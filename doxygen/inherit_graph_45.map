@@ -1,10 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="5,107,180,134"/>
-<area shape="rect" id="node2" href="$classMobilityCahnHilliardModel.html" title="Implementation of the computation of the mobility for Cahn&#45;Hilliard equations." alt="" coords="228,78,423,105"/>
-<area shape="rect" id="node5" href="$classSurfaceTensionModel.html" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="245,137,405,163"/>
-<area shape="rect" id="node3" href="$classMobilityCahnHilliardModelConstant.html" title="Constant mobility model." alt="" coords="471,5,665,47"/>
-<area shape="rect" id="node4" href="$classMobilityCahnHilliardModelQuartic.html" title="Quartic mobility model." alt="" coords="471,71,665,112"/>
-<area shape="rect" id="node6" href="$classSurfaceTensionConstant.html" title="Constant surface tension." alt="" coords="479,137,657,163"/>
-<area shape="rect" id="node7" href="$classSurfaceTensionLinear.html" title="Linear surface tension. The surface tension is given by: sigma_0 + dsimga/dT * (T&#45;T_0)." alt="" coords="488,187,648,214"/>
-<area shape="rect" id="node8" href="$classSurfaceTensionPhaseChange.html" title="Linear surface tension with phase change. The surface tension is given by: alpha_l*(sigma_0 + dsigma/..." alt="" coords="713,187,921,214"/>
+<area shape="rect" id="node1" href="$classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,81,140,108"/>
+<area shape="rect" id="node2" href="$classInsertionFile.html" title=" " alt="" coords="201,5,358,32"/>
+<area shape="rect" id="node3" href="$classInsertionList.html" title=" " alt="" coords="201,56,358,83"/>
+<area shape="rect" id="node4" href="$classInsertionPlane.html" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="194,107,365,133"/>
+<area shape="rect" id="node5" href="$classInsertionVolume.html" title=" " alt="" coords="188,157,371,184"/>
 </map>

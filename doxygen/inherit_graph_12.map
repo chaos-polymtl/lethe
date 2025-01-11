@@ -1,6 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,78,83,105"/>
-<area shape="rect" id="node2" href="$classCahnHilliardFunctionDefined.html" title="Class that implements a boundary conditions for the Cahn&#45;Hilliard equation where the phase and chemic..." alt="" coords="137,5,343,47"/>
-<area shape="rect" id="node3" href="$classNavierStokesFunctionDefined.html" title="This class implements a boundary conditions for the Navier&#45;Stokes equation where the velocity compone..." alt="" coords="133,71,347,112"/>
-<area shape="rect" id="node4" href="$classNavierStokesPressureFunctionDefined.html" title="This class implements a pressure boundary condition for the Navier&#45;Stokes equations." alt="" coords="131,136,349,177"/>
+<area shape="rect" id="node1" href="$classCahnHilliardFilterBase.html" title="Filter phase fraction according to the selected filtering method." alt="" coords="5,56,172,83"/>
+<area shape="rect" id="node2" href="$classCahnHilliardClipFilter.html" title="Calculate a filtered phase fraction for Cahn&#45;Hilliard simulations. In this case, a simple clamping is..." alt="" coords="223,5,383,32"/>
+<area shape="rect" id="node3" href="$classCahnHilliardNoFilter.html" title="Used as a default when no filter is applied to the phase fraction." alt="" coords="226,56,379,83"/>
+<area shape="rect" id="node4" href="$classCahnHilliardTanhFilter.html" title="Calculate a filtered phase fraction for Cahn&#45;Hilliard simulations." alt="" coords="220,107,385,133"/>
 </map>

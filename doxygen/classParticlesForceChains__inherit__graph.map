@@ -1,6 +1,6 @@
-<map id="ParticlesForceChains&lt; dim, force_model, rolling_friction_model &gt;" name="ParticlesForceChains&lt; dim, force_model, rolling_friction_model &gt;">
-<area shape="rect" id="node1" title="Class that carries out the calculation of particle&#45;particle contact force and the visualization of fo..." alt="" coords="507,35,707,91"/>
-<area shape="rect" id="node2" href="$classParticlesForceChainsBase.html" title=" " alt="" coords="263,5,451,47"/>
-<area shape="rect" id="node3" href="$classParticleParticleContactForce.html" title=" " alt="" coords="256,71,459,127"/>
-<area shape="rect" id="node4" href="$classParticleParticleContactForceBase.html" title="Base class for the particle&#45;particle contact force models This class does not implement any of the mo..." alt="" coords="5,79,208,120"/>
+<map id="ParticlesForceChains&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;" name="ParticlesForceChains&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;">
+<area shape="rect" id="node1" title="Class that carries out the calculation of particle&#45;particle contact force and the visualization of fo..." alt="" coords="555,28,764,99"/>
+<area shape="rect" id="node2" href="$classParticlesForceChainsBase.html" title="Base class for the particles force chains contact force models. This class does not implement any of ..." alt="" coords="295,5,483,47"/>
+<area shape="rect" id="node3" href="$classParticleParticleContactForce.html" title=" " alt="" coords="272,71,507,127"/>
+<area shape="rect" id="node4" href="$classParticleParticleContactForceBase.html" title="Base class for the particle&#45;particle contact force models This class does not implement any of the mo..." alt="" coords="5,79,224,120"/>
 </map>

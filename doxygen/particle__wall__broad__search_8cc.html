@@ -145,15 +145,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a6b91c2d51c44928bdd6119a44bc43709"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a6b91c2d51c44928bdd6119a44bc43709"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a6b91c2d51c44928bdd6119a44bc43709">particle_solid_surfaces_contact_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
 <tr class="separator:a6b91c2d51c44928bdd6119a44bc43709"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b079f8431534c5185c6d94afdef5e1f"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a1b079f8431534c5185c6d94afdef5e1f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a1b079f8431534c5185c6d94afdef5e1f">find_particle_wall_contact_pairs</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; dim &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:a1b079f8431534c5185c6d94afdef5e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47998a515b354de8f1c42d32643a848c"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a47998a515b354de8f1c42d32643a848c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a47998a515b354de8f1c42d32643a848c">find_particle_floating_wall_contact_pairs</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &amp;floating_wall_properties, const double simulation_time, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:a47998a515b354de8f1c42d32643a848c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0641eecbd449678e20a2e652c3035ea4"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a0641eecbd449678e20a2e652c3035ea4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a0641eecbd449678e20a2e652c3035ea4">particle_solid_surfaces_contact_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:a0641eecbd449678e20a2e652c3035ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf459c8734d451bf121e91430b4ecf9d"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:abf459c8734d451bf121e91430b4ecf9d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#abf459c8734d451bf121e91430b4ecf9d">find_particle_wall_contact_pairs</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; dim &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:abf459c8734d451bf121e91430b4ecf9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af162f9832cb4b1ad779888d6efd1c7d5"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:af162f9832cb4b1ad779888d6efd1c7d5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#af162f9832cb4b1ad779888d6efd1c7d5">find_particle_floating_wall_contact_pairs</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &amp;floating_wall_properties, const double simulation_time, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:af162f9832cb4b1ad779888d6efd1c7d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2eeeb69a94761e790086699dd572a4a4"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a2eeeb69a94761e790086699dd572a4a4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a2eeeb69a94761e790086699dd572a4a4">particle_solid_surfaces_contact_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:a2eeeb69a94761e790086699dd572a4a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb83b084b18ab8ae088ce79d96d7ccd4"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:aeb83b084b18ab8ae088ce79d96d7ccd4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#aeb83b084b18ab8ae088ce79d96d7ccd4">store_candidates</a> (const typename Particles::ParticleHandler&lt; dim &gt;::particle_iterator_range::iterator &amp;particle_iterator, const <a class="el" href="namespaceDEM.html#aef67e3518b42018c6fb5db80f6a9c4f7">DEM::global_face_id</a> &amp;floating_wall_id, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_wall_candidates &amp;contact_pair_candidates)</td></tr>
 <tr class="separator:aeb83b084b18ab8ae088ce79d96d7ccd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,26 +161,38 @@ Functions</h2></td></tr>
 <tr class="separator:af994776ccc0aa8435c594f9336fba0dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4252394d918dfdd73025b95e90dac5ce"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a4252394d918dfdd73025b95e90dac5ce">find_particle_wall_contact_pairs&lt; 3 &gt;</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 3 &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates)</td></tr>
 <tr class="separator:a4252394d918dfdd73025b95e90dac5ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3d951624b9f597ea5052e378a14206d"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#ab3d951624b9f597ea5052e378a14206d">find_particle_wall_contact_pairs&lt; 2 &gt;</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 2 &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2 &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:ab3d951624b9f597ea5052e378a14206d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac940838423f9b3d02d307d195515a71a"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#ac940838423f9b3d02d307d195515a71a">find_particle_wall_contact_pairs&lt; 3 &gt;</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 3 &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3 &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:ac940838423f9b3d02d307d195515a71a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70d603ad56bfacc9acaf9e3a1b926935"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a70d603ad56bfacc9acaf9e3a1b926935">find_particle_wall_contact_pairs&lt; 2 &gt;</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 2 &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:a70d603ad56bfacc9acaf9e3a1b926935"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30b3f28834d8c23f5dd695fb80431034"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a30b3f28834d8c23f5dd695fb80431034">find_particle_wall_contact_pairs&lt; 3 &gt;</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 3 &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:a30b3f28834d8c23f5dd695fb80431034"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee91f62aac919ab9facbefdc30520d66"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#aee91f62aac919ab9facbefdc30520d66">find_particle_wall_contact_pairs&lt; 2, DEM::CFDDEMProperties::PropertiesIndex &gt;</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 2 &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:aee91f62aac919ab9facbefdc30520d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affca09e65593bb174d5ce9efce55cd6e"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#affca09e65593bb174d5ce9efce55cd6e">find_particle_wall_contact_pairs&lt; 3, DEM::CFDDEMProperties::PropertiesIndex &gt;</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 3 &gt;&gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:affca09e65593bb174d5ce9efce55cd6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad193e727c7ab274d54906b1cd17fc8c9"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#ad193e727c7ab274d54906b1cd17fc8c9">find_particle_floating_wall_contact_pairs&lt; 2 &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 2 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 2 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates)</td></tr>
 <tr class="separator:ad193e727c7ab274d54906b1cd17fc8c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a037e95f8c45f4a292a03bd1539a5bf3f"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a037e95f8c45f4a292a03bd1539a5bf3f">find_particle_floating_wall_contact_pairs&lt; 3 &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 3 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 3 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates)</td></tr>
 <tr class="separator:a037e95f8c45f4a292a03bd1539a5bf3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb074e91f61cc3d43445b810f13d573f"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#adb074e91f61cc3d43445b810f13d573f">find_particle_floating_wall_contact_pairs&lt; 2 &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 2 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 2 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2 &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:adb074e91f61cc3d43445b810f13d573f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5928da2f7a3cd10a496ed6e31a04ea04"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a5928da2f7a3cd10a496ed6e31a04ea04">find_particle_floating_wall_contact_pairs&lt; 3 &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 3 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 3 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3 &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:a5928da2f7a3cd10a496ed6e31a04ea04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33ad69367337f62fe4364a7aa25a38c5"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a33ad69367337f62fe4364a7aa25a38c5">find_particle_floating_wall_contact_pairs&lt; 2, DEM::DEMProperties::PropertiesIndex &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 2 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 2 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:a33ad69367337f62fe4364a7aa25a38c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeae94268d8e9d572e287ff2eb49f3e7b"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#aeae94268d8e9d572e287ff2eb49f3e7b">find_particle_floating_wall_contact_pairs&lt; 3, DEM::DEMProperties::PropertiesIndex &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 3 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 3 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:aeae94268d8e9d572e287ff2eb49f3e7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade7b349ef49da147822cb2c7d2b69794"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#ade7b349ef49da147822cb2c7d2b69794">find_particle_floating_wall_contact_pairs&lt; 2, DEM::CFDDEMProperties::PropertiesIndex &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 2 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 2 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:ade7b349ef49da147822cb2c7d2b69794"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b1b5d678bbc26aa459dcbda77f0fc91"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a8b1b5d678bbc26aa459dcbda77f0fc91">find_particle_floating_wall_contact_pairs&lt; 3, DEM::CFDDEMProperties::PropertiesIndex &gt;</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 3 &gt;::active_cell_iterator &gt;&gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 3 &gt; &amp;floating_wall_properties, const double simulation_time, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:a8b1b5d678bbc26aa459dcbda77f0fc91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0491072c99371d324517076c0c4dca24"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a0491072c99371d324517076c0c4dca24">particle_solid_surfaces_contact_search&lt; 2 &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
 <tr class="separator:a0491072c99371d324517076c0c4dca24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2dfaea619cdfc581d484ca2c691fadb"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#ae2dfaea619cdfc581d484ca2c691fadb">particle_solid_surfaces_contact_search&lt; 3 &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
 <tr class="separator:ae2dfaea619cdfc581d484ca2c691fadb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafe6f313ce964474d30314f5c4b77c5f"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#aafe6f313ce964474d30314f5c4b77c5f">particle_solid_surfaces_contact_search&lt; 2 &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2 &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:aafe6f313ce964474d30314f5c4b77c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a363f4734489acd03fd392310e9ce399b"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a363f4734489acd03fd392310e9ce399b">particle_solid_surfaces_contact_search&lt; 3 &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3 &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:a363f4734489acd03fd392310e9ce399b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71f87121a637d624278b2767464f4563"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a71f87121a637d624278b2767464f4563">particle_solid_surfaces_contact_search&lt; 2, DEM::DEMProperties::PropertiesIndex &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:a71f87121a637d624278b2767464f4563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5f68310e818f0009c097774f9a31500"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#ad5f68310e818f0009c097774f9a31500">particle_solid_surfaces_contact_search&lt; 3, DEM::DEMProperties::PropertiesIndex &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:ad5f68310e818f0009c097774f9a31500"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6b9d26c1af67e123f3bb67b59488628"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#ab6b9d26c1af67e123f3bb67b59488628">particle_solid_surfaces_contact_search&lt; 2, DEM::CFDDEMProperties::PropertiesIndex &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:ab6b9d26c1af67e123f3bb67b59488628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2e17a49f6bfe306b018742a28588cd9"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#aa2e17a49f6bfe306b018742a28588cd9">particle_solid_surfaces_contact_search&lt; 3, DEM::CFDDEMProperties::PropertiesIndex &gt;</a> (const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list, const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:aa2e17a49f6bfe306b018742a28588cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a568808d863c8eab3f51bd96ead207ed0"></a>
@@ -231,17 +243,17 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00060">60</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00355">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_end</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00352">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_start</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00358">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_end</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00355">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_start</a>.</p>
 
 </div>
 </div>
-<a id="a47998a515b354de8f1c42d32643a848c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47998a515b354de8f1c42d32643a848c">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs() <span class="overload">[2/2]</span></h2>
+<a id="af162f9832cb4b1ad779888d6efd1c7d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af162f9832cb4b1ad779888d6efd1c7d5">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void find_particle_floating_wall_contact_pairs </td>
@@ -276,7 +288,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -287,20 +299,39 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00267">267</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
+<p>Find a two-layered unordered map of particle iterators which shows the candidate particle-floating wall collision candidates. These collision pairs will be investigated in the fine search to check if they are in contact or not. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">boundary_cells_for_floating_walls</td><td>Boundary cells located adjacent to floating walls </td></tr>
+    <tr><td class="paramname">particle_handler</td><td>Particle handler of particles located in boundary cells </td></tr>
+    <tr><td class="paramname">floating_wall_properties</td><td>Properties of the floating walls specified in the parameter handler file </td></tr>
+    <tr><td class="paramname">simulation_time</td><td>Simulation time </td></tr>
+    <tr><td class="paramname">particle_floating_wall_candidates</td><td>Output of particle-floating wall broad search which contains all the particle-floating wall collision candidates </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00304">AdaptiveSparseContacts&lt; dim &gt;::check_cell_mobility()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00355">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_end</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00352">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_start</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00268">268</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00305">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::check_cell_mobility()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00358">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_end</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00355">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::time_start</a>.</p>
 
 </div>
 </div>
 <a id="ad193e727c7ab274d54906b1cd17fc8c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad193e727c7ab274d54906b1cd17fc8c9">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 2 &gt;() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad193e727c7ab274d54906b1cd17fc8c9">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 2 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a47998a515b354de8f1c42d32643a848c">find_particle_floating_wall_contact_pairs</a>&lt; 2 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#af162f9832cb4b1ad779888d6efd1c7d5">find_particle_floating_wall_contact_pairs</a>&lt; 2 &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 2 &gt;::active_cell_iterator &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_for_floating_walls</em>, </td>
@@ -339,14 +370,14 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="adb074e91f61cc3d43445b810f13d573f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb074e91f61cc3d43445b810f13d573f">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 2 &gt;() <span class="overload">[2/2]</span></h2>
+<a id="ade7b349ef49da147822cb2c7d2b69794"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade7b349ef49da147822cb2c7d2b69794">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 2, DEM::CFDDEMProperties::PropertiesIndex &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a47998a515b354de8f1c42d32643a848c">find_particle_floating_wall_contact_pairs</a>&lt; 2 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#af162f9832cb4b1ad779888d6efd1c7d5">find_particle_floating_wall_contact_pairs</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 2 &gt;::active_cell_iterator &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_for_floating_walls</em>, </td>
@@ -378,7 +409,59 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a33ad69367337f62fe4364a7aa25a38c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33ad69367337f62fe4364a7aa25a38c5">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 2, DEM::DEMProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#af162f9832cb4b1ad779888d6efd1c7d5">find_particle_floating_wall_contact_pairs</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 2 &gt;::active_cell_iterator &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>boundary_cells_for_floating_walls</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>floating_wall_properties</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>simulation_time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_wall_candidates &amp;&#160;</td>
+          <td class="paramname"><em>particle_floating_wall_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -392,13 +475,13 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <a id="a037e95f8c45f4a292a03bd1539a5bf3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a037e95f8c45f4a292a03bd1539a5bf3f">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 3 &gt;() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a037e95f8c45f4a292a03bd1539a5bf3f">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 3 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a47998a515b354de8f1c42d32643a848c">find_particle_floating_wall_contact_pairs</a>&lt; 3 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#af162f9832cb4b1ad779888d6efd1c7d5">find_particle_floating_wall_contact_pairs</a>&lt; 3 &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 3 &gt;::active_cell_iterator &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_for_floating_walls</em>, </td>
@@ -437,14 +520,14 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a5928da2f7a3cd10a496ed6e31a04ea04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5928da2f7a3cd10a496ed6e31a04ea04">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 3 &gt;() <span class="overload">[2/2]</span></h2>
+<a id="a8b1b5d678bbc26aa459dcbda77f0fc91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b1b5d678bbc26aa459dcbda77f0fc91">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 3, DEM::CFDDEMProperties::PropertiesIndex &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a47998a515b354de8f1c42d32643a848c">find_particle_floating_wall_contact_pairs</a>&lt; 3 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#af162f9832cb4b1ad779888d6efd1c7d5">find_particle_floating_wall_contact_pairs</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 3 &gt;::active_cell_iterator &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_for_floating_walls</em>, </td>
@@ -476,7 +559,59 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aeae94268d8e9d572e287ff2eb49f3e7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeae94268d8e9d572e287ff2eb49f3e7b">&#9670;&nbsp;</a></span>find_particle_floating_wall_contact_pairs&lt; 3, DEM::DEMProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#af162f9832cb4b1ad779888d6efd1c7d5">find_particle_floating_wall_contact_pairs</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; 3 &gt;::active_cell_iterator &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>boundary_cells_for_floating_walls</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>floating_wall_properties</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>simulation_time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_wall_candidates &amp;&#160;</td>
+          <td class="paramname"><em>particle_floating_wall_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -535,17 +670,17 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00010">10</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__wall__broad__search_8cc_source.html#l00423">store_candidates()</a>.</p>
+<p class="reference">References <a class="el" href="particle__wall__broad__search_8cc_source.html#l00424">store_candidates()</a>.</p>
 
 </div>
 </div>
-<a id="a1b079f8431534c5185c6d94afdef5e1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b079f8431534c5185c6d94afdef5e1f">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs() <span class="overload">[2/2]</span></h2>
+<a id="abf459c8734d451bf121e91430b4ecf9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf459c8734d451bf121e91430b4ecf9d">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void find_particle_wall_contact_pairs </td>
@@ -568,7 +703,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -579,9 +714,26 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Finds unordered map of tuples (tuple of particle located in boundary cells, normal vector of the boundary face, a point on the face and the corresponding boundary cell) which shows the candidate particle-wall collision pairs. These collision candidates will be investigated in the fine search to check if they are in contact or not. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">boundary_cells_information</td><td>Information of the boundary cells and faces. This is the output of the FindBoundaryCellsInformation class. </td></tr>
+    <tr><td class="paramname">particle_handler</td><td>Particle handler of particles located in boundary cells. </td></tr>
+    <tr><td class="paramname">particle_wall_contact_candidates</td><td>A two-layered unordered map of tuples. Each tuple contains a particle located near boundaries, the normal vector of the corresponding face boundary, a point on the boundary and the boundary cell. The contact pair is used in the fine search. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00215">215</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00304">AdaptiveSparseContacts&lt; dim &gt;::check_cell_mobility()</a>, and <a class="el" href="particle__wall__broad__search_8cc_source.html#l00423">store_candidates()</a>.</p>
+<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00305">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::check_cell_mobility()</a>, and <a class="el" href="particle__wall__broad__search_8cc_source.html#l00424">store_candidates()</a>.</p>
 
 </div>
 </div>
@@ -592,7 +744,7 @@ template&lt;int dim&gt; </div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a1b079f8431534c5185c6d94afdef5e1f">find_particle_wall_contact_pairs</a>&lt; 2 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#abf459c8734d451bf121e91430b4ecf9d">find_particle_wall_contact_pairs</a>&lt; 2 &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 2 &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_information</em>, </td>
@@ -619,14 +771,14 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ab3d951624b9f597ea5052e378a14206d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3d951624b9f597ea5052e378a14206d">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs&lt; 2 &gt;() <span class="overload">[2/2]</span></h2>
+<a id="a70d603ad56bfacc9acaf9e3a1b926935"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70d603ad56bfacc9acaf9e3a1b926935">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs&lt; 2 &gt;() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a1b079f8431534c5185c6d94afdef5e1f">find_particle_wall_contact_pairs</a>&lt; 2 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#abf459c8734d451bf121e91430b4ecf9d">find_particle_wall_contact_pairs</a>&lt; 2 &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 2 &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_information</em>, </td>
@@ -646,7 +798,47 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aee91f62aac919ab9facbefdc30520d66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee91f62aac919ab9facbefdc30520d66">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs&lt; 2, DEM::CFDDEMProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#abf459c8734d451bf121e91430b4ecf9d">find_particle_wall_contact_pairs</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 2 &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>boundary_cells_information</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_wall_candidates &amp;&#160;</td>
+          <td class="paramname"><em>particle_wall_contact_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -666,7 +858,7 @@ template&lt;int dim&gt; </div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a1b079f8431534c5185c6d94afdef5e1f">find_particle_wall_contact_pairs</a>&lt; 3 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#abf459c8734d451bf121e91430b4ecf9d">find_particle_wall_contact_pairs</a>&lt; 3 &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 3 &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_information</em>, </td>
@@ -693,14 +885,14 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ac940838423f9b3d02d307d195515a71a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac940838423f9b3d02d307d195515a71a">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs&lt; 3 &gt;() <span class="overload">[2/2]</span></h2>
+<a id="a30b3f28834d8c23f5dd695fb80431034"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30b3f28834d8c23f5dd695fb80431034">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs&lt; 3 &gt;() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a1b079f8431534c5185c6d94afdef5e1f">find_particle_wall_contact_pairs</a>&lt; 3 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#abf459c8734d451bf121e91430b4ecf9d">find_particle_wall_contact_pairs</a>&lt; 3 &gt; </td>
           <td>(</td>
           <td class="paramtype">const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 3 &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_information</em>, </td>
@@ -720,7 +912,47 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="affca09e65593bb174d5ce9efce55cd6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#affca09e65593bb174d5ce9efce55cd6e">&#9670;&nbsp;</a></span>find_particle_wall_contact_pairs&lt; 3, DEM::CFDDEMProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#abf459c8734d451bf121e91430b4ecf9d">find_particle_wall_contact_pairs</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; 3 &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>boundary_cells_information</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_wall_candidates &amp;&#160;</td>
+          <td class="paramname"><em>particle_wall_contact_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -789,13 +1021,13 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a0641eecbd449678e20a2e652c3035ea4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0641eecbd449678e20a2e652c3035ea4">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search() <span class="overload">[2/2]</span></h2>
+<a id="a2eeeb69a94761e790086699dd572a4a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2eeeb69a94761e790086699dd572a4a4">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void particle_solid_surfaces_contact_search </td>
@@ -824,7 +1056,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -835,20 +1067,39 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00339">339</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
+<p>Find a two-layered unordered map (particle_floating_mesh_contact_candidates) of particle iterators that shows the candidate particle-floating mesh collision candidates. These collision pairs will be investigated in the fine search to check if they are in contact or not. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">solid_surfaces_mesh_information</td><td>Information of the solid surfaces mapped in the background triangulation. </td></tr>
+    <tr><td class="paramname">particle_handler</td><td></td></tr>
+    <tr><td class="paramname">particle_floating_mesh_contact_candidates</td><td>Particle-floating mesh contact candidates </td></tr>
+    <tr><td class="paramname">cells_total_neighbor_list</td><td>A container in which all the neighbor cells of the local cells are stored </td></tr>
+    <tr><td class="paramname">sparse_contacts_object</td><td>The object that contains the information about the mobility status of cells </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00304">AdaptiveSparseContacts&lt; dim &gt;::check_cell_mobility()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00340">340</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00305">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::check_cell_mobility()</a>.</p>
 
 </div>
 </div>
 <a id="a0491072c99371d324517076c0c4dca24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0491072c99371d324517076c0c4dca24">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 2 &gt;() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0491072c99371d324517076c0c4dca24">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 2 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a0641eecbd449678e20a2e652c3035ea4">particle_solid_surfaces_contact_search</a>&lt; 2 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a2eeeb69a94761e790086699dd572a4a4">particle_solid_surfaces_contact_search</a>&lt; 2 &gt; </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::solid_surfaces_mesh_information &amp;&#160;</td>
           <td class="paramname"><em>solid_surfaces_mesh_information</em>, </td>
@@ -881,14 +1132,14 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="aafe6f313ce964474d30314f5c4b77c5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafe6f313ce964474d30314f5c4b77c5f">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 2 &gt;() <span class="overload">[2/2]</span></h2>
+<a id="ab6b9d26c1af67e123f3bb67b59488628"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6b9d26c1af67e123f3bb67b59488628">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 2, DEM::CFDDEMProperties::PropertiesIndex &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a0641eecbd449678e20a2e652c3035ea4">particle_solid_surfaces_contact_search</a>&lt; 2 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a2eeeb69a94761e790086699dd572a4a4">particle_solid_surfaces_contact_search</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::solid_surfaces_mesh_information &amp;&#160;</td>
           <td class="paramname"><em>solid_surfaces_mesh_information</em>, </td>
@@ -914,7 +1165,53 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a71f87121a637d624278b2767464f4563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71f87121a637d624278b2767464f4563">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 2, DEM::DEMProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a2eeeb69a94761e790086699dd572a4a4">particle_solid_surfaces_contact_search</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::solid_surfaces_mesh_information &amp;&#160;</td>
+          <td class="paramname"><em>solid_surfaces_mesh_information</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_floating_mesh_candidates &amp;&#160;</td>
+          <td class="paramname"><em>particle_floating_mesh_contact_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;&#160;</td>
+          <td class="paramname"><em>cells_total_neighbor_list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -928,13 +1225,13 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <a id="ae2dfaea619cdfc581d484ca2c691fadb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2dfaea619cdfc581d484ca2c691fadb">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 3 &gt;() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2dfaea619cdfc581d484ca2c691fadb">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 3 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a0641eecbd449678e20a2e652c3035ea4">particle_solid_surfaces_contact_search</a>&lt; 3 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a2eeeb69a94761e790086699dd572a4a4">particle_solid_surfaces_contact_search</a>&lt; 3 &gt; </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::solid_surfaces_mesh_information &amp;&#160;</td>
           <td class="paramname"><em>solid_surfaces_mesh_information</em>, </td>
@@ -967,14 +1264,14 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a363f4734489acd03fd392310e9ce399b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a363f4734489acd03fd392310e9ce399b">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 3 &gt;() <span class="overload">[2/2]</span></h2>
+<a id="aa2e17a49f6bfe306b018742a28588cd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2e17a49f6bfe306b018742a28588cd9">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 3, DEM::CFDDEMProperties::PropertiesIndex &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a0641eecbd449678e20a2e652c3035ea4">particle_solid_surfaces_contact_search</a>&lt; 3 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a2eeeb69a94761e790086699dd572a4a4">particle_solid_surfaces_contact_search</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::solid_surfaces_mesh_information &amp;&#160;</td>
           <td class="paramname"><em>solid_surfaces_mesh_information</em>, </td>
@@ -1000,7 +1297,53 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad5f68310e818f0009c097774f9a31500"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5f68310e818f0009c097774f9a31500">&#9670;&nbsp;</a></span>particle_solid_surfaces_contact_search&lt; 3, DEM::DEMProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__wall__broad__search_8cc.html#a2eeeb69a94761e790086699dd572a4a4">particle_solid_surfaces_contact_search</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::solid_surfaces_mesh_information &amp;&#160;</td>
+          <td class="paramname"><em>solid_surfaces_mesh_information</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_floating_mesh_candidates &amp;&#160;</td>
+          <td class="paramname"><em>particle_floating_mesh_contact_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;&#160;</td>
+          <td class="paramname"><em>cells_total_neighbor_list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -1065,7 +1408,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00423">423</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00424">424</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
 
 </div>
 </div>

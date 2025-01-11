@@ -139,15 +139,15 @@ $(function() {
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8h.html#a66180abf89f7190c55b9bc6ca2239a48">   63</a></span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#ae10efb2c94c08e90ec99f6f8b79b588d">find_particle_point_contact_pairs</a>(</div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8h.html#a741771b5f59ae2e77c1c39e9889e185e">   63</a></span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#ae10efb2c94c08e90ec99f6f8b79b588d">find_particle_point_contact_pairs</a>(</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;dim&gt;</a>&gt;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    &amp;boundary_cells_with_points,</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;dim&gt;::particle_point_candidates</a></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                    &amp;particle_point_contact_candidates,</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> &amp;sparse_contacts_object)</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    &amp;particle_point_contact_candidates,</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim, PropertiesIndex&gt;</a> &amp;sparse_contacts_object)</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;{</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="comment">// Clear the candidate map</span></div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  particle_point_contact_candidates.clear();</div>
@@ -170,217 +170,263 @@ $(function() {
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="comment">// If main cell has status other than mobile, skip to next cell</span></div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> main_cell_mobility_status =</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        sparse_contacts_object.<a class="code" href="classAdaptiveSparseContacts.html#a92287b3928ce728df9ceab3785e46abd">check_cell_mobility</a>(</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        sparse_contacts_object.<a class="code" href="classAdaptiveSparseContacts.html#a8cbe56abd0a6cc4741b5f13153e3830e">check_cell_mobility</a>(</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;          cells_with_boundary_points_information.<a class="code" href="structcell__point__info.html#ad13725bcbf896d02e772b0ab2993ce46">cell</a>);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="keywordflow">if</span> (main_cell_mobility_status != <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;::mobile</a>)</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="comment">// Finding particles located in the corresponding cell</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        particles_in_cell = particle_handler.particles_in_cell(</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;          cells_with_boundary_points_information.<a class="code" href="structcell__point__info.html#ad13725bcbf896d02e772b0ab2993ce46">cell</a>);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range::</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;             iterator particles_in_cell_iterator = particles_in_cell.begin();</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;           particles_in_cell_iterator != particles_in_cell.end();</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;           ++particles_in_cell_iterator)</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        {</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;          <span class="comment">// Making the pair and adding it to the</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;          <span class="comment">// particle_point_contact_candidates map. This map is the output of</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;          <span class="comment">// this function</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;          particle_point_contact_candidates.emplace(</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            contact_candidate_counter,</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <a class="code" href="structparticle__point__contact__info.html">particle_point_contact_info&lt;dim&gt;</a>{</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;              particles_in_cell_iterator,</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;              cells_with_boundary_points_information.<a class="code" href="structcell__point__info.html#ac743eb8a1f9483775cab70ac6d6e381b">point</a>});</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;          ++contact_candidate_counter;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        }</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    }</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;}</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">// This function finds all the particle-line contact candidates</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8h.html#acd82be320646d554895eca85fc7f891e">  123</a></span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#acd82be320646d554895eca85fc7f891e">find_particle_line_contact_pairs</a>(</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a>&gt;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    &amp;boundary_cells_with_lines,</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;dim&gt;::particle_line_candidates</a></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    &amp;particle_line_contact_candidates)</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;{</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="comment">// Clear the candidates map</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  particle_line_contact_candidates.clear();</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="comment">// Defining and resetting a local particle-line candidate counter. This is</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="comment">// used as a key to the output map</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> contact_candidate_counter = 0;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="comment">// Iterating over the  boundary_cells_with_lines which is the output of</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  <span class="comment">// the find_boundary_cells_information class.</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <span class="comment">// This vector contains all the required information of the boundary</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <span class="comment">// cells with lines. In this loop we find the particles located in each of</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  <span class="comment">// these boundary cells with lines</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> map_iterator = boundary_cells_with_lines.begin();</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;       map_iterator != boundary_cells_with_lines.end();</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;       ++map_iterator)</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    {</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <span class="keyword">const</span> <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a> &amp;cells_with_boundary_lines_info =</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        map_iterator-&gt;second;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      <span class="comment">// Finding particles located in the corresponding cell</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        particles_in_cell = particle_handler.particles_in_cell(</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;          cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#a1eaaf849fd95f9373e5586b4fda4f903">cell</a>);</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> particles_in_cell_iterator = particles_in_cell.begin();</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;           particles_in_cell_iterator != particles_in_cell.end();</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;           ++particles_in_cell_iterator)</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        {</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;          <span class="comment">// Adding the particle line contact info to the</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;          <span class="comment">// particle_line_contact_candidates map.</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;          particle_line_contact_candidates.emplace(</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            contact_candidate_counter,</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <a class="code" href="structparticle__line__contact__info.html">particle_line_contact_info&lt;dim&gt;</a>{</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;              particles_in_cell_iterator,</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#ad18cd62629bb5d1a20fabeb3fc4892b5">point_one</a>,</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#af5765da5a75940b0a513cb3849d7bd7a">point_two</a>});</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;          ++contact_candidate_counter;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        }</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;}</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8h.html#a23e343cd0581ca14f66cad27fb17e1a6">  173</a></span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#acd82be320646d554895eca85fc7f891e">find_particle_line_contact_pairs</a>(</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a>&gt;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    &amp;boundary_cells_with_lines,</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;dim&gt;::particle_line_candidates</a></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                                    &amp;particle_line_contact_candidates,</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> &amp;sparse_contacts_object)</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;{</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  <span class="comment">// Clear the candidates map</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;  particle_line_contact_candidates.clear();</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="comment">// Defining and resetting a local particle-line candidate counter. This is</span></div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="comment">// used as a key to the output map</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> contact_candidate_counter = 0;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="comment">// Iterating over the  boundary_cells_with_lines which is the output of</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  <span class="comment">// the find_boundary_cells_information class.</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="comment">// This vector contains all the required information of the boundary</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <span class="comment">// cells with lines. In this loop we find the particles located in each of</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="comment">// these boundary cells with lines</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> map_iterator = boundary_cells_with_lines.begin();</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;       map_iterator != boundary_cells_with_lines.end();</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;       ++map_iterator)</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    {</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      <span class="keyword">const</span> <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a> &amp;cells_with_boundary_lines_info =</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        map_iterator-&gt;second;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      <span class="comment">// If main cell has status other than mobile, skip to next cell</span></div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> main_cell_mobility_status =</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        sparse_contacts_object.<a class="code" href="classAdaptiveSparseContacts.html#a92287b3928ce728df9ceab3785e46abd">check_cell_mobility</a>(</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;          cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#a1eaaf849fd95f9373e5586b4fda4f903">cell</a>);</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;      <span class="keywordflow">if</span> (main_cell_mobility_status != <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;::mobile</a>)</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;      <span class="comment">// Finding particles located in the corresponding cell</span></div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;      <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        particles_in_cell = particle_handler.particles_in_cell(</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;          cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#a1eaaf849fd95f9373e5586b4fda4f903">cell</a>);</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> particles_in_cell_iterator = particles_in_cell.begin();</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;           particles_in_cell_iterator != particles_in_cell.end();</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;           ++particles_in_cell_iterator)</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        {</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;          <span class="comment">// Adding the particle line contact info to the</span></div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;          <span class="comment">// particle_line_contact_candidates map.</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;          particle_line_contact_candidates.emplace(</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            contact_candidate_counter,</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            <a class="code" href="structparticle__line__contact__info.html">particle_line_contact_info&lt;dim&gt;</a>{</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;              particles_in_cell_iterator,</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#ad18cd62629bb5d1a20fabeb3fc4892b5">point_one</a>,</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#af5765da5a75940b0a513cb3849d7bd7a">point_two</a>});</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;          ++contact_candidate_counter;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        }</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    }</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;}</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00229"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#aec042909bef9cc5a79c78f5ee8d65812">  229</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aec042909bef9cc5a79c78f5ee8d65812">find_particle_line_contact_pairs&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;2&gt;</a>&gt;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    &amp;boundary_cells_with_lines,</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;2&gt;::particle_line_candidates</a></div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    &amp;particle_line_contact_candidates);</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a1532cce8b2b33a737768c150bc26c4d5">  237</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#a1532cce8b2b33a737768c150bc26c4d5">find_particle_line_contact_pairs&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;3&gt;</a>&gt;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    &amp;boundary_cells_with_lines,</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;3&gt;::particle_line_candidates</a></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    &amp;particle_line_contact_candidates);</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a4a8541134fc5271b044fd4dfddcf4455">  245</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aec042909bef9cc5a79c78f5ee8d65812">find_particle_line_contact_pairs&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;2&gt;</a>&gt;</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    &amp;boundary_cells_with_lines,</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;2&gt;::particle_line_candidates</a></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                                  &amp;particle_line_contact_candidates,</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2&gt;</a> &amp;sparse_contacts_object);</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
-<div class="line"><a name="l00254"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a1b3d00df1414239590880b65393c1041">  254</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#a1532cce8b2b33a737768c150bc26c4d5">find_particle_line_contact_pairs&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;3&gt;</a>&gt;</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    &amp;boundary_cells_with_lines,</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;3&gt;::particle_line_candidates</a></div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                                  &amp;particle_line_contact_candidates,</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3&gt;</a> &amp;sparse_contacts_object);</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
-<div class="line"><a name="l00263"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">  263</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">find_particle_point_contact_pairs&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;2&gt;</a>&gt;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    &amp;boundary_cells_with_points,</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;2&gt;::particle_point_candidates</a></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    &amp;particle_point_contact_candidates);</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
-<div class="line"><a name="l00271"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">  271</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">find_particle_point_contact_pairs&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;3&gt;</a>&gt;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    &amp;boundary_cells_with_points,</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;3&gt;::particle_point_candidates</a></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    &amp;particle_point_contact_candidates);</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a2d7eec35e0becbe75e9a8ab03ee0ce1e">  279</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">find_particle_point_contact_pairs&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;2&gt;</a>&gt;</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    &amp;boundary_cells_with_points,</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;2&gt;::particle_point_candidates</a></div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                                  &amp;particle_point_contact_candidates,</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2&gt;</a> &amp;sparse_contacts_object);</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
-<div class="line"><a name="l00288"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#ada35445ad1dbfce200849096c9aeab5a">  288</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">find_particle_point_contact_pairs&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;3&gt;</a>&gt;</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    &amp;boundary_cells_with_points,</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;3&gt;::particle_point_candidates</a></div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                                  &amp;particle_point_contact_candidates,</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3&gt;</a> &amp;sparse_contacts_object);</div>
-<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00104">adaptive_sparse_contacts.h:105</a></div></div>
-<div class="ttc" id="aclassAdaptiveSparseContacts_html_a92287b3928ce728df9ceab3785e46abd"><div class="ttname"><a href="classAdaptiveSparseContacts.html#a92287b3928ce728df9ceab3785e46abd">AdaptiveSparseContacts::check_cell_mobility</a></div><div class="ttdeci">unsigned int check_cell_mobility(const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell) const</div><div class="ttdoc">Find the mobility status of a cell.</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00304">adaptive_sparse_contacts.h:304</a></div></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="keywordflow">if</span> (main_cell_mobility_status !=</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;          <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim, PropertiesIndex&gt;::mobile</a>)</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="comment">// Finding particles located in the corresponding cell</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        particles_in_cell = particle_handler.particles_in_cell(</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;          cells_with_boundary_points_information.<a class="code" href="structcell__point__info.html#ad13725bcbf896d02e772b0ab2993ce46">cell</a>);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range::</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;             iterator particles_in_cell_iterator = particles_in_cell.begin();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;           particles_in_cell_iterator != particles_in_cell.end();</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;           ++particles_in_cell_iterator)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;          <span class="comment">// Making the pair and adding it to the</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;          <span class="comment">// particle_point_contact_candidates map. This map is the output of</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;          <span class="comment">// this function</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;          particle_point_contact_candidates.emplace(</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            contact_candidate_counter,</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <a class="code" href="structparticle__point__contact__info.html">particle_point_contact_info&lt;dim&gt;</a>{</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;              particles_in_cell_iterator,</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;              cells_with_boundary_points_information.<a class="code" href="structcell__point__info.html#ac743eb8a1f9483775cab70ac6d6e381b">point</a>});</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;          ++contact_candidate_counter;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        }</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">// This function finds all the particle-line contact candidates</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8h.html#acd82be320646d554895eca85fc7f891e">  124</a></span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#acd82be320646d554895eca85fc7f891e">find_particle_line_contact_pairs</a>(</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a>&gt;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;dim&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    &amp;particle_line_contact_candidates)</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;{</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="comment">// Clear the candidates map</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  particle_line_contact_candidates.clear();</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="comment">// Defining and resetting a local particle-line candidate counter. This is</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  <span class="comment">// used as a key to the output map</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> contact_candidate_counter = 0;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  <span class="comment">// Iterating over the  boundary_cells_with_lines which is the output of</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <span class="comment">// the find_boundary_cells_information class.</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <span class="comment">// This vector contains all the required information of the boundary</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  <span class="comment">// cells with lines. In this loop we find the particles located in each of</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  <span class="comment">// these boundary cells with lines</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> map_iterator = boundary_cells_with_lines.begin();</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;       map_iterator != boundary_cells_with_lines.end();</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;       ++map_iterator)</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      <span class="keyword">const</span> <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a> &amp;cells_with_boundary_lines_info =</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        map_iterator-&gt;second;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <span class="comment">// Finding particles located in the corresponding cell</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        particles_in_cell = particle_handler.particles_in_cell(</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;          cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#a1eaaf849fd95f9373e5586b4fda4f903">cell</a>);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> particles_in_cell_iterator = particles_in_cell.begin();</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;           particles_in_cell_iterator != particles_in_cell.end();</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;           ++particles_in_cell_iterator)</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        {</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;          <span class="comment">// Adding the particle line contact info to the</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;          <span class="comment">// particle_line_contact_candidates map.</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;          particle_line_contact_candidates.emplace(</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            contact_candidate_counter,</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            <a class="code" href="structparticle__line__contact__info.html">particle_line_contact_info&lt;dim&gt;</a>{</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;              particles_in_cell_iterator,</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#ad18cd62629bb5d1a20fabeb3fc4892b5">point_one</a>,</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#af5765da5a75940b0a513cb3849d7bd7a">point_two</a>});</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;          ++contact_candidate_counter;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        }</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    }</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8h.html#a83009ba1823bb2fb67c34a6c663d708c">  174</a></span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#acd82be320646d554895eca85fc7f891e">find_particle_line_contact_pairs</a>(</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a>&gt;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;dim&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    &amp;particle_line_contact_candidates,</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim, PropertiesIndex&gt;</a> &amp;sparse_contacts_object)</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;{</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;  <span class="comment">// Clear the candidates map</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  particle_line_contact_candidates.clear();</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="comment">// Defining and resetting a local particle-line candidate counter. This is</span></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <span class="comment">// used as a key to the output map</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> contact_candidate_counter = 0;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  <span class="comment">// Iterating over the  boundary_cells_with_lines which is the output of</span></div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="comment">// the find_boundary_cells_information class.</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <span class="comment">// This vector contains all the required information of the boundary</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="comment">// cells with lines. In this loop we find the particles located in each of</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  <span class="comment">// these boundary cells with lines</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> map_iterator = boundary_cells_with_lines.begin();</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;       map_iterator != boundary_cells_with_lines.end();</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;       ++map_iterator)</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;      <span class="keyword">const</span> <a class="code" href="structcell__line__info.html">cell_line_info&lt;dim&gt;</a> &amp;cells_with_boundary_lines_info =</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        map_iterator-&gt;second;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      <span class="comment">// If main cell has status other than mobile, skip to next cell</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> main_cell_mobility_status =</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        sparse_contacts_object.<a class="code" href="classAdaptiveSparseContacts.html#a8cbe56abd0a6cc4741b5f13153e3830e">check_cell_mobility</a>(</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;          cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#a1eaaf849fd95f9373e5586b4fda4f903">cell</a>);</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;      <span class="keywordflow">if</span> (main_cell_mobility_status !=</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;          <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim, PropertiesIndex&gt;::mobile</a>)</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      <span class="comment">// Finding particles located in the corresponding cell</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        particles_in_cell = particle_handler.particles_in_cell(</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;          cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#a1eaaf849fd95f9373e5586b4fda4f903">cell</a>);</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> particles_in_cell_iterator = particles_in_cell.begin();</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;           particles_in_cell_iterator != particles_in_cell.end();</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;           ++particles_in_cell_iterator)</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        {</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;          <span class="comment">// Adding the particle line contact info to the</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;          <span class="comment">// particle_line_contact_candidates map.</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;          particle_line_contact_candidates.emplace(</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            contact_candidate_counter,</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            <a class="code" href="structparticle__line__contact__info.html">particle_line_contact_info&lt;dim&gt;</a>{</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;              particles_in_cell_iterator,</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#ad18cd62629bb5d1a20fabeb3fc4892b5">point_one</a>,</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;              cells_with_boundary_lines_info.<a class="code" href="structcell__line__info.html#af5765da5a75940b0a513cb3849d7bd7a">point_two</a>});</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;          ++contact_candidate_counter;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        }</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    }</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;}</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#aec042909bef9cc5a79c78f5ee8d65812">  231</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aec042909bef9cc5a79c78f5ee8d65812">find_particle_line_contact_pairs&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;2&gt;</a>&gt;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;2&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    &amp;particle_line_contact_candidates);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a1532cce8b2b33a737768c150bc26c4d5">  239</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#a1532cce8b2b33a737768c150bc26c4d5">find_particle_line_contact_pairs&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;3&gt;</a>&gt;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;3&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    &amp;particle_line_contact_candidates);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
+<div class="line"><a name="l00247"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a6d60644407c9588f1ca165a22fc12768">  247</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;find_particle_line_contact_pairs&lt;2, DEM::DEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;2&gt;</a>&gt;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;2&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    &amp;particle_line_contact_candidates,</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2, DEM::DEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00257"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a4c9b11bf100e7870ea894058737f3fa1">  257</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;find_particle_line_contact_pairs&lt;3, DEM::DEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;3&gt;</a>&gt;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;3&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    &amp;particle_line_contact_candidates,</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3, DEM::DEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
+<div class="line"><a name="l00267"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a511e6322f9517bf492328bf623e0331a">  267</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;find_particle_line_contact_pairs&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;2&gt;</a>&gt;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;2&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    &amp;particle_line_contact_candidates,</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
+<div class="line"><a name="l00277"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a73d761a54c939a8adccd1c32d64aa536">  277</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;find_particle_line_contact_pairs&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__line__info.html">cell_line_info&lt;3&gt;</a>&gt;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    &amp;boundary_cells_with_lines,</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9">DEM::dem_data_structures&lt;3&gt;::particle_line_candidates</a></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    &amp;particle_line_contact_candidates,</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">  287</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">find_particle_point_contact_pairs&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;2&gt;</a>&gt;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    &amp;boundary_cells_with_points,</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;2&gt;::particle_point_candidates</a></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    &amp;particle_point_contact_candidates);</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
+<div class="line"><a name="l00295"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">  295</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">find_particle_point_contact_pairs&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;3&gt;</a>&gt;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    &amp;boundary_cells_with_points,</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;3&gt;::particle_point_candidates</a></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    &amp;particle_point_contact_candidates);</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a1aa7ded42302b2fa257347b4b8e63634">  303</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">find_particle_point_contact_pairs&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;2&gt;</a>&gt;</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    &amp;boundary_cells_with_points,</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;2&gt;::particle_point_candidates</a></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    &amp;particle_point_contact_candidates,</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2, DEM::DEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#af73bebd2da1cc6d75b12dbe530cd253a">  313</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">find_particle_point_contact_pairs&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;3&gt;</a>&gt;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    &amp;boundary_cells_with_points,</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;3&gt;::particle_point_candidates</a></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    &amp;particle_point_contact_candidates,</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3, DEM::DEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
+<div class="line"><a name="l00323"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#ac355ca82bb8021f141301de828bcb97e">  323</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">find_particle_point_contact_pairs&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;2&gt;</a>&gt;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    &amp;boundary_cells_with_points,</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;2&gt;::particle_point_candidates</a></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    &amp;particle_point_contact_candidates,</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
+<div class="line"><a name="l00333"></a><span class="lineno"><a class="line" href="particle__point__line__broad__search_8cc.html#a53c151166751cd76ff725349b8c909f5">  333</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<a class="code" href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">find_particle_point_contact_pairs&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;std::string, <a class="code" href="structcell__point__info.html">cell_point_info&lt;3&gt;</a>&gt;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    &amp;boundary_cells_with_points,</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5">DEM::dem_data_structures&lt;3&gt;::particle_point_candidates</a></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    &amp;particle_point_contact_candidates,</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;  <span class="keyword">const</span> <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;</a></div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    &amp;sparse_contacts_object);</div>
+<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00105">adaptive_sparse_contacts.h:106</a></div></div>
+<div class="ttc" id="aclassAdaptiveSparseContacts_html_a8cbe56abd0a6cc4741b5f13153e3830e"><div class="ttname"><a href="classAdaptiveSparseContacts.html#a8cbe56abd0a6cc4741b5f13153e3830e">AdaptiveSparseContacts::check_cell_mobility</a></div><div class="ttdeci">unsigned int check_cell_mobility(const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell) const</div><div class="ttdoc">Find the mobility status of a cell.</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00305">adaptive_sparse_contacts.h:305</a></div></div>
 <div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00010">dem_properties.h:11</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00033">fluid_dynamics_matrix_free.h:34</a></div></div>
 <div class="ttc" id="aparticle__point__line__broad__search_8cc_html_a1532cce8b2b33a737768c150bc26c4d5"><div class="ttname"><a href="particle__point__line__broad__search_8cc.html#a1532cce8b2b33a737768c150bc26c4d5">find_particle_line_contact_pairs&lt; 3 &gt;</a></div><div class="ttdeci">template void find_particle_line_contact_pairs&lt; 3 &gt;(const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const std::unordered_map&lt; std::string, cell_line_info&lt; 3 &gt;&gt; &amp;boundary_cells_with_lines, typename DEM::dem_data_structures&lt; 3 &gt;::particle_line_candidates &amp;particle_line_contact_candidates)</div></div>
 <div class="ttc" id="aparticle__point__line__broad__search_8cc_html_aa9f92f193a274e0b40050641d8d229c3"><div class="ttname"><a href="particle__point__line__broad__search_8cc.html#aa9f92f193a274e0b40050641d8d229c3">find_particle_point_contact_pairs&lt; 3 &gt;</a></div><div class="ttdeci">template void find_particle_point_contact_pairs&lt; 3 &gt;(const Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const std::unordered_map&lt; std::string, cell_point_info&lt; 3 &gt;&gt; &amp;boundary_cells_with_points, typename DEM::dem_data_structures&lt; 3 &gt;::particle_point_candidates &amp;particle_point_contact_candidates)</div></div>
-<div class="ttc" id="aparticle__point__line__broad__search_8cc_html_acd82be320646d554895eca85fc7f891e"><div class="ttname"><a href="particle__point__line__broad__search_8cc.html#acd82be320646d554895eca85fc7f891e">find_particle_line_contact_pairs</a></div><div class="ttdeci">void find_particle_line_contact_pairs(const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const std::unordered_map&lt; std::string, cell_line_info&lt; dim &gt;&gt; &amp;boundary_cells_with_lines, typename DEM::dem_data_structures&lt; dim &gt;::particle_line_candidates &amp;particle_line_contact_candidates)</div><div class="ttdoc">Find a map of tuples (tuple of particle and the locations of beginning and ending vertices of the bou...</div><div class="ttdef"><b>Definition:</b> <a href="particle__point__line__broad__search_8cc_source.html#l00123">particle_point_line_broad_search.cc:123</a></div></div>
+<div class="ttc" id="aparticle__point__line__broad__search_8cc_html_acd82be320646d554895eca85fc7f891e"><div class="ttname"><a href="particle__point__line__broad__search_8cc.html#acd82be320646d554895eca85fc7f891e">find_particle_line_contact_pairs</a></div><div class="ttdeci">void find_particle_line_contact_pairs(const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const std::unordered_map&lt; std::string, cell_line_info&lt; dim &gt;&gt; &amp;boundary_cells_with_lines, typename DEM::dem_data_structures&lt; dim &gt;::particle_line_candidates &amp;particle_line_contact_candidates)</div><div class="ttdoc">Find a map of tuples (tuple of particle and the locations of beginning and ending vertices of the bou...</div><div class="ttdef"><b>Definition:</b> <a href="particle__point__line__broad__search_8cc_source.html#l00124">particle_point_line_broad_search.cc:124</a></div></div>
 <div class="ttc" id="aparticle__point__line__broad__search_8cc_html_adbd96d806a9e17507387937eda6d8802"><div class="ttname"><a href="particle__point__line__broad__search_8cc.html#adbd96d806a9e17507387937eda6d8802">find_particle_point_contact_pairs&lt; 2 &gt;</a></div><div class="ttdeci">template void find_particle_point_contact_pairs&lt; 2 &gt;(const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const std::unordered_map&lt; std::string, cell_point_info&lt; 2 &gt;&gt; &amp;boundary_cells_with_points, typename DEM::dem_data_structures&lt; 2 &gt;::particle_point_candidates &amp;particle_point_contact_candidates)</div></div>
 <div class="ttc" id="aparticle__point__line__broad__search_8cc_html_ae10efb2c94c08e90ec99f6f8b79b588d"><div class="ttname"><a href="particle__point__line__broad__search_8cc.html#ae10efb2c94c08e90ec99f6f8b79b588d">find_particle_point_contact_pairs</a></div><div class="ttdeci">void find_particle_point_contact_pairs(const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const std::unordered_map&lt; std::string, cell_point_info&lt; dim &gt;&gt; &amp;boundary_cells_with_points, typename DEM::dem_data_structures&lt; dim &gt;::particle_point_candidates &amp;particle_point_contact_candidates)</div><div class="ttdoc">Find a map of pairs (pair of particle and the boundary vertex location) which shows the candidate par...</div><div class="ttdef"><b>Definition:</b> <a href="particle__point__line__broad__search_8cc_source.html#l00012">particle_point_line_broad_search.cc:12</a></div></div>
 <div class="ttc" id="aparticle__point__line__broad__search_8cc_html_aec042909bef9cc5a79c78f5ee8d65812"><div class="ttname"><a href="particle__point__line__broad__search_8cc.html#aec042909bef9cc5a79c78f5ee8d65812">find_particle_line_contact_pairs&lt; 2 &gt;</a></div><div class="ttdeci">template void find_particle_line_contact_pairs&lt; 2 &gt;(const Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const std::unordered_map&lt; std::string, cell_line_info&lt; 2 &gt;&gt; &amp;boundary_cells_with_lines, typename DEM::dem_data_structures&lt; 2 &gt;::particle_line_candidates &amp;particle_line_contact_candidates)</div></div>

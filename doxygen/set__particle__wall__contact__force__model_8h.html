@@ -160,21 +160,21 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac61df363c65d1bf1526af75e523faa5b"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:ac61df363c65d1bf1526af75e523faa5b"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="set__particle__wall__contact__force__model_8h.html#ac61df363c65d1bf1526af75e523faa5b">set_particle_wall_contact_force_model</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation)</td></tr>
-<tr class="separator:ac61df363c65d1bf1526af75e523faa5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9177360136dd11b86fec1bc1befed479"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a9177360136dd11b86fec1bc1befed479"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="set__particle__wall__contact__force__model_8h.html#a9177360136dd11b86fec1bc1befed479">set_particle_wall_contact_force_model</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation)</td></tr>
+<tr class="separator:a9177360136dd11b86fec1bc1befed479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ac61df363c65d1bf1526af75e523faa5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac61df363c65d1bf1526af75e523faa5b">&#9670;&nbsp;</a></span>set_particle_wall_contact_force_model()</h2>
+<a id="a9177360136dd11b86fec1bc1befed479"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9177360136dd11b86fec1bc1befed479">&#9670;&nbsp;</a></span>set_particle_wall_contact_force_model()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt;dim&gt; &gt; set_particle_wall_contact_force_model </td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt;dim, PropertiesIndex&gt; &gt; set_particle_wall_contact_force_model </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>dem_parameters</em>, </td>
@@ -194,6 +194,13 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Set the selected particle-wall contact force model in the parameter handler file. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters </td></tr>

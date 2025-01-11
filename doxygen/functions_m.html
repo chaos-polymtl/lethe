@@ -105,7 +105,7 @@ $(function() {
 : <a class="el" href="classPeriodicBoundariesManipulator.html#a7f9ac1843d0beb0dea34a5beadd4120a">PeriodicBoundariesManipulator&lt; dim &gt;</a>
 </li>
 <li>map_periodic_nodes()
-: <a class="el" href="classAdaptiveSparseContacts.html#a06d1d6f20db01f3f8989ee8d39dec7d0">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a9ce26d29fd4cef20e2d5509c5fc99113">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>map_solid_in_background_triangulation()
 : <a class="el" href="classSerialSolid.html#ab8ad4d1cd9fc4e30cb6559111919e4c4">SerialSolid&lt; dim, spacedim &gt;</a>
@@ -115,7 +115,7 @@ $(function() {
 </li>
 <li>mapping
 : <a class="el" href="classCahnHilliard.html#ab50556a4c97f1c9a99a11130acf88eab">CahnHilliard&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a63e542614d665b1c060e826e8ea3f472">DEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#a9d23f1178840c195cef4891501cfc6ff">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#ae031b81c4ac8c604c2ed5537a99b8525">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 , <a class="el" href="classParticleVisualization.html#ab9e054ad336b3d6a85af69cb6d1306b8">ParticleVisualization&lt; dim &gt;</a>
 , <a class="el" href="classPostProcessorSmoothing.html#a954d749b0b1634e8aa02bfee98ac2713">PostProcessorSmoothing&lt; dim, VectorType &gt;</a>
@@ -246,7 +246,7 @@ $(function() {
 </li>
 <li>maximum_particle_diameter
 : <a class="el" href="classCFDDEMSolver.html#afbc6f5c2b682a4ff8f78496c942d7455">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a948448f06cdd597921701af5cc68417b">DEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#aaf55c53f5be9be221f6baffe4a236ad3">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>maximum_range_for_randomness
 : <a class="el" href="classInsertionPlane.html#a9efaf6026f4081b28c6bf850ed6e3e51">InsertionPlane&lt; dim &gt;</a>
@@ -426,10 +426,10 @@ $(function() {
 : <a class="el" href="classMFNavierStokesPreconditionGMG.html#aff87ca3f7c3cbe9a81660dee36f606e8">MFNavierStokesPreconditionGMG&lt; dim &gt;</a>
 </li>
 <li>mobile
-: <a class="el" href="classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230aecfcb8f999747f85c2241ad0e20ea01e">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230a845f62dcad807a5258e4c5ed41e1d12e">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>mobility_at_nodes
-: <a class="el" href="classAdaptiveSparseContacts.html#a0a84cd37a119787354bf9777c4deb0f3">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a4472edc56504afa3959aaea5e18a3534">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>mobility_cahn_hilliard
 : <a class="el" href="classCahnHilliardScratchData.html#a81ccd69360d5dea77d46f2702793d2c9">CahnHilliardScratchData&lt; dim &gt;</a>
@@ -450,7 +450,7 @@ $(function() {
 : <a class="el" href="classParameters_1_1MaterialInteractions.html#a88d1c723836ec2fe0528b903a890a5ec">Parameters::MaterialInteractions</a>
 </li>
 <li>mobility_status
-: <a class="el" href="classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>mobility_status_reset_trigger
 : <a class="el" href="classDEMActionManager.html#a2f3d42b17e5316fb4bcad740dd1d54f0">DEMActionManager</a>
@@ -486,8 +486,8 @@ $(function() {
 , <a class="el" href="classPhysicalPropertyModel.html#ad805b20920189b0c308b0a4730217b81">PhysicalPropertyModel</a>
 </li>
 <li>model_parameter_beta
-: <a class="el" href="classParticleParticleContactForce.html#a7eb6fa04b9c2ba0726d2d352481ea02b">ParticleParticleContactForce&lt; dim, contact_model, rolling_friction_model &gt;</a>
-, <a class="el" href="classParticleWallContactForce.html#a766134d11299756f2cd0932e9d47d7eb">ParticleWallContactForce&lt; dim &gt;</a>
+: <a class="el" href="classParticleParticleContactForce.html#a6a136d522c1736d47dc72af3a0205d86">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>
+, <a class="el" href="classParticleWallContactForce.html#ad88851b8df70f9cbcb235c756fa369c8">ParticleWallContactForce&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>model_parameters
 : <a class="el" href="classDEMSolverParameters.html#a5131e3688171e04535b53f23b59354bb">DEMSolverParameters&lt; dim &gt;</a>
@@ -499,7 +499,7 @@ $(function() {
 </li>
 <li>MOI
 : <a class="el" href="classCFDDEMSolver.html#a5f2c26c5643bb184967f1e31f99c8943">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a304442043f06e4c702322836f92e2a10">DEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#a1877a756f3858c74dd96052f954e385b">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>molar_mass
 : <a class="el" href="classEvaporationModelTemperature.html#a0478cf6b61699f260972069aabf1ed73">EvaporationModelTemperature</a>
@@ -543,7 +543,7 @@ $(function() {
 : <a class="el" href="classGridMotion.html#a29e96f413052a3c7d952f23056359427">GridMotion&lt; dim, spacedim &gt;</a>
 </li>
 <li>move_solid_objects()
-: <a class="el" href="classDEMSolver.html#aa926d38a6be29061a9258ff09de6ec1f">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#aba266cd57fa8dd40c741b60713d587d3">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>move_solid_triangulation()
 : <a class="el" href="classSerialSolid.html#a61418fd2272a22899c3fc0bfbe948cd0">SerialSolid&lt; dim, spacedim &gt;</a>
@@ -557,9 +557,9 @@ $(function() {
 : <a class="el" href="classBlockDiagPreconditioner.html#a458925fc7cafb87ca2cdc53fd7125e41">BlockDiagPreconditioner&lt; PreconditionerMp &gt;</a>
 </li>
 <li>mpi_communicator
-: <a class="el" href="classDEMSolver.html#a3fa780f51fdf8533fccb617131260161">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#aa1b686cbab7f39208681cefc7d11ae83">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">IBParticlesDEM&lt; dim &gt;</a>
-, <a class="el" href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">LagrangianLoadBalancing&lt; dim &gt;</a>
+, <a class="el" href="classLagrangianLoadBalancing.html#af84ced980a7bb187e4a3fb08baf724c4">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#a23006cbe78a59bb413fef8d767ed3219">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 , <a class="el" href="classPostProcessorSmoothing.html#ad032efdad66457f7e71d00807aaefdf4">PostProcessorSmoothing&lt; dim, VectorType &gt;</a>
 , <a class="el" href="classRPTL2Projection.html#ac64b24d4d535780d11d7bfc76bb16b38">RPTL2Projection&lt; dim &gt;</a>
@@ -567,10 +567,10 @@ $(function() {
 , <a class="el" href="classSolidBase.html#ac9d1e9d5547ab7a4ae27b718bbefed4b">SolidBase&lt; dim, spacedim &gt;</a>
 </li>
 <li>mpi_correction_over_calculation_of_forces_and_torques()
-: <a class="el" href="classParticleWallContactForce.html#a60403c52eea612533c8b82b6a223055b">ParticleWallContactForce&lt; dim &gt;</a>
+: <a class="el" href="classParticleWallContactForce.html#a25d04d3e650544053a801776cc35a798">ParticleWallContactForce&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>multi_general_cell()
-: <a class="el" href="classParticlesForceChains.html#a349d303fe2e101b9cf0073c5987e18b3">ParticlesForceChains&lt; dim, force_model, rolling_friction_model &gt;</a>
+: <a class="el" href="classParticlesForceChains.html#a76e39ce1664e9ff4ed0cfbbf79ff92b0">ParticlesForceChains&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;</a>
 </li>
 <li>MultigridCoarseningSequenceType
 : <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddced">Parameters::LinearSolver</a>

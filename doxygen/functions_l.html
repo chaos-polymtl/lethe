@@ -98,7 +98,7 @@ $(function() {
 : <a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#a46e920e9ce8178291fe47082bd282fa9">Parameters::Lagrangian::LagrangianPostProcessing</a>
 </li>
 <li>LagrangianLoadBalancing()
-: <a class="el" href="classLagrangianLoadBalancing.html#afa36d94029a302d14d6b32917ea7f8f0">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#ae72c32054ddeab2af9f58050c4462aa9">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>LagrangianTimeSteppingMethod
 : <a class="el" href="structParameters_1_1SimulationControl.html#a367c8bfa0c5e6d273f3d95b45b8d175f">Parameters::SimulationControl</a>
@@ -250,17 +250,17 @@ $(function() {
 </li>
 <li>load_balance()
 : <a class="el" href="classCFDDEMSolver.html#a2891dbda975ae4c070cafc3a7cca99ce">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#ad88b709143c5c7c2bbcda8cc55b054d9">DEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#aaf1114608b0d54c602bafdf3e4985fa9">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>load_balance_frequency
-: <a class="el" href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a9f59af96d0569be1a367fc24b170b4eb">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a8cc0e88370a4cc531cb4590c49e517f6">Parameters::Lagrangian::ModelParameters</a>
 </li>
 <li>load_balance_iteration_check_function
-: <a class="el" href="classDEMSolver.html#ad37ecfbb128358b68d70e0a2a02be7e2">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#abe7d90a3315fc72a8ac708e47a649d5f">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>load_balance_method
-: <a class="el" href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#ac340f321c75514b64717afd96c1190c5">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a482f1a6925fb27516aa95b67e12bcb7f">Parameters::Lagrangian::ModelParameters</a>
 </li>
 <li>load_balance_particle_weight
@@ -268,7 +268,7 @@ $(function() {
 </li>
 <li>load_balance_step()
 : <a class="el" href="classDEMActionManager.html#a8859b74b5d334ef2fbc7810423f0408b">DEMActionManager</a>
-, <a class="el" href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">LagrangianLoadBalancing&lt; dim &gt;</a>
+, <a class="el" href="classLagrangianLoadBalancing.html#a74541de3d5ab8875cc452536b81b974e">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#adc20400bc54a803a8729b5500480b5c5">Parameters::Lagrangian::ModelParameters</a>
 </li>
 <li>load_balance_threshold
@@ -278,8 +278,8 @@ $(function() {
 : <a class="el" href="classDEMActionManager.html#a28510bde58a667a3a6307335613d5090">DEMActionManager</a>
 </li>
 <li>load_balancing
-: <a class="el" href="classCFDDEMSolver.html#a63ed2cf84fcdfe87bd132f3503cf79e4">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#ad7bfc35e072b37f80fa52fa2705e2db4">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classCFDDEMSolver.html#a71725947d33359505d6261141f03696c">CFDDEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#a7903b1b7332395df30c1ccb9bb53e5fc">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>load_data_from_file()
 : <a class="el" href="classCompositeShape.html#ada9e3015addff5c0c2030d66f932d33a">CompositeShape&lt; dim &gt;</a>
@@ -297,7 +297,7 @@ $(function() {
 , <a class="el" href="classParameters_1_1IBParticles.html#ab20cd4c7c90d5f1d26f5ccc4a6768456">Parameters::IBParticles&lt; dim &gt;</a>
 </li>
 <li>load_threshold
-: <a class="el" href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#ad73a632f72e2ea4c31944e86b34e60f8">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>load_triangulation()
 : <a class="el" href="classSolidBase.html#a7acbad1b1362dc41f3b2e4d255a81459">SolidBase&lt; dim, spacedim &gt;</a>
@@ -306,19 +306,19 @@ $(function() {
 : <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters</a>
 </li>
 <li>local_adjacent_particles
-: <a class="el" href="classDEMContactManager.html#a29f327bcf2d8587e3811dc1e95017edb">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#a9f9b121ad9186b0e7a636d4338f8f54a">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>local_and_ghost_cells
-: <a class="el" href="classAdaptiveSparseContacts.html#ad66bffbe2aa48219eb94a8bad09d51d5">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a2f872cc0df737ee5102f4d21b16edf01">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>local_cells_with_boundary_lines
 : <a class="el" href="classBoundaryCellsInformation.html#a07de7bcae710fda8a48e9d2eabcc09a3">BoundaryCellsInformation&lt; dim &gt;</a>
 </li>
 <li>local_contact_pair_candidates
-: <a class="el" href="classDEMContactManager.html#a94972cd84e62fe1347a5ddd540d330df">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#a163c92a97623ca276e537856297c0b36">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>local_contact_pair_periodic_candidates
-: <a class="el" href="classDEMContactManager.html#a6448bf0169c0db7bbd1d9708a5a6c44e">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#a7c2ff0eeb5e68266876506fe458da43a">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>local_curvature_radius()
 : <a class="el" href="classShape.html#a5648e1ee0838d6d6edbc75b4c5548665">Shape&lt; dim &gt;</a>
@@ -351,10 +351,10 @@ $(function() {
 : <a class="el" href="classOpenCascadeShape.html#a1d8831d252f2e5cf91bb56dabbe5bed8">OpenCascadeShape&lt; dim &gt;</a>
 </li>
 <li>local_ghost_periodic_adjacent_particles
-: <a class="el" href="classDEMContactManager.html#a0dd6158ab897f9b81e93926ed2ab6e2f">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#a1ab385091667664ae0a89d1fe10b2ccf">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>local_local_periodic_adjacent_particles
-: <a class="el" href="classDEMContactManager.html#ae66057ba1e7535ffcd0e304fda58d0a4">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#ab901ce52defcac6a3786d0ba819b2260">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>local_matrix
 : <a class="el" href="classCopyData.html#a4d95db5f45ab577dda12cdd23d535044">CopyData</a>

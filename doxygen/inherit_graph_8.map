@@ -1,3 +1,8 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classBoundaryConditions_1_1CahnHilliardBoundaryFunctions.html" title="This class manages the functions associated with function&#45;type boundary conditions of the Cahn&#45;Hillia..." alt="" coords="5,5,240,61"/>
+<area shape="rect" id="node1" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="5,165,167,221"/>
+<area shape="rect" id="node2" href="$classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html" title="This class manages the boundary conditions for the Cahn&#45;Hilliard solver It introduces the boundary fu..." alt="" coords="215,5,456,61"/>
+<area shape="rect" id="node3" href="$classBoundaryConditions_1_1HTBoundaryConditions.html" title="This class manages the boundary conditions for Heat&#45;Transfer solver It introduces the boundary functi..." alt="" coords="246,85,425,141"/>
+<area shape="rect" id="node4" href="$classBoundaryConditions_1_1NSBoundaryConditions.html" title="This class manages the boundary conditions for Navier&#45;Stokes solver It introduces the boundary functi..." alt="" coords="246,165,425,221"/>
+<area shape="rect" id="node5" href="$classBoundaryConditions_1_1TracerBoundaryConditions.html" title="This class manages the boundary conditions for Tracer solver It introduces the boundary functions and..." alt="" coords="235,245,435,301"/>
+<area shape="rect" id="node6" href="$classBoundaryConditions_1_1VOFBoundaryConditions.html" title="This class manages the boundary conditions for VOF solver It introduces the boundary functions and de..." alt="" coords="241,325,429,381"/>
 </map>

@@ -135,7 +135,7 @@ $(function() {
 : <a class="el" href="classParameters_1_1Lagrangian_1_1ForceTorqueOnWall.html#ac521a62af5f264d7970ea471012d41f1">Parameters::Lagrangian::ForceTorqueOnWall&lt; dim &gt;</a>
 </li>
 <li>calculate_force_torque_on_boundary
-: <a class="el" href="classParticleWallContactForce.html#a5c944c0331a59964b731b408f326a5e6">ParticleWallContactForce&lt; dim &gt;</a>
+: <a class="el" href="classParticleWallContactForce.html#a1077b835c6a0cc1ff1ec5682b4187c2e">ParticleWallContactForce&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>calculate_heat_flux
 : <a class="el" href="structParameters_1_1PostProcessing.html#af6508cf9a649ed716315135210bd7df0">Parameters::PostProcessing</a>
@@ -165,10 +165,10 @@ $(function() {
 : <a class="el" href="structParameters_1_1PostProcessing.html#a01032169fdab07b424db94962105f98d">Parameters::PostProcessing</a>
 </li>
 <li>calculate_rolling_resistance_torque
-: <a class="el" href="classParticleWallDMTForce.html#aeb17fa909edbd38adc6b77120df7dc31">ParticleWallDMTForce&lt; dim &gt;</a>
-, <a class="el" href="classParticleWallJKRForce.html#ad4a6d477e7e6fa2dd15ed792a3c2949b">ParticleWallJKRForce&lt; dim &gt;</a>
-, <a class="el" href="classParticleWallLinearForce.html#a1b0b8fd77abdb09c2707502da4b63d58">ParticleWallLinearForce&lt; dim &gt;</a>
-, <a class="el" href="classParticleWallNonLinearForce.html#ac1b6ca97736133deddd20b262ffc313b">ParticleWallNonLinearForce&lt; dim &gt;</a>
+: <a class="el" href="classParticleWallDMTForce.html#a59ec42e82d5dd747ef9b7ac97f2c9f3a">ParticleWallDMTForce&lt; dim, PropertiesIndex &gt;</a>
+, <a class="el" href="classParticleWallJKRForce.html#abe6865a8fb006f734c061b5d2d56ea01">ParticleWallJKRForce&lt; dim, PropertiesIndex &gt;</a>
+, <a class="el" href="classParticleWallLinearForce.html#aeb3df1512e07ecbc43893798c791a53b">ParticleWallLinearForce&lt; dim, PropertiesIndex &gt;</a>
+, <a class="el" href="classParticleWallNonLinearForce.html#a0cdef3f6a24f20740642c40604ae10fd">ParticleWallNonLinearForce&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>calculate_temperature_statistics
 : <a class="el" href="structParameters_1_1PostProcessing.html#a36d5f83d756f1d5a85c4b676ed1db2f8">Parameters::PostProcessing</a>
@@ -213,7 +213,7 @@ $(function() {
 , <a class="el" href="classStabilizedMethodsTensorCopyData.html#a792b8ffe59def9adf90e3aca7b4b55aa">StabilizedMethodsTensorCopyData&lt; dim &gt;</a>
 </li>
 <li>cell_mobility_status
-: <a class="el" href="classAdaptiveSparseContacts.html#a245b1ea491277b30318dd231594f276a">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a73630d09a9deb851860ab4e9149c1eda">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cell_quadrature
 : <a class="el" href="classCahnHilliard.html#ab0c0a61e082e30d3c1601d439a258bdc">CahnHilliard&lt; dim &gt;</a>
@@ -234,7 +234,7 @@ $(function() {
 : <a class="el" href="classRPTCellReconstruction.html#aa040782e872abddb8d394acb4455e814">RPTCellReconstruction&lt; dim &gt;</a>
 </li>
 <li>cell_velocities_accelerations
-: <a class="el" href="classAdaptiveSparseContacts.html#a263ebf66d3adbe36c56eac064157229a">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a3a4594d275bd7e0003cd07958fd4bbcf">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cell_void_fraction
 : <a class="el" href="classNavierStokesScratchData.html#a5470704145930632762c7dee59207de1">NavierStokesScratchData&lt; dim &gt;</a>
@@ -243,34 +243,34 @@ $(function() {
 : <a class="el" href="classNavierStokesScratchData.html#a15f3549bb83f7157db104857b22f0a4a">NavierStokesScratchData&lt; dim &gt;</a>
 </li>
 <li>cell_weight
-: <a class="el" href="classLagrangianLoadBalancing.html#acd54766e7c9bffcd0f0b6072516d0f99">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a8204f132e1ae5245e80a2b0666b706b7">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cells_centers
 : <a class="el" href="classInsertionPlane.html#ad5fa37da99423f411bdbdaf2063c5ae4">InsertionPlane&lt; dim &gt;</a>
 </li>
 <li>cells_ghost_local_periodic_neighbor_list
-: <a class="el" href="classDEMContactManager.html#a06c81be88437a8bd21c4f16f6379b1a5">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#a0645db1847089253bbeab912c717a6f3">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cells_ghost_neighbor_list
-: <a class="el" href="classDEMContactManager.html#a85333f4f36c57ba76a3cc998b20ca04d">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#aec6d0c2b4de296cb792403288d60425d">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cells_ghost_periodic_neighbor_list
-: <a class="el" href="classDEMContactManager.html#afaddd411d40eecb8b7f4786a807ef193">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#ae20b1049b7cdd9dc240f7abd9690c231">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cells_inside_map
 : <a class="el" href="classFluidDynamicsSharp.html#a73c24a3c410e2f62f26c4a937cf8487f">FluidDynamicsSharp&lt; dim &gt;</a>
 </li>
 <li>cells_local_neighbor_list
-: <a class="el" href="classDEMContactManager.html#ab00f458688f9955be35949e606ae7545">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#ac694666a4df048c76de5171982b5ec3a">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cells_local_periodic_neighbor_list
-: <a class="el" href="classDEMContactManager.html#a0e3a309dc0b831a1faef62203fbc2618">DEMContactManager&lt; dim &gt;</a>
+: <a class="el" href="classDEMContactManager.html#a9690d57882b17c2a1500e71ff4f13dfb">DEMContactManager&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>cells_volumes
 : <a class="el" href="classRPTCellReconstruction.html#a11d9da7924406b1c8e97e8507af0ea7a">RPTCellReconstruction&lt; dim &gt;</a>
 </li>
 <li>center_mass_container
-: <a class="el" href="classParticleWallContactForce.html#afdce2d6871dd2c377cef5783356e5c94">ParticleWallContactForce&lt; dim &gt;</a>
+: <a class="el" href="classParticleWallContactForce.html#ab1c2bd6aba8c92b1ea9cc6e6ffef809b">ParticleWallContactForce&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>center_of_rotation
 : <a class="el" href="classBoundaryConditions_1_1NSBoundaryFunctions.html#ade03b6ebd7441af51ee913caa55ac34e">BoundaryConditions::NSBoundaryFunctions&lt; dim &gt;</a>
@@ -318,7 +318,7 @@ $(function() {
 : <a class="el" href="structParameters_1_1Restart.html#aa7fb84c1978dc97e0752f2735f1e0297">Parameters::Restart</a>
 </li>
 <li>checkpoint_controller
-: <a class="el" href="classDEMSolver.html#ac78a2a14687faf9ce09567cd3bcc712b">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#aad8860f94da214a80de30288907f8486">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>checkpointing_frequency
 : <a class="el" href="classCheckpointControl.html#a498f5c51ec59f237a88ff62f05ab83d2">CheckpointControl</a>
@@ -405,7 +405,7 @@ $(function() {
 </li>
 <li>computing_timer
 : <a class="el" href="classCahnHilliard.html#a282aaee8fbae343b4bbc5a90fe8b9f22">CahnHilliard&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a7ffd39a796753ce2b4602f8e2e779028">DEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#af84ff50680a7bf8cd206270b707c4cfd">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="classHeatTransfer.html#a051b0905f7bdc5982bcd0a68b57c6639">HeatTransfer&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#aa699b2bd9971852d2f3a9b560536a594">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 , <a class="el" href="classRPTCellReconstruction.html#a54a0dbf57c136675094d68661a74e414">RPTCellReconstruction&lt; dim &gt;</a>
@@ -454,13 +454,13 @@ $(function() {
 , <a class="el" href="classVOFLinearSubequationsSolver.html#aca104bfd2d24ad8ae4874dfc721a41d3">VOFLinearSubequationsSolver&lt; dim &gt;</a>
 </li>
 <li>contact_build_number
-: <a class="el" href="classDEMSolver.html#a82695324054983cd2277870eadc5543a">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#af932c11462867b4cf9fb7e76128ef916">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>contact_detection_frequency
 : <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a55fa73335561f93dcf78c308d81ebca8">Parameters::Lagrangian::ModelParameters</a>
 </li>
 <li>contact_detection_iteration_check_function
-: <a class="el" href="classDEMSolver.html#a5c846b894bed0fd52ec162e2835b95f0">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#adc099067533f5a8b38e95c0b7ba8bf02">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>contact_detection_method
 : <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#ab4795968f22800a2923dfaff6471b2fe">Parameters::Lagrangian::ModelParameters</a>
@@ -470,11 +470,11 @@ $(function() {
 </li>
 <li>contact_list
 : <a class="el" href="classCFDDEMSolver.html#aec01cc43a2b3cba69c1de3666079373a">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#ac6a86bacce80a3380806ea29b36f95fb">DEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#a28f019c7882f66be05949090d135e6ed">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>contact_manager
-: <a class="el" href="classCFDDEMSolver.html#a3260d806724bd3bc6609b4dabbb84fec">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a82ca830b6cef58b1ad61170d189a52e6">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classCFDDEMSolver.html#ae49b5ad4b344ed284d6a51e2fd87dce3">CFDDEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#afc768f55ecf4942b0972a48272924ed8">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>contact_point
 : <a class="el" href="structIBParticlesDEM_1_1ContactInfo.html#a970883a09c3d0cec92fb872e29dc163e">IBParticlesDEM&lt; dim &gt;::ContactInfo</a>

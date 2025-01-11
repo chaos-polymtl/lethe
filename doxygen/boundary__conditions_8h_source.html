@@ -287,7 +287,7 @@ $(function() {
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  <span class="keywordtype">void</span></div>
 <div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1NSBoundaryConditions.html#a5111373395f857dbf454ec1bd377e141">  207</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1NSBoundaryConditions.html">NSBoundaryConditions&lt;dim&gt;::createNoSlip</a>()</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  {</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[0]                       = BoundaryType::noslip;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[0]                       = BoundaryType::noslip;</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    this-&gt;number_of_boundary_conditions = 1;</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    this-&gt;beta[0]                       = 0;</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  }</div>
@@ -393,7 +393,7 @@ $(function() {
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
 <div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    types::boundary_id boundary_id = prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>);</div>
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                NavierStokesBoundaryDuplicated(boundary_id));</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160; </div>
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
@@ -432,34 +432,34 @@ $(function() {
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="comment">// Establish the type of boundary condition</span></div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
 <div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;none&quot;</span>)</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;      this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::none;</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;      this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::none;</div>
 <div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;noslip&quot;</span>)</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::noslip;</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::noslip;</div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;slip&quot;</span>)</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;      this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::slip;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;      this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::slip;</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;function&quot;</span> || op == <span class="stringliteral">&quot;function weak&quot;</span> || op == <span class="stringliteral">&quot;partial slip&quot;</span>)</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;      {</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;function&quot;</span>)</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;          this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::function;</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;          this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::function;</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;partial slip&quot;</span>)</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;          this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::partial_slip;</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;          this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::partial_slip;</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;          this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::function_weak;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;          this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::function_weak;</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;      }</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;pressure&quot;</span>)</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;      {</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">BoundaryType::pressure</a>;</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">BoundaryType::pressure</a>;</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;      }</div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;periodic&quot;</span>)</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;      {</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        types::boundary_id periodic_boundary_id =</div>
 <div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;          prm.get_integer(<span class="stringliteral">&quot;periodic_id&quot;</span>);</div>
 <div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160; </div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::periodic;</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::periodic;</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160; </div>
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        <span class="comment">// We attribute a periodic neighbor boundary type to the neighbor</span></div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        <span class="comment">// boundary to ensure that all boundaries have a defined type</span></div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[periodic_boundary_id] = BoundaryType::periodic_neighbor;</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[periodic_boundary_id] = BoundaryType::periodic_neighbor;</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        <span class="comment">// We store the periodic id and direction</span></div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;        this-&gt;periodic_neighbor_id[boundary_id] = periodic_boundary_id;</div>
@@ -501,7 +501,7 @@ $(function() {
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;      }</div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;outlet&quot;</span>)</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;      {</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::outlet;</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::outlet;</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;      }</div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160; </div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    this-&gt;beta[boundary_id] = prm.get_double(<span class="stringliteral">&quot;beta&quot;</span>);</div>
@@ -744,21 +744,21 @@ $(function() {
 <div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160; </div>
 <div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    types::boundary_id boundary_id = prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>);</div>
 <div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160; </div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
 <div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;                HeatTransferBoundaryDuplicated(boundary_id));</div>
 <div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160; </div>
 <div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
 <div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;noflux&quot;</span>)</div>
 <div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;      {</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::noflux;</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::noflux;</div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;      }</div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;temperature&quot;</span>)</div>
 <div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;      {</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">BoundaryType::temperature</a>;</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">BoundaryType::temperature</a>;</div>
 <div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;      }</div>
 <div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;convection-radiation-flux&quot;</span>)</div>
 <div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;      {</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id]           = BoundaryType::convection_radiation;</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id]           = BoundaryType::convection_radiation;</div>
 <div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;        this-&gt;has_convection_radiation_bc = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160; </div>
 <div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;        <span class="comment">// Emissivity validity (0 &lt;= emissivity &lt;= 1) will be checked at</span></div>
@@ -939,7 +939,7 @@ $(function() {
 <div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160; </div>
 <div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;    types::boundary_id boundary_id = prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>);</div>
 <div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160; </div>
-<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
 <div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;                TracerBoundaryDuplicated(boundary_id));</div>
 <div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160; </div>
 <div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;    <span class="comment">// Allocate function for tracer</span></div>
@@ -947,7 +947,7 @@ $(function() {
 <div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
 <div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;dirichlet&quot;</span>)</div>
 <div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;      {</div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::tracer_dirichlet;</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::tracer_dirichlet;</div>
 <div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;        prm.enter_subsection(<span class="stringliteral">&quot;dirichlet&quot;</span>);</div>
 <div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160; </div>
 <div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;        <a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a>[boundary_id]-&gt;parse_parameters(prm);</div>
@@ -955,7 +955,7 @@ $(function() {
 <div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;      }</div>
 <div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;outlet&quot;</span>)</div>
 <div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;      {</div>
-<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::outlet;</div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::outlet;</div>
 <div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;      }</div>
 <div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;    <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;      {</div>
@@ -1117,7 +1117,7 @@ $(function() {
 <div class="line"><a name="l01036"></a><span class="lineno"> 1036</span>&#160; </div>
 <div class="line"><a name="l01037"></a><span class="lineno"> 1037</span>&#160;    types::boundary_id boundary_id = prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>);</div>
 <div class="line"><a name="l01038"></a><span class="lineno"> 1038</span>&#160; </div>
-<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
+<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
 <div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;                CahnHilliardBoundaryDuplicated(boundary_id));</div>
 <div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160; </div>
 <div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;    <span class="comment">// Create and parse the phase order boundary condition for all cases.</span></div>
@@ -1133,20 +1133,20 @@ $(function() {
 <div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
 <div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;noflux&quot;</span>)</div>
 <div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160;      {</div>
-<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_noflux;</div>
+<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::cahn_hilliard_noflux;</div>
 <div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;      }</div>
 <div class="line"><a name="l01057"></a><span class="lineno"> 1057</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;dirichlet&quot;</span>)</div>
 <div class="line"><a name="l01058"></a><span class="lineno"> 1058</span>&#160;      {</div>
-<div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] =</div>
+<div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] =</div>
 <div class="line"><a name="l01060"></a><span class="lineno"> 1060</span>&#160;          BoundaryType::cahn_hilliard_dirichlet_phase_order;</div>
 <div class="line"><a name="l01061"></a><span class="lineno"> 1061</span>&#160;      }</div>
 <div class="line"><a name="l01062"></a><span class="lineno"> 1062</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;angle_of_contact&quot;</span>)</div>
 <div class="line"><a name="l01063"></a><span class="lineno"> 1063</span>&#160;      {</div>
-<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;</div>
+<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;</div>
 <div class="line"><a name="l01065"></a><span class="lineno"> 1065</span>&#160;      }</div>
 <div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;free_angle&quot;</span>)</div>
 <div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;      {</div>
-<div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_free_angle;</div>
+<div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::cahn_hilliard_free_angle;</div>
 <div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;      }</div>
 <div class="line"><a name="l01070"></a><span class="lineno"> 1070</span>&#160;  }</div>
 <div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;<span class="comment"></span> </div>
@@ -1294,17 +1294,17 @@ $(function() {
 <div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160; </div>
 <div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;    types::boundary_id boundary_id = prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>);</div>
 <div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160; </div>
-<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
+<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
 <div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;                VOFBoundaryDuplicated(boundary_id));</div>
 <div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160; </div>
 <div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
 <div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;none&quot;</span>)</div>
 <div class="line"><a name="l01221"></a><span class="lineno"> 1221</span>&#160;      {</div>
-<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::none;</div>
+<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::none;</div>
 <div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;      }</div>
 <div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;dirichlet&quot;</span>)</div>
 <div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;      {</div>
-<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::vof_dirichlet;</div>
+<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160;        this-&gt;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>[boundary_id] = BoundaryType::vof_dirichlet;</div>
 <div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;        prm.enter_subsection(<span class="stringliteral">&quot;dirichlet&quot;</span>);</div>
 <div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;        phase_fraction[boundary_id] =</div>
 <div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
@@ -1562,7 +1562,7 @@ $(function() {
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order</a></div><div class="ttdeci">@ cahn_hilliard_dirichlet_phase_order</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::BoundaryType::function_weak</a></div><div class="ttdeci">@ function_weak</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">DEM::type</a></div><div class="ttdeci">@ type</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00022">dem_properties.h:22</a></div></div>
+<div class="ttc" id="anamespaceDEM_1_1DEMProperties_html_ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3"><div class="ttname"><a href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">DEM::DEMProperties::type</a></div><div class="ttdeci">@ type</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00036">dem_properties.h:36</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00033">fluid_dynamics_matrix_free.h:34</a></div></div>
 <div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a></div><div class="ttdeci">@ pressure</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00043">physical_property_model.h:43</a></div></div>
 <div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a></div><div class="ttdeci">@ temperature</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00040">physical_property_model.h:40</a></div></div>

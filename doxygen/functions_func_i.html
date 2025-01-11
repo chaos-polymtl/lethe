@@ -81,7 +81,7 @@ $(function() {
 : <a class="el" href="classNavierStokesBase.html#ae7e650e71ee42e4afc19a6c3de676d47">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 </li>
 <li>identify_mobility_status()
-: <a class="el" href="classAdaptiveSparseContacts.html#a1d8b13037356224f5087345dd515bd2b">AdaptiveSparseContacts&lt; dim &gt;</a>
+: <a class="el" href="classAdaptiveSparseContacts.html#a87a6ec374e003a88ec304fcfac8e919b">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>increment_checkpoint_id()
 : <a class="el" href="classCheckpointControl.html#aa43a19ed2cebe2b2131bf0c3942974e6">CheckpointControl</a>
@@ -108,7 +108,7 @@ $(function() {
 , <a class="el" href="classinternalFunctionParserCustom_1_1ParserImplementation.html#a1594e0ce505325285bd3fbefc576eae5">internalFunctionParserCustom::ParserImplementation&lt; n_components &gt;</a>
 , <a class="el" href="classMFNavierStokesPreconditionGMG.html#af5ddcb3518f6ddf3d318eb8be5612219">MFNavierStokesPreconditionGMG&lt; dim &gt;</a>
 , <a class="el" href="classParsedFunctionCustom.html#af6d61d4ec57f60a9384ab3bd903aec5f">ParsedFunctionCustom&lt; n_components &gt;</a>
-, <a class="el" href="classParticleWallContactForce.html#a7a9e41f14cd2f099d09f58f0c9114e87">ParticleWallContactForce&lt; dim &gt;</a>
+, <a class="el" href="classParticleWallContactForce.html#a2d4ee72c5319c3f6021f9f6fee66ac4a">ParticleWallContactForce&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="classPhysicalPropertiesManager.html#a8ff075795ba8a60c71e5163d8566993d">PhysicalPropertiesManager</a>
 , <a class="el" href="classPreconditionASM.html#ab25a084f5143efb94f9d913fee64b2a7">PreconditionASM&lt; VectorType &gt;</a>
 </li>
@@ -129,7 +129,7 @@ $(function() {
 : <a class="el" href="classNavierStokesOperatorBase.html#ac8897ffe280ad2d9c7fc0193191e1219">NavierStokesOperatorBase&lt; dim, number &gt;</a>
 </li>
 <li>initialize_particle_wall_properties()
-: <a class="el" href="classParticleWallDMTForce.html#a11491d023d28734653c957c8e50d5cf7">ParticleWallDMTForce&lt; dim &gt;</a>
+: <a class="el" href="classParticleWallDMTForce.html#af0eac626f92b74d2319ab7d9202c9d60">ParticleWallDMTForce&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>initialize_previous_solution()
 : <a class="el" href="classIBParticle.html#a9a552b1c7085a2ec4ff00f87fe17e517">IBParticle&lt; dim &gt;</a>
@@ -152,7 +152,7 @@ $(function() {
 , <a class="el" href="classInsertionVolume.html#a1c0ceac469413e5268938c4dc970cd37">InsertionVolume&lt; dim &gt;</a>
 </li>
 <li>insert_particles()
-: <a class="el" href="classDEMSolver.html#a2c1b42c2e8cdcf1b670e25cfd40288de">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#aa6ee657dda36d8535ef8a828b1b25d42">DEMSolver&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>Insertion()
 : <a class="el" href="classInsertion.html#a2aad2604d3e0edbc5600115af1c8d846">Insertion&lt; dim &gt;</a>
@@ -173,17 +173,17 @@ $(function() {
 : <a class="el" href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">MultiphysicsInterface&lt; dim &gt;</a>
 </li>
 <li>integrate()
-: <a class="el" href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">ExplicitEulerIntegrator&lt; dim &gt;</a>
-, <a class="el" href="classIntegrator.html#ace36cb39c30e1b7268e60fe4fdd7047c">Integrator&lt; dim &gt;</a>
+: <a class="el" href="classExplicitEulerIntegrator.html#ad232e494607a8a0795f15df090c36e13">ExplicitEulerIntegrator&lt; dim, PropertiesIndex &gt;</a>
+, <a class="el" href="classIntegrator.html#aaf196ef8dea3af77fecb88014714d64d">Integrator&lt; dim, PropertiesIndex &gt;</a>
 , <a class="el" href="classSimulationControl.html#a67aa726e7105dd0af92f47dac688e001">SimulationControl</a>
 , <a class="el" href="classSimulationControlSteady.html#a1a841b038955ea6ba6b6d8a938d442f9">SimulationControlSteady</a>
 , <a class="el" href="classSimulationControlTransient.html#a9323f75f9c5d9ab8463f1340c83fa539">SimulationControlTransient</a>
-, <a class="el" href="classVelocityVerletIntegrator.html#a7dbefbe8afffd94cfbbb9f20d5cf643b">VelocityVerletIntegrator&lt; dim &gt;</a>
+, <a class="el" href="classVelocityVerletIntegrator.html#a2eb3deeb3eef7cb165795bfbcd09e8e0">VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>integrate_half_step_location()
-: <a class="el" href="classExplicitEulerIntegrator.html#ab2d67dd0acdeb58b06de7835887c7b63">ExplicitEulerIntegrator&lt; dim &gt;</a>
-, <a class="el" href="classIntegrator.html#a96653fa0a2b7d6b892eeb3ff86eaa398">Integrator&lt; dim &gt;</a>
-, <a class="el" href="classVelocityVerletIntegrator.html#abe2aaed38fbf001db9f7479fd409905c">VelocityVerletIntegrator&lt; dim &gt;</a>
+: <a class="el" href="classExplicitEulerIntegrator.html#aa9682803315bb1ed180dec3d425386d5">ExplicitEulerIntegrator&lt; dim, PropertiesIndex &gt;</a>
+, <a class="el" href="classIntegrator.html#a219b5b81e292d98565176f225ffb6004">Integrator&lt; dim, PropertiesIndex &gt;</a>
+, <a class="el" href="classVelocityVerletIntegrator.html#a0a653703ded3d02319b04b785ea1f465">VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>integrate_particles()
 : <a class="el" href="classFluidDynamicsSharp.html#a64ead6ec2ef4177f4f352c079833ddca">FluidDynamicsSharp&lt; dim &gt;</a>
@@ -195,10 +195,10 @@ $(function() {
 : <a class="el" href="classSolidBase.html#af5eaf06fd116ba6d89bf04661e6e1289">SolidBase&lt; dim, spacedim &gt;</a>
 </li>
 <li>integrate_with_advected_particles()
-: <a class="el" href="classVelocityVerletIntegrator.html#aa15c34f8872043d2863d183181fb0c8f">VelocityVerletIntegrator&lt; dim &gt;</a>
+: <a class="el" href="classVelocityVerletIntegrator.html#a88c5898b302a02174533de1012b5479a">VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>Integrator()
-: <a class="el" href="classIntegrator.html#a0814e3ffd4eb6f2f003d5ba8436b5718">Integrator&lt; dim &gt;</a>
+: <a class="el" href="classIntegrator.html#aea8acb2f324355c5209f9eda45824c52">Integrator&lt; dim, PropertiesIndex &gt;</a>
 </li>
 <li>InterfacePropertyModel()
 : <a class="el" href="classInterfacePropertyModel.html#ad5a30d304ce21abf3baf295b20b81598">InterfacePropertyModel</a>

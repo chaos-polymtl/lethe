@@ -7,7 +7,7 @@
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
         <title>Insertion Info - Lethe documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
@@ -568,12 +568,12 @@ set list z = 0., 3.
 <section id="file">
 <h2>File<a class="headerlink" href="#file" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">file</span></code> insertion method inserts particles in a similar way to the <code class="docutils literal notranslate"><span class="pre">list</span></code> insertion method. The main difference between these two methods is the use of external files provided by the <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">input</span> <span class="pre">files</span></code> parameter. A single file or a list of files may be specified. At each insertion time step, a different file will be used. If the end of the file list is reached and there are still particles to be inserted, the list returns to the first file. An insertion file must follow this structure:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters; fem_force_x; fem_force_y; fem_force_z; fem_torque_x; fem_torque_y; fem_torque_z;
-0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
-1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters;
+0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
+1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
 </pre></div>
 </div>
-<p>Each line is associated with a particle and its properties. The <code class="docutils literal notranslate"><span class="pre">fem_force</span></code> and <code class="docutils literal notranslate"><span class="pre">fem_torque</span></code> properties are only used in the CFD-DEM solver, but must be specified in all cases. The main advantage of using the <code class="docutils literal notranslate"><span class="pre">file</span></code> method over the <code class="docutils literal notranslate"><span class="pre">list</span></code> method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with any script. An other option is to use the python code <code class="docutils literal notranslate"><span class="pre">extract-particles-properties-from-vtu.py</span></code> in <code class="docutils literal notranslate"><span class="pre">lethe/contrib/preprocessing/</span></code> directory. This code extracts particle properties from the last vtu file from a given simulation.</p>
+<p>Each line is associated with a particle and its properties. The main advantage of using the <code class="docutils literal notranslate"><span class="pre">file</span></code> method over the <code class="docutils literal notranslate"><span class="pre">list</span></code> method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with any script. An other option is to use the python code <code class="docutils literal notranslate"><span class="pre">extract-particles-properties-from-vtu.py</span></code> in <code class="docutils literal notranslate"><span class="pre">lethe/contrib/preprocessing/</span></code> directory. This code extracts particle properties from the last vtu file from a given simulation.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">frequency</span></code> defines the frequency of the insertion of particles based on the list in the file(s)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">input</span> <span class="pre">files</span></code> defines the list of files to be used for the insertion. The default value is <code class="docutils literal notranslate"><span class="pre">particles.input</span></code>.</p></li>

@@ -166,27 +166,27 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abe7a499291841396fb422459798e2a7b"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:abe7a499291841396fb422459798e2a7b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#abe7a499291841396fb422459798e2a7b">write_post_processing_results</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, const DoFHandler&lt; dim &gt; &amp;background_dh, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const double current_time, const unsigned int step_number, const MPI_Comm &amp;mpi_communicator, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;sparse_contacts_object)</td></tr>
-<tr class="separator:abe7a499291841396fb422459798e2a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada2cf361ce037cc7f5e04cf2c9f94901"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:ada2cf361ce037cc7f5e04cf2c9f94901"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#ada2cf361ce037cc7f5e04cf2c9f94901">calculate_average_particles_velocity</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;velocity_average_x, Vector&lt; double &gt; &amp;velocity_average_y, Vector&lt; double &gt; &amp;velocity_average_z, Vector&lt; double &gt; &amp;velocity_average_magnitude)</td></tr>
-<tr class="separator:ada2cf361ce037cc7f5e04cf2c9f94901"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c6b742d6934ae7b1c717b6c2218686a"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a9c6b742d6934ae7b1c717b6c2218686a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#a9c6b742d6934ae7b1c717b6c2218686a">calculate_average_granular_temperature</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;granular_temperature_average)</td></tr>
-<tr class="separator:a9c6b742d6934ae7b1c717b6c2218686a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab702fbf5d2f93b7b10b979555f8b18d"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:aab702fbf5d2f93b7b10b979555f8b18d"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#aab702fbf5d2f93b7b10b979555f8b18d">calculate_cell_average_particles_velocity</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</td></tr>
-<tr class="separator:aab702fbf5d2f93b7b10b979555f8b18d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc06b6510840baeeda1f1846e85f7e40"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:afc06b6510840baeeda1f1846e85f7e40"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#afc06b6510840baeeda1f1846e85f7e40">write_post_processing_results</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, const DoFHandler&lt; dim &gt; &amp;background_dh, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const double current_time, const unsigned int step_number, const MPI_Comm &amp;mpi_communicator, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object)</td></tr>
+<tr class="separator:afc06b6510840baeeda1f1846e85f7e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63f2ef926b3c749eed4a3bc2226599ce"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a63f2ef926b3c749eed4a3bc2226599ce"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#a63f2ef926b3c749eed4a3bc2226599ce">calculate_average_particles_velocity</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;velocity_average_x, Vector&lt; double &gt; &amp;velocity_average_y, Vector&lt; double &gt; &amp;velocity_average_z, Vector&lt; double &gt; &amp;velocity_average_magnitude)</td></tr>
+<tr class="separator:a63f2ef926b3c749eed4a3bc2226599ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af97cc0cc92fed6c223a6523b2e7d4916"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:af97cc0cc92fed6c223a6523b2e7d4916"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#af97cc0cc92fed6c223a6523b2e7d4916">calculate_average_granular_temperature</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;granular_temperature_average)</td></tr>
+<tr class="separator:af97cc0cc92fed6c223a6523b2e7d4916"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d75e2e0f9f6b30205c680a9fdf654b1"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a8d75e2e0f9f6b30205c680a9fdf654b1"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="lagrangian__post__processing_8h.html#a8d75e2e0f9f6b30205c680a9fdf654b1">calculate_cell_average_particles_velocity</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</td></tr>
+<tr class="separator:a8d75e2e0f9f6b30205c680a9fdf654b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a9c6b742d6934ae7b1c717b6c2218686a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c6b742d6934ae7b1c717b6c2218686a">&#9670;&nbsp;</a></span>calculate_average_granular_temperature()</h2>
+<a id="af97cc0cc92fed6c223a6523b2e7d4916"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af97cc0cc92fed6c223a6523b2e7d4916">&#9670;&nbsp;</a></span>calculate_average_granular_temperature()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void calculate_average_granular_temperature </td>
@@ -224,19 +224,19 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lagrangian__post__processing_8cc_source.html#l00061">61</a> of file <a class="el" href="lagrangian__post__processing_8cc_source.html">lagrangian_post_processing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lagrangian__post__processing_8cc_source.html#l00062">62</a> of file <a class="el" href="lagrangian__post__processing_8cc_source.html">lagrangian_post_processing.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="lagrangian__post__processing_8cc_source.html#l00131">calculate_cell_average_particles_velocity()</a>, and <a class="el" href="dem__properties_8h_source.html#l00024">DEM::v_x</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::DEMProperties::v_x</a>.</p>
 
 </div>
 </div>
-<a id="ada2cf361ce037cc7f5e04cf2c9f94901"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada2cf361ce037cc7f5e04cf2c9f94901">&#9670;&nbsp;</a></span>calculate_average_particles_velocity()</h2>
+<a id="a63f2ef926b3c749eed4a3bc2226599ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63f2ef926b3c749eed4a3bc2226599ce">&#9670;&nbsp;</a></span>calculate_average_particles_velocity()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void calculate_average_particles_velocity </td>
@@ -297,17 +297,15 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="lagrangian__post__processing_8cc_source.html#l00020">20</a> of file <a class="el" href="lagrangian__post__processing_8cc_source.html">lagrangian_post_processing.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="lagrangian__post__processing_8cc_source.html#l00131">calculate_cell_average_particles_velocity()</a>.</p>
-
 </div>
 </div>
-<a id="aab702fbf5d2f93b7b10b979555f8b18d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab702fbf5d2f93b7b10b979555f8b18d">&#9670;&nbsp;</a></span>calculate_cell_average_particles_velocity()</h2>
+<a id="a8d75e2e0f9f6b30205c680a9fdf654b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d75e2e0f9f6b30205c680a9fdf654b1">&#9670;&nbsp;</a></span>calculate_cell_average_particles_velocity()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">Tensor&lt;1, dim&gt; calculate_cell_average_particles_velocity </td>
@@ -339,19 +337,19 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A tensor which stores the average particles velocity in the input cell </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="lagrangian__post__processing_8cc_source.html#l00131">131</a> of file <a class="el" href="lagrangian__post__processing_8cc_source.html">lagrangian_post_processing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lagrangian__post__processing_8cc_source.html#l00132">132</a> of file <a class="el" href="lagrangian__post__processing_8cc_source.html">lagrangian_post_processing.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00024">DEM::v_x</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::DEMProperties::v_x</a>.</p>
 
 </div>
 </div>
-<a id="abe7a499291841396fb422459798e2a7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe7a499291841396fb422459798e2a7b">&#9670;&nbsp;</a></span>write_post_processing_results()</h2>
+<a id="afc06b6510840baeeda1f1846e85f7e40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc06b6510840baeeda1f1846e85f7e40">&#9670;&nbsp;</a></span>write_post_processing_results()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void write_post_processing_results </td>
@@ -404,7 +402,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;&#160;</td>
           <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
         </tr>
         <tr>
@@ -418,6 +416,13 @@ template&lt;int dim&gt; </div>
 <p>Carries out writing the cell data of the domain. </p>
 <p>This class deals with Lagrangian post-processing. At the moment, calculation of time-averaged particles velocity and granular temperature are added to the class.</p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>Add tracer particles </dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangulation</td><td>Triangulation of the domain. </td></tr>
@@ -433,9 +438,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lagrangian__post__processing_8cc_source.html#l00174">174</a> of file <a class="el" href="lagrangian__post__processing_8cc_source.html">lagrangian_post_processing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lagrangian__post__processing_8cc_source.html#l00175">175</a> of file <a class="el" href="lagrangian__post__processing_8cc_source.html">lagrangian_post_processing.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00319">AdaptiveSparseContacts&lt; dim &gt;::get_mobility_status_vector()</a>, <a class="el" href="parameters_8h_source.html#l00167">Parameters::SimulationControl::group_files</a>, <a class="el" href="parameters_8h_source.html#l00125">Parameters::SimulationControl::output_folder</a>, <a class="el" href="parameters_8h_source.html#l00128">Parameters::SimulationControl::output_name</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00023">DEMSolverParameters&lt; dim &gt;::simulation_control</a>.</p>
+<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00320">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status_vector()</a>, <a class="el" href="parameters_8h_source.html#l00167">Parameters::SimulationControl::group_files</a>, <a class="el" href="parameters_8h_source.html#l00125">Parameters::SimulationControl::output_folder</a>, <a class="el" href="parameters_8h_source.html#l00128">Parameters::SimulationControl::output_name</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00023">DEMSolverParameters&lt; dim &gt;::simulation_control</a>.</p>
 
 </div>
 </div>

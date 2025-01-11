@@ -7,7 +7,7 @@
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
         <title>Post-processing Lethe with PyVista - Lethe documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
@@ -464,15 +464,15 @@
 <section id="importing-without-installing">
 <h3>Importing without installing<a class="headerlink" href="#importing-without-installing" title="Link to this heading">#</a></h3>
 <p>In this case, we use the <a class="reference external" href="https://docs.python.org/3/library/sys.html">sys</a> module to import it directly from Lethe’s directory into a python session:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="n">path_to_module</span> <span class="o">=</span> <span class="s1">&#39;$LETHE_PATH/contrib/postprocessing/&#39;</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_to_module</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">lethe_pyvista_tools</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lethe_pyvista_tools</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </pre></div>
 </div>
 <p>where <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.path:~:text=in%20version%203.10.-,sys.path%C2%B6,-A%20list%20of">sys.path</a> is a list of strings that specifies the search path for modules. Another option is to simply copy the <a class="reference external" href="https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing">lethe_pyvista_tools.py</a> file to the same folder as the Python post-processing script, and import it as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lethe_pyvista_tools</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">lethe_pyvista_tools</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
 <p>One third and very convenient way to always import the module without copying it or even adding the <code class="docutils literal notranslate"><span class="pre">sys.path.append(path_to_module)</span></code> is permanently adding the path to the module (i.e., <code class="docutils literal notranslate"><span class="pre">/contrib/postprocessing/</span></code>) to your <a class="reference external" href="https://docs.python.org/3/library/sys_path_init.html#:~:text=The%20PYTHONPATH%20environment%20variable%20is,all%20installed%20Python%20versions%2Fenvironments.">PYTHONPATH</a>.</p>

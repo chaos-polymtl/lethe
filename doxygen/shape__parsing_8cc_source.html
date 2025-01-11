@@ -86,16 +86,16 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;std::shared_ptr&lt;Shape&lt;dim&gt;&gt;</div>
-<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">    8</a></span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">    8</a></span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;                                 <span class="keyword">const</span> std::string  &amp;shape_arguments_str,</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;                                 <span class="keyword">const</span> Point&lt;dim&gt;   &amp;position,</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;                                 <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;orientation)</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  std::shared_ptr&lt;Shape&lt;dim&gt;&gt; shape;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  std::vector&lt;double&gt;         shape_arguments;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;rbf&quot;</span> || <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;composite&quot;</span> || <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;opencascade&quot;</span>)</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;rbf&quot;</span> || <a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;composite&quot;</span> || <a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;opencascade&quot;</span>)</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;      shape = <a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">initialize_shape_from_file</a>(<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;      shape = <a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">initialize_shape_from_file</a>(<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                                         shape_arguments_str,</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                                         position,</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                                         orientation);</div>
@@ -105,7 +105,7 @@ $(function() {
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      std::vector&lt;std::string&gt; shape_arguments_str_list(</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        Utilities::split_string_list(shape_arguments_str, <span class="stringliteral">&quot;;&quot;</span>));</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;      shape_arguments = Utilities::string_to_double(shape_arguments_str_list);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      shape           = <a class="code" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">initialize_shape_from_vector</a>(<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      shape           = <a class="code" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">initialize_shape_from_vector</a>(<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                                           shape_arguments,</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                                           position,</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                                           orientation);</div>
@@ -116,16 +116,16 @@ $(function() {
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;std::shared_ptr&lt;Shape&lt;dim&gt;&gt;</div>
 <div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">   37</a></span>&#160;<a class="code" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">ShapeGenerator::initialize_shape_from_vector</a>(</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">const</span> std::string         &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">const</span> std::string         &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt; &amp;shape_arguments,</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">const</span> Point&lt;dim&gt;          &amp;position,</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt;        &amp;orientation)</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;{</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  std::shared_ptr&lt;Shape&lt;dim&gt;&gt; shape;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;sphere&quot;</span>)</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;sphere&quot;</span>)</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    shape =</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      std::make_shared&lt;Sphere&lt;dim&gt;&gt;(shape_arguments[0], position, orientation);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;hyper rectangle&quot;</span>)</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;hyper rectangle&quot;</span>)</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    {</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      Tensor&lt;1, dim&gt; half_lengths;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
@@ -136,7 +136,7 @@ $(function() {
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                                                    position,</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                                                    orientation);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;ellipsoid&quot;</span>)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;ellipsoid&quot;</span>)</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    {</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      Tensor&lt;1, dim&gt; radii;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
@@ -145,7 +145,7 @@ $(function() {
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        }</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      shape = std::make_shared&lt;Ellipsoid&lt;dim&gt;&gt;(radii, position, orientation);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;superquadric&quot;</span>)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;superquadric&quot;</span>)</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    {</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        {</div>
@@ -165,7 +165,7 @@ $(function() {
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            half_lengths, exponents, epsilon, position, orientation);</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;torus&quot;</span>)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;torus&quot;</span>)</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    {</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        shape = std::make_shared&lt;Torus&lt;dim&gt;&gt;(shape_arguments[0],</div>
@@ -173,7 +173,7 @@ $(function() {
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                                             position,</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                                             orientation);</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;cone&quot;</span>)</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;cone&quot;</span>)</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    {</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        shape = std::make_shared&lt;Cone&lt;dim&gt;&gt;(shape_arguments[0],</div>
@@ -181,7 +181,7 @@ $(function() {
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                                            position,</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                                            orientation);</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;cylinder&quot;</span>)</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;cylinder&quot;</span>)</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    {</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        shape = std::make_shared&lt;Cylinder&lt;dim&gt;&gt;(shape_arguments[0],</div>
@@ -189,7 +189,7 @@ $(function() {
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                                                position,</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                                                orientation);</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;cylindrical tube&quot;</span>)</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;cylindrical tube&quot;</span>)</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    {</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        shape = std::make_shared&lt;CylindricalTube&lt;dim&gt;&gt;(shape_arguments[0],</div>
@@ -198,7 +198,7 @@ $(function() {
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                                                       position,</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                                                       orientation);</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;cylindrical helix&quot;</span>)</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;cylindrical helix&quot;</span>)</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    {</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        shape = std::make_shared&lt;CylindricalHelix&lt;dim&gt;&gt;(shape_arguments[0],</div>
@@ -208,7 +208,7 @@ $(function() {
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                                                        position,</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                                                        orientation);</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;cut hollow sphere&quot;</span>)</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;cut hollow sphere&quot;</span>)</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    {</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        shape = std::make_shared&lt;CutHollowSphere&lt;dim&gt;&gt;(shape_arguments[0],</div>
@@ -217,7 +217,7 @@ $(function() {
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                                                       position,</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                                                       orientation);</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    }</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;death star&quot;</span>)</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;death star&quot;</span>)</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    {</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        shape = std::make_shared&lt;DeathStar&lt;dim&gt;&gt;(shape_arguments[0],</div>
@@ -226,7 +226,7 @@ $(function() {
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                                                 position,</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                                                 orientation);</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;plane&quot;</span>)</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;plane&quot;</span>)</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    {</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      shape = std::make_shared&lt;Plane&lt;dim&gt;&gt;(position, orientation);</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    }</div>
@@ -237,18 +237,18 @@ $(function() {
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;std::shared_ptr&lt;Shape&lt;dim&gt;&gt;</div>
-<div class="line"><a name="l00159"></a><span class="lineno"><a class="line" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">  159</a></span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">ShapeGenerator::initialize_shape_from_file</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00159"></a><span class="lineno"><a class="line" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">  159</a></span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">ShapeGenerator::initialize_shape_from_file</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                                           <span class="keyword">const</span> std::string  &amp;file_name,</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                                           <span class="keyword">const</span> Point&lt;dim&gt;   &amp;position,</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                                           <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;orientation)</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;{</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  std::shared_ptr&lt;Shape&lt;dim&gt;&gt; shape;</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  std::vector&lt;double&gt;         shape_arguments;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;rbf&quot;</span>)</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;rbf&quot;</span>)</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    {</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      shape = std::make_shared&lt;RBFShape&lt;dim&gt;&gt;(file_name, position, orientation);</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    }</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;composite&quot;</span>)</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;composite&quot;</span>)</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    {</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;      <span class="comment">// The following lines retrieve information regarding a</span></div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;      <span class="comment">// composite shape.</span></div>
@@ -304,7 +304,7 @@ $(function() {
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                  <span class="keywordflow">if</span> (parsing_shapes)</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                    {</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> identifier    = stoi(list_of_words_clean[0]);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                      std::string  <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>          = list_of_words_clean[1];</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                      std::string  <a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>          = list_of_words_clean[1];</div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                      std::string  arguments_str = list_of_words_clean[2];</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                      std::replace(arguments_str.begin(),</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                                   arguments_str.end(),</div>
@@ -335,7 +335,7 @@ $(function() {
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                      std::shared_ptr&lt;Shape&lt;dim&gt;&gt; shape_temp;</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                      shape_temp = <a class="code" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                        <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>, arguments_str, Point&lt;dim&gt;(), Tensor&lt;1, 3&gt;());</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                        <a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>, arguments_str, Point&lt;dim&gt;(), Tensor&lt;1, 3&gt;());</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                      shape_temp-&gt;set_position(temp_position);</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                      shape_temp-&gt;set_orientation(temp_orientation);</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                      components[identifier] = shape_temp-&gt;static_copy();</div>
@@ -343,7 +343,7 @@ $(function() {
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (parsing_operations)</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    {</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> identifier    = stoi(list_of_words_clean[0]);</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                      std::string  <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>          = list_of_words_clean[1];</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                      std::string  <a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>          = list_of_words_clean[1];</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                      std::string  arguments_str = list_of_words_clean[2];</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                      std::vector&lt;std::string&gt; arguments_str_component =</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                        Utilities::split_string_list(arguments_str, <span class="stringliteral">&quot;:&quot;</span>);</div>
@@ -352,21 +352,21 @@ $(function() {
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                        stoi(arguments_str_component[0]);</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> second_shape =</div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                        stoi(arguments_str_component[1]);</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                      <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;union&quot;</span>)</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                      <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;union&quot;</span>)</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                        {</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                          operations[identifier] = std::make_tuple(</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                            <a class="code" href="classCompositeShape.html">CompositeShape&lt;dim&gt;::BooleanOperation::Union</a>,</div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                            first_shape,</div>
 <div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                            second_shape);</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                        }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;difference&quot;</span>)</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;difference&quot;</span>)</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                        {</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                          operations[identifier] = std::make_tuple(</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                            <a class="code" href="classCompositeShape.html">CompositeShape&lt;dim&gt;::BooleanOperation::Difference</a>,</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                            first_shape,</div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                            second_shape);</div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                        }</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;intersection&quot;</span>)</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;intersection&quot;</span>)</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                        {</div>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                          operations[identifier] = std::make_tuple(</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                            <a class="code" href="classCompositeShape.html">CompositeShape&lt;dim&gt;::BooleanOperation::Intersection</a>,</div>
@@ -385,7 +385,7 @@ $(function() {
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;      <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <span class="keywordflow">throw</span> std::invalid_argument(file_name);</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <span class="stringliteral">&quot;opencascade&quot;</span>)</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a> == <span class="stringliteral">&quot;opencascade&quot;</span>)</div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    {</div>
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;      shape = std::make_shared&lt;OpenCascadeShape&lt;dim&gt;&gt;(file_name,</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                                                      position,</div>
@@ -395,39 +395,39 @@ $(function() {
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;}</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="keyword">template</span> std::shared_ptr&lt;Shape&lt;2&gt;&gt;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                                 <span class="keyword">const</span> std::string  &amp;arguments,</div>
 <div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                                 <span class="keyword">const</span> Point&lt;2&gt;     &amp;position,</div>
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;                                 <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;orientation);</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="keyword">template</span> std::shared_ptr&lt;Shape&lt;3&gt;&gt;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                                 <span class="keyword">const</span> std::string  &amp;arguments,</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;                                 <span class="keyword">const</span> Point&lt;3&gt;     &amp;position,</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                                 <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;orientation);</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="keyword">template</span> std::shared_ptr&lt;Shape&lt;2&gt;&gt;</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<a class="code" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">ShapeGenerator::initialize_shape_from_vector</a>(</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="keyword">const</span> std::string         &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="keyword">const</span> std::string         &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt; &amp;shape_arguments,</div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  <span class="keyword">const</span> Point&lt;2&gt;            &amp;position,</div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt;        &amp;orientation);</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="keyword">template</span> std::shared_ptr&lt;Shape&lt;3&gt;&gt;</div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<a class="code" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">ShapeGenerator::initialize_shape_from_vector</a>(</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  <span class="keyword">const</span> std::string         &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  <span class="keyword">const</span> std::string         &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt; &amp;shape_arguments,</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;  <span class="keyword">const</span> Point&lt;3&gt;            &amp;position,</div>
 <div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt;        &amp;orientation);</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;<span class="keyword">template</span> std::shared_ptr&lt;Shape&lt;2&gt;&gt;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">ShapeGenerator::initialize_shape_from_file</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">ShapeGenerator::initialize_shape_from_file</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                                           <span class="keyword">const</span> std::string  &amp;file_name,</div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                                           <span class="keyword">const</span> Point&lt;2&gt;     &amp;position,</div>
 <div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                                           <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;orientation);</div>
 <div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="keyword">template</span> std::shared_ptr&lt;Shape&lt;3&gt;&gt;</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">ShapeGenerator::initialize_shape_from_file</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>,</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;<a class="code" href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">ShapeGenerator::initialize_shape_from_file</a>(<span class="keyword">const</span> std::string  &amp;<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">type</a>,</div>
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                                           <span class="keyword">const</span> std::string  &amp;file_name,</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                                           <span class="keyword">const</span> Point&lt;3&gt;     &amp;position,</div>
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                                           <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;orientation);</div>
 <div class="ttc" id="aclassCompositeShape_html"><div class="ttname"><a href="classCompositeShape.html">CompositeShape</a></div><div class="ttdoc">This class was designed so that specific composite shapes could be defined through the parameter file...</div><div class="ttdef"><b>Definition:</b> <a href="shape_8h_source.html#l02118">shape.h:2119</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">DEM::type</a></div><div class="ttdeci">@ type</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00022">dem_properties.h:22</a></div></div>
+<div class="ttc" id="anamespaceDEM_1_1DEMProperties_html_ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3"><div class="ttname"><a href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adf822353601a59b25120daec88de9ee3">DEM::DEMProperties::type</a></div><div class="ttdeci">@ type</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00036">dem_properties.h:36</a></div></div>
 <div class="ttc" id="anamespaceShapeGenerator_html_a3bd744f2a2a809dc9ae6bc9d7beeecca"><div class="ttname"><a href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">ShapeGenerator::initialize_shape_from_vector</a></div><div class="ttdeci">std::shared_ptr&lt; Shape&lt; dim &gt; &gt; initialize_shape_from_vector(const std::string &amp;type, const std::vector&lt; double &gt; &amp;shape_arguments, const Point&lt; dim &gt; &amp;position, const Tensor&lt; 1, 3 &gt; &amp;orientation)</div><div class="ttdef"><b>Definition:</b> <a href="shape__parsing_8cc_source.html#l00037">shape_parsing.cc:37</a></div></div>
 <div class="ttc" id="anamespaceShapeGenerator_html_ab44d589cc8edd0b6dd1defc5d8705561"><div class="ttname"><a href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a></div><div class="ttdeci">std::shared_ptr&lt; Shape&lt; dim &gt; &gt; initialize_shape(const std::string &amp;type, const std::string &amp;shape_arguments_str, const Point&lt; dim &gt; &amp;position, const Tensor&lt; 1, 3 &gt; &amp;orientation)</div><div class="ttdef"><b>Definition:</b> <a href="shape__parsing_8cc_source.html#l00008">shape_parsing.cc:8</a></div></div>
 <div class="ttc" id="anamespaceShapeGenerator_html_ab53ceb8233664f0289908d673701d386"><div class="ttname"><a href="namespaceShapeGenerator.html#ab53ceb8233664f0289908d673701d386">ShapeGenerator::initialize_shape_from_file</a></div><div class="ttdeci">std::shared_ptr&lt; Shape&lt; dim &gt; &gt; initialize_shape_from_file(const std::string &amp;type, const std::string &amp;file_name, const Point&lt; dim &gt; &amp;position, const Tensor&lt; 1, 3 &gt; &amp;orientation)</div><div class="ttdef"><b>Definition:</b> <a href="shape__parsing_8cc_source.html#l00159">shape_parsing.cc:159</a></div></div>

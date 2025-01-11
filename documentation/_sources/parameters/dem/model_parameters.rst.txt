@@ -53,6 +53,10 @@ In this subsection, contact detection, force models, time integration, load bala
       set granular temperature threshold  = 1e-4
       set solid fraction threshold        = 0.4
     end
+
+    # Solver type
+    # Choices are dem|cfd_dem
+    set solver type = dem
   end
 
 
@@ -169,3 +173,8 @@ See how the mechanism works with mobility status in the figure below:
 Some parameters in the load balance section may be used to improve the performance of the dynamic disabling contacts feature using the dynamic load balancing.
 .. note::
 The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1.
+
+-----------
+Solver Type
+-----------
+The "solver type" parameter controls the type of physic being solved by lethe. Currently, this parameter should always be set to "dem", which is the default value, even when solving a CFD-DEM problem.

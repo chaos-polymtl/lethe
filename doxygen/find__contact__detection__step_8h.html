@@ -153,9 +153,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2cda3b14d091cbf7f6f208b56692fbbe"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a2cda3b14d091cbf7f6f208b56692fbbe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8h.html#a2cda3b14d091cbf7f6f208b56692fbbe">find_particle_contact_detection_step</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update=true)</td></tr>
-<tr class="separator:a2cda3b14d091cbf7f6f208b56692fbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d6d367c590091ae3722d8ae4c64b8f9"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a0d6d367c590091ae3722d8ae4c64b8f9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8h.html#a0d6d367c590091ae3722d8ae4c64b8f9">find_particle_contact_detection_step</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update=true)</td></tr>
+<tr class="separator:a0d6d367c590091ae3722d8ae4c64b8f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae590253416d507acd017a2491c75bd8d"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:ae590253416d507acd017a2491c75bd8d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8h.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a> (const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt;&gt;&gt; solids)</td></tr>
 <tr class="separator:ae590253416d507acd017a2491c75bd8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,19 +199,19 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the maximum cumulative displacement of particles exceeds the threshold and false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00083">83</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00101">101</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>.</p>
 
 </div>
 </div>
-<a id="a2cda3b14d091cbf7f6f208b56692fbbe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cda3b14d091cbf7f6f208b56692fbbe">&#9670;&nbsp;</a></span>find_particle_contact_detection_step()</h2>
+<a id="a0d6d367c590091ae3722d8ae4c64b8f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d6d367c590091ae3722d8ae4c64b8f9">&#9670;&nbsp;</a></span>find_particle_contact_detection_step()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void find_particle_contact_detection_step </td>
@@ -258,6 +258,13 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Find steps for dynamic contact search for particle-particle contacts. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td></td></tr>
@@ -273,7 +280,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00011">11</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="dem__properties_8h_source.html#l00024">DEM::v_x</a>, <a class="el" href="dem__properties_8h_source.html#l00025">DEM::v_y</a>, and <a class="el" href="dem__properties_8h_source.html#l00026">DEM::v_z</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="dem__properties_8h_source.html#l00038">DEM::DEMProperties::v_x</a>, <a class="el" href="dem__properties_8h_source.html#l00039">DEM::DEMProperties::v_y</a>, and <a class="el" href="dem__properties_8h_source.html#l00040">DEM::DEMProperties::v_z</a>.</p>
 
 </div>
 </div>

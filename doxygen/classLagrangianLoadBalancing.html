@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: LagrangianLoadBalancing&lt; dim &gt; Class Template Reference</title>
+<title>Lethe Open-Source Library: LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -77,7 +77,7 @@ $(function() {
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classLagrangianLoadBalancing-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">LagrangianLoadBalancing&lt; dim &gt; Class Template Reference</div>  </div>
+<div class="title">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -85,91 +85,98 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afa36d94029a302d14d6b32917ea7f8f0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#afa36d94029a302d14d6b32917ea7f8f0">LagrangianLoadBalancing</a> ()</td></tr>
-<tr class="separator:afa36d94029a302d14d6b32917ea7f8f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c29f7ee76a8967586b69624584f9821"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a3c29f7ee76a8967586b69624584f9821">set_parameters</a> (const <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a> &amp;model_parameters)</td></tr>
-<tr class="separator:a3c29f7ee76a8967586b69624584f9821"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5822945b326436fbce253c13fd6923db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">copy_references</a> (std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">simulation_control</a>, parallel::distributed::Triangulation&lt; dim &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">triangulation</a>, Particles::ParticleHandler&lt; dim &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">particle_handler</a>, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">adaptive_sparse_contacts</a>)</td></tr>
-<tr class="separator:a5822945b326436fbce253c13fd6923db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea8e6c7b36eed8ee91cbcab90b2ed3ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">check_load_balance_iteration</a> ()</td></tr>
-<tr class="separator:aea8e6c7b36eed8ee91cbcab90b2ed3ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31c2a698cfeb236fd68ced77179d4c90"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">set_iteration_check_function</a> ()</td></tr>
-<tr class="separator:a31c2a698cfeb236fd68ced77179d4c90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03489ce79eec97fd6ae85c91e7bef0e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a03489ce79eec97fd6ae85c91e7bef0e6">check_load_balance_once</a> ()</td></tr>
-<tr class="separator:a03489ce79eec97fd6ae85c91e7bef0e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ee0320e868c56e592a75aa2b5107c82"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a7ee0320e868c56e592a75aa2b5107c82">check_load_balance_frequent</a> ()</td></tr>
-<tr class="separator:a7ee0320e868c56e592a75aa2b5107c82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ee1108820cd5df05cf97332adf1f4b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a1ee1108820cd5df05cf97332adf1f4b8">check_load_balance_dynamic</a> ()</td></tr>
-<tr class="separator:a1ee1108820cd5df05cf97332adf1f4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5fa80b93d071d0b02c25ca4d0aaecd1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ad5fa80b93d071d0b02c25ca4d0aaecd1">check_load_balance_with_sparse_contacts</a> ()</td></tr>
-<tr class="separator:ad5fa80b93d071d0b02c25ca4d0aaecd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a7871198521c989f1d7efb239fad8b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">connect_weight_signals</a> ()</td></tr>
-<tr class="separator:a4a7871198521c989f1d7efb239fad8b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5d81d7eb20c13b2593ed052708ad31d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">connect_mobility_status_weight_signals</a> ()</td></tr>
-<tr class="separator:aa5d81d7eb20c13b2593ed052708ad31d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae72c32054ddeab2af9f58050c4462aa9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ae72c32054ddeab2af9f58050c4462aa9">LagrangianLoadBalancing</a> ()</td></tr>
+<tr class="separator:ae72c32054ddeab2af9f58050c4462aa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a221c38020b7dcfcce3f3b26a5a12f6d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a221c38020b7dcfcce3f3b26a5a12f6d4">set_parameters</a> (const <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a> &amp;model_parameters)</td></tr>
+<tr class="separator:a221c38020b7dcfcce3f3b26a5a12f6d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb78764ab1261c32c97789357404be58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#adb78764ab1261c32c97789357404be58">copy_references</a> (std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a44efbcdd7f058208db950ac5e4696402">simulation_control</a>, parallel::distributed::Triangulation&lt; dim &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a795b34c8b668d82cd0158c02649b53c5">triangulation</a>, Particles::ParticleHandler&lt; dim &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a200f8fd691b290ab7d00c269dbbb0c97">particle_handler</a>, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;<a class="el" href="classLagrangianLoadBalancing.html#a37f5e68560b1b45fa7aa63dd2fe7b26a">adaptive_sparse_contacts</a>)</td></tr>
+<tr class="separator:adb78764ab1261c32c97789357404be58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b6cfbe0820da2f6bf9de9da53c71b7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a3b6cfbe0820da2f6bf9de9da53c71b7a">check_load_balance_iteration</a> ()</td></tr>
+<tr class="separator:a3b6cfbe0820da2f6bf9de9da53c71b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42744133b6b23048d4e6e958e34444ff"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a42744133b6b23048d4e6e958e34444ff">set_iteration_check_function</a> ()</td></tr>
+<tr class="separator:a42744133b6b23048d4e6e958e34444ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a522b4df8936703a76bcb891502330a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a3a522b4df8936703a76bcb891502330a">check_load_balance_once</a> ()</td></tr>
+<tr class="separator:a3a522b4df8936703a76bcb891502330a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a489f6ae74f344424a31f6bce33f972f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a489f6ae74f344424a31f6bce33f972f7">check_load_balance_frequent</a> ()</td></tr>
+<tr class="separator:a489f6ae74f344424a31f6bce33f972f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeeaaaba5cb2d310ae7981e13a4341da0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#aeeaaaba5cb2d310ae7981e13a4341da0">check_load_balance_dynamic</a> ()</td></tr>
+<tr class="separator:aeeaaaba5cb2d310ae7981e13a4341da0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb80431d912d18fa5d03153bf79f3a86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#acb80431d912d18fa5d03153bf79f3a86">check_load_balance_with_sparse_contacts</a> ()</td></tr>
+<tr class="separator:acb80431d912d18fa5d03153bf79f3a86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4969e0085ae9ef133553e361153cb61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ad4969e0085ae9ef133553e361153cb61">connect_weight_signals</a> ()</td></tr>
+<tr class="separator:ad4969e0085ae9ef133553e361153cb61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39521aa8fd7e683898848170b77229dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a39521aa8fd7e683898848170b77229dc">connect_mobility_status_weight_signals</a> ()</td></tr>
+<tr class="separator:a39521aa8fd7e683898848170b77229dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a84d3bef6f0afca5b2bb33a44f5884c22"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a84d3bef6f0afca5b2bb33a44f5884c22">calculate_total_cell_weight</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus status) const</td></tr>
-<tr class="separator:a84d3bef6f0afca5b2bb33a44f5884c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc106fc2119aeb10ce6a2ca9b4ed1e2d"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#abc106fc2119aeb10ce6a2ca9b4ed1e2d">calculate_total_cell_weight_with_mobility_status</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus status) const</td></tr>
-<tr class="separator:abc106fc2119aeb10ce6a2ca9b4ed1e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8dc6856b7e2ac403bd5bd3d6a6233e6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ac8dc6856b7e2ac403bd5bd3d6a6233e6">calculate_total_cell_weight</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus status) const</td></tr>
+<tr class="separator:ac8dc6856b7e2ac403bd5bd3d6a6233e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87618c67de459ace8c6130ba8dc21cfc"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a87618c67de459ace8c6130ba8dc21cfc">calculate_total_cell_weight_with_mobility_status</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus status) const</td></tr>
+<tr class="separator:a87618c67de459ace8c6130ba8dc21cfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:af8fe02e9a628afceae401264b496c249"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">load_balance_method</a></td></tr>
-<tr class="separator:af8fe02e9a628afceae401264b496c249"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a878c6f8f754244af0ee7c44a1f7e3208"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a878c6f8f754244af0ee7c44a1f7e3208">iteration_check_function</a></td></tr>
-<tr class="separator:a878c6f8f754244af0ee7c44a1f7e3208"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd54766e7c9bffcd0f0b6072516d0f99"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#acd54766e7c9bffcd0f0b6072516d0f99">cell_weight</a> = 1000</td></tr>
-<tr class="separator:acd54766e7c9bffcd0f0b6072516d0f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad24773ce56f88f2490ec96dd37b37e42"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ad24773ce56f88f2490ec96dd37b37e42">particle_weight</a></td></tr>
-<tr class="separator:ad24773ce56f88f2490ec96dd37b37e42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedc69e52d60976511c3b77ea0c15baac"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#aedc69e52d60976511c3b77ea0c15baac">inactive_status_factor</a></td></tr>
-<tr class="separator:aedc69e52d60976511c3b77ea0c15baac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e75af594e71c988a505f881429c308a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a0e75af594e71c988a505f881429c308a">active_status_factor</a></td></tr>
-<tr class="separator:a0e75af594e71c988a505f881429c308a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acabfc750689ecb4aacc1e6b4303cea7a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">load_balance_step</a></td></tr>
-<tr class="separator:acabfc750689ecb4aacc1e6b4303cea7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a585e5a35d1f1a29dd9defa2c2cacf158"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">load_balance_frequency</a></td></tr>
-<tr class="separator:a585e5a35d1f1a29dd9defa2c2cacf158"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ab39e278c613d1ff742aac45f14a306"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a4ab39e278c613d1ff742aac45f14a306">dynamic_check_frequency</a></td></tr>
-<tr class="separator:a4ab39e278c613d1ff742aac45f14a306"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4db3ec8349c520c3292574429ce71b1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">load_threshold</a></td></tr>
-<tr class="separator:ad4db3ec8349c520c3292574429ce71b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace8d5aea56f58d6221cdb0043f49cfae"><td class="memItemLeft" align="right" valign="top">MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">mpi_communicator</a></td></tr>
-<tr class="separator:ace8d5aea56f58d6221cdb0043f49cfae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bb3a59b289f6924abb5f1ec53bd2afd"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a2bb3a59b289f6924abb5f1ec53bd2afd">n_mpi_processes</a></td></tr>
-<tr class="separator:a2bb3a59b289f6924abb5f1ec53bd2afd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5b61ad96bddd97a299d5f5f378590d0"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ae5b61ad96bddd97a299d5f5f378590d0">this_mpi_process</a></td></tr>
-<tr class="separator:ae5b61ad96bddd97a299d5f5f378590d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65f0757ace17cf18d8e38c841a704910"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">simulation_control</a></td></tr>
-<tr class="separator:a65f0757ace17cf18d8e38c841a704910"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52d7c667fd38712b283f764f52e8da20"><td class="memItemLeft" align="right" valign="top">parallel::distributed::Triangulation&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">triangulation</a></td></tr>
-<tr class="separator:a52d7c667fd38712b283f764f52e8da20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a188425d9ce4907b7256d3d8687288165"><td class="memItemLeft" align="right" valign="top">Particles::ParticleHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">particle_handler</a></td></tr>
-<tr class="separator:a188425d9ce4907b7256d3d8687288165"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ad9cad6318916aea8ccc510bbd1ab2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">adaptive_sparse_contacts</a></td></tr>
-<tr class="separator:a9ad9cad6318916aea8ccc510bbd1ab2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac340f321c75514b64717afd96c1190c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ac340f321c75514b64717afd96c1190c5">load_balance_method</a></td></tr>
+<tr class="separator:ac340f321c75514b64717afd96c1190c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa45b9e32d705899fbdd9a1d584752c08"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#aa45b9e32d705899fbdd9a1d584752c08">iteration_check_function</a></td></tr>
+<tr class="separator:aa45b9e32d705899fbdd9a1d584752c08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8204f132e1ae5245e80a2b0666b706b7"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a8204f132e1ae5245e80a2b0666b706b7">cell_weight</a> = 1000</td></tr>
+<tr class="separator:a8204f132e1ae5245e80a2b0666b706b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2506bf05b00d7eb6f905ca423a89335"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#aa2506bf05b00d7eb6f905ca423a89335">particle_weight</a></td></tr>
+<tr class="separator:aa2506bf05b00d7eb6f905ca423a89335"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c3d364e30ce8e2c50a2910fa24b1705"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a7c3d364e30ce8e2c50a2910fa24b1705">inactive_status_factor</a></td></tr>
+<tr class="separator:a7c3d364e30ce8e2c50a2910fa24b1705"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a583372e924601f35fba0cd6d3ddd7ced"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a583372e924601f35fba0cd6d3ddd7ced">active_status_factor</a></td></tr>
+<tr class="separator:a583372e924601f35fba0cd6d3ddd7ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74541de3d5ab8875cc452536b81b974e"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a74541de3d5ab8875cc452536b81b974e">load_balance_step</a></td></tr>
+<tr class="separator:a74541de3d5ab8875cc452536b81b974e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f59af96d0569be1a367fc24b170b4eb"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a9f59af96d0569be1a367fc24b170b4eb">load_balance_frequency</a></td></tr>
+<tr class="separator:a9f59af96d0569be1a367fc24b170b4eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa230f80bd183b9e15c50fffbf834dd9c"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#aa230f80bd183b9e15c50fffbf834dd9c">dynamic_check_frequency</a></td></tr>
+<tr class="separator:aa230f80bd183b9e15c50fffbf834dd9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad73a632f72e2ea4c31944e86b34e60f8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ad73a632f72e2ea4c31944e86b34e60f8">load_threshold</a></td></tr>
+<tr class="separator:ad73a632f72e2ea4c31944e86b34e60f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af84ced980a7bb187e4a3fb08baf724c4"><td class="memItemLeft" align="right" valign="top">MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#af84ced980a7bb187e4a3fb08baf724c4">mpi_communicator</a></td></tr>
+<tr class="separator:af84ced980a7bb187e4a3fb08baf724c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6688c2979da7576a6efe7bbeecd65685"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a6688c2979da7576a6efe7bbeecd65685">n_mpi_processes</a></td></tr>
+<tr class="separator:a6688c2979da7576a6efe7bbeecd65685"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44651b6afed1b9ece435839cab8b3084"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a44651b6afed1b9ece435839cab8b3084">this_mpi_process</a></td></tr>
+<tr class="separator:a44651b6afed1b9ece435839cab8b3084"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44efbcdd7f058208db950ac5e4696402"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a44efbcdd7f058208db950ac5e4696402">simulation_control</a></td></tr>
+<tr class="separator:a44efbcdd7f058208db950ac5e4696402"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a795b34c8b668d82cd0158c02649b53c5"><td class="memItemLeft" align="right" valign="top">parallel::distributed::Triangulation&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a795b34c8b668d82cd0158c02649b53c5">triangulation</a></td></tr>
+<tr class="separator:a795b34c8b668d82cd0158c02649b53c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a200f8fd691b290ab7d00c269dbbb0c97"><td class="memItemLeft" align="right" valign="top">Particles::ParticleHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a200f8fd691b290ab7d00c269dbbb0c97">particle_handler</a></td></tr>
+<tr class="separator:a200f8fd691b290ab7d00c269dbbb0c97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37f5e68560b1b45fa7aa63dd2fe7b26a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a37f5e68560b1b45fa7aa63dd2fe7b26a">adaptive_sparse_contacts</a></td></tr>
+<tr class="separator:a37f5e68560b1b45fa7aa63dd2fe7b26a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;int dim&gt;<br />
-class LagrangianLoadBalancing&lt; dim &gt;</h3>
+<div class="textblock"><h3>template&lt;int dim, typename PropertiesIndex&gt;<br />
+class LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;</h3>
 
 <p>Manages the load balancing (repartitioning), of the domain according to the computational load of the cells and the particles. It is used by the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> and the coupling CFD-DEM solvers. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00025">25</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00028">28</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="afa36d94029a302d14d6b32917ea7f8f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa36d94029a302d14d6b32917ea7f8f0">&#9670;&nbsp;</a></span>LagrangianLoadBalancing()</h2>
+<a id="ae72c32054ddeab2af9f58050c4462aa9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae72c32054ddeab2af9f58050c4462aa9">&#9670;&nbsp;</a></span>LagrangianLoadBalancing()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::<a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a></td>
+          <td class="memname"><a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::<a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -179,19 +186,19 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a84d3bef6f0afca5b2bb33a44f5884c22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a84d3bef6f0afca5b2bb33a44f5884c22">&#9670;&nbsp;</a></span>calculate_total_cell_weight()</h2>
+<a id="ac8dc6856b7e2ac403bd5bd3d6a6233e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8dc6856b7e2ac403bd5bd3d6a6233e6">&#9670;&nbsp;</a></span>calculate_total_cell_weight()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::calculate_total_cell_weight </td>
+          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::calculate_total_cell_weight </td>
           <td>(</td>
           <td class="paramtype">const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;&#160;</td>
           <td class="paramname"><em>cell</em>, </td>
@@ -216,7 +223,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Indicates to the triangulation how much computational work is expected to happen on this cell, and consequently how the domain needs to be partitioned. </p>
-<p>Every MPI rank receives a roughly equal amount of work (potentially not an equal number of cells). While the function is called from the outside, it is connected to the corresponding signal from inside this class, therefore it can be private. This function is the key component that allows dynamically balance the computational load. The function attributes a weight to every cell that represents the computational work on this cell. Here the majority of work is expected to happen on the particles, therefore the return value of this function is calculated based on the number of particles in the current cell. The function is connected to the <a class="el" href="classLagrangianLoadBalancing.html#acd54766e7c9bffcd0f0b6072516d0f99" title="Default hard-coded load weight of a cell.">cell_weight()</a> signal inside the triangulation, and will be called once per cell, whenever the triangulation repartitions the domain between ranks.</p>
+<p>Every MPI rank receives a roughly equal amount of work (potentially not an equal number of cells). While the function is called from the outside, it is connected to the corresponding signal from inside this class, therefore it can be private. This function is the key component that allows dynamically balance the computational load. The function attributes a weight to every cell that represents the computational work on this cell. Here the majority of work is expected to happen on the particles, therefore the return value of this function is calculated based on the number of particles in the current cell. The function is connected to the <a class="el" href="classLagrangianLoadBalancing.html#a8204f132e1ae5245e80a2b0666b706b7" title="Default hard-coded load weight of a cell.">cell_weight()</a> signal inside the triangulation, and will be called once per cell, whenever the triangulation repartitions the domain between ranks.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>The cell for which the load is calculated.</td></tr>
@@ -227,23 +234,23 @@ template&lt;int dim&gt; </div>
 <p>TODO: Remove preprocessor directives after deal.ii v.9.6 release</p>
 <dl class="section return"><dt>Returns</dt><dd>The total weight of the cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00133">133</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00137">137</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
 
 </div>
 </div>
-<a id="abc106fc2119aeb10ce6a2ca9b4ed1e2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc106fc2119aeb10ce6a2ca9b4ed1e2d">&#9670;&nbsp;</a></span>calculate_total_cell_weight_with_mobility_status()</h2>
+<a id="a87618c67de459ace8c6130ba8dc21cfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87618c67de459ace8c6130ba8dc21cfc">&#9670;&nbsp;</a></span>calculate_total_cell_weight_with_mobility_status()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::calculate_total_cell_weight_with_mobility_status </td>
+          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::calculate_total_cell_weight_with_mobility_status </td>
           <td>(</td>
           <td class="paramtype">const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;&#160;</td>
           <td class="paramname"><em>cell</em>, </td>
@@ -268,7 +275,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Indicates to the triangulation how much computational work is expected to happen on this cell, and consequently how the domain needs to be partitioned. Only used with the Adaptive Sparse Contacts mechanism. </p>
-<p>Similar to the <a class="el" href="classLagrangianLoadBalancing.html#a84d3bef6f0afca5b2bb33a44f5884c22" title="Indicates to the triangulation how much computational work is expected to happen on this cell,...">calculate_total_cell_weight()</a>, this function is used when the cell weight is adapted to the mobility status. For instance, if the cell is inactive, its computational load will be significantly lower than if it is a mobile cell since there is no force calculation and no velocity integration for the particles that lie within it. The weight of the cells must thus be adapted to the status of the cell.</p>
+<p>Similar to the <a class="el" href="classLagrangianLoadBalancing.html#ac8dc6856b7e2ac403bd5bd3d6a6233e6" title="Indicates to the triangulation how much computational work is expected to happen on this cell,...">calculate_total_cell_weight()</a>, this function is used when the cell weight is adapted to the mobility status. For instance, if the cell is inactive, its computational load will be significantly lower than if it is a mobile cell since there is no force calculation and no velocity integration for the particles that lie within it. The weight of the cells must thus be adapted to the status of the cell.</p>
 <p>total cell weight = cell weight + load balancing factor * n particles * particle weight</p>
 <p>TODO: Remove preprocessor directives after deal.ii v.9.6 release</p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -280,23 +287,23 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The total weight of the cell </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00199">199</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00203">203</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
 
 </div>
 </div>
-<a id="a1ee1108820cd5df05cf97332adf1f4b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ee1108820cd5df05cf97332adf1f4b8">&#9670;&nbsp;</a></span>check_load_balance_dynamic()</h2>
+<a id="aeeaaaba5cb2d310ae7981e13a4341da0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeeaaaba5cb2d310ae7981e13a4341da0">&#9670;&nbsp;</a></span>check_load_balance_dynamic()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::check_load_balance_dynamic</td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::check_load_balance_dynamic</td>
         </tr>
       </table>
   </td>
@@ -315,19 +322,19 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a7ee0320e868c56e592a75aa2b5107c82"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ee0320e868c56e592a75aa2b5107c82">&#9670;&nbsp;</a></span>check_load_balance_frequent()</h2>
+<a id="a489f6ae74f344424a31f6bce33f972f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a489f6ae74f344424a31f6bce33f972f7">&#9670;&nbsp;</a></span>check_load_balance_frequent()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::check_load_balance_frequent</td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::check_load_balance_frequent</td>
         </tr>
       </table>
   </td>
@@ -346,19 +353,19 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="aea8e6c7b36eed8ee91cbcab90b2ed3ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea8e6c7b36eed8ee91cbcab90b2ed3ed">&#9670;&nbsp;</a></span>check_load_balance_iteration()</h2>
+<a id="a3b6cfbe0820da2f6bf9de9da53c71b7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b6cfbe0820da2f6bf9de9da53c71b7a">&#9670;&nbsp;</a></span>check_load_balance_iteration()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::check_load_balance_iteration </td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::check_load_balance_iteration </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -374,23 +381,23 @@ template&lt;int dim&gt; </div>
 <p>Checks if the current iteration is a load balance iteration. </p>
 <dl class="section return"><dt>Returns</dt><dd>bool indicating if this is a load balance iteration. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00095">95</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00099">99</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a03489ce79eec97fd6ae85c91e7bef0e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03489ce79eec97fd6ae85c91e7bef0e6">&#9670;&nbsp;</a></span>check_load_balance_once()</h2>
+<a id="a3a522b4df8936703a76bcb891502330a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a522b4df8936703a76bcb891502330a">&#9670;&nbsp;</a></span>check_load_balance_once()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::check_load_balance_once</td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::check_load_balance_once</td>
         </tr>
       </table>
   </td>
@@ -409,19 +416,19 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ad5fa80b93d071d0b02c25ca4d0aaecd1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5fa80b93d071d0b02c25ca4d0aaecd1">&#9670;&nbsp;</a></span>check_load_balance_with_sparse_contacts()</h2>
+<a id="acb80431d912d18fa5d03153bf79f3a86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb80431d912d18fa5d03153bf79f3a86">&#9670;&nbsp;</a></span>check_load_balance_with_sparse_contacts()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::check_load_balance_with_sparse_contacts</td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::check_load_balance_with_sparse_contacts</td>
         </tr>
       </table>
   </td>
@@ -440,19 +447,19 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="aa5d81d7eb20c13b2593ed052708ad31d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5d81d7eb20c13b2593ed052708ad31d">&#9670;&nbsp;</a></span>connect_mobility_status_weight_signals()</h2>
+<a id="a39521aa8fd7e683898848170b77229dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39521aa8fd7e683898848170b77229dc">&#9670;&nbsp;</a></span>connect_mobility_status_weight_signals()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::connect_mobility_status_weight_signals </td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::connect_mobility_status_weight_signals </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -468,23 +475,23 @@ template&lt;int dim&gt; </div>
 <p>Connects the weight signals of the cells to the triangulation with the mobility status. Cells are reconnected when load balancing is checked with the new mobility status. </p>
 <p>TODO: Remove preprocessor directives after deal.ii v.9.6 release </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00229">229</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00233">233</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a4a7871198521c989f1d7efb239fad8b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a7871198521c989f1d7efb239fad8b7">&#9670;&nbsp;</a></span>connect_weight_signals()</h2>
+<a id="ad4969e0085ae9ef133553e361153cb61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4969e0085ae9ef133553e361153cb61">&#9670;&nbsp;</a></span>connect_weight_signals()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::connect_weight_signals </td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::connect_weight_signals </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -505,23 +512,23 @@ template&lt;int dim&gt; </div>
 </ol>
 <p>TODO: Remove preprocessor directives after deal.ii v.9.6 release </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00189">189</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00193">193</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a5822945b326436fbce253c13fd6923db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5822945b326436fbce253c13fd6923db">&#9670;&nbsp;</a></span>copy_references()</h2>
+<a id="adb78764ab1261c32c97789357404be58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb78764ab1261c32c97789357404be58">&#9670;&nbsp;</a></span>copy_references()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::copy_references </td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::copy_references </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>simulation_control</em>, </td>
@@ -541,7 +548,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;&#160;</td>
           <td class="paramname"><em>adaptive_sparse_contacts</em>&#160;</td>
         </tr>
         <tr>
@@ -568,23 +575,23 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00078">78</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00081">81</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a31c2a698cfeb236fd68ced77179d4c90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31c2a698cfeb236fd68ced77179d4c90">&#9670;&nbsp;</a></span>set_iteration_check_function()</h2>
+<a id="a42744133b6b23048d4e6e958e34444ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42744133b6b23048d4e6e958e34444ff">&#9670;&nbsp;</a></span>set_iteration_check_function()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::function&lt;void()&gt; <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::set_iteration_check_function </td>
+          <td class="memname">std::function&lt;void()&gt; <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::set_iteration_check_function </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -600,23 +607,23 @@ template&lt;int dim&gt; </div>
 <p>Sets the load balancing iteration check function according to the chosen load balancing method. During the setup of the parameters, the validation of the method is already checked, so the default value is when the method is <code>none</code>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Return a function that returns a bool indicating if the current time step is a load balance iteration. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00110">110</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00114">114</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a3c29f7ee76a8967586b69624584f9821"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c29f7ee76a8967586b69624584f9821">&#9670;&nbsp;</a></span>set_parameters()</h2>
+<a id="a221c38020b7dcfcce3f3b26a5a12f6d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a221c38020b7dcfcce3f3b26a5a12f6d4">&#9670;&nbsp;</a></span>set_parameters()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::set_parameters </td>
+          <td class="memname">void <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::set_parameters </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a> &amp;&#160;</td>
           <td class="paramname"><em>model_parameters</em></td><td>)</td>
@@ -638,26 +645,26 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00039">39</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00042">42</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00247">Parameters::Lagrangian::ModelParameters::active_load_balancing_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00236">Parameters::Lagrangian::ModelParameters::dynamic_load_balance_check_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00248">Parameters::Lagrangian::ModelParameters::inactive_load_balancing_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00230">Parameters::Lagrangian::ModelParameters::load_balance_frequency</a>, <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a482f1a6925fb27516aa95b67e12bcb7f">Parameters::Lagrangian::ModelParameters::load_balance_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00242">Parameters::Lagrangian::ModelParameters::load_balance_particle_weight</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00227">Parameters::Lagrangian::ModelParameters::load_balance_step</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00233">Parameters::Lagrangian::ModelParameters::load_balance_threshold</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a0e75af594e71c988a505f881429c308a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e75af594e71c988a505f881429c308a">&#9670;&nbsp;</a></span>active_status_factor</h2>
+<a id="a583372e924601f35fba0cd6d3ddd7ced"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a583372e924601f35fba0cd6d3ddd7ced">&#9670;&nbsp;</a></span>active_status_factor</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::active_status_factor</td>
+          <td class="memname">double <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::active_status_factor</td>
         </tr>
       </table>
   </td>
@@ -669,23 +676,23 @@ template&lt;int dim&gt; </div>
 
 <p>Load weight factor of particle weight in a cell with an active mobility status (only with ASC). </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00377">377</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00381">381</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a9ad9cad6318916aea8ccc510bbd1ab2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ad9cad6318916aea8ccc510bbd1ab2b">&#9670;&nbsp;</a></span>adaptive_sparse_contacts</h2>
+<a id="a37f5e68560b1b45fa7aa63dd2fe7b26a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37f5e68560b1b45fa7aa63dd2fe7b26a">&#9670;&nbsp;</a></span>adaptive_sparse_contacts</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt;dim&gt;* <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::adaptive_sparse_contacts</td>
+          <td class="memname"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt;dim, PropertiesIndex&gt;* <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::adaptive_sparse_contacts</td>
         </tr>
       </table>
   </td>
@@ -697,23 +704,23 @@ template&lt;int dim&gt; </div>
 
 <p>Pointer to the adaptive sparse contacts object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00441">441</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00445">445</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="acd54766e7c9bffcd0f0b6072516d0f99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd54766e7c9bffcd0f0b6072516d0f99">&#9670;&nbsp;</a></span>cell_weight</h2>
+<a id="a8204f132e1ae5245e80a2b0666b706b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8204f132e1ae5245e80a2b0666b706b7">&#9670;&nbsp;</a></span>cell_weight</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::cell_weight = 1000</td>
+          <td class="memname">const unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::cell_weight = 1000</td>
         </tr>
       </table>
   </td>
@@ -725,23 +732,23 @@ template&lt;int dim&gt; </div>
 
 <p>Default hard-coded load weight of a cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00360">360</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00364">364</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a4ab39e278c613d1ff742aac45f14a306"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ab39e278c613d1ff742aac45f14a306">&#9670;&nbsp;</a></span>dynamic_check_frequency</h2>
+<a id="aa230f80bd183b9e15c50fffbf834dd9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa230f80bd183b9e15c50fffbf834dd9c">&#9670;&nbsp;</a></span>dynamic_check_frequency</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::dynamic_check_frequency</td>
+          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::dynamic_check_frequency</td>
         </tr>
       </table>
   </td>
@@ -753,23 +760,23 @@ template&lt;int dim&gt; </div>
 
 <p>Frequency of check for the load balancing execution, only when method is <code>dynamic</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00395">395</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00399">399</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="aedc69e52d60976511c3b77ea0c15baac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aedc69e52d60976511c3b77ea0c15baac">&#9670;&nbsp;</a></span>inactive_status_factor</h2>
+<a id="a7c3d364e30ce8e2c50a2910fa24b1705"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c3d364e30ce8e2c50a2910fa24b1705">&#9670;&nbsp;</a></span>inactive_status_factor</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::inactive_status_factor</td>
+          <td class="memname">double <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::inactive_status_factor</td>
         </tr>
       </table>
   </td>
@@ -781,23 +788,23 @@ template&lt;int dim&gt; </div>
 
 <p>Load weight factor of particle weight in a cell with an inactive mobility status (only with ASC). </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00371">371</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00375">375</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a878c6f8f754244af0ee7c44a1f7e3208"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a878c6f8f754244af0ee7c44a1f7e3208">&#9670;&nbsp;</a></span>iteration_check_function</h2>
+<a id="aa45b9e32d705899fbdd9a1d584752c08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa45b9e32d705899fbdd9a1d584752c08">&#9670;&nbsp;</a></span>iteration_check_function</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::function&lt;void()&gt; <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::iteration_check_function</td>
+          <td class="memname">std::function&lt;void()&gt; <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::iteration_check_function</td>
         </tr>
       </table>
   </td>
@@ -809,23 +816,23 @@ template&lt;int dim&gt; </div>
 
 <p>The load balancing iteration check function according to the load balancing method. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00355">355</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00359">359</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a585e5a35d1f1a29dd9defa2c2cacf158"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a585e5a35d1f1a29dd9defa2c2cacf158">&#9670;&nbsp;</a></span>load_balance_frequency</h2>
+<a id="a9f59af96d0569be1a367fc24b170b4eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f59af96d0569be1a367fc24b170b4eb">&#9670;&nbsp;</a></span>load_balance_frequency</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::load_balance_frequency</td>
+          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::load_balance_frequency</td>
         </tr>
       </table>
   </td>
@@ -837,23 +844,23 @@ template&lt;int dim&gt; </div>
 
 <p>Frequency of load balancing execution, only when method is <code>frequent</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00389">389</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00393">393</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="af8fe02e9a628afceae401264b496c249"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8fe02e9a628afceae401264b496c249">&#9670;&nbsp;</a></span>load_balance_method</h2>
+<a id="ac340f321c75514b64717afd96c1190c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac340f321c75514b64717afd96c1190c5">&#9670;&nbsp;</a></span>load_balance_method</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a> <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::load_balance_method</td>
+          <td class="memname"><a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a> <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::load_balance_method</td>
         </tr>
       </table>
   </td>
@@ -865,23 +872,23 @@ template&lt;int dim&gt; </div>
 
 <p>The load balancing method chosen by the user. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00349">349</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00353">353</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="acabfc750689ecb4aacc1e6b4303cea7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acabfc750689ecb4aacc1e6b4303cea7a">&#9670;&nbsp;</a></span>load_balance_step</h2>
+<a id="a74541de3d5ab8875cc452536b81b974e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74541de3d5ab8875cc452536b81b974e">&#9670;&nbsp;</a></span>load_balance_step</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::load_balance_step</td>
+          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::load_balance_step</td>
         </tr>
       </table>
   </td>
@@ -893,23 +900,23 @@ template&lt;int dim&gt; </div>
 
 <p>Iteration number for load balancing execution, only when method is <code>once</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00383">383</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00387">387</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="ad4db3ec8349c520c3292574429ce71b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4db3ec8349c520c3292574429ce71b1">&#9670;&nbsp;</a></span>load_threshold</h2>
+<a id="ad73a632f72e2ea4c31944e86b34e60f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad73a632f72e2ea4c31944e86b34e60f8">&#9670;&nbsp;</a></span>load_threshold</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::load_threshold</td>
+          <td class="memname">double <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::load_threshold</td>
         </tr>
       </table>
   </td>
@@ -922,23 +929,23 @@ template&lt;int dim&gt; </div>
 <p>Threshold (\beta) for the check load balancing execution, only when method is <code>dynamic</code>. </p>
 <p>Load balancing will be done when the computational load amongst core is too uneven. If L_{max} - L_{min} &gt; \beta \bar{L}, where L_{max}, L_{min}, and \bar{L} are the maximum, minimum, and the average load, the load balancing will be executed. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00406">406</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00410">410</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="ace8d5aea56f58d6221cdb0043f49cfae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace8d5aea56f58d6221cdb0043f49cfae">&#9670;&nbsp;</a></span>mpi_communicator</h2>
+<a id="af84ced980a7bb187e4a3fb08baf724c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af84ced980a7bb187e4a3fb08baf724c4">&#9670;&nbsp;</a></span>mpi_communicator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">MPI_Comm <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::mpi_communicator</td>
+          <td class="memname">MPI_Comm <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::mpi_communicator</td>
         </tr>
       </table>
   </td>
@@ -950,23 +957,23 @@ template&lt;int dim&gt; </div>
 
 <p>MPI communicator. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00411">411</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00415">415</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a2bb3a59b289f6924abb5f1ec53bd2afd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2bb3a59b289f6924abb5f1ec53bd2afd">&#9670;&nbsp;</a></span>n_mpi_processes</h2>
+<a id="a6688c2979da7576a6efe7bbeecd65685"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6688c2979da7576a6efe7bbeecd65685">&#9670;&nbsp;</a></span>n_mpi_processes</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::n_mpi_processes</td>
+          <td class="memname">const unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::n_mpi_processes</td>
         </tr>
       </table>
   </td>
@@ -978,23 +985,23 @@ template&lt;int dim&gt; </div>
 
 <p>Number of MPI processes. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00416">416</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00420">420</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a188425d9ce4907b7256d3d8687288165"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a188425d9ce4907b7256d3d8687288165">&#9670;&nbsp;</a></span>particle_handler</h2>
+<a id="a200f8fd691b290ab7d00c269dbbb0c97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a200f8fd691b290ab7d00c269dbbb0c97">&#9670;&nbsp;</a></span>particle_handler</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Particles::ParticleHandler&lt;dim&gt;* <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::particle_handler</td>
+          <td class="memname">Particles::ParticleHandler&lt;dim&gt;* <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::particle_handler</td>
         </tr>
       </table>
   </td>
@@ -1006,23 +1013,23 @@ template&lt;int dim&gt; </div>
 
 <p>Pointer to the particle handler object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00436">436</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00440">440</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="ad24773ce56f88f2490ec96dd37b37e42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad24773ce56f88f2490ec96dd37b37e42">&#9670;&nbsp;</a></span>particle_weight</h2>
+<a id="aa2506bf05b00d7eb6f905ca423a89335"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2506bf05b00d7eb6f905ca423a89335">&#9670;&nbsp;</a></span>particle_weight</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::particle_weight</td>
+          <td class="memname">unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::particle_weight</td>
         </tr>
       </table>
   </td>
@@ -1034,23 +1041,23 @@ template&lt;int dim&gt; </div>
 
 <p>Load weight of a particle, the default parameters is 10000. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00365">365</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00369">369</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a65f0757ace17cf18d8e38c841a704910"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65f0757ace17cf18d8e38c841a704910">&#9670;&nbsp;</a></span>simulation_control</h2>
+<a id="a44efbcdd7f058208db950ac5e4696402"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44efbcdd7f058208db950ac5e4696402">&#9670;&nbsp;</a></span>simulation_control</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::simulation_control</td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::simulation_control</td>
         </tr>
       </table>
   </td>
@@ -1062,23 +1069,23 @@ template&lt;int dim&gt; </div>
 
 <p>Pointer to the simulation control object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00426">426</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00430">430</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="ae5b61ad96bddd97a299d5f5f378590d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5b61ad96bddd97a299d5f5f378590d0">&#9670;&nbsp;</a></span>this_mpi_process</h2>
+<a id="a44651b6afed1b9ece435839cab8b3084"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44651b6afed1b9ece435839cab8b3084">&#9670;&nbsp;</a></span>this_mpi_process</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::this_mpi_process</td>
+          <td class="memname">const unsigned int <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::this_mpi_process</td>
         </tr>
       </table>
   </td>
@@ -1090,23 +1097,23 @@ template&lt;int dim&gt; </div>
 
 <p>Rank of the current MPI process. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00421">421</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00425">425</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
-<a id="a52d7c667fd38712b283f764f52e8da20"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52d7c667fd38712b283f764f52e8da20">&#9670;&nbsp;</a></span>triangulation</h2>
+<a id="a795b34c8b668d82cd0158c02649b53c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a795b34c8b668d82cd0158c02649b53c5">&#9670;&nbsp;</a></span>triangulation</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">parallel::distributed::Triangulation&lt;dim&gt;* <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim &gt;::triangulation</td>
+          <td class="memname">parallel::distributed::Triangulation&lt;dim&gt;* <a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;::triangulation</td>
         </tr>
       </table>
   </td>
@@ -1118,7 +1125,7 @@ template&lt;int dim&gt; </div>
 
 <p>Pointer to the triangulation object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00431">431</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00435">435</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>

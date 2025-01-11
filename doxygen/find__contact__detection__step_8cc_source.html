@@ -87,9 +87,9 @@ $(function() {
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8h.html#a2cda3b14d091cbf7f6f208b56692fbbe">   11</a></span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#a4994729b6dda783b95ba3c636891a2a5">find_particle_contact_detection_step</a>(</div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8h.html#a0d6d367c590091ae3722d8ae4c64b8f9">   11</a></span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#a62dd3c98c79c024e1c0f953e7985efa1">find_particle_contact_detection_step</a>(</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     smallest_contact_search_criterion,</div>
@@ -115,12 +115,12 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <span class="comment">// Finding displacement of each particle during last step</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      particle_displacement +=</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        dt * sqrt(particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::PropertiesIndex::v_x</a>] *</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::PropertiesIndex::v_x</a>] +</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                  particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49">DEM::PropertiesIndex::v_y</a>] *</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49">DEM::PropertiesIndex::v_y</a>] +</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                  particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc">DEM::PropertiesIndex::v_z</a>] *</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc">DEM::PropertiesIndex::v_z</a>]);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        dt * sqrt(particle_properties[<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987ab8be94da5f199064e04c09ce312edc81">PropertiesIndex::v_x</a>] *</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987ab8be94da5f199064e04c09ce312edc81">PropertiesIndex::v_x</a>] +</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                  particle_properties[<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a94f59eb4f727dca857ad841403d2d04a">PropertiesIndex::v_y</a>] *</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a94f59eb4f727dca857ad841403d2d04a">PropertiesIndex::v_y</a>] +</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                  particle_properties[<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a8e3d7f7957ce7182852994323d55030d">PropertiesIndex::v_z</a>] *</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a8e3d7f7957ce7182852994323d55030d">PropertiesIndex::v_z</a>]);</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="comment">// Updating maximum displacement of particles</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      max_displacement = std::max(max_displacement, particle_displacement);</div>
@@ -140,8 +140,8 @@ $(function() {
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    }</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#ab340f39898ce7f5f8f58d78ae7535dd1">   63</a></span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#a4994729b6dda783b95ba3c636891a2a5">find_particle_contact_detection_step</a>(</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#aecf134176cdadb141d1795aa4f2f2fe3">   62</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;find_particle_contact_detection_step&lt;2, DEM::DEMProperties::PropertiesIndex&gt;(</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   dt,</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   smallest_contact_search_criterion,</div>
@@ -149,8 +149,8 @@ $(function() {
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  std::vector&lt;double&gt;           &amp;displacement,</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                     parallel_update);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#ab51211c814393d1c0ca1ade81eb477b4">   72</a></span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#a4994729b6dda783b95ba3c636891a2a5">find_particle_contact_detection_step</a>(</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#a464eae0dae3d764a1885c6009a9ba26f">   71</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;find_particle_contact_detection_step&lt;3, DEM::DEMProperties::PropertiesIndex&gt;(</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   dt,</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   smallest_contact_search_criterion,</div>
@@ -158,55 +158,73 @@ $(function() {
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  std::vector&lt;double&gt;           &amp;displacement,</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                     parallel_update);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8h.html#ae590253416d507acd017a2491c75bd8d">   83</a></span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a>(</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; solids)</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;{</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="comment">// Get the action manager</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">auto</span> *action_manager = <a class="code" href="classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53">DEMActionManager::get_action_manager</a>();</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="comment">// If there is no solid object, no need to do anything</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keywordflow">if</span> (!action_manager-&gt;check_solid_objects_enabled())</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keywordtype">bool</span> floating_mesh_requires_map = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    {</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keywordtype">double</span> displacement =</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        solids[i_solid]-&gt;get_max_displacement_since_mapped();</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      floating_mesh_requires_map =</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        floating_mesh_requires_map ||</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        displacement &gt; smallest_contact_search_criterion;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keywordflow">if</span> (floating_mesh_requires_map)</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    action_manager-&gt;solid_objects_search_step();</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;}</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#af389b9102c4e8f02fc1a9b4abc950704">  109</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#af389b9102c4e8f02fc1a9b4abc950704">find_floating_mesh_mapping_step&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;1, 2&gt;</a>&gt;&gt; solids);</div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#a19959d7eb5897c3dfcf18b552e52a8ca">   80</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;find_particle_contact_detection_step&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  Particles::ParticleHandler&lt;2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   dt,</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   smallest_contact_search_criterion,</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  MPI_Comm                      &amp;mpi_communicator,</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  std::vector&lt;double&gt;           &amp;displacement,</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                     parallel_update);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#a242a895a57e491fb68aeccf5613ddfab">   89</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;find_particle_contact_detection_step&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  Particles::ParticleHandler&lt;3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   dt,</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                   smallest_contact_search_criterion,</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  MPI_Comm                      &amp;mpi_communicator,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  std::vector&lt;double&gt;           &amp;displacement,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                     parallel_update);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8h.html#ae590253416d507acd017a2491c75bd8d">  101</a></span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a>(</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; solids)</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;{</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="comment">// Get the action manager</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keyword">auto</span> *action_manager = <a class="code" href="classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53">DEMActionManager::get_action_manager</a>();</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="comment">// If there is no solid object, no need to do anything</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keywordflow">if</span> (!action_manager-&gt;check_solid_objects_enabled())</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <span class="keywordtype">bool</span> floating_mesh_requires_map = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#a9a1c0c5990c82256134153f3aa5a9bc8">  114</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#a9a1c0c5990c82256134153f3aa5a9bc8">find_floating_mesh_mapping_step&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;2, 3&gt;</a>&gt;&gt; solids);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      <span class="keywordtype">double</span> displacement =</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        solids[i_solid]-&gt;get_max_displacement_since_mapped();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      floating_mesh_requires_map =</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        floating_mesh_requires_map ||</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        displacement &gt; smallest_contact_search_criterion;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keywordflow">if</span> (floating_mesh_requires_map)</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    action_manager-&gt;solid_objects_search_step();</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#af389b9102c4e8f02fc1a9b4abc950704">  127</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#af389b9102c4e8f02fc1a9b4abc950704">find_floating_mesh_mapping_step&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;1, 2&gt;</a>&gt;&gt; solids);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="find__contact__detection__step_8cc.html#a9a1c0c5990c82256134153f3aa5a9bc8">  132</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<a class="code" href="find__contact__detection__step_8cc.html#a9a1c0c5990c82256134153f3aa5a9bc8">find_floating_mesh_mapping_step&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;2, 3&gt;</a>&gt;&gt; solids);</div>
 <div class="ttc" id="aclassDEMActionManager_html_a4b4056b87d7e85d3832581f90a4daa53"><div class="ttname"><a href="classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53">DEMActionManager::get_action_manager</a></div><div class="ttdeci">static DEMActionManager * get_action_manager()</div><div class="ttdoc">Getter of the unique instance of the DEMActionManager.</div><div class="ttdef"><b>Definition:</b> <a href="dem__action__manager_8cc_source.html#l00009">dem_action_manager.cc:9</a></div></div>
 <div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition:</b> <a href="serial__solid_8h_source.html#l00048">serial_solid.h:49</a></div></div>
 <div class="ttc" id="adem__action__manager_8h_html"><div class="ttname"><a href="dem__action__manager_8h.html">dem_action_manager.h</a></div></div>
-<div class="ttc" id="afind__contact__detection__step_8cc_html_a4994729b6dda783b95ba3c636891a2a5"><div class="ttname"><a href="find__contact__detection__step_8cc.html#a4994729b6dda783b95ba3c636891a2a5">find_particle_contact_detection_step</a></div><div class="ttdeci">void find_particle_contact_detection_step(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update)</div><div class="ttdoc">Find steps for dynamic contact search for particle-particle contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00011">find_contact_detection_step.cc:11</a></div></div>
+<div class="ttc" id="afind__contact__detection__step_8cc_html_a62dd3c98c79c024e1c0f953e7985efa1"><div class="ttname"><a href="find__contact__detection__step_8cc.html#a62dd3c98c79c024e1c0f953e7985efa1">find_particle_contact_detection_step</a></div><div class="ttdeci">void find_particle_contact_detection_step(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update)</div><div class="ttdoc">Find steps for dynamic contact search for particle-particle contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00011">find_contact_detection_step.cc:11</a></div></div>
 <div class="ttc" id="afind__contact__detection__step_8cc_html_a9a1c0c5990c82256134153f3aa5a9bc8"><div class="ttname"><a href="find__contact__detection__step_8cc.html#a9a1c0c5990c82256134153f3aa5a9bc8">find_floating_mesh_mapping_step&lt; 3 &gt;</a></div><div class="ttdeci">template void find_floating_mesh_mapping_step&lt; 3 &gt;(const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; 2, 3 &gt;&gt;&gt; solids)</div></div>
-<div class="ttc" id="afind__contact__detection__step_8cc_html_ae590253416d507acd017a2491c75bd8d"><div class="ttname"><a href="find__contact__detection__step_8cc.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a></div><div class="ttdeci">void find_floating_mesh_mapping_step(const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; solids)</div><div class="ttdoc">Find steps for dynamic contact search in particle-floating mesh contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00083">find_contact_detection_step.cc:83</a></div></div>
+<div class="ttc" id="afind__contact__detection__step_8cc_html_ae590253416d507acd017a2491c75bd8d"><div class="ttname"><a href="find__contact__detection__step_8cc.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a></div><div class="ttdeci">void find_floating_mesh_mapping_step(const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; solids)</div><div class="ttdoc">Find steps for dynamic contact search in particle-floating mesh contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00101">find_contact_detection_step.cc:101</a></div></div>
 <div class="ttc" id="afind__contact__detection__step_8cc_html_af389b9102c4e8f02fc1a9b4abc950704"><div class="ttname"><a href="find__contact__detection__step_8cc.html#af389b9102c4e8f02fc1a9b4abc950704">find_floating_mesh_mapping_step&lt; 2 &gt;</a></div><div class="ttdeci">template void find_floating_mesh_mapping_step&lt; 2 &gt;(const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; 1, 2 &gt;&gt;&gt; solids)</div></div>
 <div class="ttc" id="afind__contact__detection__step_8h_html"><div class="ttname"><a href="find__contact__detection__step_8h.html">find_contact_detection_step.h</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::v_x</a></div><div class="ttdeci">@ v_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00024">dem_properties.h:24</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49">DEM::v_y</a></div><div class="ttdeci">@ v_y</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00025">dem_properties.h:25</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc">DEM::v_z</a></div><div class="ttdeci">@ v_z</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00026">dem_properties.h:26</a></div></div>
+<div class="ttc" id="anamespaceDEM_1_1DEMProperties_html_ad4c9c6eeafe6423a5619617d6c8a5987a8e3d7f7957ce7182852994323d55030d"><div class="ttname"><a href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a8e3d7f7957ce7182852994323d55030d">DEM::DEMProperties::v_z</a></div><div class="ttdeci">@ v_z</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00040">dem_properties.h:40</a></div></div>
+<div class="ttc" id="anamespaceDEM_1_1DEMProperties_html_ad4c9c6eeafe6423a5619617d6c8a5987a94f59eb4f727dca857ad841403d2d04a"><div class="ttname"><a href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a94f59eb4f727dca857ad841403d2d04a">DEM::DEMProperties::v_y</a></div><div class="ttdeci">@ v_y</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00039">dem_properties.h:39</a></div></div>
+<div class="ttc" id="anamespaceDEM_1_1DEMProperties_html_ad4c9c6eeafe6423a5619617d6c8a5987ab8be94da5f199064e04c09ce312edc81"><div class="ttname"><a href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987ab8be94da5f199064e04c09ce312edc81">DEM::DEMProperties::v_x</a></div><div class="ttdeci">@ v_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00038">dem_properties.h:38</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00033">fluid_dynamics_matrix_free.h:34</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

@@ -382,7 +382,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l00208">208</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00023">DEM::dp</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00037">DEM::DEMProperties::dp</a>.</p>
 
 </div>
 </div>
@@ -410,9 +410,9 @@ template&lt;int dim&gt; </div>
 
 <p>Calculate the void fraction using the Quadrature-Centered Method (QCM). </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l00545">545</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l00551">551</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00023">DEM::dp</a>, <a class="el" href="void__fraction_8h_source.html#l00041">particle_circle_intersection_2d()</a>, <a class="el" href="void__fraction_8h_source.html#l00071">particle_sphere_intersection_3d()</a>, and <a class="el" href="dem__properties_8h_source.html#l00037">DEM::volumetric_contribution</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00037">DEM::DEMProperties::dp</a>, <a class="el" href="void__fraction_8h_source.html#l00041">particle_circle_intersection_2d()</a>, <a class="el" href="void__fraction_8h_source.html#l00071">particle_sphere_intersection_3d()</a>, and <a class="el" href="dem__properties_8h_source.html#l00075">DEM::CFDDEMProperties::volumetric_contribution</a>.</p>
 
 </div>
 </div>
@@ -440,9 +440,9 @@ template&lt;int dim&gt; </div>
 
 <p>Calculate the void fraction using the satellite point method. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l00308">308</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l00310">310</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00023">DEM::dp</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00037">DEM::DEMProperties::dp</a>.</p>
 
 </div>
 </div>
@@ -582,7 +582,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l00090">90</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, <a class="el" href="boundary__conditions_8h_source.html#l00118">BoundaryConditions::BoundaryConditions&lt; dim &gt;::periodic_direction</a>, <a class="el" href="boundary__conditions_8h_source.html#l00115">BoundaryConditions::BoundaryConditions&lt; dim &gt;::periodic_neighbor_id</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb">Parameters::spm</a>, <a class="el" href="boundary__conditions_8h_source.html#l00096">BoundaryConditions::BoundaryConditions&lt; dim &gt;::type</a>, <a class="el" href="dem__properties_8h_source.html#l00022">DEM::type</a>, and <a class="el" href="lethe__grid__tools_8cc_source.html#l00050">LetheGridTools::vertices_cell_mapping_with_periodic_boundaries()</a>.</p>
+<p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, <a class="el" href="boundary__conditions_8h_source.html#l00118">BoundaryConditions::BoundaryConditions&lt; dim &gt;::periodic_direction</a>, <a class="el" href="boundary__conditions_8h_source.html#l00115">BoundaryConditions::BoundaryConditions&lt; dim &gt;::periodic_neighbor_id</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb">Parameters::spm</a>, <a class="el" href="boundary__conditions_8h_source.html#l00096">BoundaryConditions::BoundaryConditions&lt; dim &gt;::type</a>, <a class="el" href="dem__properties_8h_source.html#l00036">DEM::DEMProperties::type</a>, and <a class="el" href="lethe__grid__tools_8cc_source.html#l00050">LetheGridTools::vertices_cell_mapping_with_periodic_boundaries()</a>.</p>
 
 </div>
 </div>
@@ -694,7 +694,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsLinearSubequationsSolver.html#a7a379d697f5617b22773049dfda60c99">PhysicsLinearSubequationsSolver</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l01082">1082</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l01109">1109</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
