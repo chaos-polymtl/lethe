@@ -11,7 +11,7 @@ namespace DEM
 {
   /* @brief Identify which type of solver is used by the DEM
    * particles. This is used to identify which index of the ParticleHandler
-   * corresponds to which properties. Two type of solvers are currently
+   * corresponds to which properties. Two types of solvers are currently
    * supported. DEM implies pure DEM simulation whereas cfd_dem is used to
    * indicate simulations in which the particles are coupled to CFD (CFD-DEM).
    * In the latter case the particles carry additional properties related to the
