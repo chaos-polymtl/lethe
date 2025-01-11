@@ -8,19 +8,21 @@
 using namespace dealii;
 
 // Constructor
-template <int dim>
-ParticlePointLineForce<dim>::ParticlePointLineForce() = default;
+template <int dim, typename PropertiesIndex>
+ParticlePointLineForce<dim, PropertiesIndex>::ParticlePointLineForce() =
+  default;
 
 // In this function, the particle-point and particle-line contact forces are
 // calculated and the particle handler is updated based on this force
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
-  const typename DEM::dem_data_structures<dim>::particle_point_in_contact
-    *particle_point_pairs_in_contact,
-  const Parameters::Lagrangian::LagrangianPhysicalProperties
-                            &physical_properties,
-  std::vector<Tensor<1, 3>> &force)
+ParticlePointLineForce<dim, PropertiesIndex>::
+  calculate_particle_point_contact_force(
+    const typename DEM::dem_data_structures<dim>::particle_point_in_contact
+      *particle_point_pairs_in_contact,
+    const Parameters::Lagrangian::LagrangianPhysicalProperties
+                              &physical_properties,
+    std::vector<Tensor<1, 3>> &force)
 
 {
   // Looping over particle_point_line_pairs_in_contact
@@ -44,10 +46,9 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
       if constexpr (dim == 2)
         particle_location_3d = point_nd_to_3d(particle->get_location());
 
-      const Point<3> point = contact_information->point;
-      double         normal_overlap =
-        ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
-        point.distance(particle_location_3d);
+      const Point<3> point  = contact_information->point;
+      double normal_overlap = ((particle_properties[PropertiesIndex::dp]) / 2) -
+                              point.distance(particle_location_3d);
 
       if (normal_overlap > 0)
         {
@@ -58,23 +59,19 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
             point_to_particle_vector / point_to_particle_vector.norm();
 
           Tensor<1, 3> particle_velocity;
-          particle_velocity[0] = particle_properties[DEM::PropertiesIndex::v_x];
-          particle_velocity[1] = particle_properties[DEM::PropertiesIndex::v_y];
-          particle_velocity[2] = particle_properties[DEM::PropertiesIndex::v_z];
+          particle_velocity[0] = particle_properties[PropertiesIndex::v_x];
+          particle_velocity[1] = particle_properties[PropertiesIndex::v_y];
+          particle_velocity[2] = particle_properties[PropertiesIndex::v_z];
 
           Tensor<1, 3> particle_omega;
-          particle_omega[0] =
-            particle_properties[DEM::PropertiesIndex::omega_x];
-          particle_omega[1] =
-            particle_properties[DEM::PropertiesIndex::omega_y];
-          particle_omega[2] =
-            particle_properties[DEM::PropertiesIndex::omega_z];
+          particle_omega[0] = particle_properties[PropertiesIndex::omega_x];
+          particle_omega[1] = particle_properties[PropertiesIndex::omega_y];
+          particle_omega[2] = particle_properties[PropertiesIndex::omega_z];
 
           // Defining relative contact velocity
           Tensor<1, 3> contact_relative_velocity =
             particle_velocity +
-            cross_product_3d((((particle_properties[DEM::PropertiesIndex::dp]) /
-                               2) *
+            cross_product_3d((((particle_properties[PropertiesIndex::dp]) / 2) *
                               particle_omega),
                              normal_vector);
 
@@ -96,19 +93,17 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
                  9.8696);
           double model_parameter_sn =
             2 * effective_youngs_modulus *
-            sqrt(particle_properties[DEM::PropertiesIndex::dp] *
-                 normal_overlap);
+            sqrt(particle_properties[PropertiesIndex::dp] * normal_overlap);
 
           // Calculation of normal spring  and dashpot constants
           // using particle and wall properties
           double normal_spring_constant =
             1.3333 * effective_youngs_modulus *
-            sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2 *
-                 normal_overlap);
+            sqrt(particle_properties[PropertiesIndex::dp] / 2 * normal_overlap);
           double normal_damping_constant =
             -1.8257 * model_parameter_beta *
             sqrt(model_parameter_sn *
-                 particle_properties[DEM::PropertiesIndex::mass]);
+                 particle_properties[PropertiesIndex::mass]);
 
           // Calculation of normal force using spring and dashpot normal forces
           Tensor<1, 3> spring_normal_force =
@@ -137,14 +132,15 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
 
 // In this function, particle-line contact forces are
 // calculated and the particle handler is updated based on this force
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
-  const typename DEM::dem_data_structures<dim>::particle_line_in_contact
-    *particle_line_pairs_in_contact,
-  const Parameters::Lagrangian::LagrangianPhysicalProperties
-                            &physical_properties,
-  std::vector<Tensor<1, 3>> &force)
+ParticlePointLineForce<dim, PropertiesIndex>::
+  calculate_particle_line_contact_force(
+    const typename DEM::dem_data_structures<dim>::particle_line_in_contact
+      *particle_line_pairs_in_contact,
+    const Parameters::Lagrangian::LagrangianPhysicalProperties
+                              &physical_properties,
+    std::vector<Tensor<1, 3>> &force)
 {
   // Looping over particle_point_line_pairs_in_contact
   for (auto pairs_in_contact_iterator = particle_line_pairs_in_contact->begin();
@@ -176,7 +172,7 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
 
       // Calculation of the distance between the particle and boundary line
       const double normal_overlap =
-        ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
+        ((particle_properties[PropertiesIndex::dp]) / 2) -
         projection.distance(particle_location_3d);
 
       if (normal_overlap > 0)
@@ -189,25 +185,21 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
             point_to_particle_vector / point_to_particle_vector.norm();
 
           Tensor<1, 3> particle_velocity;
-          particle_velocity[0] = particle_properties[DEM::PropertiesIndex::v_x];
-          particle_velocity[1] = particle_properties[DEM::PropertiesIndex::v_y];
-          particle_velocity[2] = particle_properties[DEM::PropertiesIndex::v_z];
+          particle_velocity[0] = particle_properties[PropertiesIndex::v_x];
+          particle_velocity[1] = particle_properties[PropertiesIndex::v_y];
+          particle_velocity[2] = particle_properties[PropertiesIndex::v_z];
 
 
           Tensor<1, 3> particle_omega;
-          particle_omega[0] =
-            particle_properties[DEM::PropertiesIndex::omega_x];
-          particle_omega[1] =
-            particle_properties[DEM::PropertiesIndex::omega_y];
-          particle_omega[2] =
-            particle_properties[DEM::PropertiesIndex::omega_z];
+          particle_omega[0] = particle_properties[PropertiesIndex::omega_x];
+          particle_omega[1] = particle_properties[PropertiesIndex::omega_y];
+          particle_omega[2] = particle_properties[PropertiesIndex::omega_z];
 
 
           // Defining relative contact velocity
           Tensor<1, 3> contact_relative_velocity =
             particle_velocity +
-            cross_product_3d((((particle_properties[DEM::PropertiesIndex::dp]) /
-                               2) *
+            cross_product_3d((((particle_properties[PropertiesIndex::dp]) / 2) *
                               particle_omega),
                              normal_vector);
 
@@ -230,19 +222,17 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
                  9.8696);
           double model_parameter_sn =
             2 * effective_youngs_modulus *
-            sqrt(particle_properties[DEM::PropertiesIndex::dp] *
-                 normal_overlap);
+            sqrt(particle_properties[PropertiesIndex::dp] * normal_overlap);
 
           // Calculation of normal spring  and dashpot constants
           // using particle and wall properties
           double normal_spring_constant =
             1.3333 * effective_youngs_modulus *
-            sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2 *
-                 normal_overlap);
+            sqrt(particle_properties[PropertiesIndex::dp] / 2 * normal_overlap);
           double normal_damping_constant =
             -1.8257 * model_parameter_beta *
             sqrt(model_parameter_sn *
-                 particle_properties[DEM::PropertiesIndex::mass]);
+                 particle_properties[PropertiesIndex::mass]);
 
           // Calculation of normal force using spring and dashpot normal forces
           Tensor<1, 3> spring_normal_force =
@@ -269,11 +259,12 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 Point<3>
-ParticlePointLineForce<dim>::find_projection_point(const Point<3> &point_p,
-                                                   const Point<3> &point_a,
-                                                   const Point<3> &point_b)
+ParticlePointLineForce<dim, PropertiesIndex>::find_projection_point(
+  const Point<3> &point_p,
+  const Point<3> &point_a,
+  const Point<3> &point_b)
 {
   Tensor<1, 3> vector_ab = point_b - point_a;
   Tensor<1, 3> vector_ap = point_p - point_a;
@@ -284,5 +275,9 @@ ParticlePointLineForce<dim>::find_projection_point(const Point<3> &point_p,
   return projection;
 }
 
-template class ParticlePointLineForce<2>;
-template class ParticlePointLineForce<3>;
+template class ParticlePointLineForce<2, DEM::DEMProperties::PropertiesIndex>;
+template class ParticlePointLineForce<2,
+                                      DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticlePointLineForce<3, DEM::DEMProperties::PropertiesIndex>;
+template class ParticlePointLineForce<3,
+                                      DEM::CFDDEMProperties::PropertiesIndex>;

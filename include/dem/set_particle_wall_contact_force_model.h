@@ -16,12 +16,15 @@
  * @brief Set the selected particle-wall contact force model in the parameter
  * handler file.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param dem_parameters DEM parameters
  * @param triangulation Triangulation
  * @return A pointer to the particle-wall contact force object
  */
-template <int dim>
-std::shared_ptr<ParticleWallContactForce<dim>>
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<ParticleWallContactForce<dim, PropertiesIndex>>
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation);

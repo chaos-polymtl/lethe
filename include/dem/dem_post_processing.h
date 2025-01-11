@@ -32,7 +32,8 @@ namespace DEM
    * - Translational velocity
    * - Rotational (angular) velocity
    *
-   * @tparam dim Dimensionality of the problem (2D or 3D)
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    * @tparam dem_statistics_variable Enum variable used to identify which
    * granular statistics is being calculated
    *
@@ -40,7 +41,7 @@ namespace DEM
    * DEM
    * @param mpi_communicator The MPI communicator
    */
-  template <int dim, dem_statistic_variable var>
+  template <int dim, typename PropertiesIndex, dem_statistic_variable var>
   statistics
   calculate_granular_statistics(
     const Particles::ParticleHandler<dim> &particle_handler,

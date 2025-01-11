@@ -9,9 +9,9 @@
 using namespace DEM;
 
 // This function is empty for explicit Euler integrator
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ExplicitEulerIntegrator<dim>::integrate_half_step_location(
+ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
   const Tensor<1, 3> & /*body_force*/,
   const double /*time_step*/,
@@ -20,9 +20,9 @@ ExplicitEulerIntegrator<dim>::integrate_half_step_location(
   const std::vector<double> & /*MOI*/)
 {}
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ExplicitEulerIntegrator<dim>::integrate(
+ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -88,9 +88,9 @@ ExplicitEulerIntegrator<dim>::integrate(
 }
 
 // Explicit Euler not implemented for adaptive sparse contacts
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ExplicitEulerIntegrator<dim>::integrate(
+ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -98,7 +98,7 @@ ExplicitEulerIntegrator<dim>::integrate(
   std::vector<Tensor<1, 3>>       &force,
   const std::vector<double>       &MOI,
   const parallel::distributed::Triangulation<dim> & /* triangulation */,
-  AdaptiveSparseContacts<dim> & /* sparse_contacts_object */)
+  AdaptiveSparseContacts<dim, PropertiesIndex> & /* sparse_contacts_object */)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -116,5 +116,9 @@ ExplicitEulerIntegrator<dim>::integrate(
     "Adaptive sparse contacts are not supported with explicit Euler integrator, use Velocity Verlet integrator.");
 }
 
-template class ExplicitEulerIntegrator<2>;
-template class ExplicitEulerIntegrator<3>;
+template class ExplicitEulerIntegrator<2, DEM::DEMProperties::PropertiesIndex>;
+template class ExplicitEulerIntegrator<2,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;
+template class ExplicitEulerIntegrator<3, DEM::DEMProperties::PropertiesIndex>;
+template class ExplicitEulerIntegrator<3,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;

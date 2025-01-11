@@ -60,7 +60,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
+    tr, mapping, DEM::DEMProperties::PropertiesIndex::n_properties);
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
@@ -87,7 +87,7 @@ test()
     {
       auto particle_properties = particle->get_properties();
 
-      double dp = particle_properties[DEM::PropertiesIndex::dp];
+      double dp = particle_properties[DEM::DEMProperties::PropertiesIndex::dp];
 
       deallog << "Particle " << particle_number << " diameter is: " << dp
               << std::endl;

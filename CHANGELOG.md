@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-01-10
+
+### Changed
+
+- MAJOR The index of properties in the DEM and CFD-DEM simulations are now indexed using a template (PropertiesIndex) instead of using an hardcoded enum. This enables the different solvers to have different number of properties and different properties index. For large simulations, this gives minor performance gain for DEM simulations (e.g. around 5-10%), but this makes the solver significantly more flexible. This is a major change since it breaks DEM and CFD-DEM restart files from previous versions. [#1399](https://github.com/chaos-polymtl/lethe/pull/1399)
+
 ## [Master] - 2024-01-02
 
 ### Changed

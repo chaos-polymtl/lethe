@@ -34,7 +34,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 test()
 {
@@ -77,10 +77,10 @@ test()
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   // Initializing motion of boundaries
-  Tensor<1, dim> translational_and_rotational_veclocity;
+  Tensor<1, dim> translational_and_rotational_velocity;
   for (unsigned int d = 0; d < dim; ++d)
     {
-      translational_and_rotational_veclocity[d] = 0;
+      translational_and_rotational_velocity[d] = 0;
     }
   for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
        ++counter)
@@ -88,13 +88,13 @@ test()
       dem_parameters.boundary_conditions.boundary_rotational_speed.insert(
         {counter, 0});
       dem_parameters.boundary_conditions.boundary_translational_velocity.insert(
-        {counter, translational_and_rotational_veclocity});
+        {counter, translational_and_rotational_velocity});
       dem_parameters.boundary_conditions.boundary_rotational_vector.insert(
-        {counter, translational_and_rotational_veclocity});
+        {counter, translational_and_rotational_velocity});
     }
 
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
+    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
 
   // Inserting one particle in contact with a wall
   Point<dim>               position1 = {-0.998, 0, 0};
@@ -104,15 +104,15 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0.01;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+  pit1->get_properties()[PropertiesIndex::type]    = 0;
+  pit1->get_properties()[PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[PropertiesIndex::v_x]     = 0.01;
+  pit1->get_properties()[PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[PropertiesIndex::mass]    = 1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -155,7 +155,7 @@ test()
                                  particle_wall_contact_information);
 
   // Calling linear force
-  ParticleWallLinearForce<dim> force_object(dem_parameters);
+  ParticleWallLinearForce<dim, PropertiesIndex> force_object(dem_parameters);
   force_object.calculate_particle_wall_contact_force(
     particle_wall_contact_information, dt, torque, force);
 
@@ -173,7 +173,7 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3>();
+      test<3, DEM::DEMProperties::PropertiesIndex>();
     }
   catch (std::exception &exc)
     {

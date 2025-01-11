@@ -44,6 +44,9 @@ find_particle_point_contact_pairs(
  * collision pairs will be investigated in the fine search to check if they
  * are in contact or not.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param particle_handler Particle handler of particles located in boundary
  * cells.
  * @param boundary_cells_with_points A container of cells which are located at
@@ -54,15 +57,15 @@ find_particle_point_contact_pairs(
  * @param sparse_contacts_object The Adaptive Sparse Contacts for mobility
  * status checks.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<std::string, cell_point_info<dim>>
     &boundary_cells_with_points,
   typename DEM::dem_data_structures<dim>::particle_point_candidates
-                                    &particle_point_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
  * @brief Find a map of tuples (tuple of particle and the locations of
@@ -93,6 +96,9 @@ find_particle_line_contact_pairs(
  * candidate particle-line collision pairs. These collision pairs will be
  * investigated in the fine search to check if they are in contact or not.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param particle_handler Particle handler of particles located in boundary
  * cells.
  * @param boundary_cells_with_lines A container of cells which are located at
@@ -103,14 +109,14 @@ find_particle_line_contact_pairs(
  * @param sparse_contacts_object The Adaptive Sparse Contacts for mobility
  * status checks.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<std::string, cell_line_info<dim>>
     &boundary_cells_with_lines,
   typename DEM::dem_data_structures<dim>::particle_line_candidates
-                                    &particle_line_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 #endif

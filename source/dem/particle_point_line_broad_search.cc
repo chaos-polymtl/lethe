@@ -58,15 +58,15 @@ find_particle_point_contact_pairs(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<std::string, cell_point_info<dim>>
     &boundary_cells_with_points,
   typename DEM::dem_data_structures<dim>::particle_point_candidates
-                                    &particle_point_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
 {
   // Clear the candidate map
   particle_point_contact_candidates.clear();
@@ -91,7 +91,8 @@ find_particle_point_contact_pairs(
       unsigned int main_cell_mobility_status =
         sparse_contacts_object.check_cell_mobility(
           cells_with_boundary_points_information.cell);
-      if (main_cell_mobility_status != AdaptiveSparseContacts<dim>::mobile)
+      if (main_cell_mobility_status !=
+          AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
         continue;
 
       // Finding particles located in the corresponding cell
@@ -168,15 +169,15 @@ find_particle_line_contact_pairs(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<std::string, cell_line_info<dim>>
     &boundary_cells_with_lines,
   typename DEM::dem_data_structures<dim>::particle_line_candidates
-                                    &particle_line_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
 {
   // Clear the candidates map
   particle_line_contact_candidates.clear();
@@ -201,7 +202,8 @@ find_particle_line_contact_pairs(
       unsigned int main_cell_mobility_status =
         sparse_contacts_object.check_cell_mobility(
           cells_with_boundary_lines_info.cell);
-      if (main_cell_mobility_status != AdaptiveSparseContacts<dim>::mobile)
+      if (main_cell_mobility_status !=
+          AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
         continue;
 
       // Finding particles located in the corresponding cell
@@ -243,22 +245,44 @@ find_particle_line_contact_pairs<3>(
     &particle_line_contact_candidates);
 
 template void
-find_particle_line_contact_pairs<2>(
+find_particle_line_contact_pairs<2, DEM::DEMProperties::PropertiesIndex>(
   const Particles::ParticleHandler<2> &particle_handler,
   const std::unordered_map<std::string, cell_line_info<2>>
     &boundary_cells_with_lines,
   typename DEM::dem_data_structures<2>::particle_line_candidates
-                                  &particle_line_contact_candidates,
-  const AdaptiveSparseContacts<2> &sparse_contacts_object);
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
 
 template void
-find_particle_line_contact_pairs<3>(
+find_particle_line_contact_pairs<3, DEM::DEMProperties::PropertiesIndex>(
   const Particles::ParticleHandler<3> &particle_handler,
   const std::unordered_map<std::string, cell_line_info<3>>
     &boundary_cells_with_lines,
   typename DEM::dem_data_structures<3>::particle_line_candidates
-                                  &particle_line_contact_candidates,
-  const AdaptiveSparseContacts<3> &sparse_contacts_object);
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_line_contact_pairs<2, DEM::CFDDEMProperties::PropertiesIndex>(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<std::string, cell_line_info<2>>
+    &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<2>::particle_line_candidates
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<2, DEM::CFDDEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_line_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<std::string, cell_line_info<3>>
+    &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<3>::particle_line_candidates
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
 
 template void
 find_particle_point_contact_pairs<2>(
@@ -282,8 +306,9 @@ find_particle_point_contact_pairs<2>(
   const std::unordered_map<std::string, cell_point_info<2>>
     &boundary_cells_with_points,
   typename DEM::dem_data_structures<2>::particle_point_candidates
-                                  &particle_point_contact_candidates,
-  const AdaptiveSparseContacts<2> &sparse_contacts_object);
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
 
 template void
 find_particle_point_contact_pairs<3>(
@@ -291,5 +316,26 @@ find_particle_point_contact_pairs<3>(
   const std::unordered_map<std::string, cell_point_info<3>>
     &boundary_cells_with_points,
   typename DEM::dem_data_structures<3>::particle_point_candidates
-                                  &particle_point_contact_candidates,
-  const AdaptiveSparseContacts<3> &sparse_contacts_object);
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_point_contact_pairs<2>(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<std::string, cell_point_info<2>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<2>::particle_point_candidates
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<2, DEM::CFDDEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_point_contact_pairs<3>(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<std::string, cell_point_info<3>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<3>::particle_point_candidates
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
+    &sparse_contacts_object);

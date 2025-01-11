@@ -9,9 +9,9 @@
 
 using namespace DEM;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim>::integrate_half_step_location(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -54,9 +54,9 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim>::integrate(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -134,9 +134,9 @@ VelocityVerletIntegrator<dim>::integrate(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim>::integrate(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const Tensor<1, 3>                              &g,
   const double                                     dt,
@@ -144,7 +144,7 @@ VelocityVerletIntegrator<dim>::integrate(
   std::vector<Tensor<1, 3>>                       &force,
   const std::vector<double>                       &MOI,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  AdaptiveSparseContacts<dim>                     &sparse_contacts_object)
+  AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -199,7 +199,8 @@ VelocityVerletIntegrator<dim>::integrate(
 
               if (n_particles_in_cell > 0)
                 {
-                  if (mobility_status == AdaptiveSparseContacts<dim>::mobile)
+                  if (mobility_status ==
+                      AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
                     {
                       for (auto &particle : particles_in_cell)
                         {
@@ -278,17 +279,18 @@ VelocityVerletIntegrator<dim>::integrate(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
-  Particles::ParticleHandler<dim>                 &particle_handler,
-  const Tensor<1, 3>                              &g,
-  const double                                     dt,
-  std::vector<Tensor<1, 3>>                       &torque,
-  std::vector<Tensor<1, 3>>                       &force,
-  const std::vector<double>                       &MOI,
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  AdaptiveSparseContacts<dim>                     &sparse_contacts_object)
+VelocityVerletIntegrator<dim, PropertiesIndex>::
+  integrate_with_advected_particles(
+    Particles::ParticleHandler<dim>                 &particle_handler,
+    const Tensor<1, 3>                              &g,
+    const double                                     dt,
+    std::vector<Tensor<1, 3>>                       &torque,
+    std::vector<Tensor<1, 3>>                       &force,
+    const std::vector<double>                       &MOI,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object)
 {
   Point<3>           particle_position;
   const Tensor<1, 3> dt_g = g * dt;
@@ -320,7 +322,8 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
 
           if (n_particles_in_cell > 0)
             {
-              if (mobility_status == AdaptiveSparseContacts<dim>::mobile)
+              if (mobility_status ==
+                  AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
                 {
                   // When mobile, the average velocity of the cell and the
                   // acceleration is updated at the same step that the particles
@@ -399,9 +402,11 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
                   velocity_cell_average /= n_particles_in_cell;
                 }
               else if (mobility_status ==
-                         AdaptiveSparseContacts<dim>::advected ||
+                         AdaptiveSparseContacts<dim,
+                                                PropertiesIndex>::advected ||
                        mobility_status ==
-                         AdaptiveSparseContacts<dim>::advected_active)
+                         AdaptiveSparseContacts<dim, PropertiesIndex>::
+                           advected_active)
                 {
                   for (auto &particle : particles_in_cell)
                     {
@@ -464,5 +469,9 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
 }
 
 
-template class VelocityVerletIntegrator<2>;
-template class VelocityVerletIntegrator<3>;
+template class VelocityVerletIntegrator<2, DEM::DEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<2,
+                                        DEM::CFDDEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<3, DEM::DEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<3,
+                                        DEM::CFDDEMProperties::PropertiesIndex>;

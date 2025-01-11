@@ -45,15 +45,34 @@ find_particle_wall_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
     &particle_wall_contact_candidates);
 
-template <int dim>
+/**
+ * @brief Finds unordered map of tuples (tuple of particle located in
+ * boundary cells, normal vector of the boundary face, a
+ * point on the face and the corresponding boundary cell) which shows the
+ * candidate particle-wall collision pairs. These collision candidates will be
+ * investigated in the fine search to check if they are in contact or not.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
+ * @param boundary_cells_information Information of the boundary cells and
+ * faces. This is the output of the FindBoundaryCellsInformation class.
+ * @param particle_handler Particle handler of particles located in boundary
+ * cells.
+ * @param particle_wall_contact_candidates A two-layered unordered map of tuples. Each
+ * tuple contains a particle located near boundaries, the normal vector of
+ * the corresponding face boundary, a point on the boundary and the boundary
+ * cell. The contact pair is used in the fine search.
+ */
+template <int dim, typename PropertiesIndex>
 void
 find_particle_wall_contact_pairs(
   const std::map<int, boundary_cells_info_struct<dim>>
                                         &boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
-                                    &particle_wall_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+    &particle_wall_contact_candidates,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
  * @brief Find a two-layered unordered map of particle iterators which shows the
@@ -84,7 +103,28 @@ find_particle_floating_wall_contact_pairs(
   const double                                      simulation_time,
   typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
     &particle_floating_wall_candidates);
-template <int dim>
+
+/**
+ * @brief Find a two-layered unordered map of particle iterators which shows the
+ * candidate particle-floating wall collision candidates. These collision
+ * pairs will be investigated in the fine search to check if they are in
+ * contact or not
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
+ * @param boundary_cells_for_floating_walls Boundary cells located adjacent to
+ * floating walls
+ * @param particle_handler Particle handler of particles located in boundary
+ * cells
+ * @param floating_wall_properties Properties of the floating walls specified
+ * in the parameter handler file
+ * @param simulation_time Simulation time
+ * @param particle_floating_wall_candidates Output of particle-floating wall
+ * broad search which contains all the particle-floating wall collision
+ * candidates
+ */
+template <int dim, typename PropertiesIndex>
 void
 find_particle_floating_wall_contact_pairs(
   const std::unordered_map<
@@ -95,8 +135,8 @@ find_particle_floating_wall_contact_pairs(
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double                                      simulation_time,
   typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
-                                    &particle_floating_wall_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+    &particle_floating_wall_candidates,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
  * @brief Find a two-layered unordered map
@@ -126,7 +166,28 @@ particle_solid_surfaces_contact_search(
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
     &cells_total_neighbor_list);
 
-template <int dim>
+
+/**
+ * @brief Find a two-layered unordered map
+ * (particle_floating_mesh_contact_candidates) of particle iterators that
+ * shows the candidate particle-floating mesh collision candidates. These
+ * collision pairs will be investigated in the fine search to check if they
+ * are in contact or not
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
+ * @param solid_surfaces_mesh_information Information of the solid surfaces mapped
+ * in the background triangulation.
+ * @param particle_handler
+ * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact
+ * candidates
+ * @param cells_total_neighbor_list A container in which all the neighbor cells
+ * of the local cells are stored
+ * @param sparse_contacts_object The object that contains the
+ * information about the mobility status of cells
+ */
+template <int dim, typename PropertiesIndex>
 void
 particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
@@ -135,8 +196,8 @@ particle_solid_surfaces_contact_search(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
-                                    &cells_total_neighbor_list,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+                                                     &cells_total_neighbor_list,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 
 /**

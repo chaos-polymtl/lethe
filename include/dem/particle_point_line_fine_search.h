@@ -14,6 +14,9 @@ using namespace dealii;
  * contact, the normal overlap, normal vector of contact and contact normal
  * relative velocity are stored in a map which is the output of this function.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param particle_point_contact_candidates The output of particle-point broad
  * search which shows contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.
@@ -21,7 +24,7 @@ using namespace dealii;
  * information (normal overlap, normal vector and contact normal relative
  * velocity) for calculation of particle-point contact force.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 particle_point_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_point_candidates
@@ -36,6 +39,9 @@ particle_point_fine_search(
  * contact, the normal overlap, normal vector of contact and contact normal
  * relative velocity are stored in a map which is the output of this function.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param particle_line_contact_candidates The output of particle-line broad
  * search which shows contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.
@@ -43,7 +49,7 @@ particle_point_fine_search(
  * information (normal overlap, normal vector and contact normal relative
  * velocity) for calculation of particle-line contact force.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 particle_line_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_line_candidates

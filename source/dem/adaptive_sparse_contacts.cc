@@ -7,15 +7,15 @@
 
 #include <deal.II/fe/fe_q.h>
 
-template <int dim>
-AdaptiveSparseContacts<dim>::AdaptiveSparseContacts()
+template <int dim, typename PropertiesIndex>
+AdaptiveSparseContacts<dim, PropertiesIndex>::AdaptiveSparseContacts()
   : sparse_contacts_enabled(false)
   , advect_particles_enabled(false)
 {}
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-AdaptiveSparseContacts<dim>::update_local_and_ghost_cell_set(
+AdaptiveSparseContacts<dim, PropertiesIndex>::update_local_and_ghost_cell_set(
   const DoFHandler<dim> &background_dh)
 {
   if (!sparse_contacts_enabled)
@@ -29,14 +29,15 @@ AdaptiveSparseContacts<dim>::update_local_and_ghost_cell_set(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  const std::set<typename DoFHandler<dim>::active_cell_iterator>
-                 &local_and_ghost_cells_with_particles,
-  Vector<double> &granular_temperature_average,
-  Vector<double> &solid_fractions)
+AdaptiveSparseContacts<dim, PropertiesIndex>::
+  calculate_granular_temperature_and_solid_fraction(
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const std::set<typename DoFHandler<dim>::active_cell_iterator>
+                   &local_and_ghost_cells_with_particles,
+    Vector<double> &granular_temperature_average,
+    Vector<double> &solid_fractions)
 {
   // Iterating through the active cells in cell set with particles
   for (const auto &cell : local_and_ghost_cells_with_particles)
@@ -65,12 +66,12 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
           // Get particle properties
           auto particle_properties =
             particles_in_cell_iterator->get_properties();
-          const double dp = particle_properties[DEM::PropertiesIndex::dp];
+          const double dp = particle_properties[PropertiesIndex::dp];
 
           for (int d = 0; d < dim; ++d)
             {
               // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
-              int v_axis = DEM::PropertiesIndex::v_x + d;
+              int v_axis = PropertiesIndex::v_x + d;
 
               // Add the velocity component value
               velocity_cell_average[d] += particle_properties[v_axis];
@@ -97,7 +98,7 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
           for (int d = 0; d < dim; ++d)
             {
               // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
-              int v_axis = DEM::PropertiesIndex::v_x + d;
+              int v_axis = PropertiesIndex::v_x + d;
 
               cell_velocity_fluctuation_squared_average[d] +=
                 Utilities::fixed_power<2>(particle_properties[v_axis] -
@@ -121,9 +122,9 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-AdaptiveSparseContacts<dim>::identify_mobility_status(
+AdaptiveSparseContacts<dim, PropertiesIndex>::identify_mobility_status(
   const DoFHandler<dim>                 &background_dh,
   const Particles::ParticleHandler<dim> &particle_handler,
   const unsigned int                     n_active_cells,
@@ -354,13 +355,14 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
-  Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, 3>              &g,
-  const std::vector<Tensor<1, 3>> &force,
-  const double                     dt)
+AdaptiveSparseContacts<dim, PropertiesIndex>::
+  update_average_velocities_acceleration(
+    Particles::ParticleHandler<dim> &particle_handler,
+    const Tensor<1, 3>              &g,
+    const std::vector<Tensor<1, 3>> &force,
+    const double                     dt)
 {
   // If the sparse contacts is disabled, exit the function.
   // Also, if the mobility status do not need to be reset, which only happens
@@ -400,7 +402,7 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
                     particle.get_local_index();
 
                   double dt_mass_inverse =
-                    dt / particle_properties[DEM::PropertiesIndex::mass];
+                    dt / particle_properties[PropertiesIndex::mass];
 
                   // Calculate the acceleration of the particle times the time
                   // step
@@ -414,7 +416,7 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
                     {
                       // Add up the current velocity for the average velocity
                       velocity_cell_average[d] +=
-                        particle_properties[DEM::PropertiesIndex::v_x + d] +
+                        particle_properties[PropertiesIndex::v_x + d] +
                         acc_dt_particle[d];
                     }
                 }
@@ -431,5 +433,9 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
     }
 }
 
-template class AdaptiveSparseContacts<2>;
-template class AdaptiveSparseContacts<3>;
+template class AdaptiveSparseContacts<2, DEM::DEMProperties::PropertiesIndex>;
+template class AdaptiveSparseContacts<2,
+                                      DEM::CFDDEMProperties::PropertiesIndex>;
+template class AdaptiveSparseContacts<3, DEM::DEMProperties::PropertiesIndex>;
+template class AdaptiveSparseContacts<3,
+                                      DEM::CFDDEMProperties::PropertiesIndex>;

@@ -31,6 +31,9 @@ using namespace dealii;
 /**
  * @brief Carries out writing the cell data of the domain.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param triangulation Triangulation of the domain.
  * @param grid_pvdhandler PVD handler for grid.
  * @param background_dh Background DoF handler.
@@ -41,7 +44,7 @@ using namespace dealii;
  * @param mpi_communicator MPI communicator.
  * @param sparse_contacts_object Àdaptive sparse contacts object.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 write_post_processing_results(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -52,7 +55,7 @@ write_post_processing_results(
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm                                  &mpi_communicator,
-  AdaptiveSparseContacts<dim>                     &sparse_contacts_object);
+  AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object);
 
 /**
  * @brief Carries out the calculation of the average particles velocity in each local
@@ -67,7 +70,7 @@ write_post_processing_results(
  * @param velocity_average_z Average velocity in z-direction.
  * @param velocity_average_magnitude Average velocity magnitude.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 calculate_average_particles_velocity(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -87,7 +90,7 @@ calculate_average_particles_velocity(
  * @param particle_handler Particle handler.
  * @param granular_temperature_average Average granular temperature.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 calculate_average_granular_temperature(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -105,7 +108,7 @@ calculate_average_granular_temperature(
  *
  * @return A tensor which stores the average particles velocity in the input cell
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 Tensor<1, dim>
 calculate_cell_average_particles_velocity(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,

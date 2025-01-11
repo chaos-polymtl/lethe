@@ -21,7 +21,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 test()
 {
@@ -68,7 +68,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
+    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
 
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
@@ -93,7 +93,7 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3>();
+      test<3, DEM::DEMProperties::PropertiesIndex>();
     }
   catch (std::exception &exc)
     {

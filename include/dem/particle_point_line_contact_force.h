@@ -21,8 +21,11 @@ using namespace dealii;
  * of particles and walls. Since the inputs and the calculation method of
  * particle-point and particle-line contact forces are similar, we only used one
  * function for both tasks.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class ParticlePointLineForce
 {
 public:

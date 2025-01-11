@@ -23,9 +23,12 @@ using namespace dealii;
 /**
  * @brief Base interface for classes that carry out the calculation of
  * particle-wall contact force.
+
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class ParticleWallContactForce
 {
 public:

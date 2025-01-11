@@ -29,7 +29,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 test()
 {
@@ -48,7 +48,7 @@ test()
   double particle_diameter = 0.005;
 
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
+    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
 
   // Inserting one particle in contact with a wall
   Point<dim>               position1 = {-0.998, 0, 0};
@@ -58,15 +58,15 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+  pit1->get_properties()[PropertiesIndex::type]    = 0;
+  pit1->get_properties()[PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[PropertiesIndex::v_x]     = 0;
+  pit1->get_properties()[PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[PropertiesIndex::mass]    = 1;
 
   // Calling find_boundary_cells_information function to find the information of
   // boundary cells
@@ -125,7 +125,7 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3>();
+      test<3, DEM::DEMProperties::PropertiesIndex>();
     }
   catch (std::exception &exc)
     {
