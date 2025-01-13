@@ -35,13 +35,11 @@ In this example, we evaluate the performance of the ``lethe-fluid`` solver in th
   :align: center
   :width: 400
 
-
 The incompressible Navier-Stokes equations with a Boussinesq approximation for the buoyant force are:
-.. math::
-  \nabla \cdot {\bf{u}} = 0
 
 .. math::
-  \rho \frac{\partial {\bf{u}}}{\partial t} + \rho ({\bf{u}} \cdot \nabla) {\bf{u}} = -\nabla p + \nabla \cdot {\bf{\tau}} - \rho \beta {\bf{g}} (T - T_0)
+  \nabla \cdot {\bf{u}} &= 0 \\
+  \rho \frac{\partial {\bf{u}}}{\partial t} + \rho ({\bf{u}} \cdot \nabla) {\bf{u}} &= -\nabla p + \nabla \cdot {\bf{\tau}} - \rho \beta {\bf{g}} (T - T_0)
 
 where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a reference temperature, respectively.
 
@@ -50,7 +48,6 @@ A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0`
 .. math::
   Ra &= \frac{\rho^2 \beta g (T_\text{h} - T_\text{c}) H^3 c_\text{p}}{k \mu} \\
   Pr &= \frac{\mu c_\text{p}}{k}
-
 
 where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, :math:`\mu` is the dynamic viscosity, and :math:`c_\text{p}` is the specific heat capacity.
 
@@ -165,7 +162,7 @@ to run the simulations using eight CPU cores for the :math:`Ra=10^4` and :math:`
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. The first simulation takes
-    :math:`\approx` 20 minutes on 8 processes and the second at :math:`Ra=10^6` can take more than 2 days because of the much smaller time-step required to respect the CFL condition.
+    :math:`\approx` 20 minutes on 8 processes and the second at :math:`Ra=10^6` can take a few hours because of the much smaller time-step required to respect the CFL condition.
 
 
 -------
