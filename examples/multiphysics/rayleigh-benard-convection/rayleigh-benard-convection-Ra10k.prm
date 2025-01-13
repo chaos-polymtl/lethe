@@ -15,7 +15,7 @@ subsection simulation control
   set time end                     = 24
   set time step                    = 0.01
   set adapt                        = true
-  set max cfl                      = 0.5
+  set max cfl                      = 0.9
   set stop tolerance               = 1e-5
   set adaptative time step scaling = 1.3
   set number mesh adapt            = 0
@@ -179,9 +179,12 @@ subsection non-linear solver
     set max iterations = 20
   end
   subsection fluid dynamics
-    set verbosity      = verbose
-    set tolerance      = 1e-8
-    set max iterations = 20
+    set solver           = inexact_newton
+    set verbosity        = verbose
+    set matrix tolerance = 0.1
+    set reuse matrix     = true
+    set tolerance        = 1e-8
+    set max iterations   = 20
   end
 end
 
@@ -196,10 +199,7 @@ subsection linear solver
     set max iters                             = 1000
     set relative residual                     = 1e-6
     set minimum residual                      = 1e-8
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-14
-    set ilu preconditioner relative tolerance = 1.00
+    set preconditioner                        = amg
   end
   subsection heat transfer
     set verbosity                             = verbose
@@ -208,8 +208,5 @@ subsection linear solver
     set relative residual                     = 1e-6
     set minimum residual                      = 1e-8
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-14
-    set ilu preconditioner relative tolerance = 1.00
   end
 end

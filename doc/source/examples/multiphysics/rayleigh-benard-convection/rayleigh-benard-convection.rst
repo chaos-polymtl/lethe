@@ -54,10 +54,10 @@ A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0`
 
 where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, :math:`\mu` is the dynamic viscosity, and :math:`c_\text{p}` is the specific heat capacity.
 
-In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers ( :math:`Ra=10^4` and :math:`Ra=10^6` ) with a Prandtl number of :math:`Pr=0.71` which correspond to air. According to the literature [#ouertatani]_ , we should see one big convective cell at steady-state for both :math:`Ra=10^4` and :math:`Ra=10^6`, but for the latter, there should also be two small voriticies in opposite corners rotating in the reverse direction of the big vortex. For simplicity, the gravity magnitude is set to 10 pointing in the opposite direction of the y-axis for both simulations. Additionally, because the two dimensionless numbers above are the only thing that characterize the flow we may choose the remaining parameters as we want. Here we chose to fix :math:`\rho = 1`, :math:`H = 1`, :math:`c_\text{p} = 100` and :math:`\mu = 0.071`. Thus, the Rayleigh number is controlled only by the thermal expansion coefficient (:math:`\beta = 0.71` or :math:`\beta = 71`). In other words, we change the Rayleigh number by changing the thermal expansion coefficient of the fluid.
+In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers ( :math:`Ra=10^4` and :math:`Ra=10^6` ) with a Prandtl number of :math:`Pr=0.71` which correspond to air. According to the literature [#ouertatani]_ , we should see one big convective cell at steady-state for both :math:`Ra=10^4` and :math:`Ra=10^6`, but for the latter, there should also be two small vortices in opposite corners rotating in the reverse direction of the big vortex. For simplicity, the gravity magnitude is set to 10 pointing in the opposite direction of the y-axis for both simulations. Additionally, because the two dimensionless numbers above are the only thing that characterize the flow we may choose the remaining parameters as we want. Here we chose to fix :math:`\rho = 1`, :math:`H = 1`, :math:`c_\text{p} = 100` and :math:`\mu = 0.071`. Thus, the Rayleigh number is controlled only by the thermal expansion coefficient (:math:`\beta = 0.71` or :math:`\beta = 71`).
 
 .. note:: 
-    All four boundary conditions are ``noslip``.
+    All four boundary conditions for the velocity are ``noslip``. The sides wall are set to ``convection-radiation-flux`` with a heat transfer coefficient of 0 to have isolated walls. The top and bottom walls are set to a ``temperature`` to force a value of 0 and 10, respectively. 
 
 
 --------------
@@ -77,7 +77,7 @@ The time integration is handled by a 1st order backward differentiation scheme
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = time``, and ``output time frequency = 0.5`` the simulation results are written every 0.5 seconds regardless of the time-steps.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.9 here). Using ``output control = time``, and ``output time frequency = 0.5`` the simulation results are written every 0.5 seconds regardless of the time-steps.
 
 .. code-block:: text
 
@@ -86,7 +86,7 @@ The time integration is handled by a 1st order backward differentiation scheme
       set time end                     = 24
       set time step                    = 0.01
       set adapt                        = true
-      set max cfl                      = 0.5
+      set max cfl                      = 0.9
       set stop tolerance               = 1e-5
       set adaptative time step scaling = 1.3
       set number mesh adapt            = 0
@@ -165,7 +165,7 @@ to run the simulations using eight CPU cores for the :math:`Ra=10^4` and :math:`
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. The first simulation takes
-    :math:`\approx` 20 minutes on 8 processes and the second at :math:`Ra=10^6` can take more than 2 days.
+    :math:`\approx` 20 minutes on 8 processes and the second at :math:`Ra=10^6` can take more than 2 days because of the much smaller time-step required to respect the CFL condition.
 
 
 -------
