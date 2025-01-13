@@ -31,7 +31,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 test()
 {
@@ -85,10 +85,10 @@ test()
   Particles::ParticleIterator<dim> pit0 =
     particle_handler.insert_particle(particle0, particle0_cell);
 
-  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x] = 0;
-  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y] = 0;
-  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z] = 0;
-  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] =
+  pit0->get_properties()[PropertiesIndex::v_x] = 0;
+  pit0->get_properties()[PropertiesIndex::v_y] = 0;
+  pit0->get_properties()[PropertiesIndex::v_z] = 0;
+  pit0->get_properties()[PropertiesIndex::mass] =
     particle_mass;
 
   // Calling integrators
@@ -111,7 +111,7 @@ test()
       while (t < t_final)
         {
           particle_iterator
-            ->get_properties()[DEM::PropertiesIndex::force_x + (dim - 1)] =
+            ->get_properties()[PropertiesIndex::force_x + (dim - 1)] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 
           explicit_euler_object.integrate(particle_handler, g, dt1, MOI);
@@ -134,10 +134,10 @@ test()
     particle_handler.insert_particle(particle1, particle1_cell);
 
 
-  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x] = 0;
-  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y] = 0;
-  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z] = 0;
-  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] =
+  pit1->get_properties()[PropertiesIndex::v_x] = 0;
+  pit1->get_properties()[PropertiesIndex::v_y] = 0;
+  pit1->get_properties()[PropertiesIndex::v_z] = 0;
+  pit1->get_properties()[PropertiesIndex::mass] =
     particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
@@ -152,7 +152,7 @@ test()
       while (t < t_final)
         {
           particle_iterator
-            ->get_properties()[DEM::PropertiesIndex::force_x + (dim - 1)] =
+            ->get_properties()[PropertiesIndex::force_x + (dim - 1)] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 
           explicit_euler_object.integrate(particle_handler, g, dt2, MOI);
@@ -198,7 +198,7 @@ test()
     {
       t = 0;
       particle_iterator
-        ->get_properties()[DEM::PropertiesIndex::force_x + (dim - 1)] = -x0;
+        ->get_properties()[PropertiesIndex::force_x + (dim - 1)] = -x0;
 
       velocity_verlet_object.integrate_half_step_location(particle_handler,
                                                           g,
@@ -209,7 +209,7 @@ test()
       while (t < t_final)
         {
           particle_iterator
-            ->get_properties()[DEM::PropertiesIndex::force_x + (dim - 1)] =
+            ->get_properties()[PropertiesIndex::force_x + (dim - 1)] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 
           velocity_verlet_object.integrate(particle_handler, g, dt1, MOI);
@@ -230,10 +230,10 @@ test()
   Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, particle3_cell);
 
-  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x] = 0;
-  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y] = 0;
-  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z] = 0;
-  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] =
+  pit3->get_properties()[PropertiesIndex::v_x] = 0;
+  pit3->get_properties()[PropertiesIndex::v_y] = 0;
+  pit3->get_properties()[PropertiesIndex::v_z] = 0;
+  pit3->get_properties()[PropertiesIndex::mass] =
     particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
@@ -247,7 +247,7 @@ test()
       t = 0;
 
       particle_iterator
-        ->get_properties()[DEM::PropertiesIndex::force_x + (dim - 1)] = -x0;
+        ->get_properties()[PropertiesIndex::force_x + (dim - 1)] = -x0;
 
       velocity_verlet_object.integrate_half_step_location(particle_handler,
                                                           g,
@@ -258,7 +258,7 @@ test()
       while (t < t_final)
         {
           particle_iterator
-            ->get_properties()[DEM::PropertiesIndex::force_x + (dim - 1)] =
+            ->get_properties()[PropertiesIndex::force_x + (dim - 1)] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 
           velocity_verlet_object.integrate(particle_handler, g, dt2, MOI);
@@ -285,7 +285,7 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3>();
+      test<3,DEM::DEMProperties::PropertiesIndex>();
     }
   catch (std::exception &exc)
     {

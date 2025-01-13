@@ -39,6 +39,23 @@ using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
 void
+reinitialize_force_and_torque(Particles::ParticleHandler<dim> &particle_handler)
+{
+  for (auto particle_iterator = particle_handler.begin();
+       particle_iterator != particle_handler.end();
+       ++particle_iterator)
+  {
+    particle_iterator->get_properties()[PropertiesIndex::force_x]  = 0;
+    particle_iterator->get_properties()[PropertiesIndex::force_y]  = 0;
+    particle_iterator->get_properties()[PropertiesIndex::force_z]  = 0;
+    particle_iterator->get_properties()[PropertiesIndex::torque_x] = 0;
+    particle_iterator->get_properties()[PropertiesIndex::torque_y] = 0;
+    particle_iterator->get_properties()[PropertiesIndex::torque_z] = 0;
+  }
+}
+
+template <int dim, typename PropertiesIndex>
+void
 test()
 {
   // Creating the mesh and refinement
@@ -133,7 +150,7 @@ test()
   while (time < 0.2)
     {
       auto particle = particle_handler.begin();
-      reinitialize_force_and_torque<dim>(particle_handler);
+    reinitialize_force_and_torque<dim,PropertiesIndex>(particle_handler);
 
       find_particle_point_contact_pairs<dim>(
         particle_handler,

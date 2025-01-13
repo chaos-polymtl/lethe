@@ -42,16 +42,16 @@ reinitialize_force_and_torque(Particles::ParticleHandler<dim> &particle_handler)
        particle_iterator != particle_handler.end();
        ++particle_iterator)
     {
-      particle_iterator->get_properties()[DEM::PropertiesIndex::force_x]  = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::force_y]  = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::force_z]  = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_x] = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_y] = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_z] = 0;
+      particle_iterator->get_properties()[PropertiesIndex::force_x]  = 0;
+      particle_iterator->get_properties()[PropertiesIndex::force_y]  = 0;
+      particle_iterator->get_properties()[PropertiesIndex::force_z]  = 0;
+      particle_iterator->get_properties()[PropertiesIndex::torque_x] = 0;
+      particle_iterator->get_properties()[PropertiesIndex::torque_y] = 0;
+      particle_iterator->get_properties()[PropertiesIndex::torque_z] = 0;
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 test()
 {
@@ -175,7 +175,7 @@ test()
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force acting on particle 1 is: "
-          << particle->get_properties()[DEM::PropertiesIndex::force_x] << " N "
+          << particle->get_properties()[PropertiesIndex::force_x] << " N "
           << std::endl;
 }
 

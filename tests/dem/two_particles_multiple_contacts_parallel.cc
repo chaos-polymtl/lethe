@@ -23,7 +23,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 reinitialize_force_and_torque(Particles::ParticleHandler<dim> &particle_handler)
 {
@@ -31,12 +31,12 @@ reinitialize_force_and_torque(Particles::ParticleHandler<dim> &particle_handler)
        particle_iterator != particle_handler.end();
        ++particle_iterator)
     {
-      particle_iterator->get_properties()[DEM::PropertiesIndex::force_x]  = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::force_y]  = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::force_z]  = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_x] = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_y] = 0;
-      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_z] = 0;
+      particle_iterator->get_properties()[PropertiesIndex::force_x]  = 0;
+      particle_iterator->get_properties()[PropertiesIndex::force_y]  = 0;
+      particle_iterator->get_properties()[PropertiesIndex::force_z]  = 0;
+      particle_iterator->get_properties()[PropertiesIndex::torque_x] = 0;
+      particle_iterator->get_properties()[PropertiesIndex::torque_y] = 0;
+      particle_iterator->get_properties()[PropertiesIndex::torque_z] = 0;
     }
 }
 
@@ -165,7 +165,7 @@ test()
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
       // Reinitializing forces
-      reinitialize_force_and_torque(particle_handler);
+      reinitialize_force_and_torque<dim, PropertiesIndex>(particle_handler);
 
       particle_handler.exchange_ghost_particles();
 
@@ -196,7 +196,7 @@ test()
       // TODO - Improve this in the future, this is not clean.
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 1)
         step_force = particle_handler.begin()
-                       ->get_properties()[DEM::PropertiesIndex::force_y];
+                       ->get_properties()[PropertiesIndex::force_y];
 
       // Integration
       integrator_object.integrate(particle_handler, g, dt, MOI);

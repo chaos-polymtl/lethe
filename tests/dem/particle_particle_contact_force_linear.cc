@@ -156,9 +156,9 @@ test()
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force vector for particle 1 is: "
-          << pit1->get_properties()[DEM::PropertiesIndex::force_x] << " "
-          << pit1->get_properties()[DEM::PropertiesIndex::force_y] << " "
-          << pit1->get_properties()[DEM::PropertiesIndex::force_z] << " N "
+          << pit1->get_properties()[PropertiesIndex::force_x] << " "
+          << pit1->get_properties()[PropertiesIndex::force_y] << " "
+          << pit1->get_properties()[PropertiesIndex::force_z] << " N "
           << std::endl;
 }
 

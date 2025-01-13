@@ -156,9 +156,9 @@ test()
       distance      = hyper_cube_length + particle->get_location()[0] -
                  particle->get_properties()[PropertiesIndex::dp] / 2.0;
 
-      particle->get_properties()[DEM::PropertiesIndex::force_x] = 0.0;
-      particle->get_properties()[DEM::PropertiesIndex::force_y] = 0.0;
-      particle->get_properties()[DEM::PropertiesIndex::force_z] = 0.0;
+      particle->get_properties()[PropertiesIndex::force_x] = 0.0;
+      particle->get_properties()[PropertiesIndex::force_y] = 0.0;
+      particle->get_properties()[PropertiesIndex::force_z] = 0.0;
 
       if (distance > 0.0)
         {
@@ -200,7 +200,7 @@ test()
 
           // Storing force before integration
           step_force =
-            particle->get_properties()[DEM::PropertiesIndex::force_x];
+            particle->get_properties()[PropertiesIndex::force_x];
 
 
           integrator_object.integrate(particle_handler, g, dt, MOI);
