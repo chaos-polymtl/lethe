@@ -1,6 +1,9 @@
 <map id="FluidDynamicsSharp&lt; dim &gt;" name="FluidDynamicsSharp&lt; dim &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="37,259,193,300"/>
-<area shape="rect" id="node2" href="$classFluidDynamicsMatrixBased.html" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="14,169,215,211"/>
-<area shape="rect" id="node3" href="$classNavierStokesBase.html" title=" " alt="" coords="5,80,224,121"/>
-<area shape="rect" id="node4" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="8,5,221,32"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="37,255,193,295"/>
+<area shape="rect" id="Node000002" href="$classFluidDynamicsMatrixBased.html" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="14,167,215,207"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,221,117,254,112,254,112,221"/>
+<area shape="rect" id="Node000003" href="$classNavierStokesBase.html" title=" " alt="" coords="5,79,224,119"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="117,133,117,166,112,166,112,133"/>
+<area shape="rect" id="Node000004" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="8,5,221,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="117,44,117,79,112,79,112,44"/>
 </map>

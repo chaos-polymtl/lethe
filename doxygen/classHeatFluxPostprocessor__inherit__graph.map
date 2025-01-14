@@ -1,4 +1,5 @@
 <map id="HeatFluxPostprocessor&lt; dim &gt;" name="HeatFluxPostprocessor&lt; dim &gt;">
-<area shape="rect" id="node1" title="Compute the local heat flux vector field within a domain." alt="" coords="12,95,184,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,191,47"/>
+<area shape="rect" id="Node000001" title="Compute the local heat flux vector field within a domain." alt="" coords="12,93,184,133"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,191,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,59,101,93,95,93,95,59"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="NavierStokesBase&lt; dim, VectorType, DofsType &gt;" name="NavierStokesBase&lt; dim, VectorType, DofsType &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="20,80,204,121"/>
-<area shape="rect" id="node2" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="5,5,219,32"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="20,79,204,119"/>
+<area shape="rect" id="Node000002" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="5,5,219,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,44,115,79,109,79,109,44"/>
 </map>

@@ -1,7 +1,11 @@
 <map id="ThermalConductivityModel" name="ThermalConductivityModel">
-<area shape="rect" id="node1" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="224,56,423,83"/>
-<area shape="rect" id="node3" href="$classConstantThermalConductivity.html" title="Constant thermal conductivity." alt="" coords="471,5,687,32"/>
-<area shape="rect" id="node4" href="$classThermalConductivityLinear.html" title="Implements a linear temperature&#45;dependent thermal conductivity of the form k = A + BT." alt="" coords="479,56,678,83"/>
-<area shape="rect" id="node5" href="$classThermalConductivityPhaseChange.html" title="Implements a phase&#45;dependent thermal conductivity." alt="" coords="480,107,677,149"/>
-<area shape="rect" id="node2" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,56,176,83"/>
+<area shape="rect" id="Node000001" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="224,55,423,80"/>
+<area shape="rect" id="Node000003" href="$classConstantThermalConductivity.html" title="Constant thermal conductivity." alt="" coords="471,5,687,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="402,49,512,28,513,33,403,55"/>
+<area shape="rect" id="Node000004" href="$classThermalConductivityLinear.html" title="Implements a linear temperature&#45;dependent thermal conductivity of the form k = A + BT." alt="" coords="479,55,678,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="436,65,479,65,479,70,436,70"/>
+<area shape="rect" id="Node000005" href="$classThermalConductivityPhaseChange.html" title="Implements a phase&#45;dependent thermal conductivity." alt="" coords="480,105,677,145"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="394,80,490,102,489,107,393,86"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,55,176,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,65,224,65,224,70,190,70"/>
 </map>

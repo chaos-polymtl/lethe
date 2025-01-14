@@ -1,9 +1,18 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/tracer_scratch_data.h" name="/home/runner/work/lethe/lethe/include/solvers/tracer_scratch_data.h">
-<area shape="rect" id="node1" title=" " alt="" coords="261,5,443,61"/>
-<area shape="rect" id="node2" href="$tracer_8h.html" title=" " alt="" coords="67,213,250,269"/>
-<area shape="rect" id="node4" href="$tracer_8cc.html" title=" " alt="" coords="222,317,405,373"/>
-<area shape="rect" id="node5" href="$tracer__assemblers_8h.html" title=" " alt="" coords="326,109,509,165"/>
-<area shape="rect" id="node7" href="$tracer__scratch__data_8cc.html" title=" " alt="" coords="533,109,715,165"/>
-<area shape="rect" id="node3" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,317,197,373"/>
-<area shape="rect" id="node6" href="$tracer__assemblers_8cc.html" title=" " alt="" coords="377,213,559,269"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="261,5,443,60"/>
+<area shape="rect" id="Node000002" href="$tracer_8h.html" title=" " alt="" coords="67,211,250,265"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="313,71,271,110,181,212,177,209,267,106,309,67"/>
+<area shape="rect" id="Node000004" href="$tracer_8cc.html" title=" " alt="" coords="222,313,405,368"/>
+<area shape="poly" id="edge8_Node000001_Node000004" title=" " alt="" coords="330,73,316,109,307,165,305,221,312,313,307,313,300,222,302,164,311,107,325,71"/>
+<area shape="rect" id="Node000005" href="$tracer__assemblers_8h.html" title=" " alt="" coords="326,108,509,163"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="379,70,403,106,398,109,374,73"/>
+<area shape="rect" id="Node000007" href="$tracer__scratch__data_8cc.html" title=" " alt="" coords="533,108,715,163"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="436,62,554,105,552,110,434,67"/>
+<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,313,197,368"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="139,279,119,315,114,312,135,276"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="212,271,274,311,271,315,209,275"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="338,170,227,213,225,208,336,165"/>
+<area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="390,175,366,212,342,265,324,314,319,312,337,263,362,209,386,172"/>
+<area shape="rect" id="Node000006" href="$tracer__assemblers_8cc.html" title=" " alt="" coords="377,211,559,265"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="439,174,457,209,452,212,434,176"/>
 </map>

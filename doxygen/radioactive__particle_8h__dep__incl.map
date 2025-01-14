@@ -1,12 +1,28 @@
 <map id="/home/runner/work/lethe/lethe/include/rpt/radioactive_particle.h" name="/home/runner/work/lethe/lethe/include/rpt/radioactive_particle.h">
-<area shape="rect" id="node1" title=" " alt="" coords="407,5,616,61"/>
-<area shape="rect" id="node2" href="$particle__detector__interactions_8h.html" title=" " alt="" coords="237,109,423,165"/>
-<area shape="rect" id="node3" href="$rpt_8h.html" title=" " alt="" coords="239,221,421,262"/>
-<area shape="rect" id="node5" href="$rpt__fem__reconstruction_8h.html" title=" " alt="" coords="445,213,628,269"/>
-<area shape="rect" id="node9" href="$rpt__cell__reconstruction_8h.html" title=" " alt="" coords="756,109,939,165"/>
-<area shape="rect" id="node10" href="$rpt__utilities_8h.html" title=" " alt="" coords="549,109,732,165"/>
-<area shape="rect" id="node6" href="$rpt__fem__reconstruction_8cc.html" title=" " alt="" coords="135,317,317,373"/>
-<area shape="rect" id="node7" href="$particle__detector__interactions_8cc.html" title=" " alt="" coords="29,213,215,269"/>
-<area shape="rect" id="node8" href="$rpt__cell__reconstruction_8cc.html" title=" " alt="" coords="704,213,887,269"/>
-<area shape="rect" id="node4" href="$rpt_8cc.html" title=" " alt="" coords="407,325,589,366"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="406,5,616,60"/>
+<area shape="rect" id="Node000002" href="$particle__detector__interactions_8h.html" title=" " alt="" coords="237,108,422,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="453,69,378,110,376,105,450,64"/>
+<area shape="rect" id="Node000003" href="$rpt_8h.html" title=" " alt="" coords="238,218,421,258"/>
+<area shape="poly" id="edge9_Node000001_Node000003" title=" " alt="" coords="496,74,470,119,436,164,401,196,365,220,362,216,397,191,432,161,465,116,491,71"/>
+<area shape="rect" id="Node000005" href="$rpt__fem__reconstruction_8h.html" title=" " alt="" coords="445,211,628,265"/>
+<area shape="poly" id="edge12_Node000001_Node000005" title=" " alt="" coords="519,73,536,210,530,210,513,74"/>
+<area shape="rect" id="Node000009" href="$rpt__cell__reconstruction_8h.html" title=" " alt="" coords="756,108,938,163"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="612,61,760,105,759,110,611,66"/>
+<area shape="rect" id="Node000010" href="$rpt__utilities_8h.html" title=" " alt="" coords="549,108,732,163"/>
+<area shape="poly" id="edge13_Node000001_Node000010" title=" " alt="" coords="557,66,608,106,605,110,554,70"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="332,177,332,218,327,218,327,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="397,166,484,208,481,213,394,171"/>
+<area shape="rect" id="Node000006" href="$rpt__fem__reconstruction_8cc.html" title=" " alt="" coords="134,313,317,368"/>
+<area shape="poly" id="edge8_Node000002_Node000006" title=" " alt="" coords="224,150,161,160,100,174,49,191,31,201,18,212,10,225,8,238,11,250,18,264,42,288,70,306,102,320,134,328,133,333,100,325,68,311,38,292,14,267,6,252,3,238,5,223,14,209,28,197,47,186,99,168,160,155,223,145"/>
+<area shape="rect" id="Node000007" href="$particle__detector__interactions_8cc.html" title=" " alt="" coords="29,211,214,265"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="264,171,177,213,175,208,262,166"/>
+<area shape="rect" id="Node000008" href="$rpt__cell__reconstruction_8cc.html" title=" " alt="" coords="704,211,886,265"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="436,157,704,214,703,220,435,162"/>
+<area shape="rect" id="Node000004" href="$rpt_8cc.html" title=" " alt="" coords="406,321,589,361"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="374,263,468,318,465,323,371,267"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="443,272,307,316,306,311,442,267"/>
+<area shape="poly" id="edge11_Node000009_Node000008" title=" " alt="" coords="829,176,811,212,806,209,825,174"/>
+<area shape="poly" id="edge15_Node000010_Node000004" title=" " alt="" coords="653,176,655,221,651,245,641,267,627,285,608,301,567,323,565,318,605,296,623,282,637,264,646,243,649,221,647,176"/>
+<area shape="poly" id="edge14_Node000010_Node000005" title=" " alt="" coords="605,174,565,212,562,209,601,170"/>
+<area shape="poly" id="edge16_Node000010_Node000008" title=" " alt="" coords="694,168,756,208,753,213,691,172"/>
 </map>

@@ -1,6 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/ib_particles_dem.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/ib_particles_dem.h">
-<area shape="rect" id="node1" title=" " alt="" coords="109,5,292,61"/>
-<area shape="rect" id="node2" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="7,109,189,165"/>
-<area shape="rect" id="node4" href="$ib__particles__dem_8cc.html" title=" " alt="" coords="213,109,396,165"/>
-<area shape="rect" id="node3" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,213,191,269"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="109,5,292,60"/>
+<area shape="rect" id="Node000002" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="7,108,189,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="166,72,127,110,123,106,162,68"/>
+<area shape="rect" id="Node000004" href="$ib__particles__dem_8cc.html" title=" " alt="" coords="213,108,396,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="240,68,279,106,276,110,236,72"/>
+<area shape="rect" id="Node000003" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,211,191,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,176,101,211,95,211,95,176"/>
 </map>

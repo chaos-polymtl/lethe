@@ -1,8 +1,14 @@
 <map id="/home/runner/work/lethe/lethe/include/core/ib_stencil.h" name="/home/runner/work/lethe/lethe/include/core/ib_stencil.h">
-<area shape="rect" id="node1" title=" " alt="" coords="136,5,319,61"/>
-<area shape="rect" id="node2" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="7,213,189,269"/>
-<area shape="rect" id="node4" href="$ib__particles__dem_8h.html" title=" " alt="" coords="136,109,319,165"/>
-<area shape="rect" id="node6" href="$ib__stencil_8cc.html" title=" " alt="" coords="343,109,525,165"/>
-<area shape="rect" id="node3" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,317,191,373"/>
-<area shape="rect" id="node5" href="$ib__particles__dem_8cc.html" title=" " alt="" coords="213,213,396,269"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="136,5,319,60"/>
+<area shape="rect" id="Node000002" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="7,211,189,265"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,70,145,88,127,109,115,134,107,161,101,211,95,210,102,160,110,132,122,107,141,84,163,66"/>
+<area shape="rect" id="Node000004" href="$ib__particles__dem_8h.html" title=" " alt="" coords="136,108,319,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="230,74,230,108,225,108,225,74"/>
+<area shape="rect" id="Node000006" href="$ib__stencil_8cc.html" title=" " alt="" coords="343,108,525,163"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="294,63,381,106,379,110,292,68"/>
+<area shape="rect" id="Node000003" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,313,191,368"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,279,101,313,95,313,95,279"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="185,173,134,213,130,208,181,169"/>
+<area shape="rect" id="Node000005" href="$ib__particles__dem_8cc.html" title=" " alt="" coords="213,211,396,265"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="258,172,287,209,282,212,254,175"/>
 </map>

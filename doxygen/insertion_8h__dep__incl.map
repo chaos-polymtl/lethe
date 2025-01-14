@@ -1,22 +1,48 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/insertion.h" name="/home/runner/work/lethe/lethe/include/dem/insertion.h">
-<area shape="rect" id="node1" title=" " alt="" coords="985,5,1201,47"/>
-<area shape="rect" id="node2" href="$dem_8h.html" title=" " alt="" coords="209,102,397,143"/>
-<area shape="rect" id="node8" href="$insertion__file_8h.html" title=" " alt="" coords="421,95,625,151"/>
-<area shape="rect" id="node10" href="$insertion__list_8h.html" title=" " alt="" coords="649,95,853,151"/>
-<area shape="rect" id="node12" href="$insertion__plane_8h.html" title=" " alt="" coords="877,95,1081,151"/>
-<area shape="rect" id="node14" href="$insertion__volume_8h.html" title=" " alt="" coords="1105,95,1309,151"/>
-<area shape="rect" id="node16" href="$read__checkpoint_8h.html" title=" " alt="" coords="1333,95,1516,151"/>
-<area shape="rect" id="node18" href="$write__checkpoint_8h.html" title=" " alt="" coords="1540,95,1723,151"/>
-<area shape="rect" id="node20" href="$insertion_8cc.html" title=" " alt="" coords="1747,102,1966,143"/>
-<area shape="rect" id="node3" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="212,303,395,359"/>
-<area shape="rect" id="node5" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="83,199,265,255"/>
-<area shape="rect" id="node7" href="$dem_8cc.html" title=" " alt="" coords="1013,206,1204,247"/>
-<area shape="rect" id="node4" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="212,407,395,463"/>
-<area shape="rect" id="node6" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="5,303,188,359"/>
-<area shape="rect" id="node9" href="$insertion__file_8cc.html" title=" " alt="" coords="341,199,541,255"/>
-<area shape="rect" id="node11" href="$insertion__list_8cc.html" title=" " alt="" coords="565,199,765,255"/>
-<area shape="rect" id="node13" href="$insertion__plane_8cc.html" title=" " alt="" coords="789,199,989,255"/>
-<area shape="rect" id="node15" href="$insertion__volume_8cc.html" title=" " alt="" coords="1229,199,1429,255"/>
-<area shape="rect" id="node17" href="$read__checkpoint_8cc.html" title=" " alt="" coords="1453,199,1636,255"/>
-<area shape="rect" id="node19" href="$write__checkpoint_8cc.html" title=" " alt="" coords="1660,199,1843,255"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="985,5,1201,45"/>
+<area shape="rect" id="Node000002" href="$dem_8h.html" title=" " alt="" coords="209,101,397,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="971,36,712,57,560,74,409,96,374,103,373,98,408,91,559,68,711,51,971,31"/>
+<area shape="rect" id="Node000008" href="$insertion__file_8h.html" title=" " alt="" coords="421,93,625,148"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="972,44,812,67,637,96,626,98,625,93,636,91,811,61,971,39"/>
+<area shape="rect" id="Node000010" href="$insertion__list_8h.html" title=" " alt="" coords="649,93,853,148"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="1011,52,848,96,847,91,1009,46"/>
+<area shape="rect" id="Node000012" href="$insertion__plane_8h.html" title=" " alt="" coords="877,93,1081,148"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="1061,56,1013,95,1010,91,1058,52"/>
+<area shape="rect" id="Node000014" href="$insertion__volume_8h.html" title=" " alt="" coords="1105,93,1309,148"/>
+<area shape="poly" id="edge17_Node000001_Node000014" title=" " alt="" coords="1128,52,1177,91,1173,95,1125,56"/>
+<area shape="rect" id="Node000016" href="$read__checkpoint_8h.html" title=" " alt="" coords="1333,93,1516,148"/>
+<area shape="poly" id="edge20_Node000001_Node000016" title=" " alt="" coords="1174,47,1334,91,1332,96,1172,52"/>
+<area shape="rect" id="Node000018" href="$write__checkpoint_8h.html" title=" " alt="" coords="1540,93,1723,148"/>
+<area shape="poly" id="edge23_Node000001_Node000018" title=" " alt="" coords="1214,39,1365,61,1529,91,1540,93,1539,98,1528,96,1364,67,1214,45"/>
+<area shape="rect" id="Node000020" href="$insertion_8cc.html" title=" " alt="" coords="1747,101,1966,141"/>
+<area shape="poly" id="edge26_Node000001_Node000020" title=" " alt="" coords="1215,33,1456,55,1596,71,1736,91,1776,98,1775,103,1735,96,1596,76,1456,60,1214,38"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="212,299,395,353"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="306,154,306,298,301,298,301,154"/>
+<area shape="rect" id="Node000005" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="83,196,265,251"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="270,151,210,198,206,194,266,147"/>
+<area shape="rect" id="Node000007" href="$dem_8cc.html" title=" " alt="" coords="1013,203,1204,243"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="386,141,409,145,499,158,575,165,705,170,835,174,911,181,1001,193,1038,201,1037,206,1000,199,911,186,835,180,705,175,574,170,498,163,408,151,385,146"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="212,401,395,456"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="306,367,306,401,301,401,301,367"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="220,257,271,296,268,301,217,261"/>
+<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="5,299,188,353"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="147,263,119,300,115,297,143,260"/>
+<area shape="poly" id="edge9_Node000008_Node000007" title=" " alt="" coords="639,146,742,161,822,169,901,178,1001,193,1036,201,1035,206,1000,199,900,183,821,174,741,166,639,151"/>
+<area shape="rect" id="Node000009" href="$insertion__file_8cc.html" title=" " alt="" coords="341,196,541,251"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="495,160,464,198,460,194,491,157"/>
+<area shape="poly" id="edge12_Node000010_Node000007" title=" " alt="" coords="858,149,1042,201,1041,206,856,154"/>
+<area shape="rect" id="Node000011" href="$insertion__list_8cc.html" title=" " alt="" coords="565,196,765,251"/>
+<area shape="poly" id="edge13_Node000010_Node000011" title=" " alt="" coords="722,160,689,198,685,194,718,157"/>
+<area shape="poly" id="edge15_Node000012_Node000007" title=" " alt="" coords="1025,154,1086,201,1083,205,1022,159"/>
+<area shape="rect" id="Node000013" href="$insertion__plane_8cc.html" title=" " alt="" coords="789,196,989,251"/>
+<area shape="poly" id="edge16_Node000012_Node000013" title=" " alt="" coords="948,160,914,198,910,194,944,157"/>
+<area shape="poly" id="edge18_Node000014_Node000007" title=" " alt="" coords="1174,160,1129,205,1126,201,1170,156"/>
+<area shape="rect" id="Node000015" href="$insertion__volume_8cc.html" title=" " alt="" coords="1229,196,1429,251"/>
+<area shape="poly" id="edge19_Node000014_Node000015" title=" " alt="" coords="1251,155,1299,194,1295,198,1248,159"/>
+<area shape="poly" id="edge21_Node000016_Node000007" title=" " alt="" coords="1330,155,1169,206,1167,201,1329,150"/>
+<area shape="rect" id="Node000017" href="$read__checkpoint_8cc.html" title=" " alt="" coords="1453,196,1636,251"/>
+<area shape="poly" id="edge22_Node000016_Node000017" title=" " alt="" coords="1468,155,1515,194,1512,198,1465,159"/>
+<area shape="poly" id="edge24_Node000018_Node000007" title=" " alt="" coords="1527,151,1439,166,1370,175,1302,184,1217,199,1183,206,1182,201,1216,193,1302,179,1370,170,1438,161,1526,146"/>
+<area shape="rect" id="Node000019" href="$write__checkpoint_8cc.html" title=" " alt="" coords="1660,196,1843,251"/>
+<area shape="poly" id="edge25_Node000018_Node000019" title=" " alt="" coords="1675,155,1722,194,1718,198,1671,159"/>
 </map>

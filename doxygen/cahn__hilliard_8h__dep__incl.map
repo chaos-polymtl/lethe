@@ -1,5 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/cahn_hilliard.h" name="/home/runner/work/lethe/lethe/include/solvers/cahn_hilliard.h">
-<area shape="rect" id="node1" title=" " alt="" coords="111,5,293,61"/>
-<area shape="rect" id="node2" href="$cahn__hilliard_8cc.html" title=" " alt="" coords="5,109,188,165"/>
-<area shape="rect" id="node3" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="213,109,405,165"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="111,5,293,60"/>
+<area shape="rect" id="Node000002" href="$cahn__hilliard_8cc.html" title=" " alt="" coords="5,108,188,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="166,72,126,110,122,106,163,68"/>
+<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="213,108,405,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="242,68,283,106,279,110,238,72"/>
 </map>

@@ -1,5 +1,7 @@
 <map id="CutHollowSphere&lt; dim &gt;" name="CutHollowSphere&lt; dim &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,169,195,196"/>
-<area shape="rect" id="node2" href="$classShape.html" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="41,95,159,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="13,5,187,47"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,167,195,192"/>
+<area shape="rect" id="Node000002" href="$classShape.html" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="41,93,159,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,132,103,167,97,167,97,132"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="13,5,187,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="103,59,103,93,97,93,97,59"/>
 </map>

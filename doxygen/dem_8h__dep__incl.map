@@ -1,8 +1,14 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/dem.h" name="/home/runner/work/lethe/lethe/include/dem/dem.h">
-<area shape="rect" id="node1" title=" " alt="" coords="132,5,320,47"/>
-<area shape="rect" id="node2" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,199,188,255"/>
-<area shape="rect" id="node4" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="135,95,317,151"/>
-<area shape="rect" id="node6" href="$dem_8cc.html" title=" " alt="" coords="341,102,532,143"/>
-<area shape="rect" id="node3" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,303,188,359"/>
-<area shape="rect" id="node5" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,199,395,255"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="132,5,320,45"/>
+<area shape="rect" id="Node000002" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,196,188,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="171,54,146,72,126,95,113,119,105,146,99,196,94,195,100,145,108,117,121,92,143,68,168,50"/>
+<area shape="rect" id="Node000004" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="135,93,317,148"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="229,59,229,93,223,93,223,59"/>
+<area shape="rect" id="Node000006" href="$dem_8cc.html" title=" " alt="" coords="341,101,532,141"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="282,48,395,98,393,103,280,53"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,299,188,353"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,264,99,299,94,299,94,264"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="183,158,132,198,129,194,180,154"/>
+<area shape="rect" id="Node000005" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,196,395,251"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="257,157,285,194,281,198,253,161"/>
 </map>

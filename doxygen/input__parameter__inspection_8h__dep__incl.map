@@ -1,5 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/input_parameter_inspection.h" name="/home/runner/work/lethe/lethe/include/dem/input_parameter_inspection.h">
-<area shape="rect" id="node1" title=" " alt="" coords="116,5,299,61"/>
-<area shape="rect" id="node2" href="$dem_8cc.html" title=" " alt="" coords="5,117,196,158"/>
-<area shape="rect" id="node3" href="$input__parameter__inspection_8cc.html" title=" " alt="" coords="221,109,410,165"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="116,5,299,60"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,115,196,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="171,71,123,117,119,113,168,68"/>
+<area shape="rect" id="Node000003" href="$input__parameter__inspection_8cc.html" title=" " alt="" coords="221,108,410,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="248,68,289,106,285,110,244,72"/>
 </map>

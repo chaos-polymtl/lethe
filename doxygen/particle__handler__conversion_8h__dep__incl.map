@@ -1,6 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/particle_handler_conversion.h" name="/home/runner/work/lethe/lethe/include/dem/particle_handler_conversion.h">
-<area shape="rect" id="node1" title=" " alt="" coords="215,5,411,61"/>
-<area shape="rect" id="node2" href="$particle__handler__conversion_8cc.html" title=" " alt="" coords="5,109,197,165"/>
-<area shape="rect" id="node3" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="222,109,405,165"/>
-<area shape="rect" id="node4" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="429,109,611,165"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="215,5,411,60"/>
+<area shape="rect" id="Node000002" href="$particle__handler__conversion_8cc.html" title=" " alt="" coords="5,108,197,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,68,158,110,155,106,245,63"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="222,108,405,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="316,74,316,108,311,108,311,74"/>
+<area shape="rect" id="Node000004" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="429,108,611,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="380,63,467,106,465,110,378,68"/>
 </map>

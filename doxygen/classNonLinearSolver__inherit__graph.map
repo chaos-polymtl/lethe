@@ -1,6 +1,9 @@
 <map id="NonLinearSolver&lt; VectorType &gt;" name="NonLinearSolver&lt; VectorType &gt;">
-<area shape="rect" id="node1" title="Base class that works as an interface for all non&#45;linear solvers for all non&#45;linear systems of equati..." alt="" coords="5,78,236,105"/>
-<area shape="rect" id="node2" href="$classInexactNewtonNonLinearSolver.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses an inexact Newton method with &#160;relax..." alt="" coords="284,5,511,47"/>
-<area shape="rect" id="node3" href="$classKinsolNewtonNonLinearSolver.html" title="Non&#45;linear Newton solver for non&#45;linear systems of equations implemented in the SUNDIALS suite,..." alt="" coords="288,71,507,112"/>
-<area shape="rect" id="node4" href="$classNewtonNonLinearSolver.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses a Newton method with &#160;relaxation to ..." alt="" coords="308,136,487,177"/>
+<area shape="rect" id="Node000001" title="Base class that works as an interface for all non&#45;linear solvers for all non&#45;linear systems of equati..." alt="" coords="5,77,236,102"/>
+<area shape="rect" id="Node000002" href="$classInexactNewtonNonLinearSolver.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses an inexact Newton method with &#160;relax..." alt="" coords="284,5,511,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,71,309,43,311,48,191,76"/>
+<area shape="rect" id="Node000003" href="$classKinsolNewtonNonLinearSolver.html" title="Non&#45;linear Newton solver for non&#45;linear systems of equations implemented in the SUNDIALS suite,..." alt="" coords="288,69,507,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="250,87,288,87,288,92,250,92"/>
+<area shape="rect" id="Node000004" href="$classNewtonNonLinearSolver.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses a Newton method with &#160;relaxation to ..." alt="" coords="308,133,487,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="191,103,311,131,309,136,190,108"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="HeatTransferAssemblerLaserExponentialDecayVOF&lt; dim &gt;" name="HeatTransferAssemblerLaserExponentialDecayVOF&lt; dim &gt;">
-<area shape="rect" id="node1" title="Class that assembles the laser heating as a volumetric source for the heat transfer solver when VOF i..." alt="" coords="5,95,228,136"/>
-<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="13,5,220,47"/>
+<area shape="rect" id="Node000001" title="Class that assembles the laser heating as a volumetric source for the heat transfer solver when VOF i..." alt="" coords="5,93,228,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="13,5,220,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,59,119,93,114,93,114,59"/>
 </map>

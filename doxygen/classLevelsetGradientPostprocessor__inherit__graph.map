@@ -1,4 +1,5 @@
 <map id="LevelsetGradientPostprocessor&lt; dim &gt;" name="LevelsetGradientPostprocessor&lt; dim &gt;">
-<area shape="rect" id="node1" title="Compute a levelset gradient vector field for a given shape within a domain." alt="" coords="5,95,229,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="25,5,210,47"/>
+<area shape="rect" id="Node000001" title="Compute a levelset gradient vector field for a given shape within a domain." alt="" coords="5,93,229,133"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="25,5,210,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,59,120,93,115,93,115,59"/>
 </map>

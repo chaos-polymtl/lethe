@@ -1,6 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/dem_post_processing.h" name="/home/runner/work/lethe/lethe/include/dem/dem_post_processing.h">
-<area shape="rect" id="node1" title=" " alt="" coords="220,5,403,61"/>
-<area shape="rect" id="node2" href="$dem_8cc.html" title=" " alt="" coords="5,117,196,158"/>
-<area shape="rect" id="node3" href="$dem__post__processing_8cc.html" title=" " alt="" coords="220,109,403,165"/>
-<area shape="rect" id="node4" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="427,109,609,165"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="220,5,403,60"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,115,196,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="245,68,142,117,139,113,243,63"/>
+<area shape="rect" id="Node000003" href="$dem__post__processing_8cc.html" title=" " alt="" coords="220,108,403,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="314,74,314,108,309,108,309,74"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="427,108,609,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="378,63,465,106,463,110,376,68"/>
 </map>

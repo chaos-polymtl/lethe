@@ -1,9 +1,15 @@
 <map id="/home/runner/work/lethe/lethe/source/solvers/source_terms.cc" name="/home/runner/work/lethe/lethe/source/solvers/source_terms.cc">
-<area shape="rect" id="node1" title=" " alt="" coords="371,5,553,61"/>
-<area shape="rect" id="node2" href="$source__terms_8h.html" title=" " alt="" coords="375,109,549,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,191,172,218"/>
-<area shape="rect" id="node4" title=" " alt="" coords="196,184,365,225"/>
-<area shape="rect" id="node5" title=" " alt="" coords="389,184,535,225"/>
-<area shape="rect" id="node6" title=" " alt="" coords="559,191,701,218"/>
-<area shape="rect" id="node7" title=" " alt="" coords="725,191,802,218"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="371,5,553,60"/>
+<area shape="rect" id="Node000002" href="$source__terms_8h.html" title=" " alt="" coords="375,108,549,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="465,60,465,94,459,94,459,60"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,189,172,214"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="408,136,157,188,156,183,407,131"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="196,181,365,221"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="437,136,338,178,336,173,435,131"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="389,181,535,221"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="465,134,465,168,459,168,459,134"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="559,189,701,214"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="488,131,595,181,592,185,485,136"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="725,189,802,214"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="519,131,611,151,713,179,722,182,721,187,712,184,610,157,518,136"/>
 </map>

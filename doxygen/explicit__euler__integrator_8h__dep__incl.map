@@ -1,6 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/explicit_euler_integrator.h" name="/home/runner/work/lethe/lethe/include/dem/explicit_euler_integrator.h">
-<area shape="rect" id="node1" title=" " alt="" coords="218,5,413,61"/>
-<area shape="rect" id="node2" href="$dem_8cc.html" title=" " alt="" coords="5,117,196,158"/>
-<area shape="rect" id="node3" href="$explicit__euler__integrator_8cc.html" title=" " alt="" coords="220,109,411,165"/>
-<area shape="rect" id="node4" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="435,109,617,165"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="218,5,413,60"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,115,196,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="248,68,142,118,140,113,246,63"/>
+<area shape="rect" id="Node000003" href="$explicit__euler__integrator_8cc.html" title=" " alt="" coords="220,108,411,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="318,74,318,108,313,108,313,74"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="435,108,617,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="384,63,472,106,470,110,381,68"/>
 </map>

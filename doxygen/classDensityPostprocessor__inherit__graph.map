@@ -1,4 +1,5 @@
 <map id="DensityPostprocessor&lt; dim &gt;" name="DensityPostprocessor&lt; dim &gt;">
-<area shape="rect" id="node1" title="Compute the density scalar field of a material within a domain." alt="" coords="16,95,179,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,189,47"/>
+<area shape="rect" id="Node000001" title="Compute the density scalar field of a material within a domain." alt="" coords="16,93,179,133"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,189,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,59,100,93,95,93,95,59"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="GLSNavierStokesCahnHilliardAssemblerCore&lt; dim &gt;" name="GLSNavierStokesCahnHilliardAssemblerCore&lt; dim &gt;">
-<area shape="rect" id="node1" title="Class that assembles the core of the Navier&#45;Stokes equation with free surface using Cahn&#45;Hilliard mod..." alt="" coords="5,95,219,136"/>
-<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="7,5,217,47"/>
+<area shape="rect" id="Node000001" title="Class that assembles the core of the Navier&#45;Stokes equation with free surface using Cahn&#45;Hilliard mod..." alt="" coords="5,93,219,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="7,5,217,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,59,115,93,109,93,109,59"/>
 </map>

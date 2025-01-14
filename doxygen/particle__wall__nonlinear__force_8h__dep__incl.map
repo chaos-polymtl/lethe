@@ -1,10 +1,18 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/particle_wall_nonlinear_force.h" name="/home/runner/work/lethe/lethe/include/dem/particle_wall_nonlinear_force.h">
-<area shape="rect" id="node1" title=" " alt="" coords="349,5,545,61"/>
-<area shape="rect" id="node2" href="$particle__wall__dmt__force_8h.html" title=" " alt="" coords="349,109,545,165"/>
-<area shape="rect" id="node3" href="$set__particle__wall__contact__force__model_8h.html" title=" " alt="" coords="220,213,403,284"/>
-<area shape="rect" id="node8" href="$particle__wall__nonlinear__force_8cc.html" title=" " alt="" coords="570,109,762,165"/>
-<area shape="rect" id="node7" href="$particle__wall__dmt__force_8cc.html" title=" " alt="" coords="427,221,619,277"/>
-<area shape="rect" id="node4" href="$dem_8cc.html" title=" " alt="" coords="5,347,196,388"/>
-<area shape="rect" id="node5" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="220,332,403,403"/>
-<area shape="rect" id="node6" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="427,339,609,395"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="349,5,545,60"/>
+<area shape="rect" id="Node000002" href="$particle__wall__dmt__force_8h.html" title=" " alt="" coords="349,108,545,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="450,74,450,108,445,108,445,74"/>
+<area shape="rect" id="Node000003" href="$set__particle__wall__contact__force__model_8h.html" title=" " alt="" coords="220,211,403,280"/>
+<area shape="poly" id="edge7_Node000001_Node000003" title=" " alt="" coords="381,70,358,88,339,109,327,134,319,160,313,211,308,210,314,159,322,132,334,107,354,84,377,65"/>
+<area shape="rect" id="Node000008" href="$particle__wall__nonlinear__force_8cc.html" title=" " alt="" coords="570,108,762,163"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="518,63,610,106,608,110,516,68"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="405,173,356,212,352,208,402,169"/>
+<area shape="rect" id="Node000007" href="$particle__wall__dmt__force_8cc.html" title=" " alt="" coords="427,218,619,273"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="476,173,507,216,503,219,472,176"/>
+<area shape="rect" id="Node000004" href="$dem_8cc.html" title=" " alt="" coords="5,343,196,383"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="239,289,136,345,134,340,236,284"/>
+<area shape="rect" id="Node000005" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="220,328,403,397"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="314,294,314,328,309,328,309,294"/>
+<area shape="rect" id="Node000006" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="427,335,609,390"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="385,284,472,333,470,338,382,289"/>
 </map>

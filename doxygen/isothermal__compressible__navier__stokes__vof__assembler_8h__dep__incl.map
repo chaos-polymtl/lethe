@@ -1,7 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/isothermal_compressible_navier_stokes_vof_assembler.h" name="/home/runner/work/lethe/lethe/include/solvers/isothermal_compressible_navier_stokes_vof_assembler.h">
-<area shape="rect" id="node1" title=" " alt="" coords="295,5,528,76"/>
-<area shape="rect" id="node2" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,131,191,187"/>
-<area shape="rect" id="node3" href="$fluid__dynamics__block_8cc.html" title=" " alt="" coords="215,131,399,187"/>
-<area shape="rect" id="node4" href="$fluid__dynamics__matrix__based_8cc.html" title=" " alt="" coords="424,124,607,195"/>
-<area shape="rect" id="node5" href="$isothermal__compressible__navier__stokes__vof__assembler_8cc.html" title=" " alt="" coords="631,124,869,195"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="295,5,528,75"/>
+<area shape="rect" id="Node000002" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,130,191,185"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="308,82,170,132,168,127,306,77"/>
+<area shape="rect" id="Node000003" href="$fluid__dynamics__block_8cc.html" title=" " alt="" coords="215,130,399,185"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="373,87,333,132,329,128,370,83"/>
+<area shape="rect" id="Node000004" href="$fluid__dynamics__matrix__based_8cc.html" title=" " alt="" coords="424,123,607,192"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="453,83,487,121,483,124,449,87"/>
+<area shape="rect" id="Node000005" href="$isothermal__compressible__navier__stokes__vof__assembler_8cc.html" title=" " alt="" coords="631,123,869,192"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="524,77,652,120,650,125,522,82"/>
 </map>

@@ -1,6 +1,9 @@
 <map id="DensityModel" name="DensityModel">
-<area shape="rect" id="node1" title="Abstract class for calculating the density of materials." alt="" coords="109,80,221,107"/>
-<area shape="rect" id="node3" href="$classDensityConstant.html" title="Constant density model." alt="" coords="5,155,136,181"/>
-<area shape="rect" id="node4" href="$classDensityIsothermalIdealGas.html" title="Isothermal ideal gas density." alt="" coords="161,155,359,181"/>
-<area shape="rect" id="node2" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="80,5,251,32"/>
+<area shape="rect" id="Node000001" title="Abstract class for calculating the density of materials." alt="" coords="109,79,221,104"/>
+<area shape="rect" id="Node000003" href="$classDensityConstant.html" title="Constant density model." alt="" coords="5,152,136,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="141,114,88,154,85,150,138,110"/>
+<area shape="rect" id="Node000004" href="$classDensityIsothermalIdealGas.html" title="Isothermal ideal gas density." alt="" coords="161,152,359,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="193,110,246,150,243,154,190,114"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="80,5,251,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="168,44,168,79,163,79,163,44"/>
 </map>

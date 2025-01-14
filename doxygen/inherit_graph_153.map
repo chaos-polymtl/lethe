@@ -1,3 +1,13 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classRPTCellReconstruction.html" title=" " alt="" coords="5,5,173,47"/>
+<area shape="rect" id="Node000000" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,74,237,99"/>
+<area shape="rect" id="Node000001" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="285,67,484,107"/>
+<area shape="poly" id="edge178_Node000000_Node000001" title=" " alt="" coords="251,84,285,84,285,89,251,89"/>
+<area shape="rect" id="Node000002" href="$classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="532,37,751,77"/>
+<area shape="poly" id="edge179_Node000001_Node000002" title=" " alt="" coords="497,71,532,67,532,72,498,76"/>
+<area shape="rect" id="Node000005" href="$classVoidFractionBase.html" title="Void fraction calculator. This class manages the calculation of the void fraction which is used as an..." alt="" coords="547,102,736,127"/>
+<area shape="poly" id="edge182_Node000001_Node000005" title=" " alt="" coords="498,96,547,102,546,107,498,102"/>
+<area shape="rect" id="Node000003" href="$classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="814,5,993,45"/>
+<area shape="poly" id="edge180_Node000002_Node000003" title=" " alt="" coords="764,40,813,34,814,39,764,45"/>
+<area shape="rect" id="Node000004" href="$classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="799,69,1008,109"/>
+<area shape="poly" id="edge181_Node000002_Node000004" title=" " alt="" coords="765,70,799,74,798,79,764,75"/>
 </map>

@@ -1,5 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/isothermal_compressible_navier_stokes_assembler.h" name="/home/runner/work/lethe/lethe/include/solvers/isothermal_compressible_navier_stokes_assembler.h">
-<area shape="rect" id="node1" title=" " alt="" coords="105,5,310,76"/>
-<area shape="rect" id="node2" href="$fluid__dynamics__matrix__based_8cc.html" title=" " alt="" coords="5,124,188,195"/>
-<area shape="rect" id="node3" href="$isothermal__compressible__navier__stokes__assembler_8cc.html" title=" " alt="" coords="213,124,423,195"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="105,5,310,75"/>
+<area shape="rect" id="Node000002" href="$fluid__dynamics__matrix__based_8cc.html" title=" " alt="" coords="5,123,188,192"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,87,131,124,127,121,163,83"/>
+<area shape="rect" id="Node000003" href="$isothermal__compressible__navier__stokes__assembler_8cc.html" title=" " alt="" coords="213,123,423,192"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="251,83,288,121,284,124,247,87"/>
 </map>

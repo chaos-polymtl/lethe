@@ -1,6 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/boundary_cells_info_struct.h" name="/home/runner/work/lethe/lethe/include/dem/boundary_cells_info_struct.h">
-<area shape="rect" id="node1" title=" " alt="" coords="149,5,357,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,117,152,143"/>
-<area shape="rect" id="node3" title=" " alt="" coords="177,117,330,143"/>
-<area shape="rect" id="node4" title=" " alt="" coords="355,109,491,151"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="149,5,357,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,115,152,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,62,113,111,111,107,203,58"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="177,115,330,141"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="256,60,256,101,251,101,251,60"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="355,108,491,148"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="302,58,378,99,375,104,300,62"/>
 </map>

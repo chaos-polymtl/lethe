@@ -1,4 +1,5 @@
 <map id="/home/runner/work/lethe/lethe/source/core/mesh_controller.cc" name="/home/runner/work/lethe/lethe/source/core/mesh_controller.cc">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,188,61"/>
-<area shape="rect" id="node2" href="$mesh__controller_8h.html" title=" " alt="" coords="11,109,182,136"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,188,60"/>
+<area shape="rect" id="Node000002" href="$mesh__controller_8h.html" title=" " alt="" coords="11,108,182,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,60,99,94,94,94,94,60"/>
 </map>

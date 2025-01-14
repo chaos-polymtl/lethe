@@ -1,8 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/stabilization.h" name="/home/runner/work/lethe/lethe/include/solvers/stabilization.h">
-<area shape="rect" id="node1" title=" " alt="" coords="521,5,703,61"/>
-<area shape="rect" id="node2" href="$isothermal__compressible__navier__stokes__assembler_8cc.html" title=" " alt="" coords="5,109,216,180"/>
-<area shape="rect" id="node3" href="$isothermal__compressible__navier__stokes__vof__assembler_8cc.html" title=" " alt="" coords="241,109,479,180"/>
-<area shape="rect" id="node4" href="$navier__stokes__assemblers_8cc.html" title=" " alt="" coords="504,117,720,173"/>
-<area shape="rect" id="node5" href="$navier__stokes__cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="745,109,951,180"/>
-<area shape="rect" id="node6" href="$navier__stokes__vof__assemblers_8cc.html" title=" " alt="" coords="975,117,1219,173"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="521,5,703,60"/>
+<area shape="rect" id="Node000002" href="$isothermal__compressible__navier__stokes__assembler_8cc.html" title=" " alt="" coords="5,108,216,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="508,54,374,79,229,111,217,114,215,108,227,105,373,74,507,49"/>
+<area shape="rect" id="Node000003" href="$isothermal__compressible__navier__stokes__vof__assembler_8cc.html" title=" " alt="" coords="241,108,479,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="539,68,440,110,438,105,537,63"/>
+<area shape="rect" id="Node000004" href="$navier__stokes__assemblers_8cc.html" title=" " alt="" coords="504,115,720,170"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="615,74,615,115,609,115,609,74"/>
+<area shape="rect" id="Node000005" href="$navier__stokes__cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="745,108,951,177"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="683,63,775,105,773,110,681,68"/>
+<area shape="rect" id="Node000006" href="$navier__stokes__vof__assemblers_8cc.html" title=" " alt="" coords="975,115,1219,170"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="717,52,965,105,995,113,994,118,963,111,716,58"/>
 </map>

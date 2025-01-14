@@ -1,4 +1,5 @@
 <map id="PeriodicHillsPullBack&lt; dim, spacedim &gt;" name="PeriodicHillsPullBack&lt; dim, spacedim &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="13,95,172,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,180,47"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="13,93,172,133"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,180,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,59,95,93,90,93,90,59"/>
 </map>

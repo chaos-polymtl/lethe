@@ -1,4 +1,5 @@
 <map id="DynamicViscosityPostprocessor&lt; dim &gt;" name="DynamicViscosityPostprocessor&lt; dim &gt;">
-<area shape="rect" id="node1" title="Compute the dynamic viscosity scalar field of a fluid within a domain." alt="" coords="5,95,236,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="29,5,213,47"/>
+<area shape="rect" id="Node000001" title="Compute the dynamic viscosity scalar field of a fluid within a domain." alt="" coords="5,93,236,133"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="29,5,213,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,59,123,93,118,93,118,59"/>
 </map>

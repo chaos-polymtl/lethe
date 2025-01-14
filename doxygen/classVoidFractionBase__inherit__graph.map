@@ -1,5 +1,7 @@
 <map id="VoidFractionBase&lt; dim &gt;" name="VoidFractionBase&lt; dim &gt;">
-<area shape="rect" id="node1" title="Void fraction calculator. This class manages the calculation of the void fraction which is used as an..." alt="" coords="27,169,216,196"/>
-<area shape="rect" id="node2" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="22,80,221,121"/>
-<area shape="rect" id="node3" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,5,237,32"/>
+<area shape="rect" id="Node000001" title="Void fraction calculator. This class manages the calculation of the void fraction which is used as an..." alt="" coords="27,167,216,192"/>
+<area shape="rect" id="Node000002" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="22,79,221,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="124,132,124,166,119,166,119,132"/>
+<area shape="rect" id="Node000003" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,5,237,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="124,44,124,79,119,79,119,44"/>
 </map>

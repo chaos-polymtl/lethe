@@ -1,9 +1,15 @@
 <map id="/home/runner/work/lethe/lethe/source/solvers/tracer_drift_velocity.cc" name="/home/runner/work/lethe/lethe/source/solvers/tracer_drift_velocity.cc">
-<area shape="rect" id="node1" title=" " alt="" coords="371,5,553,61"/>
-<area shape="rect" id="node2" href="$tracer__drift__velocity_8h.html" title=" " alt="" coords="390,109,534,151"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,206,172,233"/>
-<area shape="rect" id="node4" title=" " alt="" coords="196,199,365,240"/>
-<area shape="rect" id="node5" title=" " alt="" coords="389,199,535,240"/>
-<area shape="rect" id="node6" title=" " alt="" coords="559,206,701,233"/>
-<area shape="rect" id="node7" title=" " alt="" coords="725,206,802,233"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="371,5,553,60"/>
+<area shape="rect" id="Node000002" href="$tracer__drift__velocity_8h.html" title=" " alt="" coords="390,108,534,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="465,60,465,94,459,94,459,60"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,203,172,229"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="390,148,152,203,151,198,389,143"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="196,196,365,236"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="423,150,334,193,331,188,421,146"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="389,196,535,236"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="465,148,465,182,459,182,459,148"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="559,203,701,229"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="500,146,597,195,594,200,498,150"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="725,203,802,229"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="535,144,713,193,721,196,720,201,712,199,534,149"/>
 </map>

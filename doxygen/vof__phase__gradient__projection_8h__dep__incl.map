@@ -1,5 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/vof_phase_gradient_projection.h" name="/home/runner/work/lethe/lethe/include/solvers/vof_phase_gradient_projection.h">
-<area shape="rect" id="node1" title=" " alt="" coords="137,5,376,61"/>
-<area shape="rect" id="node2" href="$vof__phase__gradient__projection_8cc.html" title=" " alt="" coords="5,109,249,165"/>
-<area shape="rect" id="node3" href="$vof__subequations__interface_8cc.html" title=" " alt="" coords="274,109,498,165"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="137,5,376,60"/>
+<area shape="rect" id="Node000002" href="$vof__phase__gradient__projection_8cc.html" title=" " alt="" coords="5,108,249,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="214,70,163,110,160,106,211,66"/>
+<area shape="rect" id="Node000003" href="$vof__subequations__interface_8cc.html" title=" " alt="" coords="274,108,498,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="303,66,354,106,350,110,299,70"/>
 </map>

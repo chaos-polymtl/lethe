@@ -1,4 +1,5 @@
 <map id="HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface&lt; dim &gt;" name="HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface&lt; dim &gt;">
-<area shape="rect" id="node1" title="Class that assembles the laser heating as a surface flux for the heat transfer solver when VOF is ena..." alt="" coords="5,95,287,136"/>
-<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="43,5,249,47"/>
+<area shape="rect" id="Node000001" title="Class that assembles the laser heating as a surface flux for the heat transfer solver when VOF is ena..." alt="" coords="5,93,287,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="43,5,249,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,59,149,93,143,93,143,59"/>
 </map>

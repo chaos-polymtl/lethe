@@ -1,4 +1,5 @@
 <map id="VANSAssemblerShearForce&lt; dim &gt;" name="VANSAssemblerShearForce&lt; dim &gt;">
-<area shape="rect" id="node1" title="Class that assembles the particle shear force that will then be added to particle_fluid_interactions." alt="" coords="7,95,206,136"/>
-<area shape="rect" id="node2" href="$classParticleFluidAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the particle_fluid int..." alt="" coords="5,5,208,47"/>
+<area shape="rect" id="Node000001" title="Class that assembles the particle shear force that will then be added to particle_fluid_interactions." alt="" coords="7,93,206,133"/>
+<area shape="rect" id="Node000002" href="$classParticleFluidAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the particle_fluid int..." alt="" coords="5,5,208,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,59,109,93,104,93,104,59"/>
 </map>

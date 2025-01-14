@@ -1,5 +1,7 @@
 <map id="NavierStokesStabilizedOperator&lt; dim, number &gt;" name="NavierStokesStabilizedOperator&lt; dim, number &gt;">
-<area shape="rect" id="node1" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="5,169,235,211"/>
-<area shape="rect" id="node2" href="$classNavierStokesOperatorBase.html" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="21,80,219,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="73,5,167,32"/>
+<area shape="rect" id="Node000001" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="5,167,235,207"/>
+<area shape="rect" id="Node000002" href="$classNavierStokesOperatorBase.html" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="21,79,219,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,133,123,166,117,166,117,133"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="73,5,167,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="123,44,123,79,117,79,117,44"/>
 </map>

@@ -1,12 +1,23 @@
 <map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/cfd_dem_simulation_parameters.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/cfd_dem_simulation_parameters.h">
-<area shape="rect" id="node1" title=" " alt="" coords="164,5,416,61"/>
-<area shape="rect" id="node2" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,317,188,373"/>
-<area shape="rect" id="node4" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="69,109,252,165"/>
-<area shape="rect" id="node6" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="277,213,460,269"/>
-<area shape="rect" id="node8" href="$vans__assemblers_8h.html" title=" " alt="" coords="328,109,511,165"/>
-<area shape="rect" id="node10" href="$cfd__dem__simulation__parameters_8cc.html" title=" " alt="" coords="535,109,794,165"/>
-<area shape="rect" id="node3" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,421,188,477"/>
-<area shape="rect" id="node5" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="68,213,253,269"/>
-<area shape="rect" id="node7" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="277,317,460,373"/>
-<area shape="rect" id="node9" href="$vans__assemblers_8cc.html" title=" " alt="" coords="484,213,667,269"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="164,5,416,60"/>
+<area shape="rect" id="Node000002" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,313,188,368"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="152,51,100,73,78,89,59,110,46,129,39,147,36,182,45,219,58,264,67,289,80,312,75,314,62,292,53,266,40,221,31,183,34,146,42,127,55,106,74,85,97,69,150,46"/>
+<area shape="rect" id="Node000004" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="69,108,252,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="247,70,196,110,193,106,244,66"/>
+<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="277,211,460,265"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="296,73,304,117,318,162,332,187,348,209,343,212,327,190,313,164,298,118,291,74"/>
+<area shape="rect" id="Node000008" href="$vans__assemblers_8h.html" title=" " alt="" coords="328,108,511,163"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="336,66,387,106,384,110,333,70"/>
+<area shape="rect" id="Node000010" href="$cfd__dem__simulation__parameters_8cc.html" title=" " alt="" coords="535,108,794,163"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="401,61,568,105,566,111,400,66"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,416,188,471"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,382,99,416,94,416,94,382"/>
+<area shape="rect" id="Node000005" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="68,211,253,265"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="163,176,163,211,158,211,158,176"/>
+<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="286,272,168,316,167,311,284,267"/>
+<area shape="rect" id="Node000007" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="277,313,460,368"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="371,279,371,313,366,313,366,279"/>
+<area shape="poly" id="edge9_Node000008_Node000006" title=" " alt="" coords="402,176,384,212,380,209,398,174"/>
+<area shape="rect" id="Node000009" href="$vans__assemblers_8cc.html" title=" " alt="" coords="484,211,667,265"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="473,168,536,208,533,213,470,172"/>
 </map>

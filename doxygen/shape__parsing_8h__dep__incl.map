@@ -1,5 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/core/shape_parsing.h" name="/home/runner/work/lethe/lethe/include/core/shape_parsing.h">
-<area shape="rect" id="node1" title=" " alt="" coords="107,5,292,61"/>
-<area shape="rect" id="node2" href="$ib__particle_8cc.html" title=" " alt="" coords="5,109,188,165"/>
-<area shape="rect" id="node3" href="$shape__parsing_8cc.html" title=" " alt="" coords="212,109,395,165"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="107,5,292,60"/>
+<area shape="rect" id="Node000002" href="$ib__particle_8cc.html" title=" " alt="" coords="5,108,188,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="165,72,125,110,122,106,161,68"/>
+<area shape="rect" id="Node000003" href="$shape__parsing_8cc.html" title=" " alt="" coords="212,108,395,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="238,68,278,106,274,110,235,72"/>
 </map>

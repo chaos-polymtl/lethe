@@ -1,9 +1,16 @@
 <map id="/home/runner/work/lethe/lethe/include/rpt/particle_detector_interactions.h" name="/home/runner/work/lethe/lethe/include/rpt/particle_detector_interactions.h">
-<area shape="rect" id="node1" title=" " alt="" coords="340,5,525,61"/>
-<area shape="rect" id="node2" href="$rpt_8h.html" title=" " alt="" coords="5,117,188,158"/>
-<area shape="rect" id="node4" href="$rpt__fem__reconstruction_8h.html" title=" " alt="" coords="212,109,395,165"/>
-<area shape="rect" id="node5" href="$rpt__fem__reconstruction_8cc.html" title=" " alt="" coords="276,213,459,269"/>
-<area shape="rect" id="node6" href="$particle__detector__interactions_8cc.html" title=" " alt="" coords="471,109,656,165"/>
-<area shape="rect" id="node7" href="$rpt__cell__reconstruction_8cc.html" title=" " alt="" coords="680,109,863,165"/>
-<area shape="rect" id="node3" href="$rpt_8cc.html" title=" " alt="" coords="5,221,188,262"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="340,5,525,60"/>
+<area shape="rect" id="Node000002" href="$rpt_8h.html" title=" " alt="" coords="5,115,188,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="333,66,161,118,159,113,332,61"/>
+<area shape="rect" id="Node000004" href="$rpt__fem__reconstruction_8h.html" title=" " alt="" coords="212,108,395,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="390,70,339,110,336,106,387,66"/>
+<area shape="rect" id="Node000005" href="$rpt__fem__reconstruction_8cc.html" title=" " alt="" coords="276,211,459,265"/>
+<area shape="poly" id="edge7_Node000001_Node000005" title=" " alt="" coords="431,74,423,118,410,164,386,212,382,209,405,162,418,116,425,73"/>
+<area shape="rect" id="Node000006" href="$particle__detector__interactions_8cc.html" title=" " alt="" coords="471,108,656,163"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="479,66,531,106,527,110,476,70"/>
+<area shape="rect" id="Node000007" href="$rpt__cell__reconstruction_8cc.html" title=" " alt="" coords="680,108,863,163"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="535,61,684,105,682,111,533,66"/>
+<area shape="rect" id="Node000003" href="$rpt_8cc.html" title=" " alt="" coords="5,218,188,258"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,169,99,218,94,218,94,169"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="330,173,353,209,348,212,325,176"/>
 </map>

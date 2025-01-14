@@ -1,5 +1,7 @@
 <map id="PreconditionASM&lt; VectorType &gt;" name="PreconditionASM&lt; VectorType &gt;">
-<area shape="rect" id="node1" title="An Additive Schwarz preconditioner." alt="" coords="5,169,239,196"/>
-<area shape="rect" id="node2" href="$classPreconditionBase.html" title="A base class of preconditioners used by the smoother." alt="" coords="27,80,217,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="75,5,169,32"/>
+<area shape="rect" id="Node000001" title="An Additive Schwarz preconditioner." alt="" coords="5,167,239,192"/>
+<area shape="rect" id="Node000002" href="$classPreconditionBase.html" title="A base class of preconditioners used by the smoother." alt="" coords="27,79,217,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,132,125,166,119,166,119,132"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="75,5,169,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="125,44,125,79,119,79,119,44"/>
 </map>

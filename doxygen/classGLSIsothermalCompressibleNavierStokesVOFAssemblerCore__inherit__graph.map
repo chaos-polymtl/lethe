@@ -1,4 +1,5 @@
 <map id="GLSIsothermalCompressibleNavierStokesVOFAssemblerCore&lt; dim &gt;" name="GLSIsothermalCompressibleNavierStokesVOFAssemblerCore&lt; dim &gt;">
-<area shape="rect" id="node1" title="Class that assembles the core of the Navier&#45;Stokes equation with free surface using VOF modeling...." alt="" coords="5,95,292,136"/>
-<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="44,5,253,47"/>
+<area shape="rect" id="Node000001" title="Class that assembles the core of the Navier&#45;Stokes equation with free surface using VOF modeling...." alt="" coords="5,93,292,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="44,5,253,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,59,151,93,146,93,146,59"/>
 </map>
