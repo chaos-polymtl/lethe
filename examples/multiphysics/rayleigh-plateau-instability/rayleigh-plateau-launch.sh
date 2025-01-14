@@ -73,7 +73,7 @@ do
 
   # Launch simulation (feel free to use a different number of CPUs)
   cd  $case_name
-  mpirun -np 14 lethe-fluid $case_parameter_file
+  mpirun -np 10 lethe-fluid $case_parameter_file
 
   # Return to parent directory
   cd ..

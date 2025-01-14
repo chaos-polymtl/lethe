@@ -438,13 +438,57 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "enable",
       "false",
       Patterns::Bool(),
-      "Enables the interface to be reinitialized with the algebraic method <true|false>");
+      "Enables the interface to be reinitialized with the algebraic method "
+      "<true|false>");
+    prm.declare_entry(
+      "diffusivity type",
+      "constant",
+      Patterns::Selection("constant|mesh-dependant"),
+      "Type of diffusivity model used in the algebraic reinitialization "
+      "equation."
+      "Choices are <constant|mesh-dependant>.");
+    prm.declare_entry(
+      "diffusivity value",
+      "1.",
+      Patterns::Double(),
+      "Constant diffusion coefficient value in the algebraic reinitialization "
+      "equation.");
+    prm.declare_entry(
+      "diffusivity multiplier",
+      "1.",
+      Patterns::Double(),
+      "Constant that multiplies the mesh-size in the mesh-dependant diffusivity "
+      "model of the algebraic interface reinitialization.");
+    prm.declare_entry(
+      "diffusivity power",
+      "1.",
+      Patterns::Double(),
+      "Power value applied to the mesh-size in the mesh-dependant diffusivity "
+      "model of the algebraic interface reinitialization.");
+    prm.declare_entry("tolerance",
+                      "1e-8",
+                      Patterns::Double(),
+                      "Tolerance for the pseudo-time-stepping scheme.");
     prm.declare_entry(
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose"),
-      "States whether the output from the algebraic interface reinitialization should be printed "
+      "States whether the output from the algebraic interface reinitialization "
+      "should be printed."
       "Choices are <quiet|verbose>.");
+
+    // TODO AA Erase
+    prm.declare_entry("enable explicit solving",
+                      "false",
+                      Patterns::Bool(),
+                      "Enables solving the linearized version of the equation"
+                      "<true|false>");
+    prm.declare_entry(
+      "reinitialization CFL",
+      "1.",
+      Patterns::Double(),
+      "CFL value for time-step calculation purposes in the algebraic interface "
+      "reinitialization.");
   }
   prm.leave_subsection();
 }
@@ -455,14 +499,33 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
 {
   prm.enter_subsection("algebraic interface reinitialization");
   {
-    enable               = prm.get_bool("enable");
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
+    enable = prm.get_bool("enable");
+
+    // Diffusivity
+    const std::string op1 = prm.get("diffusivity type");
+    if (op1 == "constant")
+      diffusivity_type = Parameters::ReinitializationDiffusivityType::constant;
+    else if (op1 == "mesh-dependant")
+      diffusivity_type =
+        Parameters::ReinitializationDiffusivityType::mesh_dependant;
+    else
+      throw(std::runtime_error("Invalid diffusivity type"));
+    diffusivity_value      = prm.get_double("diffusivity value");
+    diffusivity_multiplier = prm.get_double("diffusivity multiplier");
+    diffusivity_power      = prm.get_double("diffusivity power");
+    tolerance              = prm.get_double("tolerance");
+
+    const std::string op2 = prm.get("verbosity");
+    if (op2 == "verbose")
       verbosity = Parameters::Verbosity::verbose;
-    else if (op == "quiet")
+    else if (op2 == "quiet")
       verbosity = Parameters::Verbosity::quiet;
     else
       throw(std::runtime_error("Invalid verbosity level"));
+
+    // TODO AA Erase
+    enable_explicit_solving = prm.get_bool("enable explicit solving");
+    reinitialization_cfl    = prm.get_double("reinitialization CFL");
   }
   prm.leave_subsection();
 }
