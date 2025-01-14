@@ -61,7 +61,7 @@ In this example, we simulate the Rayleigh-Bénard convection problem at two Rayl
 Parameter File
 --------------
 
-For simplicity, we present only the parameter file for :math:`Ra=10^4` only.
+For simplicity, we present only the parameter file for :math:`Ra=10^4`.
 
 .. note::   
     Note that the resolution (256x256) is set to match the one of the article results [#ouertatani]_ . If desired, you can choose to reduced to 7 or 6 the ``initial refinement level`` in the parameter files to reduce the simulation time without loosing too much accuracy.
