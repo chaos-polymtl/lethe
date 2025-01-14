@@ -57,6 +57,9 @@ find_particle_particle_contact_pairs(
  * This version of the function is used when adaptive sparse contacts is
  * enabled.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param particle_handler The particle handler of particles in the broad
  * search
  * @param[in] cells_local_neighbor_list  A vector (with size equal to the number
@@ -73,7 +76,7 @@ find_particle_particle_contact_pairs(
  * @param[in] sparse_contacts_object The object that contains the
  * information about the mobility status of cells
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -84,8 +87,8 @@ find_particle_particle_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                                    &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+    &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
  * @brief Finds vectors of pairs (particle_particle_candidates) which contains the
@@ -164,7 +167,7 @@ find_particle_particle_periodic_contact_pairs(
  * @param sparse_contacts_object The object that contains the
  * information about the mobility status of cells
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -180,7 +183,7 @@ find_particle_particle_periodic_contact_pairs(
     &ghost_contact_pair_periodic_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &ghost_local_contact_pair_periodic_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
  * @brief Stores the candidate particle-particle collision pairs with a given

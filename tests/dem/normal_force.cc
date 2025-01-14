@@ -37,7 +37,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 test()
 {
@@ -99,8 +99,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
-
+    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
   // Inserting one particle in contact with wall
   Point<dim>               position1 = {-0.999, 0, 0};
   int                      id        = 0;
@@ -109,15 +108,15 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = -1.0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+  pit1->get_properties()[PropertiesIndex::type]    = 0;
+  pit1->get_properties()[PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[PropertiesIndex::v_x]     = -1.0;
+  pit1->get_properties()[PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[PropertiesIndex::mass]    = 1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -148,11 +147,12 @@ test()
 
   // Particle-Wall fine search
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                                  particle_wall_contact_information;
-  ParticleWallNonLinearForce<dim> particle_wall_force_object(dem_parameters);
-  VelocityVerletIntegrator<dim>   integrator_object;
-  double                          distance;
-  double                          time = 0.0;
+    particle_wall_contact_information;
+  ParticleWallNonLinearForce<dim, PropertiesIndex> particle_wall_force_object(
+    dem_parameters);
+  VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
+  double                                         distance;
+  double                                         time = 0.0;
 
   while (time < 0.00115)
     {
@@ -164,7 +164,7 @@ test()
           force[0][2] = 0;
         }
       distance = hyper_cube_length + particle->get_location()[0] -
-                 particle->get_properties()[DEM::PropertiesIndex::dp] / 2.0;
+                 particle->get_properties()[PropertiesIndex::dp] / 2.0;
 
       if (distance > 0.0)
         {
@@ -231,7 +231,7 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3>();
+      test<3, DEM::DEMProperties::PropertiesIndex>();
     }
   catch (std::exception &exc)
     {

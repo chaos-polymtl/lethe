@@ -3,6 +3,7 @@
 
 #include <core/lethe_grid_tools.h>
 
+#include <dem/particle_handler_conversion.h>
 #include <fem-dem/fluid_dynamics_vans.h>
 #include <fem-dem/void_fraction.h>
 
@@ -19,9 +20,10 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
   : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
   , cfd_dem_simulation_parameters(nsparam)
   , particle_mapping(1)
-  , particle_handler(*this->triangulation,
-                     particle_mapping,
-                     DEM::get_number_properties())
+  , particle_handler(
+      *this->triangulation,
+      particle_mapping,
+      DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>())
   , void_fraction_manager(
       &(*this->triangulation),
       nsparam.void_fraction,
@@ -111,7 +113,14 @@ FluidDynamicsVANS<dim>::read_dem()
   std::istringstream            iss(buffer);
   boost::archive::text_iarchive ia(iss, boost::archive::no_header);
 
-  ia >> particle_handler;
+  // Create a temporary particle_handler with DEM properties
+  Particles::ParticleHandler<dim> temporary_particle_handler(
+    *this->triangulation,
+    particle_mapping,
+    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
+
+
+  ia >> temporary_particle_handler;
 
   const std::string filename = prefix + ".triangulation";
   std::ifstream     in(filename.c_str());
@@ -129,10 +138,10 @@ FluidDynamicsVANS<dim>::read_dem()
     {
       try
         {
-          parallel_triangulation->load(filename.c_str());
+          this->triangulation->load(filename.c_str());
 
           // Deserialize particles have the triangulation has been read
-          particle_handler.deserialize();
+          temporary_particle_handler.deserialize();
         }
       catch (...)
         {
@@ -140,6 +149,14 @@ FluidDynamicsVANS<dim>::read_dem()
                       ExcMessage("Cannot open snapshot mesh file or read the"
                                  "triangulation stored there."));
         }
+
+      // Fill the existing particle handler using the temporary one
+      // This is done during the dynamic cast for the convert_particle_handler
+      // function which requires a pararallel::distributed::triangulation
+      convert_particle_handler<dim,
+                               DEM::DEMProperties::PropertiesIndex,
+                               DEM::CFDDEMProperties::PropertiesIndex>(
+        *parallel_triangulation, temporary_particle_handler, particle_handler);
     }
   else
     {

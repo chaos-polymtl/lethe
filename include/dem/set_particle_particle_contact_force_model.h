@@ -14,14 +14,15 @@
  * spring-dashpot model and the rolling resistance model (and the cohesive
  * force model if applicable).
  *
- * @tparam dim Space dimension.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param[in] dem_parameters DEM parameters.
  *
  * @return The pointer to the particle-particle contact force object.
  */
-template <int dim>
-std::shared_ptr<ParticleParticleContactForceBase<dim>>
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
 set_particle_particle_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 
@@ -29,7 +30,8 @@ set_particle_particle_contact_force_model(
  *  @brief Set the rolling resistance model for the particle-particle contact
  *  force model.
  *
- * @tparam dim Space dimension.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  * @tparam particle_particle_contact_force_model Particle-particle contact force
  * model.
  *
@@ -38,12 +40,13 @@ set_particle_particle_contact_force_model(
  * particle contact force object.
  */
 template <int dim,
+          typename PropertiesIndex,
           Parameters::Lagrangian::ParticleParticleContactForceModel
             particle_particle_contact_force_model>
 void
 set_rolling_resistance_model(
   const DEMSolverParameters<dim> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
     &particle_particle_contact_force_object);
 
 /**
@@ -51,12 +54,15 @@ set_rolling_resistance_model(
  * spring-dashpot model and the rolling resistance model (and the cohesive
  * force model if applicable) for the force-chain post-processing.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param dem_parameters DEM parameters.
  *
  * @return The pointer to the particle-particle contact force object.
  */
-template <int dim>
-std::shared_ptr<ParticlesForceChainsBase<dim>>
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<ParticlesForceChainsBase<dim, PropertiesIndex>>
 set_force_chains_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 

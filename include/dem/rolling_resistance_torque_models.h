@@ -14,6 +14,7 @@
  * @brief No rolling resistance torque model. No calculation is being done with
  * this model.
  */
+
 inline Tensor<1, 3>
 no_rolling_resistance_torque(
   const double /*effective_r*/,
@@ -37,6 +38,9 @@ no_rolling_resistance_torque(
  * The model woks as follows:
  * M_r = - mu_r * R_eff * |F_n| * omega_hat
  * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
+ *
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param[in] effective_r Effective radius.
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.
@@ -45,6 +49,7 @@ no_rolling_resistance_torque(
  * @param[in] normal_force_norm Norm of the nomal force.
  *
  */
+template <typename PropertiesIndex>
 inline Tensor<1, 3>
 constant_rolling_resistance_torque(
   const double                   effective_r,
@@ -61,9 +66,9 @@ constant_rolling_resistance_torque(
   for (int d = 0; d < 3; ++d)
     {
       particle_one_angular_velocity[d] =
-        particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_one_properties[PropertiesIndex::omega_x + d];
       particle_two_angular_velocity[d] =
-        particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_two_properties[PropertiesIndex::omega_x + d];
     }
 
   Tensor<1, 3> omega_ij =
@@ -83,6 +88,9 @@ constant_rolling_resistance_torque(
  * M_r = - mu_r * R_eff * |F_n| * |V_omega| * omega_hat
  * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
  * V_omega = omega_i × (R_i * n_ij) - omega_j × (R_j * n_ji)
+ *
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param[in] effective_r Effective radius.
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.
@@ -92,6 +100,7 @@ constant_rolling_resistance_torque(
  * @param[in] normal_contact_vector Normal unit vector.
  */
 
+template <typename PropertiesIndex>
 inline Tensor<1, 3>
 viscous_rolling_resistance_torque(
   const double                   effective_r,
@@ -108,9 +117,9 @@ viscous_rolling_resistance_torque(
   for (int d = 0; d < 3; ++d)
     {
       particle_one_angular_velocity[d] =
-        particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_one_properties[PropertiesIndex::omega_x + d];
       particle_two_angular_velocity[d] =
-        particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_two_properties[PropertiesIndex::omega_x + d];
     }
 
   Tensor<1, 3> omega_ij =
@@ -119,10 +128,10 @@ viscous_rolling_resistance_torque(
 
   Tensor<1, 3> v_omega =
     cross_product_3d(particle_one_angular_velocity,
-                     particle_one_properties[DEM::PropertiesIndex::dp] * 0.5 *
+                     particle_one_properties[PropertiesIndex::dp] * 0.5 *
                        normal_contact_vector) -
     cross_product_3d(particle_two_angular_velocity,
-                     particle_two_properties[DEM::PropertiesIndex::dp] * 0.5 *
+                     particle_two_properties[PropertiesIndex::dp] * 0.5 *
                        -normal_contact_vector);
 
   // Calculation of rolling resistance torque

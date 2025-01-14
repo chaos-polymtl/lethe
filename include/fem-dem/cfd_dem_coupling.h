@@ -72,7 +72,7 @@ private:
    *
    * @return The pointer to the integration object
    */
-  std::shared_ptr<Integrator<dim>>
+  std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
   set_integrator_type();
 
   /**
@@ -205,16 +205,24 @@ private:
   double                                     maximum_particle_diameter;
   double                                     smallest_contact_search_criterion;
 
-  DEMContactManager<dim>           contact_manager;
-  LagrangianLoadBalancing<dim>     load_balancing;
-  ParticlePointLineForce<dim>      particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>> integrator_object;
-  std::shared_ptr<Insertion<dim>>  insertion_object;
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
+  DEMContactManager<dim, DEM::CFDDEMProperties::PropertiesIndex>
+    contact_manager;
+  LagrangianLoadBalancing<dim, DEM::CFDDEMProperties::PropertiesIndex>
+    load_balancing;
+  ParticlePointLineForce<dim, DEM::CFDDEMProperties::PropertiesIndex>
+    particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+                                  integrator_object;
+  std::shared_ptr<Insertion<dim>> insertion_object;
+  std::shared_ptr<
+    ParticleParticleContactForceBase<dim,
+                                     DEM::CFDDEMProperties::PropertiesIndex>>
     particle_particle_contact_force_object;
-  std::shared_ptr<ParticleWallContactForce<dim>>
-                                particle_wall_contact_force_object;
-  Visualization<dim>            visualization_object;
+  std::shared_ptr<
+    ParticleWallContactForce<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+    particle_wall_contact_force_object;
+  Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex>
+                                visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
 
   // Mesh and boundary information
@@ -233,7 +241,8 @@ private:
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
 
   // Object handling the sparse contacts
-  AdaptiveSparseContacts<dim> sparse_contacts_object;
+  AdaptiveSparseContacts<dim, DEM::CFDDEMProperties::PropertiesIndex>
+    sparse_contacts_object;
 
   // Counter of contact searches in a CFD iteration
   unsigned int contact_search_counter;
@@ -244,7 +253,8 @@ private:
   // Storage of statistics about time and contact lists
   statistics contact_list;
 
-  DEM::DEMProperties<dim> properties_class;
+  DEM::ParticleProperties<dim, DEM::CFDDEMProperties::PropertiesIndex>
+    properties_class;
 
   // Information for parallel grid processing
   PVDHandler grid_pvdhandler;

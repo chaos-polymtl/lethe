@@ -21,8 +21,12 @@ using namespace dealii;
 /**
  * @brief Building patches of particle properties for visualization.
  * This function is taken from Aspect and dealii and implemented here.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class Visualization : public dealii::DataOutInterface<0, dim>
 {
 public:

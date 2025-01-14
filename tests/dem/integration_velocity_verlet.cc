@@ -51,7 +51,10 @@ test()
 
   // Defning particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
+    tr,
+    mapping,
+    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
+
 
   // inserting one particle at x = 0 , y = 0 and z = 0 m
   // initial velocity of particles = 0, 0, 0 m/s
@@ -71,15 +74,15 @@ test()
   Particles::ParticleIterator<dim> pit =
     particle_handler.insert_particle(particle1, particle_cell);
 
-  pit->get_properties()[DEM::PropertiesIndex::type]    = 1;
-  pit->get_properties()[DEM::PropertiesIndex::dp]      = 0.005;
-  pit->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
-  pit->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
-  pit->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::type]    = 1;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::dp]      = 0.005;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x]     = 0;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y]     = 0;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z]     = 0;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_x] = 0;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_y] = 0;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_z] = 0;
+  pit->get_properties()[DEM::DEMProperties::PropertiesIndex::mass]    = 1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -89,7 +92,8 @@ test()
   MOI.push_back(1);
 
   // Calling velocity verlet integrator
-  VelocityVerletIntegrator<dim> integration_object;
+  VelocityVerletIntegrator<dim, DEM::DEMProperties::PropertiesIndex>
+    integration_object;
   integration_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
   // Output

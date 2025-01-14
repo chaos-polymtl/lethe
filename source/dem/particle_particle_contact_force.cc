@@ -8,21 +8,29 @@
 using namespace DEM;
 using namespace Parameters::Lagrangian;
 
-template <int                               dim,
+template <int dim,
+          typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
-ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
+ParticleParticleContactForce<dim,
+                             PropertiesIndex,
+                             contact_model,
+                             rolling_friction_model>::
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {
   set_effective_properties(dem_parameters);
 }
 
-template <int                               dim,
+template <int dim,
+          typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
 void
-ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
+ParticleParticleContactForce<dim,
+                             PropertiesIndex,
+                             contact_model,
+                             rolling_friction_model>::
   calculate_particle_particle_contact_force(
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
@@ -82,152 +90,377 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     }
 }
 
+// dem
 // No resistance
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::no_resistance>;
 
 // Constant resistance
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::constant_resistance>;
 
 // Viscous resistance
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::DEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::viscous_resistance>;
+
+
+// cfd_dem
+// No resistance
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::no_resistance>;
+
+// Constant resistance
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::constant_resistance>;
+
+// Viscous resistance
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::viscous_resistance>;

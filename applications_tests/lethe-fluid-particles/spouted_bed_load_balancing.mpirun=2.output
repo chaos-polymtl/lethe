@@ -32,7 +32,7 @@ DEM
 
 Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 15525 , 1731 and 29319
+Average, minimum and maximum number of particles on the processors are 15525 , 1743 and 29307
 Minimum and maximum number of cells owned by the processors are 679 and 679
 Setup DOFs
    Number of active cells:       679
@@ -47,16 +47,16 @@ Max local continuity error: 0 s^-1
 --------------------
 Particle statistics
 --------------------
-| Variable                     | Min              | Max              | Average          | Total            |
-| Contact list generation      | 0.0000000000e+00 | 2.0000000000e+00 | 2.0000000000e+00 | 2.0000000000e+00 |
-| Velocity magnitude           | 1.1352064162e-06 | 9.9831732708e-02 | 1.6504427168e-02 | 5.1246246357e+02 |
-| Angular velocity magnitude   | 2.4264129470e-02 | 4.3110982423e+01 | 6.0451753902e+00 | 1.8770269587e+05 |
-| Translational kinetic energy | 1.3315935201e-17 | 1.0298150080e-07 | 3.7773610446e-09 | 1.1728706043e-04 |
-| Rotational kinetic energy    | 7.6043385060e-15 | 2.4005339444e-08 | 7.3894825718e-10 | 2.2944343386e-05 |
+| Variable                     | Min              | Max              | Average          | Total            | 
+| Contact list generation      | 0.0000000000e+00 | 2.0000000000e+00 | 2.0000000000e+00 | 2.0000000000e+00 | 
+| Velocity magnitude           | 2.6947994628e-05 | 7.8393646823e-02 | 1.6416719911e-02 | 5.0973915325e+02 | 
+| Angular velocity magnitude   | 1.4749084646e-02 | 4.4372974640e+01 | 5.9302598300e+00 | 1.8413456772e+05 | 
+| Translational kinetic energy | 7.5036903344e-15 | 6.3501463567e-08 | 3.7269067374e-09 | 1.1572045420e-04 | 
+| Rotational kinetic energy    | 2.8097142107e-15 | 2.5431331504e-08 | 7.0616316794e-10 | 2.1926366364e-05 | 
 
-*********************************************************************************
-Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39636596
-*********************************************************************************
+**********************************************************************************
+Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.396372318
+**********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -66,26 +66,17 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
--->Repartitionning triangulation
-Load balance finished
-Average, minimum and maximum number of particles on the processors are 15525 , 15444 and 15606
-Minimum and maximum number of cells owned by the processors are 679 and 679
-Setup DOFs
-   Number of active cells:       679
-   Number of degrees of freedom: 5952
-   Volume of triangulation:      0.0010185
-DEM contact search at dem step 0
 DEM contact search at dem step 49
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 0 s^-1
-Max local continuity error: 0 s^-1
+Global continuity equation error: -1.164824534e-09 s^-1
+Max local continuity error: 0.0004002969829 s^-1
 --------------------
 Particle statistics
 --------------------
-| Variable                     | Min              | Max              | Average          | Total            |
-| Contact list generation      | 0.0000000000e+00 | 2.0000000000e+00 | 2.0000000000e+00 | 4.0000000000e+00 |
-| Velocity magnitude           | 5.7050928928e-05 | 1.0407079300e-01 | 1.6739547480e-02 | 5.1976294927e+02 |
-| Angular velocity magnitude   | 1.2131759214e-02 | 4.7964579158e+01 | 5.7326173705e+00 | 1.7799776935e+05 |
-| Translational kinetic energy | 3.3631593045e-14 | 1.1191279094e-07 | 3.7752441479e-09 | 1.1722133079e-04 |
-| Rotational kinetic energy    | 1.9009888778e-15 | 2.9714832637e-08 | 6.5871491265e-10 | 2.0453098038e-05 |
+| Variable                     | Min              | Max              | Average          | Total            | 
+| Contact list generation      | 0.0000000000e+00 | 2.0000000000e+00 | 1.5000000000e+00 | 3.0000000000e+00 | 
+| Velocity magnitude           | 2.2183110066e-04 | 7.8566843200e-02 | 1.2685409241e-02 | 3.9388195694e+02 | 
+| Angular velocity magnitude   | 4.2378370090e-03 | 3.8410811385e+01 | 5.5138291467e+00 | 1.7120439501e+05 | 
+| Translational kinetic energy | 5.0847179432e-13 | 6.3782363185e-08 | 2.1528314553e-09 | 6.6845416688e-05 | 
+| Rotational kinetic energy    | 2.3196395804e-16 | 1.9056317251e-08 | 6.2986225957e-10 | 1.9557223160e-05 | 

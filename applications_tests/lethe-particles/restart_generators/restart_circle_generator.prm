@@ -25,8 +25,7 @@ subsection restart
   set restart    = false
   set checkpoint = true
   set frequency  = 1000
-
-  set filename = restart_circle
+  set filename = ../restart_circle_files/restart_circle
 end
 
 #---------------------------------------------------

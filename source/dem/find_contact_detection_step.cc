@@ -6,7 +6,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_contact_detection_step(
   Particles::ParticleHandler<dim> &particle_handler,
@@ -34,12 +34,12 @@ find_particle_contact_detection_step(
 
       // Finding displacement of each particle during last step
       particle_displacement +=
-        dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
-                    particle_properties[DEM::PropertiesIndex::v_x] +
-                  particle_properties[DEM::PropertiesIndex::v_y] *
-                    particle_properties[DEM::PropertiesIndex::v_y] +
-                  particle_properties[DEM::PropertiesIndex::v_z] *
-                    particle_properties[DEM::PropertiesIndex::v_z]);
+        dt * sqrt(particle_properties[PropertiesIndex::v_x] *
+                    particle_properties[PropertiesIndex::v_x] +
+                  particle_properties[PropertiesIndex::v_y] *
+                    particle_properties[PropertiesIndex::v_y] +
+                  particle_properties[PropertiesIndex::v_z] *
+                    particle_properties[PropertiesIndex::v_z]);
 
       // Updating maximum displacement of particles
       max_displacement = std::max(max_displacement, particle_displacement);
@@ -60,7 +60,7 @@ find_particle_contact_detection_step(
 }
 
 template void
-find_particle_contact_detection_step(
+find_particle_contact_detection_step<2, DEM::DEMProperties::PropertiesIndex>(
   Particles::ParticleHandler<2> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,
@@ -69,7 +69,25 @@ find_particle_contact_detection_step(
   const bool                     parallel_update);
 
 template void
-find_particle_contact_detection_step(
+find_particle_contact_detection_step<3, DEM::DEMProperties::PropertiesIndex>(
+  Particles::ParticleHandler<3> &particle_handler,
+  const double                   dt,
+  const double                   smallest_contact_search_criterion,
+  MPI_Comm                      &mpi_communicator,
+  std::vector<double>           &displacement,
+  const bool                     parallel_update);
+
+template void
+find_particle_contact_detection_step<2, DEM::CFDDEMProperties::PropertiesIndex>(
+  Particles::ParticleHandler<2> &particle_handler,
+  const double                   dt,
+  const double                   smallest_contact_search_criterion,
+  MPI_Comm                      &mpi_communicator,
+  std::vector<double>           &displacement,
+  const bool                     parallel_update);
+
+template void
+find_particle_contact_detection_step<3, DEM::CFDDEMProperties::PropertiesIndex>(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,

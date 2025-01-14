@@ -29,8 +29,10 @@ using namespace dealii;
  * actual implementation of the models are carried out in the
  * ParticleParticleContactForce class which is templated by the contact model
  * type.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class ParticleParticleContactForceBase
 {
 public:
@@ -96,11 +98,12 @@ protected:
  * @tparam rolling_friction_model The rolling resistance model.
  */
 template <
-  int                                                       dim,
+  int dim,
+  typename PropertiesIndex,
   Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 class ParticleParticleContactForce
-  : public ParticleParticleContactForceBase<dim>
+  : public ParticleParticleContactForceBase<dim, PropertiesIndex>
 {
 public:
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters);
@@ -520,16 +523,14 @@ private:
     const ArrayView<const double> &particle_two_properties)
   {
     // Calculate the effective radius
-    const double diameter_one =
-      particle_one_properties[DEM::PropertiesIndex::dp];
-    const double diameter_two =
-      particle_two_properties[DEM::PropertiesIndex::dp];
-    double effective_radius =
+    const double diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double diameter_two = particle_two_properties[PropertiesIndex::dp];
+    double       effective_radius =
       (diameter_one * diameter_two) / (2 * (diameter_one + diameter_two));
 
     // Calculate the effective mass
-    const double mass_one = particle_one_properties[DEM::PropertiesIndex::mass];
-    const double mass_two = particle_two_properties[DEM::PropertiesIndex::mass];
+    const double mass_one = particle_one_properties[PropertiesIndex::mass];
+    const double mass_two = particle_two_properties[PropertiesIndex::mass];
     double       effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
 
     return std::make_tuple(effective_radius, effective_mass);
@@ -571,22 +572,24 @@ private:
     if constexpr (rolling_friction_model ==
                   RollingResistanceMethod::constant_resistance)
       {
-        return constant_rolling_resistance_torque(effective_radius,
-                                                  particle_one_properties,
-                                                  particle_two_properties,
-                                                  rolling_friction_coeff,
-                                                  normal_force.norm(),
-                                                  normal_unit_vector);
+        return constant_rolling_resistance_torque<PropertiesIndex>(
+          effective_radius,
+          particle_one_properties,
+          particle_two_properties,
+          rolling_friction_coeff,
+          normal_force.norm(),
+          normal_unit_vector);
       }
 
     if constexpr (rolling_friction_model == viscous_resistance)
       {
-        return viscous_rolling_resistance_torque(effective_radius,
-                                                 particle_one_properties,
-                                                 particle_two_properties,
-                                                 rolling_friction_coeff,
-                                                 normal_force.norm(),
-                                                 normal_unit_vector);
+        return viscous_rolling_resistance_torque<PropertiesIndex>(
+          effective_radius,
+          particle_one_properties,
+          particle_two_properties,
+          rolling_friction_coeff,
+          normal_force.norm(),
+          normal_unit_vector);
       }
   }
 

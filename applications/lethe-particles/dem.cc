@@ -32,9 +32,25 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
+          const DEM::SolverType solver_type =
+            dem_parameters.model_parameters.solver_type;
 
-          DEMSolver<2> problem(dem_parameters);
-          problem.solve();
+          if (solver_type == DEM::SolverType::dem)
+            {
+              DEMSolver<2, DEM::DEMProperties::PropertiesIndex> problem(
+                dem_parameters);
+              problem.solve();
+            }
+          else
+            {
+              AssertThrow(
+                false,
+                dealii::ExcMessage(
+                  "While reading the solver type from the input file, "
+                  "Lethe found a value different than \"dem\". As of January 2025, "
+                  "the lethe-particles application requires the uses of  "
+                  "\"solver type = dem\", which is the default value."));
+            }
         }
 
       else if (dim == 3)
@@ -46,9 +62,25 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
-
-          DEMSolver<3> problem(dem_parameters);
-          problem.solve();
+          // const DEM::SolverType solver_type =
+          // dem_parameters.model_parameters.solver_type;
+          const DEM::SolverType solver_type = DEM::SolverType::dem;
+          if (solver_type == DEM::SolverType::dem)
+            {
+              DEMSolver<3, DEM::DEMProperties::PropertiesIndex> problem(
+                dem_parameters);
+              problem.solve();
+            }
+          else
+            {
+              AssertThrow(
+                false,
+                dealii::ExcMessage(
+                  "While reading the solver type from the input file, "
+                  "Lethe found a value different than \"dem\". As of January 2025, "
+                  "the lethe-particles application requires the uses of  "
+                  "\"solver type = dem\", which is the default value."));
+            }
         }
 
       else

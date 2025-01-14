@@ -272,17 +272,20 @@ namespace LetheGridTools
    * Variables name are taken straight from this reference to ensure a better
    * readability.
    *
-   * @return A tuple in which 0. a vector of bools to determine if the particle is
-   * close to the triangle plane, 1. a vector of projected location of particles
-   * on the triangle, 2. a vector of normal vectors of the triangles
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    *
    * @param triangle A vector of points that defines a triangle
    * @param particles A particle_iterator_range that refers to all the particles
    * located in the background (base) cell
    * @param n_particles_in_base_cell Number of particles in the base cell
    *
+   * @return A tuple in which 0. a vector of bools to determine if the particle is
+   * close to the triangle plane, 1. a vector of projected location of particles
+   * on the triangle, 2. a vector of normal vectors of the triangles
    */
-  template <int dim>
+
+  template <int dim, typename PropertiesIndex>
   std::
     tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
     find_particle_triangle_projection(

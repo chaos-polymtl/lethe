@@ -8,8 +8,8 @@ Finished reading DEM checkpoint
    Volume of triangulation:      0.000384
 ---------------------------------------------------------------
 Initializing DEM parameters
-Warning: expansion of particle-wall contact list is disabled.
-This feature is useful in geometries with concave boundaries.
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters
 DEM time-step is 1e-05 s
 --------------
@@ -17,7 +17,7 @@ Void Fraction
 --------------
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0
+Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0       
 *******************************************************************************
 ---------------------
 Flow control summary
@@ -32,9 +32,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.1201 0.00499572 0.019 0 -3.83398e-15 0
-1 0.0001 0.00499572 0.019 0 -3.83398e-15 0
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.0001        0.00499572    0.019         0             -3.83398e-15  0             
+1             0.1201        0.00499572    0.019         0             -3.83398e-15  0             
 ----
 DEM
 ----
@@ -42,7 +42,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.4378e-21 s^-1
+Global continuity equation error: -4.97725e-21 s^-1
 Max local continuity error: 7.00492e-09 s^-1
 
 *********************************************************************************
@@ -61,9 +61,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120099 0.00499574 0.019 -0.000930352 2.76724e-05 0
-1 9.94585e-05 0.00499574 0.019 -0.000930352 2.76724e-05 0
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             9.94585e-05   0.00499574    0.019         -0.000930352  2.76724e-05   0             
+1             0.120099      0.00499574    0.019         -0.000930352  2.76724e-05   0             
 ----
 DEM
 ----
@@ -71,7 +71,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.74026e-20 s^-1
+Global continuity equation error: 1.37841e-20 s^-1
 Max local continuity error: 9.8617e-09 s^-1
 
 *********************************************************************************
@@ -90,9 +90,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120098 0.00499575 0.019 -0.00172965 -1.45139e-05 -1.05409e-10
-1 9.81927e-05 0.00499575 0.019 -0.00172965 -1.45139e-05 -1.04992e-10
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             9.81927e-05   0.00499575    0.019         -0.00172965   -1.45139e-05  -1.04992e-10  
+1             0.120098      0.00499575    0.019         -0.00172965   -1.45139e-05  -1.05409e-10  
 ----
 DEM
 ----
@@ -100,7 +100,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 4.01795e-20 s^-1
+Global continuity equation error: -3.75623e-21 s^-1
 Max local continuity error: 1.9277e-08 s^-1
 
 ********************************************************************************
@@ -119,9 +119,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120095 0.00499573 0.019 -0.00380249 -1.71296e-05 -6.583e-08
-1 9.52675e-05 0.00499573 0.019 -0.00380249 -1.71296e-05 -6.58297e-08
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             9.52675e-05   0.00499573    0.019         -0.00380249   -1.71296e-05  -6.58297e-08  
+1             0.120095      0.00499573    0.019         -0.00380249   -1.71296e-05  -6.583e-08    
 ----
 DEM
 ----
@@ -129,7 +129,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 5.3684e-21 s^-1
+Global continuity equation error: -3.14097e-20 s^-1
 Max local continuity error: 2.87863e-08 s^-1
 
 ********************************************************************************
@@ -148,9 +148,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.12009 0.00499573 0.019 -0.00626449 2.18704e-05 -2.92819e-07
-1 9.03137e-05 0.00499573 0.019 -0.00626449 2.18704e-05 -2.92818e-07
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             9.03137e-05   0.00499573    0.019         -0.00626449   2.18704e-05   -2.92818e-07  
+1             0.12009       0.00499573    0.019         -0.00626449   2.18704e-05   -2.92819e-07  
 ----
 DEM
 ----
@@ -158,7 +158,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.55204e-20 s^-1
+Global continuity equation error: -5.77372e-21 s^-1
 Max local continuity error: 4.62072e-08 s^-1
 
 ********************************************************************************
@@ -177,9 +177,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120083 0.00499575 0.019 -0.00855568 3.58991e-06 -9.98482e-07
-1 8.2833e-05 0.00499575 0.019 -0.00855568 3.58991e-06 -9.98483e-07
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             8.2833e-05    0.00499575    0.019         -0.00855568   3.58991e-06   -9.98483e-07  
+1             0.120083      0.00499575    0.019         -0.00855568   3.58991e-06   -9.98482e-07  
 ----
 DEM
 ----
@@ -187,7 +187,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 5.30057e-20 s^-1
+Global continuity equation error: -4.49093e-20 s^-1
 Max local continuity error: 6.81829e-08 s^-1
 
 ********************************************************************************
@@ -206,9 +206,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120074 0.00499573 0.019 -0.0100861 -2.17351e-05 -2.42e-06
-1 7.36044e-05 0.00499573 0.019 -0.0100861 -2.17351e-05 -2.41998e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             7.36044e-05   0.00499573    0.019         -0.0100861    -2.17351e-05  -2.41998e-06  
+1             0.120074      0.00499573    0.019         -0.0100861    -2.17351e-05  -2.42e-06     
 ----
 DEM
 ----
@@ -216,7 +216,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.2507e-20 s^-1
+Global continuity equation error: -9.2856e-20 s^-1
 Max local continuity error: 9.52008e-08 s^-1
 
 ********************************************************************************
@@ -235,9 +235,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120063 0.00499573 0.019 -0.0108395 7.90431e-06 -4.49051e-06
-1 6.31178e-05 0.00499573 0.019 -0.0108395 7.90429e-06 -4.49049e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             6.31178e-05   0.00499573    0.019         -0.0108395    7.90429e-06   -4.49049e-06  
+1             0.120063      0.00499573    0.019         -0.0108395    7.90431e-06   -4.49051e-06  
 ----
 DEM
 ----
@@ -245,7 +245,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.04622e-20 s^-1
+Global continuity equation error: 7.07471e-20 s^-1
 Max local continuity error: 1.35203e-07 s^-1
 
 ********************************************************************************
@@ -264,9 +264,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120052 0.00499574 0.019 -0.0107293 1.51161e-05 -6.83962e-06
-1 5.24084e-05 0.00499574 0.019 -0.0107293 1.5116e-05 -6.83956e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             5.24084e-05   0.00499574    0.019         -0.0107293    1.5116e-05    -6.83956e-06  
+1             0.120052      0.00499574    0.019         -0.0107293    1.51161e-05   -6.83962e-06  
 ----
 DEM
 ----
@@ -274,7 +274,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -8.93024e-20 s^-1
+Global continuity equation error: -1.64715e-19 s^-1
 Max local continuity error: 1.68226e-07 s^-1
 
 ********************************************************************************
@@ -293,9 +293,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120042 0.00499574 0.019 -0.0101584 -1.49249e-05 -9.03611e-06
-1 4.19453e-05 0.00499574 0.019 -0.0101584 -1.49248e-05 -9.03599e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             4.19453e-05   0.00499574    0.019         -0.0101584    -1.49248e-05  -9.03599e-06  
+1             0.120042      0.00499574    0.019         -0.0101584    -1.49249e-05  -9.03611e-06  
 ----
 DEM
 ----
@@ -303,7 +303,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.76031e-19 s^-1
+Global continuity equation error: -1.65324e-19 s^-1
 Max local continuity error: 1.92139e-07 s^-1
 
 ********************************************************************************
@@ -322,9 +322,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120032 0.00499573 0.019 -0.00929774 -5.47629e-06 -1.0792e-05
-1 3.22557e-05 0.00499573 0.019 -0.00929774 -5.47636e-06 -1.07919e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             3.22557e-05   0.00499573    0.019         -0.00929774   -5.47636e-06  -1.07919e-05  
+1             0.120032      0.00499573    0.019         -0.00929774   -5.47629e-06  -1.0792e-05   
 ----
 DEM
 ----
@@ -332,7 +332,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.23868e-20 s^-1
+Global continuity equation error: -4.61302e-20 s^-1
 Max local continuity error: 2.07886e-07 s^-1
 
 ********************************************************************************
@@ -351,9 +351,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120023 0.00499574 0.019 -0.00858746 1.64206e-05 -1.20427e-05
-1 2.32822e-05 0.00499574 0.019 -0.00858746 1.64205e-05 -1.20426e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             2.32822e-05   0.00499574    0.019         -0.00858746   1.64205e-05   -1.20426e-05  
+1             0.120023      0.00499574    0.019         -0.00858746   1.64206e-05   -1.20427e-05  
 ----
 DEM
 ----
@@ -361,7 +361,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -6.43944e-20 s^-1
+Global continuity equation error: -6.54002e-20 s^-1
 Max local continuity error: 2.17957e-07 s^-1
 
 ********************************************************************************
@@ -380,9 +380,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120015 0.00499574 0.0189999 -0.00810204 -3.5435e-06 -1.28767e-05
-1 1.49472e-05 0.00499574 0.0189999 -0.00810204 -3.54339e-06 -1.28766e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             1.49472e-05   0.00499574    0.0189999     -0.00810204   -3.54339e-06  -1.28766e-05  
+1             0.120015      0.00499574    0.0189999     -0.00810204   -3.5435e-06   -1.28767e-05  
 ----
 DEM
 ----
@@ -390,7 +390,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -6.12445e-20 s^-1
+Global continuity equation error: -3.226e-20 s^-1
 Max local continuity error: 2.25267e-07 s^-1
 
 ********************************************************************************
@@ -409,9 +409,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120007 0.00499573 0.0189999 -0.00804132 -1.26822e-05 -1.34486e-05
-1 6.84277e-06 0.00499573 0.0189999 -0.00804132 -1.26822e-05 -1.34485e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             6.84277e-06   0.00499573    0.0189999     -0.00804132   -1.26822e-05  -1.34485e-05  
+1             0.120007      0.00499573    0.0189999     -0.00804132   -1.26822e-05  -1.34486e-05  
 ----
 DEM
 ----
@@ -419,7 +419,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.38507e-21 s^-1
+Global continuity equation error: 5.03455e-20 s^-1
 Max local continuity error: 2.32331e-07 s^-1
 
 ********************************************************************************
@@ -438,9 +438,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119999 0.00499573 0.0189999 -0.00826334 9.87316e-06 -1.3896e-05
-1 0.239999 0.00499573 0.0189999 -0.00826334 9.87305e-06 -1.38959e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239999      0.00499573    0.0189999     -0.00826334   9.87305e-06   -1.38959e-05  
+1             0.119999      0.00499573    0.0189999     -0.00826334   9.87316e-06   -1.3896e-05   
 ----
 DEM
 ----
@@ -448,7 +448,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 9.78058e-20 s^-1
+Global continuity equation error: -1.85288e-21 s^-1
 Max local continuity error: 2.51155e-07 s^-1
 
 ********************************************************************************
@@ -467,9 +467,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.11999 0.00499574 0.0189999 -0.00875099 6.12886e-06 -1.44511e-05
-1 0.23999 0.00499574 0.0189999 -0.00875099 6.12889e-06 -1.4451e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.23999       0.00499574    0.0189999     -0.00875099   6.12889e-06   -1.4451e-05   
+1             0.11999       0.00499574    0.0189999     -0.00875099   6.12886e-06   -1.44511e-05  
 ----
 DEM
 ----
@@ -477,7 +477,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.88026e-20 s^-1
+Global continuity equation error: -7.99255e-20 s^-1
 Max local continuity error: 2.77539e-07 s^-1
 
 ********************************************************************************
@@ -496,9 +496,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119981 0.00499574 0.0189999 -0.00928522 -1.10684e-05 -1.24624e-05
-1 0.239981 0.00499574 0.0189999 -0.00928522 -1.10683e-05 -1.24623e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239981      0.00499574    0.0189999     -0.00928522   -1.10683e-05  -1.24623e-05  
+1             0.119981      0.00499574    0.0189999     -0.00928522   -1.10684e-05  -1.24624e-05  
 ----
 DEM
 ----
@@ -506,7 +506,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.00453e-20 s^-1
+Global continuity equation error: -4.00355e-20 s^-1
 Max local continuity error: 2.98276e-07 s^-1
 
 ********************************************************************************
@@ -525,9 +525,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119972 0.00499573 0.0189999 -0.0098231 3.46356e-07 -1.0404e-05
-1 0.239972 0.00499573 0.0189999 -0.0098231 3.4628e-07 -1.04039e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239972      0.00499573    0.0189999     -0.0098231    3.4628e-07    -1.04039e-05  
+1             0.119972      0.00499573    0.0189999     -0.0098231    3.46356e-07   -1.0404e-05   
 ----
 DEM
 ----
@@ -535,7 +535,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -7.05023e-20 s^-1
+Global continuity equation error: 9.3703e-21 s^-1
 Max local continuity error: 3.1429e-07 s^-1
 
 ********************************************************************************
@@ -554,9 +554,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119962 0.00499574 0.0189999 -0.0101991 9.72822e-06 -8.04801e-06
-1 0.239962 0.00499574 0.0189999 -0.0101991 9.72818e-06 -8.04793e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239962      0.00499574    0.0189999     -0.0101991    9.72818e-06   -8.04793e-06  
+1             0.119962      0.00499574    0.0189999     -0.0101991    9.72822e-06   -8.04801e-06  
 ----
 DEM
 ----
@@ -564,7 +564,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.21078e-20 s^-1
+Global continuity equation error: 1.30628e-20 s^-1
 Max local continuity error: 3.25209e-07 s^-1
 
 ********************************************************************************
@@ -583,9 +583,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119951 0.00499574 0.0189999 -0.0104584 -5.38531e-06 -5.59499e-06
-1 0.239951 0.00499574 0.0189999 -0.0104584 -5.38522e-06 -5.59489e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239951      0.00499574    0.0189999     -0.0104584    -5.38522e-06  -5.59489e-06  
+1             0.119951      0.00499574    0.0189999     -0.0104584    -5.38531e-06  -5.59499e-06  
 ----
 DEM
 ----
@@ -593,7 +593,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.05786e-19 s^-1
+Global continuity equation error: 6.94964e-20 s^-1
 Max local continuity error: 3.30891e-07 s^-1
 
 ********************************************************************************
@@ -612,9 +612,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119941 0.00499573 0.0189999 -0.0105426 -5.85157e-06 -2.86195e-06
-1 0.239941 0.00499573 0.0189999 -0.0105426 -5.85159e-06 -2.86184e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239941      0.00499573    0.0189999     -0.0105426    -5.85159e-06  -2.86184e-06  
+1             0.119941      0.00499573    0.0189999     -0.0105426    -5.85157e-06  -2.86195e-06  
 ----
 DEM
 ----
@@ -622,7 +622,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.41746e-20 s^-1
+Global continuity equation error: 5.72012e-20 s^-1
 Max local continuity error: 3.31727e-07 s^-1
 
 ********************************************************************************
@@ -641,9 +641,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.11993 0.00499573 0.0189999 -0.0105636 7.86562e-06 -1.74275e-07
-1 0.23993 0.00499573 0.0189999 -0.0105636 7.86555e-06 -1.74158e-07
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.23993       0.00499573    0.0189999     -0.0105636    7.86555e-06   -1.74158e-07  
+1             0.11993       0.00499573    0.0189999     -0.0105636    7.86562e-06   -1.74275e-07  
 ----
 DEM
 ----
@@ -651,7 +651,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 8.89649e-20 s^-1
+Global continuity equation error: 7.71594e-20 s^-1
 Max local continuity error: 3.2842e-07 s^-1
 
 ********************************************************************************
@@ -670,9 +670,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.11992 0.00499574 0.0189999 -0.0105182 1.06997e-06 2.66336e-06
-1 0.23992 0.00499574 0.0189999 -0.0105182 1.07002e-06 2.66348e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.23992       0.00499574    0.0189999     -0.0105182    1.07002e-06   2.66348e-06   
+1             0.11992       0.00499574    0.0189999     -0.0105182    1.06997e-06   2.66336e-06   
 ----
 DEM
 ----
@@ -680,7 +680,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 4.73147e-20 s^-1
+Global continuity equation error: -3.79444e-20 s^-1
 Max local continuity error: 3.21799e-07 s^-1
 
 ********************************************************************************
@@ -699,9 +699,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119909 0.00499574 0.0189999 -0.0105144 -7.6148e-06 5.36909e-06
-1 0.239909 0.00499574 0.0189999 -0.0105144 -7.61477e-06 5.36921e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239909      0.00499574    0.0189999     -0.0105144    -7.61477e-06  5.36921e-06   
+1             0.119909      0.00499574    0.0189999     -0.0105144    -7.6148e-06   5.36909e-06   
 ----
 DEM
 ----
@@ -709,7 +709,7 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.2057e-20 s^-1
+Global continuity equation error: 1.56039e-20 s^-1
 Max local continuity error: 3.12566e-07 s^-1
 
 ********************************************************************************
@@ -728,9 +728,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119899 0.00499573 0.0189999 -0.0105381 3.01125e-06 8.18896e-06
-1 0.239899 0.00499573 0.0189999 -0.0105381 3.01119e-06 8.18908e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.239899      0.00499573    0.0189999     -0.0105381    3.01119e-06   8.18908e-06   
+1             0.119899      0.00499573    0.0189999     -0.0105381    3.01125e-06   8.18896e-06   
 ----
 DEM
 ----
@@ -738,5 +738,5 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.68612e-20 s^-1
+Global continuity equation error: -2.5808e-20 s^-1
 Max local continuity error: 3.3233e-07 s^-1

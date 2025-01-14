@@ -25,14 +25,16 @@ using namespace dealii;
 using namespace DEM;
 
 /**
- * Base class for the particles force chains contact force models.
+ * @brief Base class for the particles force chains contact force models.
  * This class does not implement any of the models, but ensures that
  * an interface without template specialization is available. All of the
  * actual implementation of the models are carried out in the
  * ParticlesForceChains class which is templated by the contact model
  * type.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class ParticlesForceChainsBase
 {
 protected:
@@ -101,12 +103,14 @@ public:
  * @tparam rolling_friction_model The rolling resistance model
  */
 template <
-  int                                                       dim,
+  int dim,
+  typename PropertiesIndex,
   Parameters::Lagrangian::ParticleParticleContactForceModel force_model,
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 class ParticlesForceChains
-  : public ParticlesForceChainsBase<dim>,
+  : public ParticlesForceChainsBase<dim, PropertiesIndex>,
     public ParticleParticleContactForce<dim,
+                                        PropertiesIndex,
                                         force_model,
                                         rolling_friction_model>
 {

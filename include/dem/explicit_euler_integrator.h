@@ -16,13 +16,15 @@ using namespace dealii;
  * also integrated into integration class
  *
  * @note Euler is a first-order integration scheme. Calculation proceudre:
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * x(n+1) = x(n) + v(n) * dt
  * v(n+1) = v(n) + a(n) * dt
  * a(n+1) = F(n+1) / m
  */
-template <int dim>
-class ExplicitEulerIntegrator : public Integrator<dim>
+template <int dim, typename PropertiesIndex>
+class ExplicitEulerIntegrator : public Integrator<dim, PropertiesIndex>
 {
 public:
   ExplicitEulerIntegrator()
@@ -76,7 +78,8 @@ public:
             std::vector<Tensor<1, 3>>                       &force,
             const std::vector<double>                       &MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
-            AdaptiveSparseContacts<dim> &sparse_contacts_object) override;
+            AdaptiveSparseContacts<dim, PropertiesIndex>
+              &sparse_contacts_object) override;
 };
 
 #endif
