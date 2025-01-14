@@ -71,7 +71,7 @@ cp $plots $folder
 cp $data $folder
 
 # Append the information to the report
-magick -density 300 -pointsize 12 -font Courier text:mass-and-discharge-rate.txt mass-and-discharge-rate.pdf
+magick -density 300 -pointsize 12 text:mass-and-discharge-rate.txt mass-and-discharge-rate.pdf
 
 magick -density 300  $output_root/report.pdf mass-and-discharge-rate.pdf $plots  -quality 100 $output_root/temporary.pdf
 cp $output_root/temporary.pdf $output_root/report.pdf
