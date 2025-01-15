@@ -45,10 +45,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
   // Extractor for phase fraction gradient vector
   FEValuesExtractors::Vector phase_fraction_gradients(0);
 
-  // Initialize solution arrays
-  std::vector<double>         present_curvature_projection_values(n_q_points);
-  std::vector<Tensor<1, dim>> present_curvature_projection_gradients(
-    n_q_points);
+  // Initialize projected phase fraction gradient solution array
   std::vector<Tensor<1, dim>> present_phase_gradient_projection_values(
     n_q_points);
 
@@ -93,12 +90,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
             compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
                                        fe_curvature_projection.degree);
 
-          // Get projected curvature values, gradients and projected phase
-          // fraction gradient values
-          fe_values_curvature_projection.get_function_values(
-            this->present_solution, present_curvature_projection_values);
-          fe_values_curvature_projection.get_function_gradients(
-            this->present_solution, present_curvature_projection_gradients);
+          // Get projected fraction gradient values
           fe_values_phase_gradient_projection[phase_fraction_gradients]
             .get_function_values(
               *this->subequations_interface->get_solution(

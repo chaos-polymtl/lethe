@@ -74,7 +74,6 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , curvature_dof_handler(*triangulation)
     , sharpening_threshold(
         simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
   {
@@ -100,10 +99,7 @@ public:
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
           simulation_parameters.fem_parameters.VOF_order);
-        mapping      = std::make_shared<MappingQ<dim>>(fe->degree);
-        fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
-        curvature_mapping =
-          std::make_shared<MappingQ<dim>>(fe_curvature->degree);
+        mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
@@ -689,14 +685,11 @@ private:
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl>  simulation_control;
   DoFHandler<dim>                     dof_handler;
-  DoFHandler<dim>                     curvature_dof_handler;
   std::shared_ptr<FiniteElement<dim>> fe;
-  std::shared_ptr<FiniteElement<dim>> fe_curvature;
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
   std::shared_ptr<Mapping<dim>>        mapping;
-  std::shared_ptr<Mapping<dim>>        curvature_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
