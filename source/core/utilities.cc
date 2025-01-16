@@ -277,7 +277,7 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
               list_of_words_clean.emplace_back(word);
             }
         }
-      // check if the line is contained words or numbers.
+      // If the line is not the first one, it contains numbers
       if (line_count != 0)
         {
           line_of_data = Utilities::string_to_double(list_of_words_clean);

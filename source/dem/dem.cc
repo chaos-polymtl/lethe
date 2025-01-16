@@ -654,6 +654,7 @@ DEMSolver<dim, PropertiesIndex>::write_output_results()
   particle_data_out.build_patches(particle_handler,
                                   properties_class.get_properties_name());
 
+
   write_vtu_and_pvd<0, dim>(particles_pvdhandler,
                             particle_data_out,
                             folder,

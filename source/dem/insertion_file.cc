@@ -151,6 +151,9 @@ InsertionFile<dim>::assign_particle_properties_for_file_insertion(
   // Getting properties as local parameters
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
+  // Allocate an empty vector
+  std::vector<double> properties_of_one_particle(DEM::DEMProperties::PropertiesIndex::n_properties,0.);
+
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
   for (unsigned int particle_counter = 0;
@@ -162,19 +165,33 @@ InsertionFile<dim>::assign_particle_properties_for_file_insertion(
       double density =
         physical_properties
           .density_particle[this->current_inserting_particle_type];
+      double mass    = density * 4. / 3. * M_PI *
+              Utilities::fixed_power<3, double>(diameter * 0.5);
+      double moment_of_inertia = 0.1 * mass * diameter * diameter;
+
       double vel_x   = particles_data["v_x"][particle_counter];
       double vel_y   = particles_data["v_y"][particle_counter];
       double vel_z   = particles_data["v_z"][particle_counter];
       double omega_x = particles_data["w_x"][particle_counter];
       double omega_y = particles_data["w_y"][particle_counter];
       double omega_z = particles_data["w_z"][particle_counter];
-      double mass    = density * 4. / 3. * M_PI *
-                    Utilities::fixed_power<3, double>(diameter * 0.5);
 
-      std::vector<double> properties_of_one_particle{
-        type, diameter, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z, mass};
 
-      particle_properties.push_back(properties_of_one_particle);
+
+    // Selectively fill the entities that need to be filled
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::type]=type;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::dp]=diameter;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::mass]=mass;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::moment_of_inertia]=moment_of_inertia;
+
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::v_x]=vel_x;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::v_y]=vel_y;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::v_z]=vel_z;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::omega_x]=omega_x;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::omega_y]=omega_y;
+    properties_of_one_particle[DEM::DEMProperties::PropertiesIndex::omega_z]=omega_z;
+
+      particle_properties.emplace_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
 }
