@@ -77,7 +77,13 @@ public:
   value(const Point<dim> &p,
         const unsigned int /* component */ = 0) const override
   {
-    const Point<dim> center = Point<dim>(0.5,0.75,0.5);
+    Point<dim> center = Point<dim>();
+    
+    center(0) = 0.5;
+    center(1) = 0.75;
+    if constexpr (dim == 3)
+      center(2) = 0.5;
+      
     Tensor<1,dim> dist = center - p;
     
     double signed_dist = 0.15 - dist.norm();
@@ -572,11 +578,23 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   (void)component;
   Assert(component == 0, ExcIndexRange(component, 0, 1));
   
-  Point<dim> center = Point<dim>(0.5,0.75,0.5);
+  Point<dim> center = Point<dim>();
+  
+  center(0) = 0.5;
+  center(1) = 0.75;
+  if constexpr (dim == 3)
+    center(2) = 0.5;
+    
   Tensor<1,dim> dist = center - p;
   
-  return 0.5+0.5*std::tanh((0.15-dist.norm())/0.016);
-  
+  // return 0.15-dist.norm();
+  return 0.5+0.5*std::tanh((0.15-dist.norm())/0.0078125);
+  if (0.15-dist.norm() > 0.0078125)
+    return 1.0;
+  else if (0.15-dist.norm() < -0.0078125)
+    return 0.0;
+  else
+    return 0.5*((0.15-dist.norm())/0.0078125 + 1.0);
   
   // Point<dim> bl = Point<dim>(0.4,0.4);
   // Point<dim> tr = Point<dim>(0.6,0.6);
@@ -798,6 +816,7 @@ private:
   ConditionalOStream pcout;
   TableHandler table_volume_monitoring;
   TableHandler table_error_monitoring;
+  double initial_volume;
   
 };
 
@@ -820,7 +839,7 @@ AdvectionProblem<dim>::AdvectionProblem()
   , fe_level_set(1)
   , level_set_dof_handler(triangulation)
   , mesh_classifier(dof_handler, level_set)
-  , dt(2.5/300.0)
+  , dt(0.000833)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
 {
@@ -1083,7 +1102,7 @@ AdvectionProblem<dim>::refine_grid(const unsigned int max_grid_level, const unsi
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_trans(dof_handler);
     
   Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
-  
+
   KellyErrorEstimator<dim>::estimate(mapping, dof_handler,
                                          QGauss<dim-1>(fe.degree+1),
                                          typename std::map<types::boundary_id, const Function<dim, double> *>(),
@@ -1097,7 +1116,8 @@ AdvectionProblem<dim>::refine_grid(const unsigned int max_grid_level, const unsi
   parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(triangulation,
                                                         estimated_error_per_cell,
                                                         0.9,
-                                                        0.01);         
+                                                        0.00005);    
+                                                                                                               
   if (triangulation.n_levels() > max_grid_level)
     for (auto &cell :
          triangulation.active_cell_iterators_on_level(max_grid_level))
@@ -1135,7 +1155,13 @@ AdvectionProblem<dim>::compute_phase_fraction_from_level_set()
   for (auto p : this->locally_owned_dofs)
     {
       const double signed_dist = signed_distance[p];
-      solution_owned[p] = 0.5+0.5*std::tanh(signed_dist/0.016);
+      // solution_owned[p] = signed_dist;
+      solution_owned[p] = 0.5+0.5*std::tanh(signed_dist/0.0078125);
+      // solution_owned[p] = 0.5*(signed_dist/0.0625 + 1.0);
+      // if (signed_dist > 0.0625)
+      //   solution_owned[p] = 1.0;
+      // else if (signed_dist < -0.0625)
+      //   solution_owned[p] = 0.0;
     }
     constraints.distribute(solution_owned);
     
@@ -1152,10 +1178,10 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
   for (auto p : this->locally_owned_dofs)
     {
       const double phase = locally_relevant_solution[p];
-      // level_set_owned[p] = log10(std::max(phase,1e-8)/std::max(1.0-phase,1e-8));
       double phase_sign = sgn(phase-0.5);
-      level_set_owned[p] = 0.016*std::atanh(phase_sign*std::min(abs(phase-0.5)/0.5,1.0-1e-12));
-      // level_set_owned[p] = phase-0.5;
+      level_set_owned[p] = 0.0078125*std::atanh(phase_sign*std::min(abs(phase-0.5)/0.5,1.0-1e-12));
+      // level_set_owned[p] = 0.0625*(2.0*phase - 1.0);
+      // level_set_owned[p] = phase;
     }
   constraints.distribute(level_set_owned);
   
@@ -1203,18 +1229,23 @@ AdvectionProblem<dim>::perform_geometric_redistanciation(unsigned int time_itera
   
   // Compute volume (the one delimited by level set = 0.0).
   double global_volume = compute_volume(time_iteration);
-  pcout << "global_volume = " << global_volume << std::endl;
+  if (time_iteration == 0)
+    initial_volume = global_volume;
+  pcout << "global_volume = " << initial_volume << std::endl;
   
-  // Gain the writing right.
-  zero_out_ghost_values();
+  if (time_iteration%1 == 0)
+  {
+    // Gain the writing right.
+    zero_out_ghost_values();
   
-  compute_sign_distance(time_iteration, global_volume);
-
-  // Gain the reading right.
-  update_ghost_values();
+    compute_sign_distance(time_iteration, initial_volume);
   
-  compute_static_sphere_error(time_iteration);
-  compute_phase_fraction_from_level_set();
+    // Gain the reading right.
+    update_ghost_values();
+  
+    compute_static_sphere_error(time_iteration);
+    compute_phase_fraction_from_level_set();
+  }
   
 }
 
@@ -1591,24 +1622,23 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
   double corr_global_volume_n = corr_global_volume_nm1;
   double C_n = global_delta_volume_nm1/global_volume;
   
+  unsigned int it = 0;
   double global_delta_volume_n = 0.0;
-  while (global_delta_volume_nm1 > 1e-10)
+  while (global_delta_volume_nm1 > 1e-3*global_volume && it  < 20)
   {
+    it += 1;
     corr_global_volume_n = 0.0;
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
       {
-  
         Vector<double> cell_dof_values(dofs_per_cell);
         Vector<double> cell_level_set_dof_values(dofs_per_cell);
         Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
   
-  
         cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
         cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
         cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
-  
   
         for (unsigned int j = 0; j < dofs_per_cell; j++)
         {
@@ -1639,6 +1669,9 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
   
   }
   
+  // If the secant method does not converge, do not correct.
+  if (it >= 20)
+    C_n = 0.0;
   
   for (auto p : this->locally_active_dofs)
   {
@@ -1654,6 +1687,8 @@ template <int dim>
 void AdvectionProblem<dim>::conserve_local_volume()
 {
   const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  
+  // Initialize required variables to compute local volume
   const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
   LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
   
@@ -1713,15 +1748,18 @@ void AdvectionProblem<dim>::conserve_local_volume()
       
       unsigned int secante_it = 0;
       
-      if (inside_cell_volume_nm1 < 1e-8 || inside_cell_volume_nm1 > (cell_size - 1e-8))
+      const double intial_inside_cell_volume = inside_cell_volume_nm1;
+      
+      // Check if there is enough volume to correct. TO DO: Change to base the volume tol on a percentage of the cell size.
+      if (inside_cell_volume_nm1 < 1e-3*cell_size || inside_cell_volume_nm1 > (cell_size - 1e-3*cell_size))
       {
         continue;
       }
         
-      while (abs(delta_volume_nm1) > 1e-10 && secante_it < 10)
+      while (abs(delta_volume_nm1) > 1e-3*intial_inside_cell_volume  && secante_it < 20)
       {
         // If the cell is almost full or empty, we stop correcting the volume.
-        if (inside_cell_volume_nm1 < 1e-8 || inside_cell_volume_nm1 > (cell_size - 1e-8))
+        if (inside_cell_volume_nm1 < 1e-3*cell_size || inside_cell_volume_nm1 > (cell_size - 1e-3*cell_size))
         {
           local_corr_n = 0.0;
           break;
@@ -1741,6 +1779,11 @@ void AdvectionProblem<dim>::conserve_local_volume()
         inside_cell_volume_nm1 = inside_cell_volume_n;
         delta_volume_nm1 = delta_volume_n;
       } // End secante method loop.
+      
+      if (secante_it >= 20)
+      {
+        local_corr_n = 0.0;
+      }
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
       cell->get_dof_indices(dof_indices);
@@ -1830,8 +1873,8 @@ void AdvectionProblem<dim>::initialize_local_distance()
   // Initialization of the active dofs to the max distance we want to redistanciate. It requires a loop on the active dofs to initialize also the distance value of the ghost dofs. Otherwise, they are set to 0.0 by default.
   for (auto p : this->locally_active_dofs)
     {
-      distance(p) = 0.2;
-      distance_with_ghost(p) = 0.2;
+      distance(p) = 0.01;
+      distance_with_ghost(p) = 0.01;
     }
 }
 
@@ -1926,6 +1969,8 @@ double AdvectionProblem<dim>::compute_volume(unsigned int time_iteration)
   std::vector<double> phase_values(n_q_points);
   
   double volume_sharp = 0.0;
+  double volume_0p5 = 0.0;
+  
   double volume_phase = 0.0;
   
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1939,6 +1984,12 @@ double AdvectionProblem<dim>::compute_volume(unsigned int time_iteration)
       
       volume_sharp += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
       
+      Vector<double> cell_dof_phase_values(dofs_per_cell);
+      
+      cell->get_dof_values(locally_relevant_solution, cell_dof_phase_values.begin(), cell_dof_phase_values.end());
+      
+      volume_0p5 += compute_cell_wise_volume(cell, cell_dof_phase_values, -0.5, unit_box, level_set_function, quadrature_generator);
+      
       fe_values.reinit(cell);
       fe_values.get_function_values(locally_relevant_solution, phase_values);
 
@@ -1949,6 +2000,8 @@ double AdvectionProblem<dim>::compute_volume(unsigned int time_iteration)
     }
   }
   volume_sharp = Utilities::MPI::sum(volume_sharp, mpi_communicator);
+  volume_0p5 = Utilities::MPI::sum(volume_0p5, mpi_communicator);
+  
   volume_phase = Utilities::MPI::sum(volume_phase, mpi_communicator);
   
   table_volume_monitoring.add_value("time_iteration", time_iteration);
@@ -1959,11 +2012,19 @@ double AdvectionProblem<dim>::compute_volume(unsigned int time_iteration)
   table_volume_monitoring.add_value("volume_sharp", volume_sharp);
   table_volume_monitoring.set_scientific("volume_sharp", true);
   
+  table_volume_monitoring.add_value("volume_0p5", volume_0p5);
+  table_volume_monitoring.set_scientific("volume_0p5", true);
+  
   table_volume_monitoring.add_value("volume_phase", volume_phase);
   table_volume_monitoring.set_scientific("volume_phase", true);
   
   std::ofstream output("output/volume.dat");
   table_volume_monitoring.write_text(output);
+  
+  pcout << "volume_sharp = " << volume_sharp << std::endl;
+  pcout << "volume_0p5 = " << volume_0p5 << std::endl;
+  
+  pcout << "volume_phase = " << volume_phase << std::endl;
   
   return volume_sharp;    
 }
@@ -2027,7 +2088,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(6);
+  triangulation.refine_global(9);
             
   pcout << "Setup system" << std::endl;
   setup_system();
@@ -2036,8 +2097,8 @@ void AdvectionProblem<dim>::run()
   unsigned int it = 0;
   double final_time = 2.0;
 
-  refine_grid(6,4);
-  refine_grid(6,4);
+  refine_grid(9,6);
+  refine_grid(9,6);
   
   previous_solution = locally_relevant_solution;
   
@@ -2061,8 +2122,8 @@ void AdvectionProblem<dim>::run()
     
     output_results(it);
   
-    refine_grid(6,4);
-  
+    refine_grid(9,6);
+    
     previous_solution = locally_relevant_solution;  
     
   // 
@@ -2093,7 +2154,7 @@ int main(int argc, char *argv[])
 Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
 try
   {
-    AdvectionProblem<3> advection_problem_2d;
+    AdvectionProblem<2> advection_problem_2d;
     advection_problem_2d.run();
   }
 catch (std::exception &exc)
