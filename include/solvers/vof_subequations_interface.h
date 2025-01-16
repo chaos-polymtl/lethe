@@ -22,7 +22,9 @@ enum class VOFSubequationsID : unsigned int
   /// VOF curvature L2 projection
   curvature_projection = 1,
   /// VOF algebraic interface reinitialization
-  algebraic_interface_reinitialization = 2
+  algebraic_interface_reinitialization = 2,
+  /// VOF eeinitialized phase fraction gradient L2 projection
+  reinitialized_phase_gradient_projection = 3
 };
 
 
@@ -96,6 +98,7 @@ public:
     this->subequations.find(subequation_id)->second->setup_dofs();
   };
 
+  // TODO AA ERASE maybe ?
   /**
    * @brief Call solving method of active subequations.
    *
@@ -208,6 +211,10 @@ public:
     else if (subequation_id ==
              VOFSubequationsID::algebraic_interface_reinitialization)
       subequation_string = "VOF algebraic interface reinitialization";
+    else if (subequation_id ==
+             VOFSubequationsID::reinitialized_phase_gradient_projection)
+      subequation_string =
+        "VOF reinitialized phase fraction gradient projection";
 
     return subequation_string;
   }

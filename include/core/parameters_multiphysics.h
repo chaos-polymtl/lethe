@@ -19,7 +19,8 @@ using namespace dealii;
 
 namespace Parameters
 {
-  /** @brief Class to account for different sharpening types:
+  /**
+   * @brief Class to account for different sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
    *  - adaptive: the sharpening threshold is determined by binary search, to
@@ -31,7 +32,8 @@ namespace Parameters
     adaptive
   };
 
-  /** @brief Class to account for different phase fraction filtering types:
+  /**
+   * @brief Class to account for different phase fraction filtering types:
    * - none: no filter wil be applied on the calculated phase fraction
    * - tanh: the tanh filter function will be applied to the phase fraction,
    * a \f$\beta\f$ parameter influencing the interface definition must be
@@ -62,6 +64,14 @@ namespace Parameters
     verbose
   };
 
+  /**
+   * TODO AA
+   */
+  enum class ReinitializationDiffusivityType
+  {
+    constant,
+    mesh_dependant
+  };
 
   /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
@@ -170,13 +180,49 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * TODO AA
+   * @brief
+   */
   struct VOF_AlgebraicInterfaceReinitialization
   {
-    bool                  enable;
+    /// Enables/Disables the algebraic interface reinitialization.
+    bool enable;
+    /// Type of diffusivity model employed in the algebraic interface
+    /// reinitialization PDE.
+    Parameters::ReinitializationDiffusivityType diffusivity_type;
+    /// Constant-value diffusion coefficient (used with
+    /// ReinitializationDiffusivityType::constant).
+    double diffusivity_value;
+    /// Constant multiplying the mesh-size in the evaluation of the diffusion
+    /// coefficient (used with ReinitializationDiffusivityType::mesh_dependant).
+    double diffusivity_multiplier;
+    /// Constant representing the power to which the mesh-size is elevated in
+    /// the evaluation of the diffusion coefficient (used with
+    /// ReinitializationDiffusivityType::mesh_dependant).
+    double diffusivity_power;
+    /// Tolerance used for the pseudo-time-stepping scheme.
+    double tolerance;
+    /// Type of verbosity of the algebraic interface reinitialization solver.
     Parameters::Verbosity verbosity;
 
+    // TODO AA Erase
+    bool   enable_explicit_solving;
+    double reinitialization_cfl;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };

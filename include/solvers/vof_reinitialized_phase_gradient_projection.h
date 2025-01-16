@@ -1,18 +1,20 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_vof_phase_gradient_projection_h
-#define lethe_vof_phase_gradient_projection_h
+#ifndef lethe_vof_reinitialized_phase_gradient_projection_h
+#define lethe_vof_reinitialized_phase_gradient_projection_h
 
 #include <solvers/vof_linear_subequations_solver.h>
 
 /**
+ * TODO AA update all comments
  * @brief VOF phase fraction gradient L2 projection solver.
  *
  * @tparam dim Number of dimensions of the problem.
  */
 template <int dim>
-class VOFPhaseGradientProjection : public VOFLinearSubequationsSolver<dim>
+class VOFReinitializedPhaseGradientProjection
+  : public VOFLinearSubequationsSolver<dim>
 {
 public:
   /**
@@ -32,7 +34,7 @@ public:
    * to get information from other subequations and store information from the
    * current one.
    */
-  VOFPhaseGradientProjection(
+  VOFReinitializedPhaseGradientProjection(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -40,12 +42,10 @@ public:
     MultiphysicsInterface<dim>    *p_multiphysics_interface,
     VOFSubequationsInterface<dim> *p_subequations_interface)
     : VOFLinearSubequationsSolver<dim>(
-        VOFSubequationsID::phase_gradient_projection,
+        VOFSubequationsID::reinitialized_phase_gradient_projection,
         p_simulation_parameters,
         p_simulation_parameters.multiphysics.vof_parameters
-          .surface_tension_force
-          .verbosity, // TODO AA Change verbosity parameter to account for
-                      // algebraic reinitialization also
+          .algebraic_interface_reinitialization.verbosity,
         p_pcout,
         p_triangulation,
         p_multiphysics_interface,
@@ -78,7 +78,7 @@ public:
   /**
    * @brief Default destructor.
    */
-  ~VOFPhaseGradientProjection() = default;
+  ~VOFReinitializedPhaseGradientProjection() = default;
 
 private:
   /**

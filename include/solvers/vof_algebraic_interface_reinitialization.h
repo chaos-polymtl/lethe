@@ -4,8 +4,11 @@
 #ifndef lethe_vof_algebraic_interface_reinitialization_h
 #define lethe_vof_algebraic_interface_reinitialization_h
 
+#include <core/pvd_handler.h> // for debugging
+
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
+#include <solvers/vof_filter.h> // for debugging
 #include <solvers/vof_scratch_data.h>
 #include <solvers/vof_subequations_interface.h>
 
@@ -34,7 +37,7 @@ class VOFAlgebraicInterfaceReinitialization
 {
 public:
   /**
-   * TODO AMISHGA
+   * TODO AA
    * @brief Constructor of the VOF algebraic interface reinitialization.
    *
    * @param[in] p_simulation_parameters Simulation parameters.
@@ -70,7 +73,7 @@ public:
     , simulation_parameters(p_simulation_parameters)
     , simulation_control(p_simulation_control)
     , triangulation(p_triangulation)
-    , dof_handler(*triangulation)
+    , dof_handler(*this->triangulation)
     , linear_solver_verbosity(
         p_simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity)
     , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
@@ -111,7 +114,7 @@ public:
 
 
   /**
-   * TODO AMISHGA make something with this
+   * TODO AA make something with this
    * @brief Assemble and solve linear system when the equation to solve is
    * linear without using the non-linear solver interface.
    *
@@ -128,7 +131,7 @@ public:
    */
 
   /**
-   * TODO AMISHGA for all get methods
+   * TODO AA for all get methods
    * @return
    */
   GlobalVectorType &
@@ -185,6 +188,98 @@ public:
   }
 
 private:
+  // functions for condition number calculation
+
+
+  /**
+   * TODO AA
+   * @brief write_output_results
+   * Post-processing as parallel VTU files
+   */
+  void
+  write_output_results(const unsigned int it);
+
+  /**
+   * TODO AA
+   * @return
+   */
+  inline double
+  identify_minimum_cell_size() const
+  {
+    // Initialize FEValues for interface algebraic reinitialization
+    FEValues<dim> fe_values(*this->mapping,
+                            this->dof_handler.get_fe(),
+                            *this->cell_quadrature,
+                            update_JxW_values);
+
+    // Initialize cell diameter
+    double h = DBL_MAX;
+
+    // Element degree
+    double degree = double(fe_values.get_fe().degree);
+
+    for (const auto &cell : this->dof_handler.active_cell_iterators())
+      {
+        if (cell->is_locally_owned())
+          {
+            fe_values.reinit(cell);
+
+            // Compute cell diameter
+            double cell_measure =
+              compute_cell_measure_with_JxW(fe_values.get_JxW_values());
+            double h_local = compute_cell_diameter<dim>(cell_measure, degree);
+
+            // Update cell diameter to minimum value
+            h = std::min(h, h_local);
+          }
+      }
+    return h;
+  }
+
+  /**
+   * TODO AA do model casting?
+   * @param[in] cell_size
+   * @return
+   */
+  inline double
+  compute_diffusivity(const double cell_size) const
+  {
+    if (this->simulation_parameters.multiphysics.vof_parameters
+          .algebraic_interface_reinitialization.diffusivity_type ==
+        Parameters::ReinitializationDiffusivityType::constant)
+      {
+        return this->simulation_parameters.multiphysics.vof_parameters
+          .algebraic_interface_reinitialization.diffusivity_value;
+      }
+    else // Mesh-dependant diffusivity model
+      {
+        const double multiplier =
+          this->simulation_parameters.multiphysics.vof_parameters
+            .algebraic_interface_reinitialization.diffusivity_multiplier;
+        const double power =
+          this->simulation_parameters.multiphysics.vof_parameters
+            .algebraic_interface_reinitialization.diffusivity_power;
+        return multiplier * std::pow(cell_size, power);
+      }
+  }
+
+  /**
+   * TODO AA
+   * @return
+   */
+  inline double
+  compute_time_step()
+  {
+    // Get CFL value
+    const double cfl =
+      this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.reinitialization_cfl;
+
+    const double h_min = identify_minimum_cell_size();
+    //    h = std::min(h_min, vof_time_step);
+    return h_min * cfl;
+  }
+
   /**
    * @brief Define the zero constraints used to solve the problem.
    */
@@ -229,7 +324,7 @@ private:
                       const bool renewed_matrix = true) override;
 
   /**
-   * TODO AMISHGA
+   * TODO AA
    * @param time_step_inv
    * @param tolerance
    * @return
@@ -237,15 +332,20 @@ private:
   inline bool
   continue_iterating(const double time_step_inv, const double tolerance)
   {
-    auto solution_diff = present_solution;
-    solution_diff -= previous_solution;
+    // TODO AA cleanup
+    auto solution_diff = local_evaluation_point;
+    solution_diff -= previous_local_evaluation_point;
 
     double stop_criterion = time_step_inv * solution_diff.l2_norm();
 
-    return (stop_criterion < tolerance);
+    this->pcout << "TIME-STEP INV = " << time_step_inv << std::endl;
+    this->pcout << "SOLUTION DIFF NORM = " << solution_diff.l2_norm()
+                << std::endl;
+    this->pcout << "STOP CRITERION = " << stop_criterion << std::endl;
+    this->pcout << "TOLERANCE = " << tolerance << std::endl;
+
+    return (stop_criterion > tolerance);
   }
-
-
 
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> *subequations_interface;
@@ -254,9 +354,14 @@ private:
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
+  PVDHandler                       pvdhandler;
 
   // VOF Simulation control
-  const SimulationControl &simulation_control;
+  const SimulationControl
+        &simulation_control; // TODO AA Only needed for CFL value... work on it
+  double current_time_step;
+  std::vector<double> time_step_vector = {
+    0}; // TODO AA resee how it is initialized
 
   // Core elements
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
@@ -272,6 +377,7 @@ private:
   IndexSet                       locally_relevant_dofs;
   GlobalVectorType               evaluation_point;
   GlobalVectorType               local_evaluation_point;
+  GlobalVectorType               previous_local_evaluation_point;
   GlobalVectorType               newton_update;
   GlobalVectorType               present_solution;
   GlobalVectorType               previous_solution; // Only used with bdf1
@@ -280,6 +386,9 @@ private:
   AffineConstraints<double>      nonzero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+
+  // Diffusivity storage TODO AA for non constant diffusivity
+  //  GlobalVectorType diffusivity_values;
 
   // Verbosity
   const Parameters::Verbosity linear_solver_verbosity;

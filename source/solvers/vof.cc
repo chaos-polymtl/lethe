@@ -358,6 +358,28 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                  VOFSubequationsID::curvature_projection),
                                "curvature");
     }
+  // TODO AA restructure the if conditions
+  if (vof_parameters.algebraic_interface_reinitialization.enable &&
+      !vof_parameters.surface_tension_force.enable)
+    {
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        projected_phase_fraction_gradient_component_interpretation(
+          dim, DataComponentInterpretation::component_is_scalar);
+      for (unsigned int i = 0; i < dim; ++i)
+        projected_phase_fraction_gradient_component_interpretation[i] =
+          DataComponentInterpretation::component_is_part_of_vector;
+
+      std::vector<std::string> solution_names_new(dim,
+                                                  "phase_fraction_gradient");
+
+      data_out.add_data_vector(
+        *this->subequations->get_dof_handler(
+          VOFSubequationsID::phase_gradient_projection),
+        *this->subequations->get_solution(
+          VOFSubequationsID::phase_gradient_projection),
+        solution_names_new,
+        projected_phase_fraction_gradient_component_interpretation);
+    }
 }
 
 template <int dim>
@@ -1146,7 +1168,8 @@ VolumeOfFluid<dim>::modify_solution()
     }
 
   // Apply algebraic interface reinitialization
-  if (simulation_parameters.multiphysics.vof_parameters.algebraic_interface_reinitialization.enable)
+  if (simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.enable)
     reinitialize_interface_with_algebraic_method();
 
   // Apply filter to phase fraction values
@@ -1600,9 +1623,11 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->previous_solutions[i] = tmp_previous_solution;
     }
 
-  // Apply algebraic interface reinitialization
-  if (simulation_parameters.multiphysics.vof_parameters.algebraic_interface_reinitialization.enable)
-    reinitialize_interface_with_algebraic_method();
+  // TODO AA CHECK if necessary
+  //  // Apply algebraic interface reinitialization
+  //  if
+  //  (simulation_parameters.multiphysics.vof_parameters.algebraic_interface_reinitialization.enable)
+  //    reinitialize_interface_with_algebraic_method();
 
   // Apply filter to phase fraction
   apply_phase_filter();
@@ -1763,7 +1788,7 @@ VolumeOfFluid<dim>::setup_dofs()
 
   auto mpi_communicator = triangulation->get_communicator();
 
-  // Setup DoFs for phase gradient and curvature L2 projection
+  // Setup DoFs for all active subequations
   this->subequations->setup_dofs();
 
   this->dof_handler.distribute_dofs(*this->fe);
@@ -2387,20 +2412,25 @@ VolumeOfFluid<dim>::apply_phase_filter()
 
 template <int dim>
 void
-  VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
+VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::phase_gradient_projection, false);
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::curvature_projection, false);
+
   // Solve algebraic reinitialization steps
   this->subequations->solve_specific_subequation(
     VOFSubequationsID::algebraic_interface_reinitialization);
 
-  // Overwrite solution with the algebraic interface reinitialization
+  // Overwrite the solution with the algebraic interface reinitialization
   VectorTools::interpolate_to_different_mesh(
-  *this->subequations->get_dof_handler(
-    VOFSubequationsID::algebraic_interface_reinitialization),
-  *this->subequations->get_solution(
-    VOFSubequationsID::algebraic_interface_reinitialization),
-      this->dof_handler,
-      this->local_evaluation_point); // TODO AMISHGA check if it can be directly in present solution (locally relevant)
+    *this->subequations->get_dof_handler(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    *this->subequations->get_solution(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    this->dof_handler,
+    this->local_evaluation_point);
   this->nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
 }

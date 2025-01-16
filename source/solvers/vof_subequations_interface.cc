@@ -5,6 +5,7 @@
 #include <solvers/vof_curvature_projection.h>
 #include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_phase_gradient_projection.h>
+#include <solvers/vof_reinitialized_phase_gradient_projection.h>
 #include <solvers/vof_subequations_interface.h>
 
 template <int dim>
@@ -42,9 +43,34 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
           this);
     }
   if (p_simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization
-        .enable)
+        .algebraic_interface_reinitialization.enable)
     {
+      if (!p_simulation_parameters.multiphysics.vof_parameters
+             .surface_tension_force.enable)
+        {
+          // Phase gradient projection for interface normal vector computation
+          this->active_subequations.push_back(
+            VOFSubequationsID::phase_gradient_projection);
+          this->subequations[VOFSubequationsID::phase_gradient_projection] =
+            std::make_shared<VOFPhaseGradientProjection<dim>>(
+              p_simulation_parameters,
+              this->pcout,
+              p_triangulation,
+              this->multiphysics_interface,
+              this);
+          // Phase curvature projection
+          this->active_subequations.push_back(
+            VOFSubequationsID::curvature_projection);
+          this->subequations[VOFSubequationsID::curvature_projection] =
+            std::make_shared<VOFCurvatureProjection<dim>>(
+              p_simulation_parameters,
+              this->pcout,
+              p_triangulation,
+              this->multiphysics_interface,
+              this);
+        }
+
+      // Algebraic interface reinitialization
       this->active_subequations.push_back(
         VOFSubequationsID::algebraic_interface_reinitialization);
       this->subequations
@@ -53,6 +79,16 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
           p_simulation_parameters,
           this->pcout,
           p_simulation_control,
+          p_triangulation,
+          this->multiphysics_interface,
+          this);
+      this->active_subequations.push_back(
+        VOFSubequationsID::reinitialized_phase_gradient_projection);
+      this->subequations
+        [VOFSubequationsID::reinitialized_phase_gradient_projection] =
+        std::make_shared<VOFReinitializedPhaseGradientProjection<dim>>(
+          p_simulation_parameters,
+          this->pcout,
           p_triangulation,
           this->multiphysics_interface,
           this);
