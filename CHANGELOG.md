@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Change
 
-- MAJOR The order of the particle properties used for DEM and CFD-DEM has been changed. The mass is now the third property (index 2) instead of being the last. This change, which is purely esthetic, allowed us to fix a leftover bug in the vizualiation of DEM results where the array allocated for the particle properties in the VTU output was not the right size (it was one double too small). Surprisingly, this was not crashing, but it was wrong in any cases. Furthermore, we figured out that some of the restart CFD-DEM application tests (the particle sedimentation and the gas fluidized bed) had wrong restart files. This PR addresses all of those changes and refreshes the restart files due to the change in the order of the particle properties. [#1406](https://github.com/chaos-polymtl/lethe/pull/1406)
+- MAJOR The order of the particle properties used for DEM and CFD-DEM has been changed. The mass is now the third property (index 2) instead of being the last. This change, which is purely esthetic, allowed us to fix a leftover bug in the visualisation of DEM results where the array allocated for the particle properties in the VTU output was not the right size (it was one double too small). Surprisingly, this was not crashing, but it was wrong in any cases. Furthermore, we figured out that some of the restart CFD-DEM application tests (the particle sedimentation and the gas fluidized bed) had wrong restart files. This PR addresses all of those changes and refreshes the restart files due to the change in the order of the particle properties. [#1406](https://github.com/chaos-polymtl/lethe/pull/1406)
 
 ## [Master] - 2025-01-10
 
