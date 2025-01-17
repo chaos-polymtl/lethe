@@ -72,9 +72,6 @@ subsection void fraction
   set read dem            = true
   set dem file name       = ../particle_sedimentation_files/dem
   set l2 smoothing factor = 0.00001
-  set bound void fraction = false
-  set l2 lower bound      = 0
-  set l2 upper bound      = 1
 end
 
 #---------------------------------------------------
