@@ -3,19 +3,25 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2024-01-10
+## [Master] - 2025-01-17
+
+### Change
+
+- MAJOR The order of the particle properties used for DEM and CFD-DEM has been changed. The mass is now the third property (index 2) instead of being the last. This change, which is purely esthetic, allowed us to fix a leftover bug in the visualisation of DEM results where the array allocated for the particle properties in the VTU output was not the right size (it was one double too small). Surprisingly, this was not crashing, but it was wrong in any cases. Furthermore, we figured out that some of the restart CFD-DEM application tests (the particle sedimentation and the gas fluidized bed) had wrong restart files. This PR addresses all of those changes and refreshes the restart files due to the change in the order of the particle properties. [#1406](https://github.com/chaos-polymtl/lethe/pull/1406)
+
+## [Master] - 2025-01-10
 
 ### Changed
 
 - MAJOR The index of properties in the DEM and CFD-DEM simulations are now indexed using a template (PropertiesIndex) instead of using an hardcoded enum. This enables the different solvers to have different number of properties and different properties index. For large simulations, this gives minor performance gain for DEM simulations (e.g. around 5-10%), but this makes the solver significantly more flexible. This is a major change since it breaks DEM and CFD-DEM restart files from previous versions. [#1399](https://github.com/chaos-polymtl/lethe/pull/1399)
 
-## [Master] - 2024-01-02
+## [Master] - 2025-01-02
 
 ### Changed
 
 - MINOR All lethe-particles tests that have a restart file now start with "restart_". This nomenclature change is made to ensure that restart tests are easier to identify. Furthermore, all restart file generators have been tested and missing generators have beem added. [#1402](https://github.com/chaos-polymtl/lethe/pull/1402)
 
-## [Master] - 2024-01-01
+## [Master] - 2025-01-01
 
 ### Changed
 

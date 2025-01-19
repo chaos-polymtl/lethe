@@ -98,7 +98,7 @@ Insertion<dim>::assign_particle_properties(
                     Utilities::fixed_power<3, double>(diameter * 0.5);
 
       std::vector<double> properties_of_one_particle{
-        type, diameter, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z, mass};
+        type, diameter, mass, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z};
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();

@@ -16,33 +16,30 @@ Visualization<dim, PropertiesIndex>::build_patches(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<std::pair<std::string, int>> properties)
 {
-  // Adding ID to properties vector for visualization
-  properties.insert(properties.begin(), std::make_pair("ID", 1));
+  // We reserve 1 more name than the number of properties, since we will also be
+  // writing the ID of the particles
+  this->dataset_names.reserve(PropertiesIndex::n_properties + 1);
 
-  // Defining properties for writing
-  this->properties_to_write.assign(
-    properties.begin(),
-    properties.begin() + DEM::get_number_properties<PropertiesIndex>());
+  // Adding ID to properties vector for visualization
+  dataset_names.emplace_back("ID");
 
   // Defining property field position
-  int field_position = 0;
   // Iterating over properties
-  for (auto properties_iterator = properties_to_write.begin();
-       properties_iterator != properties_to_write.end();
-       ++properties_iterator, ++field_position)
+  for (int field_position = 0; field_position < PropertiesIndex::n_properties;
+       ++field_position)
     {
       // Get the property field name
-      const std::string field_name = properties_iterator->first;
+      const std::string field_name = properties[field_position].first;
 
       // Number of components of the corresponding property
-      const unsigned components_number = properties_iterator->second;
+      const unsigned n_components = properties[field_position].second;
 
       // Check to see if the property is a vector
-      if (components_number == dim)
+      if (n_components == dim)
         {
           vector_datasets.emplace_back(std::make_tuple(
             field_position,
-            field_position + components_number - 1,
+            field_position + n_components - 1,
             field_name,
             DataComponentInterpretation::component_is_part_of_vector));
         }
@@ -61,22 +58,23 @@ Visualization<dim, PropertiesIndex>::build_patches(
       // Particle location
       patches[i].vertices[0] = particle->get_location();
       patches[i].patch_index = i;
-      patches[i].data.reinit(DEM::get_number_properties<PropertiesIndex>(), 1);
+      patches[i].data.reinit(PropertiesIndex::n_properties + 1, 1);
 
       // ID and other properties
       if (particle->has_properties())
         {
-          // Calculating force for visualization
           auto particle_properties = particle->get_properties();
 
           // Adding ID to patches
           patches[i].data(0, 0) = particle->get_id();
 
-          for (unsigned int property_index = 1;
-               property_index < DEM::get_number_properties<PropertiesIndex>();
+          // We need to offset the data we write by one since we have one more
+          // property due to the fact that we save the ID of the particles.
+          for (unsigned int property_index;
+               property_index < PropertiesIndex::n_properties;
                ++property_index)
-            patches[i].data(property_index, 0) =
-              particle_properties[property_index - 1];
+            patches[i].data(property_index + 1, 0) =
+              particle_properties[property_index];
         }
     }
 }
