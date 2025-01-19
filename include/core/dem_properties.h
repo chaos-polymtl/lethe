@@ -43,7 +43,6 @@ namespace DEM
       omega_y      = 7,
       omega_z      = 8,
       n_properties = 9,
-
     };
   } // namespace DEMProperties
 
