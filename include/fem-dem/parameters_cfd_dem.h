@@ -68,7 +68,7 @@ namespace Parameters
     Functions::ParsedFunction<dim> void_fraction;
     bool                           read_dem;
     std::string                    dem_file_name;
-    double                         l2_smoothing_factor;
+    double                         l2_smoothing_length;
     unsigned int                   particle_refinement_factor;
     double                         qcm_sphere_diameter;
     bool                           qcm_sphere_equal_cell_volume;

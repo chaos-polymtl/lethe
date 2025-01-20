@@ -11,6 +11,7 @@
 #include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/index_set.h>
+#include <deal.II/base/utilities.h>
 
 #include <deal.II/distributed/tria_base.h>
 
@@ -390,6 +391,9 @@ private:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_periodic_cell;
+
+  // Smoothing length factor for the void fraction calculation
+  const double l2_smoothing_factor = Utilities::fixed_power<2>(void_fraction_parameters->l2_smoothing_length);
 };
 
 
