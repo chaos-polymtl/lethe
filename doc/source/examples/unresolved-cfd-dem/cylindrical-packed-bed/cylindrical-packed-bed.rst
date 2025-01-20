@@ -304,7 +304,7 @@ Since we are calculating the void fraction using the packed bed of the DEM simul
       set mode                = pcm
       set read dem            = true
       set dem file name       = dem
-      set l2 smoothing factor = 0.000005
+      set l2 smoothing length = 0.002236067977
     end
 
 CFD-DEM

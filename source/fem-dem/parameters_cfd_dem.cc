@@ -27,7 +27,7 @@ namespace Parameters
                       Patterns::FileName(),
                       "File output dem prefix");
     prm.declare_entry("l2 smoothing length",
-                      "0.000001",
+                      "0.001",
                       Patterns::Double(),
                       "The smoothing length for void fraction L2 projection");
     prm.declare_entry(
