@@ -393,7 +393,8 @@ private:
     vertices_to_periodic_cell;
 
   // Smoothing length factor for the void fraction calculation
-  const double l2_smoothing_factor = Utilities::fixed_power<2>(void_fraction_parameters->l2_smoothing_length);
+  const double l2_smoothing_factor =
+    Utilities::fixed_power<2>(void_fraction_parameters->l2_smoothing_length);
 };
 
 

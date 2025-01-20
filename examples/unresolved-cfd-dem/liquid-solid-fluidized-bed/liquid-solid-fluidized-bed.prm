@@ -60,7 +60,7 @@ subsection void fraction
   set mode                = pcm
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing factor = 0.000028387584
+  set l2 smoothing length = 0.05623413252
 end
 
 #---------------------------------------------------
