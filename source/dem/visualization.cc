@@ -23,8 +23,7 @@ Visualization<dim, PropertiesIndex>::build_patches(
   // Adding ID to properties vector for visualization
   dataset_names.emplace_back("ID");
 
-  // Defining property field position
-  // Iterating over properties
+  // Defining property field position by iterating over properties.
   for (int field_position = 0; field_position < PropertiesIndex::n_properties;
        ++field_position)
     {
@@ -37,9 +36,13 @@ Visualization<dim, PropertiesIndex>::build_patches(
       // Check to see if the property is a vector
       if (n_components == dim)
         {
+          // The proeprty is a vector, thus we set that the components
+          // are part of a vector. Do not forget that since we added the ID
+          // of the particles, we need to shift the field_position by 1. Hence
+          // we add 1 to field_position
           vector_datasets.emplace_back(std::make_tuple(
-            field_position,
-            field_position + n_components - 1,
+            field_position + 1,
+            field_position + n_components,
             field_name,
             DataComponentInterpretation::component_is_part_of_vector));
         }
@@ -70,7 +73,7 @@ Visualization<dim, PropertiesIndex>::build_patches(
 
           // We need to offset the data we write by one since we have one more
           // property due to the fact that we save the ID of the particles.
-          for (unsigned int property_index;
+          for (unsigned int property_index = 0;
                property_index < PropertiesIndex::n_properties;
                ++property_index)
             patches[i].data(property_index + 1, 0) =

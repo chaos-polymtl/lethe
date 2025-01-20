@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-01-20
+
+### Fixed
+
+- MAJOR The change in #1406 introduced a major bug that would prevent the velocity, diameter, angular velocity and other particle properties from being adequately displayed in paraview. This PR fixes this bug by adequately positioning the output data when building the patches. [#1407](https://github.com/chaos-polymtl/lethe/pull/1407)
+
 ## [Master] - 2025-01-17
 
 ### Change
