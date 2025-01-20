@@ -5,13 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2025-01-20
 
+### Changed
+
+- MAJOR Change name and meaning of the void fraction smoothing length factor parameter for unresolved CFD-DEM and VANS simulations. The previous parameters, named "l2 smoothing factor", meant the square of the desired smoothing length. The new parameter, named "l2 smoothing length", is the actual length of the smoothing region. This was done by adding an attribute to the void fraction class (l2_smoothing_factor) calculated as the parameter's square. This way, the meaning of the parameter are more understandable and more easily manipulated.
+
 ### Fixed
 
 - MAJOR The change in #1406 introduced a major bug that would prevent the velocity, diameter, angular velocity and other particle properties from being adequately displayed in paraview. This PR fixes this bug by adequately positioning the output data when building the patches. [#1407](https://github.com/chaos-polymtl/lethe/pull/1407)
 
 ## [Master] - 2025-01-17
 
-### Change
+### Changed
 
 - MAJOR The order of the particle properties used for DEM and CFD-DEM has been changed. The mass is now the third property (index 2) instead of being the last. This change, which is purely esthetic, allowed us to fix a leftover bug in the visualisation of DEM results where the array allocated for the particle properties in the VTU output was not the right size (it was one double too small). Surprisingly, this was not crashing, but it was wrong in any cases. Furthermore, we figured out that some of the restart CFD-DEM application tests (the particle sedimentation and the gas fluidized bed) had wrong restart files. This PR addresses all of those changes and refreshes the restart files due to the change in the order of the particle properties. [#1406](https://github.com/chaos-polymtl/lethe/pull/1406)
 
