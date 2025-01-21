@@ -46,7 +46,7 @@ VolumeOfFluid<dim>::setup_assemblers()
     this->simulation_parameters.fem_parameters,
     this->simulation_parameters.multiphysics.vof_parameters));
 
-  // DCDD schock-capturing assembler
+  // DCDD shock-capturing assembler
   if (this->simulation_parameters.stabilization.vof_dcdd_stabilization)
     this->assemblers.emplace_back(
       std::make_shared<VOFAssemblerDCDDStabilization<dim>>(
@@ -137,7 +137,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
     }
   else
     {
-      // Check if the postprocessed variable needs to be calculated with the
+      // Check if the post-processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
             Parameters::InitialConditionType::average_velocity_profile &&
@@ -331,8 +331,8 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
-  if (vof_parameters.surface_tension_force.enable &&
-      vof_parameters.surface_tension_force.output_vof_auxiliary_fields)
+  if ((vof_parameters.surface_tension_force.enable &&
+      vof_parameters.surface_tension_force.output_vof_auxiliary_fields) || vof_parameters.algebraic_interface_reinitialization.enable )
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         projected_phase_fraction_gradient_component_interpretation(
@@ -357,28 +357,6 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                *this->subequations->get_solution(
                                  VOFSubequationsID::curvature_projection),
                                "curvature");
-    }
-  // TODO AA restructure the if conditions
-  if (vof_parameters.algebraic_interface_reinitialization.enable &&
-      !vof_parameters.surface_tension_force.enable)
-    {
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        projected_phase_fraction_gradient_component_interpretation(
-          dim, DataComponentInterpretation::component_is_scalar);
-      for (unsigned int i = 0; i < dim; ++i)
-        projected_phase_fraction_gradient_component_interpretation[i] =
-          DataComponentInterpretation::component_is_part_of_vector;
-
-      std::vector<std::string> solution_names_new(dim,
-                                                  "phase_fraction_gradient");
-
-      data_out.add_data_vector(
-        *this->subequations->get_dof_handler(
-          VOFSubequationsID::phase_gradient_projection),
-        *this->subequations->get_solution(
-          VOFSubequationsID::phase_gradient_projection),
-        solution_names_new,
-        projected_phase_fraction_gradient_component_interpretation);
     }
 }
 
@@ -2013,10 +1991,11 @@ VolumeOfFluid<dim>::set_initial_conditions()
                            this->newton_update);
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
-  apply_phase_filter();
 
   if (simulation_parameters.initial_condition->enable_projection_step)
     smooth_phase_fraction();
+
+  apply_phase_filter();
 
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptive)
