@@ -1,0 +1,174 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = steady
+  set output frequency = 1
+  set output name      = out
+  set output path      = ./output/
+  set number mesh adapt = 3
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order    = 1
+  set pressure order    = 1
+  set temperature order = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set thermal conductivity model = constant
+    set thermal conductivity       = 100
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 20 : 0.01 : 0.1 
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics = false
+  set heat transfer  = true
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions 
+  set number = 3
+  subsection bc 0
+    set id    = 0
+    set type  = noslip
+  end
+  subsection bc 1
+    set id    = 1
+    set type  = noslip
+  end
+  subsection bc 2
+    set id    = 2
+    set type  = noslip
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 3
+  subsection bc 0
+    set id    = 0
+    set type = convection-radiation-flux
+    subsection h
+      set Function expression = 10
+    end
+    subsection Tinf
+      set Function expression = 20
+    end
+    subsection emissivity
+      set Function expression = 0
+    end
+    subsection heat_flux
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id    = 1
+    set type  = temperature
+    subsection value
+      set Function expression = 100
+    end
+  end
+  subsection bc 2
+    set id    = 2
+    set type = convection-radiation-flux
+    subsection h
+      set Function expression = 0
+    end
+    subsection Tinf
+      set Function expression = 20
+    end
+    subsection emissivity
+      set Function expression = 0
+    end
+    subsection heat_flux
+      set Function expression = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Source term
+
+subsection source term
+  subsection heat transfer
+    set Function expression = 0
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection heat transfer
+    set verbosity      = verbose
+    set tolerance      = 1e-4
+    set max iterations = 10
+  end
+end
+
+subsection post-processing
+  set verbosity                        = quiet
+  set calculate heat flux              = true
+  set calculate temperature statistics = true
+end
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection heat transfer
+    set verbosity                             = verbose
+    set method                                = gmres
+    set relative residual                     = 1e-6
+    set minimum residual                      = 1e-13
+    set preconditioner                        = ilu
+    set ilu preconditioner absolute tolerance = 1e-14
+    set max krylov vectors                 = 1000
+  end
+end
