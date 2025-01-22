@@ -308,7 +308,7 @@ The additional sections for the CFD-DEM simulations are the void fraction subsec
 Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to "dem". For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the read dem to "true" and specify the prefix of the dem files to be dem. We now choose a smoothing factor for the void fraction to reduce discontinuity which can lead to oscillations in the velocity. The factor we choose is around the square of twice the particle's diameter. 
+Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to "dem". For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the read dem to "true" and specify the prefix of the dem files to be dem. We now choose a smoothing length for the void fraction to reduce discontinuity which can lead to oscillations in the velocity. The length we choose is around the square of twice the particle's diameter. 
  
 .. code-block:: text
 
@@ -316,7 +316,7 @@ Since we are calculating the void fraction using the packed bed of the DEM simul
         set mode                = pcm
         set read dem            = true
         set dem file name       = dem
-        set l2 smoothing factor = 0.000005
+        set l2 smoothing length = 0.02236067977
     end
 
 CFD-DEM

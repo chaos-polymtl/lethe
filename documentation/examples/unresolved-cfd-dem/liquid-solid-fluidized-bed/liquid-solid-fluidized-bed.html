@@ -702,12 +702,12 @@ end
 </section>
 <section id="void-fraction">
 <h3>Void Fraction<a class="headerlink" href="#void-fraction" title="Link to this heading">#</a></h3>
-<p>We choose the <a class="reference external" href="../../../parameters/unresolved-cfd-dem/void-fraction.html">particle centroid method (PCM)</a> to calculate void fraction. The <code class="docutils literal notranslate"><span class="pre">l2</span> <span class="pre">smoothing</span> <span class="pre">factor</span></code> we choose is around the square of twice the particle’s diameter, as in the other examples.</p>
+<p>We choose the <a class="reference external" href="../../../parameters/unresolved-cfd-dem/void-fraction.html">particle centroid method (PCM)</a> to calculate void fraction. The <code class="docutils literal notranslate"><span class="pre">l2</span> <span class="pre">smoothing</span> <span class="pre">length</span></code> we choose is around twice the particle’s diameter, as in the other examples.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection void fraction
   set mode                = pcm
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing factor = 2.8387584e-5
+  set l2 smoothing length = 0.005328
 end
 </pre></div>
 </div>

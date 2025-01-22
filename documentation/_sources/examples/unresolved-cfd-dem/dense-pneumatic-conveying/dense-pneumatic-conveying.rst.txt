@@ -503,7 +503,7 @@ By default, the controller has a high stiffness and aims to correct the flow in 
 Void Fraction
 -------------
 
-We choose the `quadrature centred method (QCM) <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#the-quadrature-centered-method>`_  to calculate the void fraction. The ``l2 smoothing factor`` we choose is the square of twice the diameter of the particles.
+We choose the `quadrature centred method (QCM) <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#the-quadrature-centered-method>`_  to calculate the void fraction. The ``l2 smoothing length`` we choose is of twice the diameter of the particles.
 
 .. code-block:: text
 
@@ -511,7 +511,7 @@ We choose the `quadrature centred method (QCM) <../../../theory/multiphase/cfd_d
       set mode                = qcm
       set read dem            = true
       set dem file name       = dem
-      set l2 smoothing factor = 0.0001
+      set l2 smoothing length = 0.01
     end
 
 CFD-DEM

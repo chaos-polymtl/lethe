@@ -321,7 +321,7 @@ The following sections for the CFD-DEM simulations are the void fraction subsect
 Void Fraction
 ~~~~~~~~~~~~~~~
 
-We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_ to calculate void fraction. The ``l2 smoothing factor`` we choose is around the square of twice the particle’s diameter, as in the other examples.
+We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_ to calculate void fraction. The ``l2 smoothing length`` we choose is around twice the particle’s diameter, as in the other examples.
  
 .. code-block:: text
 
@@ -329,7 +329,7 @@ We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cf
       set mode                = pcm
       set read dem            = true
       set dem file name       = dem
-      set l2 smoothing factor = 2.8387584e-5
+      set l2 smoothing length = 0.005328
     end
 
 

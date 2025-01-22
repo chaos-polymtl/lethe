@@ -670,12 +670,12 @@ end
 </section>
 <section id="void-fraction">
 <h3>Void Fraction<a class="headerlink" href="#void-fraction" title="Link to this heading">#</a></h3>
-<p>Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to <code class="docutils literal notranslate"><span class="pre">dem</span></code>. For this, we need to read the dem files which we already wrote using check-pointing. We therefore set the read dem to <code class="docutils literal notranslate"><span class="pre">true</span></code> and specify the prefix of the <code class="docutils literal notranslate"><span class="pre">dem</span></code> files to be read. We now choose a smoothing factor for the void fraction as to reduce discontinuity which can lead to oscillations in the velocity. The factor we choose is around the square of twice the particle’s diameter.</p>
+<p>Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to <code class="docutils literal notranslate"><span class="pre">dem</span></code>. For this, we need to read the dem files which we already wrote using check-pointing. We therefore set the read dem to <code class="docutils literal notranslate"><span class="pre">true</span></code> and specify the prefix of the <code class="docutils literal notranslate"><span class="pre">dem</span></code> files to be read. We now choose a smoothing length for the void fraction as to reduce discontinuity which can lead to oscillations in the velocity. The length we choose is around the square of twice the particle’s diameter.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection void fraction
   set mode                = pcm
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing factor = 0.000005
+  set l2 smoothing length = 0.002236067977
 end
 </pre></div>
 </div>

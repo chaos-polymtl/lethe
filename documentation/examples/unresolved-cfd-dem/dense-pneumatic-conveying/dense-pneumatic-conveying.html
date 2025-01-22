@@ -875,12 +875,12 @@ end
 </section>
 <section id="void-fraction">
 <h4>Void Fraction<a class="headerlink" href="#void-fraction" title="Link to this heading">#</a></h4>
-<p>We choose the <a class="reference external" href="../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#the-quadrature-centered-method">quadrature centred method (QCM)</a>  to calculate the void fraction. The <code class="docutils literal notranslate"><span class="pre">l2</span> <span class="pre">smoothing</span> <span class="pre">factor</span></code> we choose is the square of twice the diameter of the particles.</p>
+<p>We choose the <a class="reference external" href="../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#the-quadrature-centered-method">quadrature centred method (QCM)</a>  to calculate the void fraction. The <code class="docutils literal notranslate"><span class="pre">l2</span> <span class="pre">smoothing</span> <span class="pre">length</span></code> we choose is of twice the diameter of the particles.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection void fraction
   set mode                = qcm
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing factor = 0.0001
+  set l2 smoothing length = 0.01
 end
 </pre></div>
 </div>
