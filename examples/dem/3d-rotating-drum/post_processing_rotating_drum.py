@@ -105,5 +105,5 @@ plt.ylabel("y (m)")
 plt.plot(y_graph * 1.214749159, y_graph, "-.", label=r"$\omega r$")
 plt.legend()
 plt.title(f"Average velocity parallel to the free surface \ndepending on the depth from the center of the cylinder")
-plt.show()
+plt.savefig("lethe-rotating-drum-comparison.pdf")
 
