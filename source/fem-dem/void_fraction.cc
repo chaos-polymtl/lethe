@@ -207,9 +207,6 @@ template <int dim>
 void
 VoidFractionBase<dim>::calculate_void_fraction_particle_centered_method()
 {
-  const double l2_smoothing_factor =
-    void_fraction_parameters->l2_smoothing_factor;
-
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
                                         *quadrature,
@@ -283,7 +280,7 @@ VoidFractionBase<dim>::calculate_void_fraction_particle_centered_method()
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
                       local_matrix_void_fraction(i, j) +=
-                        (phi_vf[j] * phi_vf[i] + l2_smoothing_factor *
+                        (phi_vf[j] * phi_vf[i] + this->l2_smoothing_factor *
                                                    grad_phi_vf[j] *
                                                    grad_phi_vf[i]) *
                         JxW;
@@ -524,9 +521,8 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
                       local_matrix_void_fraction(i, j) +=
                         (phi_vf[j] * phi_vf[i]) *
                           fe_values_void_fraction.JxW(q) +
-                        (void_fraction_parameters->l2_smoothing_factor *
-                         grad_phi_vf[j] * grad_phi_vf[i] *
-                         fe_values_void_fraction.JxW(q));
+                        (this->l2_smoothing_factor * grad_phi_vf[j] *
+                         grad_phi_vf[i] * fe_values_void_fraction.JxW(q));
                     }
                   local_rhs_void_fraction(i) += phi_vf[i] * cell_void_fraction *
                                                 fe_values_void_fraction.JxW(q);
@@ -1079,8 +1075,8 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                     {
                       local_matrix_void_fraction(i, j) +=
                         ((phi_vf[j] * phi_vf[i]) +
-                         (void_fraction_parameters->l2_smoothing_factor *
-                          grad_phi_vf[j] * grad_phi_vf[i])) *
+                         (this->l2_smoothing_factor * grad_phi_vf[j] *
+                          grad_phi_vf[i])) *
                         fe_values_void_fraction.JxW(q);
                     }
 

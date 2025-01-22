@@ -163,7 +163,7 @@ subsection void fraction
   set mode                = qcm
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing factor = 0.0001
+  set l2 smoothing length = 0.01
 end
 
 # --------------------------------------------------

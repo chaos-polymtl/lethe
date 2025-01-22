@@ -71,7 +71,7 @@ subsection void fraction
   set mode                = pcm
   set read dem            = true
   set dem file name       = ../particle_sedimentation_files/dem
-  set l2 smoothing factor = 0.00001
+  set l2 smoothing length = 0.00316227766
 end
 
 #---------------------------------------------------

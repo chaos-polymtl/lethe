@@ -79,7 +79,7 @@ subsection void fraction
   set mode                = qcm
   set read dem            = true
   set dem file name       = ../restart_fluidized_bed_files/dem
-  set l2 smoothing factor = 0.000005
+  set l2 smoothing length = 0.0022360679774998
 end
 
 #---------------------------------------------------

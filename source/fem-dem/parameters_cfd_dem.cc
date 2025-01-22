@@ -26,10 +26,10 @@ namespace Parameters
                       "dem",
                       Patterns::FileName(),
                       "File output dem prefix");
-    prm.declare_entry("l2 smoothing factor",
-                      "0.000001",
+    prm.declare_entry("l2 smoothing length",
+                      "0.001",
                       Patterns::Double(),
-                      "The smoothing factor for void fraction L2 projection");
+                      "The smoothing length for void fraction L2 projection");
     prm.declare_entry(
       "particle refinement factor",
       "0",
@@ -70,7 +70,7 @@ namespace Parameters
 
     read_dem                   = prm.get_bool("read dem");
     dem_file_name              = prm.get("dem file name");
-    l2_smoothing_factor        = prm.get_double("l2 smoothing factor");
+    l2_smoothing_length        = prm.get_double("l2 smoothing length");
     particle_refinement_factor = prm.get_integer("particle refinement factor");
     qcm_sphere_diameter        = prm.get_double("qcm sphere diameter");
     qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
