@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MAJOR Change name and meaning of the void fraction smoothing length factor parameter for unresolved CFD-DEM and VANS simulations. The previous parameters, named "l2 smoothing factor", meant the square of the desired smoothing length. The new parameter, named "l2 smoothing length", is the actual length of the smoothing region. This was done by adding an attribute to the void fraction class (l2_smoothing_factor) calculated as the parameter's square. This way, the meaning of the parameter are more understandable and more easily manipulated. [#1408](https://github.com/chaos-polymtl/lethe/pull/1408)
+- MAJOR This change deprecates the "l2 smoothing factor" void fraction parameter and introduces the "l2 smoothing factor length". The previous parameters, named "l2 smoothing factor", meant the square of the desired smoothing length. The new parameter, named "l2 smoothing length", is the actual length of the smoothing region. This was done by adding an attribute to the void fraction class (l2_smoothing_factor) calculated as the parameter's square. This way, the meaning of the parameter are more understandable and more easily manipulated. [#1408](https://github.com/chaos-polymtl/lethe/pull/1408)
 
 ### Fixed
 
