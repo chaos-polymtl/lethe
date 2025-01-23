@@ -1231,7 +1231,7 @@ AdvectionProblem<dim>::perform_geometric_redistanciation(unsigned int time_itera
   double global_volume = compute_volume(time_iteration);
   if (time_iteration == 0)
     initial_volume = global_volume;
-  pcout << "global_volume = " << initial_volume << std::endl;
+  pcout << "Initial volume = " << initial_volume << std::endl;
   
   if (time_iteration%1 == 0)
   {
@@ -1256,6 +1256,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   
   pcout << "In redistancation" << std::endl;
   
+  // Clear maps and sets
   intersection_point.clear();
   interface_reconstruction_vertices.clear();
   interface_reconstruction_cells.clear();
@@ -1274,6 +1275,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   // Compute the distance for the dofs of the intersected cells (the ones in the intersected_dofs set). They correspond to the first neighbor dofs.
   compute_first_neighbors_distance();
   
+  // Conserve local and global volume
   conserve_local_volume();
   conserve_global_volume(global_volume);
   
@@ -1314,19 +1316,17 @@ void AdvectionProblem<dim>::exchange_distance()
   // Update local ghost (distance becomes read only)
   distance.update_ghost_values();    
   
-  // Copy distance to distance_with_ghost
+  // Copy distance to distance_with_ghost to keep the knowledge of local ghost values and to have a read only version of the vector
   distance_with_ghost = distance;
   
-  // Zero out ghost DOFs to regain write functionalities in distance (it becomes write only, that is why we need distance_with_ghost - to read the values in it.)
+  // Zero out ghost DOFs to regain write functionalities in distance (it becomes write only, that is why we need distance_with_ghost - to read the ghost values in it.)
   distance.zero_out_ghost_values();    
 
   // Copy the ghost values back in distance (zero_out_ghost_values() puts zeros in ghost DOFs)
   for (auto p : this->locally_active_dofs)
   {
     distance(p) = distance_with_ghost(p);
-
-    const double level_set_value = level_set(p);
-    signed_distance(p) = distance(p)*sgn(level_set_value);
+    signed_distance(p) = distance(p)*sgn(signed_distance(p));
   }
 }
 
@@ -1584,7 +1584,7 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
   
   NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
   
-  double corr_global_volume_nm1 = 0.0; 
+  double global_volume_nm1 = 0.0; 
   
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
@@ -1595,11 +1595,9 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
       Vector<double> cell_level_set_dof_values(dofs_per_cell);
       Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
   
-  
       cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
       cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
       cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
-  
   
       for (unsigned int j = 0; j < dofs_per_cell; j++)
       {
@@ -1608,26 +1606,28 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
         cell_dof_values[j] += cell_volume_correction_dof_values[j];
       }
   
-      corr_global_volume_nm1 += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+      global_volume_nm1 += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
   
     }
   }
-  corr_global_volume_nm1 = Utilities::MPI::sum(corr_global_volume_nm1, mpi_communicator);
+  global_volume_nm1 = Utilities::MPI::sum(global_volume_nm1, mpi_communicator);
   
-  pcout << "corr_global_volume_nm1 = " << corr_global_volume_nm1 << std::endl;
+  const double initial_global_volume = global_volume_nm1;
   
-  double global_delta_volume_nm1 = abs(corr_global_volume_nm1 - global_volume);
-  double C_nm1 = 1.0;
+  pcout << "global_volume_0 = " << global_volume_nm1 << std::endl;
   
-  double corr_global_volume_n = corr_global_volume_nm1;
-  double C_n = global_delta_volume_nm1/global_volume;
+  double C_nm1 = 0.0;
+  double global_delta_volume_nm1 = global_volume - global_volume_nm1;
   
-  unsigned int it = 0;
-  double global_delta_volume_n = 0.0;
-  while (global_delta_volume_nm1 > 1e-3*global_volume && it  < 20)
+  double C_n = 1e-6*global_volume;
+  double C_np1 = 0.0;
+  
+  unsigned int secant_it = 0;
+  double secant_update = 1.0;
+  while (abs(secant_update) > 1e-10 && abs(global_delta_volume_nm1) > 1e-3*initial_global_volume && secant_it  < 20)
   {
-    it += 1;
-    corr_global_volume_n = 0.0;
+    secant_it += 1;
+    double global_volume_n = 0.0;
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -1647,36 +1647,40 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
           cell_dof_values[j] += C_n*cell_volume_correction_dof_values[j];
         }
   
-        corr_global_volume_n += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+        global_volume_n += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
   
       }
     }
-    corr_global_volume_n = Utilities::MPI::sum(corr_global_volume_n, mpi_communicator);
+    global_volume_n = Utilities::MPI::sum(global_volume_n, mpi_communicator);
   
-    pcout << "corr_global_volume_n = " << corr_global_volume_n << std::endl;
+    pcout << "global_volume_n = " << global_volume_n << std::endl;
   
-    global_delta_volume_n = abs(corr_global_volume_n - global_volume);
+    double global_delta_volume_n = global_volume - global_volume_n;
+    
+    pcout << std::setprecision(15) << "global_delta_volume_n = " <<  global_delta_volume_n << std::endl;
+    
   
-    double global_delta_volume_prime = (global_delta_volume_n - global_delta_volume_nm1)/(C_n - C_nm1);
-  
-    double C_np1 = C_n - global_delta_volume_n/global_delta_volume_prime;
-  
+    double global_delta_volume_prime = (global_delta_volume_n - global_delta_volume_nm1)/(C_n - C_nm1 + 1e-16);
+    
+    secant_update =  -global_delta_volume_n/(global_delta_volume_prime + 1e-16);
+    C_np1 = C_n + secant_update;
+    pcout << "C_np1 = " << C_np1 << std::endl;
+    
     C_nm1 = C_n;
     C_n = C_np1;
   
-    corr_global_volume_nm1 = corr_global_volume_n;
+    global_volume_nm1 = global_volume_n;
     global_delta_volume_nm1 = global_delta_volume_n;
   
   }
   
   // If the secant method does not converge, do not correct.
-  if (it >= 20)
+  if (secant_it >= 20)
     C_n = 0.0;
   
   for (auto p : this->locally_active_dofs)
   {
-    const double level_set_value = level_set(p);
-    signed_distance(p) +=  C_n*volume_correction(p);
+    signed_distance(p) +=  C_np1*volume_correction(p);
     distance(p) = abs(signed_distance(p));
   }
   
@@ -1712,23 +1716,27 @@ void AdvectionProblem<dim>::conserve_local_volume()
       {
         continue;
       }
+      // We want to find a cell wise correction to apply to the cell's dof value of the signed_distance so that the geometric cell wise volume encompased by the level 0 of the signed_distance V_K,d and by the iso-contour 0.5 of the phase fraction V_K,VOF match. This is required because the computed distance doesn't belong to the Q1 approximation space.
+      // We solve the non-linear problem: DeltaV_K(eta_K) = V_K,VOF - V_K,d(eta_K) = 0, where eta_K is the correction on the signed_distance that we are looking for. We use the secant method to do so.
       
-      // Get the signed distance values (could be improved)
-      Vector<double> cell_dof_values(dofs_per_cell);
+      // Get the level set values
       Vector<double> cell_level_set_dof_values(dofs_per_cell);
   
-      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
       cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
-  
-      double cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
       
+      // Compute the targetted volume to correct for
+      double targetted_cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+      
+      // Get the signed distance values to be corrected (could be improved)
+      Vector<double> cell_dof_values(dofs_per_cell);
+      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
       for (unsigned int j = 0; j < dofs_per_cell; j++)
       {
         const double level_set_value = cell_level_set_dof_values[j];
         cell_dof_values[j] *= sgn(level_set_value);
       }
       
-      // Get cell size to initialize secante method.
+      // Get cell size to initialize secant method. We use it to compute the first derivative value in the secant method
       double cell_size;
       if (dim == 2)
       {
@@ -1739,50 +1747,55 @@ void AdvectionProblem<dim>::conserve_local_volume()
         cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
       }
       
-      // Initialize secante method.
-      double local_corr_nm1 = 0.0;
-      double inside_cell_volume_nm1 = compute_cell_wise_volume(cell, cell_dof_values, local_corr_nm1, unit_box, level_set_function, quadrature_generator);
-      double delta_volume_nm1 = abs(cell_volume - inside_cell_volume_nm1);
-  
-      double local_corr_n = cell_size*delta_volume_nm1/cell->measure();
+      // secant method. The subsricpt nm1 (or n minus 1) stands for the previous secant iteration (it = n-1), the subsricpt n stands for the current iteration and the subsricpt np1 stands for the next iteration (it = n+1).
+      double eta_nm1 = 0.0;
       
-      unsigned int secante_it = 0;
-      
+      // Compute the volume for the first initial value (eta_nm1)
+      double inside_cell_volume_nm1 = compute_cell_wise_volume(cell, cell_dof_values, eta_nm1, unit_box, level_set_function, quadrature_generator);
+      double delta_volume_nm1 = targetted_cell_volume - inside_cell_volume_nm1;
+      // Store the initial volume in the cell to limit the secant method in some case.
       const double intial_inside_cell_volume = inside_cell_volume_nm1;
       
-      // Check if there is enough volume to correct. TO DO: Change to base the volume tol on a percentage of the cell size.
-      if (inside_cell_volume_nm1 < 1e-3*cell_size || inside_cell_volume_nm1 > (cell_size - 1e-3*cell_size))
+  
+      // Compute the volume for the second initial value (eta_n). Here, we use perturbation value.
+      double eta_n = 1e-6*cell_size;
+      
+      // Check if there is enough volume to correct. If not, we don't correct.
+      if (inside_cell_volume_nm1 < 1e-10*cell_size || inside_cell_volume_nm1 > (cell_size - 1e-10*cell_size))
       {
         continue;
       }
-        
-      while (abs(delta_volume_nm1) > 1e-3*intial_inside_cell_volume  && secante_it < 20)
+      
+      unsigned int secant_it = 0;
+      double secant_update = 1.0;
+      while (abs(secant_update) > 1e-10 && abs(delta_volume_nm1) > 1e-10*intial_inside_cell_volume && secant_it < 20)
       {
         // If the cell is almost full or empty, we stop correcting the volume.
-        if (inside_cell_volume_nm1 < 1e-3*cell_size || inside_cell_volume_nm1 > (cell_size - 1e-3*cell_size))
+        if (inside_cell_volume_nm1 < 1e-10*cell_size || inside_cell_volume_nm1 > (cell_size - 1e-10*cell_size))
         {
-          local_corr_n = 0.0;
+          eta_n = 0.0;
           break;
         }
-        secante_it += 1;
+        secant_it += 1;
         
-        double inside_cell_volume_n = compute_cell_wise_volume(cell, cell_dof_values, local_corr_n, unit_box, level_set_function, quadrature_generator);
+        const double inside_cell_volume_n = compute_cell_wise_volume(cell, cell_dof_values, eta_n, unit_box, level_set_function, quadrature_generator);
         
-        double delta_volume_n = abs(cell_volume - inside_cell_volume_n);
+        const double delta_volume_n = targetted_cell_volume - inside_cell_volume_n;
   
-        double delta_volume_prime = (delta_volume_n - delta_volume_nm1)/(local_corr_n - local_corr_nm1 + 1e-12);
+        const double delta_volume_prime = (delta_volume_n - delta_volume_nm1)/(eta_n - eta_nm1 + 1e-16);
+        
+        secant_update =  -delta_volume_n/(delta_volume_prime + 1e-16);
+        double eta_np1 = eta_n + secant_update;
   
-        double local_corr_np1 = local_corr_n - delta_volume_n/(delta_volume_prime + 1e-12);
-  
-        local_corr_nm1 = local_corr_n;
-        local_corr_n = local_corr_np1;
+        eta_nm1 = eta_n;
+        eta_n = eta_np1;
         inside_cell_volume_nm1 = inside_cell_volume_n;
         delta_volume_nm1 = delta_volume_n;
-      } // End secante method loop.
+      } // End secant method loop.
       
-      if (secante_it >= 20)
+      if (secant_it >= 20)
       {
-        local_corr_n = 0.0;
+        eta_n = 0.0;
       }
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
@@ -1795,7 +1808,7 @@ void AdvectionProblem<dim>::conserve_local_volume()
       }
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        volume_correction(dof_indices[i]) += local_corr_n/n_cells_per_dofs;
+        volume_correction(dof_indices[i]) += eta_n/n_cells_per_dofs;
       }
     }
   } // End loop on cells.
@@ -1875,6 +1888,9 @@ void AdvectionProblem<dim>::initialize_local_distance()
     {
       distance(p) = 0.01;
       distance_with_ghost(p) = 0.01;
+      
+      const double level_set_value = level_set(p);
+      signed_distance(p) = distance(p)*sgn(level_set_value);
     }
 }
 
