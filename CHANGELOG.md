@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR The clang-tidy CI now uses deal.II 9.6.0 instead of deal.II 9.5.1 [#1410](https://github.com/chaos-polymtl/lethe/pull/1410)
+
+## [Master] - 2025-01-23
+
+### Changed
+
 - MINOR Update the installation instructions under WSL and Linux to use the deal.II 9.6.0 version instead of the 9.5.1 [#1409](https://github.com/chaos-polymtl/lethe/pull/1409)
 
 ## [Master] - 2025-01-20
