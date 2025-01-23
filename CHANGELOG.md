@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-01-23
+
+### Changed
+
+- MINOR Update the installation instructions under WSL and Linux to use the deal.II 9.6.0 version instead of the 9.5.1 [#1409](https://github.com/chaos-polymtl/lethe/pull/1409)
+
 ## [Master] - 2025-01-20
 
 ### Changed

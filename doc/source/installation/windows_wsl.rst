@@ -97,12 +97,12 @@ Installing deal.II using apt (Step #1)
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-1. |linux_shell| In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+1. |linux_shell| In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports>`_:
 
 .. code-block:: text
   :class: copy-button
 
-  sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
   sudo apt update
 
 2. |linux_shell| A dependency required by Lethe, and that deal.II needs to be compiled with, is muParser:
@@ -208,7 +208,7 @@ Do not forget the ``.`` at the end of the command, which means "here".
   +--------+------------------------------------------+----------------------------------------+
   |     86 | ``# PACKAGES="${PACKAGES} once:netcdf"`` | ``PACKAGES="${PACKAGES} once:netcdf"`` |
   +--------+------------------------------------------+----------------------------------------+
-  |     97 | ``DEAL_II_VERSION=v9.5.0``               | ``DEAL_II_VERSION=master``             |
+  |     97 | ``DEAL_II_VERSION=v9.6.0``               | ``DEAL_II_VERSION=master``             |
   +--------+------------------------------------------+----------------------------------------+
 
   * save and close
