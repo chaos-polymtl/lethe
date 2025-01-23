@@ -23,6 +23,7 @@ namespace Parameters
     thermal_conductivity_scaling     = 1. / M / L * T * T * T * theta;
     enthalpy_scaling                 = 1. / M / L / L * T * T;
     diffusivity_scaling              = 1. / L / L * T;
+    reaction_constant_scaling        = 1. / T;
     thermal_expansion_scaling        = 1. * theta;
     surface_tension_scaling          = 1. * T * T / M;
     surface_tension_gradient_scaling = 1. * theta * T * T / M;

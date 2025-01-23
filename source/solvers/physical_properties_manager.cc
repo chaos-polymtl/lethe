@@ -95,6 +95,10 @@ PhysicalPropertiesManager::initialize(
         TracerDiffusivityModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*tracer_diffusivity[f]);
 
+      tracer_reaction_constant.push_back(
+        TracerReactionConstantModel::model_cast(physical_properties.fluids[f]));
+      establish_fields_required_by_model(*tracer_reaction_constant[f]);
+
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*thermal_expansion[f]);
@@ -137,6 +141,11 @@ PhysicalPropertiesManager::initialize(
         TracerDiffusivityModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(
         *tracer_diffusivity[s + number_of_fluids]);
+
+      tracer_reaction_constant.push_back(
+        TracerReactionConstantModel::model_cast(physical_properties.fluids[s]));
+      establish_fields_required_by_model(
+        *tracer_reaction_constant[s + number_of_fluids]);
 
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.solids[s]));

@@ -698,3 +698,90 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
 
 template class TracerAssemblerBoundaryNitsche<2>;
 template class TracerAssemblerBoundaryNitsche<3>;
+
+template <int dim>
+void
+TracerAssemblerFirstOrderHomogeneous<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &k = scratch_data.tracer_reaction_constant;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // assembling local matrix
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Update the strong Jacobian with the reaction term contribution
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto phi_T_j = scratch_data.phi[q][j];
+          // Strong Jacobian contribution: - k phi
+          strong_jacobian_vec[q][j] += -k[q] * phi_T_j;
+        }
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i = scratch_data.phi[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto phi_T_j = scratch_data.phi[q][j];
+
+              // Add reaction term to the local matrix
+              local_matrix(i, j) += k[q] * phi_T_i * phi_T_j * JxW;
+            }
+        }
+    } // end loop on quadrature points
+}
+
+
+template <int dim>
+void
+TracerAssemblerFirstOrderHomogeneous<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &k = scratch_data.tracer_reaction_constant;
+
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // assembling right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculate the strong residual for GLS stabilization
+      strong_residual_vec[q] += -k[q] * scratch_data.tracer_values[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i = scratch_data.phi[q][i];
+
+          // Add reaction term to the RHS
+          local_rhs(i) -= k[q] * phi_T_i * scratch_data.tracer_values[q] * JxW;
+        }
+    } // end loop on quadrature points
+}
+
+template class TracerAssemblerFirstOrderHomogeneous<2>;
+template class TracerAssemblerFirstOrderHomogeneous<3>;

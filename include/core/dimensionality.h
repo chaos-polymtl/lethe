@@ -88,6 +88,7 @@ namespace Parameters
     double thermal_conductivity_scaling;
     double enthalpy_scaling;
     double diffusivity_scaling;
+    double reaction_constant_scaling;
     double thermal_expansion_scaling;
     double surface_tension_scaling;
     double surface_tension_gradient_scaling;
