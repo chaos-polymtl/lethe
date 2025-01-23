@@ -4,21 +4,21 @@
 // Deal.II includes
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/fe/mapping_q.h>
-
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/manifold.h>
-#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/particles/data_out.h>
-
 
 // Lethe
 #include <core/lethe_grid_tools.h>
 
 #include <deal.II/numerics/data_out.h>
 
-// Tests (with common definitions)
+// This include is only required for 9.7 and above.
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+#  include <deal.II/grid/cell_data.h>
+#endif
+
 #include <../tests/tests.h>
 
 

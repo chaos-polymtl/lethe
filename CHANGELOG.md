@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2025-01-23
 
+### Fixed
+
+- MINOR There was a missing include (<deal.II/grid/cell_data.h>) for two tests. The include has been added. It has only been added for deal.II master since deal.II 9.6 does not have this include. [#1412](https://github.com/chaos-polymtl/lethe/pull/1412)
+
+## [Master] - 2025-01-23
+
 ### Changed
 
 - MINOR Update the installation instructions under WSL and Linux to use the deal.II 9.6.0 version instead of the 9.5.1 [#1409](https://github.com/chaos-polymtl/lethe/pull/1409)
