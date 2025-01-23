@@ -528,6 +528,7 @@ public:
   std::vector<double>                  tracer_diffusivity_face;
   std::vector<double>                  tracer_diffusivity_0;
   std::vector<double>                  tracer_diffusivity_1;
+  std::vector<double>                  tracer_reaction_constant;
 
   // FEValues for the Tracer problem
   FEValues<dim>          fe_values_tracer;
@@ -542,8 +543,6 @@ public:
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
   std::vector<Point<dim>> face_quadrature_points;
-
-
 
   // Tracer values
   std::vector<double>              tracer_values;

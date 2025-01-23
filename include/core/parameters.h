@@ -296,6 +296,8 @@ namespace Parameters
     // Properties that apply to the tracer physics with immersed solids
     double tracer_diffusivity_inside;
     double tracer_diffusivity_outside;
+    double tracer_reaction_constant_inside;
+    double tracer_reaction_constant_outside;
     double thickness;
 
     static void
@@ -430,6 +432,9 @@ namespace Parameters
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 
+    // first order reaction constant in 1/s
+    double tracer_reaction_constant;
+
     // Phase change parameters
     PhaseChange phase_change_parameters;
 
@@ -474,6 +479,12 @@ namespace Parameters
       constant,
       immersed_boundary_tanh
     } tracer_diffusivity_model;
+
+    enum class TracerReactionConstantModel
+    {
+      constant,
+      immersed_boundary_tanh
+    } tracer_reaction_constant_model;
 
     // Struct that contains the parameters to handle physical properties when
     // immersed solids models are used
