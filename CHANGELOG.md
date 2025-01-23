@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR There was a missing include (<deal.II/grid/cell_data.h>) for two tests. The include has been added. [#1410](https://github.com/chaos-polymtl/lethe/pull/1410)
+- MINOR There was a missing include (<deal.II/grid/cell_data.h>) for two tests. The include has been added. It has only been added for deal.II master since deal.II 9.6 does not have this include. [#1412](https://github.com/chaos-polymtl/lethe/pull/1412)
 
 ## [Master] - 2025-01-23
 
