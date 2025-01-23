@@ -456,7 +456,7 @@
 <span id="install-deal-ii-apt"></span><h2>Installing deal.II using apt<a class="headerlink" href="#installing-deal-ii-using-apt" title="Link to this heading">#</a></h2>
 <p>This is done following <a class="reference external" href="https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux">this procedure</a>.</p>
 <p>In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports">update the backports</a>:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
 sudo apt update
 </pre></div>
 </div>
@@ -472,10 +472,10 @@ sudo apt update
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>apt show libdeal.ii-dev
 </pre></div>
 </div>
-<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.5.1</span></code> is output</p>
+<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code> is output</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.5.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
+<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
 </div>
 </section>
 <section id="installing-deal-ii-using-candi">
@@ -607,8 +607,8 @@ sudo apt upgrade -y
 </section>
 <section id="with-candi">
 <h3>With Candi<a class="headerlink" href="#with-candi" title="Link to this heading">#</a></h3>
-<p>In the candi folder (for instance, <code class="docutils literal notranslate"><span class="pre">/home/username/software/candi</span></code>), modify the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> to get the latest dealii version, by changing the <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION</span></code> variable in the case of an official release with its number (e.g. <code class="docutils literal notranslate"><span class="pre">v9.5.2</span></code>), or by changing it to <code class="docutils literal notranslate"><span class="pre">master</span></code> in the case of a development release. The <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file should contain on lines 96-97:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span># Install the following deal.II version (choose master, v9.3.0, v9.2.0, ...)
+<p>In the candi folder (for instance, <code class="docutils literal notranslate"><span class="pre">/home/username/software/candi</span></code>), modify the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> to get the latest dealii version, by changing the <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION</span></code> variable in the case of an official release with its number (e.g. <code class="docutils literal notranslate"><span class="pre">v9.6.0</span></code>), or by changing it to <code class="docutils literal notranslate"><span class="pre">master</span></code> in the case of a development release. The <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file should contain on lines 96-97:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span># Install the following deal.II version (choose master, v9.6.0, ...)
 DEAL_II_VERSION=master
 </pre></div>
 </div>

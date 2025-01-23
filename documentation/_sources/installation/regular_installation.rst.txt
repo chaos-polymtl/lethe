@@ -34,7 +34,7 @@ In case you are using Ubuntu, you will need to `update the backports <https://la
 .. code-block:: text
   :class: copy-button
 
-  sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
   sudo apt update
 
 A dependency required by Lethe, and that deal.II needs to be compiled with, is muParser:
@@ -58,11 +58,11 @@ To verify if the correct version of deal.II is installed, run:
 
   apt show libdeal.ii-dev
 
-This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.5.1`` is output
+This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.6.0`` is output
 
 .. note::
 
-  If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+  If the installed version is other than ``deal.ii-9.6.0``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 
 .. _install-deal.II-candi:
@@ -265,12 +265,12 @@ The deal.II version supported by Lethe is updated and tested every week or so, s
 
 With Candi
 ~~~~~~~~~~~~~
-In the candi folder (for instance, ``/home/username/software/candi``), modify the ``candi.cfg`` to get the latest dealii version, by changing the ``DEAL_II_VERSION`` variable in the case of an official release with its number (e.g. ``v9.5.2``), or by changing it to ``master`` in the case of a development release. The ``candi.cfg`` file should contain on lines 96-97:
+In the candi folder (for instance, ``/home/username/software/candi``), modify the ``candi.cfg`` to get the latest dealii version, by changing the ``DEAL_II_VERSION`` variable in the case of an official release with its number (e.g. ``v9.6.0``), or by changing it to ``master`` in the case of a development release. The ``candi.cfg`` file should contain on lines 96-97:
 
 .. code-block:: text
   :class: copy-button
 
-  # Install the following deal.II version (choose master, v9.3.0, v9.2.0, ...)
+  # Install the following deal.II version (choose master, v9.6.0, ...)
   DEAL_II_VERSION=master
 
 Run the command ``./candi.sh`` to install the new version of dealii.
