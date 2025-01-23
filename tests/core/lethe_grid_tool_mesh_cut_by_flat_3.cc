@@ -14,8 +14,10 @@
 
 #include <deal.II/numerics/data_out.h>
 
-// Tests (with common definitions)
-#include <deal.II/grid/cell_data.h>
+// This include is only required for 9.7 and above.
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+#  include <deal.II/grid/cell_data.h>
+#endif
 
 #include <../tests/tests.h>
 
