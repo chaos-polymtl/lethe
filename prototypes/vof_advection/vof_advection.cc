@@ -839,7 +839,7 @@ AdvectionProblem<dim>::AdvectionProblem()
   , fe_level_set(1)
   , level_set_dof_handler(triangulation)
   , mesh_classifier(dof_handler, level_set)
-  , dt(0.000833)
+  , dt(0.00020825)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
 {
@@ -1238,7 +1238,7 @@ AdvectionProblem<dim>::perform_geometric_redistanciation(unsigned int time_itera
     // Gain the writing right.
     zero_out_ghost_values();
   
-    compute_sign_distance(time_iteration, initial_volume);
+    compute_sign_distance(time_iteration, global_volume);
   
     // Gain the reading right.
     update_ghost_values();
@@ -1624,7 +1624,7 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
   
   unsigned int secant_it = 0;
   double secant_update = 1.0;
-  while (abs(secant_update) > 1e-10 && abs(global_delta_volume_nm1) > 1e-3*initial_global_volume && secant_it  < 20)
+  while (abs(secant_update) > 1e-10 && abs(global_delta_volume_nm1) > 1e-10*initial_global_volume && secant_it  < 20)
   {
     secant_it += 1;
     double global_volume_n = 0.0;
@@ -1701,6 +1701,13 @@ void AdvectionProblem<dim>::conserve_local_volume()
   q_collection.push_back(QGauss<1>(n_quad_points));
   
   NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  
+  // For the L2 projection of the cell-wise correction
+  double n_cells_per_dofs_inv = 1.0/4.0;
+  if constexpr (dim == 3)
+  {
+    n_cells_per_dofs_inv = 1.0/8.0;
+  }
   
   // Re-initialize volume_correction vector.
   volume_correction = 0.0;
@@ -1801,29 +1808,16 @@ void AdvectionProblem<dim>::conserve_local_volume()
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
       cell->get_dof_indices(dof_indices);
   
-      double n_cells_per_dofs = 4.0;
-      if constexpr (dim == 3)
-      {
-        n_cells_per_dofs = 8.0;
-      }
+      // L2 projection of the cell-wise (discontinuous) correction to have a continuous correction at the dofs.
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        volume_correction(dof_indices[i]) += eta_n/n_cells_per_dofs;
+        volume_correction(dof_indices[i]) += eta_n*n_cells_per_dofs_inv;
       }
     }
   } // End loop on cells.
   
   volume_correction.compress(VectorOperation::add);
   volume_correction.update_ghost_values();
-  
-  for (auto p : this->locally_active_dofs)
-  {
-    const double level_set_value = level_set(p);
-  
-    distance(p) += volume_correction(p)*sgn(level_set_value);
-  }
-  
-  exchange_distance();
 }
 
 template <int dim>
@@ -2141,27 +2135,6 @@ void AdvectionProblem<dim>::run()
     refine_grid(9,6);
     
     previous_solution = locally_relevant_solution;  
-    
-  // 
-  //   compute_level_set_from_phase_fraction();
-  // 
-  //   if (it%1 == 0)
-  //   {
-  //     mesh_classifier.reclassify();
-  //     compute_sign_distance(it, global_volume);
-  // 
-  //     compute_phase_fraction_from_level_set();
-  // 
-  //     compute_level_set_from_phase_fraction();
-  //   }
-  // 
-  //   compute_volume(it);
-  // 
-  //   output_results(it);
-  // 
-  //   refine_grid(6,4);
-  // 
-  //   previous_solution = locally_relevant_solution;
   } 
 }
 
