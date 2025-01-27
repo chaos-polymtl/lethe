@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tracer_reaction_constant_model_h
@@ -67,7 +67,7 @@ public:
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated.
-   * @return value of the partial derivative of the diffusivity with respect to the field.
+   * @return value of the partial derivative of the reaction constant with respect to the field.
    */
 
   double
@@ -190,7 +190,7 @@ public:
    * @param[in] id Indicator of the field with respect to which the jacobian
    * should be computed.
    *
-   * @return Value of the derivative of the diffusivity with respect to the
+   * @return Value of the derivative of the reaction constant with respect to the
    * specified field.
    */
   double

@@ -59,10 +59,10 @@ Tracer<dim>::setup_assemblers()
     {
       this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerCore<dim>>(this->simulation_control));
-      bool first_order_homogeneous_reaction = true;
-      if (first_order_homogeneous_reaction)
+
+      if (this->simulation_parameters.multiphysics.first_order_reaction)
         this->assemblers.emplace_back(
-          std::make_shared<TracerAssemblerFirstOrderHomogeneous<dim>>(
+          std::make_shared<TracerAssemblerFirstOrder<dim>>(
             this->simulation_control));
     }
 }

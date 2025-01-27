@@ -701,7 +701,7 @@ template class TracerAssemblerBoundaryNitsche<3>;
 
 template <int dim>
 void
-TracerAssemblerFirstOrderHomogeneous<dim>::assemble_matrix(
+TracerAssemblerFirstOrder<dim>::assemble_matrix(
   const TracerScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
@@ -748,7 +748,7 @@ TracerAssemblerFirstOrderHomogeneous<dim>::assemble_matrix(
 
 template <int dim>
 void
-TracerAssemblerFirstOrderHomogeneous<dim>::assemble_rhs(
+TracerAssemblerFirstOrder<dim>::assemble_rhs(
   const TracerScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
@@ -783,5 +783,5 @@ TracerAssemblerFirstOrderHomogeneous<dim>::assemble_rhs(
     } // end loop on quadrature points
 }
 
-template class TracerAssemblerFirstOrderHomogeneous<2>;
-template class TracerAssemblerFirstOrderHomogeneous<3>;
+template class TracerAssemblerFirstOrder<2>;
+template class TracerAssemblerFirstOrder<3>;

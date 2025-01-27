@@ -293,6 +293,9 @@ namespace Parameters
     bool viscous_dissipation;
     bool buoyancy_force;
 
+    // subparameter for tracer
+    bool first_order_reaction;
+
     Parameters::VOF          vof_parameters;
     Parameters::CahnHilliard cahn_hilliard_parameters;
 
