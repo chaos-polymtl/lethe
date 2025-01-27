@@ -281,7 +281,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the homogeneous first order reaction source term of the Tracer equation.
+ * @brief Class that assembles the first order reaction source term of the Tracer equation.
  * This class assembles the term:
  * \f$ S = - R \= k T \f$
  *
@@ -290,10 +290,10 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class TracerAssemblerFirstOrderHomogeneous : public TracerAssemblerBase<dim>
+class TracerAssemblerFirstOrder : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerFirstOrderHomogeneous(
+  TracerAssemblerFirstOrder(
     const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
