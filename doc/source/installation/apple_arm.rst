@@ -123,4 +123,4 @@ Finally, you can install Lethe:
   make install
 
 .. warning:: 
-  Not all tests and application tests work on Mac. As such ``ctest`` may fail. However, we have tested it extensively and the library itself should work fine.
+  Tests and application tests (``ctest``) may fail. However, we have tested it extensively and the library itself should work fine.
