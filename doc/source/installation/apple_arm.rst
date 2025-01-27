@@ -26,12 +26,7 @@ To install the dependencies (mpi, p4est, trilinos and METIS) all together using 
 
 Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master`` on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail. We also recommend the use of trilinos 12.18.1, which is the version that has been tested with Lethe. To do so, change the ``candi.cfg`` file, line 103, to:
-
-..code-block:: text
-  :class: copy-button
-
-  TRILINOS_VERSION=12
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -126,21 +121,3 @@ Finally, you can install Lethe:
   :class: copy-button
 
   make install
-
-Testing Lethe installation and troubleshooting installation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-At the ``build`` folder, you can test the installation by running the following command:
-
-.. code-block:: text
-  :class: copy-button
-
-  ctest -j<numprocs> --output-on-failure
-
-If the tests pass, you are ready to use Lethe. If not and you verify that the logs output a message such as:
-
-.. code-block:: text
-
-  dyld[5623]: Library not loaded: $NAME_OF_MISSING_LIBRARY.dylib
-
-This may be because because the library path is absent or not correctly set. In this case, verify that all library paths are correctly set to the path variable ``DYLD_LIBRARY_PATH``. Fixing this issue should solve the problem.
