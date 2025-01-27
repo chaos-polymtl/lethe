@@ -121,3 +121,6 @@ Finally, you can install Lethe:
   :class: copy-button
 
   make install
+
+.. warning:: 
+  Not all tests and application tests work on Mac. As such ``ctest`` may fail. However, we have tested it extensively and the library itself should work fine.
