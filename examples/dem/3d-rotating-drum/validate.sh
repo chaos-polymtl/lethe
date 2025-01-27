@@ -81,7 +81,7 @@ action="mpirun -np $n_proc lethe-particles rotating-drum.prm"
 show_animation $pid "---> Running simulation"
 wait $pid
 
-python3 post_processing_rotating_drum.py -i data_exp.csv -f ./
+python3 post_processing_rotating_drum.py -i data_exp.csv -f ./ --validate
 
 # Copy the information to the log folder
 cp $plots $folder
