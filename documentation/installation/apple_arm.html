@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Docker" href="docker.html" /><link rel="prev" title="Windows with WSL" href="windows_wsl.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Installation on Apple ARM (M1 or M2) - Lethe documentation</title>
+        <title>Installation on Apple ARM - Lethe documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -160,7 +160,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="installation.html">Installation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="regular_installation.html">Regular Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="windows_wsl.html">Windows with WSL</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Installation on Apple ARM (M1 or M2)</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Installation on Apple ARM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="digital_alliance.html">Running Lethe on Digital Research Alliance of Canada Clusters</a></li>
 </ul>
@@ -431,12 +431,12 @@
           </label>
         </div>
         <article role="main">
-          <section id="installation-on-apple-arm-m1-or-m2">
-<h1>Installation on Apple ARM (M1 or M2)<a class="headerlink" href="#installation-on-apple-arm-m1-or-m2" title="Link to this heading">#</a></h1>
+          <section id="installation-on-apple-arm">
+<h1>Installation on Apple ARM<a class="headerlink" href="#installation-on-apple-arm" title="Link to this heading">#</a></h1>
 <figure class="align-default">
 <a class="reference internal image-reference" href="../_images/apple.png"><img alt="../_images/apple.png" src="../_images/apple.png" style="height: 100px;" /></a>
 </figure>
-<p>Lethe can be now be deployed on Apple ARM, namely M1 and M2 chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture.</p>
+<p>Lethe can be now be deployed on Apple ARM chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture.</p>
 <p>The installation of Lethe consists in two steps:
 1. Installation of deal.II using the Candi toolset
 2. Installation of Lethe</p>
@@ -444,7 +444,7 @@
 <section id="installing-deal-ii-using-candi-step-1">
 <h2>Installing deal.II Using Candi (Step #1)<a class="headerlink" href="#installing-deal-ii-using-candi-step-1" title="Link to this heading">#</a></h2>
 <p>To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following <a class="reference external" href="https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX">procedure</a> on the deal.II wiki can be followed. You also need to ensure that muParser is installed:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt-get install libmuparser-dev
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>brew install muparser
 </pre></div>
 </div>
 <p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">$HOME/software/</span></code>). You can edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file if you want to force the installation of the deal.II master version instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code> on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.</p>
@@ -474,28 +474,6 @@ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:path/to/candi/install/parmetis-4.0
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is not a clean workaround, but so far this is the only solution we have found. We welcome any suggestions on that front!</p>
-</div>
-</section>
-<section id="fixing-trilinos-includes">
-<h3>Fixing Trilinos Includes<a class="headerlink" href="#fixing-trilinos-includes" title="Link to this heading">#</a></h3>
-<p>Lethe compiles using the C++ 17 standard. There is a header file in the Trilinos library which does not adhere to this standard and uses a deprecated function. When compiling with GCC, this does not pose any problem, but it does when using the built-in Clang compiler of Mac OS.</p>
-<p>The following file needs to be modified in the include dir of your Trilinos installation:</p>
-<div class="copy-button highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">candi</span><span class="o">/</span><span class="n">install</span><span class="o">/</span><span class="n">trilinos</span><span class="o">-</span><span class="n">release</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">18</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">Tpetra_Import_def</span><span class="o">.</span><span class="n">hpp</span>
-</pre></div>
-</div>
-<p>At line 1169, the following line:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">size_type</span><span class="w"> </span><span class="n">numInvalidRemote</span><span class="w"> </span><span class="o">=</span>
-<span class="n">std</span><span class="o">::</span><span class="n">count_if</span><span class="w"> </span><span class="p">(</span><span class="n">remoteProcIDs</span><span class="p">.</span><span class="n">begin</span><span class="w"> </span><span class="p">(),</span><span class="w"> </span><span class="n">remoteProcIDs</span><span class="p">.</span><span class="n">end</span><span class="w"> </span><span class="p">(),</span>
-<span class="w">               </span><span class="n">std</span><span class="o">::</span><span class="n">bind1st</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">equal_to</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(),</span><span class="w"> </span><span class="mi">-1</span><span class="p">));</span>
-</pre></div>
-</div>
-<p>Should be replaced by:</p>
-<div class="copy-button highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">size_type</span><span class="w"> </span><span class="n">numInvalidRemote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>It is still unclear to us what are the consequences of doing this, but we have found so far that it does not affect the outcome of the Lethe solvers. We are aware that this type of manual manipulation is far from being clean…</p>
 </div>
 </section>
 <section id="numdiff">
@@ -528,6 +506,14 @@ cd build
 <p>Then you can compile:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j&lt;numprocs&gt;
 </pre></div>
+</div>
+<p>Finally, you can install Lethe:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make install
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Tests and application tests (<code class="docutils literal notranslate"><span class="pre">ctest</span></code>) may fail. However, we have tested it extensively and the library itself should work fine.</p>
 </div>
 </section>
 </section>
@@ -587,10 +573,9 @@ cd build
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Installation on Apple ARM (M1 or M2)</a><ul>
+<li><a class="reference internal" href="#">Installation on Apple ARM</a><ul>
 <li><a class="reference internal" href="#installing-deal-ii-using-candi-step-1">Installing deal.II Using Candi (Step #1)</a><ul>
 <li><a class="reference internal" href="#setting-the-library-and-include-paths">Setting the Library and Include Paths</a></li>
-<li><a class="reference internal" href="#fixing-trilinos-includes">Fixing Trilinos Includes</a></li>
 <li><a class="reference internal" href="#numdiff">Numdiff</a></li>
 </ul>
 </li>

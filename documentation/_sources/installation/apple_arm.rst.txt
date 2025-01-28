@@ -1,11 +1,11 @@
 ====================================
-Installation on Apple ARM (M1 or M2)
+Installation on Apple ARM
 ====================================
 
 .. figure:: ./images/apple.png
    :height: 100px
 
-Lethe can be now be deployed on Apple ARM, namely M1 and M2 chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture. 
+Lethe can be now be deployed on Apple ARM chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture. 
 
 The installation of Lethe consists in two steps:
 1. Installation of deal.II using the Candi toolset
@@ -22,7 +22,7 @@ To install the dependencies (mpi, p4est, trilinos and METIS) all together using 
 .. code-block:: text
   :class: copy-button
 
-  sudo apt-get install libmuparser-dev
+  brew install muparser
 
 Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master`` on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
 
@@ -64,37 +64,6 @@ The deal.II installation procedure might not set the correct path for the librar
 .. note::
   This is not a clean workaround, but so far this is the only solution we have found. We welcome any suggestions on that front!
 
-
-Fixing Trilinos Includes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Lethe compiles using the C++ 17 standard. There is a header file in the Trilinos library which does not adhere to this standard and uses a deprecated function. When compiling with GCC, this does not pose any problem, but it does when using the built-in Clang compiler of Mac OS.
-
-The following file needs to be modified in the include dir of your Trilinos installation:
-
-.. code-block::
-  :class: copy-button
-
-  path/to/candi/install/trilinos-release-12-18-1/include/Tpetra_Import_def.hpp
-
-At line 1169, the following line:
-
-.. code-block:: cpp
-
-  const size_type numInvalidRemote =
-  std::count_if (remoteProcIDs.begin (), remoteProcIDs.end (),
-                 std::bind1st (std::equal_to<int> (), -1));
-
-Should be replaced by:
-
-.. code-block:: cpp
-  :class: copy-button
-
-  const size_type numInvalidRemote = 0;
-
-.. warning::
-  It is still unclear to us what are the consequences of doing this, but we have found so far that it does not affect the outcome of the Lethe solvers. We are aware that this type of manual manipulation is far from being clean...
-
 Numdiff
 ~~~~~~~~
 
@@ -104,7 +73,6 @@ numdiff is used within the automatic testing procedure of Lethe to compare files
   :class: copy-button
 
   brew install numdiff
-
 
 
 
@@ -146,3 +114,13 @@ Then you can compile:
   :class: copy-button
 
   make -j<numprocs>
+
+Finally, you can install Lethe:
+
+.. code-block:: text
+  :class: copy-button
+
+  make install
+
+.. warning:: 
+  Tests and application tests (``ctest``) may fail. However, we have tested it extensively and the library itself should work fine.
