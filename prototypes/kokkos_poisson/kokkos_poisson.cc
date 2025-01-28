@@ -21,6 +21,7 @@
 #include <deal.II/matrix_free/matrix_free.h>
 #include <deal.II/matrix_free/portable_fe_evaluation.h>
 #include <deal.II/matrix_free/portable_matrix_free.h>
+#include <deal.II/matrix_free/tools.h>
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
@@ -70,6 +71,20 @@ public:
     matrix_free.cell_loop(&LaplaceOperator::local_apply, this, dst, src, true);
   }
 
+  void
+  compute_inverse_diagonal(VectorType &diagonal_global) const
+  {
+    this->initialize_dof_vector(diagonal_global);
+
+    MatrixFreeTools::compute_diagonal(matrix_free,
+                                      diagonal_global,
+                                      &LaplaceOperator::do_vmult_cell_single,
+                                      this);
+
+    for (auto &e : diagonal_global)
+      e = (e == 0.0) ? 1.0 : (1.0 / e);
+  }
+
 private:
   void
   local_apply(const MatrixFree<dim, Number>               &data,
@@ -83,12 +98,20 @@ private:
         phi.reinit(cell);
 
         phi.read_dof_values_plain(src);
-        phi.evaluate(EvaluationFlags::gradients);
-        for (unsigned int q = 0; q < phi.n_q_points; ++q)
-          phi.submit_gradient(phi.get_gradient(q), q);
-        phi.integrate(EvaluationFlags::gradients);
+        do_vmult_cell_single(phi);
         phi.distribute_local_to_global(dst);
       }
+  }
+
+  void
+  do_vmult_cell_single(
+    FEEvaluation<dim, fe_degree, fe_degree + 1, n_components, Number> &phi)
+    const
+  {
+    phi.evaluate(EvaluationFlags::gradients);
+    for (unsigned int q = 0; q < phi.n_q_points; ++q)
+      phi.submit_gradient(phi.get_gradient(q), q);
+    phi.integrate(EvaluationFlags::gradients);
   }
 
   MatrixFree<dim, Number> matrix_free;
@@ -108,6 +131,15 @@ public:
   {
     phi->submit_gradient(phi->get_gradient(q_point), q_point);
   }
+
+  DEAL_II_HOST_DEVICE
+  void
+  set_cell(int)
+  {}
+
+  DEAL_II_HOST_DEVICE void
+  set_matrix_free_data(const typename Portable::MatrixFree<dim, Number>::Data &)
+  {}
 };
 
 template <int dim, int fe_degree, int n_components, typename Number>
@@ -127,15 +159,16 @@ public:
       phi(
         /*cell,*/ gpu_data, shared_data);
     phi.read_dof_values(src);
-    phi.evaluate(false, true);
+    phi.evaluate(EvaluationFlags::gradients);
     phi.apply_for_each_quad_point(
       LaplaceOperatorQuad<dim, fe_degree, n_components, Number>());
-    phi.integrate(false, true);
+    phi.integrate(EvaluationFlags::gradients);
     phi.distribute_local_to_global(dst);
   }
-  static const unsigned int n_dofs_1d    = fe_degree + 1;
-  static const unsigned int n_local_dofs = Utilities::pow(fe_degree + 1, dim);
-  static const unsigned int n_q_points   = Utilities::pow(fe_degree + 1, dim);
+
+  static const unsigned int n_local_dofs =
+    Utilities::pow(fe_degree + 1, dim) * n_components;
+  static const unsigned int n_q_points = Utilities::pow(fe_degree + 1, dim);
 };
 
 template <int dim, int fe_degree, int n_components, typename Number>
@@ -177,6 +210,31 @@ public:
     LaplaceOperatorLocal<dim, fe_degree, n_components, Number> local_operator;
     matrix_free.cell_loop(local_operator, src, dst);
     matrix_free.copy_constrained_values(src, dst); // TODO: annoying
+  }
+
+  void
+  compute_inverse_diagonal(VectorType &diagonal_global) const
+  {
+    matrix_free.initialize_dof_vector(diagonal_global);
+    LaplaceOperatorQuad<dim, fe_degree, n_components, Number>
+      laplace_operator_quad;
+    MatrixFreeTools::
+      compute_diagonal<dim, fe_degree, fe_degree + 1, n_components, Number>(
+        matrix_free,
+        diagonal_global,
+        laplace_operator_quad,
+        EvaluationFlags::gradients,
+        EvaluationFlags::gradients);
+
+    Number *diagonal_global_ptr = diagonal_global.get_values();
+
+    Kokkos::parallel_for(
+      "lethe::invert_vector",
+      Kokkos::RangePolicy<MemorySpace::Default::kokkos_space::execution_space>(
+        0, diagonal_global.locally_owned_size()),
+      KOKKOS_LAMBDA(int i) {
+        diagonal_global_ptr[i] = 1.0 / diagonal_global_ptr[i];
+      });
   }
 
 private:
@@ -268,7 +326,9 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
     dst = 0.0;
   }
 
-  PreconditionIdentity preconditioner;
+  // PreconditionIdentity preconditioner;
+  DiagonalMatrix<VectorType> preconditioner;
+  laplace_operator.compute_inverse_diagonal(preconditioner.get_vector());
 
   ReductionControl     solver_control;
   SolverCG<VectorType> solver(solver_control);
@@ -302,6 +362,7 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
   table.add_value("n_refinements", n_refinements);
   table.add_value("n_components", n_components);
   table.add_value("n_dofs", dof_handler.n_dofs());
+  table.add_value("n_iterations", solver_control.last_step());
 
   if (std::is_same_v<MemorySpace, dealii::MemorySpace::Host>)
     table.add_value("version", "host");
