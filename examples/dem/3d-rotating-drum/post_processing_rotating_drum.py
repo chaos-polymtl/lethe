@@ -52,7 +52,6 @@ x_loc_unit = np.array([-np.cos(angle), -np.sin(angle)])
 y_loc_unit = np.array([-np.sin(angle), np.cos(angle)])
 
 for i in range(start, len(time)):
-    print("Time step: ", i)
     df_load = particle.get_df(i)
 
     # We do a scalar product to find the velocity in the new frame of reference.
