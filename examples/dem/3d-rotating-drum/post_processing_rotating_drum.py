@@ -12,6 +12,7 @@ from numpy.ma.extras import average
 parser = argparse.ArgumentParser(description='Arguments for calculation of the velocity profile in the rotating drum')
 parser.add_argument("-f", "--folder", type=str, help="Folder path", required=True)
 parser.add_argument("-i", "--input", type=str, help="Name of the input file", required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 
 folder=args.folder
@@ -51,7 +52,6 @@ x_loc_unit = np.array([-np.cos(angle), -np.sin(angle)])
 y_loc_unit = np.array([-np.sin(angle), np.cos(angle)])
 
 for i in range(start, len(time)):
-    print("Time step: ", i)
     df_load = particle.get_df(i)
 
     # We do a scalar product to find the velocity in the new frame of reference.
@@ -105,5 +105,10 @@ plt.ylabel("y (m)")
 plt.plot(y_graph * 1.214749159, y_graph, "-.", label=r"$\omega r$")
 plt.legend()
 plt.title(f"Average velocity parallel to the free surface \ndepending on the depth from the center of the cylinder")
-plt.show()
+
+
+if (args.validate):     
+    plt.savefig("lethe-rotating-drum-comparison.pdf")
+else:
+    plt.show()
 

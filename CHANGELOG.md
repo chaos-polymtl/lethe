@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-01-24
+
+### Added
+
+- MINOR A new validation case is added. This new case used the full scale rotating drum example. All the validation cases can be launch using the contrib/validation/validate_lethe.sh script.[#1413](https://github.com/chaos-polymtl/lethe/pull/1413)
+
 ## [Master] - 2025-01-23
 
 ### Fixed
