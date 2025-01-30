@@ -1420,6 +1420,8 @@ private:
                                                 n_particle_types);
     effective_coefficient_of_friction.resize(n_particle_types *
                                              n_particle_types);
+    effective_rolling_viscous_damping_coefficient.resize(n_particle_types *
+                                                         n_particle_types);
     effective_coefficient_of_rolling_friction.resize(n_particle_types *
                                                      n_particle_types);
     model_parameter_beta.resize(n_particle_types * n_particle_types);
@@ -1435,6 +1437,8 @@ private:
           properties.restitution_coefficient_particle.at(i);
         const double friction_coefficient_i =
           properties.friction_coefficient_particle.at(i);
+        const double rolling_viscous_damping_coefficient_i =
+          properties.rolling_viscous_damping_coefficient_particle.at(i);
         const double rolling_friction_coefficient_i =
           properties.rolling_friction_coefficient_particle.at(i);
         const double surface_energy_i =
@@ -1454,6 +1458,8 @@ private:
               properties.restitution_coefficient_particle.at(j);
             const double friction_coefficient_j =
               properties.friction_coefficient_particle.at(j);
+            const double rolling_viscous_damping_coefficient_j =
+              properties.rolling_viscous_damping_coefficient_particle.at(j);
             const double rolling_friction_coefficient_j =
               properties.rolling_friction_coefficient_particle.at(j);
             const double surface_energy_j =
@@ -1481,6 +1487,10 @@ private:
 
             this->effective_coefficient_of_friction[k] =
               harmonic_mean(friction_coefficient_i, friction_coefficient_j);
+
+            this->effective_rolling_viscous_damping_coefficient[k] =
+              harmonic_mean(rolling_viscous_damping_coefficient_i,
+                            rolling_viscous_damping_coefficient_j);
 
             this->effective_coefficient_of_rolling_friction[k] =
               harmonic_mean(rolling_friction_coefficient_i,
@@ -1746,6 +1756,7 @@ private:
   std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
   std::vector<double> effective_coefficient_of_friction;
+  std::vector<double> effective_rolling_viscous_damping_coefficient;
   std::vector<double> effective_coefficient_of_rolling_friction;
   std::vector<double> effective_surface_energy;
   std::vector<double> effective_hamaker_constant;

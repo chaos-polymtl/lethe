@@ -94,6 +94,10 @@ namespace Parameters
       // Friction coefficient of each particle type
       std::unordered_map<unsigned int, double> friction_coefficient_particle;
 
+      // Rolling viscous damping coefficient of each particle type
+      std::unordered_map<unsigned int, double>
+        rolling_viscous_damping_coefficient_particle;
+
       // Rolling friction coefficient of each particle type
       std::unordered_map<unsigned int, double>
         rolling_friction_coefficient_particle;
@@ -149,6 +153,8 @@ namespace Parameters
         std::unordered_map<unsigned int, double>
           &restitution_coefficient_particle,
         std::unordered_map<unsigned int, double> &friction_coefficient_particle,
+        std::unordered_map<unsigned int, double>
+          &rolling_viscous_dampimg_coefficient_particle,
         std::unordered_map<unsigned int, double>
           &rolling_friction_coefficient_particle,
         std::unordered_map<unsigned int, double> &surface_energy_particle,

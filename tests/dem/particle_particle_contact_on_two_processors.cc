@@ -84,6 +84,8 @@ test()
   dem_parameters.lagrangian_physical_properties
     .friction_coefficient_particle[0] = 0.5;
   dem_parameters.lagrangian_physical_properties
+    .rolling_viscous_damping_coefficient_particle[0] = 0.5;
+  dem_parameters.lagrangian_physical_properties
     .rolling_friction_coefficient_particle[0] = 0.1;
   dem_parameters.lagrangian_physical_properties.surface_energy_particle[0] = 0.;
   dem_parameters.lagrangian_physical_properties.hamaker_constant_particle[0] =

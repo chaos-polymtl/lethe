@@ -63,6 +63,10 @@ namespace Parameters
                         "0.1",
                         Patterns::Double(),
                         "Particle friction coefficient");
+      prm.declare_entry("rolling viscous damping particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle rolling viscous damping");
       prm.declare_entry("rolling friction particles",
                         "0.1",
                         Patterns::Double(),
@@ -131,6 +135,8 @@ namespace Parameters
         prm.get_double("restitution coefficient particles");
       friction_coefficient_particle.at(particle_type) =
         prm.get_double("friction coefficient particles");
+      rolling_viscous_damping_coefficient_particle.at(particle_type) =
+        prm.get_double("rolling viscous damping particles");
       rolling_friction_coefficient_particle.at(particle_type) =
         prm.get_double("rolling friction particles");
       surface_energy_particle.at(particle_type) =
@@ -226,6 +232,7 @@ namespace Parameters
                             poisson_ratio_particle,
                             restitution_coefficient_particle,
                             friction_coefficient_particle,
+                            rolling_viscous_damping_coefficient_particle,
                             rolling_friction_coefficient_particle,
                             surface_energy_particle,
                             hamaker_constant_particle);
@@ -279,6 +286,8 @@ namespace Parameters
         &restitution_coefficient_particle,
       std::unordered_map<unsigned int, double> &friction_coefficient_particle,
       std::unordered_map<unsigned int, double>
+        &rolling_viscous_damping_coefficient_particle,
+      std::unordered_map<unsigned int, double>
         &rolling_friction_coefficient_particle,
       std::unordered_map<unsigned int, double> &surface_energy_particle,
       std::unordered_map<unsigned int, double> &hamaker_constant_particle)
@@ -297,6 +306,7 @@ namespace Parameters
           poisson_ratio_particle.insert({counter, 0.});
           restitution_coefficient_particle.insert({counter, 0.});
           friction_coefficient_particle.insert({counter, 0.});
+          rolling_viscous_damping_coefficient_particle.insert({counter, 0.});
           rolling_friction_coefficient_particle.insert({counter, 0.});
           surface_energy_particle.insert({counter, 0.});
           hamaker_constant_particle.insert({counter, 0.});
