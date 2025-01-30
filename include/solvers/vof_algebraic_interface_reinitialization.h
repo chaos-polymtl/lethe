@@ -241,23 +241,13 @@ private:
   inline double
   compute_diffusivity(const double cell_size) const
   {
-    if (this->simulation_parameters.multiphysics.vof_parameters
-          .algebraic_interface_reinitialization.diffusivity_type ==
-        Parameters::ReinitializationDiffusivityType::constant)
-      {
-        return this->simulation_parameters.multiphysics.vof_parameters
-          .algebraic_interface_reinitialization.diffusivity_value;
-      }
-    else // Mesh-dependant diffusivity model
-      {
-        const double multiplier =
-          this->simulation_parameters.multiphysics.vof_parameters
-            .algebraic_interface_reinitialization.diffusivity_multiplier;
-        const double power =
-          this->simulation_parameters.multiphysics.vof_parameters
-            .algebraic_interface_reinitialization.diffusivity_power;
-        return multiplier * std::pow(cell_size, power);
-      }
+    const double multiplier =
+      this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.diffusivity_multiplier;
+    const double power =
+      this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.diffusivity_power;
+    return multiplier * std::pow(cell_size, power);
   }
 
   /**

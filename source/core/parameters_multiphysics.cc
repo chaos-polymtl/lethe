@@ -448,19 +448,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "interface algebraic reinitialization process will be applied to the VOF "
       "phase fraction field.");
     prm.declare_entry(
-      "diffusivity type",
-      "constant",
-      Patterns::Selection("constant|mesh-dependant"),
-      "Type of diffusivity model used in the algebraic reinitialization "
-      "equation."
-      "Choices are <constant|mesh-dependant>.");
-    prm.declare_entry(
-      "diffusivity value",
-      "1.",
-      Patterns::Double(),
-      "Constant diffusion coefficient value in the algebraic reinitialization "
-      "equation.");
-    prm.declare_entry(
       "diffusivity multiplier",
       "1.",
       Patterns::Double(),
@@ -505,17 +492,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
   {
     enable                     = prm.get_bool("enable");
     reinitialization_frequency = prm.get_integer("frequency");
-
-    // Diffusivity
-    const std::string op1 = prm.get("diffusivity type");
-    if (op1 == "constant")
-      diffusivity_type = Parameters::ReinitializationDiffusivityType::constant;
-    else if (op1 == "mesh-dependant")
-      diffusivity_type =
-        Parameters::ReinitializationDiffusivityType::mesh_dependant;
-    else
-      throw(std::runtime_error("Invalid diffusivity type"));
-    diffusivity_value      = prm.get_double("diffusivity value");
     diffusivity_multiplier = prm.get_double("diffusivity multiplier");
     diffusivity_power      = prm.get_double("diffusivity power");
     reinitialization_cfl   = prm.get_double("reinitialization CFL");

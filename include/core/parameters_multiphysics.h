@@ -65,15 +65,6 @@ namespace Parameters
   };
 
   /**
-   * TODO AA
-   */
-  enum class ReinitializationDiffusivityType
-  {
-    constant,
-    mesh_dependant
-  };
-
-  /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
    */
   struct CahnHilliard_PhaseFilter
@@ -191,18 +182,11 @@ namespace Parameters
     /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
     /// fraction field will be reinitialized
     int reinitialization_frequency;
-    /// Type of diffusivity model employed in the algebraic interface
-    /// reinitialization PDE.
-    Parameters::ReinitializationDiffusivityType diffusivity_type;
-    /// Constant-value diffusion coefficient (used with
-    /// ReinitializationDiffusivityType::constant).
-    double diffusivity_value;
     /// Constant multiplying the mesh-size in the evaluation of the diffusion
-    /// coefficient (used with ReinitializationDiffusivityType::mesh_dependant).
+    /// coefficient.
     double diffusivity_multiplier;
     /// Constant representing the power to which the mesh-size is elevated in
-    /// the evaluation of the diffusion coefficient (used with
-    /// ReinitializationDiffusivityType::mesh_dependant).
+    /// the evaluation of the diffusion coefficient.
     double diffusivity_power;
     /// CFL for the reinitialization equation
     double reinitialization_cfl;
