@@ -591,6 +591,16 @@ private:
           normal_force.norm(),
           normal_unit_vector);
       }
+    if constexpr (rolling_friction_model == epsd_resistance)
+      {
+        return epsd_rolling_resistance_torque<PropertiesIndex>(
+          effective_radius,
+          particle_one_properties,
+          particle_two_properties,
+          rolling_friction_coeff,
+          normal_force.norm(),
+          normal_unit_vector);
+      }
   }
 
   /**

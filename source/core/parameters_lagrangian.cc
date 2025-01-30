@@ -698,9 +698,9 @@ namespace Parameters
           "rolling resistance torque method",
           "constant_resistance",
           Patterns::Selection(
-            "no_resistance|constant_resistance|viscous_resistance"),
+            "no_resistance|constant_resistance|viscous_resistance|epsd_resistance"),
           "Choosing rolling resistance torque model"
-          "Choices are <no_resistance|constant_resistance|viscous_resistance>.");
+          "Choices are <no_resistance|constant_resistance|viscous_resistance|epsd_resistance>.");
 
         prm.declare_entry("integration method",
                           "velocity_verlet",
@@ -908,6 +908,11 @@ namespace Parameters
           {
             rolling_resistance_method =
               RollingResistanceMethod::viscous_resistance;
+          }
+        else if (rolling_resistance_torque == "epsd_resistance")
+          {
+            rolling_resistance_method =
+              RollingResistanceMethod::epsd_resistance;
           }
         else
           {

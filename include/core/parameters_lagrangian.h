@@ -29,7 +29,8 @@ namespace Parameters
     {
       no_resistance,
       constant_resistance,
-      viscous_resistance
+      viscous_resistance,
+      epsd_resistance
     };
 
     enum class SizeDistributionType
