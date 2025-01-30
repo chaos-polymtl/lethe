@@ -1681,6 +1681,18 @@ namespace Parameters
                         Patterns::Selection("x+|x-|y+|y-|z+|z-"),
                         "Laser beam orientation "
                         "Choices are <x+|x-|y+|y-|z+|z->.");
+
+      prm.declare_entry(
+        "beam rotation angle",
+        "0",
+        Patterns::Double(),
+        "Angle of rotation of the beam axis with respect to the axis defined by the beam orientation parameter");
+        
+      prm.declare_entry(
+        "beam rotation axis",
+        "1, 0, 0",
+        Patterns::List(Patterns::Double()),
+        "Axis around which the laser beam is rotated");
     }
     prm.leave_subsection();
   }
@@ -1789,6 +1801,11 @@ namespace Parameters
           else if constexpr (dim == 2)
             Assert(dim == 2, TwoDimensionalLaserError(dim));
         }
+        // Initial rotation axis and angle
+        rotation_axis =
+          value_string_to_tensor<3>(prm.get("initial rotation axis"));
+        rotation_angle = prm.get_double("initial rotation angle");
+        
     }
     prm.leave_subsection();
   }
