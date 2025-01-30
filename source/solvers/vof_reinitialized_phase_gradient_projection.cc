@@ -18,12 +18,11 @@ VOFReinitializedPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
 
   // Initialize FEValues for phase fraction gradient projection and algebraic
   // interface reinitialization
-  FEValues<dim> fe_values_phase_gradient_projection(*this->mapping,
-                                                    *this->fe,
-                                                    *this->cell_quadrature,
-                                                    update_values |
-                                                      update_gradients |
-                                                      update_JxW_values);
+  FEValues<dim> fe_values_reinitialized_phase_gradient_projection(
+    *this->mapping,
+    *this->fe,
+    *this->cell_quadrature,
+    update_values | update_gradients | update_JxW_values);
   FEValues<dim> fe_values_algebraic_reinitialization(
     *this->mapping,
     dof_handler_algebraic_reinitialization->get_fe(),
@@ -32,9 +31,10 @@ VOFReinitializedPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
 
   // Initialize size of arrays
   const double n_q_points =
-    fe_values_phase_gradient_projection.get_quadrature().size();
+    fe_values_reinitialized_phase_gradient_projection.get_quadrature().size();
   const double n_dofs_per_cell =
-    fe_values_phase_gradient_projection.get_fe().n_dofs_per_cell();
+    fe_values_reinitialized_phase_gradient_projection.get_fe()
+      .n_dofs_per_cell();
 
   // Initialize local matrix and rhs
   FullMatrix<double> local_matrix(n_dofs_per_cell, n_dofs_per_cell);
@@ -54,9 +54,9 @@ VOFReinitializedPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   std::vector<Tensor<2, dim>> grad_phi(n_dofs_per_cell);
 
   // Get the diffusion factor
-  const double diffusion_factor = 1.; // TODO AA add parameter later
-  //    this->simulation_parameters.multiphysics.vof_parameters
-  //      .surface_tension_force.phase_fraction_gradient_diffusion_factor;
+  const double diffusion_factor =
+    this->simulation_parameters.multiphysics.vof_parameters
+      .surface_tension_force.phase_fraction_gradient_diffusion_factor;
 
   // Loop over phase gradient projection cells
   for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -76,24 +76,24 @@ VOFReinitializedPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
               dof_handler_algebraic_reinitialization);
 
           // Reinitialize FEValues with corresponding cells
-          fe_values_phase_gradient_projection.reinit(cell);
+          fe_values_reinitialized_phase_gradient_projection.reinit(cell);
           fe_values_algebraic_reinitialization.reinit(
             algebraic_reinitialization_cell);
 
           // Get vector of Jacobi determinant times the quadrature weights
           std::vector<double> JxW_vec =
-            fe_values_phase_gradient_projection.get_JxW_values();
+            fe_values_reinitialized_phase_gradient_projection.get_JxW_values();
 
           // Compute cell size
-          auto &fe_phase_gradient_projection =
-            fe_values_phase_gradient_projection.get_fe();
-          const double h =
-            compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
-                                       fe_phase_gradient_projection.degree);
+          auto &fe_reinitialized_phase_gradient_projection =
+            fe_values_reinitialized_phase_gradient_projection.get_fe();
+          const double h = compute_cell_diameter<dim>(
+            compute_cell_measure_with_JxW(JxW_vec),
+            fe_reinitialized_phase_gradient_projection.degree);
 
           // Get reinitialized interface phase fraction gradients
           fe_values_algebraic_reinitialization.get_function_gradients(
-            *this->subequations_interface->get_solution(
+            *this->subequations_interface->get_filtered_solution(
               VOFSubequationsID::algebraic_interface_reinitialization),
             present_reinitialized_phase_gradients);
 
@@ -103,12 +103,13 @@ VOFReinitializedPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
               // Shape functions
               for (unsigned int k = 0; k < n_dofs_per_cell; ++k)
                 {
-                  phi[k] = fe_values_phase_gradient_projection
+                  phi[k] = fe_values_reinitialized_phase_gradient_projection
                              [phase_fraction_gradients]
                                .value(k, q);
-                  grad_phi[k] = fe_values_phase_gradient_projection
-                                  [phase_fraction_gradients]
-                                    .gradient(k, q);
+                  grad_phi[k] =
+                    fe_values_reinitialized_phase_gradient_projection
+                      [phase_fraction_gradients]
+                        .gradient(k, q);
                 }
 
               // Local linear system assembly

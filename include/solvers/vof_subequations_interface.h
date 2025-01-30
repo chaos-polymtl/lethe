@@ -46,9 +46,6 @@ public:
    *
    * @param[in] p_pcout Parallel cout used to print the information.
    *
-   * @param[in] p_simulation_control Object containing simulation time-stepping
-   * information.
-   *
    * @param[in] p_triangulation Distributed mesh information.
    *
    * @param[in] p_multiphysics_interface Multiphysics interface object pointer
@@ -57,7 +54,6 @@ public:
   VOFSubequationsInterface(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
-    const SimulationControl         &p_simulation_control,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                &p_triangulation,
     MultiphysicsInterface<dim> *p_multiphysics_interface);
@@ -185,6 +181,25 @@ public:
   }
 
   /**
+   * @brief Get a pointer to the filtered solution vector of a specific
+   * subequation.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @return Pointer to the solution vector of the specified subequation.
+   */
+  GlobalVectorType *
+  get_filtered_solution(const VOFSubequationsID &subequation_id)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+    return this->subequations_filtered_solutions[subequation_id];
+  }
+
+  /**
    * @brief Get the string associated with a specific subequation.
    *
    * @param[in] subequation_id Identifier associated with a specific
@@ -260,6 +275,28 @@ public:
     this->subequations_solutions[subequation_id] = solution_vector;
   }
 
+  /**
+   * @brief Set the filtered solution associated with a specific subequation
+   * in the interface.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @param[in] filtered_solution_vector Pointer to the filtered solution vector
+   * of a specific subequation.
+   */
+  void
+  set_filtered_solution(const VOFSubequationsID &subequation_id,
+                        GlobalVectorType        *filtered_solution_vector)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+    this->subequations_filtered_solutions[subequation_id] =
+      filtered_solution_vector;
+  }
+
 private:
   MultiphysicsInterface<dim> *multiphysics_interface;
 
@@ -277,6 +314,10 @@ private:
 
   // Present solutions
   std::map<VOFSubequationsID, GlobalVectorType *> subequations_solutions;
+
+  // Present filtered solutions
+  std::map<VOFSubequationsID, GlobalVectorType *>
+    subequations_filtered_solutions;
 };
 
 #endif

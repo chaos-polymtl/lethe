@@ -140,7 +140,6 @@ public:
     this->subequations = std::make_shared<VOFSubequationsInterface<dim>>(
       this->simulation_parameters,
       this->pcout,
-      *this->simulation_control,
       this->triangulation,
       this->multiphysics);
   }

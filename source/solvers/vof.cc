@@ -332,7 +332,8 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
   if ((vof_parameters.surface_tension_force.enable &&
-      vof_parameters.surface_tension_force.output_vof_auxiliary_fields) || vof_parameters.algebraic_interface_reinitialization.enable )
+       vof_parameters.surface_tension_force.output_vof_auxiliary_fields) ||
+      vof_parameters.algebraic_interface_reinitialization.enable)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         projected_phase_fraction_gradient_component_interpretation(
@@ -1147,7 +1148,11 @@ VolumeOfFluid<dim>::modify_solution()
 
   // Apply algebraic interface reinitialization
   if (simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.enable)
+        .algebraic_interface_reinitialization.enable &&
+      (simulation_control->get_step_number() %
+         simulation_parameters.multiphysics.vof_parameters
+           .algebraic_interface_reinitialization.reinitialization_frequency ==
+       0))
     reinitialize_interface_with_algebraic_method();
 
   // Apply filter to phase fraction values
@@ -1601,11 +1606,10 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->previous_solutions[i] = tmp_previous_solution;
     }
 
-  // TODO AA CHECK if necessary
-  //  // Apply algebraic interface reinitialization
-  //  if
-  //  (simulation_parameters.multiphysics.vof_parameters.algebraic_interface_reinitialization.enable)
-  //    reinitialize_interface_with_algebraic_method();
+  // Apply algebraic interface reinitialization
+  if (simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.enable)
+    reinitialize_interface_with_algebraic_method();
 
   // Apply filter to phase fraction
   apply_phase_filter();

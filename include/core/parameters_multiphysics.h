@@ -188,6 +188,9 @@ namespace Parameters
   {
     /// Enables/Disables the algebraic interface reinitialization.
     bool enable;
+    /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
+    /// fraction field will be reinitialized
+    int reinitialization_frequency;
     /// Type of diffusivity model employed in the algebraic interface
     /// reinitialization PDE.
     Parameters::ReinitializationDiffusivityType diffusivity_type;
@@ -201,14 +204,14 @@ namespace Parameters
     /// the evaluation of the diffusion coefficient (used with
     /// ReinitializationDiffusivityType::mesh_dependant).
     double diffusivity_power;
-    /// Tolerance used for the pseudo-time-stepping scheme.
-    double tolerance;
+    /// CFL for the reinitialization equation
+    double reinitialization_cfl;
+    /// Steady-state criterion used for the pseudo-time-stepping scheme.
+    double steady_state_criterion;
+    /// Maximum number of reinitialization steps.
+    double max_steps_number;
     /// Type of verbosity of the algebraic interface reinitialization solver.
     Parameters::Verbosity verbosity;
-
-    // TODO AA Erase
-    bool   enable_explicit_solving;
-    double reinitialization_cfl;
 
     /**
      * @brief Declare the parameters.

@@ -44,9 +44,6 @@ public:
    *
    * @param[in] p_pcout Parallel cout used to print the information.
    *
-   * @param[in] p_simulation_control Object containing simulation time-stepping
-   * information.
-   *
    * @param[in] p_triangulation Distributed mesh information.
    *
    * @param[in] p_multiphysics_interface Multiphysics interface object used to
@@ -59,7 +56,6 @@ public:
   VOFAlgebraicInterfaceReinitialization(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
-    const SimulationControl         &p_simulation_control,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                   &p_triangulation,
     MultiphysicsInterface<dim>    *p_multiphysics_interface,
@@ -71,7 +67,6 @@ public:
     , subequations_interface(p_subequations_interface)
     , multiphysics_interface(p_multiphysics_interface)
     , simulation_parameters(p_simulation_parameters)
-    , simulation_control(p_simulation_control)
     , triangulation(p_triangulation)
     , dof_handler(*this->triangulation)
     , linear_solver_verbosity(
@@ -181,16 +176,13 @@ public:
   {
     this->pcout << std::setprecision(display_precision)
                 << "\t||dphi_reinit||_L2 = " << std::setw(6)
-                << newton_update.l2_norm() << std::setw(6)
+                << this->newton_update.l2_norm() << std::setw(6)
                 << "\t||dphi_reinit||_Linfty = "
                 << std::setprecision(display_precision)
-                << newton_update.linfty_norm() << std::endl;
+                << this->newton_update.linfty_norm() << std::endl;
   }
 
 private:
-  // functions for condition number calculation
-
-
   /**
    * TODO AA
    * @brief write_output_results
@@ -206,6 +198,9 @@ private:
   inline double
   identify_minimum_cell_size() const
   {
+    // Get MPI communicator
+    auto mpi_communicator = this->triangulation->get_communicator();
+
     // Initialize FEValues for interface algebraic reinitialization
     FEValues<dim> fe_values(*this->mapping,
                             this->dof_handler.get_fe(),
@@ -233,6 +228,8 @@ private:
             h = std::min(h, h_local);
           }
       }
+    // Get the minimum between all processes
+    h = Utilities::MPI::min(h, mpi_communicator);
     return h;
   }
 
@@ -276,9 +273,17 @@ private:
         .algebraic_interface_reinitialization.reinitialization_cfl;
 
     const double h_min = identify_minimum_cell_size();
-    //    h = std::min(h_min, vof_time_step);
     return h_min * cfl;
   }
+
+  /**
+   * @brief Apply filter on reinitialized phase fraction values.
+   *
+   * @note The filter is applied for phase fraction gradient computation
+   * purposes.
+   */
+  void
+  apply_phase_filter();
 
   /**
    * @brief Define the zero constraints used to solve the problem.
@@ -326,25 +331,31 @@ private:
   /**
    * TODO AA
    * @param time_step_inv
-   * @param tolerance
+   * @param steady_state_criterion
    * @return
    */
   inline bool
-  continue_iterating(const double time_step_inv, const double tolerance)
+  continue_iterating(const double       time_step_inv,
+                     const double       steady_state_criterion,
+                     const unsigned int step_number)
   {
-    // TODO AA cleanup
     auto solution_diff = local_evaluation_point;
     solution_diff -= previous_local_evaluation_point;
 
     double stop_criterion = time_step_inv * solution_diff.l2_norm();
 
-    this->pcout << "TIME-STEP INV = " << time_step_inv << std::endl;
-    this->pcout << "SOLUTION DIFF NORM = " << solution_diff.l2_norm()
+    this->pcout << " Algebraic reinitialization solution norm difference = "
+                << solution_diff.l2_norm() << std::endl;
+    this->pcout << " Algebraic reinitialization steady-state criterion value = "
+                << stop_criterion << std::endl;
+    this->pcout << " Algebraic reinitialization fixed steady-state criterion = "
+                << steady_state_criterion << "\n"
                 << std::endl;
-    this->pcout << "STOP CRITERION = " << stop_criterion << std::endl;
-    this->pcout << "TOLERANCE = " << tolerance << std::endl;
 
-    return (stop_criterion > tolerance);
+    return ((stop_criterion > steady_state_criterion) &&
+            (step_number + 1 <
+             this->simulation_parameters.multiphysics.vof_parameters
+               .algebraic_interface_reinitialization.max_steps_number));
   }
 
   const VOFSubequationsID        subequation_id;
@@ -353,15 +364,13 @@ private:
     *multiphysics_interface; // to get VOF DoFHandler and solution
 
   // Parameters
-  const SimulationParameters<dim> &simulation_parameters;
-  PVDHandler                       pvdhandler;
+  const SimulationParameters<dim>
+    &simulation_parameters; // TODO AA check what parameters are necessary
+  PVDHandler pvdhandler;    // TODO AA for debugging
 
-  // VOF Simulation control
-  const SimulationControl
-        &simulation_control; // TODO AA Only needed for CFL value... work on it
-  double current_time_step;
-  std::vector<double> time_step_vector = {
-    0}; // TODO AA resee how it is initialized
+  // Time-stepping with BDF1
+  double              current_time_step;
+  std::vector<double> time_step_vector = {0.0};
 
   // Core elements
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
@@ -380,15 +389,15 @@ private:
   GlobalVectorType               previous_local_evaluation_point;
   GlobalVectorType               newton_update;
   GlobalVectorType               present_solution;
+  GlobalVectorType               filtered_solution;
   GlobalVectorType               previous_solution; // Only used with bdf1
   GlobalVectorType               system_rhs;
   AffineConstraints<double>      zero_constraints;
   AffineConstraints<double>      nonzero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
-  // Diffusivity storage TODO AA for non constant diffusivity
-  //  GlobalVectorType diffusivity_values;
+  // Phase fraction filter
+  std::shared_ptr<VolumeOfFluidFilterBase> filter;
 
   // Verbosity
   const Parameters::Verbosity linear_solver_verbosity;

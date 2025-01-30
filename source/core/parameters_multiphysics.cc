@@ -441,6 +441,13 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "Enables the interface to be reinitialized with the algebraic method "
       "<true|false>");
     prm.declare_entry(
+      "frequency",
+      "1",
+      Patterns::Integer(),
+      "Reinitialization frequency at every specified number of time-steps, the "
+      "interface algebraic reinitialization process will be applied to the VOF "
+      "phase fraction field.");
+    prm.declare_entry(
       "diffusivity type",
       "constant",
       Patterns::Selection("constant|mesh-dependant"),
@@ -465,10 +472,14 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       Patterns::Double(),
       "Power value applied to the mesh-size in the mesh-dependant diffusivity "
       "model of the algebraic interface reinitialization.");
-    prm.declare_entry("tolerance",
-                      "1e-8",
+    prm.declare_entry("steady state criterion",
+                      "1e-2",
                       Patterns::Double(),
                       "Tolerance for the pseudo-time-stepping scheme.");
+    prm.declare_entry("max steps number",
+                      "5",
+                      Patterns::Integer(),
+                      "Maximum number of reinitialization steps.");
     prm.declare_entry(
       "verbosity",
       "quiet",
@@ -476,13 +487,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "States whether the output from the algebraic interface reinitialization "
       "should be printed."
       "Choices are <quiet|verbose>.");
-
-    // TODO AA Erase
-    prm.declare_entry("enable explicit solving",
-                      "false",
-                      Patterns::Bool(),
-                      "Enables solving the linearized version of the equation"
-                      "<true|false>");
     prm.declare_entry(
       "reinitialization CFL",
       "1.",
@@ -499,7 +503,8 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
 {
   prm.enter_subsection("algebraic interface reinitialization");
   {
-    enable = prm.get_bool("enable");
+    enable                     = prm.get_bool("enable");
+    reinitialization_frequency = prm.get_integer("frequency");
 
     // Diffusivity
     const std::string op1 = prm.get("diffusivity type");
@@ -513,7 +518,9 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
     diffusivity_value      = prm.get_double("diffusivity value");
     diffusivity_multiplier = prm.get_double("diffusivity multiplier");
     diffusivity_power      = prm.get_double("diffusivity power");
-    tolerance              = prm.get_double("tolerance");
+    reinitialization_cfl   = prm.get_double("reinitialization CFL");
+    steady_state_criterion = prm.get_double("steady state criterion");
+    max_steps_number       = prm.get_integer("max steps number");
 
     const std::string op2 = prm.get("verbosity");
     if (op2 == "verbose")
@@ -522,10 +529,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
       verbosity = Parameters::Verbosity::quiet;
     else
       throw(std::runtime_error("Invalid verbosity level"));
-
-    // TODO AA Erase
-    enable_explicit_solving = prm.get_bool("enable explicit solving");
-    reinitialization_cfl    = prm.get_double("reinitialization CFL");
   }
   prm.leave_subsection();
 }

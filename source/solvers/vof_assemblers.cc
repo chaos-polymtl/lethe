@@ -403,7 +403,7 @@ VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
   // Copy data elements
   auto &local_rhs = copy_data.local_rhs;
 
-  // Assemble local matrix
+  // Assemble local right-hand side (rhs)
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields for faster access
