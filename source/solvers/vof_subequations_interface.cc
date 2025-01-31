@@ -5,7 +5,6 @@
 #include <solvers/vof_curvature_projection.h>
 #include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_phase_gradient_projection.h>
-#include <solvers/vof_reinitialized_phase_gradient_projection.h>
 #include <solvers/vof_subequations_interface.h>
 
 template <int dim>
@@ -52,18 +51,6 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
           this->subequations
             [VOFSubequationsID::algebraic_interface_reinitialization] =
             std::make_shared<VOFAlgebraicInterfaceReinitialization<dim>>(
-              p_simulation_parameters,
-              this->pcout,
-              p_triangulation,
-              this->multiphysics_interface,
-              this);
-
-          // Reinitialized phase gradient projection
-          this->active_subequations.push_back(
-            VOFSubequationsID::reinitialized_phase_gradient_projection);
-          this->subequations
-            [VOFSubequationsID::reinitialized_phase_gradient_projection] =
-            std::make_shared<VOFReinitializedPhaseGradientProjection<dim>>(
               p_simulation_parameters,
               this->pcout,
               p_triangulation,

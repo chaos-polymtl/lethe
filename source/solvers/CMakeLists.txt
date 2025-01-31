@@ -42,7 +42,6 @@ add_library(lethe-solvers
   vof_filter.cc
   vof_linear_subequations_solver.cc
   vof_phase_gradient_projection.cc
-  vof_reinitialized_phase_gradient_projection.cc
   vof_scratch_data.cc
   vof_subequations_interface.cc
   # Headers
@@ -94,7 +93,6 @@ add_library(lethe-solvers
   ../../include/solvers/vof_filter.h
   ../../include/solvers/vof_linear_subequations_solver.h
   ../../include/solvers/vof_phase_gradient_projection.h
-  ../../include/solvers/vof_reinitialized_phase_gradient_projection.h
   ../../include/solvers/vof_scratch_data.h
   ../../include/solvers/vof_subequations_interface.h
   )

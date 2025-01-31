@@ -8,7 +8,6 @@
 
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
-#include <solvers/vof_filter.h> // for debugging
 #include <solvers/vof_scratch_data.h>
 #include <solvers/vof_subequations_interface.h>
 
@@ -279,15 +278,6 @@ private:
   }
 
   /**
-   * @brief Apply filter on reinitialized phase fraction values.
-   *
-   * @note The filter is applied for phase fraction gradient computation
-   * purposes.
-   */
-  void
-  apply_phase_filter();
-
-  /**
    * @brief Define the zero constraints used to solve the problem.
    */
   void
@@ -396,15 +386,11 @@ private:
   GlobalVectorType               previous_local_evaluation_point;
   GlobalVectorType               newton_update;
   GlobalVectorType               present_solution;
-  GlobalVectorType               filtered_solution;
   GlobalVectorType               previous_solution; // Only used with bdf1
   GlobalVectorType               system_rhs;
   AffineConstraints<double>      zero_constraints;
   AffineConstraints<double>      nonzero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-
-  // Phase fraction filter
-  std::shared_ptr<VolumeOfFluidFilterBase> filter;
 
   // Verbosity
   const Parameters::Verbosity linear_solver_verbosity;
