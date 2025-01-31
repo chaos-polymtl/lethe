@@ -55,8 +55,10 @@ public:
     LinearAlgebra::distributed::Vector<Number, dealii::MemorySpace::Host>;
 
   MGTransferMFWrapper(
-    const MGLevelObject<MGTwoLevelTransfer<dim, VectorTypeHost>> &mg_transfers)
-    : transfer(mg_transfers)
+    const MGLevelObject<MGTwoLevelTransfer<dim, VectorTypeHost>> &mg_transfers,
+    const std::function<void(const unsigned int, VectorTypeHost &)>
+      &initialize_dof_vector)
+    : transfer(mg_transfers, initialize_dof_vector)
   {}
 
   template <typename Number2>
@@ -491,8 +493,9 @@ public:
     return 0;
   }
 
+  template <typename VectorType2>
   void
-  initialize_dof_vector(VectorType &vec) const
+  initialize_dof_vector(VectorType2 &vec) const
   {
     matrix_free.initialize_dof_vector(vec);
   }
@@ -728,6 +731,8 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
           constraints.distribute_local_to_global(rhs_local, indices, src_host);
         }
 
+    src_host.compress(VectorOperation::add);
+
     LinearAlgebra::ReadWriteVector<Number> rw_vector(
       src.get_partitioner()->locally_owned_range());
     rw_vector.import(src_host, VectorOperation::insert);
@@ -812,7 +817,9 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
                                        mg_constraints[level + 1],
                                        mg_constraints[level]);
 
-      MGTransferType mg_transfer(mg_transfers);
+      MGTransferType mg_transfer(mg_transfers, [&](const auto l, auto &vec) {
+        mg_matrices[l].initialize_dof_vector(vec);
+      });
 
       // smoother
       MGLevelObject<typename SmootherType::AdditionalData> smoother_data(
@@ -960,5 +967,6 @@ main(int argc, char **argv)
   run<dim, fe_degree, MemorySpace::Host>(n_refinements, table);
   run<dim, fe_degree, MemorySpace::Default>(n_refinements, table);
 
-  table.write_text(std::cout);
+  if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+    table.write_text(std::cout);
 }
