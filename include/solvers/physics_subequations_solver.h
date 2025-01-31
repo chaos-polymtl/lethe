@@ -74,9 +74,13 @@ protected:
 };
 
 /**
- * @brief TODO AA
- * @tparam dim
- * @tparam VectorType
+ * @brief Non-linear subequations solved inside a physics (or auxiliary physics)
+ * that are not part of the main set of equations.
+ *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the problem is solved.
+ *
+ * @tparam VectorType The Vector type used for the solvers.
  */
 template <int dim, typename VectorType>
 class PhysicsNonlinearSubequationsSolver : public PhysicsSubequationsSolverBase,
@@ -84,10 +88,13 @@ class PhysicsNonlinearSubequationsSolver : public PhysicsSubequationsSolverBase,
 {
 public:
   /**
-   * @brief TODO AA
+   * @brief Constructor for physics subequations that require the use of a
+   * non-linear solver within the span of the physics solving.
    *
-   * @param non_linear_solver_parameters
-   * @param pcout
+   * @param[in] non_linear_solver_parameters Set of parameters used to construct
+   * the non-linear solver.
+   *
+   * @param[in] pcout Parallel cout used to print the information.
    */
   PhysicsNonlinearSubequationsSolver(
     const Parameters::NonLinearSolver non_linear_solver_parameters,
@@ -97,9 +104,10 @@ public:
   {}
 
   /**
-   * TODO AA
-   * @brief Set up preconditioner. Not used for the physics subequations, but
-   * needed for the compilation of the non-linear solver.
+   * @brief Setup preconditioner.
+   *
+   * @note used for the physics subequations, but needed for the compilation
+   * of the non-linear solver.
    */
   void
   setup_preconditioner() override{};

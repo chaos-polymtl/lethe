@@ -492,11 +492,11 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
   {
     enable                     = prm.get_bool("enable");
     reinitialization_frequency = prm.get_integer("frequency");
-    diffusivity_multiplier = prm.get_double("diffusivity multiplier");
-    diffusivity_power      = prm.get_double("diffusivity power");
-    reinitialization_cfl   = prm.get_double("reinitialization CFL");
-    steady_state_criterion = prm.get_double("steady state criterion");
-    max_steps_number       = prm.get_integer("max steps number");
+    diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
+    diffusivity_power          = prm.get_double("diffusivity power");
+    reinitialization_cfl       = prm.get_double("reinitialization CFL");
+    steady_state_criterion     = prm.get_double("steady state criterion");
+    max_steps_number           = prm.get_integer("max steps number");
 
     const std::string op2 = prm.get("verbosity");
     if (op2 == "verbose")

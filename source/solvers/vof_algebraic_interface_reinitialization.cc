@@ -829,7 +829,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
       this->pcout << "-Solving " << subequation_string << ", step " << it << ":"
                   << std::endl;
     }
-  this->solve_non_linear_system(false); // TODO AA true/false ???
+  this->solve_non_linear_system(true); // TODO AA true/false ???
   // TODO AA For debugging purposes
   //  write_output_results(it);
 
@@ -916,7 +916,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
   auto              mpi_communicator = this->triangulation->get_communicator();
   const std::string folder =
     this->simulation_parameters.simulation_control.output_folder +
-    "/AR-output/";
+    "/algebraic-reinitialization-steps-output/";
   struct stat buffer;
 
   // If output directory does not exist, create it

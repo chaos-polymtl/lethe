@@ -109,9 +109,8 @@ public:
 
 
   /**
-   * TODO AA make something with this
-   * @brief Assemble and solve linear system when the equation to solve is
-   * linear without using the non-linear solver interface.
+   * @brief Solve interface algebraic reinitialization process until one of the
+   * stop criterion is met.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
    * solved during post_mesh_adaptation(), for verbosity.
@@ -167,7 +166,7 @@ public:
 
 
   /**
-   * @brief Output the L2 and Linfty norms of the correction vector.
+   * @brief Output the \f$L_2\f$ and \f$L_\infty\f$ norms of the correction vector.
    *
    * @param[in] display_precision Number of outputted digits.
    */
@@ -184,16 +183,21 @@ public:
 
 private:
   /**
-   * TODO AA
-   * @brief write_output_results
-   * Post-processing as parallel VTU files
+   * @brief Write parallel VTU files of quantities of interest for
+   * the algebraic interface reinitialization process.
+   *
+   * @param[in] step Integer indicating the reinitialization step number.
+   *
+   * @note Only the reinitialization steps of the last global time-step
+   * (simulation time-step) ran are outputted.
    */
   void
-  write_output_results(const unsigned int it);
+  write_output_results(const unsigned int step);
 
   /**
-   * TODO AA
-   * @return
+   * @brief Identify minimal cell size.
+   *
+   * @return Smallest cell size value.
    */
   inline double
   identify_minimum_cell_size() const
@@ -228,18 +232,22 @@ private:
             h = std::min(h, h_local);
           }
       }
+
     // Get the minimum between all processes
     h = Utilities::MPI::min(h, mpi_communicator);
+
     return h;
   }
 
   /**
-   * TODO AA do model casting?
-   * @param[in] cell_size
-   * @return
+   * @brief Computes mesh-dependant diffusivity coefficient value.
+   *
+   * @param[in] min_cell_size Smallest cell's measure.
+   *
+   * @return Constant diffusivity coefficient value for a given mesh.
    */
   inline double
-  compute_diffusivity(const double cell_size) const
+  compute_diffusivity(const double min_cell_size) const
   {
     const double multiplier =
       this->simulation_parameters.multiphysics.vof_parameters
@@ -247,12 +255,14 @@ private:
     const double power =
       this->simulation_parameters.multiphysics.vof_parameters
         .algebraic_interface_reinitialization.diffusivity_power;
-    return multiplier * std::pow(cell_size, power);
+    return multiplier * std::pow(min_cell_size, power);
   }
 
   /**
-   * TODO AA
-   * @return
+   * @brief Computes algebraic reinitialization time-step value with
+   * user-imposed CFL and minimum cell size.
+   *
+   * @return Algebraic reinitialization time-step.
    */
   inline double
   compute_time_step()
@@ -262,7 +272,9 @@ private:
       this->simulation_parameters.multiphysics.vof_parameters
         .algebraic_interface_reinitialization.reinitialization_cfl;
 
+    // Get the minimum cell size
     const double h_min = identify_minimum_cell_size();
+
     return h_min * cfl;
   }
 
@@ -308,11 +320,11 @@ private:
   /**
    * @brief Solve the linear system.
    *
-   * @param initial_step Provides the linear solver with indication if this
+   * @param[in] initial_step Provides the linear solver with indication if this
    * solution is the first one for the system of equation or not.
    *
-   * @param renewed_matrix Indicates to the linear solve if the system matrix
-   * has been recalculated or not.
+   * @param[in] renewed_matrix Indicates to the linear solve if the system
+   * matrix has been recalculated or not.
    */
   void
   solve_linear_system(const bool initial_step,
@@ -334,13 +346,18 @@ private:
 
     double stop_criterion = time_step_inv * solution_diff.l2_norm();
 
-    this->pcout << " Algebraic reinitialization solution norm difference = "
-                << solution_diff.l2_norm() << std::endl;
-    this->pcout << " Algebraic reinitialization steady-state criterion value = "
-                << stop_criterion << std::endl;
-    this->pcout << " Algebraic reinitialization fixed steady-state criterion = "
-                << steady_state_criterion << "\n"
-                << std::endl;
+    if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
+      {
+        this->pcout << " Algebraic reinitialization solution norm difference = "
+                    << solution_diff.l2_norm() << std::endl;
+        this->pcout
+          << " Algebraic reinitialization steady-state criterion value = "
+          << stop_criterion << std::endl;
+        this->pcout
+          << " Algebraic reinitialization fixed steady-state criterion = "
+          << steady_state_criterion << "\n"
+          << std::endl;
+      }
 
     return ((stop_criterion > steady_state_criterion) &&
             (step_number + 1 <
