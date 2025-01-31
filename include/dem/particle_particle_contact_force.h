@@ -1451,6 +1451,7 @@ private:
       {
         cohesive_term = -F_po;
         contact_info.tangential_overlap.clear();
+        contact_info.rolling_resistance_spring_torque.clear();
       }
     // No contact. Particle are far from each other. The cohesive force is not
     // constant. It needs to be computed.
@@ -1459,6 +1460,7 @@ private:
         cohesive_term = -hamaker_constant * effective_radius /
                         (6. * Utilities::fixed_power<2>(normal_overlap));
         contact_info.tangential_overlap.clear();
+        contact_info.rolling_resistance_spring_torque.clear();
       }
     normal_force += cohesive_term * normal_unit_vector;
   }
@@ -1820,6 +1822,7 @@ private:
             // If the adjacent pair is not in contact anymore, only the
             // tangential overlap is set to zero
             contact_info.tangential_overlap.clear();
+            contact_info.rolling_resistance_spring_torque.clear();
           }
       }
   }

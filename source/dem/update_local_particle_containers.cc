@@ -121,6 +121,8 @@ update_contact_container_iterators(
                   if (clear_tangential_overlap)
                     {
                       adjacent_map_iterator->second.tangential_overlap.clear();
+                      adjacent_map_iterator->second
+                        .rolling_resistance_spring_torque.clear();
                     }
                   ++adjacent_map_iterator;
                 }

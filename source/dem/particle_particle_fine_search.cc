@@ -98,9 +98,8 @@ particle_particle_fine_search(
 
               particle_one_contact_list.emplace(
                 particle_two_id,
-                particle_particle_contact_info<dim>{particle_one,
-                                                    particle_two,
-                                                    Tensor<1, 3>()});
+                particle_particle_contact_info<dim>{
+                  particle_one, particle_two, Tensor<1, 3>(), Tensor<1, 3>()});
             }
         }
     }
