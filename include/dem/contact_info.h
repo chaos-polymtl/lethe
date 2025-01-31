@@ -23,6 +23,7 @@ struct particle_particle_contact_info
   Particles::ParticleIterator<dim> particle_one;
   Particles::ParticleIterator<dim> particle_two;
   Tensor<1, 3>                     tangential_overlap;
+  Tensor<1, 3>                     rolling_resistance_spring_torque;
 };
 
 template <int dim>
