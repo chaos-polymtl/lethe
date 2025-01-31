@@ -22,7 +22,7 @@ no_rolling_resistance_torque(
   const ArrayView<const double> & /*particle_two_properties*/,
   const double /*effective_rolling_friction_coefficient*/,
   const double /*normal_force_norm*/,
-  const Tensor<1, 3> & /*normal_contact_vector*/)
+  const Tensor<1, 3> & /*normal_unit_vector*/)
 {
   // No rolling resistance torque model. When this model is use, the rolling
   // friction is zero.
@@ -57,7 +57,7 @@ constant_rolling_resistance_torque(
   const ArrayView<const double> &particle_two_properties,
   const double                   effective_rolling_friction_coefficient,
   const double                   normal_force_norm,
-  const Tensor<1, 3> & /*normal_contact_vector*/)
+  const Tensor<1, 3> & /*normal_unit_vector*/)
 
 {
   // For calculation of rolling resistance torque, we need to obtain
@@ -97,7 +97,7 @@ constant_rolling_resistance_torque(
  * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
  * @param[in] normal_force_norm Norm of the nomal force.
- * @param[in] normal_contact_vector Normal unit vector.
+ * @param[in] normal_unit_vector Normal unit vector.
  */
 
 template <typename PropertiesIndex>
@@ -108,7 +108,7 @@ viscous_rolling_resistance_torque(
   const ArrayView<const double> &particle_two_properties,
   const double                   effective_rolling_friction_coefficient,
   const double                   normal_force_norm,
-  const Tensor<1, 3>            &normal_contact_vector)
+  const Tensor<1, 3>            &normal_unit_vector)
 
 {
   // For calculation of rolling resistance torque, we need to obtain
@@ -129,10 +129,10 @@ viscous_rolling_resistance_torque(
   Tensor<1, 3> v_omega =
     cross_product_3d(particle_one_angular_velocity,
                      particle_one_properties[PropertiesIndex::dp] * 0.5 *
-                       normal_contact_vector) -
+                       normal_unit_vector) -
     cross_product_3d(particle_two_angular_velocity,
                      particle_two_properties[PropertiesIndex::dp] * 0.5 *
-                       -normal_contact_vector);
+                       -normal_unit_vector);
 
   // Calculation of rolling resistance torque
   return (-effective_rolling_friction_coefficient * effective_r *
@@ -142,18 +142,22 @@ viscous_rolling_resistance_torque(
 /**
  * @brief
  *
-
- *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the problem is solved.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param[in] effective_r Effective radius.
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.
+ * @param[in] effective_rolling_viscous_damping_coefficient
+ * Effective rolling viscous damping
  * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
  * @param[in] normal_force_norm Norm of the nomal force.
- * @param[in] normal_contact_vector Normal unit vector.
  * @param[in] dt DEM time step.
+ * @param[in] normal_spring_constant normal contact stiffness constant.
+ * @param[in] normal_unit_vector Normal unit vector between particles in
+ * contact.
  */
 
 template <int dim, typename PropertiesIndex>
@@ -165,9 +169,9 @@ epsd_rolling_resistance_torque(
   const double                   effective_rolling_viscous_damping_coefficient,
   const double                   effective_rolling_friction_coefficient,
   const double                   normal_force_norm,
-  const Tensor<1, 3>            &normal_contact_vector,
   const double                   dt,
-  const double                   normal_spring_stiffness,
+  const double                   normal_spring_constant,
+  const Tensor<1, 3>            &normal_unit_vector,
   particle_particle_contact_info<dim> &contact_info)
 
 {
@@ -194,14 +198,20 @@ epsd_rolling_resistance_torque(
   // Non-collinear component of the relative velocity.
   const Tensor<1, 3> omega_ij_perpendicular =
     omega_ij -
-    scalar_product(omega_ij, normal_contact_vector) * normal_contact_vector;
+    scalar_product(omega_ij, normal_unit_vector) * normal_unit_vector;
 
   // Delta theta
   const Tensor<1, 3> delta_theta = dt * omega_ij_perpendicular;
 
   // Rolling stiffness
-  const double K_r =
-    2.25 * normal_spring_stiffness * Utilities::fixed_power<2>(mu_r_times_R_e);
+  const double K_r = [&]() {
+    if constexpr (dim == 3)
+      return 2.25 * normal_spring_constant *
+             Utilities::fixed_power<2>(mu_r_times_R_e);
+    else
+      return 3. * normal_spring_constant *
+             Utilities::fixed_power<2>(mu_r_times_R_e);
+  }();
 
   // Update the spring torque
   contact_info.rolling_resistance_spring_torque -= K_r * delta_theta;
@@ -224,8 +234,9 @@ epsd_rolling_resistance_torque(
       // other words the f used in "Assessment of rolling resistance models in
       // discrete element simulations. Jun Ai et al."  is equal to zero.
       //
-      // This way, the damping is only active when the angular relative velocity
-      // is low, which help to damp the oscillation in a static problem.
+      // This way, the damping is only active when the angular relative
+      // velocity is low, which help to damp the oscillation in a static
+      // problem.
 
       return contact_info.rolling_resistance_spring_torque;
     }
@@ -234,8 +245,8 @@ epsd_rolling_resistance_torque(
       // m_i times (R_i)^2
       const double m_R_square_i =
         particle_one_properties[PropertiesIndex::mass] *
-        Utilities::fixed_power<2>(
-          0.5 * particle_one_properties[PropertiesIndex::diameter]);
+        Utilities::fixed_power<2>(0.5 *
+                                  particle_one_properties[PropertiesIndex::dp]);
 
       // Total inertia of particle i evaluated at its surface
       const double I_i = 1.4 * m_R_square_i;
@@ -243,8 +254,8 @@ epsd_rolling_resistance_torque(
       // m_i times (R_i)^2
       const double m_R_square_j =
         particle_two_properties[PropertiesIndex::mass] *
-        Utilities::fixed_power<2>(
-          0.5 * particle_two_properties[PropertiesIndex::diameter]);
+        Utilities::fixed_power<2>(0.5 *
+                                  particle_two_properties[PropertiesIndex::dp]);
 
       // Total inertia of particle j evaluated at its surface
       const double I_j = 1.4 * m_R_square_j;

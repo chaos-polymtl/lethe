@@ -282,6 +282,7 @@ protected:
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
    * @param[in] normal_unit_vector Contact normal unit vector.
    * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    * @param[out] normal_force Contact normal force.
@@ -298,6 +299,7 @@ protected:
                     const double        normal_relative_velocity_value,
                     const Tensor<1, 3> &normal_unit_vector,
                     const double        normal_overlap,
+                    const double        dt,
                     const ArrayView<const double> &particle_one_properties,
                     const ArrayView<const double> &particle_two_properties,
                     Tensor<1, 3>                  &normal_force,
@@ -315,6 +317,7 @@ protected:
                                  normal_relative_velocity_value,
                                  normal_unit_vector,
                                  normal_overlap,
+                                 dt,
                                  particle_one_properties,
                                  particle_two_properties,
                                  normal_force,
@@ -331,6 +334,7 @@ protected:
                                       normal_relative_velocity_value,
                                       normal_unit_vector,
                                       normal_overlap,
+                                      dt,
                                       particle_one_properties,
                                       particle_two_properties,
                                       normal_force,
@@ -349,6 +353,7 @@ protected:
           normal_relative_velocity_value,
           normal_unit_vector,
           normal_overlap,
+          dt,
           particle_one_properties,
           particle_two_properties,
           normal_force,
@@ -367,6 +372,7 @@ protected:
           normal_relative_velocity_value,
           normal_unit_vector,
           normal_overlap,
+          dt,
           particle_one_properties,
           particle_two_properties,
           normal_force,
@@ -384,6 +390,7 @@ protected:
                                           normal_relative_velocity_value,
                                           normal_unit_vector,
                                           normal_overlap,
+                                          dt,
                                           particle_one_properties,
                                           particle_two_properties,
                                           normal_force,
@@ -400,6 +407,7 @@ protected:
                                     normal_relative_velocity_value,
                                     normal_unit_vector,
                                     normal_overlap,
+                                    dt,
                                     particle_one_properties,
                                     particle_two_properties,
                                     normal_force,
@@ -543,18 +551,30 @@ private:
    * @param[in] effective_radius Effective radius of the particle pair.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
+   * @param[in] rolling_viscous_damping_coeff Effective rolling viscous damping
+   * coefficient.
+   * @param[in] rolling_friction_coeff Effective rolling friction coefficient.
+   * @param[in] dt DEM time step.
+   * @param[in] normal_spring_constant normal contact stiffness constant.
    * @param[out] normal_force Contact normal force.
-   * @param[in] normal_unit_vector Contact normal unit vector.
-   * @param[out] tangential_force Contact tangential force.
+   * @param[in] normal_unit_vector Normal unit vector between particles in
+   * contact.
+   * @param[in,out] contact_info A container that contains the required
+   * information for calculation of the contact force for a particle pair in
+   * contact.
    */
   inline Tensor<1, 3>
   calculate_rolling_resistance_torque(
-    const double                   effective_radius,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const double                   rolling_friction_coeff,
-    const Tensor<1, 3>            &normal_force,
-    const Tensor<1, 3>            &normal_unit_vector)
+    const double                         effective_radius,
+    const ArrayView<const double>       &particle_one_properties,
+    const ArrayView<const double>       &particle_two_properties,
+    const double                         rolling_viscous_damping_coeff,
+    const double                         rolling_friction_coeff,
+    const double                         dt,
+    const double                         normal_spring_constant,
+    const Tensor<1, 3>                  &normal_force,
+    const Tensor<1, 3>                  &normal_unit_vector,
+    particle_particle_contact_info<dim> &contact_info)
   {
     using namespace Parameters::Lagrangian;
 
@@ -593,13 +613,17 @@ private:
       }
     if constexpr (rolling_friction_model == epsd_resistance)
       {
-        return epsd_rolling_resistance_torque<PropertiesIndex>(
+        return epsd_rolling_resistance_torque<dim, PropertiesIndex>(
           effective_radius,
           particle_one_properties,
           particle_two_properties,
+          rolling_viscous_damping_coeff,
           rolling_friction_coeff,
           normal_force.norm(),
-          normal_unit_vector);
+          dt,
+          normal_spring_constant,
+          normal_unit_vector,
+          contact_info);
       }
   }
 
@@ -614,6 +638,7 @@ private:
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
    * @param[in] normal_unit_vector Contact normal unit vector.
    * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    * @param[out] normal_force Contact normal force.
@@ -631,6 +656,7 @@ private:
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
+    const double                         dt,
     const ArrayView<const double>       &particle_one_properties,
     const ArrayView<const double>       &particle_two_properties,
     Tensor<1, 3>                        &normal_force,
@@ -655,6 +681,8 @@ private:
 
     const double youngs_modulus = this->effective_youngs_modulus[pair_index];
     const double beta           = this->model_parameter_beta[pair_index];
+    const double rolling_viscous_damping_coeff =
+      this->effective_rolling_viscous_damping_coefficient[pair_index];
     const double friction_coeff =
       this->effective_coefficient_of_friction[pair_index];
     const double rolling_friction_coeff =
@@ -741,9 +769,13 @@ private:
       calculate_rolling_resistance_torque(effective_radius,
                                           particle_one_properties,
                                           particle_two_properties,
+                                          rolling_viscous_damping_coeff,
                                           rolling_friction_coeff,
+                                          dt,
+                                          normal_spring_constant,
+                                          normal_force,
                                           normal_unit_vector,
-                                          normal_force);
+                                          contact_info);
   }
 
   /**
@@ -762,6 +794,7 @@ private:
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    * @param[out] normal_force Contact normal force.
+   * @param[in] dt DEM time step.
    * @param[out] tangential_force Contact tangential force.
    * @param[out] particle_one_tangential_torque Contact tangential torque on
    * particle one.
@@ -776,6 +809,7 @@ private:
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
+    const double                         dt,
     const ArrayView<const double>       &particle_one_properties,
     const ArrayView<const double>       &particle_two_properties,
     Tensor<1, 3>                        &normal_force,
@@ -801,6 +835,8 @@ private:
     const double beta           = this->model_parameter_beta[pair_index];
     const double friction_coeff =
       this->effective_coefficient_of_friction[pair_index];
+    const double rolling_viscous_damping_coeff =
+      this->effective_rolling_viscous_damping_coefficient[pair_index];
     const double rolling_friction_coeff =
       this->effective_coefficient_of_rolling_friction[pair_index];
 
@@ -888,9 +924,13 @@ private:
       calculate_rolling_resistance_torque(effective_radius,
                                           particle_one_properties,
                                           particle_two_properties,
+                                          rolling_viscous_damping_coeff,
                                           rolling_friction_coeff,
+                                          dt,
+                                          normal_spring_constant,
                                           normal_force,
-                                          normal_unit_vector);
+                                          normal_unit_vector,
+                                          contact_info);
   }
 
   /**
@@ -906,6 +946,7 @@ private:
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
    * @param[in] normal_unit_vector Contact normal unit vector.
    * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    * @param[out] normal_force Contact normal force.
@@ -923,6 +964,7 @@ private:
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
+    const double                         dt,
     const ArrayView<const double>       &particle_one_properties,
     const ArrayView<const double>       &particle_two_properties,
     Tensor<1, 3>                        &normal_force,
@@ -948,6 +990,8 @@ private:
     const double beta           = this->model_parameter_beta[pair_index];
     const double friction_coeff =
       this->effective_coefficient_of_friction[pair_index];
+    const double rolling_viscous_damping_coeff =
+      this->effective_rolling_viscous_damping_coefficient[pair_index];
     const double rolling_friction_coeff =
       this->effective_coefficient_of_rolling_friction[pair_index];
 
@@ -1021,9 +1065,13 @@ private:
       calculate_rolling_resistance_torque(effective_radius,
                                           particle_one_properties,
                                           particle_two_properties,
+                                          rolling_viscous_damping_coeff,
                                           rolling_friction_coeff,
+                                          dt,
+                                          normal_spring_constant,
                                           normal_force,
-                                          normal_unit_vector);
+                                          normal_unit_vector,
+                                          contact_info);
   }
 
   /**
@@ -1038,6 +1086,7 @@ private:
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
    * @param[in] normal_unit_vector Contact normal unit vector.
    * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    * @param[out] normal_force Contact normal force.
@@ -1055,6 +1104,7 @@ private:
     const double                   normal_relative_velocity_value,
     const Tensor<1, 3>            &normal_unit_vector,
     const double                   normal_overlap,
+    const double                   dt,
     const ArrayView<const double> &particle_one_properties,
     const ArrayView<const double> &particle_two_properties,
     Tensor<1, 3>                  &normal_force,
@@ -1080,6 +1130,8 @@ private:
     const double beta           = this->model_parameter_beta[pair_index];
     const double friction_coeff =
       this->effective_coefficient_of_friction[pair_index];
+    const double rolling_viscous_damping_coeff =
+      this->effective_rolling_viscous_damping_coefficient[pair_index];
     const double rolling_friction_coeff =
       this->effective_coefficient_of_rolling_friction[pair_index];
 
@@ -1142,28 +1194,35 @@ private:
       calculate_rolling_resistance_torque(effective_radius,
                                           particle_one_properties,
                                           particle_two_properties,
+                                          rolling_viscous_damping_coeff,
                                           rolling_friction_coeff,
+                                          dt,
+                                          normal_spring_constant,
                                           normal_force,
-                                          normal_unit_vector);
+                                          normal_unit_vector,
+                                          contact_info);
   }
-
   /**
-   * @brief Carries out the calculation of the particle-particle non-linear contact
-   * force and torques based on the updated values in contact_info
+   * @brief Calculate the particle-particle linear contact force and torque
+   * based on the updated values in contact_info.
    *
-   * @param contact_info A container that contains the required information for
-   * calculation of the contact force for a particle pair in contact
-   * @param tangential_relative_velocity Tangential relative velocity
-   * @param normal_relative_velocity_value Normal relative contact velocity
-   * @param normal_unit_vector Contact normal unit vector
-   * @param normal_overlap Contact normal overlap
-   * @param particle_one_properties Properties of particle one in contact
-   * @param particle_two_properties Properties of particle two in contact
-   * @param normal_force Contact normal force
-   * @param tangential_force Contact tangential force
-   * @param particle_one_tangential_torque Contact tangential torque on particle one
-   * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_resistance_torque Contact rolling resistance torque
+   * @param[in,out] contact_info A container that contains the required
+   * information for calculation of the contact force for a particle pair in
+   * contact.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative contact velocity.
+   * @param[in] normal_unit_vector Contact normal unit vector.
+   * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] dt DEM time step.
+   * @param[in] particle_one_properties Properties of particle one in contact.
+   * @param[in] particle_two_properties Properties of particle two in contact.
+   * @param[out] normal_force Contact normal force.
+   * @param[out] tangential_force Contact tangential force.
+   * @param[out] particle_one_tangential_torque Contact tangential torque on
+   * particle one.
+   * @param[out] particle_two_tangential_torque Contact tangential torque on
+   * particle two.
+   * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
   inline void
   calculate_hertz_JKR_contact(
@@ -1172,6 +1231,7 @@ private:
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
+    const double                         dt,
     const ArrayView<const double>       &particle_one_properties,
     const ArrayView<const double>       &particle_two_properties,
     Tensor<1, 3>                        &normal_force,
@@ -1197,6 +1257,8 @@ private:
     const double beta           = this->model_parameter_beta[pair_index];
     const double friction_coeff =
       this->effective_coefficient_of_friction[pair_index];
+    const double rolling_viscous_damping_coeff =
+      this->effective_rolling_viscous_damping_coefficient[pair_index];
     const double rolling_friction_coeff =
       this->effective_coefficient_of_rolling_friction[pair_index];
     const double surface_energy = this->effective_surface_energy[pair_index];
@@ -1283,33 +1345,44 @@ private:
     particle_two_tangential_torque =
       particle_one_tangential_torque * diameter_two / diameter_one;
 
+    // We need to compute the normal spring constant in case if we use the EPSD
+    // rolling resistance model.
+    double normal_spring_constant = 0.66665 * model_parameter_sn;
+
     // Rolling resistance torque
     rolling_resistance_torque =
       calculate_rolling_resistance_torque(effective_radius,
                                           particle_one_properties,
                                           particle_two_properties,
+                                          rolling_viscous_damping_coeff,
                                           rolling_friction_coeff,
+                                          dt,
+                                          normal_spring_constant,
                                           normal_force,
-                                          normal_unit_vector);
+                                          normal_unit_vector,
+                                          contact_info);
   }
-
   /**
-   * @brief Carries out the calculation of the particle-particle DMT contact
-   * force and torques based on the updated values in contact_info
+   * @brief Calculate the particle-particle linear contact force and torque
+   * based on the updated values in contact_info.
    *
-   * @param contact_info A container that contains the required information for
-   * calculation of the contact force for a particle pair in contact
-   * @param tangential_relative_velocity Tangential relative velocity
-   * @param normal_relative_velocity_value Normal relative contact velocity
-   * @param normal_unit_vector Contact normal unit vector
-   * @param normal_overlap Contact normal overlap
-   * @param particle_one_properties Properties of particle one in contact
-   * @param particle_two_properties Properties of particle two in contact
-   * @param normal_force Contact normal force
-   * @param tangential_force Contact tangential force
-   * @param particle_one_tangential_torque Contact tangential torque on particle one
-   * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_resistance_torque Contact rolling resistance torque
+   * @param[in,out] contact_info A container that contains the required
+   * information for calculation of the contact force for a particle pair in
+   * contact.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative contact velocity.
+   * @param[in] normal_unit_vector Contact normal unit vector.
+   * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] dt DEM time step.
+   * @param[in] particle_one_properties Properties of particle one in contact.
+   * @param[in] particle_two_properties Properties of particle two in contact.
+   * @param[out] normal_force Contact normal force.
+   * @param[out] tangential_force Contact tangential force.
+   * @param[out] particle_one_tangential_torque Contact tangential torque on
+   * particle one.
+   * @param[out] particle_two_tangential_torque Contact tangential torque on
+   * particle two.
+   * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
   inline void
   calculate_DMT_contact(particle_particle_contact_info<dim> &contact_info,
@@ -1317,6 +1390,7 @@ private:
                         const double        normal_relative_velocity_value,
                         const Tensor<1, 3> &normal_unit_vector,
                         const double        normal_overlap,
+                        const double        dt,
                         const ArrayView<const double> &particle_one_properties,
                         const ArrayView<const double> &particle_two_properties,
                         Tensor<1, 3>                  &normal_force,
@@ -1363,6 +1437,7 @@ private:
           normal_relative_velocity_value,
           normal_unit_vector,
           normal_overlap,
+          dt,
           particle_one_properties,
           particle_two_properties,
           normal_force,
@@ -1392,8 +1467,8 @@ private:
    * @brief Return the index for accessing the properties vectors for a given
    * combinations of particle types.
    *
-   * @param i First particle type index.
-   * @param j Second particle type index.
+   * @param[in] i First particle type index.
+   * @param[i] j Second particle type index.
    * @return index associated with the combinations of particle types.
    */
   inline unsigned int
@@ -1406,7 +1481,7 @@ private:
    * @brief Set every containers needed to carry the particle-particle force
    * calculation.
    *
-   * @param dem_parameters DEM parameters declared in the .prm file.
+   * @param[in] dem_parameters DEM parameters declared in the .prm file.
    */
   void
   set_effective_properties(const DEMSolverParameters<dim> &dem_parameters)
@@ -1521,11 +1596,11 @@ private:
    * @brief Execute the contact calculation step for the particle-particle
    * contact according to the contact type
    *
-   * @param adjacent_particles_list Container of the adjacent particles of a
+   * @param[in] adjacent_particles_list Container of the adjacent particles of a
    * particles
-   * @param torque Torque acting on particles.
-   * @param force Force acting on particles.
-   * @param dt DEM time step.
+   * @param[out] torque Torque acting on particles.
+   * @param[out] force Force acting on particles.
+   * @param[in] dt DEM time step.
    */
   template <ContactType contact_type>
   inline void
@@ -1633,6 +1708,7 @@ private:
                                         normal_relative_velocity_value,
                                         normal_unit_vector,
                                         normal_overlap,
+                                        dt,
                                         particle_one_properties,
                                         particle_two_properties,
                                         normal_force,
@@ -1669,12 +1745,13 @@ private:
                                         normal_relative_velocity_value,
                                         normal_unit_vector,
                                         normal_overlap,
-                                        particle_two_properties,
+                                        dt,
                                         particle_one_properties,
+                                        particle_two_properties,
                                         normal_force,
                                         tangential_force,
-                                        particle_two_tangential_torque,
                                         particle_one_tangential_torque,
+                                        particle_two_tangential_torque,
                                         rolling_resistance_torque);
               }
 
