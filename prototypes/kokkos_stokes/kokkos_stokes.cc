@@ -6,6 +6,7 @@
 //                                                       +-----stab-----+
 
 #include <deal.II/base/convergence_table.h>
+#include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -636,6 +637,14 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
   using VectorType = LinearAlgebra::distributed::Vector<Number, MemorySpace>;
   using VectorTypeHost = LinearAlgebra::distributed::Vector<Number>;
 
+  ConditionalOStream pcout(std::cout,
+                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                             0);
+
+  TimerOutput timer_output(pcout,
+                           dealii::TimerOutput::never,
+                           dealii::TimerOutput::wall_times);
+
   const bool   use_multigrid   = true;
   const double delta_1_scaling = 0.1;
 
@@ -861,7 +870,32 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
       PreconditionMG<dim, VectorType, MGTransferType> preconditioner(
         dof_handler, mg, mg_transfer);
 
+      const auto create_mg_timer_function = [&](const std::string &label) {
+        return [label, &timer_output](const bool flag, const unsigned int = 0) {
+          if (flag)
+            timer_output.enter_subsection(label);
+          else
+            timer_output.leave_subsection(label);
+        };
+      };
+
+      mg.connect_pre_smoother_step(
+        create_mg_timer_function("mg_pre_smoother_step"));
+      mg.connect_residual_step(create_mg_timer_function("mg_residual_step"));
+      mg.connect_restriction(create_mg_timer_function("mg_restriction"));
+      mg.connect_coarse_solve(create_mg_timer_function("mg_coarse_solve"));
+      mg.connect_prolongation(create_mg_timer_function("mg_prolongation"));
+      mg.connect_edge_prolongation(
+        create_mg_timer_function("mg_edge_prolongation"));
+      mg.connect_post_smoother_step(
+        create_mg_timer_function("mg_post_smoother_step"));
+      preconditioner.connect_transfer_to_mg(
+        create_mg_timer_function("mg_copy_to_mg"));
+      preconditioner.connect_transfer_to_global(
+        create_mg_timer_function("mg_copy_from_mg"));
+
       // solve
+      TimerOutput::Scope timer(timer_output, "solve");
       solver.solve(stokes_operator, dst, src, preconditioner);
     }
 
@@ -951,6 +985,8 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
                            DataOut<dim>::CurvedCellRegion::curved_inner_cells);
     data_out.write_vtu_in_parallel(file_name, MPI_COMM_WORLD);
   }
+
+  timer_output.print_wall_time_statistics(comm);
 }
 
 int
