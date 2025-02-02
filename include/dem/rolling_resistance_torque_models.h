@@ -172,7 +172,7 @@ epsd_rolling_resistance_torque(
   const double                   dt,
   const double                   normal_spring_constant,
   const Tensor<1, 3>            &normal_unit_vector,
-  particle_particle_contact_info<dim> &contact_info)
+  Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
 
 {
   // Usefull value used more than once
@@ -214,20 +214,20 @@ epsd_rolling_resistance_torque(
   }();
 
   // Update the spring torque
-  contact_info.rolling_resistance_spring_torque -= K_r * delta_theta;
+  cumulative_rolling_resistance_spring_torque -= K_r * delta_theta;
 
   // Limiting spring torque
   const double M_r_max = mu_r_times_R_e * normal_force_norm;
 
   const double rolling_resistance_spring_torque_norm =
-    contact_info.rolling_resistance_spring_torque.norm();
+    cumulative_rolling_resistance_spring_torque.norm();
 
   // Similarly to the coulomb limit, the spring torque must be decrease to the
   // limit value if it exceeds the limiting spring toque.
   if (rolling_resistance_spring_torque_norm > M_r_max)
     {
-      contact_info.rolling_resistance_spring_torque =
-        contact_info.rolling_resistance_spring_torque *
+      cumulative_rolling_resistance_spring_torque =
+        cumulative_rolling_resistance_spring_torque *
         (M_r_max / rolling_resistance_spring_torque_norm);
 
       // If the limiting spring torque is exceeded, there is no damping. In
@@ -238,7 +238,7 @@ epsd_rolling_resistance_torque(
       // velocity is low, which help to damp the oscillation in a static
       // problem.
 
-      return contact_info.rolling_resistance_spring_torque;
+      return cumulative_rolling_resistance_spring_torque;
     }
   else
     {
@@ -267,7 +267,7 @@ epsd_rolling_resistance_torque(
       const double C_r =
         effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_r * K_r);
 
-      return contact_info.rolling_resistance_spring_torque -
+      return cumulative_rolling_resistance_spring_torque -
              C_r * omega_ij_perpendicular;
     }
 }

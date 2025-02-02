@@ -559,22 +559,22 @@ private:
    * @param[out] normal_force Contact normal force.
    * @param[in] normal_unit_vector Normal unit vector between particles in
    * contact.
-   * @param[in,out] contact_info A container that contains the required
-   * information for calculation of the contact force for a particle pair in
-   * contact.
+   * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
+   * spring rolling resistance torque applied between particle one and two.
+   *
    */
   inline Tensor<1, 3>
   calculate_rolling_resistance_torque(
-    const double                         effective_radius,
-    const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties,
-    const double                         rolling_viscous_damping_coeff,
-    const double                         rolling_friction_coeff,
-    const double                         dt,
-    const double                         normal_spring_constant,
-    const Tensor<1, 3>                  &normal_force,
-    const Tensor<1, 3>                  &normal_unit_vector,
-    particle_particle_contact_info<dim> &contact_info)
+    const double                   effective_radius,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    const double                   rolling_viscous_damping_coeff,
+    const double                   rolling_friction_coeff,
+    const double                   dt,
+    const double                   normal_spring_constant,
+    const Tensor<1, 3>            &normal_force,
+    const Tensor<1, 3>            &normal_unit_vector,
+    Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
   {
     using namespace Parameters::Lagrangian;
 
@@ -623,7 +623,7 @@ private:
           dt,
           normal_spring_constant,
           normal_unit_vector,
-          contact_info);
+          cumulative_rolling_resistance_spring_torque);
       }
   }
 
@@ -765,17 +765,17 @@ private:
       particle_one_tangential_torque * diameter_two / diameter_one;
 
     // Rolling resistance torque
-    rolling_resistance_torque =
-      calculate_rolling_resistance_torque(effective_radius,
-                                          particle_one_properties,
-                                          particle_two_properties,
-                                          rolling_viscous_damping_coeff,
-                                          rolling_friction_coeff,
-                                          dt,
-                                          normal_spring_constant,
-                                          normal_force,
-                                          normal_unit_vector,
-                                          contact_info);
+    rolling_resistance_torque = calculate_rolling_resistance_torque(
+      effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      rolling_viscous_damping_coeff,
+      rolling_friction_coeff,
+      dt,
+      normal_spring_constant,
+      normal_force,
+      normal_unit_vector,
+      contact_info.rolling_resistance_spring_torque);
   }
 
   /**
@@ -920,17 +920,17 @@ private:
       particle_one_tangential_torque * diameter_two / diameter_one;
 
     // Rolling resistance torque
-    rolling_resistance_torque =
-      calculate_rolling_resistance_torque(effective_radius,
-                                          particle_one_properties,
-                                          particle_two_properties,
-                                          rolling_viscous_damping_coeff,
-                                          rolling_friction_coeff,
-                                          dt,
-                                          normal_spring_constant,
-                                          normal_force,
-                                          normal_unit_vector,
-                                          contact_info);
+    rolling_resistance_torque = calculate_rolling_resistance_torque(
+      effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      rolling_viscous_damping_coeff,
+      rolling_friction_coeff,
+      dt,
+      normal_spring_constant,
+      normal_force,
+      normal_unit_vector,
+      contact_info.rolling_resistance_spring_torque);
   }
 
   /**
@@ -1061,17 +1061,17 @@ private:
       particle_one_tangential_torque * diameter_two / diameter_one;
 
     // Rolling resistance torque
-    rolling_resistance_torque =
-      calculate_rolling_resistance_torque(effective_radius,
-                                          particle_one_properties,
-                                          particle_two_properties,
-                                          rolling_viscous_damping_coeff,
-                                          rolling_friction_coeff,
-                                          dt,
-                                          normal_spring_constant,
-                                          normal_force,
-                                          normal_unit_vector,
-                                          contact_info);
+    rolling_resistance_torque = calculate_rolling_resistance_torque(
+      effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      rolling_viscous_damping_coeff,
+      rolling_friction_coeff,
+      dt,
+      normal_spring_constant,
+      normal_force,
+      normal_unit_vector,
+      contact_info.rolling_resistance_spring_torque);
   }
 
   /**
@@ -1190,21 +1190,22 @@ private:
       particle_one_tangential_torque * diameter_two / diameter_one;
 
     // Rolling resistance torque
-    rolling_resistance_torque =
-      calculate_rolling_resistance_torque(effective_radius,
-                                          particle_one_properties,
-                                          particle_two_properties,
-                                          rolling_viscous_damping_coeff,
-                                          rolling_friction_coeff,
-                                          dt,
-                                          normal_spring_constant,
-                                          normal_force,
-                                          normal_unit_vector,
-                                          contact_info);
+    rolling_resistance_torque = calculate_rolling_resistance_torque(
+      effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      rolling_viscous_damping_coeff,
+      rolling_friction_coeff,
+      dt,
+      normal_spring_constant,
+      normal_force,
+      normal_unit_vector,
+      contact_info.rolling_resistance_spring_torque);
   }
   /**
-   * @brief Calculate the particle-particle linear contact force and torque
-   * based on the updated values in contact_info.
+   * @brief Calculate the particle-particle contact and cohesive forces and
+   * contact torque based on the updated values in contact_info. It uses the JKR
+   * cohesive force model.
    *
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle pair in
@@ -1350,21 +1351,22 @@ private:
     double normal_spring_constant = 0.66665 * model_parameter_sn;
 
     // Rolling resistance torque
-    rolling_resistance_torque =
-      calculate_rolling_resistance_torque(effective_radius,
-                                          particle_one_properties,
-                                          particle_two_properties,
-                                          rolling_viscous_damping_coeff,
-                                          rolling_friction_coeff,
-                                          dt,
-                                          normal_spring_constant,
-                                          normal_force,
-                                          normal_unit_vector,
-                                          contact_info);
+    rolling_resistance_torque = calculate_rolling_resistance_torque(
+      effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      rolling_viscous_damping_coeff,
+      rolling_friction_coeff,
+      dt,
+      normal_spring_constant,
+      normal_force,
+      normal_unit_vector,
+      contact_info.rolling_resistance_spring_torque);
   }
   /**
-   * @brief Calculate the particle-particle linear contact force and torque
-   * based on the updated values in contact_info.
+   * @brief Calculate the particle-particle contact and cohesive forces and
+   * contact torque based on the updated values in contact_info. It uses the DMT
+   * cohesive force model.
    *
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle pair in
