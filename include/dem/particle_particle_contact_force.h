@@ -556,7 +556,7 @@ private:
    * @param[in] rolling_friction_coeff Effective rolling friction coefficient.
    * @param[in] dt DEM time step.
    * @param[in] normal_spring_constant normal contact stiffness constant.
-   * @param[out] normal_force Contact normal force.
+   * @param[in] normal_force Contact normal force.
    * @param[in] normal_unit_vector Normal unit vector between particles in
    * contact.
    * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
@@ -791,10 +791,10 @@ private:
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
    * @param[in] normal_unit_vector Contact normal unit vector.
    * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    * @param[out] normal_force Contact normal force.
-   * @param[in] dt DEM time step.
    * @param[out] tangential_force Contact tangential force.
    * @param[out] particle_one_tangential_torque Contact tangential torque on
    * particle one.
@@ -1472,7 +1472,7 @@ private:
    * combinations of particle types.
    *
    * @param[in] i First particle type index.
-   * @param[i] j Second particle type index.
+   * @param[in] j Second particle type index.
    * @return index associated with the combinations of particle types.
    */
   inline unsigned int
@@ -1750,12 +1750,12 @@ private:
                                         normal_unit_vector,
                                         normal_overlap,
                                         dt,
-                                        particle_one_properties,
                                         particle_two_properties,
+                                        particle_one_properties,
                                         normal_force,
                                         tangential_force,
-                                        particle_one_tangential_torque,
                                         particle_two_tangential_torque,
+                                        particle_one_tangential_torque,
                                         rolling_resistance_torque);
               }
 
