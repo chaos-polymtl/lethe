@@ -95,6 +95,12 @@ ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
       calculate_rolling_resistance_torque =
         &ParticleWallLinearForce<dim, PropertiesIndex>::viscous_resistance;
     }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::RollingResistanceMethod::epsd_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &ParticleWallLinearForce<dim, PropertiesIndex>::epsd_resistance;
+    }
 
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
@@ -180,7 +186,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
               std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
                 forces_and_torques =
                   this->calculate_linear_contact_force_and_torque(
-                    contact_information, particle_properties);
+                    dt, contact_information, particle_properties);
 
               // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
@@ -336,7 +342,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
                                      Tensor<1, 3>>
                             forces_and_torques =
                               this->calculate_linear_contact_force_and_torque(
-                                contact_info, particle_properties);
+                                dt, contact_info, particle_properties);
 
                           // Get particle's torque and force
                           types::particle_index particle_id =
@@ -376,6 +382,7 @@ template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallLinearForce<dim, PropertiesIndex>::
   calculate_linear_contact_force_and_torque(
+    const double                     dt,
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties)
 {
@@ -451,8 +458,12 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
     (this->*calculate_rolling_resistance_torque)(
       particle_properties,
       this->effective_coefficient_of_rolling_friction[particle_type],
+      this->effective_coefficient_of_rolling_friction[particle_type],
+      dt,
+      normal_spring_constant,
       normal_force.norm(),
-      contact_info.normal_vector);
+      contact_info.normal_vector,
+      contact_info.rolling_resistance_spring_torque);
 
   return std::make_tuple(normal_force,
                          tangential_force,

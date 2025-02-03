@@ -58,6 +58,7 @@ public:
     , normal_relative_velocity(0)
     , tangential_overlap({0, 0, 0})
     , tangential_relative_velocity({0, 0, 0})
+    , rolling_resistance_spring_torque({0, 0, 0})
   {}
 
   /**
@@ -87,6 +88,7 @@ public:
   double                           normal_relative_velocity;
   Tensor<1, 3>                     tangential_overlap;
   Tensor<1, 3>                     tangential_relative_velocity;
+  Tensor<1, 3>                     rolling_resistance_spring_torque;
 };
 
 /**

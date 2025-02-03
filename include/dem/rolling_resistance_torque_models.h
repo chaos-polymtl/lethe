@@ -166,8 +166,8 @@ epsd_rolling_resistance_torque(
   const double                   effective_r,
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties,
-  const double                   effective_rolling_viscous_damping_coefficient,
   const double                   effective_rolling_friction_coefficient,
+  const double                   effective_rolling_viscous_damping_coefficient,
   const double                   normal_force_norm,
   const double                   dt,
   const double                   normal_spring_constant,
@@ -175,25 +175,22 @@ epsd_rolling_resistance_torque(
   Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
 
 {
-  // Usefull value used more than once
+  // Useful value used more than once
   const double mu_r_times_R_e =
     effective_rolling_friction_coefficient * effective_r;
 
 
   // For calculation of rolling resistance torque, we need to obtain
   // omega_ij using rotational velocities of particles one and two
-  Tensor<1, 3> particle_one_angular_velocity, particle_two_angular_velocity;
+  // omega_ij is the total relative angular velocity
+  Tensor<1, 3> omega_ij;
   for (int d = 0; d < 3; ++d)
     {
-      particle_one_angular_velocity[d] =
-        particle_one_properties[PropertiesIndex::omega_x + d];
-      particle_two_angular_velocity[d] =
-        particle_two_properties[PropertiesIndex::omega_x + d];
+      omega_ij[d] = particle_two_properties[PropertiesIndex::omega_x + d] -
+                    particle_one_properties[PropertiesIndex::omega_x + d];
     }
 
-  // Total relative angular velocity
-  const Tensor<1, 3> omega_ij =
-    particle_one_angular_velocity - particle_two_angular_velocity;
+
 
   // Non-collinear component of the relative velocity.
   const Tensor<1, 3> omega_ij_perpendicular =
@@ -251,7 +248,7 @@ epsd_rolling_resistance_torque(
       // Total inertia of particle i evaluated at its surface
       const double I_i = 1.4 * m_R_square_i;
 
-      // m_i times (R_i)^2
+      // m_j times (R_j)^2
       const double m_R_square_j =
         particle_two_properties[PropertiesIndex::mass] *
         Utilities::fixed_power<2>(0.5 *
@@ -260,12 +257,13 @@ epsd_rolling_resistance_torque(
       // Total inertia of particle j evaluated at its surface
       const double I_j = 1.4 * m_R_square_j;
 
-      // Harmonic mean of the inertia at the point of contact.
-      const double I_r = I_i * I_j / (I_i + I_j);
+      // Harmonic mean of the inertia at the point of contact. (Effective
+      // inertia)
+      const double I_e = I_i * I_j / (I_i + I_j);
 
       // C_r_crit = 2. * sqrt(I_r * K_r)
       const double C_r =
-        effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_r * K_r);
+        effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
 
       return cumulative_rolling_resistance_spring_torque -
              C_r * omega_ij_perpendicular;
