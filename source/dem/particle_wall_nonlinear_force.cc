@@ -119,7 +119,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
            Parameters::Lagrangian::RollingResistanceMethod::epsd_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallNonLinearForce<dim, PropertiesIndex>::epsd_resistance;
+        &ParticleWallNonLinearForce<dim, PropertiesIndex>::viscous_resistance;
     }
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
@@ -227,7 +227,8 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
               contact_information.normal_overlap = 0;
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0;
+                  contact_information.tangential_overlap[d]               = 0;
+                  contact_information.rolling_resistance_spring_torque[d] = 0;
                 }
             }
         }

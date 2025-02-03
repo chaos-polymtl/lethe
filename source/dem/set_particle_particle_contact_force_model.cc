@@ -131,6 +131,16 @@ set_rolling_resistance_model(
               RollingResistanceMethod::viscous_resistance>>(dem_parameters);
           break;
         }
+      case RollingResistanceMethod::epsd_resistance:
+        {
+          particle_particle_contact_force_object =
+            std::make_shared<ParticleParticleContactForce<
+              dim,
+              PropertiesIndex,
+              particle_particle_contact_force_model,
+              RollingResistanceMethod::epsd_resistance>>(dem_parameters);
+          break;
+        }
       default:
         throw std::runtime_error("Invalid rolling resistance method");
     }
@@ -256,6 +266,16 @@ set_rolling_resistance_model(
                                  PropertiesIndex,
                                  particle_particle_contact_force_model,
                                  RollingResistanceMethod::viscous_resistance>>(
+            dem_parameters);
+          break;
+        }
+      case RollingResistanceMethod::epsd_resistance:
+        {
+          particles_force_chains_object = std::make_shared<
+            ParticlesForceChains<dim,
+                                 PropertiesIndex,
+                                 particle_particle_contact_force_model,
+                                 RollingResistanceMethod::epsd_resistance>>(
             dem_parameters);
           break;
         }

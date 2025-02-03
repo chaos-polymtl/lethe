@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_linear_force.h>
 
@@ -222,7 +221,8 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
             {
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0;
+                  contact_information.tangential_overlap[d]               = 0;
+                  contact_information.rolling_resistance_spring_torque[d] = 0;
                 }
             }
         }

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_jkr_force.h>
 
@@ -207,7 +206,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          if (normal_overlap > 0)
+          if (normal_overlap > 0.)
             {
               contact_information.normal_overlap = normal_overlap;
 
@@ -242,7 +241,8 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
               contact_information.normal_overlap = 0;
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0;
+                  contact_information.tangential_overlap[d]               = 0;
+                  contact_information.rolling_resistance_spring_torque[d] = 0;
                 }
             }
         }

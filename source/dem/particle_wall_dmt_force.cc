@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_dmt_force.h>
 
@@ -94,7 +93,6 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                 return (point_nd_to_3d(particle->get_location()));
               }
           }();
-          ;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -441,6 +439,8 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                               for (int d = 0; d < dim; ++d)
                                 {
                                   contact_info.tangential_overlap[d] = 0.;
+                                  contact_info
+                                    .rolling_resistance_spring_torque[d] = 0.;
                                 }
                             }
                           else // between delta_* and delta_0.
@@ -459,6 +459,8 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                               for (int d = 0; d < dim; ++d)
                                 {
                                   contact_info.tangential_overlap[d] = 0.;
+                                  contact_info
+                                    .rolling_resistance_spring_torque[d] = 0.;
                                 }
                               cohesive_force =
                                 -F_cohesion * -normal_vectors[particle_counter];
@@ -489,6 +491,8 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                           for (int d = 0; d < dim; ++d)
                             {
                               contact_info.tangential_overlap[d] = 0.;
+                              contact_info.rolling_resistance_spring_torque[d] =
+                                0.;
                             }
                         }
                       particle_counter++;
