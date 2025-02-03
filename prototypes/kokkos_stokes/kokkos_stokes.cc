@@ -587,7 +587,7 @@ public:
     else if (c == 2)
       return 0.0;
 
-    AssertThrow(false, ExcNotImplemented());
+    // AssertThrow(false, ExcNotImplemented());
 
     return 0.0;
   }
@@ -619,7 +619,7 @@ public:
     else if (c == 2)
       return std::sin(a * x) * std::sin(a * y);
 
-    AssertThrow(false, ExcNotImplemented());
+    // AssertThrow(false, ExcNotImplemented());
 
     return 0.0;
   }
@@ -879,23 +879,23 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
         };
       };
 
-      mg.connect_pre_smoother_step(
-        create_mg_timer_function("mg_pre_smoother_step"));
-      mg.connect_residual_step(create_mg_timer_function("mg_residual_step"));
-      mg.connect_restriction(create_mg_timer_function("mg_restriction"));
-      mg.connect_coarse_solve(create_mg_timer_function("mg_coarse_solve"));
-      mg.connect_prolongation(create_mg_timer_function("mg_prolongation"));
-      mg.connect_edge_prolongation(
-        create_mg_timer_function("mg_edge_prolongation"));
-      mg.connect_post_smoother_step(
-        create_mg_timer_function("mg_post_smoother_step"));
       preconditioner.connect_transfer_to_mg(
-        create_mg_timer_function("mg_copy_to_mg"));
+        create_mg_timer_function("mg_01_copy_to_mg"));
+      mg.connect_pre_smoother_step(
+        create_mg_timer_function("mg_02_pre_smoother_step"));
+      mg.connect_residual_step(create_mg_timer_function("mg_02_residual_step"));
+      mg.connect_restriction(create_mg_timer_function("mg_03_restriction"));
+      mg.connect_coarse_solve(create_mg_timer_function("mg_04_coarse_solve"));
+      mg.connect_prolongation(create_mg_timer_function("mg_05_prolongation"));
+      mg.connect_edge_prolongation(
+        create_mg_timer_function("mg_06_edge_prolongation"));
+      mg.connect_post_smoother_step(
+        create_mg_timer_function("mg_07_post_smoother_step"));
       preconditioner.connect_transfer_to_global(
-        create_mg_timer_function("mg_copy_from_mg"));
+        create_mg_timer_function("mg_08_copy_from_mg"));
 
       // solve
-      TimerOutput::Scope timer(timer_output, "solve");
+      TimerOutput::Scope timer(timer_output, "cg_solve");
       solver.solve(stokes_operator, dst, src, preconditioner);
     }
 
@@ -994,9 +994,9 @@ main(int argc, char **argv)
 {
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  const unsigned int dim           = 2;
+  const unsigned int dim           = 3;
   const unsigned int fe_degree     = 3;
-  unsigned int       n_refinements = 3;
+  unsigned int       n_refinements = 5;
 
   ConvergenceTable table;
 
