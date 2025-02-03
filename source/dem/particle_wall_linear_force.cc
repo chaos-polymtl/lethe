@@ -53,8 +53,6 @@ ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
           .rolling_viscous_damping_coefficient_particle.at(i);
 
       // Effective particle-wall properties.
-
-      // Young modulus
       this->effective_youngs_modulus[i] =
         (particle_youngs_modulus * wall_youngs_modulus) /
         (wall_youngs_modulus *

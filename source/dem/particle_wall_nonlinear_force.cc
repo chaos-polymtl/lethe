@@ -13,6 +13,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
   const std::vector<types::boundary_id> &boundary_index)
   : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
 {
+  // Wall properties
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =
@@ -23,11 +24,14 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
     dem_parameters.lagrangian_physical_properties.friction_coefficient_wall;
   const double wall_rolling_friction_coefficient =
     dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
+  const double wall_rolling_viscous_damping =
+    dem_parameters.lagrangian_physical_properties.rolling_viscous_damping_wall;
 
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
+      // Particle properties
       const double particle_youngs_modulus =
         dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
           .at(i);
@@ -43,7 +47,11 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
       const double particle_rolling_friction_coefficient =
         dem_parameters.lagrangian_physical_properties
           .rolling_friction_coefficient_particle.at(i);
+      const double particle_rolling_viscous_damping_coefficient =
+        dem_parameters.lagrangian_physical_properties
+          .rolling_viscous_damping_coefficient_particle.at(i);
 
+      // Effective particle-wall properties.
       this->effective_youngs_modulus[i] =
         (particle_youngs_modulus * wall_youngs_modulus) /
         (wall_youngs_modulus *
@@ -80,6 +88,13 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
         wall_rolling_friction_coefficient /
         (particle_rolling_friction_coefficient +
          wall_rolling_friction_coefficient + DBL_MIN);
+
+      // Rolling viscous damping coefficient
+      this->effective_coefficient_of_rolling_viscous_damping[i] =
+        2 * particle_rolling_viscous_damping_coefficient *
+        wall_rolling_viscous_damping /
+        (particle_rolling_viscous_damping_coefficient +
+         wall_rolling_viscous_damping + DBL_MIN);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
