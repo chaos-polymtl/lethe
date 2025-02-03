@@ -41,6 +41,7 @@ public:
     effective_coefficient_of_restitution.resize(n_particle_types);
     effective_coefficient_of_friction.resize(n_particle_types);
     effective_coefficient_of_rolling_friction.resize(n_particle_types);
+    effective_coefficient_of_rolling_viscous_damping.resize(n_particle_types);
     effective_surface_energy.resize(n_particle_types);
     effective_hamaker_constant.resize(n_particle_types);
     model_parameter_beta.resize(n_particle_types);
@@ -241,11 +242,13 @@ protected:
 
   unsigned int n_particle_types;
 
+  // Effective properties
   std::vector<double> effective_youngs_modulus;
   std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
   std::vector<double> effective_coefficient_of_friction;
   std::vector<double> effective_coefficient_of_rolling_friction;
+  std::vector<double> effective_coefficient_of_rolling_viscous_damping;
   std::vector<double> effective_surface_energy;
   std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;

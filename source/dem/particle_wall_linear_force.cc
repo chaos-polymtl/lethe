@@ -14,6 +14,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
   const std::vector<types::boundary_id> &boundary_index)
   : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
 {
+  // Wall properties
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =
@@ -24,11 +25,14 @@ ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
     dem_parameters.lagrangian_physical_properties.friction_coefficient_wall;
   const double wall_rolling_friction_coefficient =
     dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
+  const double wall_rolling_viscous_damping =
+    dem_parameters.lagrangian_physical_properties.rolling_viscous_damping_wall;
 
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
+      // Particle properties
       const double particle_youngs_modulus =
         dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
           .at(i);
@@ -44,8 +48,13 @@ ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
       const double particle_rolling_friction_coefficient =
         dem_parameters.lagrangian_physical_properties
           .rolling_friction_coefficient_particle.at(i);
+      const double particle_rolling_viscous_damping_coefficient =
+        dem_parameters.lagrangian_physical_properties
+          .rolling_viscous_damping_coefficient_particle.at(i);
 
+      // Effective particle-wall properties.
 
+      // Young modulus
       this->effective_youngs_modulus[i] =
         (particle_youngs_modulus * wall_youngs_modulus) /
         (wall_youngs_modulus *
@@ -54,20 +63,30 @@ ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
            (1 - wall_poisson_ratio * wall_poisson_ratio) +
          DBL_MIN);
 
+      // Restitution coefficient
       this->effective_coefficient_of_restitution[i] =
         2 * particle_restitution_coefficient * wall_restitution_coefficient /
         (particle_restitution_coefficient + wall_restitution_coefficient +
          DBL_MIN);
 
+      // Friction coefficient
       this->effective_coefficient_of_friction[i] =
         2 * particle_friction_coefficient * wall_friction_coefficient /
         (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
 
+      // Rolling friction coefficient
       this->effective_coefficient_of_rolling_friction[i] =
         2 * particle_rolling_friction_coefficient *
         wall_rolling_friction_coefficient /
         (particle_rolling_friction_coefficient +
          wall_rolling_friction_coefficient + DBL_MIN);
+
+      // Rolling viscous damping coefficient
+      this->effective_coefficient_of_rolling_viscous_damping[i] =
+        2 * particle_rolling_viscous_damping_coefficient *
+        wall_rolling_viscous_damping /
+        (particle_rolling_viscous_damping_coefficient +
+         wall_rolling_viscous_damping + DBL_MIN);
 
       const double log_coeff_restitution =
         log(this->effective_coefficient_of_restitution[i]);
@@ -458,7 +477,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
     (this->*calculate_rolling_resistance_torque)(
       particle_properties,
       this->effective_coefficient_of_rolling_friction[particle_type],
-      this->effective_coefficient_of_rolling_friction[particle_type],
+      this->effective_coefficient_of_rolling_viscous_damping[particle_type],
       dt,
       normal_spring_constant,
       normal_force.norm(),

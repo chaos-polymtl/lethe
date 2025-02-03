@@ -70,6 +70,16 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
         (particle_restitution_coefficient + wall_restitution_coefficient +
          DBL_MIN);
 
+      this->effective_coefficient_of_friction[i] =
+        2 * particle_friction_coefficient * wall_friction_coefficient /
+        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
+
+      this->effective_coefficient_of_rolling_friction[i] =
+        2 * particle_rolling_friction_coefficient *
+        wall_rolling_friction_coefficient /
+        (particle_rolling_friction_coefficient +
+         wall_rolling_friction_coefficient + DBL_MIN);
+
       this->effective_surface_energy[i] =
         particle_surface_energy + wall_surface_energy -
         std::pow(std::sqrt(particle_surface_energy) -
@@ -81,17 +91,6 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
       this->model_parameter_beta[i] =
         log_coeff_restitution /
         sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
-
-
-      this->effective_coefficient_of_friction[i] =
-        2 * particle_friction_coefficient * wall_friction_coefficient /
-        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
-
-      this->effective_coefficient_of_rolling_friction[i] =
-        2 * particle_rolling_friction_coefficient *
-        wall_rolling_friction_coefficient /
-        (particle_rolling_friction_coefficient +
-         wall_rolling_friction_coefficient + DBL_MIN);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==

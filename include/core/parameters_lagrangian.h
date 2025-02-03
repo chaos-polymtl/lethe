@@ -117,6 +117,9 @@ namespace Parameters
       // Rolling friction coefficient wall
       double rolling_friction_wall;
 
+      // Rolling friction coefficient wall
+      double rolling_viscous_damping_wall;
+
       // Surface energy wall
       double surface_energy_wall;
 

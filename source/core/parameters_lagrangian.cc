@@ -204,6 +204,10 @@ namespace Parameters
                           "0.1",
                           Patterns::Double(),
                           "Rolling friction coefficient of wall");
+        prm.declare_entry("rolling viscous damping wall",
+                          "0.1",
+                          Patterns::Double(),
+                          "Rolling viscous damping wall");
         prm.declare_entry("surface energy wall",
                           "0.0",
                           Patterns::Double(),
@@ -262,8 +266,10 @@ namespace Parameters
         prm.get_double("restitution coefficient wall");
       friction_coefficient_wall = prm.get_double("friction coefficient wall");
       rolling_friction_wall     = prm.get_double("rolling friction wall");
-      surface_energy_wall       = prm.get_double("surface energy wall");
-      hamaker_constant_wall     = prm.get_double("hamaker constant wall");
+      rolling_viscous_damping_wall =
+        prm.get_double("rolling viscous damping wall");
+      surface_energy_wall   = prm.get_double("surface energy wall");
+      hamaker_constant_wall = prm.get_double("hamaker constant wall");
 
       prm.leave_subsection();
     }
