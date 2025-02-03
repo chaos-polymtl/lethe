@@ -173,19 +173,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
     this->multiphysics_interface->get_dof_handler(PhysicsID::VOF);
 
   // Interpolate VOF solution to algebraic interface reinitialization
-  //  VectorTools::interpolate_to_different_mesh(
-  //    *dof_handler_vof,
-  //    *this->multiphysics_interface->get_solution(PhysicsID::VOF),
-  //    this->dof_handler,
-  //    this->local_evaluation_point);
-  //
-  //  this->nonzero_constraints.distribute(this->local_evaluation_point);
-  //  this->present_solution = this->local_evaluation_point;
-  //  this->previous_solution =
-  //    this->present_solution; // We only have 1 previous solution (bdf1)
-  //  this->previous_local_evaluation_point =
-  //    this->local_evaluation_point; // For steady-state criterion evaluation
-
   VectorTools::interpolate_to_different_mesh(
     *dof_handler_vof,
     *this->multiphysics_interface->get_solution(PhysicsID::VOF),
@@ -199,7 +186,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
   this->previous_local_evaluation_point =
     this->previous_solution; // For steady-state criterion evaluation
 
-  // For debugging purposes,output
+  // For debugging purposes
   if (this->simulation_parameters.multiphysics.vof_parameters
         .algebraic_interface_reinitialization.output_reinitialization_steps)
     {

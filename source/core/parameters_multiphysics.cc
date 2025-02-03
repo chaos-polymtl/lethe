@@ -465,7 +465,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       Patterns::Double(),
       "Power value applied to the mesh-size in the mesh-dependant diffusivity "
       "model of the algebraic interface reinitialization.");
-    prm.declare_entry("steady state criterion",
+    prm.declare_entry("steady-state criterion",
                       "1e-2",
                       Patterns::Double(),
                       "Tolerance for the pseudo-time-stepping scheme.");
@@ -503,7 +503,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
     diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
     diffusivity_power          = prm.get_double("diffusivity power");
     reinitialization_cfl       = prm.get_double("reinitialization CFL");
-    steady_state_criterion     = prm.get_double("steady state criterion");
+    steady_state_criterion     = prm.get_double("steady-state criterion");
     max_steps_number           = prm.get_integer("max steps number");
 
     const std::string op2 = prm.get("verbosity");

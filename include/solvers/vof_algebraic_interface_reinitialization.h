@@ -4,7 +4,7 @@
 #ifndef lethe_vof_algebraic_interface_reinitialization_h
 #define lethe_vof_algebraic_interface_reinitialization_h
 
-#include <core/pvd_handler.h> // for debugging
+#include <core/pvd_handler.h>
 
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
@@ -358,12 +358,14 @@ private:
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> *subequations_interface;
   MultiphysicsInterface<dim>
-    *multiphysics_interface; // to get VOF DoFHandler and solution
+    *multiphysics_interface; // To get VOF DoFHandler and solution
 
   // Parameters
   const SimulationParameters<dim>
     &simulation_parameters; // TODO AA check what parameters are necessary
-  PVDHandler pvdhandler;    // TODO AA for debugging
+
+  // To output algebraic reinitialization steps
+  PVDHandler pvdhandler;
 
   // Time-stepping with BDF1
   double              current_time_step;
