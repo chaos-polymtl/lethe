@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/solutions_output.h> // for debugging
+#include <core/solutions_output.h>
 
 #include <solvers/vof_algebraic_interface_reinitialization.h>
 
@@ -9,7 +9,7 @@
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
-#include <sys/stat.h> // for debugging
+#include <sys/stat.h>
 
 template <int dim>
 void
@@ -184,7 +184,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
   //  this->previous_solution =
   //    this->present_solution; // We only have 1 previous solution (bdf1)
   //  this->previous_local_evaluation_point =
-  //    this->local_evaluation_point; // For stop criterion
+  //    this->local_evaluation_point; // For steady-state criterion evaluation
 
   VectorTools::interpolate_to_different_mesh(
     *dof_handler_vof,
@@ -197,10 +197,34 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
   this->previous_solution =
     this->present_solution; // We only have 1 previous solution (bdf1)
   this->previous_local_evaluation_point =
-    this->previous_solution; // For stop criterion
+    this->previous_solution; // For steady-state criterion evaluation
 
-  // TODO AA erase for debugging purposes
-  //  write_output_results(0);
+  // For debugging purposes,output
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.output_reinitialization_steps)
+    {
+      auto mpi_communicator = this->triangulation->get_communicator();
+      const std::string folder =
+        this->simulation_parameters.simulation_control.output_folder +
+        "/algebraic-reinitialization-steps-output/";
+      struct stat buffer;
+
+      // Reset output directory; if it does not exist, create it.
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        {
+          if (stat(folder.c_str(), &buffer) != 0)
+            {
+              create_output_folder(folder);
+            }
+          else
+            {
+              delete_output_folder(folder);
+              create_output_folder(folder);
+            }
+        }
+
+      write_output_results(0);
+    }
 }
 
 
@@ -256,7 +280,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   std::vector<double>         present_phase_fraction_values(n_q_points);
   std::vector<Tensor<1, dim>> present_phase_gradient_projection_values(
     n_q_points);
-  std::vector<double> present_curvature_values(n_q_points);
+  std::vector<double>         present_curvature_values(n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
     n_q_points); // debugging
   std::vector<Tensor<1, dim>> present_vof_phase_gradient_values(n_q_points);
@@ -441,7 +465,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   std::vector<double>         previous_phase_fraction_values(n_q_points);
   std::vector<Tensor<1, dim>> present_vof_phase_gradient_projection_values(
     n_q_points);
-  std::vector<double> present_curvature_values(n_q_points);
+  std::vector<double>         present_curvature_values(n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
     n_q_points);
 
@@ -691,7 +715,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
   set_initial_conditions();
 
   // Reinitialization steps counter
-  unsigned int it = 0;
+  unsigned int step = 1;
 
   // Solve a first time-step
   if (this->subequation_verbosity != Parameters::Verbosity::quiet)
@@ -700,17 +724,21 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
         this->subequations_interface->get_subequation_string(
           this->subequation_id);
 
-      this->pcout << "-Solving " << subequation_string << ", step " << it << ":"
-                  << std::endl;
+      this->pcout << "-Solving " << subequation_string << ", step " << step - 1
+                  << ":" << std::endl;
     }
-  this->solve_non_linear_system(true); // TODO AA true/false ???
-  // TODO AA For debugging purposes
-  //  write_output_results(it);
+  this->solve_non_linear_system(true);
 
-  // Iterate until the stop criterion is met // TODO AA double condition
-  while (continue_iterating(current_time_step_inv, steady_state_criterion, it))
+  // For debugging purposes
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.output_reinitialization_steps)
+    write_output_results(step);
+
+  // Iterate until a stop criterion is met
+  while (
+    continue_iterating(current_time_step_inv, steady_state_criterion, step))
     {
-      it += 1;
+      step += 1;
 
       // Update previous solution
       this->previous_solution               = this->present_solution;
@@ -726,42 +754,35 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
             this->subequations_interface->get_subequation_string(
               this->subequation_id);
 
-          this->pcout << "-Solving " << subequation_string << ", step " << it
-                      << ":" << std::endl;
+          this->pcout << "-Solving " << subequation_string << ", step "
+                      << step - 1 << ":" << std::endl;
         }
       this->solve_non_linear_system(false);
 
-      // TODO AA For debugging purposes
-      //      write_output_results(it);
+      // For debugging purposes
+      if (this->simulation_parameters.multiphysics.vof_parameters
+            .algebraic_interface_reinitialization.output_reinitialization_steps)
+        write_output_results(step);
     }
 
   if (this->subequation_verbosity != Parameters::Verbosity::quiet)
-    this->pcout << "The solver took: " << it + 1 << " reinitialization steps\n"
+    this->pcout << "The solver took: " << step << " reinitialization steps\n"
                 << std::endl;
 }
 
 template <int dim>
 void
 VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
-  const unsigned int it)
+  const unsigned int step)
 {
   auto              mpi_communicator = this->triangulation->get_communicator();
   const std::string folder =
     this->simulation_parameters.simulation_control.output_folder +
     "/algebraic-reinitialization-steps-output/";
-  struct stat buffer;
-
-  // If output directory does not exist, create it
-  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-    {
-      if (stat(folder.c_str(), &buffer) != 0)
-        {
-          create_output_folder(folder);
-        }
-    }
 
   const std::string file_name =
-    "ar-" + this->simulation_parameters.simulation_control.output_name;
+    "algebraic-reinitialization-" +
+    this->simulation_parameters.simulation_control.output_name;
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
@@ -773,7 +794,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
 
   DataOut<dim> data_out;
 
-  // Attach the solution data to data_out object
+  // Attach solution data to DataOut object
   data_out.attach_dof_handler(this->dof_handler);
   data_out.add_data_vector(this->present_solution, "reinit_phase_fraction");
   data_out.add_data_vector(this->previous_solution,
@@ -814,8 +835,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
                          data_out,
                          folder,
                          file_name,
-                         it, // time,
-                         it,
+                         step, // time,
+                         step,
                          1, // group_files,
                          mpi_communicator);
 }

@@ -361,6 +361,17 @@ create_output_folder(const std::string &dirname)
 #endif
 }
 
+void
+delete_output_folder(const std::string &dirname)
+{
+#if __GNUC__ > 7
+  std::filesystem::remove_all(dirname);
+#else
+  // std::string command = "rm -rf " + dirname;
+  // system(command.c_str());
+#endif
+}
+
 template TableHandler
 make_table_scalars_vectors(
   const std::vector<double>              &independent_values,

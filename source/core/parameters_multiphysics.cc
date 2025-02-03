@@ -441,6 +441,12 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "Enables the interface to be reinitialized with the algebraic method "
       "<true|false>");
     prm.declare_entry(
+      "output reinitialization steps",
+      "false",
+      Patterns::Bool(),
+      "Enables pvtu format outputs of the algebraic interface reinitialization "
+      "steps of the last simulated time-step <true|false>");
+    prm.declare_entry(
       "frequency",
       "1",
       Patterns::Integer(),
@@ -490,7 +496,9 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
 {
   prm.enter_subsection("algebraic interface reinitialization");
   {
-    enable                     = prm.get_bool("enable");
+    enable = prm.get_bool("enable");
+    output_reinitialization_steps =
+      prm.get_bool("output reinitialization steps");
     reinitialization_frequency = prm.get_integer("frequency");
     diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
     diffusivity_power          = prm.get_double("diffusivity power");

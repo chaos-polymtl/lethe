@@ -391,6 +391,14 @@ void
 create_output_folder(const std::string &dirname);
 
 /**
+ * @brief Deletes the output folder and its content.
+ *
+ * @param[in] dirname Output directory name.
+ */
+void
+delete_output_folder(const std::string &dirname);
+
+/**
  * @brief Prints a string and then adds a line above and below made with dashes containing as many dashes as the string has characters+1
  *
  * For example, if the string to be printed is "Tracer" the result will be:
