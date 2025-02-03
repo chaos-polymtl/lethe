@@ -535,9 +535,9 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
       particle_properties,
       this->effective_coefficient_of_rolling_friction[particle_type],
       this->effective_coefficient_of_rolling_friction[particle_type],
+      normal_force.norm(),
       dt,
       normal_spring_constant,
-      normal_force.norm(),
       contact_info.normal_vector,
       contact_info.rolling_resistance_spring_torque);
 

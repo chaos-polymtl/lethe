@@ -171,7 +171,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                   // respectively
                   forces_and_torques =
                     this->calculate_nonlinear_contact_force_and_torque(
-                      contact_information, particle_properties);
+                      dt, contact_information, particle_properties);
                 }
               // No contact, but still in the constant zone for the cohesive
               // force.
@@ -423,7 +423,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                               forces_and_torques =
                                 this
                                   ->calculate_nonlinear_contact_force_and_torque(
-                                    contact_info, particle_properties);
+                                    dt, contact_info, particle_properties);
                             }
                           // No contact, but still in the constant zone for the
                           // cohesive force.

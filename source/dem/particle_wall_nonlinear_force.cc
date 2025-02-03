@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_nonlinear_force.h>
 
@@ -101,6 +100,12 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
       calculate_rolling_resistance_torque =
         &ParticleWallNonLinearForce<dim, PropertiesIndex>::viscous_resistance;
     }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::RollingResistanceMethod::epsd_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &ParticleWallNonLinearForce<dim, PropertiesIndex>::epsd_resistance;
+    }
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
   this->center_mass_container = dem_parameters.forces_torques.point_center_mass;
@@ -154,7 +159,6 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
                 return (point_nd_to_3d(particle->get_location()));
               }
           }();
-          ;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -188,7 +192,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
               std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
                 forces_and_torques =
                   this->calculate_nonlinear_contact_force_and_torque(
-                    contact_information, particle_properties);
+                    dt, contact_information, particle_properties);
 
               // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
@@ -346,7 +350,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
                             forces_and_torques =
                               this
                                 ->calculate_nonlinear_contact_force_and_torque(
-                                  contact_info, particle_properties);
+                                  dt, contact_info, particle_properties);
 
                           // Get particle's torque and force
                           types::particle_index particle_id =
@@ -380,13 +384,12 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
     }
 }
 
-
-
 // Calculates nonlinear contact force and torques
 template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallNonLinearForce<dim, PropertiesIndex>::
   calculate_nonlinear_contact_force_and_torque(
+    const double                     dt,
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties)
 {
@@ -481,8 +484,12 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
     (this->*calculate_rolling_resistance_torque)(
       particle_properties,
       this->effective_coefficient_of_rolling_friction[particle_type],
+      this->effective_coefficient_of_rolling_friction[particle_type],
       normal_force.norm(),
-      contact_info.normal_vector);
+      dt,
+      normal_spring_constant,
+      contact_info.normal_vector,
+      contact_info.rolling_resistance_spring_torque);
 
   return std::make_tuple(normal_force,
                          tangential_force,

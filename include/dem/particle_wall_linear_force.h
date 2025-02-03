@@ -324,9 +324,11 @@ private:
    * @brief Calculate the particle-particle linear contact
    * force and torques based on the updated values in contact_info
    *
-   * @param contact_info A container that contains the required information for
-   * calculation of the contact force for a particle pair in contact
-   * @param particle_properties Properties of particle one in contact
+   * @param[in] dt DEM time step.
+   * @param[in,out] contact_info A container that contains the required
+   * information for calculation of the contact force for a particle pair in
+   * contact
+   * @param[in] particle_properties Properties of particle one in contact
    * @return A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
