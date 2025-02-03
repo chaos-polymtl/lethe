@@ -119,7 +119,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
            Parameters::Lagrangian::RollingResistanceMethod::epsd_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallNonLinearForce<dim, PropertiesIndex>::viscous_resistance;
+        &ParticleWallNonLinearForce<dim, PropertiesIndex>::epsd_resistance;
     }
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;

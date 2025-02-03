@@ -186,11 +186,10 @@ epsd_rolling_resistance_torque(
   Tensor<1, 3> omega_ij;
   for (int d = 0; d < 3; ++d)
     {
-      omega_ij[d] = particle_two_properties[PropertiesIndex::omega_x + d] -
-                    particle_one_properties[PropertiesIndex::omega_x + d];
+      // particle_one - particle_two (has been verified)
+      omega_ij[d] = particle_one_properties[PropertiesIndex::omega_x + d] -
+                    particle_two_properties[PropertiesIndex::omega_x + d];
     }
-
-
 
   // Non-collinear component of the relative velocity.
   const Tensor<1, 3> omega_ij_perpendicular =
@@ -211,6 +210,7 @@ epsd_rolling_resistance_torque(
   }();
 
   // Update the spring torque
+  // -= has been verified
   cumulative_rolling_resistance_spring_torque -= K_r * delta_theta;
 
   // Limiting spring torque
@@ -265,6 +265,8 @@ epsd_rolling_resistance_torque(
       const double C_r =
         effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
 
+
+      // Minus sign has been verified
       return cumulative_rolling_resistance_spring_torque -
              C_r * omega_ij_perpendicular;
     }
