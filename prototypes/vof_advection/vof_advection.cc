@@ -55,7 +55,6 @@
 
 #include <deal.II/non_matching/fe_immersed_values.h>
 #include <deal.II/non_matching/fe_values.h>
-#include <deal.II/non_matching/mesh_classifier.h>
 
 #include <fstream>
 #include <iostream>
@@ -67,6 +66,469 @@ int
 sgn(T val)
 {
   return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
+}
+
+namespace CustomGridTools
+{
+  // Already implemented in LetheGridTools
+  template <int dim>
+  inline double compute_point_2_interface_min_distance(const std::vector<Point<dim>> triangle,const Point<dim> &point)
+  {
+    double D;
+    const Point<dim> &point_0 = triangle[0];
+    const Point<dim> &point_1 = triangle[1];
+    
+    if constexpr (dim == 3)
+      {
+        const Point<dim> &point_2 = triangle[2];
+        
+        Tensor<1, dim> vector_to_plane;
+        Point<dim>     pt_in_triangle;
+
+        vector_to_plane = point_0 - point;
+
+        const Tensor<1, dim> e_0 = point_1 - point_0;
+        const Tensor<1, dim> e_1 = point_2 - point_0;
+        
+        const double a   = e_0.norm_square();
+        const double b   = scalar_product(e_0, e_1);
+        const double c   = e_1.norm_square();
+        const double d = scalar_product(e_0, vector_to_plane);
+        const double e = scalar_product(e_1, vector_to_plane);
+        
+        const double det = a * c - b * b ;
+        
+        double s = b * e - c * d;
+        double t = b * d - a * e;
+
+        if (s + t <= det)
+          {
+            if (s < 0)
+              {
+                if (t < 0)
+                  {
+                    // Region 4
+                    if (d < 0)
+                      {
+                        t = 0;
+                        if (-d >= a)
+                          s = 1;
+                        else
+                          s = -d / a;
+                      }
+                    else
+                      {
+                        s = 0;
+                        if (e >= 0)
+                          t = 0;
+                        else if (-e >= c)
+                          t = 1;
+                        else
+                          t = e / c;
+                      }
+                  }
+                else
+                  {
+                    // Region 3
+                    s = 0;
+                    if (e >= 0)
+                      t = 0;
+                    else if (-e >= c)
+                      t = 1;
+                    else
+                      t = -e / c;
+                  }
+              }
+            else if (t < 0)
+              {
+                // Region 5
+                t = 0;
+                if (d >= 0)
+                  s = 0;
+                else if (-d >= a)
+                  s = 1;
+                else
+                  s = -d / a;
+              }
+            else
+              {
+                // Region 0
+                const double inv_det = 1. / det;
+                s *= inv_det;
+                t *= inv_det;
+              }
+          }
+        else
+          {
+            if (s < 0)
+              {
+                // Region 2
+                const double tmp0 = b + d;
+                const double tmp1 = c + e;
+                if (tmp1 > tmp0)
+                  {
+                    const double numer = tmp1 - tmp0;
+                    const double denom = a - 2 * b + c;
+                    if (numer >= denom)
+                      s = 1;
+                    else
+                      s = numer / denom;
+
+                    t = 1 - s;
+                  }
+                else
+                  {
+                    s = 0;
+                    if (tmp1 <= 0)
+                      t = 1;
+                    else if (e >= 0)
+                      t = 0;
+                    else
+                      t = -e / c;
+                  }
+              }
+            else if (t < 0)
+              {
+                // Region 6
+                const double tmp0 = b + e;
+                const double tmp1 = a + d;
+                if (tmp1 > tmp0)
+                  {
+                    const double numer = tmp1 - tmp0;
+                    const double denom = a - 2 * b + c;
+                    if (numer >= denom)
+                      t = 1;
+                    else
+                      t = numer / denom;
+                    s = 1 - t;
+                  }
+                else
+                  {
+                    t = 0;
+                    if (tmp1 <= 0)
+                      s = 1;
+                    else if (d >= 0)
+                      s = 0;
+                    else
+                      s = -d / a;
+                  }
+              }
+            else
+              {
+                // Region 1
+                const double numer = (c + e) - (b + d);
+                if (numer <= 0)
+                  s = 0;
+                else
+                  {
+                    const double denom = a - 2 * b + c;
+                    if (numer >= denom)
+                      s = 1;
+                    else
+                      s = numer / denom;
+                  }
+                t = 1 - s;
+              }
+          }
+        
+        pt_in_triangle = point_0 + s * e_0 + t * e_1;
+
+        D = pt_in_triangle.distance(point);
+      }
+    
+    if constexpr (dim == 2)
+      {
+        const Tensor<1,dim> d = point_1 - point_0;
+        
+        const double t_bar = d*(point-point_0)/(d.norm()*d.norm());
+        
+        if (t_bar <= 0.0)
+        {
+          const Tensor<1,dim> point_minus_p0 = point-point_0;
+          D = point_minus_p0.norm();
+        }
+        else if (t_bar >= 1.0)
+        {
+          const Tensor<1,dim> point_minus_p1 = point-point_1;
+          D = point_minus_p1.norm();
+        }
+        else
+        {
+          const Tensor<1,dim> projection = point-(point_0+t_bar*d);
+          D = projection.norm();
+        }
+    }
+    
+    return D;
+  }
+   
+  /**
+   * @brief
+   * Return the local id of the opposite faces to the given local DOF (works 
+   * for quad only).
+   *
+   * @param local_dof_id Local id of the DOF
+   *
+   * @param local_opposite_faces The vector containing the id of the opposite 
+   * faces
+   */
+  
+  template <int dim>
+  inline void get_dof_opposite_faces(unsigned int local_dof_id, std::vector<unsigned int> &local_opposite_faces)
+  {
+    unsigned int local_dof_id_2d = local_dof_id%4;
+    
+    local_opposite_faces[0] = (local_dof_id_2d + 1)%2;
+    local_opposite_faces[1] = 3-local_dof_id_2d/2;
+    
+    if constexpr (dim==3)
+      local_opposite_faces[2] = 5 - local_dof_id/4;
+  }
+  
+  /**
+   * @brief
+   * Return the face transformation jacobian (dim-1 x dim-1).
+   *
+   * @param cell_transformation_jac Transformation jacobian of the cell (dim x dim)
+   *
+   * @param local_face_id Local id of the face 
+   *
+   * @param face_transformation_jac Face transformation jacobian (dim-1 x dim-1)
+   * faces
+   */
+   
+  template <int dim>
+  inline void get_face_transformation_jacobian(const DerivativeForm<1, dim, dim> &cell_transformation_jac, const unsigned int local_face_id, DerivativeForm<1, dim-1, dim> &face_transformation_jac)
+  {
+    for (unsigned int i = 0; i < dim; ++i)
+    {
+      unsigned int k = 0;
+      for (unsigned int j = 0; j < dim; ++j)
+      {
+        if (local_face_id/2 == j)
+          continue;
+        face_transformation_jac[i][k] = cell_transformation_jac[i][j];
+        k += 1;
+      }
+    }
+  }
+  
+  /**
+   * @brief
+   * Transform a point dim-1 in a reference face to a point dim in the 
+   * reference cell.
+   *
+   * @param x_ref_face Point dim-1 in the reference face
+   *
+   * @param local_face_id Local id of the face 
+   *
+   * @return Point dim in the reference cell
+   */
+   
+  template <int dim>
+  inline Point<dim> transform_ref_face_point_to_ref_cell(const Point<dim-1> &x_ref_face, const unsigned int local_face_id)
+  {
+    Point<dim> x_ref_cell;
+    
+    unsigned int j = 0;
+    for (unsigned int i = 0; i < dim; ++i)
+    {
+      if (local_face_id/2 == i)
+        {
+          x_ref_cell[i] = double(local_face_id%2);
+          continue;
+        }
+      x_ref_cell[i] = x_ref_face[j];
+      j += 1;
+    }
+    
+    return x_ref_cell;
+  }
+}
+
+namespace InterfaceTools
+{
+  /**
+   * @brief Scalar function defined by the DOF values of a single cell. Based on the CellWiseFunction and RefSpaceFEFieldFunction of dealii. 
+   */
+   
+  template <int dim, typename VectorType = Vector<double>>
+  class LocalCellWiseFunction : public Function<dim>
+  {
+  public:
+    LocalCellWiseFunction(unsigned int fe_degree);
+    
+    void
+    set_active_cell(const typename DoFHandler<dim>::active_cell_iterator &cell, const VectorType &in_local_dof_values);
+
+    double
+    value(const Point<dim>  &point,
+          const unsigned int component = 0) const override;
+
+    Tensor<1, dim>
+    gradient(const Point<dim>  &point,
+             const unsigned int component = 0) const override;
+
+    SymmetricTensor<2, dim>
+    hessian(const Point<dim>  &point,
+            const unsigned int component = 0) const override;
+            
+  private: 
+    FE_Q<dim> fe;
+    
+    unsigned int n_local_dofs;
+    
+    Vector<typename VectorType::value_type> local_dof_values;
+  };
+
+  template <int dim, typename VectorType>
+  LocalCellWiseFunction<dim, VectorType>::LocalCellWiseFunction(unsigned int fe_degree) :
+  fe(fe_degree)
+  {
+    n_local_dofs = fe.dofs_per_cell;
+  } 
+
+  template <int dim, typename VectorType>
+  void
+  LocalCellWiseFunction<dim, VectorType>::set_active_cell(const typename DoFHandler<dim>::active_cell_iterator &cell, const VectorType &in_local_dof_values)
+  {
+    local_dof_values = in_local_dof_values;
+  } 
+
+  template <int dim, typename VectorType>
+  double
+  LocalCellWiseFunction<dim, VectorType>::value(
+    const Point<dim>  &point, const unsigned int component) const
+  {
+    double value = 0;
+    for (unsigned int i = 0; i < n_local_dofs; ++i)
+      value += local_dof_values[i] *
+               fe.shape_value_component(i, point, component);
+
+    return value;
+  } 
+
+  template <int dim, typename VectorType>
+  Tensor<1, dim>
+  LocalCellWiseFunction<dim, VectorType>::gradient(
+    const Point<dim>  &point, const unsigned int component) const
+  {
+    Tensor<1, dim> gradient;
+    for (unsigned int i = 0; i < n_local_dofs; ++i)
+      gradient += local_dof_values[i] *
+               fe.shape_grad_component(i, point, component);
+
+    return gradient;
+  } 
+
+  template <int dim, typename VectorType>
+  SymmetricTensor<2, dim>
+  LocalCellWiseFunction<dim, VectorType>::hessian(
+    const Point<dim>  &point, const unsigned int component) const
+  {
+    Tensor<2, dim> hessian;
+    for (unsigned int i = 0; i < n_local_dofs; ++i)
+      hessian += local_dof_values[i] *
+               fe.shape_grad_grad_component(i, point, component);
+
+    return symmetrize(hessian);
+  } 
+  
+  /**
+  * @brief
+  * Compute the volume enclosed by the 0 level of a level set field 
+  * inside a cell.
+  *
+  * @param cell Cell for which the volume is computed
+  *
+  * @param cell_dof_values cell DOFs value of the level set field 
+  *
+  * @param corr correction to apply to the DOF values (constant for all DOFs)
+  *
+  * @param n_quad_points number of quadrature points for the volume integration 
+  * faces
+  *
+  * @return cell-wise volume 
+  */
+  
+  template <int dim>
+  double 
+  compute_cell_wise_volume(const Mapping<dim> &mapping, const typename DoFHandler<dim>::active_cell_iterator &cell, Vector<double> cell_dof_values, const double corr, const unsigned int n_quad_points)
+  {
+    const unsigned int n_dofs = cell_dof_values.size();
+     
+    // Initialize required variables to compute local volume
+    const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+    LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>(cell->get_fe().degree);
+
+    hp::QCollection<1> q_collection;
+    q_collection.push_back(QGauss<1>(n_quad_points));
+
+    NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+
+    for (unsigned int j = 0; j < n_dofs; j++)
+    {
+     cell_dof_values[j] += corr;
+    }
+
+    level_set_function.set_active_cell(cell, cell_dof_values);
+    quadrature_generator.generate(level_set_function, unit_box);
+
+    const Quadrature<dim> inside_quadrature = quadrature_generator.get_outside_quadrature();
+
+    if (inside_quadrature.size() == 0)
+     return 0.0;
+     
+    FEValues<dim> inside_fe_values(mapping, cell->get_fe(), inside_quadrature, update_JxW_values);
+     
+    inside_fe_values.reinit(cell);
+    std::vector<double> inside_JxW = inside_fe_values.get_JxW_values();
+
+    double inside_cell_volume = 0.0;
+    for (unsigned int q = 0; q < inside_quadrature.size(); q++)
+    {
+     inside_cell_volume += inside_JxW[q];
+    }
+
+    return inside_cell_volume;
+  }
+  
+    /**
+  * @brief
+  * Compute the volume enclosed by the 0 level of a level set field 
+  * in the domain.
+  *
+  * @param mapping Mapping of the domain
+  *
+  * @param dof_handler DofHandler associated to the triangulation on which the * volume is computed
+  *
+  * @param level_set_vector Level-set vector 
+  *
+  * @param mpi_communicator MPI communicator
+  *
+  * @return Volume enclosed by the 0 level
+  */
+  template <int dim, typename VectorType>
+  double compute_volume(const Mapping<dim> &mapping, const DoFHandler<dim> &dof_handler, const VectorType &level_set_vector, const MPI_Comm &mpi_communicator)
+  {
+    
+    double volume = 0.0;
+    for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+      {
+        const unsigned int n_dofs_per_cell = cell->get_fe().n_dofs_per_cell();
+        Vector<double> cell_dof_level_set_values(n_dofs_per_cell);
+        
+        cell->get_dof_values(level_set_vector, cell_dof_level_set_values.begin(), cell_dof_level_set_values.end());
+        
+        volume += InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_dof_level_set_values, 0.0, cell->get_fe().degree + 1);
+      }
+    }
+    volume = Utilities::MPI::sum(volume, mpi_communicator);
+    
+    return volume;
+  }
 }
 
 template <int dim>
@@ -92,224 +554,7 @@ public:
   }
 };
 
-template <int dim>
-inline double compute_point_2_interface_min_distance(const std::vector<Point<dim>> triangle,const Point<dim> &point)
-{
-  double D;
-  const Point<dim> &point_0 = triangle[0];
-  const Point<dim> &point_1 = triangle[1];
-  
-  if constexpr (dim == 3)
-    {
-      const Point<dim> &point_2 = triangle[2];
-      
-      Tensor<1, dim> vector_to_plane;
-      Point<dim>     pt_in_triangle;
 
-      vector_to_plane = point_0 - point;
-
-      const Tensor<1, dim> e_0 = point_1 - point_0;
-      const Tensor<1, dim> e_1 = point_2 - point_0;
-      
-      const double a   = e_0.norm_square();
-      const double b   = scalar_product(e_0, e_1);
-      const double c   = e_1.norm_square();
-      const double d = scalar_product(e_0, vector_to_plane);
-      const double e = scalar_product(e_1, vector_to_plane);
-      
-      const double det = a * c - b * b ;
-      
-      double s = b * e - c * d;
-      double t = b * d - a * e;
-
-      if (s + t <= det)
-        {
-          if (s < 0)
-            {
-              if (t < 0)
-                {
-                  // Region 4
-                  if (d < 0)
-                    {
-                      t = 0;
-                      if (-d >= a)
-                        s = 1;
-                      else
-                        s = -d / a;
-                    }
-                  else
-                    {
-                      s = 0;
-                      if (e >= 0)
-                        t = 0;
-                      else if (-e >= c)
-                        t = 1;
-                      else
-                        t = e / c;
-                    }
-                }
-              else
-                {
-                  // Region 3
-                  s = 0;
-                  if (e >= 0)
-                    t = 0;
-                  else if (-e >= c)
-                    t = 1;
-                  else
-                    t = -e / c;
-                }
-            }
-          else if (t < 0)
-            {
-              // Region 5
-              t = 0;
-              if (d >= 0)
-                s = 0;
-              else if (-d >= a)
-                s = 1;
-              else
-                s = -d / a;
-            }
-          else
-            {
-              // Region 0
-              const double inv_det = 1. / det;
-              s *= inv_det;
-              t *= inv_det;
-            }
-        }
-      else
-        {
-          if (s < 0)
-            {
-              // Region 2
-              const double tmp0 = b + d;
-              const double tmp1 = c + e;
-              if (tmp1 > tmp0)
-                {
-                  const double numer = tmp1 - tmp0;
-                  const double denom = a - 2 * b + c;
-                  if (numer >= denom)
-                    s = 1;
-                  else
-                    s = numer / denom;
-
-                  t = 1 - s;
-                }
-              else
-                {
-                  s = 0;
-                  if (tmp1 <= 0)
-                    t = 1;
-                  else if (e >= 0)
-                    t = 0;
-                  else
-                    t = -e / c;
-                }
-            }
-          else if (t < 0)
-            {
-              // Region 6
-              const double tmp0 = b + e;
-              const double tmp1 = a + d;
-              if (tmp1 > tmp0)
-                {
-                  const double numer = tmp1 - tmp0;
-                  const double denom = a - 2 * b + c;
-                  if (numer >= denom)
-                    t = 1;
-                  else
-                    t = numer / denom;
-                  s = 1 - t;
-                }
-              else
-                {
-                  t = 0;
-                  if (tmp1 <= 0)
-                    s = 1;
-                  else if (d >= 0)
-                    s = 0;
-                  else
-                    s = -d / a;
-                }
-            }
-          else
-            {
-              // Region 1
-              const double numer = (c + e) - (b + d);
-              if (numer <= 0)
-                s = 0;
-              else
-                {
-                  const double denom = a - 2 * b + c;
-                  if (numer >= denom)
-                    s = 1;
-                  else
-                    s = numer / denom;
-                }
-              t = 1 - s;
-            }
-        }
-      
-      pt_in_triangle = point_0 + s * e_0 + t * e_1;
-
-      D = pt_in_triangle.distance(point);
-    }
-  
-  if constexpr (dim == 2)
-    {
-      const Tensor<1,dim> d = point_1 - point_0;
-      
-      const double t_bar = d*(point-point_0)/(d.norm()*d.norm());
-      
-      if (t_bar <= 0.0)
-      {
-        const Tensor<1,dim> point_minus_p0 = point-point_0;
-        D = point_minus_p0.norm();
-      }
-      else if (t_bar >= 1.0)
-      {
-        const Tensor<1,dim> point_minus_p1 = point-point_1;
-        D = point_minus_p1.norm();
-      }
-      else
-      {
-        const Tensor<1,dim> projection = point-(point_0+t_bar*d);
-        D = projection.norm();
-      }
-  }
-  
-  return D;
-}
-
-template <int dim>
-inline void get_dof_opposite_faces(unsigned int local_face_id, std::vector<unsigned int> &local_opposite_faces)
-{
-  unsigned int local_face_id_2d = local_face_id%4;
-  
-  local_opposite_faces[0] = (local_face_id_2d + 1)%2;
-  local_opposite_faces[1] = 3-local_face_id_2d/2;
-  
-  if constexpr (dim==3)
-    local_opposite_faces[2] = 5 - local_face_id/4;
-}
-
-template <int dim>
-inline void get_face_transformation_jacobians(const DerivativeForm<1, dim, dim> &cell_transformation_jac, const unsigned int local_face_id, DerivativeForm<1, dim-1, dim> &face_transformation_jac)
-{
-  for (unsigned int i = 0; i < dim; ++i)
-  {
-    unsigned int k = 0;
-    for (unsigned int j = 0; j < dim; ++j)
-    {
-      if (local_face_id/2 == j)
-        continue;
-      face_transformation_jac[i][k] = cell_transformation_jac[i][j];
-      k += 1;
-    }
-  }
-}
 
 template <int dim>
 inline void compute_residual(const Tensor<1,dim> &x_n_to_x_J_real, const Tensor<1, dim> &distance_gradient, const DerivativeForm<1, dim-1, dim> transformation_jac, Tensor<1, dim-1> &residual_ref)
@@ -328,7 +573,6 @@ inline std::vector<Point<dim>> compute_numerical_jacobian_stencil(const Point<di
 {
   
   std::vector<Point<dim>> stencil( 2*dim - 1);
-  // std::cout << "local_face_id = " << local_face_id << std::endl;
   for (unsigned int i = 0; i < 2*dim - 1; ++i)
   {
     stencil[i] = x_ref;
@@ -348,36 +592,11 @@ inline std::vector<Point<dim>> compute_numerical_jacobian_stencil(const Point<di
     
   for (unsigned int i = 1; i < dim; ++i)
   {
-    // for (unsigned int j = 0; j < dim; ++j)
-    // {
-      // std::cout << "local_face_id/2 = " << local_face_id/2 << std::endl;
-            
-      // std::cout << "i = " << i << std::endl;
-      
-      j = j_index[i-1];
-      
-      // std::cout << "j = " << j << std::endl;
-
-      stencil[2*i-1][j] -= perturbation;
-      stencil[2*i][j] += perturbation;
-      
-      // std::cout << stencil[2*i-1][j] << std::endl;
-      // std::cout << stencil[2*i][j] << std::endl;
-
-    // }
+    j = j_index[i-1];
+    stencil[2*i-1][j] -= perturbation;
+    stencil[2*i][j] += perturbation;
   }
   
-  // for (unsigned int i = 0; i < dim; ++i)
-  // {
-  //   unsigned int k = 0;
-  //   for (unsigned int j = 0; j < dim; ++j)
-  //   {
-  //     if (local_face_id/2 == j)
-  //       continue;
-  //     face_transformation_jac[i][k] = cell_transformation_jac[i][j];
-  //     k += 1;
-  //   }
-  // }
   return stencil;
 }
 
@@ -402,26 +621,6 @@ inline Tensor<1,dim> transform_ref_face_correction_to_ref_cell(const VectorType 
 }
 
 template <int dim>
-inline Point<dim> transform_ref_face_point_to_ref_cell(const Point<dim-1> &x_ref_face, const unsigned int local_face_id)
-{
-  Point<dim> x_ref_cell;
-  
-  unsigned int j = 0;
-  for (unsigned int i = 0; i < dim; ++i)
-  {
-    if (local_face_id/2 == i)
-      {
-        x_ref_cell[i] = double(local_face_id%2);
-        continue;
-      }
-    x_ref_cell[i] = x_ref_face[j];
-    j += 1;
-  }
-  
-  return x_ref_cell;
-}
-
-template <int dim>
 inline void compute_numerical_jacobian(const std::vector<Point<dim>> &stencil_real, const Point<dim> &x_J_real, const std::vector<Tensor<1, dim>> &distance_gradients, const std::vector<DerivativeForm<1, dim-1, dim>> &transformation_jacobians, const double perturbation, LAPACKFullMatrix<double> &jacobian_matrix)
 {  
   for (unsigned int i = 0; i < dim-1; ++i)
@@ -430,14 +629,11 @@ inline void compute_numerical_jacobian(const std::vector<Point<dim>> &stencil_re
   
     Tensor<1, dim-1> residual_ref_m1;
     compute_residual(x_n_to_x_J_real_m1, distance_gradients[2*i+1], transformation_jacobians[2*i+1], residual_ref_m1);
-    // std::cout << "residual_ref_m1 = " << residual_ref_m1 << std::endl;
-    
   
     const Tensor<1,dim> x_n_to_x_J_real_p1 = x_J_real - stencil_real[2*i+2]; 
   
     Tensor<1, dim-1> residual_ref_p1;
     compute_residual(x_n_to_x_J_real_p1, distance_gradients[2*i+2], transformation_jacobians[2*i+2], residual_ref_p1);
-    // std::cout << "residual_ref_p1 = " << residual_ref_p1 << std::endl;
   
     for (unsigned int j = 0; j < dim-1; ++j)
     {  
@@ -477,89 +673,6 @@ Tensor<1, dim> AdvectionField<dim>::value(const Point<dim> &p) const
   return value;
 }
 
-template <int dim, typename VectorType = Vector<double>>
-class LocalCellWiseFunction : public Function<dim>
-{
-public:
-  LocalCellWiseFunction();
-  
-  void
-  set_active_cell(const VectorType &in_local_dof_values);
-
-  double
-  value(const Point<dim>  &point,
-        const unsigned int component = 0) const override;
-
-  Tensor<1, dim>
-  gradient(const Point<dim>  &point,
-           const unsigned int component = 0) const override;
-
-  SymmetricTensor<2, dim>
-  hessian(const Point<dim>  &point,
-          const unsigned int component = 0) const override;
-          
-private: 
-  FE_Q<dim> element;
-  
-  unsigned int n_local_dof;
-  
-  Vector<typename VectorType::value_type> local_dof_values;
-};
-
-template <int dim, typename VectorType>
-LocalCellWiseFunction<dim, VectorType>::LocalCellWiseFunction()
-  : element(1)
-{
-  this->n_local_dof = element.dofs_per_cell;
-} 
-
-template <int dim, typename VectorType>
-void
-LocalCellWiseFunction<dim, VectorType>::set_active_cell(const VectorType &in_local_dof_values)
-{
-  n_local_dof = element.dofs_per_cell;
-  local_dof_values = in_local_dof_values;
-} 
-
-template <int dim, typename VectorType>
-double
-LocalCellWiseFunction<dim, VectorType>::value(
-  const Point<dim>  &point, const unsigned int component) const
-{
-  double value = 0;
-  for (unsigned int i = 0; i < n_local_dof; ++i)
-    value += local_dof_values[i] *
-             element.shape_value_component(i, point, component);
-
-  return value;
-} 
-
-template <int dim, typename VectorType>
-Tensor<1, dim>
-LocalCellWiseFunction<dim, VectorType>::gradient(
-  const Point<dim>  &point, const unsigned int component) const
-{
-  Tensor<1, dim> gradient;
-  for (unsigned int i = 0; i < n_local_dof; ++i)
-    gradient += local_dof_values[i] *
-             element.shape_grad_component(i, point, component);
-
-  return gradient;
-} 
-
-template <int dim, typename VectorType>
-SymmetricTensor<2, dim>
-LocalCellWiseFunction<dim, VectorType>::hessian(
-  const Point<dim>  &point, const unsigned int component) const
-{
-  Tensor<2, dim> hessian;
-  for (unsigned int i = 0; i < n_local_dof; ++i)
-    hessian += local_dof_values[i] *
-             element.shape_grad_grad_component(i, point, component);
-
-  return symmetrize(hessian);
-} 
-
 template <int dim>
 class InitialConditions : public Function<dim>
 {
@@ -595,28 +708,7 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
     return 0.0;
   else
     return 0.5*((0.15-dist.norm())/0.0078125 + 1.0);
-  
-  // Point<dim> bl = Point<dim>(0.4,0.4);
-  // Point<dim> tr = Point<dim>(0.6,0.6);
-  // 
-  // Tensor<1,dim> dist_bl = bl - p;
-  // Tensor<1,dim> dist_tr = p - tr;
-  // 
-  // Tensor<1,dim> dist_border;
-  // dist_border[0] = std::max(dist_bl[0],dist_tr[0]);
-  // dist_border[1] = std::max(dist_bl[1],dist_tr[1]);
-  // 
-  // Tensor<1,dim> dist_corner;
-  // dist_corner[0] = std::max(0.0,dist_border[0]);
-  // dist_corner[1] = std::max(0.0,dist_border[1]);
-  // 
-  // double dist = dist_corner.norm() + std::min(0.0, std::max(dist_border[0],dist_border[1]));
-  // return 0.5+0.5*std::tanh(-1.0*dist/0.016);
-  
-  // return 0.5+0.5*std::tanh((0.1-abs(dist[0]))/0.016);
 }
-
-
 
 template <int dim>
 class Visualization : public dealii::DataOutInterface<0, dim>
@@ -752,7 +844,6 @@ private:
   
   void compute_static_sphere_error(unsigned int time_iteration);
   double compute_volume(unsigned int time_iteration);
-  double compute_cell_wise_volume(const typename DoFHandler<dim>::active_cell_iterator &cell, Vector<double> cell_dof_values, const double corr, const BoundingBox<dim> &unit_box, LocalCellWiseFunction<dim> &level_set_function, NonMatching::QuadratureGenerator<dim> &quadrature_generator);
   
   void refine_grid(const unsigned int max_grid_level, const unsigned int min_grid_level);
   void output_results(const int time_iteration) const;
@@ -761,52 +852,19 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
   
-  GridTools::Cache<dim> grid_tools_cache;
-  
   const FE_Q<dim>           fe;
   DoFHandler<dim>           dof_handler;
-  hp::FECollection<dim>     fe_collection;
-  
-  const FE_Q<dim> fe_level_set;
-  DoFHandler<dim> level_set_dof_handler;
-  VectorType      level_set;
       
   AffineConstraints<double> constraints;
   MatrixType                system_matrix;
   
-  NonMatching::MeshClassifier<dim> mesh_classifier;
-
   IndexSet locally_owned_dofs;
-  types::global_dof_index n_locally_owned_dofs;
   
   IndexSet locally_relevant_dofs;
   IndexSet locally_active_dofs;
   
-  
   VectorType locally_relevant_solution;
   VectorType previous_solution;
-  VectorType location;
-  VectorType error;
-  
-  // VectorType cell_wise_volume;
-  
-  LinearAlgebra::distributed::Vector<double> signed_distance;
-  LinearAlgebra::distributed::Vector<double> distance;
-  LinearAlgebra::distributed::Vector<double> distance_with_ghost;
-  LinearAlgebra::distributed::Vector<double> volume_correction;
-  
-  
-  std::map<types::global_cell_index,std::vector<Point<dim>>> intersection_point;
-  
-  std::map<types::global_cell_index,std::vector<Point<dim>>> interface_reconstruction_vertices;
-  
-  std::map<types::global_cell_index,std::vector<CellData<dim-1>>> interface_reconstruction_cells;
-  
-  std::set<types::global_dof_index> intersected_dofs;
-  
-  std::set<types::global_dof_index> dofs_location_status;
-  
-    
   VectorType system_rhs;
   
   double dt;
@@ -814,6 +872,22 @@ private:
   
   MPI_Comm           mpi_communicator;
   ConditionalOStream pcout;
+  
+  GridTools::Cache<dim> grid_tools_cache;
+  
+  VectorType      level_set;
+  
+  LinearAlgebra::distributed::Vector<double> signed_distance;
+  LinearAlgebra::distributed::Vector<double> distance;
+  LinearAlgebra::distributed::Vector<double> distance_with_ghost;
+  LinearAlgebra::distributed::Vector<double> volume_correction;
+  
+  std::map<types::global_cell_index,std::vector<Point<dim>>> interface_reconstruction_vertices;
+  std::map<types::global_cell_index,std::vector<CellData<dim-1>>> interface_reconstruction_cells;
+  
+  std::set<types::global_dof_index> intersected_dofs;
+  
+
   TableHandler table_volume_monitoring;
   TableHandler table_error_monitoring;
   double initial_volume;
@@ -833,39 +907,22 @@ AdvectionProblem<dim>::AdvectionProblem()
                     Triangulation<dim>::smoothing_on_refinement |
                     Triangulation<dim>::smoothing_on_coarsening))
   , mapping(1)
-  , grid_tools_cache(triangulation, mapping)
   , fe(1)
   , dof_handler(triangulation)
-  , fe_level_set(1)
-  , level_set_dof_handler(triangulation)
-  , mesh_classifier(dof_handler, level_set)
   , dt(0.00020825)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
+  , grid_tools_cache(triangulation, mapping)
 {
-  fe_collection.push_back(FE_Q<dim>(1));
   
 }
   
 template <int dim>
 void AdvectionProblem<dim>::setup_system()
 {
-  // fe_collection.push_back(FE_Q<dim>(1));
-      // fe_collection.push_back(FE_Nothing<dim>());
-  
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      // const NonMatching::LocationToLevelSet cell_location =
-      //   mesh_classifier.location_to_level_set(cell);
-      if (!cell->is_locally_owned())
-        continue;
-      cell->set_active_fe_index(ActiveFEIndex::lagrange);
-    }
-        
-  dof_handler.distribute_dofs(fe_collection);
+  dof_handler.distribute_dofs(fe);
   
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
-  n_locally_owned_dofs    = dof_handler.n_locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
   locally_active_dofs = DoFTools::extract_locally_active_dofs(dof_handler);
   
@@ -873,11 +930,6 @@ void AdvectionProblem<dim>::setup_system()
   previous_solution.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   
   level_set.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
-  location.reinit(locally_owned_dofs, mpi_communicator);
-  error.reinit(locally_owned_dofs, mpi_communicator);
-  
-  // cell_wise_volume.reinit(locally_owned_dofs, mpi_communicator);
-  
   
   signed_distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
   distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
@@ -1189,36 +1241,36 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
    
 }
 
-template <int dim>
-double 
-AdvectionProblem<dim>::compute_cell_wise_volume(const typename DoFHandler<dim>::active_cell_iterator &cell, Vector<double> cell_dof_values, const double corr, const BoundingBox<dim> &unit_box, LocalCellWiseFunction<dim> &level_set_function, NonMatching::QuadratureGenerator<dim> &quadrature_generator)
-{
-  for (unsigned int j = 0; j < fe.n_dofs_per_cell(); j++)
-  {
-    cell_dof_values[j] += corr;
-  }
-  
-  level_set_function.set_active_cell(cell_dof_values);
-  quadrature_generator.generate(level_set_function, unit_box);
-  
-  const Quadrature<dim> inside_quadrature = quadrature_generator.get_outside_quadrature();
-  
-  if (inside_quadrature.size() == 0)
-    return 0.0;
-    
-  FEValues<dim> inside_fe_values(mapping, fe, inside_quadrature, update_values | update_quadrature_points | update_JxW_values);
-    
-  inside_fe_values.reinit(cell);
-  std::vector<double> inside_JxW = inside_fe_values.get_JxW_values();
-
-  double inside_cell_volume = 0.0;
-  for (unsigned int q = 0; q < inside_quadrature.size(); q++)
-  {
-    inside_cell_volume += inside_JxW[q];
-  }
-  
-  return inside_cell_volume;
-}
+// template <int dim>
+// double 
+// AdvectionProblem<dim>::compute_cell_wise_volume(const typename DoFHandler<dim>::active_cell_iterator &cell, Vector<double> cell_dof_values, const double corr, const BoundingBox<dim> &unit_box, LocalCellWiseFunction<dim> &level_set_function, NonMatching::QuadratureGenerator<dim> &quadrature_generator)
+// {
+//   for (unsigned int j = 0; j < fe.n_dofs_per_cell(); j++)
+//   {
+//     cell_dof_values[j] += corr;
+//   }
+// 
+//   level_set_function.set_active_cell(cell_dof_values);
+//   quadrature_generator.generate(level_set_function, unit_box);
+// 
+//   const Quadrature<dim> inside_quadrature = quadrature_generator.get_outside_quadrature();
+// 
+//   if (inside_quadrature.size() == 0)
+//     return 0.0;
+// 
+//   FEValues<dim> inside_fe_values(mapping, fe, inside_quadrature, update_values | update_quadrature_points | update_JxW_values);
+// 
+//   inside_fe_values.reinit(cell);
+//   std::vector<double> inside_JxW = inside_fe_values.get_JxW_values();
+// 
+//   double inside_cell_volume = 0.0;
+//   for (unsigned int q = 0; q < inside_quadrature.size(); q++)
+//   {
+//     inside_cell_volume += inside_JxW[q];
+//   }
+// 
+//   return inside_cell_volume;
+// }
 
 template <int dim>
 void 
@@ -1228,22 +1280,16 @@ AdvectionProblem<dim>::perform_geometric_redistanciation(unsigned int time_itera
   compute_level_set_from_phase_fraction();
   
   // Compute volume (the one delimited by level set = 0.0).
-  double global_volume = compute_volume(time_iteration);
+  double global_volume = InterfaceTools::compute_volume(mapping, dof_handler, level_set, mpi_communicator);
   if (time_iteration == 0)
     initial_volume = global_volume;
   pcout << "Initial volume = " << initial_volume << std::endl;
   
   if (time_iteration%1 == 0)
   {
-    // Gain the writing right.
-    zero_out_ghost_values();
-  
+    
     compute_sign_distance(time_iteration, global_volume);
   
-    // Gain the reading right.
-    update_ghost_values();
-  
-    compute_static_sphere_error(time_iteration);
     compute_phase_fraction_from_level_set();
   }
   
@@ -1256,12 +1302,13 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   
   pcout << "In redistancation" << std::endl;
   
+  // Gain the writing right.
+  zero_out_ghost_values();
+  
   // Clear maps and sets
-  intersection_point.clear();
   interface_reconstruction_vertices.clear();
   interface_reconstruction_cells.clear();
   intersected_dofs.clear();
-  dofs_location_status.clear();
   
   std::unordered_set<types::global_dof_index> dofs_in_interface_halo;
                                            
@@ -1383,7 +1430,7 @@ void AdvectionProblem<dim>::compute_second_neighbors_distance()
           
           // Get opposite faces 
           std::vector<unsigned int> dof_opposite_faces(n_opposite_faces_per_dofs);
-          get_dof_opposite_faces<dim>(i, dof_opposite_faces);
+          CustomGridTools::get_dof_opposite_faces<dim>(i, dof_opposite_faces);
           
           // Get the real coordinates of the current dof.
           const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
@@ -1392,7 +1439,7 @@ void AdvectionProblem<dim>::compute_second_neighbors_distance()
           for (unsigned int j = 0; j < n_opposite_faces_per_dofs; ++j)
           {
             // Initialize required variables. 
-            Point<dim> x_n_ref= transform_ref_face_point_to_ref_cell<dim>(ref_face_center_point,dof_opposite_faces[j]);
+            Point<dim> x_n_ref= CustomGridTools::transform_ref_face_point_to_ref_cell<dim>(ref_face_center_point,dof_opposite_faces[j]);
             Point<dim> x_n_real;
             
             double correction_norm = 1.0;
@@ -1422,7 +1469,7 @@ void AdvectionProblem<dim>::compute_second_neighbors_distance()
                 stencil_real[k] = fe_point_evaluation.quadrature_point(k);
                 distance_gradients[k] = fe_point_evaluation.get_gradient(k);
                 cell_transformation_jacobians[k] = fe_point_evaluation.jacobian(k);
-                get_face_transformation_jacobians(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
+                CustomGridTools::get_face_transformation_jacobian(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
               }
               
               // Compute the jacobian matrix. The Ax=b system is formulated as the dim-1 system. We solve for the correction in the reference face.
@@ -1562,7 +1609,7 @@ void AdvectionProblem<dim>::compute_first_neighbors_distance()
         {
           surface_cell_vertices[p] = surface_cell->vertex(p);
         }
-        double D = compute_point_2_interface_min_distance(surface_cell_vertices, y);
+        double D = CustomGridTools::compute_point_2_interface_min_distance(surface_cell_vertices, y);
         
         distance(intersected_dof) = std::min(std::abs(distance(intersected_dof)), std::abs(D));
       }
@@ -1576,7 +1623,7 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
 {
   const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
   const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
-  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
+  InterfaceTools::LocalCellWiseFunction<dim> level_set_function = InterfaceTools::LocalCellWiseFunction<dim>(fe.degree);
   
   const unsigned int n_quad_points = fe.degree + 1;
   hp::QCollection<1> q_collection;
@@ -1606,7 +1653,7 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
         cell_dof_values[j] += cell_volume_correction_dof_values[j];
       }
   
-      global_volume_nm1 += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+      global_volume_nm1 += InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_dof_values, 0.0, n_quad_points);
   
     }
   }
@@ -1647,7 +1694,7 @@ void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
           cell_dof_values[j] += C_n*cell_volume_correction_dof_values[j];
         }
   
-        global_volume_n += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+        global_volume_n += InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_dof_values, 0.0, n_quad_points);
   
       }
     }
@@ -1694,7 +1741,7 @@ void AdvectionProblem<dim>::conserve_local_volume()
   
   // Initialize required variables to compute local volume
   const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
-  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
+  InterfaceTools::LocalCellWiseFunction<dim> level_set_function = InterfaceTools::LocalCellWiseFunction<dim>(fe.degree);
   
   const unsigned int n_quad_points = fe.degree + 1;
   hp::QCollection<1> q_collection;
@@ -1732,7 +1779,7 @@ void AdvectionProblem<dim>::conserve_local_volume()
       cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
       
       // Compute the targetted volume to correct for
-      double targetted_cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+      double targetted_cell_volume = InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_level_set_dof_values, 0.0, n_quad_points);
       
       // Get the signed distance values to be corrected (could be improved)
       Vector<double> cell_dof_values(dofs_per_cell);
@@ -1758,7 +1805,7 @@ void AdvectionProblem<dim>::conserve_local_volume()
       double eta_nm1 = 0.0;
       
       // Compute the volume for the first initial value (eta_nm1)
-      double inside_cell_volume_nm1 = compute_cell_wise_volume(cell, cell_dof_values, eta_nm1, unit_box, level_set_function, quadrature_generator);
+      double inside_cell_volume_nm1 = InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_dof_values, eta_nm1, n_quad_points);
       double delta_volume_nm1 = targetted_cell_volume - inside_cell_volume_nm1;
       // Store the initial volume in the cell to limit the secant method in some case.
       const double intial_inside_cell_volume = inside_cell_volume_nm1;
@@ -1785,7 +1832,7 @@ void AdvectionProblem<dim>::conserve_local_volume()
         }
         secant_it += 1;
         
-        const double inside_cell_volume_n = compute_cell_wise_volume(cell, cell_dof_values, eta_n, unit_box, level_set_function, quadrature_generator);
+        const double inside_cell_volume_n = InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_dof_values, eta_n, n_quad_points);
         
         const double delta_volume_n = targetted_cell_volume - inside_cell_volume_n;
   
@@ -1956,88 +2003,89 @@ void AdvectionProblem<dim>::compute_static_sphere_error(unsigned int time_iterat
   std::ofstream output("output/error.dat");
   table_error_monitoring.write_text(output);
 }
-template <int dim>
-double AdvectionProblem<dim>::compute_volume(unsigned int time_iteration)
-{
-  
-  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-  const unsigned int n_quad_points = fe.degree + 1;
-  
-  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
-  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
-  
-  hp::QCollection<1> q_collection;
-  q_collection.push_back(QGauss<1>(n_quad_points));
 
-  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
-  
-  FEValues<dim> fe_values(fe,
-                          QGauss<dim>(fe.degree + 1),
-                          update_values | update_JxW_values);
-  
-  const unsigned int n_q_points    = fe_values.n_quadrature_points;
-  std::vector<double> phase_values(n_q_points);
-  
-  double volume_sharp = 0.0;
-  double volume_0p5 = 0.0;
-  
-  double volume_phase = 0.0;
-  
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      
-      Vector<double> cell_dof_values(dofs_per_cell);
-      
-      cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
-      
-      volume_sharp += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-      
-      Vector<double> cell_dof_phase_values(dofs_per_cell);
-      
-      cell->get_dof_values(locally_relevant_solution, cell_dof_phase_values.begin(), cell_dof_phase_values.end());
-      
-      volume_0p5 += compute_cell_wise_volume(cell, cell_dof_phase_values, -0.5, unit_box, level_set_function, quadrature_generator);
-      
-      fe_values.reinit(cell);
-      fe_values.get_function_values(locally_relevant_solution, phase_values);
-
-      for (unsigned int q = 0; q < n_q_points; ++q)
-        {
-          volume_phase += fe_values.JxW(q) * phase_values[q];
-        }
-    }
-  }
-  volume_sharp = Utilities::MPI::sum(volume_sharp, mpi_communicator);
-  volume_0p5 = Utilities::MPI::sum(volume_0p5, mpi_communicator);
-  
-  volume_phase = Utilities::MPI::sum(volume_phase, mpi_communicator);
-  
-  table_volume_monitoring.add_value("time_iteration", time_iteration);
-  
-  table_volume_monitoring.add_value("time", time);
-  table_volume_monitoring.set_scientific("time", true);
-  
-  table_volume_monitoring.add_value("volume_sharp", volume_sharp);
-  table_volume_monitoring.set_scientific("volume_sharp", true);
-  
-  table_volume_monitoring.add_value("volume_0p5", volume_0p5);
-  table_volume_monitoring.set_scientific("volume_0p5", true);
-  
-  table_volume_monitoring.add_value("volume_phase", volume_phase);
-  table_volume_monitoring.set_scientific("volume_phase", true);
-  
-  std::ofstream output("output/volume.dat");
-  table_volume_monitoring.write_text(output);
-  
-  pcout << "volume_sharp = " << volume_sharp << std::endl;
-  pcout << "volume_0p5 = " << volume_0p5 << std::endl;
-  
-  pcout << "volume_phase = " << volume_phase << std::endl;
-  
-  return volume_sharp;    
-}
+// template <int dim>
+// double AdvectionProblem<dim>::compute_volume(unsigned int time_iteration)
+// {
+// 
+//   const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+//   const unsigned int n_quad_points = fe.degree + 1;
+// 
+//   const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+//   InterfaceTools::LocalCellWiseFunction level_set_function = InterfaceTools::LocalCellWiseFunction<dim>(fe.degree);
+// 
+//   hp::QCollection<1> q_collection;
+//   q_collection.push_back(QGauss<1>(n_quad_points));
+// 
+//   NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+// 
+//   FEValues<dim> fe_values(fe,
+//                           QGauss<dim>(fe.degree + 1),
+//                           update_values | update_JxW_values);
+// 
+//   const unsigned int n_q_points    = fe_values.n_quadrature_points;
+//   std::vector<double> phase_values(n_q_points);
+// 
+//   double volume_sharp = 0.0;
+//   double volume_0p5 = 0.0;
+// 
+//   double volume_phase = 0.0;
+// 
+//   for (const auto &cell : dof_handler.active_cell_iterators())
+//   {
+//     if (cell->is_locally_owned())
+//     {
+// 
+//       Vector<double> cell_dof_values(dofs_per_cell);
+// 
+//       cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
+// 
+//       volume_sharp += InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_dof_values, 0.0, n_quad_points);
+// 
+//       Vector<double> cell_dof_phase_values(dofs_per_cell);
+// 
+//       cell->get_dof_values(locally_relevant_solution, cell_dof_phase_values.begin(), cell_dof_phase_values.end());
+// 
+//       volume_0p5 += InterfaceTools::compute_cell_wise_volume(mapping, cell, cell_dof_phase_values, -0.5, n_quad_points);
+// 
+//       fe_values.reinit(cell);
+//       fe_values.get_function_values(locally_relevant_solution, phase_values);
+// 
+//       for (unsigned int q = 0; q < n_q_points; ++q)
+//         {
+//           volume_phase += fe_values.JxW(q) * phase_values[q];
+//         }
+//     }
+//   }
+//   volume_sharp = Utilities::MPI::sum(volume_sharp, mpi_communicator);
+//   volume_0p5 = Utilities::MPI::sum(volume_0p5, mpi_communicator);
+// 
+//   volume_phase = Utilities::MPI::sum(volume_phase, mpi_communicator);
+// 
+//   table_volume_monitoring.add_value("time_iteration", time_iteration);
+// 
+//   table_volume_monitoring.add_value("time", time);
+//   table_volume_monitoring.set_scientific("time", true);
+// 
+//   table_volume_monitoring.add_value("volume_sharp", volume_sharp);
+//   table_volume_monitoring.set_scientific("volume_sharp", true);
+// 
+//   table_volume_monitoring.add_value("volume_0p5", volume_0p5);
+//   table_volume_monitoring.set_scientific("volume_0p5", true);
+// 
+//   table_volume_monitoring.add_value("volume_phase", volume_phase);
+//   table_volume_monitoring.set_scientific("volume_phase", true);
+// 
+//   std::ofstream output("output/volume.dat");
+//   table_volume_monitoring.write_text(output);
+// 
+//   pcout << "volume_sharp = " << volume_sharp << std::endl;
+//   pcout << "volume_0p5 = " << volume_0p5 << std::endl;
+// 
+//   pcout << "volume_phase = " << volume_phase << std::endl;
+// 
+//   return volume_sharp;    
+// }
 
 template <int dim>
 void AdvectionProblem<dim>::output_results(const int time_iteration) const
@@ -2048,10 +2096,7 @@ void AdvectionProblem<dim>::output_results(const int time_iteration) const
   data_out.add_data_vector(locally_relevant_solution, "locally_relevant_solution");
   data_out.add_data_vector(previous_solution, "previous_solution");
   
-  
   data_out.add_data_vector(level_set, "level_set");
-  data_out.add_data_vector(error, "error");
-  
   
   data_out.add_data_vector(signed_distance, "signed_distance");
   
