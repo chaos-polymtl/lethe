@@ -50,7 +50,8 @@ public:
    * @brief Calculate the particle-wall contact force using
    * linear (Hookean) model
    *
-   * @param particle_wall_pairs_in_contact Required information for calculation of
+   * @param particle_wall_pairs_in_contact Required information for calculation
+   * of
    * the particle-wall contact force. These information were obtained in
    * the fine search
    * @param dt DEM time step
@@ -69,7 +70,8 @@ public:
    * @brief Calculate particle-floating mesh contact force using
    * linear (Hooekan) model
    *
-   * @param particle_floating_mesh_in_contact A container that stores the information of
+   * @param particle_floating_mesh_in_contact A container that stores the
+   * information of
    * particle-floating mesh contact
    * @param dt DEM time step
    * @param torque Torque acting on particles
@@ -89,16 +91,20 @@ public:
 
 private:
   /**
-   * @brief No rolling resistance torque model
+   * @brief No rolling resistance torque model.
    *
    * @param particle_properties Particle one properties.
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient.
-   * @param effective_rolling_viscous_damping_coefficient Effective rolling viscous damping coefficient.
+   * @param effective_rolling_friction_coefficient Effective rolling friction
+   * coefficient.
+   * @param effective_rolling_viscous_damping_coefficient Effective rolling
+   * viscous damping coefficient.
    * @param normal_force_norm Normal force norm.
    * @param dt DEM time step.
    * @param normal_spring_constant Normal spring constant.
-   * @param normal_unit_vector Normal unit contact vector between the particle and the wall.
-   * @param cumulative_rolling_resistance_spring_torque Cumulative rolling resistance torque for the EPSD rolling resistance model.
+   * @param normal_unit_vector Normal unit contact vector between the particle
+   * and the wall.
+   * @param cumulative_rolling_resistance_spring_torque Cumulative rolling
+   * resistance torque for the EPSD rolling resistance model.
    *
    * @return Rolling resistance torque equal to the null vector.
    */
@@ -117,14 +123,21 @@ private:
   }
 
   /**
-   * @param particle_properties Particle one properties.
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient.
-   * @param effective_rolling_viscous_damping_coefficient Effective rolling viscous damping coefficient.
-   * @param normal_force_norm Normal force norm.
-   * @param dt DEM time step.
-   * @param normal_spring_constant Normal spring constant.
-   * @param normal_unit_vector Normal unit contact vector between the particle and the wall.
-   * @param cumulative_rolling_resistance_spring_torque Cumulative rolling resistance torque for the EPSD rolling resistance model.
+   * @brief Calculation of the rolling resistance torque model using the
+   * physical properties and the constant model.
+   *
+   * @param[in] particle_properties Particle one properties.
+   * @param[in] effective_rolling_friction_coefficient Effective rolling
+   * friction coefficient.
+   * @param[in] effective_rolling_viscous_damping_coefficient Effective rolling
+   * viscous damping coefficient.
+   * @param[in] normal_force_norm Normal force norm.
+   * @param[in] dt DEM time step.
+   * @param[in] normal_spring_constant Normal spring constant.
+   * @param[in] normal_unit_vector Normal unit contact vector between the
+   * particle and the wall.
+   * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
+   * rolling resistance torque for the EPSD rolling resistance model.
    *
    * @return Rolling resistance torque
    */
@@ -166,16 +179,21 @@ private:
   }
 
   /**
-   * @brief Carries out calculation of the rolling resistance torque using the viscous model
+   * @brief Calculation of the rolling resistance torque model using the
+   * physical properties and the viscous model.
    *
-   * @param particle_properties Particle one properties.
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient.
-   * @param effective_rolling_viscous_damping_coefficient Effective rolling viscous damping coefficient.
-   * @param normal_force_norm Normal force norm.
-   * @param dt DEM time step.
-   * @param normal_spring_constant Normal spring constant.
-   * @param normal_unit_vector Normal unit contact vector between the particle and the wall.
-   * @param cumulative_rolling_resistance_spring_torque Cumulative rolling resistance torque for the EPSD rolling resistance model.
+   * @param[in] particle_properties Particle one properties.
+   * @param[in] effective_rolling_friction_coefficient Effective rolling
+   * friction coefficient.
+   * @param[in] effective_rolling_viscous_damping_coefficient Effective rolling
+   * viscous damping coefficient.
+   * @param[in] normal_force_norm Normal force norm.
+   * @param[in] dt DEM time step.
+   * @param[in] normal_spring_constant Normal spring constant.
+   * @param[in] normal_unit_vector Normal unit contact vector between the
+   * particle and the wall.
+   * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
+   * rolling resistance torque for the EPSD rolling resistance model.
    *
    * @return rolling resistance torque
    */
@@ -222,18 +240,23 @@ private:
   }
 
   /**
-   * @brief Carries out calculation of the rolling resistance torque using the  elastic-plastic spring-dashpot model
+   * @brief alculation of the rolling resistance torque model using the
+   * physical properties and the elastic-plastic spring-dashpot model
    *
-   * @param particle_properties Particle one properties.
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient.
-   * @param effective_rolling_viscous_damping_coefficient Effective rolling viscous damping coefficient.
-   * @param normal_force_norm Normal force norm.
-   * @param dt DEM time step.
-   * @param normal_spring_constant Normal spring constant.
-   * @param normal_unit_vector Normal unit contact vector between the particle and the wall.
-   * @param cumulative_rolling_resistance_spring_torque Cumulative rolling resistance torque for the EPSD rolling resistance model.
+   * @param[in] particle_properties Particle one properties.
+   * @param[in] effective_rolling_friction_coefficient Effective rolling
+   * friction coefficient.
+   * @param[in] effective_rolling_viscous_damping_coefficient Effective rolling
+   * viscous damping coefficient.
+   * @param[in] normal_force_norm Normal force norm.
+   * @param[in] dt DEM time step.
+   * @param[in] normal_spring_constant Normal spring constant.
+   * @param[in] normal_unit_vector Normal unit contact vector between the
+   * particle and the wall.
+   * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
+   * rolling resistance torque for the EPSD rolling resistance model.
    *
-   * @return rolling resistance torque
+   * @return Elasto-platique spring-dashpot rolling resistance torque
    */
   inline Tensor<1, 3>
   epsd_resistance(const ArrayView<const double> &particle_properties,
