@@ -326,15 +326,15 @@ private:
     else
       {
         // Total inertia of particle i evaluated at its surface. Mass of the
-        // wall is considered infinite, thus I_i is equal to I_r. (Effective
+        // wall is considered infinite, thus I_i is equal to I_e. (Effective
         // inertia)
-        const double I_r = 1.4 * particle_properties[PropertiesIndex::mass] *
+        const double I_e = 1.4 * particle_properties[PropertiesIndex::mass] *
                            Utilities::fixed_power<2>(
                              0.5 * particle_properties[PropertiesIndex::dp]);
 
         // C_r_crit = 2. * sqrt(I_r * K_r)
         const double C_r =
-          effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_r * K_r);
+          effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
 
         return cumulative_rolling_resistance_spring_torque -
                C_r * omega_ij_perpendicular;

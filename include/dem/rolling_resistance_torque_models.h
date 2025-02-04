@@ -210,7 +210,6 @@ epsd_rolling_resistance_torque(
   }();
 
   // Update the spring torque
-  // -= has been verified
   cumulative_rolling_resistance_spring_torque -= K_r * delta_theta;
 
   // Limiting spring torque
@@ -232,30 +231,24 @@ epsd_rolling_resistance_torque(
       // discrete element simulations. Jun Ai et al."  is equal to zero.
       //
       // This way, the damping is only active when the angular relative
-      // velocity is low, which help to damp the oscillation in a static
-      // problem.
+      // velocity is low, which help to damp the oscillation when reaching a
+      // static solution.
 
       return cumulative_rolling_resistance_spring_torque;
     }
   else
     {
-      // m_i times (R_i)^2
-      const double m_R_square_i =
-        particle_one_properties[PropertiesIndex::mass] *
-        Utilities::fixed_power<2>(0.5 *
-                                  particle_one_properties[PropertiesIndex::dp]);
+      // 1.4 * m_i * (R_i)^2
+      // Total inertia of particle i evaluated at the contact point.
+      const double I_i = 1.4 * particle_one_properties[PropertiesIndex::mass] *
+                         Utilities::fixed_power<2>(
+                           0.5 * particle_one_properties[PropertiesIndex::dp]);
 
-      // Total inertia of particle i evaluated at its surface
-      const double I_i = 1.4 * m_R_square_i;
-
-      // m_j times (R_j)^2
-      const double m_R_square_j =
-        particle_two_properties[PropertiesIndex::mass] *
-        Utilities::fixed_power<2>(0.5 *
-                                  particle_two_properties[PropertiesIndex::dp]);
-
-      // Total inertia of particle j evaluated at its surface
-      const double I_j = 1.4 * m_R_square_j;
+      // 1.4 * m_j * (R_j)^2
+      // Total inertia of particle jevaluated at the contact point.
+      const double I_j = 1.4 * particle_two_properties[PropertiesIndex::mass] *
+                         Utilities::fixed_power<2>(
+                           0.5 * particle_two_properties[PropertiesIndex::dp]);
 
       // Harmonic mean of the inertia at the point of contact. (Effective
       // inertia)
@@ -264,7 +257,6 @@ epsd_rolling_resistance_torque(
       // C_r_crit = 2. * sqrt(I_r * K_r)
       const double C_r =
         effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
-
 
       // Minus sign has been verified
       return cumulative_rolling_resistance_spring_torque -
