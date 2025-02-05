@@ -362,7 +362,7 @@ private:
 
   // Parameters
   const SimulationParameters<dim>
-    &simulation_parameters; // TODO AA check what parameters are necessary
+    &simulation_parameters;
 
   // To output algebraic reinitialization steps
   PVDHandler pvdhandler;

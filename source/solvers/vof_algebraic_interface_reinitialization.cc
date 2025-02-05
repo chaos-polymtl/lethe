@@ -607,7 +607,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
     initial_step ? this->nonzero_constraints : this->zero_constraints;
 
   const bool verbose(
-    this->subequation_verbosity != Parameters::Verbosity::quiet &&
+    this->subequation_verbosity == Parameters::Verbosity::extra_verbose &&
     this->linear_solver_verbosity != Parameters::Verbosity::quiet);
 
   // Get residual conditions
@@ -686,9 +686,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
 {
   // Compute time-step
   this->current_time_step = compute_time_step();
-  this->pcout << "\n"
-              << "Current algebraic reinitialization time-step: "
-              << this->current_time_step << std::endl;
+  if (this->subequation_verbosity != Parameters::Verbosity::quiet)
+    this->pcout << "\n"
+                << "Current algebraic reinitialization time-step: "
+                << this->current_time_step << std::endl;
 
   double current_time_step_inv = 1. / this->current_time_step;
   this->time_step_vector[0]    = this->current_time_step;
@@ -714,7 +715,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
       this->pcout << "-Solving " << subequation_string << ", step " << step - 1
                   << ":" << std::endl;
     }
-  this->solve_non_linear_system(true);
+  this->solve_non_linear_system(false);
 
   // For debugging purposes
   if (this->simulation_parameters.multiphysics.vof_parameters
@@ -784,20 +785,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
   // Attach solution data to DataOut object
   data_out.attach_dof_handler(this->dof_handler);
   data_out.add_data_vector(this->present_solution, "reinit_phase_fraction");
-  data_out.add_data_vector(this->previous_solution,
-                           "previous_reinit_phase_fraction");
-
   data_out.add_data_vector(
     *this->multiphysics_interface->get_dof_handler(PhysicsID::VOF),
     *this->multiphysics_interface->get_solution(PhysicsID::VOF),
     "vof_phase_fraction",
     data_component_interpretation);
-  data_out.add_data_vector(
-    *this->multiphysics_interface->get_dof_handler(PhysicsID::VOF),
-    *this->multiphysics_interface->get_filtered_solution(PhysicsID::VOF),
-    "vof_filtered_phase_fraction",
-    data_component_interpretation);
-
   std::vector<std::string> vof_gradient_solution_names(dim,
                                                        "vof_phase_gradient");
   data_out.add_data_vector(*this->subequations_interface->get_dof_handler(
@@ -806,7 +798,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
                              VOFSubequationsID::phase_gradient_projection),
                            vof_gradient_solution_names,
                            vector_data_component_interpretation);
-
   data_out.add_data_vector(*this->subequations_interface->get_dof_handler(
                              VOFSubequationsID::curvature_projection),
                            *this->subequations_interface->get_solution(

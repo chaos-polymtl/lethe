@@ -38,6 +38,18 @@ The default values of the VOF parameters are given in the text box below.
       set monitored fluid         = fluid 1
     end
 
+    subsection algebraic interface reinitialization
+      set enable                        = false
+      set output reinitialization steps = false
+      set frequency                     = 1
+      set steady-state criterion        = 1e-2
+      set max steps number              = 5
+      set diffusivity multiplier        = 1
+      set diffusivity power             = 1
+      set reinitialization CFL          = 1
+      set verbosity                     = verbose
+    end
+
     subsection phase filtration
       set type      = none
       set verbosity = quiet
@@ -71,7 +83,7 @@ The default values of the VOF parameters are given in the text box below.
 Interface Sharpening
 ~~~~~~~~~~~~~~~~~~~~~
 
-* ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is refered to the Interface sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this sharpening method.
+* ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is referred to the Interface sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this sharpening method.
 
   * ``enable``: controls if interface sharpening is enabled.
   * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).  
@@ -110,10 +122,71 @@ Interface Sharpening
     The :doc:`../../examples/multiphysics/dam-break/dam-break` example discussed the interface sharperning mechanism.
 
 
+
+Algebraic Interface Reinitialization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* ``subsection algebraic interface reinitialization``: defines parameters used to reinitialize the interface in VOF simulations. Alike the interface sharpening, this aims to reduce numerical smudging of the phase fraction and redefine the interface more compactly.
+
+  .. note::
+    A subsection on algebraic interface reinitialization will be added shortly to the :doc:`Volume of Fluid (VOF) Method<../../../theory/multiphase/cfd/vof>` theory guide for additional details on this method.
+
+  * ``enable``: enable the algebraic interface reinitialization.
+
+  * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps of the last simulated VOF time-step. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
+
+    Outputted quantities of interest are:
+      * Reinitialized phase fraction scalar-field (``reinit_phase_fraction``);
+      * VOF phase fraction scalar-field (``vof_phase_fraction``);
+      * VOF projected phase gradient vector-field (``vof_phase_gradient``) and;
+      * VOF projected curvature scalar-field (``vof_curvature``).
+
+    .. tip::
+      This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.
+
+  * ``frequency``: integer used to indicate the frequency at which the algebraic interface reinitialization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be reinitialization once every :math:`2` time-steps.
+
+  The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
+
+  * ``steady-state criterion``: double representing one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance to the reach of steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
+
+    .. math::
+     \alpha_\text{ss} \geq \frac{\phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau}}{\Delta \tau}
+
+  * ``max steps number``: integer indicating the maximum number of interface reinitialization steps that can be applied before the process ends.
+
+  The algebraic interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient :math:`(\varepsilon)` given by:
+
+  .. math::
+    \varepsilon = C h_\text{min}^d
+
+  * ``diffusivity multiplier``: double representing the constant :math:`(C)` multiplying the smallest cell-size value :math:`(h_\text{min})` in the evaluation of the diffusion coefficient of the PDE.
+
+  * ``diffusivity power``: double representing the power :math:`(d)` to which the smallest cell-size value :math:`(h_\text{min})` is elevated in the evaluation of the diffusion coefficient of the PDE.
+
+  * ``reinitialization CFL``: double representing the CFL condition of the interface reinitialization process. This is used to evaluate the time-step :math:`(\Delta\tau)`.
+
+    .. math::
+      \Delta \tau = C_\text{CFL} \, h_\text{min}
+
+    where :math:`C_\text{CFL}` is the imposed CFL condition and :math:`h_\text{min}` is the size of the smallest cell.
+
+  * ``verbosity``: enables the display of the solving process of the algebraic interface reinitialization. The different level of verbosity are:
+
+    * ``quiet``: no information on the algebraic interface reinitialization process is displayed.
+
+      .. warning::
+        As the verbosity of the algebraic interface reinitialization depends on the verbosity of VOF solvers, some prints may remain if they are set to ``verbose``.
+
+    * ``verbose``: default verbosity level; displays reinitialization steps progression. Only indicates the details of the non-linear iterations if the VOF non-linear solver is set to ``verbose``.
+
+    * ``extra verbose``: displays the details of the linear iterations if the VOF linear solver is set to ``verbose``. It also displays the steady-state criterion progression trough reinitialization steps. This may be used for debugging purposes.
+
+
 Phase Filtration
 ~~~~~~~~~~~~~~~~~~
 
-* ``subsection phase filtration``: This subsection defines the filter applied to the phase fraction. This affects the definition of the interface.
+* ``subsection phase filtration``: defines the filter applied to the phase fraction. This affects the definition of the interface.
 
 * ``type``: defines the filter type, either ``none`` or ``tanh``
 

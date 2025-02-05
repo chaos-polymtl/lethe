@@ -92,7 +92,6 @@ public:
     this->subequations.find(subequation_id)->second->setup_dofs();
   };
 
-  // TODO AA ERASE maybe ?
   /**
    * @brief Call solving method of active subequations.
    *

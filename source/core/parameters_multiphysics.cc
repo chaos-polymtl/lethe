@@ -475,11 +475,11 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
                       "Maximum number of reinitialization steps.");
     prm.declare_entry(
       "verbosity",
-      "quiet",
-      Patterns::Selection("quiet|verbose"),
+      "verbose",
+      Patterns::Selection("quiet|verbose|extra verbose"),
       "States whether the output from the algebraic interface reinitialization "
       "should be printed."
-      "Choices are <quiet|verbose>.");
+      "Choices are <quiet|verbose|extra verbose>.");
     prm.declare_entry(
       "reinitialization CFL",
       "1.",
@@ -507,10 +507,12 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
     max_steps_number           = prm.get_integer("max steps number");
 
     const std::string op2 = prm.get("verbosity");
-    if (op2 == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (op2 == "quiet")
+    if (op2 == "quiet")
       verbosity = Parameters::Verbosity::quiet;
+    else if (op2 == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (op2 == "extra verbose")
+      verbosity = Parameters::Verbosity::extra_verbose;
     else
       throw(std::runtime_error("Invalid verbosity level"));
   }
