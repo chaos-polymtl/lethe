@@ -16,9 +16,9 @@ TracerReactionConstantModel::model_cast(
         .tracer_reaction_constant_inside,
       material_properties.immersed_solid_tanh_parameters.thickness);
   else if (material_properties.tracer_reaction_constant_model ==
-           Parameters::Material::TracerReactionConstantModel::none)
-    return std::make_shared<NoneTracerReactionConstant>();
-  else
+           Parameters::Material::TracerReactionConstantModel::constant)
     return std::make_shared<ConstantTracerReactionConstant>(
       material_properties.tracer_reaction_constant);
+  else
+    return std::make_shared<NoneTracerReactionConstant>();
 }
