@@ -16,7 +16,6 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
     # Tracer
     set tracer                          = false
-    set first order reaction            = false
 
     # Multiphase flow
     # Volume of Fluid method
@@ -45,9 +44,6 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
   The heat transfer solver is used in the example :doc:`../../examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid`.
 
 * The ``tracer`` parameter adds a passive tracer auxiliary physics. This is an advection-diffusion equation.
-
-  When ``set tracer = true``, this optional parameter can be used:
-   * ``first order reaction``: controls if a first order reaction is taken into account in the tracer equation.
 
 .. seealso::
 
