@@ -281,19 +281,19 @@ public:
 };
 
 /**
- * @brief Class that assembles the first order reaction source term of the Tracer equation.
+ * @brief Class that assembles the reaction source term of the Tracer equation.
  * It assembles the term:
- * \f$ S = - R \= k T \f$
+ * \f$ S = - R \= - k T^a \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
  */
 template <int dim>
-class TracerAssemblerFirstOrder : public TracerAssemblerBase<dim>
+class TracerAssemblerReaction : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerFirstOrder(
+  TracerAssemblerReaction(
     const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}

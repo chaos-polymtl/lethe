@@ -432,8 +432,10 @@ namespace Parameters
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 
-    // first order reaction constant in 1/s
+    // tracer reaction constant in 1/s^[order]
     double tracer_reaction_constant;
+    // tracer reaction order
+    double tracer_reaction_order;
 
     // Phase change parameters
     PhaseChange phase_change_parameters;
