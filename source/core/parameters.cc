@@ -1292,7 +1292,7 @@ namespace Parameters
       else
         tracer_reaction_constant_model = TracerReactionConstantModel::constant;
       tracer_reaction_constant = prm.get_double("tracer reaction constant");
-      // First order reaction constant is in T^-1
+      // Reaction constant for a first order reaction is in T^-1
       tracer_reaction_constant *= dimensions.reaction_constant_scaling;
 
       // Parsing of the immersed solids models parameters

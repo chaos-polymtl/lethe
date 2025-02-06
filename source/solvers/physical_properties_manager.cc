@@ -143,7 +143,7 @@ PhysicalPropertiesManager::initialize(
         *tracer_diffusivity[s + number_of_fluids]);
 
       tracer_reaction_constant.push_back(
-        TracerReactionConstantModel::model_cast(physical_properties.fluids[s]));
+        TracerReactionConstantModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(
         *tracer_reaction_constant[s + number_of_fluids]);
 
