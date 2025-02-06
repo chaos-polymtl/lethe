@@ -482,6 +482,7 @@ namespace Parameters
 
     enum class TracerReactionConstantModel
     {
+      none,
       constant,
       immersed_boundary_tanh
     } tracer_reaction_constant_model;

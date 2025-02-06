@@ -1089,9 +1089,9 @@ namespace Parameters
       prm.declare_entry(
         "tracer reaction constant model",
         "constant",
-        Patterns::Selection("constant|immersed solid tanh"),
+        Patterns::Selection("none|constant|immersed solid tanh"),
         "Model used for the calculation of the tracer reaction constant"
-        "Choices are <constant|immersed solid tanh>.");
+        "Choices are <none|constant|immersed solid tanh>.");
 
       prm.declare_entry(
         "tracer reaction constant",
@@ -1281,7 +1281,9 @@ namespace Parameters
       // Tracer reaction constant
       //-------------------
       op = prm.get("tracer reaction constant model");
-      if (op == "immersed solid tanh")
+      if (op == "none")
+        tracer_reaction_constant_model = TracerReactionConstantModel::none;
+      else if (op == "immersed solid tanh")
         tracer_reaction_constant_model =
           TracerReactionConstantModel::immersed_boundary_tanh;
       else

@@ -25,6 +25,56 @@ public:
 
 
 /**
+ * @brief None tracer reaction constant mode. This class is dummy.
+ */
+class NoneTracerReactionConstant : public TracerReactionConstantModel
+{
+public:
+  /**
+   * @brief Default constructor
+   */
+  NoneTracerReactionConstant()
+  {}
+
+  /**
+   * @brief Function of dummy class.
+   */
+  double
+  value(const std::map<field, double> & /*fields_value*/) override
+  {
+    return 0.;
+  };
+
+  /**
+   * @brief Function of dummy class.
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+               std::vector<double> &/*property_vector*/) override
+  {  }
+
+  /**
+   * @brief Function of dummy class.
+   */
+  double
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
+  {
+    return 0;
+  };
+
+  /**
+   * @brief Function of dummy class.
+   */
+  void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &/*jacobian_vector*/) override
+  {  };
+};
+
+/**
  * @brief Constant tracer reaction constant.
  */
 class ConstantTracerReactionConstant : public TracerReactionConstantModel
