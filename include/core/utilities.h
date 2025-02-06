@@ -391,7 +391,7 @@ void
 create_output_folder(const std::string &dirname);
 
 /**
- * @brief Deletes the output folder and its content.
+ * @brief Delete the output folder and its content.
  *
  * @param[in] dirname Output directory name.
  */

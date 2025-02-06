@@ -384,10 +384,10 @@ private:
           << steady_state_criterion << std::endl;
       }
 
-    return ((stop_criterion > steady_state_criterion) &&
-            (step_number + 1 <
-             this->simulation_parameters.multiphysics.vof_parameters
-               .algebraic_interface_reinitialization.max_steps_number));
+    return (
+      (stop_criterion > steady_state_criterion) &&
+      (step_number < this->simulation_parameters.multiphysics.vof_parameters
+                       .algebraic_interface_reinitialization.max_steps_number));
   }
 
   const VOFSubequationsID        subequation_id;

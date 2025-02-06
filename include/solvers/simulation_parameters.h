@@ -487,7 +487,7 @@ private:
                                             "tracer",
                                             "VOF",
                                             "cahn hilliard"};
-  // Names of subequations within physics that goes inherits from PhysicsSolver
+  // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
     "VOF algebraic interface reinitialization"};
 };

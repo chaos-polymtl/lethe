@@ -127,7 +127,7 @@ namespace Parameters
   };
 
   /**
-   * @brief Defines the parameters for the calculation of surface tension
+   * @brief Parameters for the calculation of surface tension
    * force in the VOF solver.
    */
   struct VOF_SurfaceTensionForce
@@ -152,7 +152,7 @@ namespace Parameters
   };
 
   /**
-   * @brief Defines the parameters for the phase filtration
+   * @brief Parameters for the phase filtration
    */
   struct VOF_PhaseFilter
   {
@@ -172,7 +172,7 @@ namespace Parameters
   };
 
   /**
-   * @brief Defines parameters for algebraic reinitialization of the interface
+   * @brief Parameters for algebraic reinitialization of the interface
    * used with the VOF solver.
    */
   struct VOF_AlgebraicInterfaceReinitialization
