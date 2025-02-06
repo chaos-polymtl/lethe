@@ -1102,7 +1102,7 @@ namespace Parameters
 
       prm.declare_entry(
         "tracer reaction order",
-        "0",
+        "1",
         Patterns::Double(),
         "Tracer reaction order for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));

@@ -38,7 +38,7 @@ Physical Properties
       # Tracer reaction
       set tracer reaction constant model = none
       set tracer reaction constant       = 0
-      set tracer reaction order          = 0
+      set tracer reaction order          = 1
     end
 
     set number of solids = 0
