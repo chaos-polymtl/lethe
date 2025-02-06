@@ -147,13 +147,13 @@ private:
 };
 
 /**
- * @brief Reaction constant that depends on the levelset
+ * @brief Reaction constant that depends on the level set
  */
 class TanhLevelsetTracerReactionConstant : public TracerReactionConstantModel
 {
 public:
   /**
-   * @brief Constructor of the levelset-dependent reaction constant model.
+   * @brief Constructor of the level set-dependent reaction constant model.
    *
    * @param[in] p_tracer_reaction_constant_outside Reaction constant outside the
    * solid
@@ -180,7 +180,7 @@ public:
    * @brief Compute the reaction constant.
    *
    * @param[in] field_values Values of the various fields on which the property
-   * may depend. In this case, the reaction constant depends on the levelset.
+   * may depend. In this case, the reaction constant depends on the level set.
    * The map stores a single value per field.
    *
    * @return Value of the reaction constant computed with the @p field_values.
@@ -202,7 +202,7 @@ public:
    *
    * @param[in] field_vectors Vectors of the fields on which the reaction
    * constant may depend. In this case, the reaction constant depends on the
-   * levelset. The map stores a vector of values per field.
+   * level set. The map stores a vector of values per field.
    *
    * @param[out] property_vector Vectors of computed reaction constants.
    */
