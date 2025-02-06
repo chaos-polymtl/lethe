@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-10
+
+### Added
+
+- MINOR To improve VOF interface definition through simulations, a new algebraic interface reinitialization process was added. To reinitialize the interface, a non-linear PDE is solved. Since all previous added subequations were linear, a new class for non-linear subequations was added, namely PhysicsNonlinearSubequationsSolver. This class inherits from PhysicsSolver and follows the same solving algorithm as other non-linear equations solved in Lethe. The algebraic reinitialization PDE is integrated to the VOFSubequationsInterface.[#1416](https://github.com/chaos-polymtl/lethe/pull/1416)
+
 ## [Master] - 2025-02-09
 
 ### Fixed
