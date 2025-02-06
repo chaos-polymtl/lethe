@@ -12,7 +12,7 @@
 #include <core/thermal_conductivity_model.h>
 #include <core/thermal_expansion_model.h>
 #include <core/tracer_diffusivity_model.h>
-#include <core/tracer_reaction_constant_model.h>
+#include <core/tracer_reaction_model.h>
 
 using namespace dealii;
 
