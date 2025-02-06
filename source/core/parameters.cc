@@ -1097,7 +1097,14 @@ namespace Parameters
         "tracer reaction constant",
         "0",
         Patterns::Double(),
-        "Tracer first order reaction constant for the fluid corresponding to Phase = " +
+        "Tracer reaction constant for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+
+      prm.declare_entry(
+        "tracer reaction order",
+        "0",
+        Patterns::Double(),
+        "Tracer reaction order for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
       // Declaration of the immersed solids models parameters
@@ -1289,6 +1296,7 @@ namespace Parameters
       else
         tracer_reaction_constant_model = TracerReactionConstantModel::constant;
       tracer_reaction_constant = prm.get_double("tracer reaction constant");
+      tracer_reaction_order    = prm.get_double("tracer reaction order");
 
       // Parsing of the immersed solids models parameters
       immersed_solid_tanh_parameters.parse_parameters(prm, dimensions);

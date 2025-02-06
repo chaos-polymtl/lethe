@@ -79,6 +79,8 @@ TracerScratchData<dim>::calculate_physical_properties()
             properties_manager.get_tracer_reaction_constant();
           reaction_constant_model->vector_value(fields,
                                                 tracer_reaction_constant);
+          tracer_reaction_order =
+            properties_manager.get_tracer_reaction_order();
           break;
         }
       case 2:

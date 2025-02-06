@@ -35,9 +35,10 @@ Physical Properties
       set tracer diffusivity model = constant
       set tracer diffusivity       = 0
 
-      # Tracer reaction constant
-      set tracer reaction constant model = constant
+      # Tracer reaction
+      set tracer reaction constant model = none
       set tracer reaction constant       = 0
+      set tracer reaction order          = 0
     end
 
     set number of solids = 0
@@ -113,9 +114,11 @@ Physical Properties
 
 * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
-* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant (used only for first order reactions). At the moment, a constant tracer reaction constant and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_).
+* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant. At the moment, a constant tracer reaction constant and level set based :math:`\tanh` model are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``>. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_).
 
-* The ``tracer reaction constant`` parameter is the reaction constant coefficient of the tracer in units of :math:`\text{Time}^{-1}` . In SI, this is :math:`\text{s}^{-1}`.
+* The ``tracer reaction constant`` parameter is the reaction constant coefficient of the tracer in units of :math:`\text{Concentration}^{1-[\text{order}]}\text{Time}^{-[\text{order}]}` . In SI, this is :math:`(\text{m}^{\text{dim}}\text{g}^{-1})^{1-[\text{order}]} \text{s}^{-[\text{order}]}`.
+
+* The ``tracer reaction order`` parameter is the reaction order of the tracer.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
@@ -244,7 +247,7 @@ Immersed solid models can be used to affect specific behavior to immersed solids
 
 The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. The intent behind these models is to define physical properties in the fluid and solid phases as well as in the transition regions.
 
-The ``tracer diffusivity model`` and ``tracer reaction constant model`` parameters set which models are used. The default models are ``constant``, which use constant ``tracer diffusivity`` and ``tracer reaction constant``. The alternative is ``immersed solid tanh``, whose parameters are defined as such, with :math:`D` being the tracer property (outside and inside), :math:`\lambda` being signed distance and :math:`t` the thickness of the transition zone between both property values:
+The ``tracer diffusivity model`` and ``tracer reaction constant model`` parameters set which models are used. The default models are ``constant``, which use constant ``tracer diffusivity`` and ``tracer reaction constant``. The equation of the ``immersed solid tanh`` model is defined as follows. :math:`D` is the tracer property (outside and inside), :math:`\lambda` is the signed distance and :math:`t` the thickness of the transition zone between both property values:
 
 .. math::
 

@@ -99,6 +99,9 @@ PhysicalPropertiesManager::initialize(
         TracerReactionConstantModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*tracer_reaction_constant[f]);
 
+      tracer_reaction_order.push_back(
+        physical_properties.fluids[f].tracer_reaction_order);
+
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*thermal_expansion[f]);
@@ -146,6 +149,9 @@ PhysicalPropertiesManager::initialize(
         TracerReactionConstantModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(
         *tracer_reaction_constant[s + number_of_fluids]);
+
+      tracer_reaction_order.push_back(
+        physical_properties.fluids[s].tracer_reaction_order);
 
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.solids[s]));

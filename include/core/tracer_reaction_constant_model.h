@@ -50,8 +50,8 @@ public:
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
-               std::vector<double> &/*property_vector*/) override
-  {  }
+               std::vector<double> & /*property_vector*/) override
+  {}
 
   /**
    * @brief Function of dummy class.
@@ -70,8 +70,7 @@ public:
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
-    std::vector<double> &/*jacobian_vector*/) override
-  {  };
+    std::vector<double> & /*jacobian_vector*/) override{};
 };
 
 /**

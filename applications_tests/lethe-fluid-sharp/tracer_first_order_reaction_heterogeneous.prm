@@ -99,6 +99,7 @@ subsection physical properties
   subsection fluid 0
     set tracer diffusivity model       = immersed solid tanh
     set tracer reaction constant model = immersed solid tanh
+    set tracer reaction order          = 1
     subsection immersed solid tanh
       set tracer diffusivity inside        = 0.001
       set tracer diffusivity outside       = 0.1

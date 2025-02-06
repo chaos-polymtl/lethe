@@ -162,6 +162,13 @@ public:
     return tracer_reaction_constant[calculate_global_id(fluid_id, material_id)];
   }
 
+  double
+  get_tracer_reaction_order(const unsigned int fluid_id    = 0,
+                            const unsigned int material_id = 0) const
+  {
+    return tracer_reaction_order[calculate_global_id(fluid_id, material_id)];
+  }
+
   std::shared_ptr<SurfaceTensionModel>
   get_surface_tension(const unsigned int material_interaction_id = 0) const
   {
@@ -370,6 +377,7 @@ private:
   std::vector<std::shared_ptr<TracerDiffusivityModel>>   tracer_diffusivity;
   std::vector<std::shared_ptr<TracerReactionConstantModel>>
                                                     tracer_reaction_constant;
+  std::vector<double>                               tracer_reaction_order;
   std::vector<std::shared_ptr<SurfaceTensionModel>> surface_tension;
   std::vector<std::shared_ptr<MobilityCahnHilliardModel>>
                                        mobility_cahn_hilliard;
