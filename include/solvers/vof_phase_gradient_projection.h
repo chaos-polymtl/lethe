@@ -42,10 +42,13 @@ public:
     : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::phase_gradient_projection,
         p_simulation_parameters,
-        p_simulation_parameters.multiphysics.vof_parameters
-          .surface_tension_force
-          .verbosity, // TODO AA Change verbosity parameter to account for
-                      // algebraic reinitialization also
+        ((p_simulation_parameters.multiphysics.vof_parameters
+            .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
+         (p_simulation_parameters.multiphysics.vof_parameters
+            .algebraic_interface_reinitialization.verbosity !=
+          Parameters::Verbosity::quiet)) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet,
         p_pcout,
         p_triangulation,
         p_multiphysics_interface,

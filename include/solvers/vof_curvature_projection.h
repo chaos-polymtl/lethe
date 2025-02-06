@@ -41,8 +41,13 @@ public:
     : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::curvature_projection,
         p_simulation_parameters,
-        p_simulation_parameters.multiphysics.vof_parameters
-          .surface_tension_force.verbosity,
+        ((p_simulation_parameters.multiphysics.vof_parameters
+            .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
+         (p_simulation_parameters.multiphysics.vof_parameters
+            .algebraic_interface_reinitialization.verbosity !=
+          Parameters::Verbosity::quiet)) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet,
         p_pcout,
         p_triangulation,
         p_multiphysics_interface,

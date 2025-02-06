@@ -280,6 +280,12 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   const double h_min                   = identify_minimum_cell_size();
   const double diffusivity_coefficient = compute_diffusivity(h_min);
 
+  // BDF coefficients for pseudo time-stepping
+  const Parameters::SimulationControl::TimeSteppingMethod method =
+    Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+  const Vector<double> bdf_coefficient_vector =
+    calculate_bdf_coefficients(method, this->time_step_vector);
+
   // Assemble system matrix
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -323,12 +329,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
 
           // Set tolerance to avoid division by zero
           const double tolerance = 1e-12;
-
-          // BDF coefficients for pseudo time-stepping
-          const Parameters::SimulationControl::TimeSteppingMethod method =
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-          const Vector<double> bdf_coefficient_vector =
-            calculate_bdf_coefficients(method, this->time_step_vector);
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -464,6 +464,12 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   const double h_min                   = identify_minimum_cell_size();
   const double diffusivity_coefficient = compute_diffusivity(h_min);
 
+  // BDF coefficients for pseudo time-stepping
+  const Parameters::SimulationControl::TimeSteppingMethod method =
+    Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+  const Vector<double> bdf_coefficient_vector =
+    calculate_bdf_coefficients(method, this->time_step_vector);
+
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -514,13 +520,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
 
           // Set tolerance to avoid division by zero
           const double tolerance = 1e-12;
-
-          // BDF coefficients for pseudo time-stepping // TODO AA move outside
-          // also in matrix
-          const Parameters::SimulationControl::TimeSteppingMethod method =
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-          const Vector<double> bdf_coefficient_vector =
-            calculate_bdf_coefficients(method, this->time_step_vector);
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -607,15 +606,19 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
     initial_step ? this->nonzero_constraints : this->zero_constraints;
 
   const bool verbose(
-    this->subequation_verbosity == Parameters::Verbosity::extra_verbose &&
-    this->linear_solver_verbosity != Parameters::Verbosity::quiet);
+    this->subequation_verbosity != Parameters::Verbosity::quiet &&
+    this->simulation_parameters.vof_subequations_linear_solvers
+        .at(VOFSubequationsID::algebraic_interface_reinitialization)
+        .verbosity != Parameters::Verbosity::quiet);
 
   // Get residual conditions
   const double absolute_residual =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    this->simulation_parameters.vof_subequations_linear_solvers
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .minimum_residual;
   const double relative_residual =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    this->simulation_parameters.vof_subequations_linear_solvers
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .relative_residual;
 
   // Set linear solver tolerance
@@ -630,13 +633,16 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
 
   // ILU preconditioner
   const double ilu_fill =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    this->simulation_parameters.vof_subequations_linear_solvers
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .ilu_precond_fill;
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    this->simulation_parameters.vof_subequations_linear_solvers
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .ilu_precond_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    this->simulation_parameters.vof_subequations_linear_solvers
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -649,14 +655,17 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
                                                    mpi_communicator);
 
   SolverControl solver_control(
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
+    this->simulation_parameters.vof_subequations_linear_solvers
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
+      .max_iterations,
     linear_solver_tolerance,
     true,
     true);
 
   TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
     false,
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    this->simulation_parameters.vof_subequations_linear_solvers
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .max_krylov_vectors);
 
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
@@ -686,18 +695,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
 {
   // Compute time-step
   this->current_time_step = compute_time_step();
-  if (this->subequation_verbosity != Parameters::Verbosity::quiet)
-    this->pcout << "\n"
-                << "Current algebraic reinitialization time-step: "
-                << this->current_time_step << std::endl;
 
   double current_time_step_inv = 1. / this->current_time_step;
   this->time_step_vector[0]    = this->current_time_step;
-
-  // Get the stop criterion of the pseudo-time-stepping scheme
-  double steady_state_criterion =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .algebraic_interface_reinitialization.steady_state_criterion;
 
   // Set initial conditions from the VOF solution
   set_initial_conditions();
@@ -705,15 +705,28 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
   // Reinitialization steps counter
   unsigned int step = 1;
 
+  // Define verbosity
+  const bool verbose(
+    this->subequation_verbosity != Parameters::Verbosity::quiet ||
+    this->simulation_parameters.vof_subequations_non_linear_solvers
+        .at(VOFSubequationsID::algebraic_interface_reinitialization)
+        .verbosity != Parameters::Verbosity::quiet);
+
+
   // Solve a first time-step
-  if (this->subequation_verbosity != Parameters::Verbosity::quiet)
+  if (verbose)
     {
       std::string subequation_string =
         this->subequations_interface->get_subequation_string(
           this->subequation_id);
 
+      announce_string(this->pcout, "VOF algebraic interface reinitialization");
+
+      this->pcout << "Current algebraic reinitialization time-step: "
+                  << this->current_time_step << std::endl;
+
       this->pcout << "-Solving " << subequation_string << ", step " << step - 1
-                  << ":" << std::endl;
+                  << std::endl;
     }
   this->solve_non_linear_system(false);
 
@@ -723,8 +736,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
     write_output_results(step);
 
   // Iterate until a stop criterion is met
-  while (
-    continue_iterating(current_time_step_inv, steady_state_criterion, step))
+  while (continue_iterating(current_time_step_inv, step))
     {
       step += 1;
 
@@ -733,17 +745,17 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
       this->previous_local_evaluation_point = this->local_evaluation_point;
 
       // Update non-zero constraints
-      define_non_zero_constraints(); // TODO AA check if necessary
+      define_non_zero_constraints();
 
       // Solve non-linear equation
-      if (this->subequation_verbosity != Parameters::Verbosity::quiet)
+      if (verbose)
         {
           std::string subequation_string =
             this->subequations_interface->get_subequation_string(
               this->subequation_id);
 
           this->pcout << "-Solving " << subequation_string << ", step "
-                      << step - 1 << ":" << std::endl;
+                      << step - 1 << std::endl;
         }
       this->solve_non_linear_system(false);
 
@@ -753,8 +765,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
         write_output_results(step);
     }
 
-  if (this->subequation_verbosity != Parameters::Verbosity::quiet)
-    this->pcout << "The solver took: " << step << " reinitialization steps\n"
+  if (verbose)
+    this->pcout << "The solver took: " << step << " reinitialization steps"
                 << std::endl;
 }
 

@@ -47,7 +47,7 @@ The default values of the VOF parameters are given in the text box below.
       set diffusivity multiplier        = 1
       set diffusivity power             = 1
       set reinitialization CFL          = 1
-      set verbosity                     = verbose
+      set verbosity                     = quiet
     end
 
     subsection phase filtration
@@ -173,14 +173,14 @@ Algebraic Interface Reinitialization
 
   * ``verbosity``: enables the display of the solving process of the algebraic interface reinitialization. The different level of verbosity are:
 
-    * ``quiet``: no information on the algebraic interface reinitialization process is displayed.
+    * ``quiet``: default verbosity level; no information on the algebraic interface reinitialization process is displayed.
 
       .. warning::
-        As the verbosity of the algebraic interface reinitialization depends on the verbosity of VOF solvers, some prints may remain if they are set to ``verbose``.
+        As the verbosity of the algebraic interface reinitialization depends on the verbosity of the non-linear and linear solvers, some prints may remain if they are set to ``verbose``.
 
-    * ``verbose``: default verbosity level; displays reinitialization steps progression. Only indicates the details of the non-linear iterations if the VOF non-linear solver is set to ``verbose``.
+    * ``verbose``: displays reinitialization steps progression. Only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
-    * ``extra verbose``: displays the details of the linear iterations if the VOF linear solver is set to ``verbose``. It also displays the steady-state criterion progression trough reinitialization steps. This may be used for debugging purposes.
+    * ``extra verbose``: in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression trough reinitialization steps. This may be used for debugging purposes.
 
 
 Phase Filtration

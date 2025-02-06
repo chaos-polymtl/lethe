@@ -475,7 +475,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
                       "Maximum number of reinitialization steps.");
     prm.declare_entry(
       "verbosity",
-      "verbose",
+      "quiet",
       Patterns::Selection("quiet|verbose|extra verbose"),
       "States whether the output from the algebraic interface reinitialization "
       "should be printed."

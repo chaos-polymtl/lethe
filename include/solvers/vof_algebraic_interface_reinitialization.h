@@ -36,7 +36,6 @@ class VOFAlgebraicInterfaceReinitialization
 {
 public:
   /**
-   * TODO AA
    * @brief Constructor of the VOF algebraic interface reinitialization.
    *
    * @param[in] p_simulation_parameters Simulation parameters.
@@ -60,7 +59,8 @@ public:
     MultiphysicsInterface<dim>    *p_multiphysics_interface,
     VOFSubequationsInterface<dim> *p_subequations_interface)
     : PhysicsNonlinearSubequationsSolver<dim, GlobalVectorType>(
-        p_simulation_parameters.non_linear_solver.at(PhysicsID::VOF),
+        p_simulation_parameters.vof_subequations_non_linear_solvers.at(
+          VOFSubequationsID::algebraic_interface_reinitialization),
         p_pcout)
     , subequation_id(VOFSubequationsID::algebraic_interface_reinitialization)
     , subequations_interface(p_subequations_interface)
@@ -68,8 +68,6 @@ public:
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , dof_handler(*this->triangulation)
-    , linear_solver_verbosity(
-        p_simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity)
     , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
                               .algebraic_interface_reinitialization.verbosity)
   {
@@ -118,14 +116,10 @@ public:
   solve(const bool & /*is_post_mesh_adaptation = false*/) override;
 
   /**
-   * @brief Getter methods to get the private attributes for the physic currently solved
-   * NB : dof_handler and present_solution are passed to the multiphysics
-   * interface at the end of the setup_dofs method
-   */
-
-  /**
-   * TODO AA for all get methods
-   * @return
+   * @brief Getter method to access the private attribute evaluation_point for
+   * the subequation currently solved.
+   *
+   * @return The vector in which the evaluation is performed.
    */
   GlobalVectorType &
   get_evaluation_point() override
@@ -133,30 +127,63 @@ public:
     return this->evaluation_point;
   }
 
+  /**
+   * @brief Getter method to access the private attribute
+   * local_evaluation_point for the subequation currently solved.
+   *
+   * @return The local evaluation point. Ghosts cells are not considered in
+   * this evaluation.
+   */
   GlobalVectorType &
   get_local_evaluation_point() override
   {
     return this->local_evaluation_point;
   }
 
+  /**
+   * @brief Getter method to access the private attribute
+   * newton_update for the subequation currently solved.
+   *
+   * @return The direction used to perform the newton iteration.
+   */
   GlobalVectorType &
   get_newton_update() override
   {
     return this->newton_update;
   }
 
+  /**
+   * @brief Getter method to access the private attribute
+   * present_solution for the subequation currently solved.
+   *
+   * @return Vector containing all the values of the solution.
+   */
   GlobalVectorType &
   get_present_solution() override
   {
     return this->present_solution;
   }
 
+  /**
+   * @brief Getter method to access the private attribute
+   * system_rhs for the subequation currently solved.
+   *
+   * @return Right-hand side vector.
+   */
   GlobalVectorType &
   get_system_rhs() override
   {
     return this->system_rhs;
   }
 
+  /**
+   * @brief Getter method to access the private attribute
+   * nonzero_constraints for the subequation currently solved.
+   *
+   * @return Container of nonzero constraints that arise from several sources such
+   * as boundary conditions and hanging nodes in the mesh. See the deal.II
+   * documentation on constraints on degrees of freedom for more information.
+   */
   AffineConstraints<double> &
   get_nonzero_constraints() override
   {
@@ -321,32 +348,40 @@ private:
                       const bool renewed_matrix = true) override;
 
   /**
-   * TODO AA
-   * @param time_step_inv
-   * @param steady_state_criterion
-   * @return
+   * @brief Indicate if the algebraic reinitialization should continue by
+   * checking if at least one of the two stop criteria (steady-state criterion
+   * or maximum number of reinitialization steps) is met.
+   *
+   * @param time_step_inv Inverse of the current reinitialization time-step.
+   *
+   * @return Boolean indicating if the algebraic reinitialization should
+   * continue
    */
   inline bool
-  continue_iterating(const double       time_step_inv,
-                     const double       steady_state_criterion,
-                     const unsigned int step_number)
+  continue_iterating(const double time_step_inv, const unsigned int step_number)
   {
+    // Get the stop criterion of the pseudo-time-stepping scheme
+    double steady_state_criterion =
+      this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.steady_state_criterion;
+
+    // Evaluate the solution difference between the 2 last solutions
     auto solution_diff = local_evaluation_point;
     solution_diff -= previous_local_evaluation_point;
 
+    // Evaluate the current steady-state criterion value
     double stop_criterion = time_step_inv * solution_diff.l2_norm();
 
     if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
       {
-        this->pcout << " Algebraic reinitialization solution norm difference = "
+        this->pcout << "Algebraic reinitialization solution norm difference = "
                     << solution_diff.l2_norm() << std::endl;
         this->pcout
-          << " Algebraic reinitialization steady-state criterion value = "
+          << "Algebraic reinitialization steady-state criterion value = "
           << stop_criterion << std::endl;
         this->pcout
-          << " Algebraic reinitialization fixed steady-state criterion = "
-          << steady_state_criterion << "\n"
-          << std::endl;
+          << "Algebraic reinitialization fixed steady-state criterion = "
+          << steady_state_criterion << std::endl;
       }
 
     return ((stop_criterion > steady_state_criterion) &&
@@ -361,8 +396,7 @@ private:
     *multiphysics_interface; // To get VOF DoFHandler and solution
 
   // Parameters
-  const SimulationParameters<dim>
-    &simulation_parameters;
+  const SimulationParameters<dim> &simulation_parameters;
 
   // To output algebraic reinitialization steps
   PVDHandler pvdhandler;
@@ -395,7 +429,6 @@ private:
   TrilinosWrappers::SparseMatrix system_matrix;
 
   // Verbosity
-  const Parameters::Verbosity linear_solver_verbosity;
   const Parameters::Verbosity subequation_verbosity;
 };
 

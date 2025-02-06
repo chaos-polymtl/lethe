@@ -8,22 +8,9 @@
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
+#include <solvers/vof_subequations.h>
 
 using namespace dealii;
-
-
-/**
- * @brief IDs associated to the different subequations solved in Lethe.
- */
-enum class VOFSubequationsID : unsigned int
-{
-  /// VOF phase fraction gradient L2 projection
-  phase_gradient_projection = 0,
-  /// VOF curvature L2 projection
-  curvature_projection = 1,
-  /// VOF algebraic interface reinitialization
-  algebraic_interface_reinitialization = 2
-};
 
 
 /**

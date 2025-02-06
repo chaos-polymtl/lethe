@@ -94,6 +94,7 @@ add_library(lethe-solvers
   ../../include/solvers/vof_linear_subequations_solver.h
   ../../include/solvers/vof_phase_gradient_projection.h
   ../../include/solvers/vof_scratch_data.h
+  ../../include/solvers/vof_subequations.h
   ../../include/solvers/vof_subequations_interface.h
   )
 
