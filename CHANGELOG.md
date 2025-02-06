@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR In the tracer physics, a new feature is added that allows to take into account 1-species reaction. This feature works in CG or DG, with or without immersed solids. [#1411](https://github.com/chaos-polymtl/lethe/pull/1411)
+- MINOR In the tracer physics, a new feature is added that allows to take into account single species reaction. This feature works in CG or DG, with or without immersed solids. [#1411](https://github.com/chaos-polymtl/lethe/pull/1411)
 
 ## [Master] - 2025-02-20
 
