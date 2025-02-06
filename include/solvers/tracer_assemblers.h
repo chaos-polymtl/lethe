@@ -27,7 +27,7 @@ using TracerAssemblerBase =
 /**
  * @brief Class that assembles the core of the Tracer equation.
  * This class assembles the weak form of:
- * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 = S \f$ with an SUPG
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2T = S \f$ with an SUPG
  * stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -68,7 +68,7 @@ public:
 /**
  * @brief Class that assembles the core (cells) of the Tracer equation for DG elements.
  * This class assembles the weak form of:
- * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =S \f$
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2T =S \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -282,7 +282,7 @@ public:
 
 /**
  * @brief Class that assembles the first order reaction source term of the Tracer equation.
- * This class assembles the term:
+ * It assembles the term:
  * \f$ S = - R \= k T \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions

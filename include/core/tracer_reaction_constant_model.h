@@ -7,7 +7,7 @@
 #include <core/physical_property_model.h>
 
 /**
- * @brief Abstract class that allows to calculates the
+ * @brief Abstract class to calculate the
  * tracer reaction constant.
  */
 class TracerReactionConstantModel : public PhysicalPropertyModel
@@ -38,7 +38,7 @@ public:
   {}
 
   /**
-   * @brief value Calculates the tracer reaction constant
+   * @brief Calculate the tracer reaction constant
    * @param fields_value Value of the various fields on which the property may depend.
    * @return value of the physical property calculated with the fields_value
    */
@@ -49,7 +49,7 @@ public:
   };
 
   /**
-   * @brief vector_value Calculates the vector of tracer reaction constant.
+   * @brief Calculate the vector of tracer reaction constant.
    * @param field_vectors Vectors of the fields on which the reaction constant may depend.
    * @param property_vector Vectors of the tracer reaction constant values
    */
@@ -63,7 +63,7 @@ public:
   }
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the reaction constant with respect to a field
+   * @brief Calculate the jacobian (the partial derivative) of the reaction constant with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated.
@@ -78,7 +78,7 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculates the derivative of the tracer reaction constant with respect to a field.
+   * @brief Calculate the derivative of the tracer reaction constant with respect to a field.
    * @param field_vectors Vector for the values of the fields used to evaluate the property.
    * @param id Identifier of the field with respect to which a derivative should be calculated.
    * @param jacobian vector of the value of the derivative of the tracer reaction constant with respect to the field id.
@@ -111,7 +111,7 @@ public:
    * @param[in] p_tracer_reaction_constant_inside Reaction constant inside the
    * solid
    * @param[in] p_thickness Thickness of the tanh function used to smooth the
-   * property jump
+   * reaction constant jump between the inside and outside of the immersed solid.
    */
   TanhLevelsetTracerReactionConstant(
     const double p_tracer_reaction_constant_outside,
