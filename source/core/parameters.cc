@@ -425,20 +425,18 @@ namespace Parameters
                         "1.0",
                         Patterns::Double(),
                         "Tracer diffusivity inside the immersed solid");
-      prm.declare_entry(
-        "tracer diffusivity outside",
-        "1.0",
-        Patterns::Double(),
-        "Tracer diffusivity outside (or at the edge of) the immersed solid");
+      prm.declare_entry("tracer diffusivity outside",
+                        "1.0",
+                        Patterns::Double(),
+                        "Tracer diffusivity outside the immersed solid");
       prm.declare_entry("tracer reaction constant inside",
                         "0.0",
                         Patterns::Double(),
                         "Tracer reaction constant inside the immersed solid");
-      prm.declare_entry(
-        "tracer reaction constant outside",
-        "0.0",
-        Patterns::Double(),
-        "Tracer reaction constant outside (or at the edge of) the immersed solid");
+      prm.declare_entry("tracer reaction constant outside",
+                        "0.0",
+                        Patterns::Double(),
+                        "Tracer reaction constant outside the immersed solid");
       prm.declare_entry("thickness",
                         "1.0",
                         Patterns::Double(),
