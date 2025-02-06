@@ -111,7 +111,8 @@ public:
    * @param[in] p_tracer_reaction_constant_inside Reaction constant inside the
    * solid
    * @param[in] p_thickness Thickness of the tanh function used to smooth the
-   * reaction constant jump between the inside and outside of the immersed solid.
+   * reaction constant jump between the inside and outside of the immersed
+   * solid.
    */
   TanhLevelsetTracerReactionConstant(
     const double p_tracer_reaction_constant_outside,
