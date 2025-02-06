@@ -32,7 +32,7 @@ add_library(lethe-core
   thermal_conductivity_model.cc
   thermal_expansion_model.cc
   tracer_diffusivity_model.cc
-  tracer_reaction_constant_model.cc
+  tracer_reaction_model.cc
   utilities.cc
   # Headers
   ../../include/core/ale.h
@@ -83,7 +83,7 @@ add_library(lethe-core
   ../../include/core/thermal_expansion_model.h
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
-  ../../include/core/tracer_reaction_constant_model.h
+  ../../include/core/tracer_reaction_model.h
   ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)
