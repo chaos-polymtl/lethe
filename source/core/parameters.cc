@@ -462,9 +462,6 @@ namespace Parameters
       // Diffusivity is in L^2 T^-1
       tracer_diffusivity_inside *= dimensions.diffusivity_scaling;
       tracer_diffusivity_outside *= dimensions.diffusivity_scaling;
-      // Reaction constant is in T^-1
-      tracer_reaction_constant_inside *= dimensions.diffusivity_scaling;
-      tracer_reaction_constant_outside *= dimensions.diffusivity_scaling;
     }
     prm.leave_subsection();
   }
@@ -1290,8 +1287,6 @@ namespace Parameters
       else
         tracer_reaction_constant_model = TracerReactionConstantModel::constant;
       tracer_reaction_constant = prm.get_double("tracer reaction constant");
-      // Reaction constant for a first order reaction is in T^-1
-      tracer_reaction_constant *= dimensions.reaction_constant_scaling;
 
       // Parsing of the immersed solids models parameters
       immersed_solid_tanh_parameters.parse_parameters(prm, dimensions);
