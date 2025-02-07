@@ -1452,7 +1452,7 @@ namespace InterfaceTools
               {
                 continue;
               }
-              
+
             /* We want to find a cell wise correction to apply to the cell's dof
             values of the signed_distance so that the geometric cell wise volume
             encompased by the level 0 of the signed_distance V_K,d and by the
@@ -1678,10 +1678,10 @@ namespace InterfaceTools
         global_delta_volume_prime =
           (global_delta_volume_n - global_delta_volume_nm1) /
           (C_n - C_nm1 + 1e-16);
-          
+
         secant_update =
           -global_delta_volume_n / (global_delta_volume_prime + 1e-16);
-        
+
         C_np1 = C_n + secant_update;
         C_nm1 = C_n;
         C_n   = C_np1;
@@ -2500,7 +2500,7 @@ void
 AdvectionProblem<dim>::reinitialize_phase_fraction_with_geometric_method()
 {
   pcout << "In redistanciation..." << std::endl;
-  
+
   compute_level_set_from_phase_fraction();
 
   signed_distance_solver.setup_dofs(mpi_communicator);
@@ -2570,7 +2570,7 @@ AdvectionProblem<dim>::monitor_volume(unsigned int time_iteration)
 
   std::ofstream output("output/volume.dat");
   table_volume_monitoring.write_text(output);
-  
+
   pcout << "Volume = " << volume_sharp << std::endl;
 
   return volume_sharp;
