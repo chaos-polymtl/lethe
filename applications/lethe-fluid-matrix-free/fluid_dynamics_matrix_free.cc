@@ -3,20 +3,7 @@
 
 #include "solvers/fluid_dynamics_matrix_free.h"
 
-#include <core/revision.h>
-
-#include <deal.II/base/revision.h>
-
-std::string
-concatenate_strings(const int argc, char **argv)
-{
-  std::string result = std::string(argv[0]);
-
-  for (int i = 1; i < argc; ++i)
-    result = result + " " + std::string(argv[i]);
-
-  return result;
-}
+#include <core/utilities.h>
 
 int
 main(int argc, char *argv[])
@@ -30,7 +17,6 @@ main(int argc, char *argv[])
           std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
           std::exit(1);
         }
-
 
       const std::string file_name(argv[argc - 1]);
       const bool        print_parameters =
@@ -46,17 +32,7 @@ main(int argc, char *argv[])
                                  print_parameters);
 
       if (print_parameters)
-        {
-          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
-          pcout << "  - deal.II (branch: " << DEAL_II_GIT_BRANCH
-                << "; revision: " << DEAL_II_GIT_REVISION
-                << "; short: " << DEAL_II_GIT_SHORTREV << ")" << std::endl;
-          pcout << "  - Lethe (branch: " << LETHE_GIT_BRANCH
-                << "; revision: " << LETHE_GIT_REVISION
-                << "; short: " << LETHE_GIT_SHORTREV << ")" << std::endl;
-          pcout << std::endl;
-          pcout << std::endl;
-        }
+        print_version_info(argc, argv, pcout);
 
       if (dim == 2)
         {
@@ -67,16 +43,7 @@ main(int argc, char *argv[])
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
-          if (pcout.is_active())
-            prm.print_parameters(pcout.get_stream(),
-                                 ParameterHandler::OutputStyle::PRM |
-                                   ParameterHandler::OutputStyle::Short |
-                                   ParameterHandler::KeepDeclarationOrder
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-                                   | ParameterHandler::KeepOnlyChanged
-#endif
-            );
-          pcout << std::endl << std::endl;
+          print_parameters_to_output_file(pcout, prm);
 
           FluidDynamicsMatrixFree<2> problem(NSparam);
           problem.solve();
@@ -91,16 +58,7 @@ main(int argc, char *argv[])
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
-          if (pcout.is_active())
-            prm.print_parameters(pcout.get_stream(),
-                                 ParameterHandler::OutputStyle::PRM |
-                                   ParameterHandler::OutputStyle::Short |
-                                   ParameterHandler::KeepDeclarationOrder
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-                                   | ParameterHandler::KeepOnlyChanged
-#endif
-            );
-          pcout << std::endl << std::endl;
+          print_parameters_to_output_file(pcout, prm);
 
           FluidDynamicsMatrixFree<3> problem(NSparam);
           problem.solve();

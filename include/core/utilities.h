@@ -4,7 +4,11 @@
 #ifndef lethe_utilities_h
 #define lethe_utilities_h
 
+#include <core/revision.h.in>
+
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/revision.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -753,5 +757,45 @@ extract_values_from_map(const std::map<key, val> &map)
   return values;
 }
 
+inline std::string
+concatenate_strings(const int argc, char **argv)
+{
+  std::string result = std::string(argv[0]);
+
+  for (int i = 1; i < argc; ++i)
+    result = result + " " + std::string(argv[i]);
+
+  return result;
+}
+
+inline void
+print_parameters_to_output_file(const ConditionalOStream &pcout,
+                                const ParameterHandler   &prm)
+{
+  if (pcout.is_active())
+    prm.print_parameters(pcout.get_stream(),
+                         ParameterHandler::OutputStyle::PRM |
+                           ParameterHandler::OutputStyle::Short |
+                           ParameterHandler::KeepDeclarationOrder
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+                           | ParameterHandler::KeepOnlyChanged
+#endif
+    );
+  pcout << std::endl << std::endl;
+}
+
+inline void
+print_version_info(int &argc, char *argv[], const ConditionalOStream &pcout)
+{
+  // pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+  pcout << "  - deal.II (branch: " << DEAL_II_GIT_BRANCH
+        << "; revision: " << DEAL_II_GIT_REVISION
+        << "; short: " << DEAL_II_GIT_SHORTREV << ")" << std::endl;
+  pcout << "  - Lethe (branch: " << LETHE_GIT_BRANCH
+        << "; revision: " << LETHE_GIT_REVISION
+        << "; short: " << LETHE_GIT_SHORTREV << ")" << std::endl;
+  pcout << std::endl;
+  pcout << std::endl;
+}
 
 #endif
