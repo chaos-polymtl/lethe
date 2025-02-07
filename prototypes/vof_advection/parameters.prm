@@ -1,0 +1,46 @@
+# Listing of Parameters
+#----------------------
+# The problem dimension <2|3>
+
+set dim = 3
+
+# Initial global refinement level
+
+set initial refinement level = 9
+
+# Initial refinement steps
+
+set initial refinement steps = 3
+
+# Maximum number of refinement level
+
+set max refinement level = 9
+
+# Minimum number of refinement level
+
+set min refinement level = 6
+
+# Maximum reinitialization distance value
+
+set max reinitialization distance = 0.02
+
+# Interface thickness for the tanh transformation
+
+set tanh thickness = 0.0078125
+
+# Time step value
+
+set time step = 0.000833
+
+# Simulation time value
+
+set time end = 2.0
+
+# Name for vtu files
+
+set output name = solution
+
+# Path for vtu output files
+
+set output path = ./output/
+
