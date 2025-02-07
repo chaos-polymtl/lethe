@@ -31,8 +31,7 @@ main(int argc, char *argv[])
                                   MPI_COMM_WORLD) == 0) &&
                                  print_parameters);
 
-      if (print_parameters)
-        print_version_info(argc, argv, pcout);
+      print_version_info(argc, argv, pcout);
 
       if (dim == 2)
         {
