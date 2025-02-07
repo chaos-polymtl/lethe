@@ -690,6 +690,13 @@ extract_values_from_map(const std::map<key, val> &map)
   return values;
 }
 
+/**
+ * @brief Concatenate the command line arguments
+ *
+ * @param [in] argc Number of arguments
+ * @param [in] argv Pointer to string arguments
+ * @return std::string Concatenated command line arguments
+ */
 inline std::string
 concatenate_strings(const int argc, char **argv)
 {
@@ -701,6 +708,12 @@ concatenate_strings(const int argc, char **argv)
   return result;
 }
 
+/**
+ * @brief Print the parameters given by the parameter file of the application
+ *
+ * @param[in] pcout Parallel output stream
+ * @param[in] prm Object containg the parameters parsed from the parameter file
+ */
 inline void
 print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const ParameterHandler   &prm)
@@ -717,10 +730,18 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
   pcout << std::endl << std::endl;
 }
 
+/**
+ * @brief Print command line arguments and the information of the deal.II
+ * and Lethe branches used to run an application
+ *
+ * @param[in] argc Number of command line arguments
+ * @param[in] argv Pointer to string arguments
+ * @param[in] pcout Parallel output stream
+ */
 inline void
 print_version_info(int &argc, char *argv[], const ConditionalOStream &pcout)
 {
-  // pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+  pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
   pcout << "  - deal.II (branch: " << DEAL_II_GIT_BRANCH
         << "; revision: " << DEAL_II_GIT_REVISION
         << "; short: " << DEAL_II_GIT_SHORTREV << ")" << std::endl;
