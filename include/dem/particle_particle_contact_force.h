@@ -568,10 +568,10 @@ private:
     const double                   effective_radius,
     const ArrayView<const double> &particle_one_properties,
     const ArrayView<const double> &particle_two_properties,
-    const double                   rolling_viscous_damping_coeff,
+    [[maybe_unused]] const double  rolling_viscous_damping_coeff,
     const double                   rolling_friction_coeff,
-    const double                   dt,
-    const double                   normal_spring_constant,
+    [[maybe_unused]] const double  dt,
+    [[maybe_unused]] const double  normal_spring_constant,
     const Tensor<1, 3>            &normal_force,
     const Tensor<1, 3>            &normal_unit_vector,
     Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
