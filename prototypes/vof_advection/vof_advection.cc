@@ -598,8 +598,8 @@ namespace InterfaceTools
     double inside_cell_volume = 0.0;
     for (unsigned int q = 0; q < inside_quadrature.size(); q++)
       {
-        // compute the volume int 1*JxW*dOmega. FEPointEvaluation.JxW() does not
-        // return the right thing.
+        /* Compute the volume int 1*JxW*dOmega. FEPointEvaluation.JxW() does not
+        return the right thing.*/
         inside_cell_volume += fe_point_evaluation.jacobian(q).determinant() *
                               inside_quadrature.weight(q);
       }
@@ -947,20 +947,20 @@ namespace InterfaceTools
                           interface_reconstruction_cells,
                           intersected_dofs);
 
-    // Compute the distance for the dofs of the intersected cells (the ones in
-    // the intersected_dofs set). They correspond to the first neighbor dofs.
+    /* Compute the distance for the dofs of the intersected cells (the ones in
+    the intersected_dofs set). They correspond to the first neighbor dofs.*/
     compute_first_neighbors_distance();
 
-    // Compute signed distance from distance (only first neighbor have an
-    // updated value)
+    /* Compute signed distance from distance (only first neighbor have an
+    updated value)*/
     compute_signed_distance_from_distance();
 
     // Conserve local and global volume
     compute_cell_wise_volume_correction();
     conserve_global_volume(mpi_communicator);
 
-    // Compute the distance for the dofs of the rest of the mesh. They
-    // correspond to the seconf neighbor dofs.
+    /* Compute the distance for the dofs of the rest of the mesh. They
+    correspond to the seconf neighbor dofs. */
     compute_second_neighbors_distance(mpi_communicator);
 
     // Compute signed distance from distance (all DOFs have updated value)
@@ -992,8 +992,8 @@ namespace InterfaceTools
   void
   SignedDistanceSolver<dim>::zero_out_ghost_values()
   {
-    // To have the right to write in a LinearAlgebra::distributed::Vector, we
-    // have to zero out the ghost values.
+    /* To have the right to write in a LinearAlgebra::distributed::Vector, we
+    have to zero out the ghost values.*/
     signed_distance.zero_out_ghost_values();
     signed_distance_with_ghost.zero_out_ghost_values();
     distance.zero_out_ghost_values();
@@ -1005,10 +1005,10 @@ namespace InterfaceTools
   void
   SignedDistanceSolver<dim>::update_ghost_values()
   {
-    // To have the right to read a LinearAlgebra::distributed::Vector, we have
-    // to update the ghost values.
+    /* To have the right to read a LinearAlgebra::distributed::Vector, we have
+    to update the ghost values.*/
     signed_distance.update_ghost_values();
-    signed_distance_with_ghost.update_ghost_values();
+    signed_distanmapce_with_ghost.update_ghost_values();
     distance.update_ghost_values();
     distance_with_ghost.update_ghost_values();
     volume_correction.update_ghost_values();
@@ -1024,23 +1024,22 @@ namespace InterfaceTools
     // Update local ghost (distance becomes read only)
     distance.update_ghost_values();
 
-    // Copy distance to distance_with_ghost to keep the knowledge of local ghost
-    // values and to have a read only version of the vector
+    /* Copy distance to distance_with_ghost to keep the knowledge of local ghost
+    values and to have a read only version of the vector*/
     distance_with_ghost = distance;
 
-    // Zero out ghost DOFs to regain write functionalities in distance (it
-    // becomes write only, that is why we need distance_with_ghost - to read the
-    // ghost values in it.)
+    /* Zero out ghost DOFs to regain write functionalities in distance (it
+    becomes write only, that is why we need distance_with_ghost - to read the
+    ghost values in it).*/
     distance.zero_out_ghost_values();
 
-    // Copy the ghost values back in distance (zero_out_ghost_values() puts
-    // zeros in ghost DOFs)
+    /* Copy the ghost values back in distance (zero_out_ghost_values() puts
+    zeros in ghost DOFs)*/
     for (auto p : this->locally_active_dofs)
       {
-        // We need to have the ghost values in distance for future
-        // compress(VectorOperation::min) operation
+        /* We need to have the ghost values in distance for future
+        compress(VectorOperation::min) operation*/
         distance(p) = distance_with_ghost(p);
-        // signed_distance(p) = distance(p)*sgn(signed_distance(p));
       }
   }
 
@@ -1048,10 +1047,10 @@ namespace InterfaceTools
   void
   SignedDistanceSolver<dim>::initialize_local_distance()
   {
-    // Initialization of the active dofs to the max distance we want to
-    // redistanciate. It requires a loop on the active dofs to initialize also
-    // the distance value of the ghost dofs. Otherwise, they are set to 0.0 by
-    // default.
+    /* Initialization of the active dofs to the max distance we want to
+     redistanciate. It requires a loop on the active dofs to initialize also
+     the distance value of the ghost dofs. Otherwise, they are set to 0.0 by
+     default. */
     for (auto p : this->locally_active_dofs)
       {
         distance(p)            = max_distance;
@@ -1075,40 +1074,54 @@ namespace InterfaceTools
     // DoF coordinates
     std::map<types::global_dof_index, Point<dim>> dof_support_points =
       DoFTools::map_dofs_to_support_points(mapping, dof_handler);
+
+    // Loop over the intersected cells (volume cells)
     for (auto &intersected_cell : interface_reconstruction_cells)
       {
         const unsigned int cell_index = intersected_cell.first;
 
+        // Create interface recontruction triangulation (surface triangulation)
+        // in the intersected volume cell
         std::vector<Point<dim>> surface_vertices =
           interface_reconstruction_vertices.at(cell_index);
         std::vector<CellData<dim - 1>> surface_cells = intersected_cell.second;
 
-        // Create interface recontruction triangulation
         Triangulation<dim - 1, dim> surface_triangulation;
         surface_triangulation.create_triangulation(surface_vertices,
                                                    surface_cells,
                                                    {});
 
+        /* Loop over all DoFs of the volume mesh belonging to a intersected
+         * volume cell. This is more expensive, but it is required to have the
+         * the right signed distance approximation for the first neighbors.*/
         for (const unsigned int &intersected_dof : intersected_dofs)
           {
             const Point<dim> y = dof_support_points.at(intersected_dof);
 
+            /* Loop over the surface cells of the interface reconstruction in
+             * the volume cell. In 2D, there is only 1 surface cell (line),
+             * while in 3D, it can vary from 1 to 4 or 5 (triangles), depending
+             * on the marching cube algorithm.*/
             for (const auto &surface_cell :
                  surface_triangulation.active_cell_iterators())
               {
+                // Store the current surface cell vertex coordinates
                 unsigned int surface_cell_n_vertices =
                   surface_cell->n_vertices();
                 std::vector<Point<dim>> surface_cell_vertices(
                   surface_cell_n_vertices);
-
                 for (unsigned int p = 0; p < surface_cell_n_vertices; p++)
                   {
                     surface_cell_vertices[p] = surface_cell->vertex(p);
                   }
+
+                // Compute the geometrical distance between the surface cell
+                // (line in 2D, triangle in 3D) and the DoF
                 double D =
                   PrototypeGridTools::compute_point_2_interface_min_distance(
                     surface_cell_vertices, y);
 
+                // Select the minimum distance
                 distance(intersected_dof) =
                   std::min(std::abs(distance(intersected_dof)), std::abs(D));
               }
@@ -1181,8 +1194,8 @@ namespace InterfaceTools
                 // Loop over the cell's Dofs
                 for (unsigned int i = 0; i < dofs_per_cell; ++i)
                   {
-                    // If the dof belongs to an intersected cell, the distance
-                    // is already computed
+                    /* If the dof belongs to an intersected cell, the distance
+                    is already computed */
                     if (intersected_dofs.find(dof_indices[i]) !=
                         intersected_dofs.end())
                       {
@@ -1252,8 +1265,8 @@ namespace InterfaceTools
                               face_transformation_jacobians(2 * dim - 1);
 
 
-                            // Prepare FEPointEvaluation to compute value and
-                            // gradient at the stencil points
+                            /* Prepare FEPointEvaluation to compute value and
+                            gradient at the stencil points*/
                             fe_point_evaluation.reinit(cell, stencil_ref);
                             fe_point_evaluation.evaluate(
                               cell_dof_values, EvaluationFlags::gradients);
@@ -1274,8 +1287,8 @@ namespace InterfaceTools
                               }
 
                             /* Compute the jacobian matrix. The Ax=b system is
-                             formulated as the dim-1 system. We solve for the
-                             correction in the reference face. */
+                            formulated as the dim-1 system. We solve for the
+                            correction in the reference face. */
                             LAPACKFullMatrix<double> jacobian_matrix(dim - 1,
                                                                      dim - 1);
                             compute_numerical_jacobian(
@@ -1305,26 +1318,26 @@ namespace InterfaceTools
                             jacobian_matrix.set_property(
                               LAPACKSupport::general);
 
-                            // Factorize and solve the matrix. The correction is
-                            // put back in residual_n_vec
+                            /* Factorize and solve the matrix. The correction is
+                            put back in residual_n_vec. */
                             jacobian_matrix.compute_lu_factorization();
                             jacobian_matrix.solve(residual_n_vec);
 
                             // Compute the norm of the correction
                             correction_norm = residual_n_vec.l2_norm();
 
-                            // Transform the dim-1 correction (in the reference
-                            // face) to dim (in the reference cell)
+                            /* Transform the dim-1 correction (in the reference
+                            face) to dim (in the reference cell) */
                             Tensor<1, dim> correction =
                               transform_ref_face_correction_to_ref_cell(
                                 residual_n_vec, dof_opposite_faces[j]);
 
-                            // Compute the solution (the point x_n_ref on the
-                            // face minimizing the distance)
+                            /* Compute the solution (the point x_n_ref on the
+                            face minimizing the distance)*/
                             Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
 
-                            // Relaxe the correction if it brings us outside of
-                            // the cell
+                            /* Relaxe the correction if it brings us outside of
+                            the cell */
                             double relaxation = 1.0;
 
                             /* Check if the Newton method results in a solution
@@ -1359,8 +1372,9 @@ namespace InterfaceTools
                                 |_____________|
 
                             */
-                            // Flag indicating if the correction brings us
-                            // outside of the cell.
+
+                            /* Flag indicating if the correction brings us
+                            outside of the cell.*/
                             bool check = false;
                             for (unsigned int k = 0; k < dim; ++k)
                               {
@@ -1369,10 +1383,10 @@ namespace InterfaceTools
                                   {
                                     check = true;
 
-                                    // Set the correction to put the solution on
-                                    // the face boundary. Select the minimum
-                                    // relaxation of the all direction to ensure
-                                    // the solution stays inside the face.
+                                    /* Set the correction to put the solution on
+                                    the face boundary. Select the minimum
+                                    relaxation of the all direction to ensure
+                                    the solution stays inside the face.*/
                                     if (correction[k] > 1e-12)
                                       {
                                         relaxation =
@@ -1465,18 +1479,18 @@ namespace InterfaceTools
     // Update local ghost (signed_distance becomes read only)
     signed_distance.update_ghost_values();
 
-    // Copy distance to signed_distance_with_ghost to keep the knowledge of
-    // local ghost values and to have a read only version of the vector. Ghost
-    // values of the signed distance are needed for volume computations.
+    /* Copy distance to signed_distance_with_ghost to keep the knowledge of
+    local ghost values and to have a read only version of the vector. Ghost
+    values of the signed distance are needed for volume computations.*/
     signed_distance_with_ghost = signed_distance;
 
-    // Zero out ghost DOFs to regain write functionalities in signed_distance
-    // (it becomes write only, that is why we need signed_distance_with_ghost -
-    // to read the ghost values in it.)
+    /* Zero out ghost DOFs to regain write functionalities in signed_distance
+    (it becomes write only, that is why we need signed_distance_with_ghost -
+    to read the ghost values in it).*/
     signed_distance.zero_out_ghost_values();
 
-    // Copy the ghost values back in signed_distance (zero_out_ghost_values()
-    // puts zeros in ghost DOFs)
+    /* Copy the ghost values back in signed_distance (zero_out_ghost_values()
+    puts zeros in ghost DOFs)*/
     for (auto p : this->locally_active_dofs)
       {
         signed_distance(p) = signed_distance_with_ghost(p);
@@ -1492,8 +1506,8 @@ namespace InterfaceTools
 
     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
-    // For the L2 projection of the cell-wise correction (the projection for a
-    // given DOF corresponds to the average of the neighbor cell values)
+    /* For the L2 projection of the cell-wise correction (the projection for a
+    given DOF corresponds to the average of the neighbor cell values)*/
     double n_cells_per_dofs_inv = 1.0 / 4.0;
     if constexpr (dim == 3)
       {
@@ -1522,7 +1536,8 @@ namespace InterfaceTools
             iso-contour 0.5 of the phase fraction V_K,VOF match. This is
             required because the computed distance doesn't belong to the Q1
             approximation space.
-            // We solve the non-linear problem: DeltaV_K(eta_K) = V_K,VOF -
+
+            We solve the non-linear problem: DeltaV_K(eta_K) = V_K,VOF -
             V_K,d(eta_K) = 0, where eta_K is the correction on the
             signed_distance that we are looking for. We use the secant method to
             do so.*/
@@ -1549,8 +1564,8 @@ namespace InterfaceTools
                                  cell_dof_values.begin(),
                                  cell_dof_values.end());
 
-            // Get cell size to initialize secant method. We use it to compute
-            // the first derivative value in the secant method
+            /* Get cell size to initialize secant method. We use it to compute
+            the first derivative value in the secant method */
             double cell_size;
             if (dim == 2)
               {
@@ -1561,10 +1576,10 @@ namespace InterfaceTools
                 cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
               }
 
-            // Secant method. The subsricpt nm1 (or n minus 1) stands for the
-            // previous secant iteration (it = n-1), the subsricpt n stands for
-            // the current iteration and the subsricpt np1 stands for the next
-            // iteration (it = n+1).
+            /* Secant method. The subsricpt nm1 (or n minus 1) stands for the
+            previous secant iteration (it = n-1), the subsricpt n stands for
+            the current iteration and the subsricpt np1 stands for the next
+            iteration (it = n+1).*/
             double inside_cell_volume_nm1 = 0.0;
             double inside_cell_volume_n   = 0.0;
 
@@ -1586,12 +1601,12 @@ namespace InterfaceTools
                                                        fe.degree + 1);
             delta_volume_nm1 = targetted_cell_volume - inside_cell_volume_nm1;
 
-            // Store the initial volume in the cell to limit the secant method
-            // in some case.
+            /* Store the initial volume in the cell to limit the secant method
+            in some case.*/
             const double intial_inside_cell_volume = inside_cell_volume_nm1;
 
-            // Check if there is enough volume to correct. If not, we don't
-            // correct.
+            /* Check if there is enough volume to correct. If not, we don't
+            correct.*/
             if (inside_cell_volume_nm1 < 1e-10 * cell_size ||
                 inside_cell_volume_nm1 > (cell_size - 1e-10 * cell_size))
               {
@@ -1674,16 +1689,16 @@ namespace InterfaceTools
     C being a constant. We use the secant method to do so. See Ausas et al.
     (2012) for more details.*/
 
-    // Compute targetted global volume. It corresponds to the one enclosed by
-    // the level 0 of the level_set vector (same volume as the one enclosed
-    // byiso-contour 0.5 of the phase fraction).
+    /* Compute targetted global volume. It corresponds to the one enclosed by
+    the level 0 of the level_set vector (same volume as the one enclosed
+    byiso-contour 0.5 of the phase fraction).*/
     const double global_volume =
       compute_volume(mapping, dof_handler, fe, level_set, mpi_communicator);
 
-    // Initialization of values for the secant method. The subsricpt nm1 (or n
-    // minus 1) stands for the previous secant iteration (it = n-1), the
-    // subsricpt n stands for the current iteration and the subsricpt np1 stands
-    // for the next iteration (it = n+1).
+    /* Initialization of values for the secant method. The subsricpt nm1 (or n
+    minus 1) stands for the previous secant iteration (it = n-1), the
+    subsricpt n stands for the current iteration and the subsricpt np1 stands
+    for the next iteration (it = n+1).*/
     double global_volume_nm1 = 0.0;
     double global_volume_n   = 0.0;
 
@@ -1696,14 +1711,14 @@ namespace InterfaceTools
     double C_n   = 0.0;
     double C_np1 = 0.0;
 
-    // Compute the volume and the difference with the targetted volume for 1st
-    // initial guest of the correction funtion (xi_nm1 = C_nm1*eta)
+    /* Compute the volume and the difference with the targetted volume for 1st
+    initial guest of the correction funtion (xi_nm1 = C_nm1*eta)*/
     C_nm1 = 1.0;
     LinearAlgebra::distributed::Vector<double> signed_distance_0(
       signed_distance_with_ghost);
     signed_distance_0.add(C_nm1, volume_correction);
 
-    // update_ghost_values is required for cell wise volume computations
+    // Update_ghost_values is required for cell wise volume computations
     signed_distance_0.update_ghost_values();
 
     global_volume_nm1 = compute_volume(
