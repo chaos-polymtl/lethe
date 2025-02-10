@@ -230,7 +230,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
     this->subequations_interface->get_dof_handler(
       VOFSubequationsID::curvature_projection);
 
-  // Initialize FEValues for VOF phase gradient and curvature projections
+  // Initialize FEValues for algebraic interface reinitialization, VOF
+  // phase fraction gradient and curvature projections
   FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
@@ -269,8 +270,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
     n_q_points);
   std::vector<double>         present_curvature_values(n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
-    n_q_points); // debugging
-  std::vector<Tensor<1, dim>> present_vof_phase_gradient_values(n_q_points);
+    n_q_points);
 
   // Initialize shape function arrays
   std::vector<double>         phi(n_dofs_per_cell);
@@ -306,10 +306,12 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                                       cell->level(),
                                       cell->index(),
                                       dof_handler_curvature);
+
           // Reinitialize FEValues with corresponding cell
           fe_values_algebraic_reinitialization.reinit(cell);
           fe_values_phase_gradient_projection.reinit(
             vof_phase_gradient_projection_cell);
+          fe_values_curvature_projection.reinit(curvature_projection_cell);
 
           // Get vector of Jacobi determinant times the quadrature weights
           std::vector<double> JxW_vec =
@@ -323,6 +325,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
               *this->subequations_interface->get_solution(
                 VOFSubequationsID::phase_gradient_projection),
               present_phase_gradient_projection_values);
+          fe_values_curvature_projection.get_function_values(
+            *this->subequations_interface->get_solution(
+              VOFSubequationsID::curvature_projection),
+            present_curvature_values);
           fe_values_algebraic_reinitialization.get_function_gradients(
             this->evaluation_point,
             present_reinitialized_phase_gradient_values);
@@ -413,8 +419,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
     this->subequations_interface->get_dof_handler(
       VOFSubequationsID::curvature_projection);
 
-  // Initialize FEValues for VOF phase fraction gradient and curvature
-  // projections
+  // Initialize FEValues for algebraic interface reinitialization, VOF phase
+  // fraction gradient and curvature projections
   FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
