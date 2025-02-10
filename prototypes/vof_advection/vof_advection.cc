@@ -130,7 +130,7 @@ Settings::try_parse(const std::string &prm_filename)
     {
       std::cout
         << "****  Error: No input file provided!\n"
-        << "****  Error: Call this program as './matrix_based_non_linear_poisson input.prm\n"
+        << "****  Error: Call this program as './vof_advection input.prm\n"
         << '\n'
         << "****  You may want to use one of the input files in this\n"
         << "****  directory, or use the following default values\n"
@@ -1066,22 +1066,18 @@ namespace InterfaceTools
   void
   SignedDistanceSolver<dim>::compute_first_neighbors_distance()
   {
-    /* The signed distance for the first neighbors (the Dofs belonging to the
-     * cells intersected by the reconstructed interface. This is a brute force
-     * distance computation, meaning the distance is computed geometrically, as
-     * presented by Ausas (2012). */
-
+    /* The signed distance for the first neighbors (the Dofs belonging to the cells intersected by the reconstructed interface. This is a brute force distance computation, meaning the distance is computed geometrically, as presented by Ausas (2012). */
+      
     // DoF coordinates
     std::map<types::global_dof_index, Point<dim>> dof_support_points =
       DoFTools::map_dofs_to_support_points(mapping, dof_handler);
-
+      
     // Loop over the intersected cells (volume cells)
     for (auto &intersected_cell : interface_reconstruction_cells)
       {
         const unsigned int cell_index = intersected_cell.first;
 
-        // Create interface recontruction triangulation (surface triangulation)
-        // in the intersected volume cell
+        // Create interface recontruction triangulation (surface triangulation) in the intersected volume cell
         std::vector<Point<dim>> surface_vertices =
           interface_reconstruction_vertices.at(cell_index);
         std::vector<CellData<dim - 1>> surface_cells = intersected_cell.second;
@@ -1090,18 +1086,13 @@ namespace InterfaceTools
         surface_triangulation.create_triangulation(surface_vertices,
                                                    surface_cells,
                                                    {});
-
-        /* Loop over all DoFs of the volume mesh belonging to a intersected
-         * volume cell. This is more expensive, but it is required to have the
-         * the right signed distance approximation for the first neighbors.*/
+        
+        /* Loop over all DoFs of the volume mesh belonging to a intersected volume cell. This is more expensive, but it is required to have the the right signed distance approximation for the first neighbors.*/
         for (const unsigned int &intersected_dof : intersected_dofs)
           {
             const Point<dim> y = dof_support_points.at(intersected_dof);
 
-            /* Loop over the surface cells of the interface reconstruction in
-             * the volume cell. In 2D, there is only 1 surface cell (line),
-             * while in 3D, it can vary from 1 to 4 or 5 (triangles), depending
-             * on the marching cube algorithm.*/
+            /* Loop over the surface cells of the interface reconstruction in the volume cell. In 2D, there is only 1 surface cell (line), while in 3D, it can vary from 1 to 4 or 5 (triangles), depending on the marching cube algorithm.*/
             for (const auto &surface_cell :
                  surface_triangulation.active_cell_iterators())
               {
@@ -1114,13 +1105,12 @@ namespace InterfaceTools
                   {
                     surface_cell_vertices[p] = surface_cell->vertex(p);
                   }
-
-                // Compute the geometrical distance between the surface cell
-                // (line in 2D, triangle in 3D) and the DoF
+                  
+                // Compute the geometrical distance between the surface cell (line in 2D, triangle in 3D) and the DoF
                 double D =
                   PrototypeGridTools::compute_point_2_interface_min_distance(
                     surface_cell_vertices, y);
-
+                    
                 // Select the minimum distance
                 distance(intersected_dof) =
                   std::min(std::abs(distance(intersected_dof)), std::abs(D));
@@ -1135,12 +1125,7 @@ namespace InterfaceTools
   SignedDistanceSolver<dim>::compute_second_neighbors_distance(
     const MPI_Comm &mpi_communicator)
   {
-    /* The signed distance for the second neighbors (the cells not intersected
-     * by the interface is resolved according the the minimization problem
-     * presented by Ausas (2012). The method looks for the point in the opposite
-     * faces of each second neighbor DoFs that minimizes the distance to the
-     * interface. It works in a similar manner as a marching algorithm from the
-     * knowledge of the signed distance for the interface first neighbors. */
+    /* The signed distance for the second neighbors (the cells not intersected by the interface is resolved according the the minimization problem presented by Ausas (2012). The method looks for the point in the opposite faces of each second neighbor DoFs that minimizes the distance to the interface. It works in a similar manner as a marching algorithm from the knowledge of the signed distance for the interface first neighbors. */
     const unsigned int n_opposite_faces_per_dofs = dim;
     const unsigned int dofs_per_cell             = fe.n_dofs_per_cell();
 
@@ -1190,7 +1175,7 @@ namespace InterfaceTools
                 cell->get_dof_values(distance_with_ghost,
                                      cell_dof_values.begin(),
                                      cell_dof_values.end());
-
+                
                 // Loop over the cell's Dofs
                 for (unsigned int i = 0; i < dofs_per_cell; ++i)
                   {
@@ -1214,17 +1199,13 @@ namespace InterfaceTools
                     // Loop on opposite faces F_J
                     for (unsigned int j = 0; j < n_opposite_faces_per_dofs; ++j)
                       {
-                        /* The minimization problem is: Find x in the face F_J
-                        (opposite to the DoF of interest I) such that:
-
+                        /* The minimization problem is: Find x in the face F_J (opposite to the DoF of interest I) such that:
+                        
                           |d|_{x_I} = min(phi(x) +|x_I - x|)
-
-                        where x_I is the coord of the DoF I, phi(x) is the
-                        distance (not signed) at the point x, belonging to the
-                        face F_J. Here, we resolve the problem in the reference
-                        space (dim - 1).
+                          
+                        where x_I is the coord of the DoF I, phi(x) is the distance (not signed) at the point x, belonging to the face F_J. Here, we resolve the problem in the reference space (dim - 1).
                         */
-
+                        
                         // Initialize required variables
                         Point<dim> x_n_ref =
                           transform_ref_face_point_to_ref_cell(
@@ -1233,24 +1214,23 @@ namespace InterfaceTools
 
                         double correction_norm = 1.0;
                         int    newton_it       = 0;
-
+                        
                         // Check to constrain the solution in the face F_J
-                        int outside_check = 0;
-
-                        // Solve the minimization problem with Newton method
-                        // using a numerical jacobian
+                        int    outside_check   = 0;
+                        
+                        // Solve the minimization problem with Newton method using a numerical jacobian
                         while (correction_norm > 1e-10 && outside_check < 3 &&
                                newton_it < 100)
                           {
                             /* Set stencil for numerical jacobian computation.
                              The entries of the vector are the following:
                                       4
-
+                            
                                  1    0    2
-
+                            
                                       3
                             The entry 0 is the current evaluation point. */
-
+                            
                             const double            perturbation = 0.01;
                             std::vector<Point<dim>> stencil_ref =
                               compute_numerical_jacobian_stencil(
@@ -1309,8 +1289,7 @@ namespace InterfaceTools
                                              face_transformation_jacobians[0],
                                              residual_n);
 
-                            // Convert the right hand side to the right format
-                            // for the linear solver
+                            // Convert the right hand side to the right format for the linear solver
                             Vector<double> residual_n_vec(dim - 1);
                             residual_n.unroll(residual_n_vec);
                             residual_n_vec *= -1.0;
@@ -1340,39 +1319,35 @@ namespace InterfaceTools
                             the cell */
                             double relaxation = 1.0;
 
-                            /* Check if the Newton method results in a solution
-                            outside the face. For example in 3D, we could have:
-                                 _____________
+                            /* Check if the Newton method results in a solution outside the face. For example in 3D, we could have: 
+                                 _____________                          
                                 |             |     solution
                                 |             |    *
                                 |             |
                                 |             |
                                 |             |
                                 |_____________|
-
-                            Each time it does, we relaxe the scheme to bring
-                            back the estimation of the solution in the face:
-                                 _____________
+                                
+                            Each time it does, we relaxe the scheme to bring back the estimation of the solution in the face:
+                                 _____________                         
                                 |             | relaxed solution
-                                |           * |
+                                |           * |    
                                 |             |
                                 |             |
                                 |             |
                                 |_____________|
-
-                            If the solution is outside the face more than three
-                            times, we constraint the solution on the right
-                            boundary of the face:
-                                 _____________
+                                
+                            If the solution is outside the face more than three times, we constraint the solution on the right boundary of the face:
+                                 _____________                         
                                 |             |         real
                                 |  constraint *     * solution
                                 |   solution  |
                                 |             |
                                 |             |
-                                |_____________|
-
+                                |_____________| 
+                                
                             */
-
+                            
                             /* Flag indicating if the correction brings us
                             outside of the cell.*/
                             bool check = false;
@@ -1451,7 +1426,7 @@ namespace InterfaceTools
                             distance(dof_indices[i]) = approx_distance;
                           }
                       } // End of the loop on the opposite faces
-                  }     // End of the loop on the dofs
+                  } // End of the loop on the dofs
               }
           } // End of the loop on the cells
 
@@ -1536,7 +1511,7 @@ namespace InterfaceTools
             iso-contour 0.5 of the phase fraction V_K,VOF match. This is
             required because the computed distance doesn't belong to the Q1
             approximation space.
-
+            
             We solve the non-linear problem: DeltaV_K(eta_K) = V_K,VOF -
             V_K,d(eta_K) = 0, where eta_K is the correction on the
             signed_distance that we are looking for. We use the secant method to
