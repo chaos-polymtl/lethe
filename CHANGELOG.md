@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-09
+
+### Fixed
+
+- MINOR Updated the installation instructions under Linux to specify installation since it was not previously explained. Took the opportunity to correct the graphviz for multiphysics problem. [#1419](https://github.com/chaos-polymtl/lethe/pull/1419)
+
 ## [Master] - 2025-01-24
 
 ### Added
