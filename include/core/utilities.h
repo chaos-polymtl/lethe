@@ -10,6 +10,8 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
+#include <deal.II/fe/fe_values.h>
+
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
@@ -633,6 +635,62 @@ compute_cell_measure_with_JxW(const std::vector<double> &JxW_values)
   return cell_measure;
 }
 
+/**
+ * @brief Identify minimal cell size.
+ *
+ * @tparam dim Number of dimensions of the problem.
+ *
+ * @param[in] mapping Interface for transformation from the reference (unit)
+ * cell to the real cell.
+ *
+ * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
+ *
+ * @param[in] cell_quadrature Local cell quadrature information.
+ *
+ * @param[in] mpi_communicator Allows communication between cores.
+ *
+ * @return Smallest cell size value.
+ */
+template <int dim>
+inline double
+identify_minimum_cell_size(const Mapping<dim>    &mapping,
+                           const DoFHandler<dim> &dof_handler,
+                           const Quadrature<dim> &cell_quadrature,
+                           const MPI_Comm        &mpi_communicator)
+{
+  // Initialize FEValues for interface algebraic reinitialization
+  FEValues<dim> fe_values(mapping,
+                          dof_handler.get_fe(),
+                          cell_quadrature,
+                          update_JxW_values);
+
+  // Initialize cell diameter
+  double h = DBL_MAX;
+
+  // Element degree
+  double degree = double(fe_values.get_fe().degree);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          // Compute cell diameter
+          double cell_measure =
+            compute_cell_measure_with_JxW(fe_values.get_JxW_values());
+          double h_local = compute_cell_diameter<dim>(cell_measure, degree);
+
+          // Update cell diameter to minimum value
+          h = std::min(h, h_local);
+        }
+    }
+
+  // Get the minimum between all processes
+  h = Utilities::MPI::min(h, mpi_communicator);
+
+  return h;
+}
 
 /**
  * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent.

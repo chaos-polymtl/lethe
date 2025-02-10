@@ -28,6 +28,17 @@ DeclException1(
   << std::endl
   << "Interface sharpening model requires an integer sharpening frequency larger than 0.");
 
+DeclException2(
+  MultipleInterfaceResettingMethods,
+  bool,
+  bool,
+  << "Only one type of interface resetting mechanism can be used in a simulation.\n"
+  << "Currently,\n"
+  << std::boolalpha << " - VOF interface sharpening is set to " << arg1
+  << std::endl
+  << " - VOF algebraic interface reinitialization is set to " << arg2
+  << std::endl);
+
 void
 Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 {
@@ -93,6 +104,15 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
+
+  // Check if multiple interface resetting methods are used
+  AssertThrow(
+    !(this->vof_parameters.sharpening.enable &&
+      this->vof_parameters.algebraic_interface_reinitialization.enable),
+    MultipleInterfaceResettingMethods(
+      this->vof_parameters.sharpening.enable,
+      this->vof_parameters.algebraic_interface_reinitialization.enable));
+
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
 }
 
@@ -496,23 +516,23 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
 {
   prm.enter_subsection("algebraic interface reinitialization");
   {
-    enable = prm.get_bool("enable");
-    output_reinitialization_steps =
+    this->enable = prm.get_bool("enable");
+    this->output_reinitialization_steps =
       prm.get_bool("output reinitialization steps");
-    reinitialization_frequency = prm.get_integer("frequency");
-    diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
-    diffusivity_power          = prm.get_double("diffusivity power");
-    reinitialization_cfl       = prm.get_double("reinitialization CFL");
-    steady_state_criterion     = prm.get_double("steady-state criterion");
-    max_steps_number           = prm.get_integer("max steps number");
+    this->reinitialization_frequency = prm.get_integer("frequency");
+    this->diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
+    this->diffusivity_power          = prm.get_double("diffusivity power");
+    this->reinitialization_cfl       = prm.get_double("reinitialization CFL");
+    this->steady_state_criterion     = prm.get_double("steady-state criterion");
+    this->max_steps_number           = prm.get_integer("max steps number");
 
     const std::string op2 = prm.get("verbosity");
     if (op2 == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
+      this->verbosity = Parameters::Verbosity::quiet;
     else if (op2 == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
+      this->verbosity = Parameters::Verbosity::verbose;
     else if (op2 == "extra verbose")
-      verbosity = Parameters::Verbosity::extra_verbose;
+      this->verbosity = Parameters::Verbosity::extra_verbose;
     else
       throw(std::runtime_error("Invalid verbosity level"));
   }

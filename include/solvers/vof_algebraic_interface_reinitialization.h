@@ -221,51 +221,6 @@ private:
   write_output_results(const unsigned int step);
 
   /**
-   * @brief Identify minimal cell size.
-   *
-   * @return Smallest cell size value.
-   */
-  inline double
-  identify_minimum_cell_size() const
-  {
-    // Get MPI communicator
-    auto mpi_communicator = this->triangulation->get_communicator();
-
-    // Initialize FEValues for interface algebraic reinitialization
-    FEValues<dim> fe_values(*this->mapping,
-                            this->dof_handler.get_fe(),
-                            *this->cell_quadrature,
-                            update_JxW_values);
-
-    // Initialize cell diameter
-    double h = DBL_MAX;
-
-    // Element degree
-    double degree = double(fe_values.get_fe().degree);
-
-    for (const auto &cell : this->dof_handler.active_cell_iterators())
-      {
-        if (cell->is_locally_owned())
-          {
-            fe_values.reinit(cell);
-
-            // Compute cell diameter
-            double cell_measure =
-              compute_cell_measure_with_JxW(fe_values.get_JxW_values());
-            double h_local = compute_cell_diameter<dim>(cell_measure, degree);
-
-            // Update cell diameter to minimum value
-            h = std::min(h, h_local);
-          }
-      }
-
-    // Get the minimum between all processes
-    h = Utilities::MPI::min(h, mpi_communicator);
-
-    return h;
-  }
-
-  /**
    * @brief Computes mesh-dependant diffusivity coefficient value.
    *
    * @param[in] min_cell_size Smallest cell's measure.
@@ -299,7 +254,11 @@ private:
         .algebraic_interface_reinitialization.reinitialization_cfl;
 
     // Get the minimum cell size
-    const double h_min = identify_minimum_cell_size();
+    const double h_min =
+      identify_minimum_cell_size(*this->mapping,
+                                 this->dof_handler,
+                                 *this->cell_quadrature,
+                                 this->triangulation->get_communicator());
 
     return h_min * cfl;
   }

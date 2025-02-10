@@ -36,7 +36,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::setup_dofs()
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
                                   this->nonzero_constraints,
-                                  true);
+                                  false);
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              this->locally_owned_dofs,
                                              mpi_communicator,
@@ -277,7 +277,12 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   std::vector<Tensor<1, dim>> grad_phi(n_dofs_per_cell);
 
   // Compute diffusivity coefficient with the smallest cell size
-  const double h_min                   = identify_minimum_cell_size();
+  const double h_min = identify_minimum_cell_size(
+    *this->mapping,
+    *this->subequations_interface->get_dof_handler(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    *this->cell_quadrature,
+    this->triangulation->get_communicator());
   const double diffusivity_coefficient = compute_diffusivity(h_min);
 
   // BDF coefficients for pseudo time-stepping
@@ -467,7 +472,12 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   std::vector<Tensor<1, dim>> grad_phi(n_dofs_per_cell);
 
   // Compute diffusivity coefficient with the smallest cell size
-  const double h_min                   = identify_minimum_cell_size();
+  const double h_min = identify_minimum_cell_size(
+    *this->mapping,
+    *this->subequations_interface->get_dof_handler(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    *this->cell_quadrature,
+    this->triangulation->get_communicator());
   const double diffusivity_coefficient = compute_diffusivity(h_min);
 
   // BDF coefficients for pseudo time-stepping
