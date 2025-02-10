@@ -29,7 +29,7 @@ Installing deal.II using apt
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports>`_:
 
 .. code-block:: text
   :class: copy-button
@@ -58,7 +58,7 @@ To verify if the correct version of deal.II is installed, run:
 
   apt show libdeal.ii-dev
 
-This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.6.0`` is output
+This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.6.0`` is the output
 
 .. note::
 
@@ -161,7 +161,16 @@ Then you can compile:
 .. code-block:: text
   :class: copy-button
 
-  make -j$numprocs
+  make -j$numprocs install
+
+This will install lethe to the installation folder you provided in the previous step. You can now add the following lines to your ``.bashrc``:
+
+.. code-block:: text
+  :class: copy-button
+
+  export PATH=$PATH:/home/username/path/to/installation/bin:
+
+to add the Lethe executables to your path.
 
 .. warning:: 
   Hyper-threading will result in poor performance when running Lethe. Make sure that it is not turned on for your machine if you have more logical CPU(s) than the number of Core(s). To obtain this information, you can run the following command in a linux terminal:

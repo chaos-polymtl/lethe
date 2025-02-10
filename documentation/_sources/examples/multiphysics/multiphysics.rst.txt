@@ -65,11 +65,10 @@ Multiphysics
       
       multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
 
+      multiphysics_4_1 [label="Jurin's Law", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/jurins-law/jurins-law.html"];
+
       multiphysics_4_2 [label="Shear Bubble Detachment", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html"];
 
-      multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
-
-      multiphysics_4_1 [label="Jurin's Law", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/jurins-law/jurins-law.html"];
 
       multiphysics -> multiphysics_1:w;
       multiphysics -> multiphysics_2:w;
@@ -93,7 +92,6 @@ Multiphysics
       multiphysics_2 -> multiphysics_2_4:w;
       multiphysics_2 -> multiphysics_2_5:w;
       multiphysics_2 -> multiphysics_2_6:w;
-      multiphysics_2 -> multiphysics_2_7:w;
 
       multiphysics_3 -> multiphysics_3_1:w;
 

@@ -455,7 +455,7 @@
 <section id="installing-deal-ii-using-apt">
 <span id="install-deal-ii-apt"></span><h2>Installing deal.II using apt<a class="headerlink" href="#installing-deal-ii-using-apt" title="Link to this heading">#</a></h2>
 <p>This is done following <a class="reference external" href="https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux">this procedure</a>.</p>
-<p>In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports">update the backports</a>:</p>
+<p>In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports">update the backports</a>:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
 sudo apt update
 </pre></div>
@@ -472,7 +472,7 @@ sudo apt update
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>apt show libdeal.ii-dev
 </pre></div>
 </div>
-<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code> is output</p>
+<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code> is the output</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
@@ -536,9 +536,14 @@ cd build
 </pre></div>
 </div>
 <p>Then you can compile:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs install
 </pre></div>
 </div>
+<p>This will install lethe to the installation folder you provided in the previous step. You can now add the following lines to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code>:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>export PATH=$PATH:/home/username/path/to/installation/bin:
+</pre></div>
+</div>
+<p>to add the Lethe executables to your path.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Hyper-threading will result in poor performance when running Lethe. Make sure that it is not turned on for your machine if you have more logical CPU(s) than the number of Core(s). To obtain this information, you can run the following command in a linux terminal:</p>
