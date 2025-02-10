@@ -588,7 +588,7 @@ namespace InterfaceTools
     quadrature_generator.generate(signed_distance_function, unit_box);
 
     const Quadrature<dim> inside_quadrature =
-      quadrature_generator.get_outside_quadrature();
+      quadrature_generator.get_inside_quadrature();
 
     if (inside_quadrature.size() == 0)
       return 0.0;
@@ -1008,7 +1008,7 @@ namespace InterfaceTools
     /* To have the right to read a LinearAlgebra::distributed::Vector, we have
     to update the ghost values.*/
     signed_distance.update_ghost_values();
-    signed_distanmapce_with_ghost.update_ghost_values();
+    signed_distance_with_ghost.update_ghost_values();
     distance.update_ghost_values();
     distance_with_ghost.update_ghost_values();
     volume_correction.update_ghost_values();
@@ -2049,7 +2049,7 @@ InitialConditions<dim>::value(const Point<dim>  &p,
 
   Tensor<1, dim> dist = center_point - p;
 
-  return 0.5 + 0.5 * std::tanh((0.15 - dist.norm()) / tanh_thickness);
+  return 0.5 - 0.5 * std::tanh((dist.norm() - 0.15) / tanh_thickness);
 }
 
 template <int dim>
@@ -2140,7 +2140,7 @@ private:
   IndexSet locally_relevant_dofs;
   IndexSet locally_active_dofs;
 
-  VectorType locally_relevant_solution;
+  VectorType solution;
   VectorType previous_solution;
   VectorType system_rhs;
 
@@ -2224,7 +2224,7 @@ AdvectionProblem<dim>::setup_system()
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
   locally_active_dofs   = DoFTools::extract_locally_active_dofs(dof_handler);
 
-  locally_relevant_solution.reinit(locally_owned_dofs,
+  solution.reinit(locally_owned_dofs,
                                    locally_relevant_dofs,
                                    mpi_communicator);
   previous_solution.reinit(locally_owned_dofs,
@@ -2428,8 +2428,8 @@ AdvectionProblem<dim>::set_initial_conditions()
                            completely_distributed_solution);
   this->constraints.distribute(completely_distributed_solution);
 
-  this->locally_relevant_solution = completely_distributed_solution;
-  this->previous_solution         = this->locally_relevant_solution;
+  this->solution = completely_distributed_solution;
+  this->previous_solution         = this->solution;
 }
 
 template <int dim>
@@ -2462,7 +2462,7 @@ AdvectionProblem<dim>::solve()
         << '\n';
 
   constraints.distribute(completely_distributed_solution);
-  locally_relevant_solution = completely_distributed_solution;
+  solution = completely_distributed_solution;
 }
 
 template <int dim>
@@ -2479,7 +2479,7 @@ AdvectionProblem<dim>::refine_grid()
     dof_handler,
     QGauss<dim - 1>(fe.degree + 1),
     typename std::map<types::boundary_id, const Function<dim, double> *>(),
-    locally_relevant_solution,
+    solution,
     estimated_error_per_cell,
     ComponentMask(),
     nullptr,
@@ -2500,7 +2500,7 @@ AdvectionProblem<dim>::refine_grid()
   triangulation.prepare_coarsening_and_refinement();
 
   solution_trans.prepare_for_coarsening_and_refinement(
-    locally_relevant_solution);
+    solution);
 
   triangulation.execute_coarsening_and_refinement();
 
@@ -2512,7 +2512,7 @@ AdvectionProblem<dim>::refine_grid()
 
   constraints.distribute(tmp_solution);
 
-  locally_relevant_solution = tmp_solution;
+  solution = tmp_solution;
 }
 
 template <int dim>
@@ -2523,11 +2523,11 @@ AdvectionProblem<dim>::compute_phase_fraction_from_level_set()
   for (auto p : this->locally_owned_dofs)
     {
       const double signed_dist = level_set[p];
-      solution_owned[p] = 0.5 + 0.5 * std::tanh(signed_dist / tanh_thickness);
+      solution_owned[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
     }
   constraints.distribute(solution_owned);
 
-  locally_relevant_solution = solution_owned;
+  solution = solution_owned;
 }
 
 template <int dim>
@@ -2537,11 +2537,11 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
   VectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
   for (auto p : this->locally_owned_dofs)
     {
-      const double phase      = locally_relevant_solution[p];
-      double       phase_sign = sgn(phase - 0.5);
+      const double phase      = solution[p];
+      double       phase_sign = sgn(0.5 - phase);
       level_set_owned[p] =
         tanh_thickness *
-        std::atanh(phase_sign * std::min(abs(phase - 0.5) / 0.5, 1.0 - 1e-12));
+        std::atanh(phase_sign * std::min(abs(0.5 - phase) / 0.5, 1.0 - 1e-12));
     }
   constraints.distribute(level_set_owned);
 
@@ -2597,7 +2597,7 @@ AdvectionProblem<dim>::monitor_volume(unsigned int time_iteration)
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(locally_relevant_solution,
+          fe_values.get_function_values(solution,
                                         phase_values);
 
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -2636,8 +2636,8 @@ AdvectionProblem<dim>::output_results(const int time_iteration) const
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
 
-  data_out.add_data_vector(locally_relevant_solution,
-                           "locally_relevant_solution");
+  data_out.add_data_vector(solution,
+                           "solution");
   data_out.add_data_vector(previous_solution, "previous_solution");
 
   data_out.add_data_vector(level_set, "level_set");
@@ -2675,7 +2675,7 @@ AdvectionProblem<dim>::run()
   for (unsigned int i = 0; i < parameters.initial_refinement_steps; ++i)
     refine_grid();
 
-  previous_solution = locally_relevant_solution;
+  previous_solution = solution;
 
   reinitialize_phase_fraction_with_geometric_method();
 
@@ -2702,7 +2702,7 @@ AdvectionProblem<dim>::run()
 
       refine_grid();
 
-      previous_solution = locally_relevant_solution;
+      previous_solution = solution;
     }
 }
 
