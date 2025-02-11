@@ -18,7 +18,7 @@ ParticleParticleContactForce<dim,
                              rolling_friction_model>::
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
-  , f_coefficient(dem_parameters.f_coefficient)
+  , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
 {
   set_effective_properties(dem_parameters);
 }

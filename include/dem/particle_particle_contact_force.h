@@ -548,9 +548,10 @@ private:
    * @param[in] effective_radius Effective radius of the particle pair.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
-   * @param[in] rolling_viscous_damping_coeff Effective rolling viscous damping
-   * coefficient.
    * @param[in] rolling_friction_coeff Effective rolling friction coefficient.
+   * @param[in] rolling_viscous_damping_coeff Effective rolling viscous damping
+   * coefficient
+   * @param[in] f_coeff Model parameter for the EPSD model.
    * @param[in] dt DEM time step.
    * @param[in] normal_spring_constant normal contact stiffness constant.
    * @param[in] normal_force Contact normal force.
@@ -567,7 +568,6 @@ private:
     const ArrayView<const double> &particle_two_properties,
     const double                   rolling_friction_coeff,
     [[maybe_unused]] const double  rolling_viscous_damping_coeff,
-    [[maybe_unused]] const double  f_coeff,
     [[maybe_unused]] const double  dt,
     [[maybe_unused]] const double  normal_spring_constant,
     const Tensor<1, 3>            &normal_force,
@@ -617,7 +617,7 @@ private:
           particle_two_properties,
           rolling_friction_coeff,
           rolling_viscous_damping_coeff,
-          f_coeff,
+          f_coefficient_epsd,
           normal_force.norm(),
           dt,
           normal_spring_constant,
@@ -768,8 +768,8 @@ private:
       effective_radius,
       particle_one_properties,
       particle_two_properties,
-      rolling_friction_coeff,
       rolling_viscous_damping_coeff,
+      rolling_friction_coeff,
       dt,
       normal_spring_constant,
       normal_force,
@@ -923,8 +923,8 @@ private:
       effective_radius,
       particle_one_properties,
       particle_two_properties,
-      rolling_viscous_damping_coeff,
       rolling_friction_coeff,
+      rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
       normal_force,
@@ -1064,8 +1064,8 @@ private:
       effective_radius,
       particle_one_properties,
       particle_two_properties,
-      rolling_viscous_damping_coeff,
       rolling_friction_coeff,
+      rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
       normal_force,
@@ -1193,8 +1193,8 @@ private:
       effective_radius,
       particle_one_properties,
       particle_two_properties,
-      rolling_viscous_damping_coeff,
       rolling_friction_coeff,
+      rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
       normal_force,
@@ -1354,8 +1354,8 @@ private:
       effective_radius,
       particle_one_properties,
       particle_two_properties,
-      rolling_viscous_damping_coeff,
       rolling_friction_coeff,
+      rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
       normal_force,
@@ -1843,7 +1843,7 @@ private:
   std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
   const double        dmt_cut_off_threshold;
-  const double        f_coefficient;
+  const double        f_coefficient_epsd;
 };
 
 #endif

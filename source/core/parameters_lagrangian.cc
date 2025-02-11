@@ -720,7 +720,7 @@ namespace Parameters
 
         prm.declare_entry(
           "f coefficient",
-          "0.1",
+          "0.",
           Patterns::Double(),
           "Model parameter for the EPSD rolling resistance model.");
 
@@ -942,7 +942,7 @@ namespace Parameters
               std::runtime_error("Invalid rolling resistance torque method "));
           }
         // Model parameter for the EPSD rolling resistance model
-        f_coefficient_epsd = prm.get("f coefficient");
+        f_coefficient_epsd = prm.get_double("f coefficient");
 
         const std::string integration = prm.get("integration method");
         if (integration == "velocity_verlet")

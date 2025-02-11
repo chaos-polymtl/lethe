@@ -12,6 +12,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
   : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
+  , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
 {
   // Wall properties
   const double wall_youngs_modulus =

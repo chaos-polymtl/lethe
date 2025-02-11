@@ -237,12 +237,9 @@ epsd_rolling_resistance_torque(
   const double I_e = I_i * I_j / (I_i + I_j);
 
   // C_r_crit = 2. * sqrt(I_r * K_r)
+  // C_r = eta_r * C_r_crit
   const double C_r =
     effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
-
-  // Minus sign has been verified
-  return cumulative_rolling_resistance_spring_torque -
-         C_r * omega_ij_perpendicular;
 
   // Similarly to the coulomb limit, the spring torque must be decrease to the
   // limit value if it exceeds the limiting spring toque.
@@ -252,17 +249,14 @@ epsd_rolling_resistance_torque(
         cumulative_rolling_resistance_spring_torque *
         (M_r_max / rolling_resistance_spring_torque_norm);
 
-      // If the limiting spring torque is exceeded, there is no damping. In
-      // other words the f used in "Assessment of rolling resistance models in
-      // discrete element simulations. Jun Ai et al."  is equal to zero.
-      //
-      // This way, the damping is only active when the angular relative
-      // velocity is low, which help to damp the oscillation when reaching a
-      // static solution.
-    }
-  else
-    {
+      // If the limiting spring torque is exceeded, the damping is multiplied by
+      // the f_coefficient which should be between 0 and 1.
 
+      return cumulative_rolling_resistance_spring_torque -
+             f_coefficient * C_r * omega_ij_perpendicular;
     }
+  // Minus sign has been verified
+  return cumulative_rolling_resistance_spring_torque -
+         C_r * omega_ij_perpendicular;
 }
 #endif
