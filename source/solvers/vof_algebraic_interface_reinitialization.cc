@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/solutions_output.h>
@@ -322,7 +322,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
           std::vector<double> JxW_vec =
             fe_values_algebraic_reinitialization.get_JxW_values();
 
-          // Get get present phase fraction and projected phase gradient values
+          // Get get present phase fraction, projected VOF phase gradient and
+          // curvature values
           fe_values_algebraic_reinitialization.get_function_values(
             this->evaluation_point, present_phase_fraction_values);
           fe_values_phase_gradient_projection[phase_fraction_gradients]
@@ -622,10 +623,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
     initial_step ? this->nonzero_constraints : this->zero_constraints;
 
   const bool verbose(
-    this->subequation_verbosity != Parameters::Verbosity::quiet &&
     this->simulation_parameters.vof_subequations_linear_solvers
-        .at(VOFSubequationsID::algebraic_interface_reinitialization)
-        .verbosity != Parameters::Verbosity::quiet);
+      .at(VOFSubequationsID::algebraic_interface_reinitialization)
+      .verbosity != Parameters::Verbosity::quiet);
 
   // Get residual conditions
   const double absolute_residual =
@@ -728,7 +728,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
         .at(VOFSubequationsID::algebraic_interface_reinitialization)
         .verbosity != Parameters::Verbosity::quiet);
 
-
   // Solve a first time-step
   if (verbose)
     {
@@ -744,7 +743,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
       this->pcout << "-Solving " << subequation_string << ", step " << step - 1
                   << std::endl;
     }
-  this->solve_non_linear_system(false);
+  this->solve_non_linear_system(true);
 
   // For debugging purposes
   if (this->simulation_parameters.multiphysics.vof_parameters

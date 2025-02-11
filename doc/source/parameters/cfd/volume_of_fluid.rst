@@ -148,10 +148,13 @@ Algebraic Interface Reinitialization
 
   The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
 
-  * ``steady-state criterion``: double representing one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance to the reach of steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
+  * ``steady-state criterion``: double representing one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance to the reaching of steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
 
     .. math::
      \alpha_\text{ss} \geq \frac{\phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau}}{\Delta \tau}
+
+
+    where :math:`\tau` is the pseudo-time used to solve the reinitialization PDE and :math:`\Delta \tau` is the associated pseudo-time-step.
 
   * ``max steps number``: integer indicating the maximum number of interface reinitialization steps that can be applied before the process ends.
 
@@ -164,7 +167,7 @@ Algebraic Interface Reinitialization
 
   * ``diffusivity power``: double representing the power :math:`(d)` to which the smallest cell-size value :math:`(h_\text{min})` is elevated in the evaluation of the diffusion coefficient of the PDE.
 
-  * ``reinitialization CFL``: double representing the CFL condition of the interface reinitialization process. This is used to evaluate the time-step :math:`(\Delta\tau)`.
+  * ``reinitialization CFL``: double representing the CFL condition of the interface reinitialization process. This is used to evaluate the pseudo-time-step :math:`(\Delta\tau)`.
 
     .. math::
       \Delta \tau = C_\text{CFL} \, h_\text{min}
@@ -176,11 +179,11 @@ Algebraic Interface Reinitialization
     * ``quiet``: default verbosity level; no information on the algebraic interface reinitialization process is displayed.
 
       .. warning::
-        As the verbosity of the algebraic interface reinitialization depends on the verbosity of the non-linear and linear solvers, some prints may remain if they are set to ``verbose``.
+        As the verbosity of the algebraic interface reinitialization depends on the verbosity of the non-linear and linear solvers, some console outputs may remain if they are set to ``verbose``.
 
     * ``verbose``: displays reinitialization steps progression. Only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
-    * ``extra verbose``: in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression trough reinitialization steps. This may be used for debugging purposes.
+    * ``extra verbose``: in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
 
 
 Phase Filtration

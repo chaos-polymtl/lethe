@@ -1606,23 +1606,24 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->previous_solutions[i] = tmp_previous_solution;
     }
 
-  // Apply algebraic interface reinitialization
-  if (simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.enable)
-    reinitialize_interface_with_algebraic_method();
+  //  // Apply algebraic interface reinitialization
+  //  if (simulation_parameters.multiphysics.vof_parameters
+  //        .algebraic_interface_reinitialization.enable)
+  //    reinitialize_interface_with_algebraic_method();
 
   // Apply filter to phase fraction
   apply_phase_filter();
 
-  // Solve phase fraction gradient and curvature projections
-  if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
-        .enable)
-    {
-      this->subequations->solve_specific_subequation(
-        VOFSubequationsID::phase_gradient_projection, true);
-      this->subequations->solve_specific_subequation(
-        VOFSubequationsID::curvature_projection, true);
-    }
+  //  // Solve phase fraction gradient and curvature projections
+  //  if
+  //  (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+  //        .enable)
+  //    {
+  //      this->subequations->solve_specific_subequation(
+  //        VOFSubequationsID::phase_gradient_projection, true);
+  //      this->subequations->solve_specific_subequation(
+  //        VOFSubequationsID::curvature_projection, true);
+  //    }
 }
 
 template <int dim>
@@ -2406,7 +2407,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
   this->subequations->solve_specific_subequation(
     VOFSubequationsID::algebraic_interface_reinitialization);
 
-  // Overwrite the solution with the algebraic interface reinitialization
+  // Overwrite the VOF solution with the algebraic interface reinitialization
   VectorTools::interpolate_to_different_mesh(
     *this->subequations->get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),

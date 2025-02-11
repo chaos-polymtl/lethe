@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_utilities_h
@@ -636,9 +636,10 @@ compute_cell_measure_with_JxW(const std::vector<double> &JxW_values)
 }
 
 /**
- * @brief Identify minimal cell size.
+ * @brief Identify minimum cell size. The cell size corresponds to the diameter
+ * of a disk (2D) or sphere (3D) of equivalent area (2D) or volume (3D).
  *
- * @tparam dim Number of dimensions of the problem.
+ * @tparam dim Number of spatial dimensions (2D or 3D).
  *
  * @param[in] mapping Interface for transformation from the reference (unit)
  * cell to the real cell.

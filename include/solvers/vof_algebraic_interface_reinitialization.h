@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_algebraic_interface_reinitialization_h
@@ -107,7 +107,7 @@ public:
 
   /**
    * @brief Solve interface algebraic reinitialization process until one of the
-   * stop criterion is met.
+   * stop criteria is met.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
    * solved during post_mesh_adaptation(), for verbosity.
@@ -270,7 +270,7 @@ private:
   define_zero_constraints();
 
   /**
-   * @brief  Define the non zero constraints used to solve the problem.
+   * @brief Define the non zero constraints used to solve the problem.
    */
   void
   define_non_zero_constraints();
@@ -311,7 +311,9 @@ private:
    * checking if at least one of the two stop criteria (steady-state criterion
    * or maximum number of reinitialization steps) is met.
    *
-   * @param time_step_inv Inverse of the current reinitialization time-step.
+   * @param[in] time_step_inv Inverse of the current reinitialization time-step.
+   *
+   * @param[in] step_number Algebraic interface reinitialization step number.
    *
    * @return Boolean indicating if the algebraic reinitialization should
    * continue
@@ -357,7 +359,7 @@ private:
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
 
-  // To output algebraic reinitialization steps
+  // Handler to output algebraic reinitialization steps
   PVDHandler pvdhandler;
 
   // Time-stepping with BDF1

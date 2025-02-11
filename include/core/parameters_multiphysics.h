@@ -180,11 +180,12 @@ namespace Parameters
     /// Enables/Disables the algebraic interface reinitialization.
     bool enable;
     /**
-     * Enables/Disables pvtu format outputs of the algebraic interface
+     * Enables/Disables @p pvtu format outputs of the algebraic interface
      * reinitialization steps of the last simulated time-step.
      * The files are stored in a folder named
-     * @p algebraic-reinitialization-steps-output located inside the @p output
-     * @p path @p folder specified in the @p simulation @p control subsection.
+     * @p algebraic-reinitialization-steps-output located inside the
+     * <tt>output path</tt> folder specified in the <tt>simulation control</tt>
+     * subsection.
      * */
     bool output_reinitialization_steps;
     /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase

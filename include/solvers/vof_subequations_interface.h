@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_subequations_interface_h
@@ -191,6 +191,11 @@ public:
     else if (subequation_id ==
              VOFSubequationsID::algebraic_interface_reinitialization)
       subequation_string = "VOF algebraic interface reinitialization";
+    else
+      throw(std::invalid_argument("Invalid VOFSubequationID. Options are: \n"
+                                  " <phase_gradient_projection>\n"
+                                  " <curvature_projection>\n"
+                                  " <algebraic_interface_reinitialization>"));
 
     return subequation_string;
   }

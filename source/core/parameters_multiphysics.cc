@@ -458,7 +458,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "enable",
       "false",
       Patterns::Bool(),
-      "Enables the interface to be reinitialized with the algebraic method "
+      "Enables the interface reinitialization with the algebraic method "
       "<true|false>");
     prm.declare_entry(
       "output reinitialization steps",
@@ -470,21 +470,21 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "frequency",
       "1",
       Patterns::Integer(),
-      "Reinitialization frequency at every specified number of time-steps, the "
+      "Reinitialization frequency (number of pseudo-time-steps) at which the "
       "interface algebraic reinitialization process will be applied to the VOF "
       "phase fraction field.");
     prm.declare_entry(
       "diffusivity multiplier",
       "1.",
       Patterns::Double(),
-      "Constant that multiplies the mesh-size in the mesh-dependant diffusivity "
-      "model of the algebraic interface reinitialization.");
+      "Factor that multiplies the mesh-size in the mesh-dependant diffusion "
+      "coefficient of the algebraic interface reinitialization.");
     prm.declare_entry(
       "diffusivity power",
       "1.",
       Patterns::Double(),
-      "Power value applied to the mesh-size in the mesh-dependant diffusivity "
-      "model of the algebraic interface reinitialization.");
+      "Power value applied to the mesh-size in the mesh-dependant diffusion "
+      "coefficient of the algebraic interface reinitialization.");
     prm.declare_entry("steady-state criterion",
                       "1e-2",
                       Patterns::Double(),
@@ -534,7 +534,9 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
     else if (op2 == "extra verbose")
       this->verbosity = Parameters::Verbosity::extra_verbose;
     else
-      throw(std::runtime_error("Invalid verbosity level"));
+      throw(std::invalid_argument("Invalid verbosity level\n "
+                                  "Options are: \n"
+                                  " <quiet|verbose|extra verbose>"));
   }
   prm.leave_subsection();
 }

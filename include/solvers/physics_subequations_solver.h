@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_physics_subequations_solver_h
@@ -106,7 +106,7 @@ public:
   /**
    * @brief Setup preconditioner.
    *
-   * @note used for the physics subequations, but needed for the compilation
+   * @note Not used for the physics subequations, but needed for the compilation
    * of the non-linear solver.
    */
   void

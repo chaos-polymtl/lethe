@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
@@ -361,14 +361,12 @@ create_output_folder(const std::string &dirname)
 #endif
 }
 
+// TODO find a solution for other compilers
 void
 delete_output_folder(const std::string &dirname)
 {
 #if __GNUC__ > 7
   std::filesystem::remove_all(dirname);
-#else
-  // std::string command = "rm -rf " + dirname;
-  // system(command.c_str());
 #endif
 }
 
