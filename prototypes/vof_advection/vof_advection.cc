@@ -91,11 +91,11 @@ Settings::try_parse(const std::string &prm_filename)
   prm.declare_entry("max refinement level",
                     "6",
                     Patterns::Integer(),
-                    "Maximum number of refinment level");
+                    "Maximum number of refinement level");
   prm.declare_entry("min refinement level",
                     "4",
                     Patterns::Integer(),
-                    "Minimum number of refinment level");
+                    "Minimum number of refinement level");
   prm.declare_entry("initial refinement level",
                     "1",
                     Patterns::Integer(),
@@ -935,7 +935,7 @@ namespace InterfaceTools
     interface_reconstruction_cells.clear();
     intersected_dofs.clear();
 
-    // Initialize local distance vetors.
+    // Initialize local distance vectors.
     initialize_local_distance();
 
     // Identify intersected cells and compute the interface reconstruction.
@@ -1021,15 +1021,15 @@ namespace InterfaceTools
     // Exchange and "select" min value between the processes
     distance.compress(VectorOperation::min);
 
-    // Update local ghost (distance becomes read only)
+    // Update local ghost (distance becomes read-only)
     distance.update_ghost_values();
 
     /* Copy distance to distance_with_ghost to keep the knowledge of local ghost
-    values and to have a read only version of the vector*/
+    values and to have a read-only version of the vector*/
     distance_with_ghost = distance;
 
     /* Zero out ghost DOFs to regain write functionalities in distance (it
-    becomes write only, that is why we need distance_with_ghost - to read the
+    becomes write-only, that is why we need distance_with_ghost - to read the
     ghost values in it).*/
     distance.zero_out_ghost_values();
 
@@ -1077,7 +1077,7 @@ namespace InterfaceTools
       {
         const unsigned int cell_index = intersected_cell.first;
 
-        // Create interface recontruction triangulation (surface triangulation) in the intersected volume cell
+        // Create interface reconstruction triangulation (surface triangulation) in the intersected volume cell
         std::vector<Point<dim>> surface_vertices =
           interface_reconstruction_vertices.at(cell_index);
         std::vector<CellData<dim - 1>> surface_cells = intersected_cell.second;
@@ -1125,7 +1125,7 @@ namespace InterfaceTools
   SignedDistanceSolver<dim>::compute_second_neighbors_distance(
     const MPI_Comm &mpi_communicator)
   {
-    /* The signed distance for the second neighbors (the cells not intersected by the interface is resolved according the the minimization problem presented by Ausas (2012). The method looks for the point in the opposite faces of each second neighbor DoFs that minimizes the distance to the interface. It works in a similar manner as a marching algorithm from the knowledge of the signed distance for the interface first neighbors. */
+    /* The signed distance for the second neighbors (the cells not intersected by the interface is resolved according the minimization problem presented by Ausas (2012). The method looks for the point in the opposite faces of each second neighbor DoFs that minimizes the distance to the interface. It works in a similar manner as a marching algorithm from the knowledge of the signed distance for the interface first neighbors. */
     const unsigned int n_opposite_faces_per_dofs = dim;
     const unsigned int dofs_per_cell             = fe.n_dofs_per_cell();
 
@@ -1146,7 +1146,7 @@ namespace InterfaceTools
     bool change = true;
 
     /* The count corresponds to how many times we iterate. In fact, it
-    correspond to the number of cell layers (starting from the interface)
+    corresponds to the number of cell layers (starting from the interface)
     that the approximation of the distance is known. */
     int count = 0;
     while (change)

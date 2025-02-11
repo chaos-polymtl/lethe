@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR A new a prototype for the geometric redistanciation is added. It includes an advection solver and the geometric redistanciation itself.[#1418](https://github.com/chaos-polymtl/lethe/pull/1418)
+- MINOR A new prototype for the geometric redistanciation is added. It includes an advection solver and the geometric redistanciation itself.[#1418](https://github.com/chaos-polymtl/lethe/pull/1418)
 
 ### Fixed
 
