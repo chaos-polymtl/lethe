@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/lethe_grid_tools.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -1059,13 +1060,15 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
           const double filtered_phase_gradient_value_q_norm =
             scratch_data.filtered_phase_gradient_values[q].norm();
 
+          const double r = LetheGridTools::find_point_line_distance(
+            laser_location,
+            laser_parameters->beam_axis,
+            scratch_data.quadrature_points[q]);
+
           // Calculate the strong residual for GLS stabilization
           double laser_heat_source =
             absorptivity * laser_power *
-            exp(-1.0 * concentration_factor *
-                std::pow(laser_location_on_surface.distance(
-                           quadrature_point_on_surface),
-                         2.0) /
+            exp(-1.0 * concentration_factor * std::pow(r, 2.0) /
                 (beam_radius * beam_radius));
 
           if constexpr (dim == 2)

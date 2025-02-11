@@ -1683,3 +1683,28 @@ template double
 LetheGridTools::find_point_triangle_distance(
   const std::vector<Point<3>> &triangle,
   const Point<3>              &point);
+
+template <int dim>
+double
+LetheGridTools::find_point_line_distance(const Point<dim>     &line_origin,
+                                         const Tensor<1, dim> &line_direction,
+                                         const Point<dim>     &point)
+{
+  Tensor<1, dim> diff = point - line_origin;
+
+  double t_0 = line_direction * diff;
+  t_0 /= line_direction.norm();
+
+  const Point<dim> closet_point_on_line = line_origin + t_0 * line_direction;
+
+  return point.distance(closet_point_on_line);
+}
+
+template double
+LetheGridTools::find_point_line_distance(const Point<2>     &line_origin,
+                                         const Tensor<1, 2> &line_direction,
+                                         const Point<2>     &point);
+template double
+LetheGridTools::find_point_line_distance(const Point<3>     &line_origin,
+                                         const Tensor<1, 3> &line_direction,
+                                         const Point<3>     &point);

@@ -317,6 +317,33 @@ namespace LetheGridTools
                                const Point<dim>              &point);
 
   /**
+   * @brief Calculates the distance between points and a line (defined using
+   * its orign and direction). The full calculation is taken from
+   * Geometric Tools for Computer Graphics, Eberly 2003 Chapter 10.2 - Point
+   * to linear component. The entire reference is available at:
+   * https://www.sciencedirect.com/science/article/pii/B9781558605947500138
+   * A full implementation of the  above reference is also available here:
+   * https://www.geometrictools.com/Documentation/DistancePointLine.pdf
+   * Variables name are taken straight from this reference to ensure a better
+   * readability.
+   *
+   * @return A distance
+   *
+   * @param[in] line_origin Origin of the line (any point on the line)
+   * @param[in] line_direction Vector tangent to the line
+   * @param[in] point A point for which we want to find the distance to the
+   * triangle
+   *
+   * return distance
+   *
+   */
+  template <int dim>
+  double
+  find_point_line_distance(const Point<dim>     &line_origin,
+                           const Tensor<1, dim> &line_direction,
+                           const Point<dim>     &point);
+
+  /**
    * @brief
    * A functor that provides a unique and uniformly distributed hash for a
    * a cell. Used to store cells in hash sets.

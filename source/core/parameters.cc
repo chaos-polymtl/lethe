@@ -1684,15 +1684,15 @@ namespace Parameters
 
       prm.declare_entry(
         "beam rotation angle",
-        "0",
+        "0.0",
         Patterns::Double(),
         "Angle of rotation of the beam axis with respect to the axis defined by the beam orientation parameter");
-        
+
       prm.declare_entry(
         "beam rotation axis",
-        "1, 0, 0",
+        "0.0, 0.0, 1.0",
         Patterns::List(Patterns::Double()),
-        "Axis around which the laser beam is rotated");
+        "Axis around which the laser beam is rotated, only used in 3D");
     }
     prm.leave_subsection();
   }
@@ -1745,8 +1745,13 @@ namespace Parameters
           beam_orientation                   = BeamOrientation::x_plus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
+          beam_axis[0]                       = 1;
+          beam_axis[1]                       = 0;
           if constexpr (dim == 3)
-            perpendicular_plane_coordinate_two = 2;
+            {
+              perpendicular_plane_coordinate_two = 2;
+              beam_axis[2]                       = 0;
+            }
         }
       else if (op == "x-")
         {
@@ -1754,8 +1759,13 @@ namespace Parameters
           beam_orientation                   = BeamOrientation::x_minus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
+          beam_axis[0]                       = -1;
+          beam_axis[1]                       = 0;
           if constexpr (dim == 3)
-            perpendicular_plane_coordinate_two = 2;
+            {
+              perpendicular_plane_coordinate_two = 2;
+              beam_axis[2]                       = 0;
+            }
         }
       else if (op == "y+")
         {
@@ -1763,8 +1773,13 @@ namespace Parameters
           beam_orientation                   = BeamOrientation::y_plus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
+          beam_axis[0]                       = 0;
+          beam_axis[1]                       = 1;
           if constexpr (dim == 3)
-            perpendicular_plane_coordinate_two = 2;
+            {
+              perpendicular_plane_coordinate_two = 2;
+              beam_axis[2]                       = 0;
+            }
         }
       else if (op == "y-")
         {
@@ -1772,8 +1787,13 @@ namespace Parameters
           beam_orientation                   = BeamOrientation::y_minus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
+          beam_axis[0]                       = 0;
+          beam_axis[1]                       = -1;
           if constexpr (dim == 3)
-            perpendicular_plane_coordinate_two = 2;
+            {
+              perpendicular_plane_coordinate_two = 2;
+              beam_axis[2]                       = 0;
+            }
         }
       else if (op == "z+")
         {
@@ -1784,6 +1804,9 @@ namespace Parameters
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
+              beam_axis[0]                       = 0;
+              beam_axis[1]                       = 0;
+              beam_axis[2]                       = 1;
             }
           else if constexpr (dim == 2)
             Assert(dim == 2, TwoDimensionalLaserError(dim));
@@ -1797,15 +1820,30 @@ namespace Parameters
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
+              beam_axis[0]                       = 0;
+              beam_axis[1]                       = 0;
+              beam_axis[2]                       = -1;
             }
           else if constexpr (dim == 2)
             Assert(dim == 2, TwoDimensionalLaserError(dim));
         }
-        // Initial rotation axis and angle
+      // Initial rotation axis and angle
+      if constexpr (dim == 3)
         rotation_axis =
-          value_string_to_tensor<3>(prm.get("initial rotation axis"));
-        rotation_angle = prm.get_double("initial rotation angle");
-        
+          value_string_to_tensor<dim>(prm.get("beam rotation axis"));
+
+      rotation_angle = prm.get_double("beam rotation angle");
+
+      if constexpr (dim == 2)
+        rotation_matrix =
+          Physics::Transformations::Rotations::rotation_matrix_2d(
+            rotation_angle);
+      if constexpr (dim == 3)
+        rotation_matrix =
+          Physics::Transformations::Rotations::rotation_matrix_3d(
+            rotation_axis, rotation_angle);
+
+      beam_axis = rotation_matrix * beam_axis;
     }
     prm.leave_subsection();
   }

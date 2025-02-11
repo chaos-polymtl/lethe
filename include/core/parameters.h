@@ -872,14 +872,21 @@ namespace Parameters
     // perpendicular plane to the laser beam orientation are stored in the
     // following parameters (x = 0, y = 1, z = 2)
     unsigned int perpendicular_plane_coordinate_one;
+
+    // Beam axis
+    Tensor<1, dim> beam_axis;
+
     unsigned int perpendicular_plane_coordinate_two;
-    
+
     // roatation angle of the laser axis in rad
     double rotation_angle;
-    
-    // rotation axis 
-    Tensor<1, 3> rotation_axis;
-    
+
+    // rotation axis
+    Tensor<1, dim> rotation_axis;
+
+    // rotation matrix
+    Tensor<2, dim> rotation_matrix;
+
     // Laser scan path indicates the path of the laser focal point during a
     // simulation
     std::shared_ptr<Functions::ParsedFunction<dim>> laser_scan_path;
