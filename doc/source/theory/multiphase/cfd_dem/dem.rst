@@ -232,7 +232,7 @@ Where:
 * :math:`I_e` effective inertia;
 * :math:`C_r^{crit}` rolling critical viscous damping constant;
 * :math:`C_r` rolling viscous damping constant;
-* :math:`f` full mobilisation model parameter (which is set to zero in the current implementation);
+* :math:`f` full mobilisation model parameter;
 
 :math:`\mathbf{M}_{t}^{k}` starts at :math:`\mathbf{0}` at the beginning of a contact and is set back to :math:`\mathbf{0}` when the contact ends. :math:`\mathbf{M}_{\mathrm{r},ij}` is applied on particle i. The rolling resistance torque applied on particle j can be found using Newton's Third Law.
 
