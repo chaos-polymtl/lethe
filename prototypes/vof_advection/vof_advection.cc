@@ -171,7 +171,7 @@ Settings::try_parse(const std::string &prm_filename)
 }
 
 template <typename T>
-int
+T
 sgn(T val)
 {
   return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
