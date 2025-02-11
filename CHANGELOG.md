@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-15
+
+### Added
+
+- MAJOR A new rolling resistance model called the elastic-plastic spring-dashpot model has been added to the DEM. This model will help when dealing with static DEM problem, like in the realization of a static angle or a repose.[#1417](https://github.com/chaos-polymtl/lethe/pull/1417)
+
 ## [Master] - 2025-02-14
 
 ### Fixed
