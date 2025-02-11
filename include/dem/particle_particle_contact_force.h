@@ -5,7 +5,6 @@
 #define lethe_particle_particle_contact_force_h
 
 #include <core/auxiliary_math_functions.h>
-#include <core/dem_properties.h>
 
 #include <dem/contact_info.h>
 #include <dem/contact_type.h>
@@ -13,8 +12,6 @@
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/rolling_resistance_torque_models.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 #include <boost/range/adaptor/map.hpp>
 
@@ -94,7 +91,7 @@ protected:
  * combination of force model is generated at compile time.
  *
  * @tparam dim The dimension of the problem.
- * @tparam force_model The particle-particle contact force model.
+ * @tparam contact_model The particle-particle contact force model.
  * @tparam rolling_friction_model The rolling resistance model.
  */
 template <
@@ -568,8 +565,9 @@ private:
     const double                   effective_radius,
     const ArrayView<const double> &particle_one_properties,
     const ArrayView<const double> &particle_two_properties,
-    [[maybe_unused]] const double  rolling_viscous_damping_coeff,
     const double                   rolling_friction_coeff,
+    [[maybe_unused]] const double  rolling_viscous_damping_coeff,
+    [[maybe_unused]] const double  f_coeff,
     [[maybe_unused]] const double  dt,
     [[maybe_unused]] const double  normal_spring_constant,
     const Tensor<1, 3>            &normal_force,
@@ -619,6 +617,7 @@ private:
           particle_two_properties,
           rolling_friction_coeff,
           rolling_viscous_damping_coeff,
+          f_coeff,
           normal_force.norm(),
           dt,
           normal_spring_constant,
@@ -769,8 +768,8 @@ private:
       effective_radius,
       particle_one_properties,
       particle_two_properties,
-      rolling_viscous_damping_coeff,
       rolling_friction_coeff,
+      rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
       normal_force,
@@ -1844,6 +1843,7 @@ private:
   std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
   const double        dmt_cut_off_threshold;
+  const double        f_coefficient;
 };
 
 #endif

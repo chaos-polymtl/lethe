@@ -289,6 +289,9 @@ namespace Parameters
       // Rolling resistance torque method
       RollingResistanceMethod rolling_resistance_method;
 
+      // Model parameter for the EPSD rolling resistance model
+      double f_coefficient_epsd;
+
       // Itegration method
       enum class IntegrationMethod
       {

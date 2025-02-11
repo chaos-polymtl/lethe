@@ -359,6 +359,9 @@ protected:
     const double                     dt,
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties);
+
+  // Model parameter
+  const double f_coefficient_epsd;
 };
 
 #endif

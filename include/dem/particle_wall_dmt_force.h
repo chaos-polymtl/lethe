@@ -337,6 +337,7 @@ private:
     return delta_0 / std::sqrt(dmt_cut_off_threshold);
   };
 
+  // Model parameter
   const double dmt_cut_off_threshold;
 };
 

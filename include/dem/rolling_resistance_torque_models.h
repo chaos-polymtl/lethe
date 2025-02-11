@@ -153,6 +153,7 @@ viscous_rolling_resistance_torque(
  * Effective rolling viscous damping
  * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
+ * @param[in] f_coefficient Model parameter for the viscous damping.
  * @param[in] normal_force_norm Norm of the nomal force.
  * @param[in] dt DEM time step.
  * @param[in] normal_spring_constant normal contact stiffness constant.
@@ -168,6 +169,7 @@ epsd_rolling_resistance_torque(
   const ArrayView<const double> &particle_two_properties,
   const double                   effective_rolling_friction_coefficient,
   const double                   effective_rolling_viscous_damping_coefficient,
+  const double                   f_coefficient,
   const double                   normal_force_norm,
   const double                   dt,
   const double                   normal_spring_constant,
@@ -218,6 +220,30 @@ epsd_rolling_resistance_torque(
   const double rolling_resistance_spring_torque_norm =
     cumulative_rolling_resistance_spring_torque.norm();
 
+  // 1.4 * m_i * (R_i)^2
+  // Total inertia of particle i evaluated at the contact point.
+  const double I_i = 1.4 * particle_one_properties[PropertiesIndex::mass] *
+                     Utilities::fixed_power<2>(
+                       0.5 * particle_one_properties[PropertiesIndex::dp]);
+
+  // 1.4 * m_j * (R_j)^2
+  // Total inertia of particle evaluated at the contact point.
+  const double I_j = 1.4 * particle_two_properties[PropertiesIndex::mass] *
+                     Utilities::fixed_power<2>(
+                       0.5 * particle_two_properties[PropertiesIndex::dp]);
+
+  // Harmonic mean of the inertia at the point of contact. (Effective
+  // inertia)
+  const double I_e = I_i * I_j / (I_i + I_j);
+
+  // C_r_crit = 2. * sqrt(I_r * K_r)
+  const double C_r =
+    effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
+
+  // Minus sign has been verified
+  return cumulative_rolling_resistance_spring_torque -
+         C_r * omega_ij_perpendicular;
+
   // Similarly to the coulomb limit, the spring torque must be decrease to the
   // limit value if it exceeds the limiting spring toque.
   if (rolling_resistance_spring_torque_norm > M_r_max)
@@ -233,34 +259,10 @@ epsd_rolling_resistance_torque(
       // This way, the damping is only active when the angular relative
       // velocity is low, which help to damp the oscillation when reaching a
       // static solution.
-
-      return cumulative_rolling_resistance_spring_torque;
     }
   else
     {
-      // 1.4 * m_i * (R_i)^2
-      // Total inertia of particle i evaluated at the contact point.
-      const double I_i = 1.4 * particle_one_properties[PropertiesIndex::mass] *
-                         Utilities::fixed_power<2>(
-                           0.5 * particle_one_properties[PropertiesIndex::dp]);
 
-      // 1.4 * m_j * (R_j)^2
-      // Total inertia of particle jevaluated at the contact point.
-      const double I_j = 1.4 * particle_two_properties[PropertiesIndex::mass] *
-                         Utilities::fixed_power<2>(
-                           0.5 * particle_two_properties[PropertiesIndex::dp]);
-
-      // Harmonic mean of the inertia at the point of contact. (Effective
-      // inertia)
-      const double I_e = I_i * I_j / (I_i + I_j);
-
-      // C_r_crit = 2. * sqrt(I_r * K_r)
-      const double C_r =
-        effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
-
-      // Minus sign has been verified
-      return cumulative_rolling_resistance_spring_torque -
-             C_r * omega_ij_perpendicular;
     }
 }
 #endif
