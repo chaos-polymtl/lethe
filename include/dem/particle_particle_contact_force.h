@@ -563,15 +563,15 @@ private:
    */
   inline Tensor<1, 3>
   calculate_rolling_resistance_torque(
-    const double                   effective_radius,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const double                   rolling_friction_coeff,
+    [[maybe_unused]]const double                   effective_radius,
+    [[maybe_unused]]const ArrayView<const double> &particle_one_properties,
+    [[maybe_unused]]const ArrayView<const double> &particle_two_properties,
+    [[maybe_unused]]const double                   rolling_friction_coeff,
     [[maybe_unused]] const double  rolling_viscous_damping_coeff,
     [[maybe_unused]] const double  dt,
     [[maybe_unused]] const double  normal_spring_constant,
-    const Tensor<1, 3>            &normal_force,
-    const Tensor<1, 3>            &normal_unit_vector,
+    [[maybe_unused]]const double                   normal_force_norm,
+    [[maybe_unused]]const Tensor<1, 3>            &normal_unit_vector,
     Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
   {
     using namespace Parameters::Lagrangian;
@@ -579,12 +579,7 @@ private:
     if constexpr (rolling_friction_model ==
                   RollingResistanceMethod::no_resistance)
       {
-        return no_rolling_resistance_torque(effective_radius,
-                                            particle_one_properties,
-                                            particle_two_properties,
-                                            rolling_friction_coeff,
-                                            normal_force.norm(),
-                                            normal_unit_vector);
+        return no_rolling_resistance_torque();
       }
 
     if constexpr (rolling_friction_model ==
@@ -595,8 +590,7 @@ private:
           particle_one_properties,
           particle_two_properties,
           rolling_friction_coeff,
-          normal_force.norm(),
-          normal_unit_vector);
+          normal_force_norm);
       }
 
     if constexpr (rolling_friction_model == viscous_resistance)
@@ -606,7 +600,7 @@ private:
           particle_one_properties,
           particle_two_properties,
           rolling_friction_coeff,
-          normal_force.norm(),
+          normal_force_norm,
           normal_unit_vector);
       }
     if constexpr (rolling_friction_model == epsd_resistance)
@@ -618,7 +612,7 @@ private:
           rolling_friction_coeff,
           rolling_viscous_damping_coeff,
           f_coefficient_epsd,
-          normal_force.norm(),
+          normal_force_norm,
           dt,
           normal_spring_constant,
           normal_unit_vector,
@@ -772,7 +766,7 @@ private:
       rolling_friction_coeff,
       dt,
       normal_spring_constant,
-      normal_force,
+      normal_force.norm(),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -927,7 +921,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force,
+      normal_force.norm(),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -1068,7 +1062,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force,
+      normal_force.norm(),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -1197,7 +1191,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force,
+      normal_force.norm(),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -1358,7 +1352,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force,
+      normal_force.norm(),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }

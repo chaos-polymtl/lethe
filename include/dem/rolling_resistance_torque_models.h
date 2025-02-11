@@ -16,13 +16,7 @@
  */
 
 inline Tensor<1, 3>
-no_rolling_resistance_torque(
-  const double /*effective_r*/,
-  const ArrayView<const double> & /*particle_one_properties*/,
-  const ArrayView<const double> & /*particle_two_properties*/,
-  const double /*effective_rolling_friction_coefficient*/,
-  const double /*normal_force_norm*/,
-  const Tensor<1, 3> & /*normal_unit_vector*/)
+no_rolling_resistance_torque()
 {
   // No rolling resistance torque model. When this model is use, the rolling
   // friction is zero.
@@ -46,7 +40,6 @@ no_rolling_resistance_torque(
  * @param[in] particle_two_properties Properties of particle two in contact.
  * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
- * @param[in] normal_force_norm Norm of the nomal force.
  *
  */
 template <typename PropertiesIndex>
@@ -56,8 +49,7 @@ constant_rolling_resistance_torque(
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties,
   const double                   effective_rolling_friction_coefficient,
-  const double                   normal_force_norm,
-  const Tensor<1, 3> & /*normal_unit_vector*/)
+  const double                   normal_force_norm)
 
 {
   // For calculation of rolling resistance torque, we need to obtain
