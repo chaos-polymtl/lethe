@@ -1,8 +1,4 @@
-"""
-.sh case generator for calcul canada
-By: Olivier Gaboriault
-Date: February  21th, 2024
-"""
+
 import numpy as np
 import jinja2
 from datetime import datetime
