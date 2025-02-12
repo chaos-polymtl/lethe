@@ -13,4 +13,4 @@ The experimental results indicate an angle of repose of **26 degrees**. To repli
 These values are applied to both particle-particle and particle-wall interactions to simplify the calibration process.
 
 
-Other simulation parameters and models can be found in this article: [Solid-liquid rotary kilns: An experimental and CFD-DEM study](link).
+Other simulation parameters and models can be found in this article: [Solid-liquid rotary kilns: An experimental and CFD-DEM study](https://www.sciencedirect.com/science/article/pii/S003259102300791X).
