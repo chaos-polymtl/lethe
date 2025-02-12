@@ -13,7 +13,6 @@ end
 subsection multiphysics
   set fluid dynamics       = true
   set tracer               = true
-  set first order reaction = true
 end
 
 subsection mesh
