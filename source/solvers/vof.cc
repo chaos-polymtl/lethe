@@ -7,6 +7,8 @@
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <sys/stat.h>
+
 #include <cmath>
 
 
@@ -1606,24 +1608,8 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->previous_solutions[i] = tmp_previous_solution;
     }
 
-  //  // Apply algebraic interface reinitialization
-  //  if (simulation_parameters.multiphysics.vof_parameters
-  //        .algebraic_interface_reinitialization.enable)
-  //    reinitialize_interface_with_algebraic_method();
-
   // Apply filter to phase fraction
   apply_phase_filter();
-
-  //  // Solve phase fraction gradient and curvature projections
-  //  if
-  //  (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
-  //        .enable)
-  //    {
-  //      this->subequations->solve_specific_subequation(
-  //        VOFSubequationsID::phase_gradient_projection, true);
-  //      this->subequations->solve_specific_subequation(
-  //        VOFSubequationsID::curvature_projection, true);
-  //    }
 }
 
 template <int dim>
@@ -2013,6 +1999,34 @@ VolumeOfFluid<dim>::set_initial_conditions()
                                   .vof_parameters.sharpening.monitored_fluid);
 
       this->mass_first_iteration = this->mass_monitored;
+    }
+
+  // Reset algebraic interface reinitialization output directory;
+  // if it does not exist, create it.
+  if (simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.enable &&
+      simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.output_reinitialization_steps)
+    {
+      auto mpi_communicator = this->triangulation->get_communicator();
+      const std::string folder =
+        this->simulation_parameters.simulation_control.output_folder +
+        "/algebraic-reinitialization-steps-output/";
+
+      struct stat buffer;
+
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        {
+          if (stat(folder.c_str(), &buffer) != 0)
+            {
+              create_output_folder(folder);
+            }
+          else
+            {
+              delete_output_folder(folder);
+              create_output_folder(folder);
+            }
+        }
     }
 
   percolate_time_vectors();

@@ -133,7 +133,7 @@ Algebraic Interface Reinitialization
 
   * ``enable``: enable the algebraic interface reinitialization.
 
-  * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps of the last simulated VOF time-step. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
+  * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
     Outputted quantities of interest are:
       * Reinitialized phase fraction scalar-field (``reinit_phase_fraction``);

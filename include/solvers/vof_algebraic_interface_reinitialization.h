@@ -44,6 +44,9 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
+   * @param[in] p_simulation_iteration_number Pointer to the current simulation
+   * iteration number.
+   *
    * @param[in] p_multiphysics_interface Multiphysics interface object used to
    * get information from physics.
    *
@@ -56,6 +59,7 @@ public:
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                   &p_triangulation,
+    unsigned int                  *p_simulation_iteration_number,
     MultiphysicsInterface<dim>    *p_multiphysics_interface,
     VOFSubequationsInterface<dim> *p_subequations_interface)
     : PhysicsNonlinearSubequationsSolver<dim, GlobalVectorType>(
@@ -66,6 +70,7 @@ public:
     , subequations_interface(p_subequations_interface)
     , multiphysics_interface(p_multiphysics_interface)
     , simulation_parameters(p_simulation_parameters)
+    , simulation_iteration_number(p_simulation_iteration_number)
     , triangulation(p_triangulation)
     , dof_handler(*this->triangulation)
     , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
@@ -321,34 +326,46 @@ private:
   inline bool
   continue_iterating(const double time_step_inv, const unsigned int step_number)
   {
-    // Get the stop criterion of the pseudo-time-stepping scheme
-    double steady_state_criterion =
-      this->simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.steady_state_criterion;
-
-    // Evaluate the solution difference between the 2 last solutions
-    auto solution_diff = local_evaluation_point;
-    solution_diff -= previous_local_evaluation_point;
-
-    // Evaluate the current steady-state criterion value
-    double stop_criterion = time_step_inv * solution_diff.l2_norm();
-
-    if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
+    if (step_number == 1)
       {
-        this->pcout << "Algebraic reinitialization solution norm difference = "
-                    << solution_diff.l2_norm() << std::endl;
-        this->pcout
-          << "Algebraic reinitialization steady-state criterion value = "
-          << stop_criterion << std::endl;
-        this->pcout
-          << "Algebraic reinitialization fixed steady-state criterion = "
-          << steady_state_criterion << std::endl;
+        return (step_number <
+                this->simulation_parameters.multiphysics.vof_parameters
+                    .algebraic_interface_reinitialization.max_steps_number +
+                  1);
       }
+    else
+      {
+        // Get the stop criterion of the pseudo-time-stepping scheme
+        double steady_state_criterion =
+          this->simulation_parameters.multiphysics.vof_parameters
+            .algebraic_interface_reinitialization.steady_state_criterion;
 
-    return (
-      (stop_criterion > steady_state_criterion) &&
-      (step_number < this->simulation_parameters.multiphysics.vof_parameters
-                       .algebraic_interface_reinitialization.max_steps_number));
+        // Evaluate the solution difference between the 2 last solutions
+        auto solution_diff = local_evaluation_point;
+        solution_diff -= previous_local_evaluation_point;
+
+        // Evaluate the current steady-state criterion value
+        double stop_criterion = time_step_inv * solution_diff.l2_norm();
+
+        if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
+          {
+            this->pcout
+              << "Algebraic reinitialization solution norm difference = "
+              << solution_diff.l2_norm() << std::endl;
+            this->pcout
+              << "Algebraic reinitialization steady-state criterion value = "
+              << stop_criterion << std::endl;
+            this->pcout
+              << "Algebraic reinitialization fixed steady-state criterion = "
+              << steady_state_criterion << std::endl;
+          }
+
+        return ((stop_criterion > steady_state_criterion) &&
+                (step_number <
+                 this->simulation_parameters.multiphysics.vof_parameters
+                     .algebraic_interface_reinitialization.max_steps_number +
+                   1));
+      }
   }
 
   const VOFSubequationsID        subequation_id;
@@ -358,6 +375,9 @@ private:
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
+
+  // Simulation iteration number
+  unsigned int *simulation_iteration_number;
 
   // Handler to output algebraic reinitialization steps
   PVDHandler pvdhandler;

@@ -465,7 +465,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "false",
       Patterns::Bool(),
       "Enables pvtu format outputs of the algebraic interface reinitialization "
-      "steps of the last simulated time-step <true|false>");
+      "steps <true|false>");
     prm.declare_entry(
       "frequency",
       "1",
@@ -504,8 +504,8 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "reinitialization CFL",
       "1.",
       Patterns::Double(),
-      "CFL value for time-step calculation purposes in the algebraic interface "
-      "reinitialization.");
+      "CFL value for pseudo-time-step calculation purposes in the algebraic "
+      "interface reinitialization.");
   }
   prm.leave_subsection();
 }

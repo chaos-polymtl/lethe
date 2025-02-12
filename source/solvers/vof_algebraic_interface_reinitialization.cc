@@ -9,8 +9,6 @@
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
-#include <sys/stat.h>
-
 template <int dim>
 void
 VOFAlgebraicInterfaceReinitialization<dim>::setup_dofs()
@@ -186,32 +184,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
   this->previous_local_evaluation_point =
     this->previous_solution; // For steady-state criterion evaluation
 
-  // For debugging purposes
-  if (this->simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.output_reinitialization_steps)
-    {
-      auto mpi_communicator = this->triangulation->get_communicator();
-      const std::string folder =
-        this->simulation_parameters.simulation_control.output_folder +
-        "/algebraic-reinitialization-steps-output/";
-      struct stat buffer;
-
-      // Reset output directory; if it does not exist, create it.
-      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-        {
-          if (stat(folder.c_str(), &buffer) != 0)
-            {
-              create_output_folder(folder);
-            }
-          else
-            {
-              delete_output_folder(folder);
-              create_output_folder(folder);
-            }
-        }
-
-      write_output_results(0);
-    }
+  // Initial condition
+  write_output_results(0);
 }
 
 
@@ -715,7 +689,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
   double current_time_step_inv = 1. / this->current_time_step;
   this->time_step_vector[0]    = this->current_time_step;
 
-  // Set initial conditions from the VOF solution
+  // Set initial conditions from the VOF solution (step 0)
   set_initial_conditions();
 
   // Reinitialization steps counter
@@ -727,23 +701,16 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
     this->simulation_parameters.vof_subequations_non_linear_solvers
         .at(VOFSubequationsID::algebraic_interface_reinitialization)
         .verbosity != Parameters::Verbosity::quiet);
+  std::string subequation_string =
+    this->subequations_interface->get_subequation_string(this->subequation_id);
 
-  // Solve a first time-step
   if (verbose)
     {
-      std::string subequation_string =
-        this->subequations_interface->get_subequation_string(
-          this->subequation_id);
-
       announce_string(this->pcout, "VOF algebraic interface reinitialization");
 
       this->pcout << "Current algebraic reinitialization time-step: "
                   << this->current_time_step << std::endl;
-
-      this->pcout << "-Solving " << subequation_string << ", step " << step - 1
-                  << std::endl;
     }
-  this->solve_non_linear_system(true);
 
   // For debugging purposes
   if (this->simulation_parameters.multiphysics.vof_parameters
@@ -753,35 +720,42 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve(
   // Iterate until a stop criterion is met
   while (continue_iterating(current_time_step_inv, step))
     {
-      step += 1;
-
-      // Update previous solution
-      this->previous_solution               = this->present_solution;
-      this->previous_local_evaluation_point = this->local_evaluation_point;
-
-      // Update non-zero constraints
-      define_non_zero_constraints();
-
-      // Solve non-linear equation
       if (verbose)
         {
-          std::string subequation_string =
-            this->subequations_interface->get_subequation_string(
-              this->subequation_id);
-
-          this->pcout << "-Solving " << subequation_string << ", step "
-                      << step - 1 << std::endl;
+          this->pcout << "-Solving " << subequation_string << ", step " << step
+                      << std::endl;
         }
-      this->solve_non_linear_system(false);
 
-      // For debugging purposes
-      if (this->simulation_parameters.multiphysics.vof_parameters
-            .algebraic_interface_reinitialization.output_reinitialization_steps)
-        write_output_results(step);
+      if (step == 1)
+        {
+          // Solve non-linear equation
+          this->solve_non_linear_system(true);
+        }
+      else
+        {
+          // Update previous solution
+          this->previous_solution               = this->present_solution;
+          this->previous_local_evaluation_point = this->local_evaluation_point;
+
+          // Update non-zero constraints
+          define_non_zero_constraints();
+
+          // Solve non-linear equation
+          this->solve_non_linear_system(false);
+
+          // For debugging purposes
+          if (this->simulation_parameters.multiphysics.vof_parameters
+                .algebraic_interface_reinitialization
+                .output_reinitialization_steps)
+            write_output_results(step);
+        }
+
+      // Increment step number
+      step++;
     }
 
   if (verbose)
-    this->pcout << "The solver took: " << step << " reinitialization steps"
+    this->pcout << "The solver took: " << step - 1 << " reinitialization steps"
                 << std::endl;
 }
 
@@ -797,7 +771,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
 
   const std::string file_name =
     "algebraic-reinitialization-" +
-    this->simulation_parameters.simulation_control.output_name;
+    this->simulation_parameters.simulation_control.output_name + "-it" +
+    Utilities::int_to_string(*this->simulation_iteration_number, 5);
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
