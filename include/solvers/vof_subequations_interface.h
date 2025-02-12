@@ -44,7 +44,7 @@ public:
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                &p_triangulation,
-    unsigned int               *simulation_iteration_number,
+    unsigned int               *p_simulation_iteration_number,
     MultiphysicsInterface<dim> *p_multiphysics_interface);
 
   /**
