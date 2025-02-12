@@ -103,7 +103,7 @@ private:
    * @param[in,out] cumulative_rolling_resistance_spring_torque cumulative
    * rolling resistance torque for the EPSD rolling resistance model.
    *
-   * @return Rolling resistance torque equal to the null vector.
+   * @return Rolling resistance torque equal to a zero tensor.
    */
   inline Tensor<1, 3>
   no_resistance(const ArrayView<const double> & /*particle_properties*/,

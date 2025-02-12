@@ -203,22 +203,22 @@ For the elastic-plastic spring-dashpot model, :math:`\mathbf{M}_{\mathrm{r}}^{k}
 
 .. math::
     \mathbf{\omega}_{ji} &= \mathbf{\omega}_{i}- \mathbf{\omega}_{j}\\
-    \mathbf{\omega}_{ji,plane} &= \mathbf{\omega}_{ij}- \left( \mathbf{\omega}_{ij}\cdot\mathbf{n}_{ij} \right) \mathbf{n}_{ij}\\
-    \mathbf{\Delta\theta} &= \Delta t \; \mathbf{\omega}_{ij,plane}\\
-    k_r &= 2.25 k_n \left( \mu_r R_e \right)^2\\
-    \mathbf{\Delta M}_{r,t}^k &= -k_r\mathbf{\Delta\theta}\\
-    \mathbf{M}_{t+\Delta t}^k &=  \mathbf{M}_{t}^{k}+ \mathbf{\Delta M}_{r,t}^{k} \\
-    M^m_r &= \mu_r R_e |\mathbf{F}_{n,ij}|\\
-    \mathbf{M}^k_{t+\Delta t} &= \begin{cases}
-         \mathbf{M}^k_{t+\Delta t}, & |\mathbf{M}^k_{t+\Delta t}| < M^m_r \\
-         \frac{\mathbf{M}^k_{t+\Delta t} }{|\mathbf{M}^k_{t+\Delta t}|} M^m_r, & \text{else}
+    \mathbf{\omega}_{ji,\mathrm{plane}} &= \mathbf{\omega}_{ij}- \left( \mathbf{\omega}_{ij}\cdot\mathbf{n}_{ij} \right) \mathbf{n}_{ij}\\
+    \mathbf{\Delta\theta} &= \Delta t \; \mathbf{\omega}_{ij,\mathrm{plane}}\\
+    k_\mathrm{r} &= 2.25 k_\mathrm{n} \left( \mu_\mathrm{r} R_\mathrm{e} \right)^2\\
+    \mathbf{\Delta M}_{\mathrm{r},t}^k &= -k_\mathrm{r}\mathbf{\Delta\theta}\\
+    \mathbf{M}_{\mathrm{r},t+\Delta t}^\mathrm{k} &= \mathbf{M}_{\mathrm{r},t}^\mathrm{k}+ \mathbf{\Delta M}_{\mathrm{r},t}^\mathrm{k} \\
+    M\mathrm{^{m}_{r}} &= \mu_\mathrm{r} R_\mathrm{e} |\mathbf{F}_{\mathrm{n},ij}|\\
+    \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}} &= \begin{cases}
+         \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}, & |\mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}| <  M\mathrm{^{m}_{r}} \\
+         \frac{ \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}}{| \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}|} M\mathrm{^{m}_{r}}, & \text{else}
     \end{cases}\\
-    I_e &= \left( \frac{1}{I_i + m_iR_i^2} + \frac{1}{I_j + m_jR_j^2} \right)\\
-    C_r^{crit} &= 2 \sqrt{I_r K_r} \\
+    I_\mathrm{e} &= \left( \frac{1}{I_i + m_iR_i^2} + \frac{1}{I_j + m_jR_j^2} \right)\\
+    C_r^{crit} &= 2 \sqrt{I_\mathrm{e} k_\mathrm{r}} \\
     C_r &= \eta_r C_r^{crit}\\
-    \mathbf{M}^d_{t+\Delta t} &= \begin{cases}
-         -C_r \mathbf{\omega}_{ij,plane} , & |\mathbf{M}^k_{t+\Delta t}| < M^m_r \\
-         -f C_r \mathbf{\omega}_{ij,plane}, & \text{else}
+    \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{e}} &= \begin{cases}
+         -C_r \mathbf{\omega}_{ij,\mathrm{plane}} , & |\mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}| <  M\mathrm{^{m}_{r}} \\
+         -f C_r \mathbf{\omega}_{ij,\mathrm{plane}}, & \text{else}
     \end{cases}
 
 Where:
@@ -226,15 +226,15 @@ Where:
 * :math:`\mathbf{\omega}_{ji}` relative angular velocity between particle j and i;
 * :math:`\mathbf{\omega}_{ji,t}` relative angular velocity between particle j and i perpendicular to the normal contact vector (vector in the contact plane);
 * :math:`\mathbf{\Delta\theta}` incremental relative rotation between particle j and i;
-* :math:`k_r` rolling stiffness;
-* :math:`\mathbf{\Delta M}_{r,t}^k` incremental elastic rolling resistance torque;
-* :math:`M^m_r` limiting spring torque which is achieved at a full angular mobilisation;
-* :math:`I_e` effective inertia;
-* :math:`C_r^{crit}` rolling critical viscous damping constant;
-* :math:`C_r` rolling viscous damping constant;
+* :math:`k_\mathrm{r}` rolling stiffness;
+* :math:`\mathbf{\Delta M}_{r,t}^\mathrm{k}` incremental elastic rolling resistance torque;
+* :math:`M\mathrm{^{m}_{r}}` limiting spring torque which is achieved at a full angular mobilisation;
+* :math:`I_\mathrm{e}` effective inertia;
+* :math:`C_\mathrm{r}^\mathrm{crit}}` rolling critical viscous damping constant;
+* :math:`C_\mathrm{r}` rolling viscous damping constant;
 * :math:`f` full mobilisation model parameter;
 
-:math:`\mathbf{M}_{t}^{k}` starts at :math:`\mathbf{0}` at the beginning of a contact and is set back to :math:`\mathbf{0}` when the contact ends. :math:`\mathbf{M}_{\mathrm{r},ij}` is applied on particle i. The rolling resistance torque applied on particle j can be found using Newton's Third Law.
+:math:`\mathbf{M}_{t}^{\mathrm{k}}` starts at :math:`\mathbf{0}` at the beginning of a contact and is set back to :math:`\mathbf{0}` when the contact ends. :math:`\mathbf{M}_{\mathrm{r},ij}` is applied on particle i. The rolling resistance torque applied on particle j can be found using Newton's Third Law.
 
 For further details on all three rolling resistance model, we refer the reader to the article by Ai *et al.*  [#ai2011]_
 

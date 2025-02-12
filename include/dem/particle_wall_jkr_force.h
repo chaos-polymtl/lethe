@@ -238,7 +238,7 @@ private:
   }
 
   /**
-   * @brief alculation of the rolling resistance torque model using the
+   * @brief Calculation of the rolling resistance torque model using the
    * physical properties and the elastic-plastic spring-dashpot model
    *
    * @param particle_properties Particle one properties.
@@ -246,7 +246,7 @@ private:
    * coefficient.
    * @param effective_rolling_viscous_damping_coefficient Effective rolling viscous
    * damping coefficient.
-   * @param normal_force_norm Normal force norm.
+   * @param normal_force_norm Norm of the normal force tensor.
    * @param dt DEM time step.
    * @param normal_spring_constant Normal spring constant.
    * @param normal_unit_vector Normal unit contact vector between the particle
@@ -305,7 +305,7 @@ private:
     const double rolling_resistance_spring_torque_norm =
       cumulative_rolling_resistance_spring_torque.norm();
 
-    // Total inertia of particle i evaluated at its surface. Mass of the
+    // Total inertia of particle i is evaluated at its surface. Mass of the
     // wall is considered infinite, thus I_i is equal to I_e. (Effective
     // inertia)
     const double I_e =
@@ -316,7 +316,7 @@ private:
     const double C_r =
       effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
 
-    // Similarly to the coulomb limit, the spring torque must be decrease to the
+    // Similarly to the Coulomb limit, the spring torque must be decrease to the
     // limit value if it exceeds the limiting spring toque.
     if (rolling_resistance_spring_torque_norm > M_r_max)
       {

@@ -563,16 +563,16 @@ private:
    */
   inline Tensor<1, 3>
   calculate_rolling_resistance_torque(
-    [[maybe_unused]]const double                   effective_radius,
-    [[maybe_unused]]const ArrayView<const double> &particle_one_properties,
-    [[maybe_unused]]const ArrayView<const double> &particle_two_properties,
-    [[maybe_unused]]const double                   rolling_friction_coeff,
-    [[maybe_unused]] const double  rolling_viscous_damping_coeff,
-    [[maybe_unused]] const double  dt,
-    [[maybe_unused]] const double  normal_spring_constant,
-    [[maybe_unused]]const double                   normal_force_norm,
-    [[maybe_unused]]const Tensor<1, 3>            &normal_unit_vector,
-    Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
+    [[maybe_unused]] const double                   effective_radius,
+    [[maybe_unused]] const ArrayView<const double> &particle_one_properties,
+    [[maybe_unused]] const ArrayView<const double> &particle_two_properties,
+    [[maybe_unused]] const double                   rolling_friction_coeff,
+    [[maybe_unused]] const double        rolling_viscous_damping_coeff,
+    [[maybe_unused]] const double        dt,
+    [[maybe_unused]] const double        normal_spring_constant,
+    [[maybe_unused]] const double        normal_force_norm,
+    [[maybe_unused]] const Tensor<1, 3> &normal_unit_vector,
+    Tensor<1, 3> &cumulative_rolling_resistance_spring_torque)
   {
     using namespace Parameters::Lagrangian;
 

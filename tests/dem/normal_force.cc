@@ -191,32 +191,20 @@ test()
             .tangential_overlap[0] = 0.0;
           particle_wall_contact_information_iterator->second
             .tangential_overlap[1] = 0.0;
-          // particle_wall_contact_information_iterator->second
-          //   .rolling_resistance_spring_torque[0] = 0.0;
-          // particle_wall_contact_information_iterator->second
-          //   .rolling_resistance_spring_torque[1] = 0.0;
 
           if (dim == 3)
             {
               particle_wall_contact_information_iterator->second
                 .tangential_overlap[2] = 0.0;
-              //  particle_wall_contact_information_iterator->second
-              //    .rolling_resistance_spring_torque[2] = 0.0;
             }
           particle_wall_contact_information_iterator->second
             .tangential_relative_velocity[0] = 0.0;
           particle_wall_contact_information_iterator->second
             .tangential_relative_velocity[1] = 0.0;
-          // particle_wall_contact_information_iterator->second
-          //   .rolling_resistance_spring_torque[0] = 0.0;
-          // particle_wall_contact_information_iterator->second
-          //.rolling_resistance_spring_torque[1] = 0.0;
           if (dim == 3)
             {
-              //  particle_wall_contact_information_iterator->second
-              //    .tangential_relative_velocity[2] = 0.0;
-              //  particle_wall_contact_information_iterator->second
-              //    .rolling_resistance_spring_torque[2] = 0.0;
+              particle_wall_contact_information_iterator->second
+                .tangential_relative_velocity[2] = 0.0;
             }
 
           particle_wall_force_object.calculate_particle_wall_contact_force(

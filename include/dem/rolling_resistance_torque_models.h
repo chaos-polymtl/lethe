@@ -190,7 +190,7 @@ epsd_rolling_resistance_torque(
     omega_ij -
     scalar_product(omega_ij, normal_unit_vector) * normal_unit_vector;
 
-  // Delta theta
+  // Delta theta : incremental relative rotation between i and j
   const Tensor<1, 3> delta_theta = dt * omega_ij_perpendicular;
 
   // Rolling stiffness

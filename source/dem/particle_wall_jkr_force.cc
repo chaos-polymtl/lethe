@@ -541,8 +541,8 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
                       normal_vector),
                      -tangential_force);
 
-  // We need to compute the normal spring constant in case if we use the EPSD
-  // rolling resistance model.
+  // We need to compute the normal spring constant for case where we use the
+  // EPSD rolling resistance model.
   double normal_spring_constant = 0.66665 * model_parameter_sn;
 
   // Rolling resistance torque
