@@ -55,7 +55,7 @@ for i in range(start, len(time)):
     df_load = particle.get_df(i)
 
     # We do a scalar product to find the velocity in the new frame of reference.
-    df = pd.DataFrame(df_load.points, columns=['x', 'y', 'z'])
+    df = pd.DataFrame(np.copy(df_load.points), columns=['x', 'y', 'z'])
     df['v_x_loc'] = pd.DataFrame(df_load['velocity'][:, 1]) * x_loc_unit[
         0] + pd.DataFrame(df_load['velocity'][:, 2]) * x_loc_unit[1]
 

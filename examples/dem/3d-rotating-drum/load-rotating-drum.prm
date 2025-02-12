@@ -51,14 +51,14 @@ subsection lagrangian physical properties
     set number of particles               = 226080
     set density particles                 = 2500
     set young modulus particles           = 1e7
-    set poisson ratio particles           = 0.24
+    set poisson ratio particles           = 0.20
     set restitution coefficient particles = 0.97
-    set friction coefficient particles    = 0.3
+    set friction coefficient particles    = 0.85
   end
   set young modulus wall           = 1e7
-  set poisson ratio wall           = 0.24
+  set poisson ratio wall           = 0.20
   set restitution coefficient wall = 0.85
-  set friction coefficient wall    = 0.35
+  set friction coefficient wall    = 0.85
 end
 
 subsection restart
@@ -103,12 +103,24 @@ end
 #---------------------------------------------------
 
 subsection DEM boundary conditions
-  set number of boundary conditions = 1
+  set number of boundary conditions = 3
   subsection boundary condition 0
-    set boundary id       = 1
-    set type              = rotational
-    set rotational speed  = 11.6
-    set rotational vector = 1,0,0
+    set boundary id        = 0
+    set type               = rotational
+    set rotational speed   = 0
+    set rotational vector  = 1,0,0
+  end
+  subsection boundary condition 1
+    set boundary id        = 1
+    set type               = rotational
+    set rotational speed   = 0
+    set rotational vector  = 1,0,0
+  end
+  subsection boundary condition 2
+    set boundary id        = 2
+    set type               = rotational
+    set rotational speed   = 0
+    set rotational vector  = 1,0,0
   end
 end
 
