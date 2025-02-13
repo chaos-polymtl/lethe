@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-13
+
+### Fixed
+
+- MINOR The rotating drum example was updated to include a comparison with experimental results. The parameters of the example had regressed with time and we now obtain the same (or highly similar) results we obtained with the original Lethe-DEM version with the current master version. The main issue we had was related to the fact that the front and the back walls of the cylinders were not rotating in the rotating cylinders examples.[#1413](https://github.com/chaos-polymtl/lethe/pull/1422)
+
 ## [Master] - 2025-02-10
 
 ### Added
