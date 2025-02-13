@@ -1017,12 +1017,14 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
       // Get laser location
       Point<dim> laser_location;
       laser_location[0] = laser_scan_path.value(
-        laser_location, laser_parameters->perpendicular_plane_coordinate_one);
+        laser_location, 0);
+      laser_location[1] = laser_scan_path.value(
+        laser_location, 1);
       if constexpr (dim == 3)
         {
-          laser_location[1] = laser_scan_path.value(
+          laser_location[2] = laser_scan_path.value(
             laser_location,
-            laser_parameters->perpendicular_plane_coordinate_two);
+            2);
         }
 
       // Get laser location on the operation surface
@@ -1040,20 +1042,6 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
       // assembling right hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          // Get quadrature point location on surface to calculate its distance
-          // from the laser focal point in a perpendicular plane to the
-          // direction of emission
-          Point<dim - 1> quadrature_point_on_surface;
-          quadrature_point_on_surface[0] =
-            scratch_data.quadrature_points
-              [q][laser_parameters->perpendicular_plane_coordinate_one];
-          if constexpr (dim == 3)
-            {
-              quadrature_point_on_surface[1] =
-                scratch_data.quadrature_points
-                  [q][laser_parameters->perpendicular_plane_coordinate_two];
-            }
-
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
 
