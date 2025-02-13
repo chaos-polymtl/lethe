@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/data_out_base.h>
@@ -59,7 +59,7 @@ using namespace dealii;
 struct Settings
 {
   bool
-  try_parse(const std::string &prm_filename);
+  parse(const std::string &prm_filename);
 
   int          dimension;
   unsigned int max_refinement_level;
@@ -78,7 +78,7 @@ struct Settings
 };
 
 bool
-Settings::try_parse(const std::string &prm_filename)
+Settings::parse(const std::string &prm_filename)
 {
   ParameterHandler prm;
   prm.declare_entry("dim",
@@ -1074,7 +1074,7 @@ namespace InterfaceTools
     /* The signed distance for the first neighbors (the Dofs belonging to the
      * cells intersected by the reconstructed interface. This is a brute force
      * distance computation, meaning the distance is computed geometrically, as
-     * presented by Ausas (2012). */
+     * presented by Ausas (2010). */
 
     // DoF coordinates
     std::map<types::global_dof_index, Point<dim>> dof_support_points =
@@ -1142,7 +1142,7 @@ namespace InterfaceTools
   {
     /* The signed distance for the second neighbors (the cells not intersected
      * by the interface is resolved according the the minimization problem
-     * presented by Ausas (2012). The method looks for the point in the opposite
+     * presented by Ausas (2010). The method looks for the point in the opposite
      * faces of each second neighbor DoFs that minimizes the distance to the
      * interface. It works in a similar manner as a marching algorithm from the
      * knowledge of the signed distance for the interface first neighbors. */
@@ -1537,15 +1537,16 @@ namespace InterfaceTools
 
             /* We want to find a cell wise correction to apply to the cell's dof
             values of the signed_distance so that the geometric cell wise volume
-            encompased by the level 0 of the signed_distance V_K,d and by the
+            encompased by the level 0 of the signed_distance V_K and by the
             iso-contour 0.5 of the phase fraction V_K,VOF match. This is
             required because the computed distance doesn't belong to the Q1
             approximation space.
 
-            We solve the non-linear problem: DeltaV_K(eta_K) = V_K,VOF -
-            V_K,d(eta_K) = 0, where eta_K is the correction on the
-            signed_distance that we are looking for. We use the secant method to
-            do so.*/
+            We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,VOF -
+            V_K(phi* + eta_K) = 0, where phi* is the redistanciated 
+            signed distance, eta_K is the correction on the signed_distance that 
+            we are looking for. We use the secant method to do so. See Ausas et 
+            al. (2010) for more details.*/
 
             // Get the level set values
             Vector<double> cell_level_set_dof_values(dofs_per_cell);
@@ -1685,14 +1686,15 @@ namespace InterfaceTools
   {
     /* We want to find a global correction function to apply to the dof value of
     the signed_distance so that the geometric global volume encompased by the
-    level 0 of the signed_distance V_d and by the iso-contour 0.5 of the phase
+    level 0 of the signed_distance V and by the iso-contour 0.5 of the phase
     fraction V_VOF match. This is required because the computed distance doesn't
     belong to the Q1 approximation space. We solve the non-linear problem:
-    DeltaV(xi) = V_VOF - V_d(xi) = 0, where  xi = C*eta is the correction
-    function on the signed_distance that we are looking for, with eta being the
-    cell wise correction compute with compute_cell_wise_volume_correction() and
-    C being a constant. We use the secant method to do so. See Ausas et al.
-    (2012) for more details.*/
+    DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the 
+    redistanciated signed distance, xi = C*eta is the correction function on the 
+    signed_distance that we are looking for, with eta being the cell wise 
+    correction compute with compute_cell_wise_volume_correction() and C being a 
+    constant. We use the secant method to do so. See Ausas et al.
+    (2010) for more details.*/
 
     /* Compute targetted global volume. It corresponds to the one enclosed by
     the level 0 of the level_set vector (same volume as the one enclosed
@@ -1712,6 +1714,10 @@ namespace InterfaceTools
 
     double global_delta_volume_prime = 0.0;
 
+    /* Global constant C that we are solving for to obtain 
+        DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0 
+    where eta is the cell wise correction compute with 
+    compute_cell_wise_volume_correction()*/
     double C_nm1 = 0.0;
     double C_n   = 0.0;
     double C_np1 = 0.0;
@@ -2736,7 +2742,7 @@ main(int argc, char *argv[])
   Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv, 1);
 
   Settings parameters;
-  if (!parameters.try_parse((argc > 1) ? (argv[1]) : ""))
+  if (!parameters.parse((argc > 1) ? (argv[1]) : ""))
     return 0;
 
   try
