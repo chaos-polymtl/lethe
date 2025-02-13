@@ -27,12 +27,9 @@ public:
 
   /**
    * @brief Assemble and solve the system.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   virtual void
-  solve(const bool &is_post_mesh_adaptation) = 0;
+  solve() = 0;
 };
 
 /**
@@ -61,13 +58,9 @@ protected:
   /**
    * @brief Solve the linear system associated with the equation to solve, when
    * the equation is already linear.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   virtual void
-  solve_linear_system_and_update_solution(
-    const bool &is_post_mesh_adaptation = false) = 0;
+  solve_linear_system_and_update_solution() = 0;
 
 
   const ConditionalOStream pcout;

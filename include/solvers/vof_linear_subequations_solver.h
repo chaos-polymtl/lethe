@@ -92,12 +92,9 @@ public:
   /**
    * @brief Assemble and solve linear system when the equation to solve is
    * linear without using the non-linear solver interface.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
-  solve(const bool &is_post_mesh_adaptation = false) override;
+  solve() override;
 
 protected:
   /**
@@ -110,13 +107,9 @@ protected:
   /**
    * @brief Solve linear system of equation using a strategy appropriate
    * for the partial differential equation.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
-  solve_linear_system_and_update_solution(
-    const bool &is_post_mesh_adaptation = false) override;
+  solve_linear_system_and_update_solution() override;
 
 
   const VOFSubequationsID        subequation_id;

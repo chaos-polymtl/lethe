@@ -2413,9 +2413,9 @@ void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
   this->subequations->solve_specific_subequation(
-    VOFSubequationsID::phase_gradient_projection, false);
+    VOFSubequationsID::phase_gradient_projection);
   this->subequations->solve_specific_subequation(
-    VOFSubequationsID::curvature_projection, false);
+    VOFSubequationsID::curvature_projection);
 
   // Solve algebraic reinitialization steps
   this->subequations->solve_specific_subequation(

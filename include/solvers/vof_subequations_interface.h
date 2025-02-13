@@ -84,39 +84,31 @@ public:
 
   /**
    * @brief Call solving method of active subequations.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
-  solve(const bool &is_post_mesh_adaptation = false)
+  solve()
   {
     for (const auto &subequation : this->subequations)
       {
-        subequation.second->solve(is_post_mesh_adaptation);
+        subequation.second->solve();
       }
   }
 
   /**
    * @brief Call solving method for a specific subequation.
    *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
-   *
    * @param[in] subequation_id Identifier associated with the subequation wished
    * to solve.
    */
   void
-  solve_specific_subequation(const VOFSubequationsID &subequation_id,
-                             const bool &is_post_mesh_adaptation = false)
+  solve_specific_subequation(const VOFSubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
 
-    this->subequations.find(subequation_id)
-      ->second->solve(is_post_mesh_adaptation);
+    this->subequations.find(subequation_id)->second->solve();
   }
 
   /**

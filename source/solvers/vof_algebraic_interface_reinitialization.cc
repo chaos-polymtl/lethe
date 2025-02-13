@@ -682,8 +682,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
 
 template <int dim>
 void
-VOFAlgebraicInterfaceReinitialization<dim>::solve(
-  const bool & /*is_post_mesh_adaptation = false*/)
+VOFAlgebraicInterfaceReinitialization<dim>::solve()
 {
   // Compute time-step
   this->current_time_step = compute_time_step();

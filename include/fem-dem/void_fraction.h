@@ -173,12 +173,9 @@ public:
 
   /**
    * @brief Assemble and solve the system.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
-  solve(const bool & /*is_post_mesh_adaptation*/) override
+  solve() override
   {}
 
 
@@ -272,12 +269,9 @@ private:
   /**
    * @brief Solve the linear system resulting from the assemblies.
    *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   virtual void
-  solve_linear_system_and_update_solution(
-    const bool &is_post_mesh_adaptation = false) override;
+  solve_linear_system_and_update_solution() override;
 
   /**
    * @brief Calculate and return the periodic offset distance vector of the domain which is needed

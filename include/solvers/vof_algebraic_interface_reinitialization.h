@@ -112,12 +112,9 @@ public:
   /**
    * @brief Solve interface algebraic reinitialization process until one of the
    * stop criteria is met.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
-  solve(const bool & /*is_post_mesh_adaptation = false*/) override;
+  solve() override;
 
   /**
    * @brief Getter method to access the private attribute evaluation_point for
