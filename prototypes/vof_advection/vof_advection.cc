@@ -1543,9 +1543,9 @@ namespace InterfaceTools
             approximation space.
 
             We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,VOF -
-            V_K(phi* + eta_K) = 0, where phi* is the redistanciated 
-            signed distance, eta_K is the correction on the signed_distance that 
-            we are looking for. We use the secant method to do so. See Ausas et 
+            V_K(phi* + eta_K) = 0, where phi* is the redistanciated
+            signed distance, eta_K is the correction on the signed_distance that
+            we are looking for. We use the secant method to do so. See Ausas et
             al. (2010) for more details.*/
 
             // Get the level set values
@@ -1689,10 +1689,10 @@ namespace InterfaceTools
     level 0 of the signed_distance V and by the iso-contour 0.5 of the phase
     fraction V_VOF match. This is required because the computed distance doesn't
     belong to the Q1 approximation space. We solve the non-linear problem:
-    DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the 
-    redistanciated signed distance, xi = C*eta is the correction function on the 
-    signed_distance that we are looking for, with eta being the cell wise 
-    correction compute with compute_cell_wise_volume_correction() and C being a 
+    DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the
+    redistanciated signed distance, xi = C*eta is the correction function on the
+    signed_distance that we are looking for, with eta being the cell wise
+    correction compute with compute_cell_wise_volume_correction() and C being a
     constant. We use the secant method to do so. See Ausas et al.
     (2010) for more details.*/
 
@@ -1714,9 +1714,9 @@ namespace InterfaceTools
 
     double global_delta_volume_prime = 0.0;
 
-    /* Global constant C that we are solving for to obtain 
-        DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0 
-    where eta is the cell wise correction compute with 
+    /* Global constant C that we are solving for to obtain
+        DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0
+    where eta is the cell wise correction compute with
     compute_cell_wise_volume_correction()*/
     double C_nm1 = 0.0;
     double C_n   = 0.0;
