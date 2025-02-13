@@ -185,7 +185,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
     this->previous_solution; // For steady-state criterion evaluation
 
   // Initial condition
-  write_output_results(0);
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.output_reinitialization_steps)
+    write_output_results(0);
 }
 
 
