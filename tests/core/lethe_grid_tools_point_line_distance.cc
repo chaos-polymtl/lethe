@@ -27,14 +27,10 @@ test()
   Triangulation<3> triangulation;
   
   const Tensor<1,3> rotation_axis({0,0,1});
-  const double rotation_angle = M_PI/4;
-  
-  GridGenerator::subdivided_cylinder(triangulation, 3, 1, 1);
-  triangulation.refine_global(3);
-  
-  GridTools::rotate(rotation_axis, M_PI/2 + rotation_angle, triangulation);
+  const double rotation_angle = M_PI/6;
   
   Tensor<1,3> cylinder_axis({0,0,1});
+  Point<3> cylinder_origin({0,0,0});
   
   const Tensor<2, 3> rotation_matrix =
     Physics::Transformations::Rotations::rotation_matrix_3d(
@@ -42,13 +38,25 @@ test()
       
   cylinder_axis = rotation_matrix * cylinder_axis;
   
-  // LetheGridTools::find_point_line_distance(const Point<dim>     &line_origin,
-  //                                        const Tensor<1, dim> &line_direction,
-  //                                        const Point<dim>     &point)
+  const double cylinder_radius = 1.0;
+  Point<3> x_prime;
+  Point<3> x;
   
-  std::ofstream out("grid.vtu");
-  GridOut       grid_out;
-  grid_out.write_vtu(triangulation, out);
+  for (int nz = 0; nz < 6; ++nz)
+  {
+    x_prime[2] = -1.0 + 0.2*nz;
+    for (int nx = 0; nx <6; ++nx)
+    {
+      x_prime[0] = -1.0 + 0.2*nx;
+      x_prime[1] = std::sqrt(cylinder_radius*cylinder_radius - x_prime[0]*x_prime[0]);
+      
+      x = rotation_matrix*x_prime;
+      
+      const double distance = LetheGridTools::find_point_line_distance(cylinder_origin, cylinder_axis, x);
+      
+      deallog << "The distance is " << distance << std::endl;
+    }
+  }
 }
 
 int
