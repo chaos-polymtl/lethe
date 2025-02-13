@@ -5,10 +5,8 @@
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_generator.h>
-
-#include <deal.II/grid/grid_tools.h>
-
 #include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_tools.h>
 
 // Lethe
 #include <core/lethe_grid_tools.h>
@@ -23,40 +21,43 @@
 void
 test()
 {
-  
   Triangulation<3> triangulation;
-  
-  const Tensor<1,3> rotation_axis({0,0,1});
-  const double rotation_angle = M_PI/6;
-  
-  Tensor<1,3> cylinder_axis({0,0,1});
-  Point<3> cylinder_origin({0,0,0});
-  
+
+  const Tensor<1, 3> rotation_axis({0, 0, 1});
+  const double       rotation_angle = M_PI / 6;
+
+  Tensor<1, 3> cylinder_axis({0, 0, 1});
+  Point<3>     cylinder_origin({0, 0, 0});
+
   const Tensor<2, 3> rotation_matrix =
-    Physics::Transformations::Rotations::rotation_matrix_3d(
-      rotation_axis, rotation_angle);
-      
+    Physics::Transformations::Rotations::rotation_matrix_3d(rotation_axis,
+                                                            rotation_angle);
+
   cylinder_axis = rotation_matrix * cylinder_axis;
-  
+
   const double cylinder_radius = 1.0;
-  Point<3> x_prime;
-  Point<3> x;
-  
+  Point<3>     x_prime;
+  Point<3>     x;
+
   for (int nz = 0; nz < 6; ++nz)
-  {
-    x_prime[2] = -1.0 + 0.2*nz;
-    for (int nx = 0; nx <6; ++nx)
     {
-      x_prime[0] = -1.0 + 0.2*nx;
-      x_prime[1] = std::sqrt(cylinder_radius*cylinder_radius - x_prime[0]*x_prime[0]);
-      
-      x = rotation_matrix*x_prime;
-      
-      const double distance = LetheGridTools::find_point_line_distance(cylinder_origin, cylinder_axis, x);
-      
-      deallog << "The distance is " << distance << std::endl;
+      x_prime[2] = -1.0 + 0.2 * nz;
+      for (int nx = 0; nx < 6; ++nx)
+        {
+          x_prime[0] = -1.0 + 0.2 * nx;
+          x_prime[1] = std::sqrt(cylinder_radius * cylinder_radius -
+                                 x_prime[0] * x_prime[0]);
+
+          x = rotation_matrix * x_prime;
+
+          const double distance =
+            LetheGridTools::find_point_line_distance(cylinder_origin,
+                                                     cylinder_axis,
+                                                     x);
+
+          deallog << "The distance is " << distance << std::endl;
+        }
     }
-  }
 }
 
 int

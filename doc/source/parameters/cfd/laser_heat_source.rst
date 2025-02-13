@@ -17,6 +17,8 @@ If a laser heat source is present in a simulation, it can be added in this secti
     set start time           = 0.0
     set end time             = 1.0
     set beam orientation     = z-
+    set beam rotation angle  = 0.0
+    set beam rotation axis   = 0.0, 0.0, 1.0
 
     subsection path
       set Function expression = 0.0; 0.0
@@ -55,6 +57,12 @@ If a laser heat source is present in a simulation, it can be added in this secti
   .. attention::
       In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.
 
+* The ``beam rotation angle`` and ``beam rotation axis`` parameters allow to rotate the beam axis (given by ``beam orientation``) of an angle :math:`\theta` in radians around the specified rotation axis, described by its tangent vector :math:`\vec{t}_\text{rot}`. It is only available for the ``gaussian_heat_flux_vof_interface`` model, and the ``beam rotation axis`` is only used in 3D simulations. The rotation is performed using the matrix for rotation :math:`R(\vec{t}_\text{rot}, \theta)` following:
+
+  .. math::
+    \vec{t}_\text{laser,rot} = R(\vec{t}_\text{rot}, \theta)\vec{t}_\text{laser}
+ 
+  where :math:`\vec{t}_\text{laser}` is the initial beam tangent vector, given by the ``beam orientation`` parameter, and :math:`\vec{t}_\text{laser}` is the rotated one.
 
 * In the ``path`` subsection, the laser scanning path is defined using a ``Function expression``.
 
