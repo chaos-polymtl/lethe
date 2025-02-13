@@ -1,20 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-// Deal.II includes
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/grid_tools.h>
-
 // Lethe
 #include <core/lethe_grid_tools.h>
-
-// This include is only required for 9.7 and above.
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-#  include <deal.II/grid/cell_data.h>
-#endif
 
 #include <../tests/tests.h>
 
