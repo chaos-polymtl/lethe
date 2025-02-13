@@ -82,14 +82,14 @@ The particles are monodispersed. Their diameter and density are 0.003 m and 2500
         set number of particles               = 226080
         set density particles                 = 2500
         set young modulus particles           = 1e7
-        set poisson ratio particles           = 0.24
+        set poisson ratio particles           = 0.20
         set restitution coefficient particles = 0.97
-        set friction coefficient particles    = 0.3
+        set friction coefficient particles    = 0.85
       end
       set young modulus wall           = 1e7
-      set poisson ratio wall           = 0.24
+      set poisson ratio wall           = 0.20
       set restitution coefficient wall = 0.85
-      set friction coefficient wall    = 0.35
+      set friction coefficient wall    = 0.85
     end
 
 
@@ -112,10 +112,10 @@ In the rotating drum simulation, we use a ``frequent`` load-balancing method and
       subsection load balancing
         set load balance method = frequent
         set frequency           = 20000
-        set step                = 150000
       end
       set particle particle contact force method    = hertz_mindlin_limit_overlap
       set particle wall contact force method        = nonlinear
+      set rolling resistance torque method          = no_resistance
       set integration method                        = velocity_verlet
     end
 
@@ -163,7 +163,7 @@ For the simulation it is:
 
     subsection simulation control
       set time step        = 1e-5
-      set time end         = 12
+      set time end         = 10
       set log frequency    = 1000
       set output frequency = 1000
       set output boundaries = false
@@ -201,6 +201,20 @@ Animation of the rotating drum simulation:
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/ReGd7qOrz_E" frameborder="0" allowfullscreen></iframe>
+
+We can compare the results of the simulation with the experimental results of Alizadeh *et al.* [#alizadeh2013]_. 
+
+The following graph compares the velocity of the particles aligned with the slope of the heap as a function of the depth with the experimental results. We note that there is a good agreement between the simulation and the experimental results.
+
+.. image:: images/lethe-rotating-drum-comparison-depth.png
+    :alt: Comparison of the velocity of the particles aligned with the slope of the heap as a function of the depth
+    :align: center
+
+The following graph compares the velocity of the particles aligned with the slope of the heap on the free surface of the heap. Again, we note a very good agreement with the experimental results.
+
+.. image:: images/lethe-rotating-drum-comparison-free-surface.png
+    :alt: Comparison of the velocity of the particles aligned with the slope of the heap on the free surface of the heap
+    :align: center
 
 ---------
 Reference
