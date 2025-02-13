@@ -79,7 +79,7 @@ test()
       solver_parameters,
       pcout,
       tria,
-      simulation_control->get_iteration_number(),
+      simulation_control,
       multiphysics_interface.get());
 
     std::vector<VOFSubequationsID> active_subequations =
@@ -102,7 +102,7 @@ test()
       solver_parameters,
       pcout,
       tria,
-      simulation_control->get_iteration_number(),
+      simulation_control,
       multiphysics_interface.get());
 
     std::vector<VOFSubequationsID> active_subequations =
@@ -127,7 +127,7 @@ test()
       solver_parameters,
       pcout,
       tria,
-      simulation_control->get_iteration_number(),
+      simulation_control,
       multiphysics_interface.get());
 
     std::vector<VOFSubequationsID> active_subequations =

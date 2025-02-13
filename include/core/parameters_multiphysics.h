@@ -20,7 +20,7 @@ using namespace dealii;
 namespace Parameters
 {
   /**
-   * @brief Class to account for different sharpening types:
+   * @brief Different sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
    *  - adaptive: the sharpening threshold is determined by binary search, to
@@ -33,7 +33,7 @@ namespace Parameters
   };
 
   /**
-   * @brief Class to account for different phase fraction filtering types:
+   * @brief Different phase fraction filtering types:
    * - none: no filter wil be applied on the calculated phase fraction
    * - tanh: the tanh filter function will be applied to the phase fraction,
    * a \f$\beta\f$ parameter influencing the interface definition must be

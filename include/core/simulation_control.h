@@ -351,12 +351,12 @@ public:
   /**
    * @brief Get current iteration number.
    *
-   * @return Pointer to the current iteration number.
+   * @return Current iteration number.
    */
-  unsigned int *
-  get_iteration_number()
+  unsigned int
+  get_iteration_number() const
   {
-    return &iteration_number;
+    return iteration_number;
   }
 
   std::string

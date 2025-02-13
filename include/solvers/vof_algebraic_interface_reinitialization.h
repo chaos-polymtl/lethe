@@ -44,8 +44,7 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_simulation_iteration_number Pointer to the current simulation
-   * iteration number.
+   * @param[in] p_simulation_control SimulationControl object.
    *
    * @param[in] p_multiphysics_interface Multiphysics interface object used to
    * get information from physics.
@@ -58,10 +57,10 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                  &p_triangulation,
-    unsigned int                  *p_simulation_iteration_number,
-    MultiphysicsInterface<dim>    *p_multiphysics_interface,
-    VOFSubequationsInterface<dim> *p_subequations_interface)
+                                             &p_triangulation,
+    const std::shared_ptr<SimulationControl> &p_simulation_control,
+    MultiphysicsInterface<dim>               *p_multiphysics_interface,
+    VOFSubequationsInterface<dim>            *p_subequations_interface)
     : PhysicsNonlinearSubequationsSolver<dim, GlobalVectorType>(
         p_simulation_parameters.vof_subequations_non_linear_solvers.at(
           VOFSubequationsID::algebraic_interface_reinitialization),
@@ -70,7 +69,7 @@ public:
     , subequations_interface(p_subequations_interface)
     , multiphysics_interface(p_multiphysics_interface)
     , simulation_parameters(p_simulation_parameters)
-    , simulation_iteration_number(p_simulation_iteration_number)
+    , simulation_control(p_simulation_control)
     , triangulation(p_triangulation)
     , dof_handler(*this->triangulation)
     , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
@@ -376,8 +375,8 @@ private:
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
 
-  // Simulation iteration number
-  unsigned int *simulation_iteration_number;
+  // Simulation control object for simulation iteration number
+  std::shared_ptr<SimulationControl> simulation_control;
 
   // Handler to output algebraic reinitialization steps
   PVDHandler pvdhandler;

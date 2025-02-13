@@ -33,8 +33,7 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_simulation_iteration_number Pointer to the current simulation
-   * iteration number.
+   * @param[in] p_simulation_control SimulationControl object.
    *
    * @param[in] p_multiphysics_interface Multiphysics interface object pointer
    * used to get information from physics.
@@ -43,9 +42,9 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                               &p_triangulation,
-    unsigned int               *p_simulation_iteration_number,
-    MultiphysicsInterface<dim> *p_multiphysics_interface);
+                                             &p_triangulation,
+    const std::shared_ptr<SimulationControl> &p_simulation_control,
+    MultiphysicsInterface<dim>               *p_multiphysics_interface);
 
   /**
    * @brief Default destructor.

@@ -12,8 +12,8 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
   const SimulationParameters<dim> &p_simulation_parameters,
   const ConditionalOStream        &p_pcout,
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> &p_triangulation,
-  unsigned int               *p_simulation_iteration_number,
-  MultiphysicsInterface<dim> *p_multiphysics_interface)
+  const std::shared_ptr<SimulationControl> &p_simulation_control,
+  MultiphysicsInterface<dim>               *p_multiphysics_interface)
   : multiphysics_interface(p_multiphysics_interface)
   , pcout(p_pcout)
 {
@@ -55,7 +55,7 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
               p_simulation_parameters,
               this->pcout,
               p_triangulation,
-              p_simulation_iteration_number,
+              p_simulation_control,
               this->multiphysics_interface,
               this);
         }

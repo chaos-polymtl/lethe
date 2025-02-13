@@ -294,7 +294,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
             vof_phase_gradient_projection_cell);
           fe_values_curvature_projection.reinit(curvature_projection_cell);
 
-          // Get vector of Jacobi determinant times the quadrature weights
+          // Get vector of JxW
           std::vector<double> JxW_vec =
             fe_values_algebraic_reinitialization.get_JxW_values();
 
@@ -774,7 +774,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
   const std::string file_name =
     "algebraic-reinitialization-" +
     this->simulation_parameters.simulation_control.output_name + "-it" +
-    Utilities::int_to_string(*this->simulation_iteration_number, 5);
+    Utilities::int_to_string(this->simulation_control->get_iteration_number(),
+                             5);
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
