@@ -128,11 +128,23 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 .. code-block:: text
 
     subsection DEM boundary conditions
-      set number of boundary conditions = 1
+      set number of boundary conditions = 3
       subsection boundary condition 0
         set boundary id       = 0
         set type              = rotational
-        set rotational speed  = 11.6
+        set rotational speed  = 1.214749159
+        set rotational vector = 1, 0, 0
+      end
+      subsection boundary condition 1
+        set boundary id       = 1
+        set type              = rotational
+        set rotational speed  = 1.214749159
+        set rotational vector = 1, 0, 0
+      end
+      subsection boundary condition 2
+        set boundary id       = 2
+        set type              = rotational
+        set rotational speed  = 1.214749159
         set rotational vector = 1, 0, 0
       end
     end
