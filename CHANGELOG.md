@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-14
+
+### Fixed
+
+- MINOR When outputting vtu files from the algebraic reinitialization process, the PVDHandler was cumulating vtu files of previous reinitialization processes. This is now fixed by clearing the `times_and_names` vector of the PVDHandler object when setting the initial condition. []()
+
 ## [Master] - 2025-02-13
 
 ### Fixed
