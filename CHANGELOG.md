@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR When outputting vtu files from the algebraic reinitialization process, the PVDHandler was cumulating vtu files of previous reinitialization processes. This is now fixed by clearing the `times_and_names` vector of the PVDHandler object when setting the initial condition. []()
+- MINOR When outputting vtu files from the algebraic reinitialization process, the PVDHandler was accumulating vtu files of previous reinitialization processes. This is now fixed by clearing the `times_and_names` vector of the PVDHandler object when setting the initial condition. [#1423](https://github.com/chaos-polymtl/lethe/pull/1423)
 
 ## [Master] - 2025-02-13
 
