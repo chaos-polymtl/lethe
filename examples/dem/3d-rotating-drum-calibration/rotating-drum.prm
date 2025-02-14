@@ -90,10 +90,10 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type                                = dealii
-  set grid type                           = subdivided_cylinder
+  set type                                = cylinder
+  set grid type                           = balanced
   set grid arguments                      = 3: 0.069:0.0925
-  set initial refinement                  = 2
+  set initial refinement                  = 1
   set expand particle-wall contact search = true
 end
 
