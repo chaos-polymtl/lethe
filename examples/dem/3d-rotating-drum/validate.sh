@@ -28,7 +28,7 @@ show_animation() {
 }
 
 # Store filenames of all plots in a variable (space-seperated)
-plots="lethe-rotating-drum-comparison.pdf"
+plots="lethe-rotating-drum-comparison-depth.pdf lethe-rotating-drum-comparison-free-surface.pdf"
 
 # Default path
 default_value="./"
@@ -81,7 +81,7 @@ action="mpirun -np $n_proc lethe-particles rotating-drum.prm"
 show_animation $pid "---> Running simulation"
 wait $pid
 
-python3 post_processing_rotating_drum.py -i data_exp.csv -f ./ --validate
+python3 post_processing_rotating_drum.py  -f ./ --validate
 
 # Copy the information to the log folder
 cp $plots $folder
