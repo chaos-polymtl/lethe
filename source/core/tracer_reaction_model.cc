@@ -14,11 +14,13 @@ TracerReactionConstantModel::model_cast(
         .tracer_reaction_constant_outside,
       material_properties.immersed_solid_tanh_parameters
         .tracer_reaction_constant_inside,
-      material_properties.immersed_solid_tanh_parameters.thickness);
+      material_properties.immersed_solid_tanh_parameters.thickness,
+      material_properties.tracer_reaction_order);
   else if (material_properties.tracer_reaction_constant_model ==
            Parameters::Material::TracerReactionConstantModel::constant)
     return std::make_shared<ConstantTracerReactionConstant>(
-      material_properties.tracer_reaction_constant);
+      material_properties.tracer_reaction_constant,
+      material_properties.tracer_reaction_order);
   else
     return std::make_shared<NoneTracerReactionConstant>();
 }
