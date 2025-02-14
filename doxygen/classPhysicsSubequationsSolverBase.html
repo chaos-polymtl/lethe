@@ -92,17 +92,23 @@ Inheritance diagram for PhysicsSubequationsSolverBase:</div>
 <div class="dyncontent">
 <div class="center"><img src="classPhysicsSubequationsSolverBase__inherit__graph.png" border="0" usemap="#aPhysicsSubequationsSolverBase_inherit__map" alt="Inheritance graph"/></div>
 <map name="aPhysicsSubequationsSolverBase_inherit__map" id="aPhysicsSubequationsSolverBase_inherit__map">
-<area shape="rect" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="201,5,433,31"/>
-<area shape="rect" href="classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="218,79,417,119"/>
-<area shape="poly" title=" " alt="" coords="320,44,320,79,315,79,315,44"/>
-<area shape="rect" href="classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="95,167,313,207"/>
-<area shape="poly" title=" " alt="" coords="283,129,231,169,227,164,280,125"/>
-<area shape="rect" href="classVoidFractionBase.html" title="Void fraction calculator. This class manages the calculation of the void fraction which is used as an..." alt="" coords="337,174,527,199"/>
-<area shape="poly" title=" " alt="" coords="356,125,418,171,415,176,352,129"/>
-<area shape="rect" href="classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="5,255,184,295"/>
-<area shape="poly" title=" " alt="" coords="171,217,121,257,117,252,167,213"/>
-<area shape="rect" href="classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="209,255,418,295"/>
-<area shape="poly" title=" " alt="" coords="241,213,291,252,287,257,237,217"/>
+<area shape="rect" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,77,237,102"/>
+<area shape="rect" href="classPhysicsNonlinearSubequationsSolver.html" title=" " alt="" coords="285,5,524,45"/>
+<area shape="poly" title=" " alt="" coords="191,71,315,43,316,48,192,76"/>
+<area shape="rect" href="classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="305,69,504,109"/>
+<area shape="poly" title=" " alt="" coords="251,87,305,87,305,92,251,92"/>
+<area shape="rect" href="classPhysicsNonlinearSubequationsSolver.html" title="Non&#45;linear subequations solved inside a physics (or auxiliary physics) that are not part of the main ..." alt="" coords="293,133,516,173"/>
+<area shape="poly" title=" " alt="" coords="192,102,316,131,315,136,191,108"/>
+<area shape="rect" href="classVOFAlgebraicInterfaceReinitialization.html" title="VOF algebraic reinitialization solver." alt="" coords="572,5,836,45"/>
+<area shape="poly" title=" " alt="" coords="538,23,572,23,572,28,538,28"/>
+<area shape="rect" href="classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="595,69,813,109"/>
+<area shape="poly" title=" " alt="" coords="518,87,594,87,594,92,518,92"/>
+<area shape="rect" href="classVoidFractionBase.html" title="Void fraction calculator. This class manages the calculation of the void fraction which is used as an..." alt="" coords="609,134,799,159"/>
+<area shape="poly" title=" " alt="" coords="518,108,637,131,636,137,517,114"/>
+<area shape="rect" href="classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="899,37,1078,77"/>
+<area shape="poly" title=" " alt="" coords="827,73,899,65,899,70,827,78"/>
+<area shape="rect" href="classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="884,101,1093,141"/>
+<area shape="poly" title=" " alt="" coords="827,101,884,107,883,112,827,106"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -110,13 +116,13 @@ Inheritance diagram for PhysicsSubequationsSolverBase:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:abb7e722d51428100ef3e642309f6ff6c" id="r_abb7e722d51428100ef3e642309f6ff6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSubequationsSolverBase.html#abb7e722d51428100ef3e642309f6ff6c">setup_dofs</a> ()=0</td></tr>
 <tr class="separator:abb7e722d51428100ef3e642309f6ff6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd4ed509215128b76e4610c1c5c4fc15" id="r_acd4ed509215128b76e4610c1c5c4fc15"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSubequationsSolverBase.html#acd4ed509215128b76e4610c1c5c4fc15">solve</a> (const bool &amp;is_post_mesh_adaptation)=0</td></tr>
-<tr class="separator:acd4ed509215128b76e4610c1c5c4fc15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ad4b59beac16fd37a200e55ccd24991" id="r_a4ad4b59beac16fd37a200e55ccd24991"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSubequationsSolverBase.html#a4ad4b59beac16fd37a200e55ccd24991">solve</a> ()=0</td></tr>
+<tr class="separator:a4ad4b59beac16fd37a200e55ccd24991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of the main equations set. It contains all the common elements of a subequation solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__subequations__solver_8h_source.html#l00016">16</a> of file <a class="el" href="physics__subequations__solver_8h_source.html">physics_subequations_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__subequations__solver_8h_source.html#l00018">18</a> of file <a class="el" href="physics__subequations__solver_8h_source.html">physics_subequations_solver.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="abb7e722d51428100ef3e642309f6ff6c" name="abb7e722d51428100ef3e642309f6ff6c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abb7e722d51428100ef3e642309f6ff6c">&#9670;&#160;</a></span>setup_dofs()</h2>
@@ -143,12 +149,12 @@ Public Member Functions</h2></td></tr>
 
 <p>Set up the DofHandler and the degrees of freedom associated with the equation to solve. </p>
 
-<p>Implemented in <a class="el" href="classVoidFractionBase.html#ad13af966d2f24f202464e48ad524ae8b">VoidFractionBase&lt; dim &gt;</a>, and <a class="el" href="classVOFLinearSubequationsSolver.html#a454cdb154deb6108e692d70ed5781685">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classVoidFractionBase.html#ad13af966d2f24f202464e48ad524ae8b">VoidFractionBase&lt; dim &gt;</a>, <a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a4be3625416e3003de8465984bedbcaed">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;</a>, and <a class="el" href="classVOFLinearSubequationsSolver.html#a454cdb154deb6108e692d70ed5781685">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
-<a id="acd4ed509215128b76e4610c1c5c4fc15" name="acd4ed509215128b76e4610c1c5c4fc15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd4ed509215128b76e4610c1c5c4fc15">&#9670;&#160;</a></span>solve()</h2>
+<a id="a4ad4b59beac16fd37a200e55ccd24991" name="a4ad4b59beac16fd37a200e55ccd24991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ad4b59beac16fd37a200e55ccd24991">&#9670;&#160;</a></span>solve()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -159,8 +165,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual void PhysicsSubequationsSolverBase::solve </td>
           <td>(</td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>is_post_mesh_adaptation</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -172,14 +177,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Assemble and solve the system. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">is_post_mesh_adaptation</td><td>Indicates if the equation is being solved during post_mesh_adaptation(), for verbosity. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p>Implemented in <a class="el" href="classVoidFractionBase.html#aef63b23b6d7e91a454b43650b2952870">VoidFractionBase&lt; dim &gt;</a>, and <a class="el" href="classVOFLinearSubequationsSolver.html#a40ad455c161722d4d805663e4951637e">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classVoidFractionBase.html#a92ac1dee052735a0d3b8c7eb346d8628">VoidFractionBase&lt; dim &gt;</a>, <a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#acffe769cbe9bb2965b24cd4a4ac1da0b">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;</a>, and <a class="el" href="classVOFLinearSubequationsSolver.html#a0b695b64afa04fe092f7ebc29366ef05">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
 
 </div>
 </div>

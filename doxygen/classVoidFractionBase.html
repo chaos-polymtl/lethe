@@ -113,8 +113,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac57dee3ccf93e94bd8472691a25753e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36c4824e019c986f73fba5db4da26641" id="r_a36c4824e019c986f73fba5db4da26641"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#a36c4824e019c986f73fba5db4da26641">calculate_void_fraction</a> (const double time)</td></tr>
 <tr class="separator:a36c4824e019c986f73fba5db4da26641"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef63b23b6d7e91a454b43650b2952870" id="r_aef63b23b6d7e91a454b43650b2952870"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#aef63b23b6d7e91a454b43650b2952870">solve</a> (const bool &amp;) override</td></tr>
-<tr class="separator:aef63b23b6d7e91a454b43650b2952870"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92ac1dee052735a0d3b8c7eb346d8628" id="r_a92ac1dee052735a0d3b8c7eb346d8628"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#a92ac1dee052735a0d3b8c7eb346d8628">solve</a> () override</td></tr>
+<tr class="separator:a92ac1dee052735a0d3b8c7eb346d8628"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace4e36c599e1331d3194721f1e5a5237" id="r_ace4e36c599e1331d3194721f1e5a5237"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#ace4e36c599e1331d3194721f1e5a5237">percolate_void_fraction</a> ()</td></tr>
 <tr class="separator:ace4e36c599e1331d3194721f1e5a5237"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8a2502dc977ea40126aac0bf69e05e3" id="r_aa8a2502dc977ea40126aac0bf69e05e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#aa8a2502dc977ea40126aac0bf69e05e3">initialize_void_fraction</a> (const double time)</td></tr>
@@ -152,8 +152,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:acdf685dd30849761961b95ad0090d3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2452fdc7f343c780580a03586b296b32" id="r_a2452fdc7f343c780580a03586b296b32"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#a2452fdc7f343c780580a03586b296b32">calculate_void_fraction_quadrature_centered_method</a> ()</td></tr>
 <tr class="separator:a2452fdc7f343c780580a03586b296b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a583a94e81d11083a2898c6a1caaee271" id="r_a583a94e81d11083a2898c6a1caaee271"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#a583a94e81d11083a2898c6a1caaee271">solve_linear_system_and_update_solution</a> (const bool &amp;is_post_mesh_adaptation=false) override</td></tr>
-<tr class="separator:a583a94e81d11083a2898c6a1caaee271"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a854f5030edd325f9778a801a02adff97" id="r_a854f5030edd325f9778a801a02adff97"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#a854f5030edd325f9778a801a02adff97">solve_linear_system_and_update_solution</a> () override</td></tr>
+<tr class="separator:a854f5030edd325f9778a801a02adff97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf3e9fe3b2f706b5ba163f3fa25df49e" id="r_adf3e9fe3b2f706b5ba163f3fa25df49e"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVoidFractionBase.html#adf3e9fe3b2f706b5ba163f3fa25df49e">get_periodic_offset_distance</a> (unsigned int boundary_id) const</td></tr>
 <tr class="separator:adf3e9fe3b2f706b5ba163f3fa25df49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -292,7 +292,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00112">112</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
-<p class="reference">References <a class="el" href="void__fraction_8h_source.html#l00225">VoidFractionBase&lt; dim &gt;::fe</a>, <a class="el" href="void__fraction_8h_source.html#l00344">VoidFractionBase&lt; dim &gt;::mapping</a>, and <a class="el" href="void__fraction_8h_source.html#l00347">VoidFractionBase&lt; dim &gt;::quadrature</a>.</p>
+<p class="reference">References <a class="el" href="void__fraction_8h_source.html#l00222">VoidFractionBase&lt; dim &gt;::fe</a>, <a class="el" href="void__fraction_8h_source.html#l00338">VoidFractionBase&lt; dim &gt;::mapping</a>, and <a class="el" href="void__fraction_8h_source.html#l00341">VoidFractionBase&lt; dim &gt;::quadrature</a>.</p>
 
 </div>
 </div>
@@ -325,7 +325,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l00155">155</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00406">announce_string()</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14">Parameters::function</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803faec5c8103218f27aa6ecfd3f11e1a6b45">Parameters::pcm</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, and <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb">Parameters::spm</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00416">announce_string()</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14">Parameters::function</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803faec5c8103218f27aa6ecfd3f11e1a6b45">Parameters::pcm</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, and <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb">Parameters::spm</a>.</p>
 
 </div>
 </div>
@@ -501,9 +501,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The periodic offset vector. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00294">294</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00288">288</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
-<p class="reference">References <a class="el" href="void__fraction_8h_source.html#l00341">VoidFractionBase&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="void__fraction_8h_source.html#l00335">VoidFractionBase&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -541,9 +541,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00207">207</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00204">204</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
-<p class="reference">References <a class="el" href="void__fraction_8cc_source.html#l00155">VoidFractionBase&lt; dim &gt;::calculate_void_fraction()</a>, <a class="el" href="void__fraction_8h_source.html#l00219">VoidFractionBase&lt; dim &gt;::previous_void_fraction</a>, and <a class="el" href="void__fraction_8h_source.html#l00222">VoidFractionBase&lt; dim &gt;::void_fraction_locally_relevant</a>.</p>
+<p class="reference">References <a class="el" href="void__fraction_8cc_source.html#l00155">VoidFractionBase&lt; dim &gt;::calculate_void_fraction()</a>, <a class="el" href="void__fraction_8h_source.html#l00216">VoidFractionBase&lt; dim &gt;::previous_void_fraction</a>, and <a class="el" href="void__fraction_8h_source.html#l00219">VoidFractionBase&lt; dim &gt;::void_fraction_locally_relevant</a>.</p>
 
 </div>
 </div>
@@ -574,9 +574,9 @@ template&lt;int dim&gt; </div>
 
 <p>Percolate the time vector for the void fraction. This operation is called at the end of a time-step. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00190">190</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00187">187</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
-<p class="reference">References <a class="el" href="void__fraction_8h_source.html#l00219">VoidFractionBase&lt; dim &gt;::previous_void_fraction</a>, and <a class="el" href="void__fraction_8h_source.html#l00222">VoidFractionBase&lt; dim &gt;::void_fraction_locally_relevant</a>.</p>
+<p class="reference">References <a class="el" href="void__fraction_8h_source.html#l00216">VoidFractionBase&lt; dim &gt;::previous_void_fraction</a>, and <a class="el" href="void__fraction_8h_source.html#l00219">VoidFractionBase&lt; dim &gt;::void_fraction_locally_relevant</a>.</p>
 
 </div>
 </div>
@@ -647,8 +647,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="aef63b23b6d7e91a454b43650b2952870" name="aef63b23b6d7e91a454b43650b2952870"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef63b23b6d7e91a454b43650b2952870">&#9670;&#160;</a></span>solve()</h2>
+<a id="a92ac1dee052735a0d3b8c7eb346d8628" name="a92ac1dee052735a0d3b8c7eb346d8628"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92ac1dee052735a0d3b8c7eb346d8628">&#9670;&#160;</a></span>solve()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -661,7 +661,6 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVoidFractionBase.html">VoidFractionBase</a>&lt; dim &gt;::solve </td>
           <td>(</td>
-          <td class="paramtype">const bool &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -674,21 +673,15 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Assemble and solve the system. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">is_post_mesh_adaptation</td><td>Indicates if the equation is being solved during post_mesh_adaptation(), for verbosity. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p>Implements <a class="el" href="classPhysicsSubequationsSolverBase.html#acd4ed509215128b76e4610c1c5c4fc15">PhysicsSubequationsSolverBase</a>.</p>
+<p>Implements <a class="el" href="classPhysicsSubequationsSolverBase.html#a4ad4b59beac16fd37a200e55ccd24991">PhysicsSubequationsSolverBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00181">181</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00178">178</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
-<a id="a583a94e81d11083a2898c6a1caaee271" name="a583a94e81d11083a2898c6a1caaee271"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a583a94e81d11083a2898c6a1caaee271">&#9670;&#160;</a></span>solve_linear_system_and_update_solution()</h2>
+<a id="a854f5030edd325f9778a801a02adff97" name="a854f5030edd325f9778a801a02adff97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a854f5030edd325f9778a801a02adff97">&#9670;&#160;</a></span>solve_linear_system_and_update_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -701,8 +694,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVoidFractionBase.html">VoidFractionBase</a>&lt; dim &gt;::solve_linear_system_and_update_solution </td>
           <td>(</td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>is_post_mesh_adaptation</em> = <code>false</code></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -714,14 +706,8 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Solve the linear system resulting from the assemblies. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">is_post_mesh_adaptation</td><td>Indicates if the equation is being solved during post_mesh_adaptation(), for verbosity. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p>Implements <a class="el" href="classPhysicsLinearSubequationsSolver.html#a7a379d697f5617b22773049dfda60c99">PhysicsLinearSubequationsSolver</a>.</p>
+<p>Implements <a class="el" href="classPhysicsLinearSubequationsSolver.html#ad07b8e3652412522f754006c783aa450">PhysicsLinearSubequationsSolver</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="void__fraction_8cc_source.html#l01105">1105</a> of file <a class="el" href="void__fraction_8cc_source.html">void_fraction.cc</a>.</p>
 
@@ -746,7 +732,7 @@ template&lt;int dim&gt; </div>
 
 <p>DoFHandler that manages the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00215">215</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00212">212</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -766,7 +752,7 @@ template&lt;int dim&gt; </div>
 
 <p>Finite element for the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00225">225</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00222">222</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -794,7 +780,7 @@ template&lt;int dim&gt; </div>
 
 <p>Boolean to indicate if the mesh has periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00381">381</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00375">375</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -821,7 +807,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Preconditioner used for the solution of the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00364">364</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00358">358</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -848,9 +834,9 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">    Utilities::fixed_power&lt;2&gt;(<a class="code hl_variable" href="classVoidFractionBase.html#abc494190a0649176dbc46f5eebe524d0">void_fraction_parameters</a>-&gt;l2_smoothing_length)</div>
-<div class="ttc" id="aclassVoidFractionBase_html_abc494190a0649176dbc46f5eebe524d0"><div class="ttname"><a href="classVoidFractionBase.html#abc494190a0649176dbc46f5eebe524d0">VoidFractionBase::void_fraction_parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::VoidFractionParameters&lt; dim &gt; &gt; void_fraction_parameters</div><div class="ttdoc">Parameters for the calculation of the void fraction.</div><div class="ttdef"><b>Definition</b> <a href="void__fraction_8h_source.html#l00351">void_fraction.h:351</a></div></div>
+<div class="ttc" id="aclassVoidFractionBase_html_abc494190a0649176dbc46f5eebe524d0"><div class="ttname"><a href="classVoidFractionBase.html#abc494190a0649176dbc46f5eebe524d0">VoidFractionBase::void_fraction_parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::VoidFractionParameters&lt; dim &gt; &gt; void_fraction_parameters</div><div class="ttdoc">Parameters for the calculation of the void fraction.</div><div class="ttdef"><b>Definition</b> <a href="void__fraction_8h_source.html#l00345">void_fraction.h:345</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00396">396</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00390">390</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -878,7 +864,7 @@ template&lt;int dim&gt; </div>
 
 <p>Linear solvers for the calculation of the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00354">354</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00348">348</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -898,7 +884,7 @@ template&lt;int dim&gt; </div>
 
 <p>Index set for the locally owned degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00228">228</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00225">225</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -918,7 +904,7 @@ template&lt;int dim&gt; </div>
 
 <p>Index set for the locally relevant degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00231">231</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00228">228</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -946,7 +932,7 @@ template&lt;int dim&gt; </div>
 
 <p>Mapping for the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00344">344</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00338">338</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -974,7 +960,7 @@ template&lt;int dim&gt; </div>
 
 <p>Particle handler used when the void fraction depends on particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00357">357</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00351">351</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1002,7 +988,7 @@ template&lt;int dim&gt; </div>
 
 <p>Direction associated with the periodic boundary condition. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00387">387</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00381">381</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1030,7 +1016,7 @@ template&lt;int dim&gt; </div>
 
 <p>Offset for the periodic boundary condition. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00384">384</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00378">378</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1049,7 +1035,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>The solutions are made public instead of using getters Solution of the void fraction at previous time steps </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00219">219</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00216">216</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1077,7 +1063,7 @@ template&lt;int dim&gt; </div>
 
 <p>Quadrature for the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00347">347</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00341">341</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1104,7 +1090,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>System matrix used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00368">368</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00362">362</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1131,7 +1117,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Right-hand side used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00372">372</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00366">366</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1159,7 +1145,7 @@ template&lt;int dim&gt; </div>
 
 <p>Triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00341">341</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00335">335</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1186,7 +1172,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Vertices to cell map, this is used in the QCM and the satellite point method to access the neighboring cells of a cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00378">378</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00372">372</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1213,7 +1199,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Vertices to periodic cell map, this is used in the QCM and the satellite point method to access the neighboring cells of a cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00393">393</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00387">387</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1232,7 +1218,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Constraints used for the boundary conditions of the void fraction. Currently, this is only used to establish periodic void fractions. This object has to be made public because the boundary conditions are set outside of the object for now. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00237">237</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00234">234</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1260,7 +1246,7 @@ template&lt;int dim&gt; </div>
 
 <p>Locally owned solution of the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00360">360</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00354">354</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1280,7 +1266,7 @@ template&lt;int dim&gt; </div>
 
 <p>Fully distributed (including locally relevant) solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00222">222</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00219">219</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>
@@ -1308,7 +1294,7 @@ template&lt;int dim&gt; </div>
 
 <p><a class="el" href="namespaceParameters.html">Parameters</a> for the calculation of the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00351">351</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="void__fraction_8h_source.html#l00345">345</a> of file <a class="el" href="void__fraction_8h_source.html">void_fraction.h</a>.</p>
 
 </div>
 </div>

@@ -177,6 +177,8 @@ Functions</h2></td></tr>
 <tr class="separator:a69bbcbc0cf35572dd8874aec59d3d0f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b7f24067b959ac5387e1f58cf045d7f" id="r_a3b7f24067b959ac5387e1f58cf045d7f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="parameters__multiphysics_8cc.html#a3b7f24067b959ac5387e1f58cf045d7f">DeclException1</a> (SharpeningFrequencyError, int,&lt;&lt; &quot;Sharpening frequency : &quot;&lt;&lt; arg1&lt;&lt; &quot; is equal or smaller than 0.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Interface sharpening model requires an integer sharpening frequency larger than 0.&quot;)</td></tr>
 <tr class="separator:a3b7f24067b959ac5387e1f58cf045d7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44c27d0ad523b7464763e81b2d491a75" id="r_a44c27d0ad523b7464763e81b2d491a75"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="parameters__multiphysics_8cc.html#a44c27d0ad523b7464763e81b2d491a75">DeclException2</a> (MultipleInterfaceResettingMethods, bool, bool,&lt;&lt; &quot;Only one type of interface resetting mechanism can be used in a simulation.\n&quot;&lt;&lt; &quot;Currently,\n&quot;&lt;&lt; std::boolalpha&lt;&lt; &quot; - VOF interface sharpening is set to &quot;&lt;&lt; arg1&lt;&lt; std::endl&lt;&lt; &quot; - VOF algebraic interface reinitialization is set to &quot;&lt;&lt; arg2&lt;&lt; std::endl)</td></tr>
+<tr class="separator:a44c27d0ad523b7464763e81b2d491a75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a3b7f24067b959ac5387e1f58cf045d7f" name="a3b7f24067b959ac5387e1f58cf045d7f"></a>
@@ -269,6 +271,52 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&lt;&lt; &quot;Sharpening threshold max deviation : &quot;&lt;&lt; arg1&lt;&lt; &quot; is smaller than 0 or larger than 0.5.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Adaptive interface sharpening requires a maximum deviation of the&quot;&lt;&lt; &quot; sharpening threshold between 0.0 and 0.5. See documentation for further details&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a44c27d0ad523b7464763e81b2d491a75" name="a44c27d0ad523b7464763e81b2d491a75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44c27d0ad523b7464763e81b2d491a75">&#9670;&#160;</a></span>DeclException2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException2 </td>
+          <td>(</td>
+          <td class="paramtype">MultipleInterfaceResettingMethods&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;Only one type of interface resetting mechanism can be used in a simulation.\n&quot;&lt;&lt; &quot;&#160;</td>
+          <td class="paramname"><em>Currently</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">\n&quot;&lt;&lt; std::boolalpha&lt;&lt; &quot; - VOF interface sharpening is set to &quot;&lt;&lt; arg1&lt;&lt; std::endl&lt;&lt; &quot; - VOF algebraic interface reinitialization is set to &quot;&lt;&lt; arg2&lt;&lt; std::endl&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

@@ -205,6 +205,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VOF.html">VOF</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html">VOF_AlgebraicInterfaceReinitialization</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VOF__InterfaceSharpening.html">VOF_InterfaceSharpening</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VOF__PhaseFilter.html">VOF_PhaseFilter</a></td></tr>
@@ -344,7 +346,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ae03f477a858859a4711ef40159b5912aa3c78b35502b2693fefdfc51cba3a53a5" name="ae03f477a858859a4711ef40159b5912aa3c78b35502b2693fefdfc51cba3a53a5"></a>manual&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00047">47</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00049">49</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -376,7 +378,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00056">56</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00058">58</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -400,7 +402,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Class to account for different phase fraction filtering types: </p>
+<p>Different phase fraction filtering types: </p>
 <ul>
 <li>none: no filter wil be applied on the calculated phase fraction</li>
 <li>tanh: the tanh filter function will be applied to the phase fraction, a \(\beta\) parameter influencing the interface definition must be defined </li>
@@ -411,7 +413,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a35f23be89bc6cc4d28f9c1b10519e9b8a5c0dbba3a6ee4ac0eb26cfee75ccb8b4" name="a35f23be89bc6cc4d28f9c1b10519e9b8a5c0dbba3a6ee4ac0eb26cfee75ccb8b4"></a>tanh&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00040">40</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00042">42</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -503,7 +505,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Class to account for different sharpening types: </p>
+<p>Different sharpening types: </p>
 <ul>
 <li>constant: the sharpening threshold is the same throughout the simulation,</li>
 <li>adaptive: the sharpening threshold is determined by binary search, to ensure mass conservation of the monitored phase </li>
@@ -513,7 +515,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="afaf982762668ab166df8919c45a58ee1a8cb043b2dace9afc0680e6bae5cd316f" name="afaf982762668ab166df8919c45a58ee1a8cb043b2dace9afc0680e6bae5cd316f"></a>adaptive&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00028">28</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00029">29</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -679,7 +681,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00068">68</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l00034">Parameters::SizeOfSubsections::boundary_conditions</a>, <a class="el" href="utilities_8cc_source.html#l00687">get_max_subsection_size()</a>, and <a class="el" href="parameters_8h_source.html#l00035">Parameters::SizeOfSubsections::manifolds</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00034">Parameters::SizeOfSubsections::boundary_conditions</a>, <a class="el" href="utilities_8cc_source.html#l00696">get_max_subsection_size()</a>, and <a class="el" href="parameters_8h_source.html#l00035">Parameters::SizeOfSubsections::manifolds</a>.</p>
 
 </div>
 </div>

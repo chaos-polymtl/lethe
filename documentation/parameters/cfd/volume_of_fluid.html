@@ -463,6 +463,18 @@
     set monitored fluid         = fluid 1
   end
 
+  subsection algebraic interface reinitialization
+    set enable                        = false
+    set output reinitialization steps = false
+    set frequency                     = 1
+    set steady-state criterion        = 1e-2
+    set max steps number              = 5
+    set diffusivity multiplier        = 1.0
+    set diffusivity power             = 1.0
+    set reinitialization CFL          = 1.0
+    set verbosity                     = quiet
+  end
+
   subsection phase filtration
     set type      = none
     set verbosity = quiet
@@ -497,7 +509,7 @@ end
 <section id="interface-sharpening">
 <h2>Interface Sharpening<a class="headerlink" href="#interface-sharpening" title="Link to this heading">#</a></h2>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is refered to the Interface sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for additional details on this sharpening method.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is referred to the Interface sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for additional details on this sharpening method.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">enable</span></code>: controls if interface sharpening is enabled.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> option in <a class="reference internal" href="linear_solver_control.html"><span class="doc">Linear Solver</span></a>. Choices are: <code class="docutils literal notranslate"><span class="pre">quiet</span></code> (default, no output), <code class="docutils literal notranslate"><span class="pre">verbose</span></code> (indicates sharpening steps) and <code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code> (details of the linear iterations).</p></li>
@@ -536,10 +548,79 @@ number of iterations to reach the mass conservation tolerance.
 </li>
 </ul>
 </section>
+<section id="algebraic-interface-reinitialization">
+<h2>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>: defines parameters used to reinitialize the interface in VOF simulations. Alike the interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A subsection on algebraic interface reinitialization will be added shortly to the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid (VOF) Method</span></a> theory guide for additional details on this method.</p>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">enable</span></code>: enable the algebraic interface reinitialization.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">reinitialization</span> <span class="pre">steps</span></code>: when set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named <code class="docutils literal notranslate"><span class="pre">algebraic-reinitialization-steps-output</span></code> located inside the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">path</span></code> directory specified in the <a class="reference internal" href="simulation_control.html"><span class="doc">simulation control</span></a> subsection.</p>
+<dl class="simple">
+<dt>Outputted quantities of interest are:</dt><dd><ul class="simple">
+<li><p>Reinitialized phase fraction scalar-field (<code class="docutils literal notranslate"><span class="pre">reinit_phase_fraction</span></code>);</p></li>
+<li><p>VOF phase fraction scalar-field (<code class="docutils literal notranslate"><span class="pre">vof_phase_fraction</span></code>);</p></li>
+<li><p>VOF projected phase gradient vector-field (<code class="docutils literal notranslate"><span class="pre">vof_phase_gradient</span></code>) and;</p></li>
+<li><p>VOF projected curvature scalar-field (<code class="docutils literal notranslate"><span class="pre">vof_curvature</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the algebraic interface reinitialization process is applied to the VOF phase fraction field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be reinitialization once every <span class="math notranslate nohighlight">\(2\)</span> time-steps.</p></li>
+</ul>
+<p>The interface reinitialization process ends either when steady-state (<code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>) is reached or when an imposed maximum number of steps (<code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">steps</span> <span class="pre">number</span></code>) is reached.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>: one of the two stop criteria of the interface reinitialization process. This parameter <span class="math notranslate nohighlight">\((\alpha_\text{ss})\)</span> acts as a tolerance to the reaching of steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau} \rVert_2}{\Delta \tau}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\tau\)</span> is the pseudo-time used to solve the reinitialization PDE and <span class="math notranslate nohighlight">\(\Delta \tau\)</span> is the associated pseudo-time-step.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">steps</span> <span class="pre">number</span></code>: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.</p></li>
+</ul>
+<p>The algebraic interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient <span class="math notranslate nohighlight">\((\varepsilon)\)</span> given by:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\varepsilon = C h_\text{min}^d\]</div>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">diffusivity</span> <span class="pre">multiplier</span></code>: factor <span class="math notranslate nohighlight">\((C)\)</span> multiplying the smallest cell-size value <span class="math notranslate nohighlight">\((h_\text{min})\)</span> in the evaluation of the diffusion coefficient of the PDE.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">diffusivity</span> <span class="pre">power</span></code>: power <span class="math notranslate nohighlight">\((d)\)</span> to which the smallest cell-size value <span class="math notranslate nohighlight">\((h_\text{min})\)</span> is elevated in the evaluation of the diffusion coefficient of the PDE.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reinitialization</span> <span class="pre">CFL</span></code>: CFL condition of the interface reinitialization process. This is used to evaluate the pseudo-time-step <span class="math notranslate nohighlight">\((\Delta\tau)\)</span>.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Delta \tau = C_\text{CFL} \, h_\text{min}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(C_\text{CFL}\)</span> is the imposed CFL condition and <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is the size of the smallest cell.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: displays the solution process of the algebraic interface reinitialization. The different level of verbosity are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">quiet</span></code>: default verbosity level; no information on the algebraic interface reinitialization process is displayed.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>As the verbosity of the algebraic interface reinitialization depends on the verbosity of the non-linear and linear solvers, some console outputs may remain if they are set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>: displays reinitialization steps progression. Only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code>: in addition to what is displayed at the <code class="docutils literal notranslate"><span class="pre">verbose</span></code> level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
 <section id="phase-filtration">
 <h2>Phase Filtration<a class="headerlink" href="#phase-filtration" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">phase</span> <span class="pre">filtration</span></code>: This subsection defines the filter applied to the phase fraction. This affects the definition of the interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">phase</span> <span class="pre">filtration</span></code>: defines the filter applied to the phase fraction. This affects the definition of the interface.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: defines the filter type, either <code class="docutils literal notranslate"><span class="pre">none</span></code> or <code class="docutils literal notranslate"><span class="pre">tanh</span></code></p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">none</span></code>: the phase fraction is not filtered</p></li>
@@ -661,6 +742,7 @@ number of iterations to reach the mass conservation tolerance.
             <ul>
 <li><a class="reference internal" href="#">Volume of Fluid (Multiphase Flow)</a><ul>
 <li><a class="reference internal" href="#interface-sharpening">Interface Sharpening</a></li>
+<li><a class="reference internal" href="#algebraic-interface-reinitialization">Algebraic Interface Reinitialization</a></li>
 <li><a class="reference internal" href="#phase-filtration">Phase Filtration</a></li>
 <li><a class="reference internal" href="#surface-tension-force">Surface Tension Force</a><ul>
 <li><a class="reference internal" href="#choosing-values-for-the-surface-tension-force-filters">Choosing Values for the Surface Tension Force Filters</a></li>

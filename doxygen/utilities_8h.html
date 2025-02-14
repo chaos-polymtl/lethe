@@ -93,6 +93,7 @@ $(function() {
 <code>#include &lt;deal.II/base/table_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/base/tensor.h&gt;</code><br />
 <code>#include &lt;deal.II/dofs/dof_handler.h&gt;</code><br />
+<code>#include &lt;deal.II/fe/fe_values.h&gt;</code><br />
 <code>#include &lt;boost/archive/text_iarchive.hpp&gt;</code><br />
 <code>#include &lt;boost/archive/text_oarchive.hpp&gt;</code><br />
 <code>#include &lt;regex&gt;</code><br />
@@ -101,21 +102,23 @@ Include dependency graph for utilities.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="utilities_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2utilities_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2utilities_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2utilities_8h">
-<area shape="rect" title=" " alt="" coords="530,5,737,45"/>
+<area shape="rect" title=" " alt="" coords="629,5,835,45"/>
 <area shape="rect" title=" " alt="" coords="5,93,179,133"/>
-<area shape="poly" title=" " alt="" coords="530,44,193,96,192,90,529,38"/>
+<area shape="poly" title=" " alt="" coords="629,40,431,63,193,96,192,90,430,58,628,35"/>
 <area shape="rect" title=" " alt="" coords="203,93,338,133"/>
-<area shape="poly" title=" " alt="" coords="554,48,352,96,351,90,553,43"/>
+<area shape="poly" title=" " alt="" coords="629,46,352,96,351,90,628,40"/>
 <area shape="rect" title=" " alt="" coords="362,101,515,126"/>
-<area shape="poly" title=" " alt="" coords="592,48,478,98,476,93,590,43"/>
+<area shape="poly" title=" " alt="" coords="668,48,492,99,490,94,667,43"/>
 <area shape="rect" title=" " alt="" coords="540,101,727,126"/>
-<area shape="poly" title=" " alt="" coords="636,46,636,87,631,87,631,46"/>
-<area shape="rect" title=" " alt="" coords="751,93,891,133"/>
-<area shape="poly" title=" " alt="" coords="676,43,769,85,767,90,673,48"/>
-<area shape="rect" title=" " alt="" coords="915,93,1055,133"/>
-<area shape="poly" title=" " alt="" coords="711,43,902,89,901,94,710,48"/>
-<area shape="rect" title=" " alt="" coords="1080,101,1139,126"/>
-<area shape="poly" title=" " alt="" coords="737,32,895,52,983,69,1069,91,1075,93,1074,98,1067,96,982,74,894,58,737,37"/>
+<area shape="poly" title=" " alt="" coords="712,48,659,93,655,89,708,44"/>
+<area shape="rect" title=" " alt="" coords="751,101,910,126"/>
+<area shape="poly" title=" " alt="" coords="756,44,809,89,805,93,752,48"/>
+<area shape="rect" title=" " alt="" coords="934,93,1074,133"/>
+<area shape="poly" title=" " alt="" coords="792,43,932,87,930,92,791,48"/>
+<area shape="rect" title=" " alt="" coords="1098,93,1238,133"/>
+<area shape="poly" title=" " alt="" coords="836,42,1085,90,1084,96,835,48"/>
+<area shape="rect" title=" " alt="" coords="1263,101,1321,126"/>
+<area shape="poly" title=" " alt="" coords="836,28,926,35,1031,47,1142,65,1251,91,1258,93,1256,98,1250,96,1141,70,1030,52,925,41,835,34"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -326,6 +329,8 @@ Functions</h2></td></tr>
 <tr class="separator:a439affc773842316d1ef847a134b246c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b182f49ed10ffa3d2d50a9a309cd2f0" id="r_a4b182f49ed10ffa3d2d50a9a309cd2f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a> (const std::string &amp;dirname)</td></tr>
 <tr class="separator:a4b182f49ed10ffa3d2d50a9a309cd2f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6761d32800de2739011760d71ae33c09" id="r_a6761d32800de2739011760d71ae33c09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a6761d32800de2739011760d71ae33c09">delete_output_folder</a> (const std::string &amp;dirname)</td></tr>
+<tr class="separator:a6761d32800de2739011760d71ae33c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56a967052620929f4db03cee351d6890" id="r_a56a967052620929f4db03cee351d6890"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a> (const ConditionalOStream &amp;pcout, const std::string expression, const char delimiter='-')</td></tr>
 <tr class="separator:a56a967052620929f4db03cee351d6890"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1169674c9744ed63bfb067efce02df5f" id="r_a1169674c9744ed63bfb067efce02df5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a> (const TableHandler &amp;table, const std::string filename)</td></tr>
@@ -349,6 +354,9 @@ Functions</h2></td></tr>
 <tr class="separator:a9b1c8b293984f450067058ee53084afc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d02cb065c32b672c94bb862ecff4431" id="r_a3d02cb065c32b672c94bb862ecff4431"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a> (const std::vector&lt; double &gt; &amp;JxW_values)</td></tr>
 <tr class="separator:a3d02cb065c32b672c94bb862ecff4431"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47c096b4659adc4e0aa45d4aeb994dad" id="r_a47c096b4659adc4e0aa45d4aeb994dad"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a47c096b4659adc4e0aa45d4aeb994dad"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">identify_minimum_cell_size</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const Quadrature&lt; dim &gt; &amp;cell_quadrature, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:a47c096b4659adc4e0aa45d4aeb994dad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb087a954bd6464fa862ca5974bebeaf" id="r_adb087a954bd6464fa862ca5974bebeaf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">get_penalty_factor</a> (const unsigned int fe_degree, const double cell_extent_here, const double cell_extent_there)</td></tr>
 <tr class="separator:adb087a954bd6464fa862ca5974bebeaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7a3beaf194e7e21b6745c52b3695c4b" id="r_aa7a3beaf194e7e21b6745c52b3695c4b"><td class="memTemplParams" colspan="2">template&lt;typename key , typename val &gt; </td></tr>
@@ -401,9 +409,9 @@ Functions</h2></td></tr>
 
 <p>add_statistics_to_table_handler Add statistics to a TableHandler under the indicated variable name </p>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00050">50</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00052">52</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00041">statistics::average</a>, <a class="el" href="utilities_8h_source.html#l00039">statistics::max</a>, <a class="el" href="utilities_8h_source.html#l00038">statistics::min</a>, and <a class="el" href="utilities_8h_source.html#l00040">statistics::total</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00043">statistics::average</a>, <a class="el" href="utilities_8h_source.html#l00041">statistics::max</a>, <a class="el" href="utilities_8h_source.html#l00040">statistics::min</a>, and <a class="el" href="utilities_8h_source.html#l00042">statistics::total</a>.</p>
 
 </div>
 </div>
@@ -461,7 +469,7 @@ Tracer</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00406">406</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00416">416</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -515,7 +523,7 @@ Tracer</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00260">260</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00262">262</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
 
@@ -571,9 +579,9 @@ Tracer</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00324">324</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00326">326</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, and <a class="el" href="utilities_8h_source.html#l00291">sgn()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, and <a class="el" href="utilities_8h_source.html#l00293">sgn()</a>.</p>
 
 </div>
 </div>
@@ -628,7 +636,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Clipped variable that is not below the lower limit and not above the upper limit </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00308">308</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00310">310</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -684,7 +692,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Cell diameter value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00592">592</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00602">602</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -727,7 +735,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Area (2D) volume (3D) of the cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00620">620</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00630">630</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -756,6 +764,34 @@ template&lt;int dim&gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00355">355</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+</div>
+</div>
+<a id="a6761d32800de2739011760d71ae33c09" name="a6761d32800de2739011760d71ae33c09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6761d32800de2739011760d71ae33c09">&#9670;&#160;</a></span>delete_output_folder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void delete_output_folder </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>dirname</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Delete the output folder and its content. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dirname</td><td>Output directory name. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00366">366</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -802,7 +838,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00438">438</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00448">448</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -840,7 +876,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>keys Vector of keys from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00662">662</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00729">729</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -878,7 +914,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>values Vector of values from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00681">681</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00748">748</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1044,9 +1080,9 @@ template&lt;typename key , typename val &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00621">621</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00630">630</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00537">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00546">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -1085,7 +1121,7 @@ template&lt;typename key , typename val &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00537">537</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00546">546</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1113,9 +1149,9 @@ template&lt;typename key , typename val &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00687">687</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00696">696</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00577">get_max_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00586">get_max_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -1170,7 +1206,79 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00643">643</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00710">710</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+
+</div>
+</div>
+<a id="a47c096b4659adc4e0aa45d4aeb994dad" name="a47c096b4659adc4e0aa45d4aeb994dad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47c096b4659adc4e0aa45d4aeb994dad">&#9670;&#160;</a></span>identify_minimum_cell_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double identify_minimum_cell_size </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Quadrature&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cell_quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Identify minimum cell size. The cell size corresponds to the diameter of a disk (2D) or sphere (3D) of equivalent area (2D) or volume (3D). </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions (2D or 3D).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Interface for transformation from the reference (unit) cell to the real cell.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>Describes the layout of DoFs and the type of FE.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_quadrature</td><td>Local cell quadrature information.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>Allows communication between cores.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Smallest cell size value. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00657">657</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00630">compute_cell_measure_with_JxW()</a>.</p>
 
 </div>
 </div>
@@ -1599,7 +1707,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00423">423</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00433">433</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1636,7 +1744,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>an integer -1 or 1 depending of the sign of the phase parameter </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00291">291</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00293">293</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1682,7 +1790,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code>value_string</code> in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00503">503</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00513">513</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1746,7 +1854,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the input parameters in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00545">545</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00555">555</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>

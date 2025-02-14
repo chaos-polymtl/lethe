@@ -91,29 +91,29 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad1b5274d9e228ecba0358eb10cdea0d8" id="r_ad1b5274d9e228ecba0358eb10cdea0d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ad1b5274d9e228ecba0358eb10cdea0d8">VOFSubequationsInterface</a> (const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;p_simulation_parameters, const ConditionalOStream &amp;p_pcout, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt; &amp;p_triangulation, <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *p_multiphysics_interface)</td></tr>
-<tr class="separator:ad1b5274d9e228ecba0358eb10cdea0d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a653bc3fd9668d4f2641defc8da78a858" id="r_a653bc3fd9668d4f2641defc8da78a858"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a653bc3fd9668d4f2641defc8da78a858">VOFSubequationsInterface</a> (const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;p_simulation_parameters, const ConditionalOStream &amp;p_pcout, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt; &amp;p_triangulation, const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;p_simulation_control, <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *p_multiphysics_interface)</td></tr>
+<tr class="separator:a653bc3fd9668d4f2641defc8da78a858"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4b9dc4b4065912e6f6bd3a7d80febaa" id="r_ac4b9dc4b4065912e6f6bd3a7d80febaa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ac4b9dc4b4065912e6f6bd3a7d80febaa">~VOFSubequationsInterface</a> ()=default</td></tr>
 <tr class="separator:ac4b9dc4b4065912e6f6bd3a7d80febaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae39a997e444814f0bbc27c0d04a69fc5" id="r_ae39a997e444814f0bbc27c0d04a69fc5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ae39a997e444814f0bbc27c0d04a69fc5">setup_dofs</a> ()</td></tr>
 <tr class="separator:ae39a997e444814f0bbc27c0d04a69fc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d615ada6ba0bc52f4eef8dbe0a03d46" id="r_a6d615ada6ba0bc52f4eef8dbe0a03d46"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a6d615ada6ba0bc52f4eef8dbe0a03d46">setup_specific_subequation_dofs</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
+<tr class="memitem:a6d615ada6ba0bc52f4eef8dbe0a03d46" id="r_a6d615ada6ba0bc52f4eef8dbe0a03d46"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a6d615ada6ba0bc52f4eef8dbe0a03d46">setup_specific_subequation_dofs</a> (const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
 <tr class="separator:a6d615ada6ba0bc52f4eef8dbe0a03d46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a509509b33450cedfe9f02741c39cd4b0" id="r_a509509b33450cedfe9f02741c39cd4b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a509509b33450cedfe9f02741c39cd4b0">solve</a> (const bool &amp;is_post_mesh_adaptation=false)</td></tr>
-<tr class="separator:a509509b33450cedfe9f02741c39cd4b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59fd098fe2e268d1242e4a3e47303b97" id="r_a59fd098fe2e268d1242e4a3e47303b97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a59fd098fe2e268d1242e4a3e47303b97">solve_specific_subequation</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id, const bool &amp;is_post_mesh_adaptation=false)</td></tr>
-<tr class="separator:a59fd098fe2e268d1242e4a3e47303b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada4ac5882551ea41c56c6a163fe0dd5e" id="r_ada4ac5882551ea41c56c6a163fe0dd5e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ada4ac5882551ea41c56c6a163fe0dd5e">get_active_subequations</a> ()</td></tr>
+<tr class="memitem:aac7127e0c5ecc4ef37f7ca773e0cbb1b" id="r_aac7127e0c5ecc4ef37f7ca773e0cbb1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#aac7127e0c5ecc4ef37f7ca773e0cbb1b">solve</a> ()</td></tr>
+<tr class="separator:aac7127e0c5ecc4ef37f7ca773e0cbb1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a534f53d55a4aa7b8c49b3eda9ebc79a1" id="r_a534f53d55a4aa7b8c49b3eda9ebc79a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a534f53d55a4aa7b8c49b3eda9ebc79a1">solve_specific_subequation</a> (const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
+<tr class="separator:a534f53d55a4aa7b8c49b3eda9ebc79a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada4ac5882551ea41c56c6a163fe0dd5e" id="r_ada4ac5882551ea41c56c6a163fe0dd5e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ada4ac5882551ea41c56c6a163fe0dd5e">get_active_subequations</a> ()</td></tr>
 <tr class="separator:ada4ac5882551ea41c56c6a163fe0dd5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23294e86910cf2e742da9e96eeef69f0" id="r_a23294e86910cf2e742da9e96eeef69f0"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a23294e86910cf2e742da9e96eeef69f0">get_dof_handler</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
+<tr class="memitem:a23294e86910cf2e742da9e96eeef69f0" id="r_a23294e86910cf2e742da9e96eeef69f0"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a23294e86910cf2e742da9e96eeef69f0">get_dof_handler</a> (const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
 <tr class="separator:a23294e86910cf2e742da9e96eeef69f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a287f54b6082b4d0790fe9a007db10ce9" id="r_a287f54b6082b4d0790fe9a007db10ce9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a287f54b6082b4d0790fe9a007db10ce9">get_solution</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
+<tr class="memitem:a287f54b6082b4d0790fe9a007db10ce9" id="r_a287f54b6082b4d0790fe9a007db10ce9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a287f54b6082b4d0790fe9a007db10ce9">get_solution</a> (const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
 <tr class="separator:a287f54b6082b4d0790fe9a007db10ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaed664829784d08911fd574c67ffc496" id="r_aaed664829784d08911fd574c67ffc496"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#aaed664829784d08911fd574c67ffc496">get_subequation_string</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
+<tr class="memitem:aaed664829784d08911fd574c67ffc496" id="r_aaed664829784d08911fd574c67ffc496"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#aaed664829784d08911fd574c67ffc496">get_subequation_string</a> (const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id)</td></tr>
 <tr class="separator:aaed664829784d08911fd574c67ffc496"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5de1d0c7e6d371fdb64735c1abdbfe0" id="r_ad5de1d0c7e6d371fdb64735c1abdbfe0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ad5de1d0c7e6d371fdb64735c1abdbfe0">set_dof_handler</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id, DoFHandler&lt; dim &gt; *dof_handler)</td></tr>
+<tr class="memitem:ad5de1d0c7e6d371fdb64735c1abdbfe0" id="r_ad5de1d0c7e6d371fdb64735c1abdbfe0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ad5de1d0c7e6d371fdb64735c1abdbfe0">set_dof_handler</a> (const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id, DoFHandler&lt; dim &gt; *dof_handler)</td></tr>
 <tr class="separator:ad5de1d0c7e6d371fdb64735c1abdbfe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1aabf67c1baee323200c0840ed44a6eb" id="r_a1aabf67c1baee323200c0840ed44a6eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a1aabf67c1baee323200c0840ed44a6eb">set_solution</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *solution_vector)</td></tr>
+<tr class="memitem:a1aabf67c1baee323200c0840ed44a6eb" id="r_a1aabf67c1baee323200c0840ed44a6eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a1aabf67c1baee323200c0840ed44a6eb">set_solution</a> (const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;subequation_id, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *solution_vector)</td></tr>
 <tr class="separator:a1aabf67c1baee323200c0840ed44a6eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
@@ -122,13 +122,13 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a8d0763f84c0b01bb9f6c147253abb2d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a293ff724445b2719cf20e4ded1e5b660" id="r_a293ff724445b2719cf20e4ded1e5b660"><td class="memItemLeft" align="right" valign="top">const ConditionalOStream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a293ff724445b2719cf20e4ded1e5b660">pcout</a></td></tr>
 <tr class="separator:a293ff724445b2719cf20e4ded1e5b660"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5bdbf3d4bb4ca0b9dc7c2e37a98d71a" id="r_af5bdbf3d4bb4ca0b9dc7c2e37a98d71a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#af5bdbf3d4bb4ca0b9dc7c2e37a98d71a">active_subequations</a></td></tr>
+<tr class="memitem:af5bdbf3d4bb4ca0b9dc7c2e37a98d71a" id="r_af5bdbf3d4bb4ca0b9dc7c2e37a98d71a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#af5bdbf3d4bb4ca0b9dc7c2e37a98d71a">active_subequations</a></td></tr>
 <tr class="separator:af5bdbf3d4bb4ca0b9dc7c2e37a98d71a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae36a029557de05691e967611f4b1a460" id="r_ae36a029557de05691e967611f4b1a460"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, std::shared_ptr&lt; <a class="el" href="classPhysicsSubequationsSolverBase.html">PhysicsSubequationsSolverBase</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ae36a029557de05691e967611f4b1a460">subequations</a></td></tr>
+<tr class="memitem:ae36a029557de05691e967611f4b1a460" id="r_ae36a029557de05691e967611f4b1a460"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, std::shared_ptr&lt; <a class="el" href="classPhysicsSubequationsSolverBase.html">PhysicsSubequationsSolverBase</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#ae36a029557de05691e967611f4b1a460">subequations</a></td></tr>
 <tr class="separator:ae36a029557de05691e967611f4b1a460"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77518e479e41e5bba8e6a0889f2c429b" id="r_a77518e479e41e5bba8e6a0889f2c429b"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, DoFHandler&lt; dim &gt; * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a77518e479e41e5bba8e6a0889f2c429b">subequations_dof_handler</a></td></tr>
+<tr class="memitem:a77518e479e41e5bba8e6a0889f2c429b" id="r_a77518e479e41e5bba8e6a0889f2c429b"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, DoFHandler&lt; dim &gt; * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a77518e479e41e5bba8e6a0889f2c429b">subequations_dof_handler</a></td></tr>
 <tr class="separator:a77518e479e41e5bba8e6a0889f2c429b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62dfa95a7989b5ad5fd160d80c196dc4" id="r_a62dfa95a7989b5ad5fd160d80c196dc4"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a62dfa95a7989b5ad5fd160d80c196dc4">subequations_solutions</a></td></tr>
+<tr class="memitem:a62dfa95a7989b5ad5fd160d80c196dc4" id="r_a62dfa95a7989b5ad5fd160d80c196dc4"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFSubequationsInterface.html#a62dfa95a7989b5ad5fd160d80c196dc4">subequations_solutions</a></td></tr>
 <tr class="separator:a62dfa95a7989b5ad5fd160d80c196dc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -141,10 +141,10 @@ class VOFSubequationsInterface&lt; dim &gt;</div><p>Interface for secondary equa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00034">34</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00023">23</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ad1b5274d9e228ecba0358eb10cdea0d8" name="ad1b5274d9e228ecba0358eb10cdea0d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1b5274d9e228ecba0358eb10cdea0d8">&#9670;&#160;</a></span>VOFSubequationsInterface()</h2>
+<a id="a653bc3fd9668d4f2641defc8da78a858" name="a653bc3fd9668d4f2641defc8da78a858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a653bc3fd9668d4f2641defc8da78a858">&#9670;&#160;</a></span>VOFSubequationsInterface()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,6 +172,12 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>p_simulation_control</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *&#160;</td>
           <td class="paramname"><em>p_multiphysics_interface</em>&#160;</td>
         </tr>
@@ -189,14 +195,15 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_simulation_parameters</td><td>Simulation parameters.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_pcout</td><td>Parallel cout used to print the information.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_triangulation</td><td>Distributed mesh information.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_simulation_control</td><td><a class="el" href="classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady-state and transient simulations ...">SimulationControl</a> object.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_multiphysics_interface</td><td>Multiphysics interface object pointer used to get information from physics. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8cc_source.html#l00010">10</a> of file <a class="el" href="vof__subequations__interface_8cc_source.html">vof_subequations_interface.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8cc_source.html#l00011">11</a> of file <a class="el" href="vof__subequations__interface_8cc_source.html">vof_subequations_interface.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00134">Parameters::VOF_SurfaceTensionForce::enable</a>, <a class="el" href="simulation__parameters_8h_source.html#l00053">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="vof__subequations__interface_8h_source.html#l00248">VOFSubequationsInterface&lt; dim &gt;::multiphysics_interface</a>, <a class="el" href="vof__subequations__interface_8h_source.html#l00250">VOFSubequationsInterface&lt; dim &gt;::pcout</a>, <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, <a class="el" href="vof__subequations__interface_8h_source.html#l00258">VOFSubequationsInterface&lt; dim &gt;::subequations</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00182">Parameters::VOF::surface_tension_force</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00241">Parameters::Multiphysics::vof_parameters</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00238">Parameters::VOF::algebraic_interface_reinitialization</a>, <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">algebraic_interface_reinitialization</a>, <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00135">Parameters::VOF_SurfaceTensionForce::enable</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00181">Parameters::VOF_AlgebraicInterfaceReinitialization::enable</a>, <a class="el" href="simulation__parameters_8h_source.html#l00058">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="vof__subequations__interface_8h_source.html#l00240">VOFSubequationsInterface&lt; dim &gt;::multiphysics_interface</a>, <a class="el" href="vof__subequations__interface_8h_source.html#l00242">VOFSubequationsInterface&lt; dim &gt;::pcout</a>, <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, <a class="el" href="vof__subequations__interface_8h_source.html#l00250">VOFSubequationsInterface&lt; dim &gt;::subequations</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00235">Parameters::VOF::surface_tension_force</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00296">Parameters::Multiphysics::vof_parameters</a>.</p>
 
 </div>
 </div>
@@ -242,7 +249,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::get_active_subequations </td>
+          <td class="memname">std::vector&lt; <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::get_active_subequations </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -258,9 +265,9 @@ template&lt;int dim&gt; </div>
 <p>Get vector of active subequations. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of active subequations identifiers. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00136">136</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00120">120</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>.</p>
 
 </div>
 </div>
@@ -278,7 +285,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">DoFHandler&lt; dim &gt; * <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::get_dof_handler </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
           <td class="paramname"><em>subequation_id</em></td><td>)</td>
           <td></td>
         </tr>
@@ -299,9 +306,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the DoFHandler of the specified subequation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00150">150</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00134">134</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00260">VOFSubequationsInterface&lt; dim &gt;::subequations_dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00252">VOFSubequationsInterface&lt; dim &gt;::subequations_dof_handler</a>.</p>
 
 </div>
 </div>
@@ -319,7 +326,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::get_solution </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
           <td class="paramname"><em>subequation_id</em></td><td>)</td>
           <td></td>
         </tr>
@@ -340,9 +347,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the solution vector of the specified subequation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00169">169</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00153">153</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00263">VOFSubequationsInterface&lt; dim &gt;::subequations_solutions</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00255">VOFSubequationsInterface&lt; dim &gt;::subequations_solutions</a>.</p>
 
 </div>
 </div>
@@ -360,7 +367,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">std::string <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::get_subequation_string </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
           <td class="paramname"><em>subequation_id</em></td><td>)</td>
           <td></td>
         </tr>
@@ -382,9 +389,9 @@ template&lt;int dim&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>String associated with the specified subequation.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This is used for printing purposes. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00189">189</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00173">173</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">algebraic_interface_reinitialization</a>, <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
 </div>
 </div>
@@ -402,7 +409,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::set_dof_handler </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
           <td class="paramname"><em>subequation_id</em>, </td>
         </tr>
         <tr>
@@ -433,9 +440,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00216">216</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00208">208</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00260">VOFSubequationsInterface&lt; dim &gt;::subequations_dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00252">VOFSubequationsInterface&lt; dim &gt;::subequations_dof_handler</a>.</p>
 
 </div>
 </div>
@@ -453,7 +460,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::set_solution </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
           <td class="paramname"><em>subequation_id</em>, </td>
         </tr>
         <tr>
@@ -484,9 +491,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00237">237</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00229">229</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00263">VOFSubequationsInterface&lt; dim &gt;::subequations_solutions</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00255">VOFSubequationsInterface&lt; dim &gt;::subequations_solutions</a>.</p>
 
 </div>
 </div>
@@ -517,9 +524,9 @@ template&lt;int dim&gt; </div>
 
 <p>Setup the DofHandler and the degree of freedom associated with the subequations. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00067">67</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00059">59</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00258">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00250">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
 
 </div>
 </div>
@@ -537,7 +544,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::setup_specific_subequation_dofs </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
           <td class="paramname"><em>subequation_id</em></td><td>)</td>
           <td></td>
         </tr>
@@ -557,14 +564,14 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00083">83</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00075">75</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00258">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00250">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
 
 </div>
 </div>
-<a id="a509509b33450cedfe9f02741c39cd4b0" name="a509509b33450cedfe9f02741c39cd4b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a509509b33450cedfe9f02741c39cd4b0">&#9670;&#160;</a></span>solve()</h2>
+<a id="aac7127e0c5ecc4ef37f7ca773e0cbb1b" name="aac7127e0c5ecc4ef37f7ca773e0cbb1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac7127e0c5ecc4ef37f7ca773e0cbb1b">&#9670;&#160;</a></span>solve()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -577,8 +584,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::solve </td>
           <td>(</td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>is_post_mesh_adaptation</em> = <code>false</code></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -590,21 +596,15 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Call solving method of active subequations. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">is_post_mesh_adaptation</td><td>Indicates if the equation is being solved during post_mesh_adaptation(), for verbosity. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00100">100</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00089">89</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00258">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00250">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
 
 </div>
 </div>
-<a id="a59fd098fe2e268d1242e4a3e47303b97" name="a59fd098fe2e268d1242e4a3e47303b97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59fd098fe2e268d1242e4a3e47303b97">&#9670;&#160;</a></span>solve_specific_subequation()</h2>
+<a id="a534f53d55a4aa7b8c49b3eda9ebc79a1" name="a534f53d55a4aa7b8c49b3eda9ebc79a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a534f53d55a4aa7b8c49b3eda9ebc79a1">&#9670;&#160;</a></span>solve_specific_subequation()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -617,19 +617,9 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::solve_specific_subequation </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
-          <td class="paramname"><em>subequation_id</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;&#160;</td>
+          <td class="paramname"><em>subequation_id</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>is_post_mesh_adaptation</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -642,15 +632,14 @@ template&lt;int dim&gt; </div>
 <p>Call solving method for a specific subequation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">is_post_mesh_adaptation</td><td>Indicates if the equation is being solved during post_mesh_adaptation(), for verbosity.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">subequation_id</td><td>Identifier associated with the subequation wished to solve. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00118">118</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00104">104</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00253">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00258">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations__interface_8h_source.html#l00245">VOFSubequationsInterface&lt; dim &gt;::active_subequations</a>, and <a class="el" href="vof__subequations__interface_8h_source.html#l00250">VOFSubequationsInterface&lt; dim &gt;::subequations</a>.</p>
 
 </div>
 </div>
@@ -667,7 +656,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>&gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::active_subequations</td>
+          <td class="memname">std::vector&lt;<a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>&gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::active_subequations</td>
         </tr>
       </table>
   </td>
@@ -677,7 +666,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00253">253</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00245">245</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
 </div>
 </div>
@@ -703,7 +692,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00248">248</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00240">240</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
 </div>
 </div>
@@ -729,7 +718,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00250">250</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00242">242</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
 </div>
 </div>
@@ -745,7 +734,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, std::shared_ptr&lt;<a class="el" href="classPhysicsSubequationsSolverBase.html">PhysicsSubequationsSolverBase</a>&gt; &gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::subequations</td>
+          <td class="memname">std::map&lt;<a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, std::shared_ptr&lt;<a class="el" href="classPhysicsSubequationsSolverBase.html">PhysicsSubequationsSolverBase</a>&gt; &gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::subequations</td>
         </tr>
       </table>
   </td>
@@ -755,7 +744,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00258">258</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00250">250</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
 </div>
 </div>
@@ -771,7 +760,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, DoFHandler&lt;dim&gt; *&gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::subequations_dof_handler</td>
+          <td class="memname">std::map&lt;<a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, DoFHandler&lt;dim&gt; *&gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::subequations_dof_handler</td>
         </tr>
       </table>
   </td>
@@ -781,7 +770,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00260">260</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00252">252</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
 </div>
 </div>
@@ -797,7 +786,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::subequations_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&gt; <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt;::subequations_solutions</td>
         </tr>
       </table>
   </td>
@@ -807,7 +796,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00263">263</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__subequations__interface_8h_source.html#l00255">255</a> of file <a class="el" href="vof__subequations__interface_8h_source.html">vof_subequations_interface.h</a>.</p>
 
 </div>
 </div>

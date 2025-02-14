@@ -1,0 +1,9 @@
+<map id="VOFAlgebraicInterfaceReinitialization&lt; dim &gt;" name="VOFAlgebraicInterfaceReinitialization&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="VOF algebraic reinitialization solver." alt="" coords="112,167,376,207"/>
+<area shape="rect" id="Node000002" href="$classPhysicsNonlinearSubequationsSolver.html" title=" " alt="" coords="125,79,363,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,133,247,166,241,166,241,133"/>
+<area shape="rect" id="Node000003" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,5,237,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="153,36,216,76,213,81,150,41"/>
+<area shape="rect" id="Node000004" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="261,5,475,31"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="339,41,275,81,272,76,336,36"/>
+</map>

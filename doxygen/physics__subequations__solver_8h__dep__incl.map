@@ -1,43 +1,49 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/physics_subequations_solver.h" name="/home/runner/work/lethe/lethe/include/solvers/physics_subequations_solver.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="535,5,762,60"/>
-<area shape="rect" id="Node000002" href="$void__fraction_8h.html" title=" " alt="" coords="295,108,477,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="569,67,455,110,453,105,567,62"/>
-<area shape="rect" id="Node000008" href="$vof__linear__subequations__solver_8h.html" title=" " alt="" coords="703,211,888,280"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="727,65,752,84,772,106,785,132,793,159,799,210,794,211,788,160,780,134,768,110,748,87,724,69"/>
-<area shape="rect" id="Node000018" href="$vof__subequations__interface_8h.html" title=" " alt="" coords="539,108,758,163"/>
-<area shape="poly" id="edge20_Node000001_Node000018" title=" " alt="" coords="651,74,651,108,646,108,646,74"/>
-<area shape="rect" id="Node000003" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="93,218,276,273"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="326,172,235,220,233,215,323,167"/>
-<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,335,395,390"/>
-<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="361,175,342,212,321,278,310,335,304,334,316,276,337,210,357,173"/>
-<area shape="rect" id="Node000007" href="$void__fraction_8cc.html" title=" " alt="" coords="352,218,535,273"/>
-<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="409,174,432,217,427,219,404,176"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,335,188,390"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="159,285,119,337,115,333,154,282"/>
-<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="223,280,278,333,274,337,220,284"/>
-<area shape="rect" id="Node000005" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,445,188,500"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="99,404,99,445,94,445,94,404"/>
-<area shape="rect" id="Node000009" href="$vof_8h.html" title=" " alt="" coords="419,343,617,383"/>
-<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="703,288,564,345,562,340,701,283"/>
-<area shape="rect" id="Node000012" href="$vof__curvature__projection_8h.html" title=" " alt="" coords="691,335,891,390"/>
-<area shape="poly" id="edge12_Node000008_Node000012" title=" " alt="" coords="796,294,795,335,790,335,791,294"/>
-<area shape="rect" id="Node000014" href="$vof__subequations__interface_8cc.html" title=" " alt="" coords="923,445,1147,500"/>
-<area shape="poly" id="edge19_Node000008_Node000014" title=" " alt="" coords="902,257,966,268,1030,283,1082,302,1102,314,1116,326,1126,344,1128,361,1116,398,1099,425,1077,447,1073,443,1095,422,1112,396,1123,361,1121,346,1112,330,1099,318,1080,307,1028,289,965,274,901,262"/>
-<area shape="rect" id="Node000015" href="$vof__phase__gradient__projection_8h.html" title=" " alt="" coords="1177,335,1416,390"/>
-<area shape="poly" id="edge15_Node000008_Node000015" title=" " alt="" coords="902,267,1159,325,1190,333,1189,338,1157,331,901,273"/>
-<area shape="rect" id="Node000017" href="$vof__linear__subequations__solver_8cc.html" title=" " alt="" coords="916,328,1101,397"/>
-<area shape="poly" id="edge18_Node000008_Node000017" title=" " alt="" coords="871,284,948,325,945,330,868,289"/>
-<area shape="rect" id="Node000010" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="239,445,431,500"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="476,392,381,448,378,443,473,387"/>
-<area shape="rect" id="Node000011" href="$vof_8cc.html" title=" " alt="" coords="456,445,639,500"/>
-<area shape="poly" id="edge11_Node000009_Node000011" title=" " alt="" coords="529,395,543,445,538,446,524,396"/>
-<area shape="rect" id="Node000013" href="$vof__curvature__projection_8cc.html" title=" " alt="" coords="688,445,895,500"/>
-<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="794,404,794,445,789,445,789,404"/>
-<area shape="poly" id="edge14_Node000012_Node000014" title=" " alt="" coords="864,393,977,443,975,448,862,398"/>
-<area shape="poly" id="edge17_Node000015_Node000014" title=" " alt="" coords="1221,398,1100,448,1098,443,1219,393"/>
-<area shape="rect" id="Node000016" href="$vof__phase__gradient__projection_8cc.html" title=" " alt="" coords="1175,445,1419,500"/>
-<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="1299,404,1299,445,1294,445,1294,404"/>
-<area shape="poly" id="edge22_Node000018_Node000008" title=" " alt="" coords="697,169,751,208,748,212,694,173"/>
-<area shape="poly" id="edge21_Node000018_Node000009" title=" " alt="" coords="629,176,531,344,527,341,624,173"/>
-<area shape="poly" id="edge23_Node000018_Node000014" title=" " alt="" coords="643,176,638,226,638,285,643,315,651,344,664,371,681,395,924,446,923,451,678,400,659,374,646,346,638,316,633,286,632,226,638,176"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="802,5,1029,60"/>
+<area shape="rect" id="Node000002" href="$void__fraction_8h.html" title=" " alt="" coords="175,108,357,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="789,56,358,123,357,117,788,51"/>
+<area shape="rect" id="Node000008" href="$vof__algebraic__interface__reinitialization_8h.html" title=" " alt="" coords="756,211,939,280"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="889,73,870,109,856,162,851,211,846,210,851,161,865,107,884,70"/>
+<area shape="rect" id="Node000011" href="$vof__linear__subequations__solver_8h.html" title=" " alt="" coords="1043,211,1228,280"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="1043,58,1080,78,1112,106,1127,131,1136,158,1140,210,1135,211,1130,159,1122,133,1108,110,1077,83,1040,63"/>
+<area shape="rect" id="Node000020" href="$vof__subequations__interface_8h.html" title=" " alt="" coords="879,108,1098,163"/>
+<area shape="poly" id="edge23_Node000001_Node000020" title=" " alt="" coords="945,70,972,106,967,109,940,73"/>
+<area shape="rect" id="Node000003" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="277,218,460,273"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="303,171,346,216,342,220,299,175"/>
+<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="5,335,188,390"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="162,151,133,160,105,173,80,190,60,212,53,226,50,242,53,274,65,306,80,334,76,336,60,308,48,276,44,241,48,225,56,209,77,186,103,168,131,155,160,146"/>
+<area shape="rect" id="Node000007" href="$void__fraction_8cc.html" title=" " alt="" coords="71,218,253,273"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="233,175,189,220,185,216,229,171"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="244,335,427,390"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="360,286,346,336,340,334,355,285"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="296,280,160,338,158,333,294,275"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="244,445,427,500"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="338,404,338,445,333,445,333,404"/>
+<area shape="rect" id="Node000009" href="$vof__algebraic__interface__reinitialization_8cc.html" title=" " alt="" coords="451,328,633,397"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="746,287,632,330,630,325,744,282"/>
+<area shape="rect" id="Node000010" href="$vof__subequations__interface_8cc.html" title=" " alt="" coords="898,445,1122,500"/>
+<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="883,290,909,326,993,443,989,446,905,330,878,293"/>
+<area shape="poly" id="edge22_Node000011_Node000010" title=" " alt="" coords="1196,288,1211,306,1223,327,1235,364,1232,381,1223,399,1203,421,1178,438,1151,451,1123,461,1121,456,1149,446,1176,434,1199,417,1218,396,1227,379,1229,364,1218,329,1207,309,1192,291"/>
+<area shape="rect" id="Node000012" href="$vof_8h.html" title=" " alt="" coords="1507,343,1705,383"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="1242,266,1496,325,1547,340,1546,345,1495,331,1241,271"/>
+<area shape="rect" id="Node000015" href="$vof__curvature__projection_8h.html" title=" " alt="" coords="1283,335,1483,390"/>
+<area shape="poly" id="edge15_Node000011_Node000015" title=" " alt="" coords="1221,283,1328,333,1326,338,1219,288"/>
+<area shape="rect" id="Node000017" href="$vof__phase__gradient__projection_8h.html" title=" " alt="" coords="657,335,896,390"/>
+<area shape="poly" id="edge18_Node000011_Node000017" title=" " alt="" coords="1030,283,859,338,857,333,1029,278"/>
+<area shape="rect" id="Node000019" href="$vof__linear__subequations__solver_8cc.html" title=" " alt="" coords="1023,328,1208,397"/>
+<area shape="poly" id="edge21_Node000011_Node000019" title=" " alt="" coords="1130,294,1124,328,1119,327,1124,293"/>
+<area shape="rect" id="Node000013" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="1510,445,1702,500"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="1609,396,1609,445,1603,445,1603,396"/>
+<area shape="rect" id="Node000014" href="$vof_8cc.html" title=" " alt="" coords="1727,445,1909,500"/>
+<area shape="poly" id="edge14_Node000012_Node000014" title=" " alt="" coords="1656,387,1768,443,1765,448,1654,391"/>
+<area shape="poly" id="edge17_Node000015_Node000010" title=" " alt="" coords="1280,396,1101,448,1100,443,1279,391"/>
+<area shape="rect" id="Node000016" href="$vof__curvature__projection_8cc.html" title=" " alt="" coords="1279,445,1485,500"/>
+<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="1386,404,1385,445,1380,445,1380,404"/>
+<area shape="poly" id="edge20_Node000017_Node000010" title=" " alt="" coords="847,393,954,443,952,448,845,398"/>
+<area shape="rect" id="Node000018" href="$vof__phase__gradient__projection_8cc.html" title=" " alt="" coords="629,445,873,500"/>
+<area shape="poly" id="edge19_Node000017_Node000018" title=" " alt="" coords="770,404,760,446,755,444,765,403"/>
+<area shape="poly" id="edge25_Node000020_Node000008" title=" " alt="" coords="945,173,893,212,890,208,941,169"/>
+<area shape="poly" id="edge27_Node000020_Node000010" title=" " alt="" coords="994,176,1011,445,1006,445,989,177"/>
+<area shape="poly" id="edge26_Node000020_Node000011" title=" " alt="" coords="1037,169,1091,208,1088,212,1034,173"/>
+<area shape="poly" id="edge24_Node000020_Node000012" title=" " alt="" coords="1100,164,1242,208,1423,279,1565,340,1563,345,1421,284,1240,213,1098,169"/>
 </map>

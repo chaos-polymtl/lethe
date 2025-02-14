@@ -24,9 +24,10 @@ var searchData=
   ['_7ephysicssolver_21',['~PhysicsSolver',['../classPhysicsSolver.html#af58e44ac26b7968b5aa943d30732086b',1,'PhysicsSolver']]],
   ['_7evisualization_22',['~Visualization',['../classVisualization.html#a0f0ca336cb4fd5e5d77cadb3ff7c9a89',1,'Visualization']]],
   ['_7evisualization_5fib_23',['~Visualization_IB',['../structFluidDynamicsSharp_1_1Visualization__IB.html#aa476a8539973609314a0ef57a08e614e',1,'FluidDynamicsSharp::Visualization_IB']]],
-  ['_7evofcurvatureprojection_24',['~VOFCurvatureProjection',['../classVOFCurvatureProjection.html#ab2c534c38cedeeb87b167e95094c779b',1,'VOFCurvatureProjection']]],
-  ['_7evoflinearsubequationssolver_25',['~VOFLinearSubequationsSolver',['../classVOFLinearSubequationsSolver.html#ae273a44334a1b0609a596617d0550edf',1,'VOFLinearSubequationsSolver']]],
-  ['_7evofphasegradientprojection_26',['~VOFPhaseGradientProjection',['../classVOFPhaseGradientProjection.html#ae6e208b8a35a5facf3737926dc37309c',1,'VOFPhaseGradientProjection']]],
-  ['_7evofsubequationsinterface_27',['~VOFSubequationsInterface',['../classVOFSubequationsInterface.html#ac4b9dc4b4065912e6f6bd3a7d80febaa',1,'VOFSubequationsInterface']]],
-  ['_7evolumeoffluid_28',['~VolumeOfFluid',['../classVolumeOfFluid.html#a0ff41381c3fa013ce5e586888dddb3c3',1,'VolumeOfFluid']]]
+  ['_7evofalgebraicinterfacereinitialization_24',['~VOFAlgebraicInterfaceReinitialization',['../classVOFAlgebraicInterfaceReinitialization.html#aa1c3f556cf5998b598e885cb5f421805',1,'VOFAlgebraicInterfaceReinitialization']]],
+  ['_7evofcurvatureprojection_25',['~VOFCurvatureProjection',['../classVOFCurvatureProjection.html#ab2c534c38cedeeb87b167e95094c779b',1,'VOFCurvatureProjection']]],
+  ['_7evoflinearsubequationssolver_26',['~VOFLinearSubequationsSolver',['../classVOFLinearSubequationsSolver.html#ae273a44334a1b0609a596617d0550edf',1,'VOFLinearSubequationsSolver']]],
+  ['_7evofphasegradientprojection_27',['~VOFPhaseGradientProjection',['../classVOFPhaseGradientProjection.html#ae6e208b8a35a5facf3737926dc37309c',1,'VOFPhaseGradientProjection']]],
+  ['_7evofsubequationsinterface_28',['~VOFSubequationsInterface',['../classVOFSubequationsInterface.html#ac4b9dc4b4065912e6f6bd3a7d80febaa',1,'VOFSubequationsInterface']]],
+  ['_7evolumeoffluid_29',['~VolumeOfFluid',['../classVolumeOfFluid.html#a0ff41381c3fa013ce5e586888dddb3c3',1,'VolumeOfFluid']]]
 ];

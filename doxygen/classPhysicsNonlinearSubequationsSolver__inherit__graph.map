@@ -1,0 +1,7 @@
+<map id="PhysicsNonlinearSubequationsSolver&lt; dim, VectorType &gt;" name="PhysicsNonlinearSubequationsSolver&lt; dim, VectorType &gt;">
+<area shape="rect" id="Node000001" title="Non&#45;linear subequations solved inside a physics (or auxiliary physics) that are not part of the main ..." alt="" coords="133,79,355,119"/>
+<area shape="rect" id="Node000002" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,5,237,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,36,216,76,213,81,150,41"/>
+<area shape="rect" id="Node000003" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="261,5,475,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="339,41,275,81,272,76,336,36"/>
+</map>
