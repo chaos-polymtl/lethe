@@ -28,6 +28,17 @@ DeclException1(
   << std::endl
   << "Interface sharpening model requires an integer sharpening frequency larger than 0.");
 
+DeclException2(
+  MultipleInterfaceResettingMethods,
+  bool,
+  bool,
+  << "Only one type of interface resetting mechanism can be used in a simulation.\n"
+  << "Currently,\n"
+  << std::boolalpha << " - VOF interface sharpening is set to " << arg1
+  << std::endl
+  << " - VOF algebraic interface reinitialization is set to " << arg2
+  << std::endl);
+
 void
 Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 {
@@ -93,6 +104,15 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
+
+  // Check if multiple interface resetting methods are used
+  AssertThrow(
+    !(this->vof_parameters.sharpening.enable &&
+      this->vof_parameters.algebraic_interface_reinitialization.enable),
+    MultipleInterfaceResettingMethods(
+      this->vof_parameters.sharpening.enable,
+      this->vof_parameters.algebraic_interface_reinitialization.enable));
+
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
 }
 
@@ -104,6 +124,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     sharpening.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
+    algebraic_interface_reinitialization.declare_parameters(prm);
 
     prm.declare_entry("viscous dissipative fluid",
                       "fluid 1",
@@ -136,6 +157,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     sharpening.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
     phase_filter.parse_parameters(prm);
+    algebraic_interface_reinitialization.parse_parameters(prm);
 
     // Viscous dissipative fluid
     const std::string op = prm.get("viscous dissipative fluid");
@@ -422,6 +444,99 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
       verbosity = Parameters::Verbosity::quiet;
     else
       throw(std::logic_error("Invalid verbosity level"));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
+  dealii::ParameterHandler &prm)
+{
+  prm.enter_subsection("algebraic interface reinitialization");
+  {
+    prm.declare_entry(
+      "enable",
+      "false",
+      Patterns::Bool(),
+      "Enables the interface reinitialization with the algebraic method "
+      "<true|false>");
+    prm.declare_entry(
+      "output reinitialization steps",
+      "false",
+      Patterns::Bool(),
+      "Enables pvtu format outputs of the algebraic interface reinitialization "
+      "steps <true|false>");
+    prm.declare_entry(
+      "frequency",
+      "1",
+      Patterns::Integer(),
+      "Reinitialization frequency (number of pseudo-time-steps) at which the "
+      "interface algebraic reinitialization process will be applied to the VOF "
+      "phase fraction field.");
+    prm.declare_entry(
+      "diffusivity multiplier",
+      "1.",
+      Patterns::Double(),
+      "Factor that multiplies the mesh-size in the mesh-dependant diffusion "
+      "coefficient of the algebraic interface reinitialization.");
+    prm.declare_entry(
+      "diffusivity power",
+      "1.",
+      Patterns::Double(),
+      "Power value applied to the mesh-size in the mesh-dependant diffusion "
+      "coefficient of the algebraic interface reinitialization.");
+    prm.declare_entry("steady-state criterion",
+                      "1e-2",
+                      Patterns::Double(),
+                      "Tolerance for the pseudo-time-stepping scheme.");
+    prm.declare_entry("max steps number",
+                      "5",
+                      Patterns::Integer(),
+                      "Maximum number of reinitialization steps.");
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose|extra verbose"),
+      "States whether the output from the algebraic interface reinitialization "
+      "should be printed."
+      "Choices are <quiet|verbose|extra verbose>.");
+    prm.declare_entry(
+      "reinitialization CFL",
+      "1.",
+      Patterns::Double(),
+      "CFL value for pseudo-time-step calculation purposes in the algebraic "
+      "interface reinitialization.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
+  dealii::ParameterHandler &prm)
+{
+  prm.enter_subsection("algebraic interface reinitialization");
+  {
+    this->enable = prm.get_bool("enable");
+    this->output_reinitialization_steps =
+      prm.get_bool("output reinitialization steps");
+    this->reinitialization_frequency = prm.get_integer("frequency");
+    this->diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
+    this->diffusivity_power          = prm.get_double("diffusivity power");
+    this->reinitialization_cfl       = prm.get_double("reinitialization CFL");
+    this->steady_state_criterion     = prm.get_double("steady-state criterion");
+    this->max_steps_number           = prm.get_integer("max steps number");
+
+    const std::string op2 = prm.get("verbosity");
+    if (op2 == "quiet")
+      this->verbosity = Parameters::Verbosity::quiet;
+    else if (op2 == "verbose")
+      this->verbosity = Parameters::Verbosity::verbose;
+    else if (op2 == "extra verbose")
+      this->verbosity = Parameters::Verbosity::extra_verbose;
+    else
+      throw(std::invalid_argument("Invalid verbosity level\n "
+                                  "Options are: \n"
+                                  " <quiet|verbose|extra verbose>"));
   }
   prm.leave_subsection();
 }

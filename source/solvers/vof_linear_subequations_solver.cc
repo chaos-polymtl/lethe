@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/vof_linear_subequations_solver.h>
@@ -75,8 +75,7 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
 
 template <int dim>
 void
-VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution(
-  const bool &is_post_mesh_adaptation)
+VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
@@ -84,8 +83,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution(
 
   const bool verbose(
     this->subequation_verbosity != Parameters::Verbosity::quiet &&
-    this->linear_solver_verbosity != Parameters::Verbosity::quiet &&
-    !is_post_mesh_adaptation);
+    this->linear_solver_verbosity != Parameters::Verbosity::quiet);
 
   if (verbose)
     {
@@ -104,7 +102,6 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution(
   // Solution vector
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
                                                    mpi_communicator);
-  completely_distributed_solution = this->present_solution;
 
   if (verbose)
     {
@@ -163,10 +160,10 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution(
 
 template <int dim>
 void
-VOFLinearSubequationsSolver<dim>::solve(const bool &is_post_mesh_adaptation)
+VOFLinearSubequationsSolver<dim>::solve()
 {
   assemble_system_matrix_and_rhs();
-  solve_linear_system_and_update_solution(is_post_mesh_adaptation);
+  solve_linear_system_and_update_solution();
 }
 
 

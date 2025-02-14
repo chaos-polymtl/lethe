@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_curvature_projection_h
@@ -41,8 +41,13 @@ public:
     : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::curvature_projection,
         p_simulation_parameters,
-        p_simulation_parameters.multiphysics.vof_parameters
-          .surface_tension_force.verbosity,
+        ((p_simulation_parameters.multiphysics.vof_parameters
+            .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
+         (p_simulation_parameters.multiphysics.vof_parameters
+            .algebraic_interface_reinitialization.verbosity !=
+          Parameters::Verbosity::quiet)) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet,
         p_pcout,
         p_triangulation,
         p_multiphysics_interface,

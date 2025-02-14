@@ -19,7 +19,8 @@ using namespace dealii;
 
 namespace Parameters
 {
-  /** @brief Class to account for different sharpening types:
+  /**
+   * @brief Different sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
    *  - adaptive: the sharpening threshold is determined by binary search, to
@@ -31,7 +32,8 @@ namespace Parameters
     adaptive
   };
 
-  /** @brief Class to account for different phase fraction filtering types:
+  /**
+   * @brief Different phase fraction filtering types:
    * - none: no filter wil be applied on the calculated phase fraction
    * - tanh: the tanh filter function will be applied to the phase fraction,
    * a \f$\beta\f$ parameter influencing the interface definition must be
@@ -61,7 +63,6 @@ namespace Parameters
     /// transient iteration.
     verbose
   };
-
 
   /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
@@ -126,8 +127,8 @@ namespace Parameters
   };
 
   /**
-   * @brief SurfaceTensionForce - Defines the parameters for
-   * the calculation of surface tension force in the VOF solver.
+   * @brief Parameters for the calculation of surface tension
+   * force in the VOF solver.
    */
   struct VOF_SurfaceTensionForce
   {
@@ -151,7 +152,7 @@ namespace Parameters
   };
 
   /**
-   * @brief VOF_PhaseFilter - Defines the parameters for the phase filtration
+   * @brief Parameters for the phase filtration
    */
   struct VOF_PhaseFilter
   {
@@ -170,6 +171,58 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Parameters for algebraic reinitialization of the interface
+   * used with the VOF solver.
+   */
+  struct VOF_AlgebraicInterfaceReinitialization
+  {
+    /// Enables/Disables the algebraic interface reinitialization.
+    bool enable;
+    /**
+     * Enables/Disables @p pvtu format outputs of the algebraic interface
+     * reinitialization steps of the last simulated time-step.
+     * The files are stored in a folder named
+     * @p algebraic-reinitialization-steps-output located inside the
+     * <tt>output path</tt> folder specified in the <tt>simulation control</tt>
+     * subsection.
+     * */
+    bool output_reinitialization_steps;
+    /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
+    /// fraction field will be reinitialized
+    int reinitialization_frequency;
+    /// Constant multiplying the mesh-size in the evaluation of the diffusion
+    /// coefficient.
+    double diffusivity_multiplier;
+    /// Constant representing the power to which the mesh-size is elevated in
+    /// the evaluation of the diffusion coefficient.
+    double diffusivity_power;
+    /// CFL for the reinitialization equation
+    double reinitialization_cfl;
+    /// Steady-state criterion used for the pseudo-time-stepping scheme.
+    double steady_state_criterion;
+    /// Maximum number of reinitialization steps.
+    double max_steps_number;
+    /// Type of verbosity of the algebraic interface reinitialization solver.
+    Parameters::Verbosity verbosity;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
   /**
    * @brief VOF - Defines the parameters for free surface simulations
@@ -181,6 +234,8 @@ namespace Parameters
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
     Parameters::VOF_PhaseFilter         phase_filter;
+    Parameters::VOF_AlgebraicInterfaceReinitialization
+      algebraic_interface_reinitialization;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 

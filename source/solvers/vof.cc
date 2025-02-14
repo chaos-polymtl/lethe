@@ -7,6 +7,8 @@
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <sys/stat.h>
+
 #include <cmath>
 
 
@@ -46,7 +48,7 @@ VolumeOfFluid<dim>::setup_assemblers()
     this->simulation_parameters.fem_parameters,
     this->simulation_parameters.multiphysics.vof_parameters));
 
-  // DCDD schock-capturing assembler
+  // DCDD shock-capturing assembler
   if (this->simulation_parameters.stabilization.vof_dcdd_stabilization)
     this->assemblers.emplace_back(
       std::make_shared<VOFAssemblerDCDDStabilization<dim>>(
@@ -137,7 +139,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
     }
   else
     {
-      // Check if the postprocessed variable needs to be calculated with the
+      // Check if the post-processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
             Parameters::InitialConditionType::average_velocity_profile &&
@@ -331,8 +333,9 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
-  if (vof_parameters.surface_tension_force.enable &&
-      vof_parameters.surface_tension_force.output_vof_auxiliary_fields)
+  if ((vof_parameters.surface_tension_force.enable &&
+       vof_parameters.surface_tension_force.output_vof_auxiliary_fields) ||
+      vof_parameters.algebraic_interface_reinitialization.enable)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         projected_phase_fraction_gradient_component_interpretation(
@@ -1144,11 +1147,28 @@ VolumeOfFluid<dim>::modify_solution()
           handle_interface_sharpening();
         }
     }
-  // Apply filter to phase fraction
+
+  // Apply algebraic interface reinitialization
+  if (simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.enable &&
+      (simulation_control->get_step_number() %
+         simulation_parameters.multiphysics.vof_parameters
+           .algebraic_interface_reinitialization.reinitialization_frequency ==
+       0))
+    reinitialize_interface_with_algebraic_method();
+
+  // Apply filter to phase fraction values
   apply_phase_filter();
 
   // Solve phase fraction gradient and curvature projections
-  this->subequations->solve();
+  if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+        .enable)
+    {
+      this->subequations->solve_specific_subequation(
+        VOFSubequationsID::phase_gradient_projection);
+      this->subequations->solve_specific_subequation(
+        VOFSubequationsID::curvature_projection);
+    }
 }
 
 template <int dim>
@@ -1590,9 +1610,6 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
 
   // Apply filter to phase fraction
   apply_phase_filter();
-
-  // Solve phase fraction gradient and curvature projections
-  this->subequations->solve(true);
 }
 
 template <int dim>
@@ -1740,7 +1757,7 @@ VolumeOfFluid<dim>::setup_dofs()
 
   auto mpi_communicator = triangulation->get_communicator();
 
-  // Setup DoFs for phase gradient and curvature L2 projection
+  // Setup DoFs for all active subequations
   this->subequations->setup_dofs();
 
   this->dof_handler.distribute_dofs(*this->fe);
@@ -1965,10 +1982,11 @@ VolumeOfFluid<dim>::set_initial_conditions()
                            this->newton_update);
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
-  apply_phase_filter();
 
   if (simulation_parameters.initial_condition->enable_projection_step)
     smooth_phase_fraction();
+
+  apply_phase_filter();
 
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptive)
@@ -1981,6 +1999,34 @@ VolumeOfFluid<dim>::set_initial_conditions()
                                   .vof_parameters.sharpening.monitored_fluid);
 
       this->mass_first_iteration = this->mass_monitored;
+    }
+
+  // Reset algebraic interface reinitialization output directory;
+  // if it does not exist, create it.
+  if (simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.enable &&
+      simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.output_reinitialization_steps)
+    {
+      auto mpi_communicator = this->triangulation->get_communicator();
+      const std::string folder =
+        this->simulation_parameters.simulation_control.output_folder +
+        "/algebraic-reinitialization-steps-output/";
+
+      struct stat buffer;
+
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        {
+          if (stat(folder.c_str(), &buffer) != 0)
+            {
+              create_output_folder(folder);
+            }
+          else
+            {
+              delete_output_folder(folder);
+              create_output_folder(folder);
+            }
+        }
     }
 
   percolate_time_vectors();
@@ -2343,7 +2389,7 @@ VolumeOfFluid<dim>::apply_phase_filter()
   filter = VolumeOfFluidFilterBase::model_cast(
     this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
-  // Apply filter to solution
+  // Apply filter to the solution
   for (auto p : this->locally_owned_dofs)
     {
       filtered_solution_owned[p] =
@@ -2362,6 +2408,30 @@ VolumeOfFluid<dim>::apply_phase_filter()
     }
 }
 
+template <int dim>
+void
+VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
+{
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::phase_gradient_projection);
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::curvature_projection);
+
+  // Solve algebraic reinitialization steps
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::algebraic_interface_reinitialization);
+
+  // Overwrite the VOF solution with the algebraic interface reinitialization
+  VectorTools::interpolate_to_different_mesh(
+    *this->subequations->get_dof_handler(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    *this->subequations->get_solution(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    this->dof_handler,
+    this->local_evaluation_point);
+  this->nonzero_constraints.distribute(this->local_evaluation_point);
+  this->present_solution = this->local_evaluation_point;
+}
 
 template class VolumeOfFluid<2>;
 template class VolumeOfFluid<3>;

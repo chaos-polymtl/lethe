@@ -74,7 +74,6 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , curvature_dof_handler(*triangulation)
     , sharpening_threshold(
         simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
   {
@@ -100,10 +99,7 @@ public:
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
           simulation_parameters.fem_parameters.VOF_order);
-        mapping      = std::make_shared<MappingQ<dim>>(fe->degree);
-        fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
-        curvature_mapping =
-          std::make_shared<MappingQ<dim>>(fe_curvature->degree);
+        mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
@@ -145,6 +141,7 @@ public:
       this->simulation_parameters,
       this->pcout,
       this->triangulation,
+      this->simulation_control,
       this->multiphysics);
   }
 
@@ -649,12 +646,6 @@ private:
   smooth_phase_fraction();
 
   /**
-   * @brief Carries out finding the interface curvature.
-   */
-  void
-  find_projected_interface_curvature();
-
-  /**
    * @brief Assembles the matrix and rhs for calculation of a smooth phase fraction using a projection.
    *
    * @param solution VOF solution (phase fraction)
@@ -670,30 +661,17 @@ private:
   solve_projection_phase_fraction(GlobalVectorType &solution);
 
   /**
-   * @brief Assembles the matrix and rhs for calculation of the curvature.
-   *
-   * Solves:
-   * \f$v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|)\f$
-   * where \f$v\f$, \f$\psi\f$, \f$\eta\f$, and \f$k\f$ are test function, fpg,
-   * filter value, and curvature.
-   *
-   * @param present_projected_phase_fraction_gradient_solution
-   */
-  void
-  assemble_curvature_matrix_and_rhs(
-    GlobalVectorType &present_projected_phase_fraction_gradient_solution);
-
-  /**
-   * @brief Solves curvature system.
-   */
-  void
-  solve_curvature();
-
-  /**
-   * @brief Applies filter on phase fraction values.
+   * @brief Apply filter on phase fraction values.
    */
   void
   apply_phase_filter();
+
+  /**
+   * @brief Reinitialize the interface between fluids using the algebraic
+   * approach.
+   */
+  void
+  reinitialize_interface_with_algebraic_method();
 
   GlobalVectorType nodal_phase_fraction_owned;
 
@@ -707,14 +685,11 @@ private:
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl>  simulation_control;
   DoFHandler<dim>                     dof_handler;
-  DoFHandler<dim>                     curvature_dof_handler;
   std::shared_ptr<FiniteElement<dim>> fe;
-  std::shared_ptr<FiniteElement<dim>> fe_curvature;
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
   std::shared_ptr<Mapping<dim>>        mapping;
-  std::shared_ptr<Mapping<dim>>        curvature_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 

@@ -37,16 +37,13 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   FullMatrix<double> local_matrix(n_dofs_per_cell, n_dofs_per_cell);
   Vector<double>     local_rhs(n_dofs_per_cell);
 
+  // Initialize local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
   // Extractor for phase fraction gradient vector
   FEValuesExtractors::Vector phase_fraction_gradients(0);
 
-  // Initialize solution arrays
-  std::vector<Tensor<1, dim>> present_phase_gradient_projection_values(
-    n_q_points);
-  std::vector<Tensor<2, dim>> present_phase_gradient_projection_gradients(
-    n_q_points);
+  // Initialize filtered phase fraction gradient solution array
   std::vector<Tensor<1, dim>> present_filtered_vof_phase_gradients(n_q_points);
 
   // Initialize shape function arrays
@@ -89,15 +86,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
             compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
                                        fe_phase_gradient_projection.degree);
 
-          // Get projected phase fraction gradient values, gradients and VOF
-          // phase fraction gradients
-          fe_values_phase_gradient_projection[phase_fraction_gradients]
-            .get_function_values(this->present_solution,
-                                 present_phase_gradient_projection_values);
-          fe_values_phase_gradient_projection[phase_fraction_gradients]
-            .get_function_gradients(
-              this->present_solution,
-              present_phase_gradient_projection_gradients);
+          // Get VOF filtered phase fraction gradients
           fe_values_vof.get_function_gradients(
             *this->multiphysics_interface->get_filtered_solution(
               PhysicsID::VOF),

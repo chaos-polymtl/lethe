@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_utilities_h
@@ -9,6 +9,8 @@
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/fe/fe_values.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -391,6 +393,14 @@ void
 create_output_folder(const std::string &dirname);
 
 /**
+ * @brief Delete the output folder and its content.
+ *
+ * @param[in] dirname Output directory name.
+ */
+void
+delete_output_folder(const std::string &dirname);
+
+/**
  * @brief Prints a string and then adds a line above and below made with dashes containing as many dashes as the string has characters+1
  *
  * For example, if the string to be printed is "Tracer" the result will be:
@@ -625,6 +635,63 @@ compute_cell_measure_with_JxW(const std::vector<double> &JxW_values)
   return cell_measure;
 }
 
+/**
+ * @brief Identify minimum cell size. The cell size corresponds to the diameter
+ * of a disk (2D) or sphere (3D) of equivalent area (2D) or volume (3D).
+ *
+ * @tparam dim Number of spatial dimensions (2D or 3D).
+ *
+ * @param[in] mapping Interface for transformation from the reference (unit)
+ * cell to the real cell.
+ *
+ * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
+ *
+ * @param[in] cell_quadrature Local cell quadrature information.
+ *
+ * @param[in] mpi_communicator Allows communication between cores.
+ *
+ * @return Smallest cell size value.
+ */
+template <int dim>
+inline double
+identify_minimum_cell_size(const Mapping<dim>    &mapping,
+                           const DoFHandler<dim> &dof_handler,
+                           const Quadrature<dim> &cell_quadrature,
+                           const MPI_Comm        &mpi_communicator)
+{
+  // Initialize FEValues for interface algebraic reinitialization
+  FEValues<dim> fe_values(mapping,
+                          dof_handler.get_fe(),
+                          cell_quadrature,
+                          update_JxW_values);
+
+  // Initialize cell diameter
+  double h = DBL_MAX;
+
+  // Element degree
+  const double degree = double(fe_values.get_fe().degree);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          // Compute cell diameter
+          double cell_measure =
+            compute_cell_measure_with_JxW(fe_values.get_JxW_values());
+          double h_local = compute_cell_diameter<dim>(cell_measure, degree);
+
+          // Update cell diameter to minimum value
+          h = std::min(h, h_local);
+        }
+    }
+
+  // Get the minimum between all processes
+  h = Utilities::MPI::min(h, mpi_communicator);
+
+  return h;
+}
 
 /**
  * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent.

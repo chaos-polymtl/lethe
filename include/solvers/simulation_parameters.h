@@ -17,17 +17,22 @@
 #include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
 #include <solvers/tracer_drift_velocity.h>
+#include <solvers/vof_subequations.h>
 
 template <int dim>
 class SimulationParameters
 {
 public:
-  Parameters::Testing                               test;
-  std::map<PhysicsID, Parameters::LinearSolver>     linear_solver;
-  std::map<PhysicsID, Parameters::NonLinearSolver>  non_linear_solver;
-  Parameters::MeshAdaptation                        mesh_adaptation;
-  Parameters::Mesh                                  mesh;
-  Parameters::Dimensionality                        dimensionality;
+  Parameters::Testing                              test;
+  std::map<PhysicsID, Parameters::LinearSolver>    linear_solver;
+  std::map<PhysicsID, Parameters::NonLinearSolver> non_linear_solver;
+  std::map<VOFSubequationsID, Parameters::LinearSolver>
+    vof_subequations_linear_solvers;
+  std::map<VOFSubequationsID, Parameters::NonLinearSolver>
+                             vof_subequations_non_linear_solvers;
+  Parameters::MeshAdaptation mesh_adaptation;
+  Parameters::Mesh           mesh;
+  Parameters::Dimensionality dimensionality;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
   Parameters::SimulationControl                     simulation_control;
@@ -104,6 +109,12 @@ public:
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
         Parameters::NonLinearSolver::declare_parameters(prm, physics_name);
       }
+    for (const auto &vof_subequation_name : vof_subequations_names)
+      {
+        Parameters::LinearSolver::declare_parameters(prm, vof_subequation_name);
+        Parameters::NonLinearSolver::declare_parameters(prm,
+                                                        vof_subequation_name);
+      }
 
     Parameters::PostProcessing::declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
@@ -142,6 +153,15 @@ public:
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
         non_linear_solver[physics_id].parse_parameters(prm, physics_name);
+      }
+    for (const auto &vof_subequation_name : vof_subequations_names)
+      {
+        VOFSubequationsID vof_subequations_id =
+          get_vof_subequation_id(vof_subequation_name);
+        vof_subequations_linear_solvers[vof_subequations_id].parse_parameters(
+          prm, vof_subequation_name);
+        vof_subequations_non_linear_solvers[vof_subequations_id]
+          .parse_parameters(prm, vof_subequation_name);
       }
 
     mesh_adaptation.parse_parameters(prm);
@@ -467,6 +487,9 @@ private:
                                             "tracer",
                                             "VOF",
                                             "cahn hilliard"};
+  // Names of subequations within VOF that inherits from PhysicsSolver
+  std::vector<std::string> vof_subequations_names = {
+    "VOF algebraic interface reinitialization"};
 };
 
 #endif

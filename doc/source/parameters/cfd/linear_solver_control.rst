@@ -2,7 +2,9 @@
 Linear Solver
 =============
 
-In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify linear solver parameters for each of them. In the example below, only ``fluid dynamics`` is used, however, the same block can be used for other physics.
+In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify linear solver parameters for each of them. The ``VOF algebraic interface reinitialization`` subequation has also its own subsection.
+
+In the example below, only ``fluid dynamics`` is used, however, the same block can be used for other physics.
 
 .. seealso::
 	For further understanding about the linear solvers used, the preconditioners supported and all parameters, see the :doc:`../../theory/multiphysics/fluid_dynamics/linear_solvers` theory section.

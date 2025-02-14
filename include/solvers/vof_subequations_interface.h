@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_subequations_interface_h
@@ -8,20 +8,9 @@
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
+#include <solvers/vof_subequations.h>
 
 using namespace dealii;
-
-
-/**
- * @brief IDs associated to the different subequations solved in Lethe.
- */
-enum class VOFSubequationsID : unsigned int
-{
-  /// VOF phase fraction gradient L2 projection
-  phase_gradient_projection = 0,
-  /// VOF curvature L2 projection
-  curvature_projection = 1
-};
 
 
 /**
@@ -44,6 +33,8 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
+   * @param[in] p_simulation_control SimulationControl object.
+   *
    * @param[in] p_multiphysics_interface Multiphysics interface object pointer
    * used to get information from physics.
    */
@@ -51,8 +42,9 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                               &p_triangulation,
-    MultiphysicsInterface<dim> *p_multiphysics_interface);
+                                             &p_triangulation,
+    const std::shared_ptr<SimulationControl> &p_simulation_control,
+    MultiphysicsInterface<dim>               *p_multiphysics_interface);
 
   /**
    * @brief Default destructor.
@@ -92,39 +84,31 @@ public:
 
   /**
    * @brief Call solving method of active subequations.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
-  solve(const bool &is_post_mesh_adaptation = false)
+  solve()
   {
     for (const auto &subequation : this->subequations)
       {
-        subequation.second->solve(is_post_mesh_adaptation);
+        subequation.second->solve();
       }
   }
 
   /**
    * @brief Call solving method for a specific subequation.
    *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
-   *
    * @param[in] subequation_id Identifier associated with the subequation wished
    * to solve.
    */
   void
-  solve_specific_subequation(const VOFSubequationsID &subequation_id,
-                             const bool &is_post_mesh_adaptation = false)
+  solve_specific_subequation(const VOFSubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
 
-    this->subequations.find(subequation_id)
-      ->second->solve(is_post_mesh_adaptation);
+    this->subequations.find(subequation_id)->second->solve();
   }
 
   /**
@@ -199,6 +183,14 @@ public:
       subequation_string = "VOF phase fraction gradient L2 projection";
     else if (subequation_id == VOFSubequationsID::curvature_projection)
       subequation_string = "VOF curvature L2 projection";
+    else if (subequation_id ==
+             VOFSubequationsID::algebraic_interface_reinitialization)
+      subequation_string = "VOF algebraic interface reinitialization";
+    else
+      throw(std::invalid_argument("Invalid VOFSubequationID. Options are: \n"
+                                  " <phase_gradient_projection>\n"
+                                  " <curvature_projection>\n"
+                                  " <algebraic_interface_reinitialization>"));
 
     return subequation_string;
   }

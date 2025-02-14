@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_simulation_control_h
@@ -346,6 +346,17 @@ public:
   get_time_step() const
   {
     return time_step;
+  }
+
+  /**
+   * @brief Get current iteration number.
+   *
+   * @return Current iteration number.
+   */
+  unsigned int
+  get_iteration_number() const
+  {
+    return iteration_number;
   }
 
   std::string

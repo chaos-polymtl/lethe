@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -76,7 +76,11 @@ test()
   // Phase fraction gradient and curvature L2 projection enabled
   {
     VOFSubequationsInterface<dim> subequations_interface(
-      solver_parameters, pcout, tria, multiphysics_interface.get());
+      solver_parameters,
+      pcout,
+      tria,
+      simulation_control,
+      multiphysics_interface.get());
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();
@@ -95,12 +99,16 @@ test()
     false;
   {
     VOFSubequationsInterface<dim> subequations_interface(
-      solver_parameters, pcout, tria, multiphysics_interface.get());
+      solver_parameters,
+      pcout,
+      tria,
+      simulation_control,
+      multiphysics_interface.get());
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();
 
-    deallog << "Active subequations [expected: no active subequation]"
+    deallog << "Active subequations [expected: No active subequation]"
             << std::endl;
     if (active_subequations.size() == 0)
       deallog << "No active subequation" << std::endl;
@@ -109,6 +117,29 @@ test()
         {
           deallog << int(subequation_id) << std::endl;
         }
+  }
+
+  // Enable algebraic interface reinitialization
+  solver_parameters.multiphysics.vof_parameters
+    .algebraic_interface_reinitialization.enable = true;
+  {
+    VOFSubequationsInterface<dim> subequations_interface(
+      solver_parameters,
+      pcout,
+      tria,
+      simulation_control,
+      multiphysics_interface.get());
+
+    std::vector<VOFSubequationsID> active_subequations =
+      subequations_interface.get_active_subequations();
+
+    deallog
+      << "Active subequations [expected: phase_gradient_projection (0), curvature_projection (1), algebraic_interface_reinitialization (2)]"
+      << std::endl;
+    for (const auto &subequation_id : active_subequations)
+      {
+        deallog << int(subequation_id) << std::endl;
+      }
   }
 }
 

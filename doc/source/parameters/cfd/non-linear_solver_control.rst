@@ -2,7 +2,9 @@
 Non-linear Solver
 =================
 
-The Navier-Stokes equations (and others) are non-linear equations. The parameters in ``subsection non-linear solver``, whose default values are given in the text block below, control the non-linear solver used within Lethe. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify non-linear solver parameters for each of them. In the example below, only ``fluid dynamics`` is shown but the same block can be used for other physics.
+The Navier-Stokes equations (and others) are non-linear equations. The parameters in ``subsection non-linear solver``, whose default values are given in the text block below, control the non-linear solver used within Lethe. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify non-linear solver parameters for each of them. The ``VOF algebraic interface reinitialization`` subequation has also its own subsection.
+
+In the example below, only ``fluid dynamics`` is shown but the same block can be used for other physics.
 
 .. code-block:: text
 
