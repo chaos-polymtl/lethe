@@ -43,7 +43,8 @@ enum field : int
   pressure,
   phase_order_cahn_hilliard,
   phase_order_cahn_hilliard_filtered,
-  levelset
+  levelset,
+  tracer_concentration
 };
 
 inline void
@@ -85,6 +86,7 @@ public:
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
     model_depends_on[levelset]                  = false;
+    model_depends_on[tracer_concentration]      = false;
   }
 
   /**

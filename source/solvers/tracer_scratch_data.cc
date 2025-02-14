@@ -58,6 +58,10 @@ TracerScratchData<dim>::allocate()
   if (properties_manager.field_is_required(field::levelset))
     fields.insert(
       std::pair<field, std::vector<double>>(field::levelset, n_q_points));
+  if (properties_manager.field_is_required(field::tracer_concentration))
+    fields.insert(
+      std::pair<field, std::vector<double>>(field::tracer_concentration,
+                                            n_q_points));
 }
 
 
@@ -67,6 +71,11 @@ TracerScratchData<dim>::calculate_physical_properties()
 {
   if (properties_manager.field_is_required(field::levelset))
     set_field_vector(field::levelset, this->sdf_values, this->fields);
+
+  if (properties_manager.field_is_required(field::tracer_concentration))
+    set_field_vector(field::tracer_concentration,
+                     this->tracer_values,
+                     this->fields);
 
   switch (properties_manager.get_number_of_fluids())
     {
@@ -79,8 +88,6 @@ TracerScratchData<dim>::calculate_physical_properties()
             properties_manager.get_tracer_reaction_constant();
           reaction_constant_model->vector_value(fields,
                                                 tracer_reaction_constant);
-          tracer_reaction_order =
-            properties_manager.get_tracer_reaction_order();
           break;
         }
       case 2:

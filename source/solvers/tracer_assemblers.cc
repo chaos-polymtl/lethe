@@ -707,9 +707,8 @@ TracerAssemblerReaction<dim>::assemble_matrix(
 {
   // Scheme and physical properties
   const std::vector<double> &k = scratch_data.tracer_reaction_constant;
-  const double               a = scratch_data.tracer_reaction_order;
 
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -717,22 +716,21 @@ TracerAssemblerReaction<dim>::assemble_matrix(
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
-  // assembling local matrix
+  // Assembling local matrix
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      const double reaction_coeff =
-        k[q] * a *
-        std::pow(scratch_data.tracer_values[q], a - 1); // k * a * C^(a-1)
+      // With the new formulation, the derivative d/dC of (k * C) is simply k.
+      const double reaction_coeff = k[q];
 
-      // Update the strong Jacobian with the reaction term contribution
+      // Update the strong Jacobian with the reaction term contribution:
+      // It comes from the derivative -d/dC (k * C) = -k.
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           const auto phi_T_j = scratch_data.phi[q][j];
-          // Strong Jacobian contribution: - k * a * C^(a-1) phi
           strong_jacobian_vec[q][j] += -reaction_coeff * phi_T_j;
         }
 
-      // Store JxW in local variable for faster access;
+      // Store JxW in a local variable for faster access.
       const double JxW = JxW_vec[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -743,13 +741,11 @@ TracerAssemblerReaction<dim>::assemble_matrix(
             {
               const auto &phi_T_j = scratch_data.phi[q][j];
 
-              // Add reaction term to the local matrix
               local_matrix(i, j) += reaction_coeff * phi_T_i * phi_T_j * JxW;
             }
         }
     } // end loop on quadrature points
 }
-
 
 template <int dim>
 void
@@ -759,7 +755,6 @@ TracerAssemblerReaction<dim>::assemble_rhs(
 {
   // Scheme and physical properties
   const std::vector<double> &k = scratch_data.tracer_reaction_constant;
-  const double               a = scratch_data.tracer_reaction_order;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -770,23 +765,24 @@ TracerAssemblerReaction<dim>::assemble_rhs(
   auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
-  // assembling right hand side
+  // Assembling right-hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Store JxW in local variable for faster access;
+      // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
 
+      // Get the tracer concentration value at this quadrature point
+      const double C = scratch_data.tracer_values[q];
+
       // Calculate the strong residual for GLS stabilization
-      strong_residual_vec[q] +=
-        -k[q] * std::pow(scratch_data.tracer_values[q], a);
+      strong_residual_vec[q] += -k[q] * C;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto &phi_T_i = scratch_data.phi[q][i];
 
           // Add reaction term to the RHS
-          local_rhs(i) -=
-            k[q] * phi_T_i * std::pow(scratch_data.tracer_values[q], a) * JxW;
+          local_rhs(i) -= k[q] * phi_T_i * C * JxW;
         }
     } // end loop on quadrature points
 }

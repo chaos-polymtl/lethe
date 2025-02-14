@@ -75,6 +75,7 @@ public:
 
 /**
  * @brief Constant tracer reaction constant.
+ * // TODO Change the comments and documentation
  */
 class ConstantTracerReactionConstant : public TracerReactionConstantModel
 {
@@ -82,9 +83,13 @@ public:
   /**
    * @brief Default constructor
    */
-  ConstantTracerReactionConstant(const double p_tracer_reaction_constant)
+  ConstantTracerReactionConstant(const double p_tracer_reaction_constant,
+                                 const double p_tracer_reaction_order)
     : tracer_reaction_constant(p_tracer_reaction_constant)
-  {}
+    , tracer_reaction_order(p_tracer_reaction_order)
+  {
+    this->model_depends_on[field::tracer_concentration] = true;
+  }
 
   /**
    * @brief Calculate the tracer reaction constant
@@ -92,9 +97,16 @@ public:
    * @return value of the physical property calculated with the fields_value
    */
   double
-  value(const std::map<field, double> & /*fields_value*/) override
+  value(const std::map<field, double> &fields_value) override
   {
-    return tracer_reaction_constant;
+    // TODO change the calculation
+    AssertThrow(
+      fields_value.find(field::tracer_concentration) != fields_value.end(),
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+                                           "tracer_concentration"));
+    return tracer_reaction_constant *
+           pow(fields_value.at(field::tracer_concentration),
+               tracer_reaction_order - 1.);
   };
 
   /**
@@ -103,12 +115,21 @@ public:
    * @param property_vector Vectors of the tracer reaction constant values
    */
   void
-  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    std::fill(property_vector.begin(),
-              property_vector.end(),
-              tracer_reaction_constant);
+    AssertThrow(
+      field_vectors.find(field::tracer_concentration) != field_vectors.end(),
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+                                           "tracer_concentration"));
+    const auto &concentration_vector =
+      field_vectors.at(field::tracer_concentration);
+    for (size_t i = 0; i < property_vector.size(); ++i)
+      {
+        property_vector[i] =
+          tracer_reaction_constant *
+          std::pow(concentration_vector[i], tracer_reaction_order - 1.);
+      }
   }
 
   /**
@@ -120,10 +141,18 @@ public:
    */
 
   double
-  jacobian(const std::map<field, double> & /*field_values*/,
-           field /*id*/) override
+  jacobian(const std::map<field, double> &field_values, field id) override
   {
-    return 0;
+    AssertThrow(
+      field_values.find(field::tracer_concentration) != field_values.end(),
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+                                           "tracer_concentration"));
+    if (id == field::tracer_concentration)
+      return tracer_reaction_constant *
+             pow(field_values.at(field::tracer_concentration),
+                 tracer_reaction_order - 2.);
+    else
+      return 0;
   };
 
   /**
@@ -134,16 +163,32 @@ public:
    */
 
   void
-  vector_jacobian(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    const field /*id*/,
-    std::vector<double> &jacobian_vector) override
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    AssertThrow(
+      field_vectors.find(field::tracer_concentration) != field_vectors.end(),
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+                                           "tracer_concentration"));
+    if (id == field::tracer_concentration)
+      {
+        const auto &concentration_vector =
+          field_vectors.at(field::tracer_concentration);
+        for (size_t i = 0; i < jacobian_vector.size(); ++i)
+          {
+            jacobian_vector[i] =
+              tracer_reaction_constant *
+              std::pow(concentration_vector[i], tracer_reaction_order - 2.);
+          }
+      }
+    else
+      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   };
 
 private:
   const double tracer_reaction_constant;
+  const double tracer_reaction_order;
 };
 
 /**
@@ -166,14 +211,17 @@ public:
   TanhLevelsetTracerReactionConstant(
     const double p_tracer_reaction_constant_outside,
     const double p_tracer_reaction_constant_inside,
-    const double p_thickness)
+    const double p_thickness,
+    const double p_tracer_reaction_order)
     : tracer_reaction_constant_outside(p_tracer_reaction_constant_outside)
     , tracer_reaction_constant_inside(p_tracer_reaction_constant_inside)
     , thickness(p_thickness)
     , delta_reaction_constant(tracer_reaction_constant_outside -
                               tracer_reaction_constant_inside)
+    , tracer_reaction_order(p_tracer_reaction_order)
   {
-    this->model_depends_on[field::levelset] = true;
+    this->model_depends_on[field::levelset]             = true;
+    this->model_depends_on[field::tracer_concentration] = true;
   }
 
   /**
@@ -191,10 +239,16 @@ public:
     AssertThrow(field_values.find(field::levelset) != field_values.end(),
                 PhysicialPropertyModelFieldUndefined(
                   "TanhLevelsetTracerReactionConstant", "levelset"));
-    double levelset = field_values.at(field::levelset);
-
-    return tracer_reaction_constant_inside +
-           delta_reaction_constant * (0.5 + 0.5 * tanh(levelset / thickness));
+    AssertThrow(
+      field_values.find(field::tracer_concentration) != field_values.end(),
+      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
+                                           "tracer_concentration"));
+    const double levelset      = field_values.at(field::levelset);
+    const double concentration = field_values.at(field::tracer_concentration);
+    const double k =
+      tracer_reaction_constant_inside +
+      delta_reaction_constant * (0.5 + 0.5 * tanh(levelset / thickness));
+    return k * pow(concentration, tracer_reaction_order - 1.);
   }
 
   /**
@@ -213,20 +267,25 @@ public:
     AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
                 PhysicialPropertyModelFieldUndefined(
                   "TanhLevelsetTracerReactionConstant", "levelset"));
+    AssertThrow(
+      field_vectors.find(field::tracer_concentration) != field_vectors.end(),
+      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
+                                           "tracer_concentration"));
 
     const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
+    const std::vector<double> &concentration_vec =
+      field_vectors.at(field::tracer_concentration);
 
     const unsigned int n_values = levelset_vec.size();
-
     Assert(n_values == levelset_vec.size(),
            SizeOfFields(n_values, levelset_vec.size()));
-
     for (unsigned int i = 0; i < n_values; ++i)
       {
-        double levelset = levelset_vec[i];
+        const double k = tracer_reaction_constant_inside +
+                         delta_reaction_constant *
+                           (0.5 + 0.5 * tanh(levelset_vec[i] / thickness));
         property_vector[i] =
-          tracer_reaction_constant_inside +
-          delta_reaction_constant * (0.5 + 0.5 * tanh(levelset / thickness));
+          k * pow(concentration_vec[i], tracer_reaction_order - 1.);
       }
   }
 
@@ -246,12 +305,25 @@ public:
   double
   jacobian(const std::map<field, double> &field_values, field id) override
   {
+    AssertThrow(field_values.find(field::levelset) != field_values.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerReactionConstant", "levelset"));
+    AssertThrow(
+      field_values.find(field::tracer_concentration) != field_values.end(),
+      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
+                                           "tracer_concentration"));
     if (id == field::levelset)
       {
-        AssertThrow(field_values.find(field::levelset) != field_values.end(),
-                    PhysicialPropertyModelFieldUndefined(
-                      "TanhLevelsetTracerReactionConstant", "levelset"));
         return numerical_jacobian(field_values, field::levelset);
+      }
+    else if (id == field::tracer_concentration)
+      {
+        const double k =
+          tracer_reaction_constant_inside +
+          delta_reaction_constant *
+            (0.5 + 0.5 * tanh(field_values.at(field::levelset) / thickness));
+        return k * pow(field_values.at(field::tracer_concentration),
+                       tracer_reaction_order - 2.);
       }
     else
       return 0;
@@ -274,12 +346,32 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) override
   {
+    AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerReactionConstant", "levelset"));
+    AssertThrow(
+      field_vectors.find(field::tracer_concentration) != field_vectors.end(),
+      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
+                                           "tracer_concentration"));
     if (id == field::levelset)
       {
-        AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
-                    PhysicialPropertyModelFieldUndefined(
-                      "TanhLevelsetTracerReactionConstant", "levelset"));
         vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+      }
+    else if (id == field::tracer_concentration)
+      {
+        const std::vector<double> &levelset_vec =
+          field_vectors.at(field::levelset);
+        const std::vector<double> &concentration_vec =
+          field_vectors.at(field::tracer_concentration);
+        const unsigned int n_values = levelset_vec.size();
+        for (unsigned int i = 0; i < n_values; ++i)
+          {
+            const double k = tracer_reaction_constant_inside +
+                             delta_reaction_constant *
+                               (0.5 + 0.5 * tanh(levelset_vec[i] / thickness));
+            jacobian_vector[i] =
+              k * pow(concentration_vec[i], tracer_reaction_order - 2.);
+          }
       }
     else
       std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.);
@@ -291,6 +383,7 @@ private:
   const double tracer_reaction_constant_inside;
   const double thickness;
   const double delta_reaction_constant;
+  const double tracer_reaction_order;
 };
 
 #endif
