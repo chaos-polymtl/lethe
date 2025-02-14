@@ -537,11 +537,23 @@ end
 </section>
 <section id="dem-boundary-conditions">
 <h3>DEM Boundary Conditions<a class="headerlink" href="#dem-boundary-conditions" title="Link to this heading">#</a></h3>
-<p>The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">deal.II boundary colouring</a>, the hull of the cylinder (rotating drum) has an id = 0. This section is in the <code class="docutils literal notranslate"><span class="pre">small-rotating-drum-dem.prm</span></code> file.</p>
+<p>The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">deal.II boundary colouring</a>, the hull of the cylinder has an id = 0 and the back and the front have id = 1 and id =2 respectively. All boundaries of the cylinder are rotating. This section is in the <code class="docutils literal notranslate"><span class="pre">small-rotating-drum-dem.prm</span></code> file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection DEM boundary conditions
-  set number of boundary conditions = 1
+  set number of boundary conditions = 3
   subsection boundary condition 0
     set boundary id         = 0
+    set type                = rotational
+    set rotational speed    = 1
+    set rotational vector   = 1, 0, 0
+  end
+  subsection boundary condition 1
+    set boundary id         = 1
+    set type                = rotational
+    set rotational speed    = 1
+    set rotational vector   = 1, 0, 0
+  end
+  subsection boundary condition 2
+    set boundary id         = 2
     set type                = rotational
     set rotational speed    = 1
     set rotational vector   = 1, 0, 0

@@ -496,14 +496,14 @@ end
     set number of particles               = 226080
     set density particles                 = 2500
     set young modulus particles           = 1e7
-    set poisson ratio particles           = 0.24
+    set poisson ratio particles           = 0.20
     set restitution coefficient particles = 0.97
-    set friction coefficient particles    = 0.3
+    set friction coefficient particles    = 0.85
   end
   set young modulus wall           = 1e7
-  set poisson ratio wall           = 0.24
+  set poisson ratio wall           = 0.20
   set restitution coefficient wall = 0.85
-  set friction coefficient wall    = 0.35
+  set friction coefficient wall    = 0.85
 end
 </pre></div>
 </div>
@@ -521,10 +521,10 @@ end
   subsection load balancing
     set load balance method = frequent
     set frequency           = 20000
-    set step                = 150000
   end
   set particle particle contact force method    = hertz_mindlin_limit_overlap
   set particle wall contact force method        = nonlinear
+  set rolling resistance torque method          = no_resistance
   set integration method                        = velocity_verlet
 end
 </pre></div>
@@ -562,7 +562,7 @@ end
 <p>For the simulation it is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set time step        = 1e-5
-  set time end         = 12
+  set time end         = 10
   set log frequency    = 1000
   set output frequency = 1000
   set output boundaries = false
@@ -590,12 +590,18 @@ end
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
 <p>Animation of the rotating drum simulation:</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/ReGd7qOrz_E" frameborder="0" allowfullscreen></iframe></section>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ReGd7qOrz_E" frameborder="0" allowfullscreen></iframe><p>We can compare the results of the simulation with the experimental results of Alizadeh <em>et al.</em> <a class="footnote-reference brackets" href="#alizadeh2013" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>The following graph compares the velocity of the particles aligned with the slope of the heap as a function of the depth with the experimental results. We note that there is a good agreement between the simulation and the experimental results.</p>
+<img alt="Comparison of the velocity of the particles aligned with the slope of the heap as a function of the depth" class="align-center" src="../../../_images/lethe-rotating-drum-comparison-depth.png" />
+<p>The following graph compares the velocity of the particles aligned with the slope of the heap on the free surface of the heap. Again, we note a very good agreement with the experimental results.</p>
+<img alt="Comparison of the velocity of the particles aligned with the slope of the heap on the free surface of the heap" class="align-center" src="../../../_images/lethe-rotating-drum-comparison-free-surface.png" />
+</section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="alizadeh2013" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
 <p>E. Alizadeh, O. Dubé, F. Bertrand, and J. Chaouki, “Characterization of Mixing and Size Segregation in a Rotating Drum by a Particle Tracking Method,” <em>AIChE J.</em>, vol. 59, no. 6, pp. 1894–1905, 2013, doi: <a class="reference external" href="https://doi.org/10.1002/aic.13982">10.1002/aic.13982</a>.</p>
 </aside>
 </aside>

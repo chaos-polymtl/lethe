@@ -129,14 +129,26 @@ In this example, we use the ``dynamic`` load balancing method. This method check
 DEM Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on `deal.II boundary colouring <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the hull of the cylinder (rotating drum) has an id = 0. This section is in the ``small-rotating-drum-dem.prm`` file.
+The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on `deal.II boundary colouring <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the hull of the cylinder has an id = 0 and the back and the front have id = 1 and id =2 respectively. All boundaries of the cylinder are rotating. This section is in the ``small-rotating-drum-dem.prm`` file.
 
 .. code-block:: text
 
     subsection DEM boundary conditions
-      set number of boundary conditions = 1
+      set number of boundary conditions = 3
       subsection boundary condition 0
         set boundary id         = 0
+        set type                = rotational
+        set rotational speed    = 1
+        set rotational vector   = 1, 0, 0
+      end
+      subsection boundary condition 1
+        set boundary id         = 1
+        set type                = rotational
+        set rotational speed    = 1
+        set rotational vector   = 1, 0, 0
+      end
+      subsection boundary condition 2
+        set boundary id         = 2
         set type                = rotational
         set rotational speed    = 1
         set rotational vector   = 1, 0, 0
