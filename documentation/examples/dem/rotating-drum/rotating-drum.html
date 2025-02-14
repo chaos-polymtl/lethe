@@ -534,11 +534,23 @@ end
 <h3>DEM Boundary Conditions<a class="headerlink" href="#dem-boundary-conditions" title="Link to this heading">#</a></h3>
 <p>In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code> is specified. Then for each boundary condition, its information is defined.  Using <code class="docutils literal notranslate"><span class="pre">rotational</span></code> boundary condition exerts imaginary rotational velocity to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the <code class="docutils literal notranslate"><span class="pre">cylinder</span></code> side wall, defined with deal.ii grid generator is 4. We set the <code class="docutils literal notranslate"><span class="pre">rotational</span> <span class="pre">speed</span></code> equal to 11.6 rad/s, and the cylinder should rotate on its axis (<cite>x</cite> direction).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection DEM boundary conditions
-  set number of boundary conditions = 1
+  set number of boundary conditions = 3
   subsection boundary condition 0
     set boundary id       = 0
     set type              = rotational
-    set rotational speed  = 11.6
+    set rotational speed  = 1.214749159
+    set rotational vector = 1, 0, 0
+  end
+  subsection boundary condition 1
+    set boundary id       = 1
+    set type              = rotational
+    set rotational speed  = 1.214749159
+    set rotational vector = 1, 0, 0
+  end
+  subsection boundary condition 2
+    set boundary id       = 2
+    set type              = rotational
+    set rotational speed  = 1.214749159
     set rotational vector = 1, 0, 0
   end
 end
