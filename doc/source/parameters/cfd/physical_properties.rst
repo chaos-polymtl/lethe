@@ -259,6 +259,7 @@ The ``tracer diffusivity model`` and ``tracer reaction constant model`` paramete
       subsection fluid 0
         set kinematic viscosity      = 0.01
         set tracer diffusivity model = immersed solid tanh
+        set tracer reaction order    = 1
         subsection immersed solid tanh
           set tracer diffusivity inside        = 1
           set tracer diffusivity outside       = 1
