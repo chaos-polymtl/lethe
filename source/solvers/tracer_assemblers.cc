@@ -737,11 +737,11 @@ TracerAssemblerReaction<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_T_i = scratch_data.phi[q][i];
+          const auto &phi_T_i = scratch_data.phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto phi_T_j = scratch_data.phi[q][j];
+              const auto &phi_T_j = scratch_data.phi[q][j];
 
               // Add reaction term to the local matrix
               local_matrix(i, j) += reaction_coeff * phi_T_i * phi_T_j * JxW;
@@ -782,7 +782,7 @@ TracerAssemblerReaction<dim>::assemble_rhs(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_T_i = scratch_data.phi[q][i];
+          const auto &phi_T_i = scratch_data.phi[q][i];
 
           // Add reaction term to the RHS
           local_rhs(i) -=
