@@ -115,7 +115,7 @@ Physical Properties
 
 * The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant. At the moment, a constant tracer reaction constant and level set based :math:`\tanh` model are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``>. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_).
 
-* The ``tracer reaction constant`` parameter is the reaction constant coefficient of the tracer in units of :math:`\text{Concentration}^{1-[\text{order}]}\text{Time}^{-[\text{order}]}` . In SI, this is :math:`(\text{m}^{\text{dim}}\text{g}^{-1})^{1-[\text{order}]} \text{s}^{-[\text{order}]}`.
+* The ``tracer reaction constant`` parameter is the reaction constant coefficient of the tracer in units of :math:`\text{Concentration}^{1-\text{order}}\text{Time}^{-\text{order}}` . In SI, this is :math:`(\text{m}^{\text{dim}}\text{g}^{-1})^{1-\text{order}} \text{s}^{-\text{order}}`.
 
 * The ``tracer reaction order`` parameter is the reaction order of the tracer.
 
