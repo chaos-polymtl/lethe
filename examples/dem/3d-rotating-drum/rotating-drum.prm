@@ -61,7 +61,7 @@ subsection lagrangian physical properties
   set poisson ratio wall           = 0.24
   set restitution coefficient wall = 0.85
   set friction coefficient wall    = 0.85
-  set rolling friction wall        = 0#0.025
+  set rolling friction wall        = 0.
 end
 
 subsection restart
