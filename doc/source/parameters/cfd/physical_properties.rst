@@ -79,7 +79,6 @@ Physical Properties
     end
   end
 
-
 * The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `Two Phase Simulations`_ .
 
 * The ``reference temperature`` parameter specifies the reference temperature used in the calculation of some physical properties or the thermal expansion force.
