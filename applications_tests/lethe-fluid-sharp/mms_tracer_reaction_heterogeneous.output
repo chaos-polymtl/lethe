@@ -10,7 +10,7 @@ Steady iteration:        1/3
 div u : 3.22831e-09
 error at the weak BC : 0.000732218
 L2 error velocity : 0.00107872 L2 error pressure: 0.0119908
-L2 error tracer: 2.4696e-06
+L2 error tracer: 2.46686e-06
 
 *****************************
 Steady iteration:        2/3
@@ -22,7 +22,7 @@ Steady iteration:        2/3
 div u : -3.03625e-08
 error at the weak BC : 0.000187088
 L2 error velocity : 0.000275274 L2 error pressure: 0.00423168
-L2 error tracer: 4.47203e-07
+L2 error tracer: 4.47348e-07
 
 *****************************
 Steady iteration:        3/3
@@ -34,12 +34,12 @@ Steady iteration:        3/3
 div u : 2.93362e-10
 error at the weak BC : 4.74152e-05
 L2 error velocity : 7.0998e-05 L2 error pressure: 0.00140056
-L2 error tracer: 9.69438e-08
+L2 error tracer: 9.70565e-08
 cells  error_velocity    error_pressure   
  1024 1.078724e-03    - 1.199081e-02    - 
  4096 2.752737e-04 1.97 4.231680e-03 1.50 
 16384 7.099801e-05 1.96 1.400565e-03 1.60 
 cells   error_tracer    
- 1024 2.469601e-06    - 
- 4096 4.472033e-07 2.47 
-16384 9.694383e-08 2.21
+ 1024 2.466861e-06    - 
+ 4096 4.473484e-07 2.46 
+16384 9.705649e-08 2.20
