@@ -4,12 +4,6 @@
 #ifndef lethe_rolling_resistance_torque_models_h
 #define lethe_rolling_resistance_torque_models_h
 
-#include <core/dem_properties.h>
-
-#include <dem/dem_solver_parameters.h>
-
-#include <deal.II/particles/particle_handler.h>
-
 /**
  * @brief No rolling resistance torque model. No calculation is being done with
  * this model.
@@ -31,7 +25,7 @@ no_rolling_resistance_torque()
  *
  * The model woks as follows:
  * M_r = - mu_r * R_eff * |F_n| * omega_hat
- * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
+ * omega_hat = (omega_i - omega_j) / (|omega_i - omega_j|)
  *
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
@@ -39,7 +33,9 @@ no_rolling_resistance_torque()
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.
  * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
+ * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
+ * @param[in] normal_force_norm Norm of the normal force.
  *
  */
 template <typename PropertiesIndex>
@@ -78,7 +74,7 @@ constant_rolling_resistance_torque(
  *
  * The model woks as follows:
  * M_r = - mu_r * R_eff * |F_n| * |V_omega| * omega_hat
- * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
+ * omega_hat = (omega_i - omega_j) / (|omega_i - omega_j|)
  * V_omega = omega_i × (R_i * n_ij) - omega_j × (R_j * n_ji)
  *
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
@@ -88,7 +84,7 @@ constant_rolling_resistance_torque(
  * @param[in] particle_two_properties Properties of particle two in contact.
  * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
- * @param[in] normal_force_norm Norm of the nomal force.
+ * @param[in] normal_force_norm Norm of the normal force.
  * @param[in] normal_unit_vector Normal unit vector.
  */
 
@@ -146,11 +142,13 @@ viscous_rolling_resistance_torque(
  * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
  * @param[in] f_coefficient Model parameter for the viscous damping.
- * @param[in] normal_force_norm Norm of the nomal force.
+ * @param[in] normal_force_norm Norm of the normal force.
  * @param[in] dt DEM time step.
  * @param[in] normal_spring_constant normal contact stiffness constant.
  * @param[in] normal_unit_vector Normal unit vector between particles in
  * contact.
+ * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
+ * rolling resistance torque for the EPSD rolling resistance model.
  */
 
 template <int dim, typename PropertiesIndex>
@@ -169,21 +167,20 @@ epsd_rolling_resistance_torque(
   Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
 
 {
-  // Useful value used more than once
+  // Useful value used more than once:
+  // mu_r * R_e
   const double mu_r_times_R_e =
     effective_rolling_friction_coefficient * effective_r;
 
 
   // For calculation of rolling resistance torque, we need to obtain
   // omega_ij using rotational velocities of particles one and two
-  // omega_ij is the total relative angular velocity
+  // omega_ij is the relative angular velocity
   Tensor<1, 3> omega_ij;
   for (int d = 0; d < 3; ++d)
-    {
-      // particle_one - particle_two (has been verified)
-      omega_ij[d] = particle_one_properties[PropertiesIndex::omega_x + d] -
-                    particle_two_properties[PropertiesIndex::omega_x + d];
-    }
+    // particle_one - particle_two
+    omega_ij[d] = particle_one_properties[PropertiesIndex::omega_x + d] -
+                  particle_two_properties[PropertiesIndex::omega_x + d];
 
   // Non-collinear component of the relative velocity.
   const Tensor<1, 3> omega_ij_perpendicular =

@@ -4,15 +4,10 @@
 #ifndef lethe_particle_wall_linear_force_h
 #define lethe_particle_wall_linear_force_h
 
-#include <core/dem_properties.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_force.h>
 
-#include <deal.II/particles/particle.h>
-
 #include <cmath>
-#include <iostream>
 #include <vector>
 
 using namespace dealii;
@@ -51,8 +46,7 @@ public:
    * linear (Hookean) model
    *
    * @param particle_wall_pairs_in_contact Required information for calculation
-   * of
-   * the particle-wall contact force. These information were obtained in
+   * of the particle-wall contact force. This information was obtained in
    * the fine search
    * @param dt DEM time step
    * @param torque Torque acting on particle
@@ -93,20 +87,7 @@ private:
   /**
    * @brief No rolling resistance torque model.
    *
-   * @param particle_properties Particle one properties.
-   * @param effective_rolling_friction_coefficient Effective rolling friction
-   * coefficient.
-   * @param effective_rolling_viscous_damping_coefficient Effective rolling
-   * viscous damping coefficient.
-   * @param normal_force_norm Normal force norm.
-   * @param dt DEM time step.
-   * @param normal_spring_constant Normal spring constant.
-   * @param normal_unit_vector Normal unit contact vector between the particle
-   * and the wall.
-   * @param cumulative_rolling_resistance_spring_torque Cumulative rolling
-   * resistance torque for the EPSD rolling resistance model.
-   *
-   * @return Rolling resistance torque equal to the null vector.
+   * @return Rolling resistance torque equal to the zero vector.
    */
   inline Tensor<1, 3>
   no_resistance(const ArrayView<const double> & /*particle_properties*/,
@@ -129,15 +110,7 @@ private:
    * @param[in] particle_properties Particle one properties.
    * @param[in] effective_rolling_friction_coefficient Effective rolling
    * friction coefficient.
-   * @param[in] effective_rolling_viscous_damping_coefficient Effective rolling
-   * viscous damping coefficient.
    * @param[in] normal_force_norm Normal force norm.
-   * @param[in] dt DEM time step.
-   * @param[in] normal_spring_constant Normal spring constant.
-   * @param[in] normal_unit_vector Normal unit contact vector between the
-   * particle and the wall.
-   * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
-   * rolling resistance torque for the EPSD rolling resistance model.
    *
    * @return Rolling resistance torque
    */
@@ -185,15 +158,9 @@ private:
    * @param[in] particle_properties Particle one properties.
    * @param[in] effective_rolling_friction_coefficient Effective rolling
    * friction coefficient.
-   * @param[in] effective_rolling_viscous_damping_coefficient Effective rolling
-   * viscous damping coefficient.
    * @param[in] normal_force_norm Normal force norm.
-   * @param[in] dt DEM time step.
-   * @param[in] normal_spring_constant Normal spring constant.
    * @param[in] normal_unit_vector Normal unit contact vector between the
    * particle and the wall.
-   * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
-   * rolling resistance torque for the EPSD rolling resistance model.
    *
    * @return rolling resistance torque
    */
@@ -240,7 +207,7 @@ private:
   }
 
   /**
-   * @brief alculation of the rolling resistance torque model using the
+   * @brief Calculation of the rolling resistance torque model using the
    * physical properties and the elastic-plastic spring-dashpot model
    *
    * @param[in] particle_properties Particle one properties.
@@ -268,7 +235,8 @@ private:
                   const Tensor<1, 3> &normal_unit_vector,
                   Tensor<1, 3> &cumulative_rolling_resistance_spring_torque)
   {
-    // Useful value used more than once
+    // Useful value used more than once:
+    // mu_r * R_e
     const double mu_r_times_R_e = effective_rolling_friction_coefficient * 0.5 *
                                   particle_properties[PropertiesIndex::dp];
 
@@ -276,9 +244,8 @@ private:
     Tensor<1, 3>
       omega_ij; // We ignore the rotation of the wall. j is the particle.
     for (int d = 0; d < 3; ++d)
-      {
-        omega_ij[d] = particle_properties[PropertiesIndex::omega_x + d];
-      }
+      omega_ij[d] = particle_properties[PropertiesIndex::omega_x + d];
+
 
     // Non-collinear component of the relative velocity.
     const Tensor<1, 3> omega_ij_perpendicular =
@@ -315,6 +282,7 @@ private:
       Utilities::fixed_power<2>(0.5 * particle_properties[PropertiesIndex::dp]);
 
     // C_r_crit = 2. * sqrt(I_r * K_r)
+    // C_r = eta_r * C_r_crit
     const double C_r =
       effective_rolling_viscous_damping_coefficient * 2. * sqrt(I_e * K_r);
 

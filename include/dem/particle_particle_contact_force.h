@@ -154,6 +154,8 @@ protected:
    * @param[out] contact_info Contact information of a particle pair in
    * neighborhood.
    * @param[out] tangential_relative_velocity Tangential relative velocity.
+   * @param[out] normal_relative_velocity_value Normal relative contact
+   * velocity.
    * @param[out] normal_unit_vector Normal vector of the contact.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
@@ -554,7 +556,7 @@ private:
    * @param[in] f_coeff Model parameter for the EPSD model.
    * @param[in] dt DEM time step.
    * @param[in] normal_spring_constant normal contact stiffness constant.
-   * @param[in] normal_force Contact normal force.
+   * @param[in] normal_force_norm Norm of the normal force.
    * @param[in] normal_unit_vector Normal unit vector between particles in
    * contact.
    * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
@@ -687,7 +689,7 @@ private:
 
     // Characteristic velocity is set at 1.0 so that the normal and tangential
     // spring constant remain constant throughout a simulation.
-    const double characteristic_velocity = 1.0;
+    constexpr double characteristic_velocity = 1.0;
 
     // Calculate the normal spring constant using the following formula:
     // kn = 16/15 * sqrt(Re) * Ye * (15/16 * (me * vc^2 / (sqrt(R) * Ye))^0.2
