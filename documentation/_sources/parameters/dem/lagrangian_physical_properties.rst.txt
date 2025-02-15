@@ -39,6 +39,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set restitution coefficient particles = 0.1
       set friction coefficient particles    = 0.1
       set rolling friction particles        = 0.1
+      set rolling viscous damping particles = 0.1
       set surface energy particles          = 0.0
       set Hamaker constant particles        = 4.e-19
 
@@ -50,6 +51,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
     set restitution coefficient wall = 0.1
     set friction coefficient wall    = 0.1
     set rolling friction wall        = 0.1
+    set rolling viscous damping wall = 0.1
     set surface energy wall          = 0.0
     set Hamaker constant wall        = 4.e-19
   end
@@ -94,6 +96,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``rolling friction particles`` defines the rolling friction coefficient of particles for each type.
 
+* The ``rolling viscous damping particles``` defines the rolling viscous damping coefficient of the particles for the elasto-plastic spring-dashpot rolling friction model.
+
 * The ``surface energy particles`` defines the surface energy of particles for each type. This parameter is used with the JKR and DMT force model.
 
 * The ``Hamaker constant particles`` defines the Hamaker constant of particles for each type. This parameter is used with the DMT force model.
@@ -107,6 +111,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
 * The ``friction coefficient wall`` defines the friction coefficient of the walls.
 
 * The ``rolling friction wall`` defines the rolling friction coefficient of the walls.
+
+* The ``rolling viscous damping wall`` defines the rolling viscous damping coefficient of the walls for the elasto-plastic spring-dashpot rolling friction model.
 
 * The ``surface energy wall`` defines the surface energy of the walls. This parameter is used with the JKR and DMT force model.
 

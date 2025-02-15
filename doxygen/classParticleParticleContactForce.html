@@ -121,8 +121,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a724373cced8db52421838a87e8dd3639"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a554c4e99eadc24eb41d557031649cc49" id="r_a554c4e99eadc24eb41d557031649cc49"><td class="memItemLeft" align="right" valign="top">Point&lt; 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a554c4e99eadc24eb41d557031649cc49">get_periodic_location</a> (const Particles::ParticleIterator&lt; dim &gt; &amp;particle) &amp;</td></tr>
 <tr class="separator:a554c4e99eadc24eb41d557031649cc49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a822d657926e11b5e39ad2a36ee6b017b" id="r_a822d657926e11b5e39ad2a36ee6b017b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a822d657926e11b5e39ad2a36ee6b017b">calculate_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
-<tr class="separator:a822d657926e11b5e39ad2a36ee6b017b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41cb6a74b12ed26abf7ab2a26855a4c7" id="r_a41cb6a74b12ed26abf7ab2a26855a4c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a41cb6a74b12ed26abf7ab2a26855a4c7">calculate_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const double dt, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
+<tr class="separator:a41cb6a74b12ed26abf7ab2a26855a4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bbeb6256c19f99a3baa3a007d8260f0" id="r_a4bbeb6256c19f99a3baa3a007d8260f0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a4bbeb6256c19f99a3baa3a007d8260f0">get_force_calculation_threshold_distance</a> ()</td></tr>
 <tr class="separator:a4bbeb6256c19f99a3baa3a007d8260f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -134,20 +134,20 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:ae58be056105632425b67830cc384aafc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fa7e4425549c15a182273889c2b87a5" id="r_a4fa7e4425549c15a182273889c2b87a5"><td class="memItemLeft" align="right" valign="top">std::tuple&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a4fa7e4425549c15a182273889c2b87a5">find_effective_radius_and_mass</a> (const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties)</td></tr>
 <tr class="separator:a4fa7e4425549c15a182273889c2b87a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f4c9ab8b81708566795d96942415619" id="r_a7f4c9ab8b81708566795d96942415619"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a7f4c9ab8b81708566795d96942415619">calculate_rolling_resistance_torque</a> (const double effective_radius, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, const double rolling_friction_coeff, const Tensor&lt; 1, 3 &gt; &amp;normal_force, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector)</td></tr>
-<tr class="separator:a7f4c9ab8b81708566795d96942415619"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38e9656a257714a7cc321790ced50eff" id="r_a38e9656a257714a7cc321790ced50eff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a38e9656a257714a7cc321790ced50eff">calculate_linear_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
-<tr class="separator:a38e9656a257714a7cc321790ced50eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8395a6ba06b4a3f136ff4966cf543b5e" id="r_a8395a6ba06b4a3f136ff4966cf543b5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a8395a6ba06b4a3f136ff4966cf543b5e">calculate_hertz_mindlin_limit_overlap_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
-<tr class="separator:a8395a6ba06b4a3f136ff4966cf543b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae51dca77830c190d47ecefe37a99848e" id="r_ae51dca77830c190d47ecefe37a99848e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#ae51dca77830c190d47ecefe37a99848e">calculate_hertz_mindlin_limit_force_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
-<tr class="separator:ae51dca77830c190d47ecefe37a99848e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c21dbe6108bcdd936a807931302f1bb" id="r_a8c21dbe6108bcdd936a807931302f1bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a8c21dbe6108bcdd936a807931302f1bb">calculate_hertz_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
-<tr class="separator:a8c21dbe6108bcdd936a807931302f1bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23d34d5e3d3f506ab623d226c4936ebf" id="r_a23d34d5e3d3f506ab623d226c4936ebf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a23d34d5e3d3f506ab623d226c4936ebf">calculate_hertz_JKR_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
-<tr class="separator:a23d34d5e3d3f506ab623d226c4936ebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b3bcb33838cb4c59f9dbee566a04878" id="r_a6b3bcb33838cb4c59f9dbee566a04878"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a6b3bcb33838cb4c59f9dbee566a04878">calculate_DMT_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
-<tr class="separator:a6b3bcb33838cb4c59f9dbee566a04878"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d333d5aa3e383d294b8310ed1197490" id="r_a9d333d5aa3e383d294b8310ed1197490"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a9d333d5aa3e383d294b8310ed1197490">calculate_rolling_resistance_torque</a> (const double effective_radius, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, const double rolling_friction_coeff, const double rolling_viscous_damping_coeff, const double dt, const double normal_spring_constant, const double normal_force_norm, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, Tensor&lt; 1, 3 &gt; &amp;cumulative_rolling_resistance_spring_torque)</td></tr>
+<tr class="separator:a9d333d5aa3e383d294b8310ed1197490"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a726ddd3045ec3169bac9ca95b02e82b7" id="r_a726ddd3045ec3169bac9ca95b02e82b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a726ddd3045ec3169bac9ca95b02e82b7">calculate_linear_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const double dt, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
+<tr class="separator:a726ddd3045ec3169bac9ca95b02e82b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56497494ce98d32b2e99adb0e10854d3" id="r_a56497494ce98d32b2e99adb0e10854d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a56497494ce98d32b2e99adb0e10854d3">calculate_hertz_mindlin_limit_overlap_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const double dt, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
+<tr class="separator:a56497494ce98d32b2e99adb0e10854d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a103d082fa685b4aa5e47d67b13168f22" id="r_a103d082fa685b4aa5e47d67b13168f22"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a103d082fa685b4aa5e47d67b13168f22">calculate_hertz_mindlin_limit_force_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const double dt, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
+<tr class="separator:a103d082fa685b4aa5e47d67b13168f22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77fe7f5393670c9c83916138d93b6fc0" id="r_a77fe7f5393670c9c83916138d93b6fc0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a77fe7f5393670c9c83916138d93b6fc0">calculate_hertz_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const double dt, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
+<tr class="separator:a77fe7f5393670c9c83916138d93b6fc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a331d4fb1de9427e289dc2e416124c3b0" id="r_a331d4fb1de9427e289dc2e416124c3b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a331d4fb1de9427e289dc2e416124c3b0">calculate_hertz_JKR_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const double dt, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
+<tr class="separator:a331d4fb1de9427e289dc2e416124c3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c462293766b3ab1113c6bf9544b97f4" id="r_a2c462293766b3ab1113c6bf9544b97f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a2c462293766b3ab1113c6bf9544b97f4">calculate_DMT_contact</a> (<a class="el" href="structparticle__particle__contact__info.html">particle_particle_contact_info</a>&lt; dim &gt; &amp;contact_info, const Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, const double normal_relative_velocity_value, const Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const double normal_overlap, const double dt, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, Tensor&lt; 1, 3 &gt; &amp;normal_force, Tensor&lt; 1, 3 &gt; &amp;tangential_force, Tensor&lt; 1, 3 &gt; &amp;particle_one_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;particle_two_tangential_torque, Tensor&lt; 1, 3 &gt; &amp;rolling_resistance_torque)</td></tr>
+<tr class="separator:a2c462293766b3ab1113c6bf9544b97f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a523fecc3503360324a304eda6d39a6a6" id="r_a523fecc3503360324a304eda6d39a6a6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a523fecc3503360324a304eda6d39a6a6">vec_particle_type_index</a> (const unsigned int i, const unsigned int j)</td></tr>
 <tr class="separator:a523fecc3503360324a304eda6d39a6a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f5c80a39283d709f0b652818fd6209a" id="r_a9f5c80a39283d709f0b652818fd6209a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a9f5c80a39283d709f0b652818fd6209a">set_effective_properties</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
@@ -168,6 +168,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:ad61538a41d871346b73c6245d946bbe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae808d4c64383be581ea334cac02a5026" id="r_ae808d4c64383be581ea334cac02a5026"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#ae808d4c64383be581ea334cac02a5026">effective_coefficient_of_friction</a></td></tr>
 <tr class="separator:ae808d4c64383be581ea334cac02a5026"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84b8d7ef1f98626f545f0112a6af5ffd" id="r_a84b8d7ef1f98626f545f0112a6af5ffd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a84b8d7ef1f98626f545f0112a6af5ffd">effective_rolling_viscous_damping_coefficient</a></td></tr>
+<tr class="separator:a84b8d7ef1f98626f545f0112a6af5ffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a006facded2968f9683833649e383a7d8" id="r_a006facded2968f9683833649e383a7d8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a006facded2968f9683833649e383a7d8">effective_coefficient_of_rolling_friction</a></td></tr>
 <tr class="separator:a006facded2968f9683833649e383a7d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d2fbb8f13e09874898a499c6689782a" id="r_a4d2fbb8f13e09874898a499c6689782a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a4d2fbb8f13e09874898a499c6689782a">effective_surface_energy</a></td></tr>
@@ -178,6 +180,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a6a136d522c1736d47dc72af3a0205d86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accd5162835ca4eaed212a6ef05b9ef0e" id="r_accd5162835ca4eaed212a6ef05b9ef0e"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#accd5162835ca4eaed212a6ef05b9ef0e">dmt_cut_off_threshold</a></td></tr>
 <tr class="separator:accd5162835ca4eaed212a6ef05b9ef0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bf0507c0f704a4c4392799ea54273a2" id="r_a5bf0507c0f704a4c4392799ea54273a2"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForce.html#a5bf0507c0f704a4c4392799ea54273a2">f_coefficient_epsd</a></td></tr>
+<tr class="separator:a5bf0507c0f704a4c4392799ea54273a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -192,13 +196,13 @@ class ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, roll
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>The dimension of the problem. </td></tr>
-    <tr><td class="paramname">force_model</td><td>The particle-particle contact force model. </td></tr>
+    <tr><td class="paramname">contact_model</td><td>The particle-particle contact force model. </td></tr>
     <tr><td class="paramname">rolling_friction_model</td><td>The rolling resistance model. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00105">105</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00102">102</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a983abcf787d264d0f10f65108883dbd9" name="a983abcf787d264d0f10f65108883dbd9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a983abcf787d264d0f10f65108883dbd9">&#9670;&#160;</a></span>ParticleParticleContactForce()</h2>
@@ -220,7 +224,7 @@ template&lt;int dim, typename PropertiesIndex , ParticleParticleContactForceMode
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8cc_source.html#l00018">18</a> of file <a class="el" href="particle__particle__contact__force_8cc_source.html">particle_particle_contact_force.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01402">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::set_effective_properties()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01486">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::set_effective_properties()</a>.</p>
 
 </div>
 </div>
@@ -249,7 +253,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00111">111</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00108">108</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -348,7 +352,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00464">464</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00471">471</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -425,12 +429,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00499">499</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00506">506</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
-<a id="a822d657926e11b5e39ad2a36ee6b017b" name="a822d657926e11b5e39ad2a36ee6b017b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a822d657926e11b5e39ad2a36ee6b017b">&#9670;&#160;</a></span>calculate_contact()</h2>
+<a id="a41cb6a74b12ed26abf7ab2a26855a4c7" name="a41cb6a74b12ed26abf7ab2a26855a4c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41cb6a74b12ed26abf7ab2a26855a4c7">&#9670;&#160;</a></span>calculate_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -469,6 +473,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
           <td></td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -533,6 +543,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_overlap</td><td>Contact normal overlap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
@@ -546,12 +557,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00296">296</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01305">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_DMT_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01042">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01159">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_JKR_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00910">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_mindlin_limit_force_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00763">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_mindlin_limit_overlap_contact()</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l00618">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_linear_contact()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01385">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_DMT_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01096">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01224">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_JKR_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00956">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_mindlin_limit_force_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00801">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_mindlin_limit_overlap_contact()</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l00648">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_linear_contact()</a>.</p>
 
 </div>
 </div>
-<a id="a6b3bcb33838cb4c59f9dbee566a04878" name="a6b3bcb33838cb4c59f9dbee566a04878"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b3bcb33838cb4c59f9dbee566a04878">&#9670;&#160;</a></span>calculate_DMT_contact()</h2>
+<a id="a2c462293766b3ab1113c6bf9544b97f4" name="a2c462293766b3ab1113c6bf9544b97f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c462293766b3ab1113c6bf9544b97f4">&#9670;&#160;</a></span>calculate_DMT_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -590,6 +601,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
           <td></td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -646,33 +663,34 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p>Carries out the calculation of the particle-particle DMT contact force and torques based on the updated values in contact_info. </p>
+<p>Calculate the particle-particle contact and cohesive forces and contact torque based on the updated values in contact_info. It uses the DMT cohesive force model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">contact_info</td><td>A container that contains the required information for calculation of the contact force for a particle pair in contact </td></tr>
-    <tr><td class="paramname">tangential_relative_velocity</td><td>Tangential relative velocity </td></tr>
-    <tr><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity </td></tr>
-    <tr><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector </td></tr>
-    <tr><td class="paramname">normal_overlap</td><td>Contact normal overlap </td></tr>
-    <tr><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact </td></tr>
-    <tr><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact </td></tr>
-    <tr><td class="paramname">normal_force</td><td>Contact normal force </td></tr>
-    <tr><td class="paramname">tangential_force</td><td>Contact tangential force </td></tr>
-    <tr><td class="paramname">particle_one_tangential_torque</td><td>Contact tangential torque on particle one </td></tr>
-    <tr><td class="paramname">particle_two_tangential_torque</td><td>Contact tangential torque on particle two </td></tr>
-    <tr><td class="paramname">rolling_resistance_torque</td><td>Contact rolling resistance torque </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">contact_info</td><td>A container that contains the required information for calculation of the contact force for a particle pair in contact. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tangential_relative_velocity</td><td>Tangential relative velocity. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_overlap</td><td>Contact normal overlap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">tangential_force</td><td>Contact tangential force. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">particle_one_tangential_torque</td><td>Contact tangential torque on particle one. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">particle_two_tangential_torque</td><td>Contact tangential torque on particle two. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">rolling_resistance_torque</td><td>Contact rolling resistance torque. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01305">1305</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01385">1385</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00763">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_mindlin_limit_overlap_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01741">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_hamaker_constant</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01740">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00521">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01390">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00801">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_hertz_mindlin_limit_overlap_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01839">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_hamaker_constant</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01838">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="contact__info_8h_source.html#l00026">particle_particle_contact_info&lt; dim &gt;::rolling_resistance_spring_torque</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01474">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
 
 </div>
 </div>
-<a id="a8c21dbe6108bcdd936a807931302f1bb" name="a8c21dbe6108bcdd936a807931302f1bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c21dbe6108bcdd936a807931302f1bb">&#9670;&#160;</a></span>calculate_hertz_contact()</h2>
+<a id="a77fe7f5393670c9c83916138d93b6fc0" name="a77fe7f5393670c9c83916138d93b6fc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77fe7f5393670c9c83916138d93b6fc0">&#9670;&#160;</a></span>calculate_hertz_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -711,6 +729,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
           <td></td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -774,6 +798,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_overlap</td><td>Contact normal overlap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
@@ -785,14 +810,14 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01042">1042</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01096">1096</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00551">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01738">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01739">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01736">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01735">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00521">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01742">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01390">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00567">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01835">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01837">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01836">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_rolling_viscous_damping_coefficient</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01833">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01832">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01840">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00026">particle_particle_contact_info&lt; dim &gt;::rolling_resistance_spring_torque</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01474">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
 
 </div>
 </div>
-<a id="a23d34d5e3d3f506ab623d226c4936ebf" name="a23d34d5e3d3f506ab623d226c4936ebf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23d34d5e3d3f506ab623d226c4936ebf">&#9670;&#160;</a></span>calculate_hertz_JKR_contact()</h2>
+<a id="a331d4fb1de9427e289dc2e416124c3b0" name="a331d4fb1de9427e289dc2e416124c3b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a331d4fb1de9427e289dc2e416124c3b0">&#9670;&#160;</a></span>calculate_hertz_JKR_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -831,6 +856,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
           <td></td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -887,33 +918,34 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p>Carries out the calculation of the particle-particle non-linear contact force and torques based on the updated values in contact_info. </p>
+<p>Calculate the particle-particle contact and cohesive forces and contact torque based on the updated values in contact_info. It uses the JKR cohesive force model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">contact_info</td><td>A container that contains the required information for calculation of the contact force for a particle pair in contact </td></tr>
-    <tr><td class="paramname">tangential_relative_velocity</td><td>Tangential relative velocity </td></tr>
-    <tr><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity </td></tr>
-    <tr><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector </td></tr>
-    <tr><td class="paramname">normal_overlap</td><td>Contact normal overlap </td></tr>
-    <tr><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact </td></tr>
-    <tr><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact </td></tr>
-    <tr><td class="paramname">normal_force</td><td>Contact normal force </td></tr>
-    <tr><td class="paramname">tangential_force</td><td>Contact tangential force </td></tr>
-    <tr><td class="paramname">particle_one_tangential_torque</td><td>Contact tangential torque on particle one </td></tr>
-    <tr><td class="paramname">particle_two_tangential_torque</td><td>Contact tangential torque on particle two </td></tr>
-    <tr><td class="paramname">rolling_resistance_torque</td><td>Contact rolling resistance torque </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">contact_info</td><td>A container that contains the required information for calculation of the contact force for a particle pair in contact. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tangential_relative_velocity</td><td>Tangential relative velocity. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_overlap</td><td>Contact normal overlap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">tangential_force</td><td>Contact tangential force. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">particle_one_tangential_torque</td><td>Contact tangential torque on particle one. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">particle_two_tangential_torque</td><td>Contact tangential torque on particle two. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">rolling_resistance_torque</td><td>Contact rolling resistance torque. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01159">1159</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01224">1224</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00551">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01738">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01739">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01736">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01740">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01735">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00521">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01742">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01390">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00567">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01835">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01837">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01836">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_rolling_viscous_damping_coefficient</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01833">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01838">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01832">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01840">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00026">particle_particle_contact_info&lt; dim &gt;::rolling_resistance_spring_torque</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01474">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
 
 </div>
 </div>
-<a id="ae51dca77830c190d47ecefe37a99848e" name="ae51dca77830c190d47ecefe37a99848e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae51dca77830c190d47ecefe37a99848e">&#9670;&#160;</a></span>calculate_hertz_mindlin_limit_force_contact()</h2>
+<a id="a103d082fa685b4aa5e47d67b13168f22" name="a103d082fa685b4aa5e47d67b13168f22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a103d082fa685b4aa5e47d67b13168f22">&#9670;&#160;</a></span>calculate_hertz_mindlin_limit_force_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -952,6 +984,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
           <td></td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1016,6 +1054,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_overlap</td><td>Contact normal overlap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
@@ -1027,14 +1066,14 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00910">910</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00956">956</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00551">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01738">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01739">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01736">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01735">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00521">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01742">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01390">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00567">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01835">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01837">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01836">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_rolling_viscous_damping_coefficient</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01833">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01832">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01840">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00026">particle_particle_contact_info&lt; dim &gt;::rolling_resistance_spring_torque</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01474">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
 
 </div>
 </div>
-<a id="a8395a6ba06b4a3f136ff4966cf543b5e" name="a8395a6ba06b4a3f136ff4966cf543b5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8395a6ba06b4a3f136ff4966cf543b5e">&#9670;&#160;</a></span>calculate_hertz_mindlin_limit_overlap_contact()</h2>
+<a id="a56497494ce98d32b2e99adb0e10854d3" name="a56497494ce98d32b2e99adb0e10854d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56497494ce98d32b2e99adb0e10854d3">&#9670;&#160;</a></span>calculate_hertz_mindlin_limit_overlap_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1073,6 +1112,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
           <td></td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1137,6 +1182,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_overlap</td><td>Contact normal overlap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
@@ -1148,14 +1194,14 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00763">763</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00801">801</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00551">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01738">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01739">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01736">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01735">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00521">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01742">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01390">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00567">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01835">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01837">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01836">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_rolling_viscous_damping_coefficient</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01833">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01832">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01840">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00026">particle_particle_contact_info&lt; dim &gt;::rolling_resistance_spring_torque</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01474">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
 
 </div>
 </div>
-<a id="a38e9656a257714a7cc321790ced50eff" name="a38e9656a257714a7cc321790ced50eff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38e9656a257714a7cc321790ced50eff">&#9670;&#160;</a></span>calculate_linear_contact()</h2>
+<a id="a726ddd3045ec3169bac9ca95b02e82b7" name="a726ddd3045ec3169bac9ca95b02e82b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a726ddd3045ec3169bac9ca95b02e82b7">&#9670;&#160;</a></span>calculate_linear_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1194,6 +1240,12 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
           <td></td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1258,6 +1310,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_overlap</td><td>Contact normal overlap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
@@ -1269,9 +1322,9 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00618">618</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00648">648</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00551">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01738">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01739">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01735">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00521">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01742">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01390">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00567">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_rolling_resistance_torque()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01835">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01837">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01836">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_rolling_viscous_damping_coefficient</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01832">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::find_effective_radius_and_mass()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01840">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="contact__info_8h_source.html#l00026">particle_particle_contact_info&lt; dim &gt;::rolling_resistance_spring_torque</a>, <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01474">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::vec_particle_type_index()</a>.</p>
 
 </div>
 </div>
@@ -1364,14 +1417,14 @@ template&lt;int dim, typename PropertiesIndex , ParticleParticleContactForceMode
 
 <p>Implements <a class="el" href="classParticleParticleContactForceBase.html#a17d44a6f1c3185184d93665a831b1fd0">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8cc_source.html#l00033">33</a> of file <a class="el" href="particle__particle__contact__force_8cc_source.html">particle_particle_contact_force.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8cc_source.html#l00034">34</a> of file <a class="el" href="particle__particle__contact__force_8cc_source.html">particle_particle_contact_force.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, and <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>.</p>
 
 </div>
 </div>
-<a id="a7f4c9ab8b81708566795d96942415619" name="a7f4c9ab8b81708566795d96942415619"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f4c9ab8b81708566795d96942415619">&#9670;&#160;</a></span>calculate_rolling_resistance_torque()</h2>
+<a id="a9d333d5aa3e383d294b8310ed1197490" name="a9d333d5aa3e383d294b8310ed1197490"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d333d5aa3e383d294b8310ed1197490">&#9670;&#160;</a></span>calculate_rolling_resistance_torque()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1408,14 +1461,38 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
-          <td class="paramname"><em>normal_force</em>, </td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>rolling_viscous_damping_coeff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>normal_spring_constant</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>normal_force_norm</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
-          <td class="paramname"><em>normal_unit_vector</em>&#160;</td>
+          <td class="paramname"><em>normal_unit_vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cumulative_rolling_resistance_spring_torque</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1436,16 +1513,21 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
     <tr><td class="paramdir">[in]</td><td class="paramname">effective_radius</td><td>Effective radius of the particle pair. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">normal_force</td><td>Contact normal force. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Contact normal unit vector. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">tangential_force</td><td>Contact tangential force. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rolling_friction_coeff</td><td>Effective rolling friction coefficient. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rolling_viscous_damping_coeff</td><td>Effective rolling viscous damping coefficient </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f_coeff</td><td>Model parameter for the EPSD model. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_spring_constant</td><td>normal contact stiffness constant. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_force_norm</td><td>Norm of the normal force. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Normal unit vector between particles in contact. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">cumulative_rolling_resistance_spring_torque</td><td>Cumulative spring rolling resistance torque applied between particle one and two. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00551">551</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00567">567</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="rolling__resistance__torque__models_8h_source.html#l00019">no_rolling_resistance_torque()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01842">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::f_coefficient_epsd</a>, and <a class="el" href="rolling__resistance__torque__models_8h_source.html#l00013">no_rolling_resistance_torque()</a>.</p>
 
 </div>
 </div>
@@ -1502,17 +1584,17 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 <p>Execute the contact calculation step for the particle-particle contact according to the contact type. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">adjacent_particles_list</td><td>Container of the adjacent particles of a particles </td></tr>
-    <tr><td class="paramname">torque</td><td>Torque acting on particles. </td></tr>
-    <tr><td class="paramname">force</td><td>Force acting on particles. </td></tr>
-    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">adjacent_particles_list</td><td>Container of the adjacent particles of a particles </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">torque</td><td>Torque acting on particles. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">force</td><td>Force acting on particles. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01512">1512</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01606">1606</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00464">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::apply_force_and_torque_on_local_particles()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00499">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::apply_force_and_torque_on_single_local_particle()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00296">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00420">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::get_force_calculation_threshold_distance()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00250">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::get_location()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00265">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::get_periodic_location()</a>, <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00013">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00012">local_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l00168">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::update_contact_information()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00471">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::apply_force_and_torque_on_local_particles()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00506">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::apply_force_and_torque_on_single_local_particle()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00296">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::calculate_contact()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00427">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::get_force_calculation_threshold_distance()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00249">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::get_location()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00264">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::get_periodic_location()</a>, <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00013">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00012">local_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l00167">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::update_contact_information()</a>.</p>
 
 </div>
 </div>
@@ -1561,7 +1643,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00521">521</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">528</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1593,9 +1675,9 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 <p>Calculate the minimum overlap at which particle-particle forces are computed. </p>
 <dl class="section return"><dt>Returns</dt><dd>minimum overlap for the force calculation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00420">420</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00427">427</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00025">Parameters::Lagrangian::DMT</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01743">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::dmt_cut_off_threshold</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01741">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_hamaker_constant</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01740">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00025">Parameters::Lagrangian::DMT</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01841">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::dmt_cut_off_threshold</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01839">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_hamaker_constant</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01838">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>.</p>
 
 </div>
 </div>
@@ -1633,7 +1715,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00250">250</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00249">249</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 <p class="reference">References <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 
@@ -1673,9 +1755,9 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00265">265</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00264">264</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00084">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offset</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00081">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offset</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 
 </div>
 </div>
@@ -1708,14 +1790,14 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 <p>Set every containers needed to carry the particle-particle force calculation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01402">1402</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01486">1486</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01738">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01737">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_restitution</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01739">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01741">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_hamaker_constant</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01736">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01740">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01735">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01742">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01734">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::n_particle_types</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00049">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01835">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01834">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_restitution</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01837">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01839">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_hamaker_constant</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01836">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_rolling_viscous_damping_coefficient</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01833">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_shear_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01838">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_surface_energy</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01832">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_youngs_modulus</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01840">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::model_parameter_beta</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01831">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::n_particle_types</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00050">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
 
 </div>
 </div>
@@ -1802,6 +1884,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">contact_info</td><td>Contact information of a particle pair in neighborhood. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tangential_relative_velocity</td><td>Tangential relative velocity. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">normal_relative_velocity_value</td><td>Normal relative contact velocity. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">normal_unit_vector</td><td>Normal vector of the contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_one_properties</td><td>Properties of particle one in contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_two_properties</td><td>Properties of particle two in contact. </td></tr>
@@ -1812,7 +1895,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00168">168</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00167">167</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 <p class="reference">References <a class="el" href="contact__info_8h_source.html#l00025">particle_particle_contact_info&lt; dim &gt;::tangential_overlap</a>.</p>
 
@@ -1857,16 +1940,16 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 <p>Return the index for accessing the properties vectors for a given combinations of particle types. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>First particle type index. </td></tr>
-    <tr><td class="paramname">j</td><td>Second particle type index. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">i</td><td>First particle type index. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Second particle type index. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>index associated with the combinations of particle types. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01390">1390</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01474">1474</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01734">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::n_particle_types</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01831">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::n_particle_types</a>.</p>
 
 </div>
 </div>
@@ -1893,7 +1976,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01743">1743</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01841">1841</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1919,7 +2002,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01738">1738</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01835">1835</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1945,7 +2028,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01737">1737</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01834">1834</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1971,7 +2054,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01739">1739</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01837">1837</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1997,7 +2080,33 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01741">1741</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01839">1839</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+
+</div>
+</div>
+<a id="a84b8d7ef1f98626f545f0112a6af5ffd" name="a84b8d7ef1f98626f545f0112a6af5ffd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84b8d7ef1f98626f545f0112a6af5ffd">&#9670;&#160;</a></span>effective_rolling_viscous_damping_coefficient</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespaceParameters_1_1Lagrangian.html#a71dab08c2bfee9dee4b2ea9875d43d3b">Parameters::Lagrangian::ParticleParticleContactForceModel</a> contact_model, <a class="el" href="namespaceParameters_1_1Lagrangian.html#af8ea30562f3b72ee8bf6e623478d3555">Parameters::Lagrangian::RollingResistanceMethod</a> rolling_friction_model&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classParticleParticleContactForce.html">ParticleParticleContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::effective_rolling_viscous_damping_coefficient</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01836">1836</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2023,7 +2132,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01736">1736</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01833">1833</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2049,7 +2158,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01740">1740</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01838">1838</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2075,7 +2184,33 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01735">1735</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01832">1832</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+
+</div>
+</div>
+<a id="a5bf0507c0f704a4c4392799ea54273a2" name="a5bf0507c0f704a4c4392799ea54273a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bf0507c0f704a4c4392799ea54273a2">&#9670;&#160;</a></span>f_coefficient_epsd</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespaceParameters_1_1Lagrangian.html#a71dab08c2bfee9dee4b2ea9875d43d3b">Parameters::Lagrangian::ParticleParticleContactForceModel</a> contact_model, <a class="el" href="namespaceParameters_1_1Lagrangian.html#af8ea30562f3b72ee8bf6e623478d3555">Parameters::Lagrangian::RollingResistanceMethod</a> rolling_friction_model&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double <a class="el" href="classParticleParticleContactForce.html">ParticleParticleContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::f_coefficient_epsd</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01842">1842</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2101,7 +2236,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01742">1742</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01840">1840</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2127,7 +2262,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01734">1734</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01831">1831</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
