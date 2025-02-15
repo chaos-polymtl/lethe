@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_jkr_force.h>
 
@@ -13,7 +12,10 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
   : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
+  , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
+
 {
+  // Wall properties
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =
@@ -24,12 +26,16 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
     dem_parameters.lagrangian_physical_properties.friction_coefficient_wall;
   const double wall_rolling_friction_coefficient =
     dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
+  const double wall_rolling_viscous_damping =
+    dem_parameters.lagrangian_physical_properties.rolling_viscous_damping_wall;
   const double wall_surface_energy =
     dem_parameters.lagrangian_physical_properties.surface_energy_wall;
+
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
+      // Particle properties
       const double particle_youngs_modulus =
         dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
           .at(i);
@@ -45,10 +51,14 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
       const double particle_rolling_friction_coefficient =
         dem_parameters.lagrangian_physical_properties
           .rolling_friction_coefficient_particle.at(i);
+      const double particle_rolling_viscous_damping_coefficient =
+        dem_parameters.lagrangian_physical_properties
+          .rolling_viscous_damping_coefficient_particle.at(i);
       const double particle_surface_energy =
         dem_parameters.lagrangian_physical_properties.surface_energy_particle
           .at(i);
 
+      // Effective particle-wall properties.
       this->effective_youngs_modulus[i] =
         (particle_youngs_modulus * wall_youngs_modulus) /
         (wall_youngs_modulus *
@@ -70,6 +80,22 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
         (particle_restitution_coefficient + wall_restitution_coefficient +
          DBL_MIN);
 
+      this->effective_coefficient_of_friction[i] =
+        2 * particle_friction_coefficient * wall_friction_coefficient /
+        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
+
+      this->effective_coefficient_of_rolling_friction[i] =
+        2 * particle_rolling_friction_coefficient *
+        wall_rolling_friction_coefficient /
+        (particle_rolling_friction_coefficient +
+         wall_rolling_friction_coefficient + DBL_MIN);
+
+      this->effective_coefficient_of_rolling_viscous_damping[i] =
+        2 * particle_rolling_viscous_damping_coefficient *
+        wall_rolling_viscous_damping /
+        (particle_rolling_viscous_damping_coefficient +
+         wall_rolling_viscous_damping + DBL_MIN);
+
       this->effective_surface_energy[i] =
         particle_surface_energy + wall_surface_energy -
         std::pow(std::sqrt(particle_surface_energy) -
@@ -81,17 +107,6 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
       this->model_parameter_beta[i] =
         log_coeff_restitution /
         sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
-
-
-      this->effective_coefficient_of_friction[i] =
-        2 * particle_friction_coefficient * wall_friction_coefficient /
-        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
-
-      this->effective_coefficient_of_rolling_friction[i] =
-        2 * particle_rolling_friction_coefficient *
-        wall_rolling_friction_coefficient /
-        (particle_rolling_friction_coefficient +
-         wall_rolling_friction_coefficient + DBL_MIN);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
@@ -111,6 +126,12 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
     {
       calculate_rolling_resistance_torque =
         &ParticleWallJKRForce<dim, PropertiesIndex>::viscous_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::RollingResistanceMethod::epsd_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &ParticleWallJKRForce<dim, PropertiesIndex>::epsd_resistance;
     }
 
 
@@ -187,7 +208,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          if (normal_overlap > 0)
+          if (normal_overlap > 0.)
             {
               contact_information.normal_overlap = normal_overlap;
 
@@ -202,7 +223,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
               std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
                 forces_and_torques =
                   this->calculate_jkr_contact_force_and_torque(
-                    contact_information, particle_properties);
+                    dt, contact_information, particle_properties);
 
               // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
@@ -222,7 +243,8 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
               contact_information.normal_overlap = 0;
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0;
+                  contact_information.tangential_overlap[d]               = 0;
+                  contact_information.rolling_resistance_spring_torque[d] = 0;
                 }
             }
         }
@@ -359,7 +381,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
                                      Tensor<1, 3>>
                             forces_and_torques =
                               this->calculate_jkr_contact_force_and_torque(
-                                contact_info, particle_properties);
+                                dt, contact_info, particle_properties);
 
                           // Get particle's torque and force
                           types::particle_index particle_id =
@@ -398,6 +420,7 @@ template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallJKRForce<dim, PropertiesIndex>::
   calculate_jkr_contact_force_and_torque(
+    const double                     dt,
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties)
 {
@@ -518,13 +541,21 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
                       normal_vector),
                      -tangential_force);
 
+  // We need to compute the normal spring constant for case where we use the
+  // EPSD rolling resistance model.
+  double normal_spring_constant = 0.66665 * model_parameter_sn;
+
   // Rolling resistance torque
   Tensor<1, 3> rolling_resistance_torque =
     (this->*calculate_rolling_resistance_torque)(
       particle_properties,
       this->effective_coefficient_of_rolling_friction[particle_type],
+      this->effective_coefficient_of_rolling_viscous_damping[particle_type],
       normal_force.norm(),
-      contact_info.normal_vector);
+      dt,
+      normal_spring_constant,
+      contact_info.normal_vector,
+      contact_info.rolling_resistance_spring_torque);
 
   return std::make_tuple(normal_force,
                          tangential_force,

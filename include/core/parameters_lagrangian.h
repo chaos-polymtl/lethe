@@ -29,7 +29,8 @@ namespace Parameters
     {
       no_resistance,
       constant_resistance,
-      viscous_resistance
+      viscous_resistance,
+      epsd_resistance
     };
 
     enum class SizeDistributionType
@@ -93,6 +94,10 @@ namespace Parameters
       // Friction coefficient of each particle type
       std::unordered_map<unsigned int, double> friction_coefficient_particle;
 
+      // Rolling viscous damping coefficient of each particle type
+      std::unordered_map<unsigned int, double>
+        rolling_viscous_damping_coefficient_particle;
+
       // Rolling friction coefficient of each particle type
       std::unordered_map<unsigned int, double>
         rolling_friction_coefficient_particle;
@@ -111,6 +116,9 @@ namespace Parameters
 
       // Rolling friction coefficient wall
       double rolling_friction_wall;
+
+      // Rolling friction coefficient wall
+      double rolling_viscous_damping_wall;
 
       // Surface energy wall
       double surface_energy_wall;
@@ -148,6 +156,8 @@ namespace Parameters
         std::unordered_map<unsigned int, double>
           &restitution_coefficient_particle,
         std::unordered_map<unsigned int, double> &friction_coefficient_particle,
+        std::unordered_map<unsigned int, double>
+          &rolling_viscous_dampimg_coefficient_particle,
         std::unordered_map<unsigned int, double>
           &rolling_friction_coefficient_particle,
         std::unordered_map<unsigned int, double> &surface_energy_particle,
@@ -278,6 +288,9 @@ namespace Parameters
 
       // Rolling resistance torque method
       RollingResistanceMethod rolling_resistance_method;
+
+      // Model parameter for the EPSD rolling resistance model
+      double f_coefficient_epsd;
 
       // Itegration method
       enum class IntegrationMethod

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_nonlinear_force.h>
 
@@ -13,7 +12,9 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
   : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
+  , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
 {
+  // Wall properties
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =
@@ -24,11 +25,14 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
     dem_parameters.lagrangian_physical_properties.friction_coefficient_wall;
   const double wall_rolling_friction_coefficient =
     dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
+  const double wall_rolling_viscous_damping =
+    dem_parameters.lagrangian_physical_properties.rolling_viscous_damping_wall;
 
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
+      // Particle properties
       const double particle_youngs_modulus =
         dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
           .at(i);
@@ -44,7 +48,11 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
       const double particle_rolling_friction_coefficient =
         dem_parameters.lagrangian_physical_properties
           .rolling_friction_coefficient_particle.at(i);
+      const double particle_rolling_viscous_damping_coefficient =
+        dem_parameters.lagrangian_physical_properties
+          .rolling_viscous_damping_coefficient_particle.at(i);
 
+      // Effective particle-wall properties.
       this->effective_youngs_modulus[i] =
         (particle_youngs_modulus * wall_youngs_modulus) /
         (wall_youngs_modulus *
@@ -81,6 +89,13 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
         wall_rolling_friction_coefficient /
         (particle_rolling_friction_coefficient +
          wall_rolling_friction_coefficient + DBL_MIN);
+
+      // Rolling viscous damping coefficient
+      this->effective_coefficient_of_rolling_viscous_damping[i] =
+        2 * particle_rolling_viscous_damping_coefficient *
+        wall_rolling_viscous_damping /
+        (particle_rolling_viscous_damping_coefficient +
+         wall_rolling_viscous_damping + DBL_MIN);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
@@ -100,6 +115,12 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
     {
       calculate_rolling_resistance_torque =
         &ParticleWallNonLinearForce<dim, PropertiesIndex>::viscous_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::RollingResistanceMethod::epsd_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &ParticleWallNonLinearForce<dim, PropertiesIndex>::epsd_resistance;
     }
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
@@ -154,7 +175,6 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
                 return (point_nd_to_3d(particle->get_location()));
               }
           }();
-          ;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -188,7 +208,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
               std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
                 forces_and_torques =
                   this->calculate_nonlinear_contact_force_and_torque(
-                    contact_information, particle_properties);
+                    dt, contact_information, particle_properties);
 
               // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
@@ -208,7 +228,8 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
               contact_information.normal_overlap = 0;
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0;
+                  contact_information.tangential_overlap[d]               = 0;
+                  contact_information.rolling_resistance_spring_torque[d] = 0;
                 }
             }
         }
@@ -346,7 +367,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
                             forces_and_torques =
                               this
                                 ->calculate_nonlinear_contact_force_and_torque(
-                                  contact_info, particle_properties);
+                                  dt, contact_info, particle_properties);
 
                           // Get particle's torque and force
                           types::particle_index particle_id =
@@ -380,13 +401,12 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
     }
 }
 
-
-
 // Calculates nonlinear contact force and torques
 template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallNonLinearForce<dim, PropertiesIndex>::
   calculate_nonlinear_contact_force_and_torque(
+    const double                     dt,
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties)
 {
@@ -481,8 +501,12 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
     (this->*calculate_rolling_resistance_torque)(
       particle_properties,
       this->effective_coefficient_of_rolling_friction[particle_type],
+      this->effective_coefficient_of_rolling_friction[particle_type],
       normal_force.norm(),
-      contact_info.normal_vector);
+      dt,
+      normal_spring_constant,
+      contact_info.normal_vector,
+      contact_info.rolling_resistance_spring_torque);
 
   return std::make_tuple(normal_force,
                          tangential_force,

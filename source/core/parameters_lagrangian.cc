@@ -63,6 +63,10 @@ namespace Parameters
                         "0.1",
                         Patterns::Double(),
                         "Particle friction coefficient");
+      prm.declare_entry("rolling viscous damping particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle rolling viscous damping");
       prm.declare_entry("rolling friction particles",
                         "0.1",
                         Patterns::Double(),
@@ -131,6 +135,8 @@ namespace Parameters
         prm.get_double("restitution coefficient particles");
       friction_coefficient_particle.at(particle_type) =
         prm.get_double("friction coefficient particles");
+      rolling_viscous_damping_coefficient_particle.at(particle_type) =
+        prm.get_double("rolling viscous damping particles");
       rolling_friction_coefficient_particle.at(particle_type) =
         prm.get_double("rolling friction particles");
       surface_energy_particle.at(particle_type) =
@@ -198,6 +204,10 @@ namespace Parameters
                           "0.1",
                           Patterns::Double(),
                           "Rolling friction coefficient of wall");
+        prm.declare_entry("rolling viscous damping wall",
+                          "0.1",
+                          Patterns::Double(),
+                          "Rolling viscous damping wall");
         prm.declare_entry("surface energy wall",
                           "0.0",
                           Patterns::Double(),
@@ -226,6 +236,7 @@ namespace Parameters
                             poisson_ratio_particle,
                             restitution_coefficient_particle,
                             friction_coefficient_particle,
+                            rolling_viscous_damping_coefficient_particle,
                             rolling_friction_coefficient_particle,
                             surface_energy_particle,
                             hamaker_constant_particle);
@@ -255,8 +266,10 @@ namespace Parameters
         prm.get_double("restitution coefficient wall");
       friction_coefficient_wall = prm.get_double("friction coefficient wall");
       rolling_friction_wall     = prm.get_double("rolling friction wall");
-      surface_energy_wall       = prm.get_double("surface energy wall");
-      hamaker_constant_wall     = prm.get_double("hamaker constant wall");
+      rolling_viscous_damping_wall =
+        prm.get_double("rolling viscous damping wall");
+      surface_energy_wall   = prm.get_double("surface energy wall");
+      hamaker_constant_wall = prm.get_double("hamaker constant wall");
 
       prm.leave_subsection();
     }
@@ -279,6 +292,8 @@ namespace Parameters
         &restitution_coefficient_particle,
       std::unordered_map<unsigned int, double> &friction_coefficient_particle,
       std::unordered_map<unsigned int, double>
+        &rolling_viscous_damping_coefficient_particle,
+      std::unordered_map<unsigned int, double>
         &rolling_friction_coefficient_particle,
       std::unordered_map<unsigned int, double> &surface_energy_particle,
       std::unordered_map<unsigned int, double> &hamaker_constant_particle)
@@ -297,6 +312,7 @@ namespace Parameters
           poisson_ratio_particle.insert({counter, 0.});
           restitution_coefficient_particle.insert({counter, 0.});
           friction_coefficient_particle.insert({counter, 0.});
+          rolling_viscous_damping_coefficient_particle.insert({counter, 0.});
           rolling_friction_coefficient_particle.insert({counter, 0.});
           surface_energy_particle.insert({counter, 0.});
           hamaker_constant_particle.insert({counter, 0.});
@@ -698,9 +714,15 @@ namespace Parameters
           "rolling resistance torque method",
           "constant_resistance",
           Patterns::Selection(
-            "no_resistance|constant_resistance|viscous_resistance"),
+            "no_resistance|constant_resistance|viscous_resistance|epsd_resistance"),
           "Choosing rolling resistance torque model"
-          "Choices are <no_resistance|constant_resistance|viscous_resistance>.");
+          "Choices are <no_resistance|constant_resistance|viscous_resistance|epsd_resistance>.");
+
+        prm.declare_entry(
+          "f coefficient",
+          "0.",
+          Patterns::Double(),
+          "Model parameter for the EPSD rolling resistance model.");
 
         prm.declare_entry("integration method",
                           "velocity_verlet",
@@ -909,11 +931,18 @@ namespace Parameters
             rolling_resistance_method =
               RollingResistanceMethod::viscous_resistance;
           }
+        else if (rolling_resistance_torque == "epsd_resistance")
+          {
+            rolling_resistance_method =
+              RollingResistanceMethod::epsd_resistance;
+          }
         else
           {
             throw(
               std::runtime_error("Invalid rolling resistance torque method "));
           }
+        // Model parameter for the EPSD rolling resistance model
+        f_coefficient_epsd = prm.get_double("f coefficient");
 
         const std::string integration = prm.get("integration method");
         if (integration == "velocity_verlet")

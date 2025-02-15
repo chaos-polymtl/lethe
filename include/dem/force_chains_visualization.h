@@ -259,18 +259,20 @@ private:
                                        particle_one_location,
                                        particle_two_location);
 
-            this->calculate_contact(contact_info,
-                                    tangential_relative_velocity,
-                                    normal_relative_velocity_value,
-                                    normal_unit_vector,
-                                    normal_overlap,
-                                    particle_one_properties,
-                                    particle_two_properties,
-                                    normal_force,
-                                    tangential_force,
-                                    particle_one_tangential_torque,
-                                    particle_two_tangential_torque,
-                                    rolling_resistance_torque);
+            this->calculate_contact(
+              contact_info,
+              tangential_relative_velocity,
+              normal_relative_velocity_value,
+              normal_unit_vector,
+              normal_overlap,
+              0., // dt is not required for the force chains
+              particle_one_properties,
+              particle_two_properties,
+              normal_force,
+              tangential_force,
+              particle_one_tangential_torque,
+              particle_two_tangential_torque,
+              rolling_resistance_torque);
 
             vertices.push_back(particle_one_location);
             vertices.push_back(particle_two_location);

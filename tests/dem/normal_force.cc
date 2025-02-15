@@ -74,17 +74,21 @@ test()
     .friction_coefficient_particle[0]                                     = 0.3;
   dem_parameters.lagrangian_physical_properties.friction_coefficient_wall = 0.3;
   dem_parameters.lagrangian_physical_properties
-    .rolling_friction_coefficient_particle[0]                         = 0.1;
+    .rolling_friction_coefficient_particle[0] = 0.1;
+  dem_parameters.lagrangian_physical_properties
+    .rolling_viscous_damping_coefficient_particle[0]                  = 0.1;
   dem_parameters.lagrangian_physical_properties.rolling_friction_wall = 0.1;
-  dem_parameters.lagrangian_physical_properties.density_particle[0]   = 7850;
+  dem_parameters.lagrangian_physical_properties.rolling_viscous_damping_wall =
+    0.1;
+  dem_parameters.lagrangian_physical_properties.density_particle[0] = 7850;
   dem_parameters.model_parameters.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   // Initializing motion of boundaries
-  Tensor<1, dim> translational_and_rotational_veclocity;
+  Tensor<1, dim> translational_and_rotational_velocity;
   for (unsigned int d = 0; d < dim; ++d)
     {
-      translational_and_rotational_veclocity[d] = 0;
+      translational_and_rotational_velocity[d] = 0;
     }
   for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
        ++counter)
@@ -92,9 +96,9 @@ test()
       dem_parameters.boundary_conditions.boundary_rotational_speed.insert(
         {counter, 0});
       dem_parameters.boundary_conditions.boundary_translational_velocity.insert(
-        {counter, translational_and_rotational_veclocity});
+        {counter, translational_and_rotational_velocity});
       dem_parameters.boundary_conditions.boundary_rotational_vector.insert(
-        {counter, translational_and_rotational_veclocity});
+        {counter, translational_and_rotational_velocity});
     }
 
   // Defining particle handler
@@ -187,6 +191,7 @@ test()
             .tangential_overlap[0] = 0.0;
           particle_wall_contact_information_iterator->second
             .tangential_overlap[1] = 0.0;
+
           if (dim == 3)
             {
               particle_wall_contact_information_iterator->second
