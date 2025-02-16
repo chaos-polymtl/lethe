@@ -383,7 +383,9 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
                           contact_info.normal_overlap = 0;
                           for (int d = 0; d < dim; ++d)
                             {
-                              contact_info.tangential_overlap[d] = 0;
+                              contact_info.tangential_overlap[d] = 0.;
+                              contact_info.rolling_resistance_spring_torque[d] =
+                                0.;
                             }
                         }
                     }

@@ -135,7 +135,8 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 {
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d]               = 0.;
+                      contact_info.rolling_resistance_spring_torque[d] = 0.;
                     }
                   pp_contact_map[particle_one.particle_id]
                                 [particle_two.particle_id] = contact_info;
@@ -309,7 +310,8 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                   // if the adjacent pair is not in contact anymore
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d]               = 0.;
+                      contact_info.rolling_resistance_spring_torque[d] = 0.;
                     }
                   pp_contact_map[particle_one.particle_id].erase(
                     particle_two.particle_id);
@@ -788,7 +790,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   // in contact with the wall anymore.
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d]               = 0.;
+                      contact_info.rolling_resistance_spring_torque[d] = 0.;
                     }
                 }
             }
