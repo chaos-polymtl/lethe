@@ -338,10 +338,20 @@ namespace LetheGridTools
    *
    */
   template <int dim>
-  double
+  inline double
   find_point_line_distance(const Point<dim>     &line_origin,
                            const Tensor<1, dim> &line_direction,
-                           const Point<dim>     &point);
+                           const Point<dim>     &point)
+  {
+    Tensor<1, dim> diff = point - line_origin;
+
+    double t_0 = line_direction * diff;
+    t_0 /= line_direction.norm();
+
+    const Point<dim> closet_point_on_line = line_origin + t_0 * line_direction;
+
+    return point.distance(closet_point_on_line);
+  }
 
   /**
    * @brief
