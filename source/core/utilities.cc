@@ -682,6 +682,17 @@ get_dimension(const std::string &file_name)
     }
 }
 
+bool
+get_print_parameters_bool(const std::string &file_name)
+{
+  const std::string print_parameters =
+    get_last_value_of_parameter(file_name, "print parameters");
+
+  bool print = false;
+  if (print_parameters == "true")
+    print = true;
+  return print;
+}
 
 int
 get_max_subsection_size(const std::string &file_name)

@@ -17,8 +17,12 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+#include <iostream>
+#include <map>
 #include <regex>
-
+#include <string>
+#include <tuple>
+#include <vector>
 
 using namespace dealii;
 
@@ -474,6 +478,15 @@ unsigned int
 get_dimension(const std::string &file_name);
 
 /**
+ * @brief Read in the parameter file whether the parameters should
+ * be printed or not.
+ *
+ * @param file_name The parameters file name passed to the application.
+ */
+bool
+get_print_parameters_bool(const std::string &file_name);
+
+/**
  * @brief Extract the maximum value between the number of boundary conditions and the number of manifolds from the file.
 This value is linked to the "number" string defined in the simulation parameter
 file. It provides an estimate for the amount of parameters or manifolds and is
@@ -716,40 +729,103 @@ concatenate_strings(const int argc, char **argv)
  */
 inline void
 print_parameters_to_output_file(const ConditionalOStream &pcout,
-                                const ParameterHandler   &prm)
+                                const ParameterHandler   &prm,
+                                const std::string        &file_name)
 {
-  if (pcout.is_active())
+  const std::string print_parameter_settings =
+    get_last_value_of_parameter(file_name, "settings");
+
+  if (print_parameter_settings == "only changed")
     prm.print_parameters(pcout.get_stream(),
                          ParameterHandler::OutputStyle::PRM |
                            ParameterHandler::OutputStyle::Short |
                            ParameterHandler::KeepDeclarationOrder
 #if DEAL_II_VERSION_GTE(9, 7, 0)
                            | ParameterHandler::KeepOnlyChanged
+#else
+                             Assert(
+                               false,
+                               ExcMessage(
+                                 "To print only parameter with changed values you need a version of deal.II >= 9.7.0."));
 #endif
     );
+  else
+    prm.print_parameters(pcout.get_stream(),
+                         ParameterHandler::OutputStyle::PRM |
+                           ParameterHandler::OutputStyle::Short |
+                           ParameterHandler::KeepDeclarationOrder);
+
   pcout << std::endl << std::endl;
 }
 
 /**
- * @brief Print command line arguments and the information of the deal.II
- * and Lethe branches used to run an application
+ * @brief Print the information of the deal.II and Lethe branches
+ * used to run an application in the "git describe" format.
  *
- * @param[in] argc Number of command line arguments
- * @param[in] argv Pointer to string arguments
  * @param[in] pcout Parallel output stream
  */
 inline void
-print_version_info(int &argc, char *argv[], const ConditionalOStream &pcout)
+print_version_info(const ConditionalOStream &pcout)
 {
-  pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
-  pcout << "  - deal.II (branch: " << DEAL_II_GIT_BRANCH
-        << "; revision: " << DEAL_II_GIT_REVISION
-        << "; short: " << DEAL_II_GIT_SHORTREV << ")" << std::endl;
-  pcout << "  - Lethe (branch: " << LETHE_GIT_BRANCH
-        << "; revision: " << LETHE_GIT_REVISION
-        << "; short: " << LETHE_GIT_SHORTREV << ")" << std::endl;
-  pcout << std::endl;
+  // Erase the first v
+  std::string lethe_tag = LETHE_GIT_FANCY_TAG;
+  lethe_tag.erase(0,1);
+
+  // DEAL_II_GIT_FANCY_TAG.erase(0, 1);
+
+  pcout << "lethe/" << LETHE_GIT_FANCY_TAG << " deal.II/"
+        << DEAL_II_GIT_FANCY_TAG << std::endl;
   pcout << std::endl;
 }
+
+/**
+ * @brief Parse the arguments given to the application
+ *
+ * @param argc Number of arguments
+ * @param argv Array of strings representing the arguments
+ * @return Tuple containing a map with the command line flags
+ * and a boolean set to 1 for the specific flag; and a vector of
+ * strings with the rest of the arguments that are not flags; in Lethe,
+ * this corresponds to the parameter file given to the application.
+ */
+inline std::tuple<std::map<std::string, bool>, std::vector<std::string>>
+parse_args(int argc, char **argv)
+{
+  int                         argi = 1; // skip program name
+  std::map<std::string, bool> options{};
+  for (; argi < argc; ++argi)
+    {
+      std::string arg{argv[argi]};
+      auto        n{arg.length()};
+      if (n == 0 || arg[0] != '-' || n == 1)
+        { // empty arg or single hyphen
+          break;
+        }
+      if (arg[1] != '-')
+        { // short option
+          for (decltype(n) i = 1; i < n; ++i)
+            {
+              options[std::string{'-'} + std::string{arg[i]}] = true;
+            }
+        }
+      else
+        { // long option
+          if (n == 2)
+            { // done options on "--" and skip it
+              argi++;
+              break;
+            }
+          options[arg] = true;
+        }
+    }
+  std::vector<std::string> args{};
+  for (; argi < argc; ++argi)
+    {
+      std::string arg{argv[argi]};
+      args.push_back(arg);
+    }
+  return {options, args};
+}
+
 
 #endif
