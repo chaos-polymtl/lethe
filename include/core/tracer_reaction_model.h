@@ -1,52 +1,56 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_tracer_reaction_constant_model_h
-#define lethe_tracer_reaction_constant_model_h
+#ifndef lethe_tracer_reaction_prefactor_model_h
+#define lethe_tracer_reaction_prefactor_model_h
 
 #include <core/physical_property_model.h>
 
 /**
- * @brief Abstract class to calculate the
- * tracer reaction constant.
+ * @brief Abstract class to calculate the tracer reaction prefactor.
+ *
+ * This model computes the prefactor \f$ k = k_\mathrm{orig} \, C^{(n-1)} \f$
+ * such that the full reaction term is assembled as
+ * \f$ r = -k \, C \f$.
  */
-class TracerReactionConstantModel : public PhysicalPropertyModel
+class TracerReactionPrefactorModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Instantiates and returns a pointer to a TracerReactionConstantModel object by casting it to
-   * the proper child class
+   * @brief Instantiates and returns a pointer to a TracerReactionPrefactorModel object by casting it to
+   * the proper child class.
    *
-   * @param material_properties Parameters for a material
+   * @param material_properties Parameters for a material.
    */
-  static std::shared_ptr<TracerReactionConstantModel>
+  static std::shared_ptr<TracerReactionPrefactorModel>
   model_cast(const Parameters::Material &material_properties);
 };
 
-
 /**
- * @brief None tracer reaction constant mode. This class is dummy.
+ * @brief Dummy tracer reaction prefactor model.
+ *
+ * This class is a dummy implementation and always returns zero.
  */
-class NoneTracerReactionConstant : public TracerReactionConstantModel
+class NoneTracerReactionPrefactor : public TracerReactionPrefactorModel
 {
 public:
   /**
-   * @brief Default constructor
+   * @brief Default constructor.
    */
-  NoneTracerReactionConstant()
+  NoneTracerReactionPrefactor()
   {}
 
   /**
-   * @brief Function of dummy class.
+   * @brief Returns a dummy value.
    */
   double
   value(const std::map<field, double> & /*fields_value*/) override
   {
     return 0.;
-  };
+  }
 
   /**
-   * @brief Function of dummy class.
+   * @brief Dummy vector value computation.
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
@@ -54,37 +58,46 @@ public:
   {}
 
   /**
-   * @brief Function of dummy class.
+   * @brief Returns a dummy jacobian value.
    */
   double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override
   {
     return 0;
-  };
+  }
 
   /**
-   * @brief Function of dummy class.
+   * @brief Dummy vector jacobian computation.
    */
   void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
-    std::vector<double> & /*jacobian_vector*/) override{};
+    std::vector<double> & /*jacobian_vector*/) override
+  {}
 };
 
 /**
- * @brief Constant tracer reaction constant.
- * // TODO Change the comments and documentation
+ * @brief Constant tracer reaction prefactor.
+ *
+ * This model computes the prefactor as
+ * \f[
+ *   k = k_\mathrm{orig}\,C^{(n-1)},
+ * \f]
+ * where \f$ k_\mathrm{orig} \f$ and the reaction order \f$ n \f$ are provided.
  */
-class ConstantTracerReactionConstant : public TracerReactionConstantModel
+class ConstantTracerReactionPrefactor : public TracerReactionPrefactorModel
 {
 public:
   /**
-   * @brief Default constructor
+   * @brief Constructor.
+   *
+   * @param p_tracer_reaction_constant The base reaction constant \f$ k_\mathrm{orig} \f$.
+   * @param p_tracer_reaction_order The reaction order \f$ n \f$.
    */
-  ConstantTracerReactionConstant(const double p_tracer_reaction_constant,
-                                 const double p_tracer_reaction_order)
+  ConstantTracerReactionPrefactor(const double p_tracer_reaction_constant,
+                                  const double p_tracer_reaction_order)
     : tracer_reaction_constant(p_tracer_reaction_constant)
     , tracer_reaction_order(p_tracer_reaction_order)
   {
@@ -92,27 +105,28 @@ public:
   }
 
   /**
-   * @brief Calculate the tracer reaction constant
-   * @param fields_value Value of the various fields on which the property may depend.
-   * @return value of the physical property calculated with the fields_value
+   * @brief Compute the tracer reaction prefactor.
+   *
+   * @param fields_value Map of field values.
+   * @return The computed prefactor value.
    */
   double
   value(const std::map<field, double> &fields_value) override
   {
-    // TODO change the calculation
     AssertThrow(
       fields_value.find(field::tracer_concentration) != fields_value.end(),
-      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
                                            "tracer_concentration"));
     return tracer_reaction_constant *
            pow(fields_value.at(field::tracer_concentration),
                tracer_reaction_order - 1.);
-  };
+  }
 
   /**
-   * @brief Calculate the vector of tracer reaction constant.
-   * @param field_vectors Vectors of the fields on which the reaction constant may depend.
-   * @param property_vector Vectors of the tracer reaction constant values
+   * @brief Compute the vector of tracer reaction prefactor values.
+   *
+   * @param field_vectors Map of field vectors.
+   * @param property_vector Vector to be filled with computed prefactor values.
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -120,7 +134,7 @@ public:
   {
     AssertThrow(
       field_vectors.find(field::tracer_concentration) != field_vectors.end(),
-      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
                                            "tracer_concentration"));
     const auto &concentration_vector =
       field_vectors.at(field::tracer_concentration);
@@ -133,19 +147,18 @@ public:
   }
 
   /**
-   * @brief Calculate the jacobian (the partial derivative) of the reaction constant with respect to a field
-   * @param field_values Value of the various fields on which the property may depend.
-   * @param id Indicator of the field with respect to which the jacobian
-   * should be calculated.
-   * @return value of the partial derivative of the reaction constant with respect to the field.
+   * @brief Compute the jacobian (partial derivative) of the prefactor with respect to a field.
+   *
+   * @param field_values Map of field values.
+   * @param id The field identifier with respect to which the derivative is computed.
+   * @return The computed derivative value.
    */
-
   double
   jacobian(const std::map<field, double> &field_values, field id) override
   {
     AssertThrow(
       field_values.find(field::tracer_concentration) != field_values.end(),
-      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
                                            "tracer_concentration"));
     if (id == field::tracer_concentration)
       return tracer_reaction_constant *
@@ -153,15 +166,15 @@ public:
                  tracer_reaction_order - 2.);
     else
       return 0;
-  };
+  }
 
   /**
-   * @brief Calculate the derivative of the tracer reaction constant with respect to a field.
-   * @param field_vectors Vector for the values of the fields used to evaluate the property.
-   * @param id Identifier of the field with respect to which a derivative should be calculated.
-   * @param jacobian vector of the value of the derivative of the tracer reaction constant with respect to the field id.
+   * @brief Compute the vector jacobian (partial derivatives) of the prefactor with respect to a field.
+   *
+   * @param field_vectors Map of field vectors.
+   * @param id The field identifier with respect to which the derivative is computed.
+   * @param jacobian_vector Vector to be filled with computed derivative values.
    */
-
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
                   const field                                 id,
@@ -169,7 +182,7 @@ public:
   {
     AssertThrow(
       field_vectors.find(field::tracer_concentration) != field_vectors.end(),
-      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionConstant",
+      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
                                            "tracer_concentration"));
     if (id == field::tracer_concentration)
       {
@@ -192,23 +205,24 @@ private:
 };
 
 /**
- * @brief Reaction constant that depends on the level set
+ * @brief Tanh level-set-dependent tracer reaction prefactor.
+ *
+ * This model computes a prefactor that depends on the level-set function,
+ * smoothly transitioning between a reaction constant inside and outside the
+ * solid.
  */
-class TanhLevelsetTracerReactionConstant : public TracerReactionConstantModel
+class TanhLevelsetTracerReactionPrefactor : public TracerReactionPrefactorModel
 {
 public:
   /**
-   * @brief Constructor of the level set-dependent reaction constant model.
+   * @brief Constructor.
    *
-   * @param[in] p_tracer_reaction_constant_outside Reaction constant outside the
-   * solid
-   * @param[in] p_tracer_reaction_constant_inside Reaction constant inside the
-   * solid
-   * @param[in] p_thickness Thickness of the tanh function used to smooth the
-   * reaction constant jump between the inside and outside of the immersed
-   * solid.
+   * @param p_tracer_reaction_constant_outside Reaction constant outside the solid.
+   * @param p_tracer_reaction_constant_inside Reaction constant inside the solid.
+   * @param p_thickness Thickness for the tanh smoothing function.
+   * @param p_tracer_reaction_order The reaction order.
    */
-  TanhLevelsetTracerReactionConstant(
+  TanhLevelsetTracerReactionPrefactor(
     const double p_tracer_reaction_constant_outside,
     const double p_tracer_reaction_constant_inside,
     const double p_thickness,
@@ -225,24 +239,22 @@ public:
   }
 
   /**
-   * @brief Compute the reaction constant.
+   * @brief Compute the tracer reaction prefactor.
    *
-   * @param[in] field_values Values of the various fields on which the property
-   * may depend. In this case, the reaction constant depends on the level set.
-   * The map stores a single value per field.
-   *
-   * @return Value of the reaction constant computed with the @p field_values.
+   * @param field_values Map of field values.
+   * @return The computed prefactor value.
    */
   double
   value(const std::map<field, double> &field_values) override
   {
     AssertThrow(field_values.find(field::levelset) != field_values.end(),
                 PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionConstant", "levelset"));
-    AssertThrow(
-      field_values.find(field::tracer_concentration) != field_values.end(),
-      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
-                                           "tracer_concentration"));
+                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    AssertThrow(field_values.find(field::tracer_concentration) !=
+                  field_values.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerReactionPrefactor",
+                  "tracer_concentration"));
     const double levelset      = field_values.at(field::levelset);
     const double concentration = field_values.at(field::tracer_concentration);
     const double k =
@@ -252,13 +264,10 @@ public:
   }
 
   /**
-   * @brief Compute a vector of reaction constant.
+   * @brief Compute a vector of tracer reaction prefactor values.
    *
-   * @param[in] field_vectors Vectors of the fields on which the reaction
-   * constant may depend. In this case, the reaction constant depends on the
-   * level set. The map stores a vector of values per field.
-   *
-   * @param[out] property_vector Vectors of computed reaction constants.
+   * @param field_vectors Map of field vectors.
+   * @param property_vector Vector to be filled with computed prefactor values.
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -266,11 +275,12 @@ public:
   {
     AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
                 PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionConstant", "levelset"));
-    AssertThrow(
-      field_vectors.find(field::tracer_concentration) != field_vectors.end(),
-      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
-                                           "tracer_concentration"));
+                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    AssertThrow(field_vectors.find(field::tracer_concentration) !=
+                  field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerReactionPrefactor",
+                  "tracer_concentration"));
 
     const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
     const std::vector<double> &concentration_vec =
@@ -290,28 +300,23 @@ public:
   }
 
   /**
-   * @brief Compute the jacobian (the partial derivative) of the reaction constant
-   * with respect to a specified field.
+   * @brief Compute the jacobian (partial derivative) of the prefactor with respect to a specified field.
    *
-   * @param[in] field_values Values of the various fields on which the specific
-   * heat may depend. The map stores a single value per field.
-   *
-   * @param[in] id Indicator of the field with respect to which the jacobian
-   * should be computed.
-   *
-   * @return Value of the derivative of the reaction constant with respect to the
-   * specified field.
+   * @param field_values Map of field values.
+   * @param id The field identifier with respect to which the derivative is computed.
+   * @return The computed derivative value.
    */
   double
   jacobian(const std::map<field, double> &field_values, field id) override
   {
     AssertThrow(field_values.find(field::levelset) != field_values.end(),
                 PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionConstant", "levelset"));
-    AssertThrow(
-      field_values.find(field::tracer_concentration) != field_values.end(),
-      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
-                                           "tracer_concentration"));
+                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    AssertThrow(field_values.find(field::tracer_concentration) !=
+                  field_values.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerReactionPrefactor",
+                  "tracer_concentration"));
     if (id == field::levelset)
       {
         return numerical_jacobian(field_values, field::levelset);
@@ -327,19 +332,14 @@ public:
       }
     else
       return 0;
-  };
+  }
 
   /**
-   * @brief Compute the derivative of the reaction constant with respect to a field.
+   * @brief Compute the vector jacobian (partial derivatives) of the prefactor with respect to a field.
    *
-   * @param[in] field_vectors Vector of values of the fields used to evaluate
-   * the reaction constant. The map stores a vector of values per field.
-   *
-   * @param[in] id Identifier of the field with respect to which a derivative
-   * should be computed.
-   *
-   * @param[out] jacobian Vector of computed derivative values of the
-   * reaction constant with respect to the field of the specified @p id.
+   * @param field_vectors Map of field vectors.
+   * @param id The field identifier with respect to which the derivative is computed.
+   * @param jacobian_vector Vector to be filled with computed derivative values.
    */
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
@@ -348,11 +348,12 @@ public:
   {
     AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
                 PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionConstant", "levelset"));
-    AssertThrow(
-      field_vectors.find(field::tracer_concentration) != field_vectors.end(),
-      PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerReactionConstant",
-                                           "tracer_concentration"));
+                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    AssertThrow(field_vectors.find(field::tracer_concentration) !=
+                  field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerReactionPrefactor",
+                  "tracer_concentration"));
     if (id == field::levelset)
       {
         vector_numerical_jacobian(field_vectors, id, jacobian_vector);
@@ -375,8 +376,7 @@ public:
       }
     else
       std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.);
-  };
-
+  }
 
 private:
   const double tracer_reaction_constant_outside;

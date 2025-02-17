@@ -706,7 +706,7 @@ TracerAssemblerReaction<dim>::assemble_matrix(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &k = scratch_data.tracer_reaction_constant;
+  const std::vector<double> &k = scratch_data.tracer_reaction_prefactor;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -754,7 +754,7 @@ TracerAssemblerReaction<dim>::assemble_rhs(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &k = scratch_data.tracer_reaction_constant;
+  const std::vector<double> &k = scratch_data.tracer_reaction_prefactor;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;

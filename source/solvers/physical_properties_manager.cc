@@ -96,9 +96,10 @@ PhysicalPropertiesManager::initialize(
         TracerDiffusivityModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*tracer_diffusivity[f]);
 
-      tracer_reaction_constant.push_back(
-        TracerReactionConstantModel::model_cast(physical_properties.fluids[f]));
-      establish_fields_required_by_model(*tracer_reaction_constant[f]);
+      tracer_reaction_prefactor.push_back(
+        TracerReactionPrefactorModel::model_cast(
+          physical_properties.fluids[f]));
+      establish_fields_required_by_model(*tracer_reaction_prefactor[f]);
 
       tracer_reaction_order.push_back(
         physical_properties.fluids[f].tracer_reaction_order);
@@ -146,10 +147,11 @@ PhysicalPropertiesManager::initialize(
       establish_fields_required_by_model(
         *tracer_diffusivity[s + number_of_fluids]);
 
-      tracer_reaction_constant.push_back(
-        TracerReactionConstantModel::model_cast(physical_properties.solids[s]));
+      tracer_reaction_prefactor.push_back(
+        TracerReactionPrefactorModel::model_cast(
+          physical_properties.solids[s]));
       establish_fields_required_by_model(
-        *tracer_reaction_constant[s + number_of_fluids]);
+        *tracer_reaction_prefactor[s + number_of_fluids]);
 
       tracer_reaction_order.push_back(
         physical_properties.fluids[s].tracer_reaction_order);
