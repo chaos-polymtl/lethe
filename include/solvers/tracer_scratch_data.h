@@ -528,7 +528,7 @@ public:
   std::vector<double>                  tracer_diffusivity_face;
   std::vector<double>                  tracer_diffusivity_0;
   std::vector<double>                  tracer_diffusivity_1;
-  std::vector<double>                  tracer_reaction_constant;
+  std::vector<double>                  tracer_reaction_prefactor;
 
   // FEValues for the Tracer problem
   FEValues<dim>          fe_values_tracer;
