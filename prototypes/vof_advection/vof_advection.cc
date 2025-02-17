@@ -1317,8 +1317,7 @@ namespace InterfaceTools
                             // Convert the right hand side to the right format
                             // for the linear solver
                             Vector<double> residual_n_vec(dim - 1);
-                            residual_n.unroll(residual_n_vec.begin(),
-                                              residual_n_vec.end());
+                            residual_n.unroll(residual_n_vec.begin(),residual_n_vec.end());
                             residual_n_vec *= -1.0;
 
                             jacobian_matrix.set_property(
@@ -1556,8 +1555,8 @@ namespace InterfaceTools
                                  cell_level_set_dof_values.begin(),
                                  cell_level_set_dof_values.end());
 
-            // Compute the targetted volume to correct for
-            double targetted_cell_volume =
+            // Compute the targeted volume to correct for
+            double targeted_cell_volume =
               InterfaceTools::compute_cell_wise_volume(
                 fe_point_evaluation,
                 cell,
@@ -1606,11 +1605,11 @@ namespace InterfaceTools
                                                        cell_dof_values,
                                                        eta_nm1,
                                                        fe.degree + 1);
-            delta_volume_nm1 = targetted_cell_volume - inside_cell_volume_nm1;
+            delta_volume_nm1 = targeted_cell_volume - inside_cell_volume_nm1;
 
             /* Store the initial volume in the cell to limit the secant method
             in some case.*/
-            const double intial_inside_cell_volume = inside_cell_volume_nm1;
+            const double initial_inside_cell_volume = inside_cell_volume_nm1;
 
             /* Check if there is enough volume to correct. If not, we don't
             correct.*/
@@ -1624,7 +1623,7 @@ namespace InterfaceTools
             unsigned int secant_it     = 0;
             double       secant_update = 1.0;
             while (abs(secant_update) > 1e-10 &&
-                   abs(delta_volume_nm1) > 1e-10 * intial_inside_cell_volume &&
+                   abs(delta_volume_nm1) > 1e-10 * initial_inside_cell_volume &&
                    secant_it < 20)
               {
                 // If the cell is almost full or empty, we stop correcting the
@@ -1644,7 +1643,7 @@ namespace InterfaceTools
                                                            eta_n,
                                                            fe.degree + 1);
 
-                delta_volume_n = targetted_cell_volume - inside_cell_volume_n;
+                delta_volume_n = targeted_cell_volume - inside_cell_volume_n;
 
                 delta_volume_prime = (delta_volume_n - delta_volume_nm1) /
                                      (eta_n - eta_nm1 + 1e-16);
@@ -1697,7 +1696,7 @@ namespace InterfaceTools
     constant. We use the secant method to do so. See Ausas et al.
     (2010) for more details.*/
 
-    /* Compute targetted global volume. It corresponds to the one enclosed by
+    /* Compute targeted global volume. It corresponds to the one enclosed by
     the level 0 of the level_set vector (same volume as the one enclosed
     byiso-contour 0.5 of the phase fraction).*/
     const double global_volume =
@@ -1723,7 +1722,7 @@ namespace InterfaceTools
     double C_n   = 0.0;
     double C_np1 = 0.0;
 
-    /* Compute the volume and the difference with the targetted volume for 1st
+    /* Compute the volume and the difference with the targeted volume for 1st
     initial guest of the correction funtion (xi_nm1 = C_nm1*eta)*/
     C_nm1 = 1.0;
     LinearAlgebra::distributed::Vector<double> signed_distance_0(
@@ -1741,7 +1740,7 @@ namespace InterfaceTools
     // Initialize the 2nd initial guest
     C_n = 1e-6 * global_volume;
 
-    // Store the intial volume for the stop criterion
+    // Store the initial volume for the stop criterion
     const double global_volume_0 = global_volume_nm1;
 
     // Initialize secant method it and update
