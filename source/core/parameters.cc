@@ -1289,12 +1289,13 @@ namespace Parameters
       //-------------------
       op = prm.get("tracer reaction constant model");
       if (op == "none")
-        tracer_reaction_constant_model = TracerReactionConstantModel::none;
+        tracer_reaction_prefactor_model = TracerReactionPrefactorModel::none;
       else if (op == "immersed solid tanh")
-        tracer_reaction_constant_model =
-          TracerReactionConstantModel::immersed_boundary_tanh;
+        tracer_reaction_prefactor_model =
+          TracerReactionPrefactorModel::immersed_boundary_tanh;
       else
-        tracer_reaction_constant_model = TracerReactionConstantModel::constant;
+        tracer_reaction_prefactor_model =
+          TracerReactionPrefactorModel::constant;
       tracer_reaction_constant = prm.get_double("tracer reaction constant");
       tracer_reaction_order    = prm.get_double("tracer reaction order");
 

@@ -79,13 +79,6 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       "false",
                       Patterns::Bool(),
                       "Buoyant force calculation <true|false>");
-
-    // subparameter for tracer
-    prm.declare_entry(
-      "first order reaction",
-      "false",
-      Patterns::Bool(),
-      "First order reaction calculation for tracer physics <true|false>");
   }
   prm.leave_subsection();
 
@@ -108,9 +101,6 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
     // subparameters for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
     buoyancy_force      = prm.get_bool("buoyancy force");
-
-    // subparameter for tracer
-    first_order_reaction = prm.get_bool("first order reaction");
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);

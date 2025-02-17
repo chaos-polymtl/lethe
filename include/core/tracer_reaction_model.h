@@ -9,9 +9,14 @@
 /**
  * @brief Abstract class to calculate the tracer reaction prefactor.
  *
- * This model computes the prefactor \f$ k = k_\mathrm{orig} \, C^{(n-1)} \f$
+ * This model computes the prefactor
+ * \f$ k = \alpha \, C^{(n-1)} \f$
  * such that the full reaction term is assembled as
  * \f$ r = -k \, C \f$.
+ *
+ * Here, \f$ \alpha \f$ represents the reaction constant.
+ * This parent class could have children classes that are not based on the power
+ * law.
  */
 class TracerReactionPrefactorModel : public PhysicalPropertyModel
 {
@@ -83,9 +88,10 @@ public:
  *
  * This model computes the prefactor as
  * \f[
- *   k = k_\mathrm{orig}\,C^{(n-1)},
+ *   k = \alpha \, C^{(n-1)},
  * \f]
- * where \f$ k_\mathrm{orig} \f$ and the reaction order \f$ n \f$ are provided.
+ * where \f$ \alpha \f$ (the reaction constant) and the reaction order \f$ n \f$
+ * are provided.
  */
 class ConstantTracerReactionPrefactor : public TracerReactionPrefactorModel
 {
@@ -93,7 +99,7 @@ public:
   /**
    * @brief Constructor.
    *
-   * @param p_tracer_reaction_constant The base reaction constant \f$ k_\mathrm{orig} \f$.
+   * @param p_tracer_reaction_constant The base reaction constant \f$ \alpha \f$.
    * @param p_tracer_reaction_order The reaction order \f$ n \f$.
    */
   ConstantTracerReactionPrefactor(const double p_tracer_reaction_constant,
@@ -208,8 +214,8 @@ private:
  * @brief Tanh level-set-dependent tracer reaction prefactor.
  *
  * This model computes a prefactor that depends on the level-set function,
- * smoothly transitioning between a reaction constant inside and outside the
- * solid.
+ * smoothly transitioning between a reaction constant \(\alpha\) inside and
+ * outside the solid.
  */
 class TanhLevelsetTracerReactionPrefactor : public TracerReactionPrefactorModel
 {
@@ -217,8 +223,8 @@ public:
   /**
    * @brief Constructor.
    *
-   * @param p_tracer_reaction_constant_outside Reaction constant outside the solid.
-   * @param p_tracer_reaction_constant_inside Reaction constant inside the solid.
+   * @param p_tracer_reaction_constant_outside Reaction constant \(\alpha\) outside the solid.
+   * @param p_tracer_reaction_constant_inside Reaction constant \(\alpha\) inside the solid.
    * @param p_thickness Thickness for the tanh smoothing function.
    * @param p_tracer_reaction_order The reaction order.
    */
