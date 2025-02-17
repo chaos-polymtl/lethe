@@ -1317,7 +1317,8 @@ namespace InterfaceTools
                             // Convert the right hand side to the right format
                             // for the linear solver
                             Vector<double> residual_n_vec(dim - 1);
-                            residual_n.unroll(residual_n_vec.begin(),residual_n_vec.end());
+                            residual_n.unroll(residual_n_vec.begin(),
+                                              residual_n_vec.end());
                             residual_n_vec *= -1.0;
 
                             jacobian_matrix.set_property(
@@ -1802,8 +1803,8 @@ namespace InterfaceTools
    *
    * @param[in] local_dof_id Local id of the DOF
    *
-   * @param[out] local_opposite_faces The vector containing the id of the opposite
-   * faces
+   * @param[out] local_opposite_faces The vector containing the id of the
+   * opposite faces
    */
   template <int dim>
   inline void
@@ -1824,12 +1825,13 @@ namespace InterfaceTools
    * @brief
    * Return the face transformation jacobian (dim-1 x dim-1).
    *
-   * @param[in] cell_transformation_jac Transformation jacobian of the cell (dim x dim)
+   * @param[in] cell_transformation_jac Transformation jacobian of the cell (dim
+   * x dim)
    *
    * @param[in] local_face_id Local id of the face
    *
-   * @param[out] face_transformation_jac Face transformation jacobian (dim-1 x dim-1)
-   * faces
+   * @param[out] face_transformation_jac Face transformation jacobian (dim-1 x
+   * dim-1) faces
    */
   template <int dim>
   inline void
