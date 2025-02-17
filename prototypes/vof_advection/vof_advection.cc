@@ -956,7 +956,7 @@ namespace InterfaceTools
     the intersected_dofs set). They correspond to the first neighbor dofs.*/
     compute_first_neighbors_distance();
 
-    /* Compute signed distance from distance (only first neighbor have an
+    /* Compute signed distance from distance (only first neighbors have an
     updated value)*/
     compute_signed_distance_from_distance();
 
@@ -965,7 +965,7 @@ namespace InterfaceTools
     conserve_global_volume(mpi_communicator);
 
     /* Compute the distance for the dofs of the rest of the mesh. They
-    correspond to the seconf neighbor dofs. */
+    correspond to the second neighbors dofs. */
     compute_second_neighbors_distance(mpi_communicator);
 
     // Compute signed distance from distance (all DOFs have updated value)
@@ -1141,7 +1141,7 @@ namespace InterfaceTools
     const MPI_Comm &mpi_communicator)
   {
     /* The signed distance for the second neighbors (the cells not intersected
-     * by the interface is resolved according the the minimization problem
+     * by the interface is resolved according the minimization problem
      * presented by Ausas (2010). The method looks for the point in the opposite
      * faces of each second neighbor DoFs that minimizes the distance to the
      * interface. It works in a similar manner as a marching algorithm from the
@@ -1226,7 +1226,7 @@ namespace InterfaceTools
 
                         where x_I is the coord of the DoF I, phi(x) is the
                         distance (not signed) at the point x, belonging to the
-                        face F_J. Here, we resolve the problem in the reference
+                        face F_J. Here, we solve the problem in the reference
                         space (dim - 1).
                         */
 
@@ -1341,7 +1341,7 @@ namespace InterfaceTools
                             face minimizing the distance)*/
                             Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
 
-                            /* Relaxe the correction if it brings us outside of
+                            /* Relax the correction if it brings us outside of
                             the cell */
                             double relaxation = 1.0;
 
@@ -1355,7 +1355,7 @@ namespace InterfaceTools
                                 |             |
                                 |_____________|
 
-                            Each time it does, we relaxe the scheme to bring
+                            Each time it does, we relax the scheme to bring
                             back the estimation of the solution in the face:
                                  _____________
                                 |             | relaxed solution
@@ -1390,7 +1390,7 @@ namespace InterfaceTools
 
                                     /* Set the correction to put the solution on
                                     the face boundary. Select the minimum
-                                    relaxation of the all direction to ensure
+                                    relaxation of the all directions to ensure
                                     the solution stays inside the face.*/
                                     if (correction[k] > 1e-12)
                                       {
@@ -1462,7 +1462,7 @@ namespace InterfaceTools
 
         exchange_distance();
 
-        // Track the change flag accross the processes
+        // Track the change flag across the processes
         change = Utilities::MPI::logical_or(change, mpi_communicator);
 
         count += 1;
@@ -1485,12 +1485,12 @@ namespace InterfaceTools
     signed_distance.update_ghost_values();
 
     /* Copy distance to signed_distance_with_ghost to keep the knowledge of
-    local ghost values and to have a read only version of the vector. Ghost
+    local ghost values and to have a read-only version of the vector. Ghost
     values of the signed distance are needed for volume computations.*/
     signed_distance_with_ghost = signed_distance;
 
     /* Zero out ghost DOFs to regain write functionalities in signed_distance
-    (it becomes write only, that is why we need signed_distance_with_ghost -
+    (it becomes write-only, that is why we need signed_distance_with_ghost -
     to read the ghost values in it).*/
     signed_distance.zero_out_ghost_values();
 
@@ -1537,7 +1537,7 @@ namespace InterfaceTools
 
             /* We want to find a cell wise correction to apply to the cell's dof
             values of the signed_distance so that the geometric cell wise volume
-            encompased by the level 0 of the signed_distance V_K and by the
+            encompassed by the level 0 of the signed_distance V_K and by the
             iso-contour 0.5 of the phase fraction V_K,VOF match. This is
             required because the computed distance doesn't belong to the Q1
             approximation space.
@@ -1582,9 +1582,9 @@ namespace InterfaceTools
                 cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
               }
 
-            /* Secant method. The subsricpt nm1 (or n minus 1) stands for the
-            previous secant iteration (it = n-1), the subsricpt n stands for
-            the current iteration and the subsricpt np1 stands for the next
+            /* Secant method. The subscript nm1 (or n minus 1) stands for the
+            previous secant iteration (it = n-1), the subscript n stands for
+            the current iteration and the subscript np1 stands for the next
             iteration (it = n+1).*/
             double inside_cell_volume_nm1 = 0.0;
             double inside_cell_volume_n   = 0.0;
@@ -1685,7 +1685,7 @@ namespace InterfaceTools
     const MPI_Comm &mpi_communicator)
   {
     /* We want to find a global correction function to apply to the dof value of
-    the signed_distance so that the geometric global volume encompased by the
+    the signed_distance so that the geometric global volume encompassed by the
     level 0 of the signed_distance V and by the iso-contour 0.5 of the phase
     fraction V_VOF match. This is required because the computed distance doesn't
     belong to the Q1 approximation space. We solve the non-linear problem:
@@ -1698,13 +1698,13 @@ namespace InterfaceTools
 
     /* Compute targeted global volume. It corresponds to the one enclosed by
     the level 0 of the level_set vector (same volume as the one enclosed
-    byiso-contour 0.5 of the phase fraction).*/
+    by iso-contour 0.5 of the phase fraction).*/
     const double global_volume =
       compute_volume(mapping, dof_handler, fe, level_set, mpi_communicator);
 
-    /* Initialization of values for the secant method. The subsricpt nm1 (or n
+    /* Initialization of values for the secant method. The subscript nm1 (or n
     minus 1) stands for the previous secant iteration (it = n-1), the
-    subsricpt n stands for the current iteration and the subsricpt np1 stands
+    subscript n stands for the current iteration and the subscript np1 stands
     for the next iteration (it = n+1).*/
     double global_volume_nm1 = 0.0;
     double global_volume_n   = 0.0;
@@ -1716,20 +1716,20 @@ namespace InterfaceTools
 
     /* Global constant C that we are solving for to obtain
         DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0
-    where eta is the cell wise correction compute with
+    where eta is the cell wise correction computed with
     compute_cell_wise_volume_correction()*/
     double C_nm1 = 0.0;
     double C_n   = 0.0;
     double C_np1 = 0.0;
 
     /* Compute the volume and the difference with the targeted volume for 1st
-    initial guest of the correction funtion (xi_nm1 = C_nm1*eta)*/
+    initial guess of the correction funtion (xi_nm1 = C_nm1*eta)*/
     C_nm1 = 1.0;
     LinearAlgebra::distributed::Vector<double> signed_distance_0(
       signed_distance_with_ghost);
     signed_distance_0.add(C_nm1, volume_correction);
 
-    // Update_ghost_values is required for cell wise volume computations
+    // Update_ghost_values is required for cell-wise volume computations
     signed_distance_0.update_ghost_values();
 
     global_volume_nm1 = compute_volume(
@@ -1800,9 +1800,9 @@ namespace InterfaceTools
    * Return the local id of the opposite faces to the given local DOF (works
    * for quad only).
    *
-   * @param local_dof_id Local id of the DOF
+   * @param[in] local_dof_id Local id of the DOF
    *
-   * @param local_opposite_faces The vector containing the id of the opposite
+   * @param[out] local_opposite_faces The vector containing the id of the opposite
    * faces
    */
   template <int dim>
@@ -1824,11 +1824,11 @@ namespace InterfaceTools
    * @brief
    * Return the face transformation jacobian (dim-1 x dim-1).
    *
-   * @param cell_transformation_jac Transformation jacobian of the cell (dim x dim)
+   * @param[in] cell_transformation_jac Transformation jacobian of the cell (dim x dim)
    *
-   * @param local_face_id Local id of the face
+   * @param[in] local_face_id Local id of the face
    *
-   * @param face_transformation_jac Face transformation jacobian (dim-1 x dim-1)
+   * @param[out] face_transformation_jac Face transformation jacobian (dim-1 x dim-1)
    * faces
    */
   template <int dim>
@@ -1856,9 +1856,9 @@ namespace InterfaceTools
    * Transform a point dim-1 in a reference face to a point dim in the
    * reference cell.
    *
-   * @param x_ref_face Point dim-1 in the reference face
+   * @param[in] x_ref_face Point dim-1 in the reference face
    *
-   * @param local_face_id Local id of the face
+   * @param[in] local_face_id Local id of the face
    *
    * @return Point dim in the reference cell
    */
@@ -2489,7 +2489,6 @@ AdvectionProblem<dim>::solve()
   VectorType residual(locally_owned_dofs, mpi_communicator);
 
   system_matrix.vmult(residual, completely_distributed_solution);
-  // residual -= system_rhs;
   pcout << "   Iterations required for convergence: "
         << solver_control.last_step() << '\n'
         << "   Max norm of residual:                " << residual.linfty_norm()
