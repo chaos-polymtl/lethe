@@ -1317,7 +1317,7 @@ namespace InterfaceTools
                             // Convert the right hand side to the right format
                             // for the linear solver
                             Vector<double> residual_n_vec(dim - 1);
-                            residual_n.unroll(residual_n_vec);
+                            residual_n.unroll(residual_n_vec.begin(),residual_n_vec.end());
                             residual_n_vec *= -1.0;
 
                             jacobian_matrix.set_property(
