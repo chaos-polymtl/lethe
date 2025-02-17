@@ -4,16 +4,6 @@
 #pragma once
 
 /**
- * Name of the local git branch of the source directory.
+ * Tag of the current git HEAD as obtained with `git describe`.
  */
-#define LETHE_GIT_BRANCH "@LETHE_GIT_BRANCH@"
-
-/**
- * Full sha1 revision of the current git HEAD.
- */
-#define LETHE_GIT_REVISION "@LETHE_GIT_REVISION@"
-
-/**
- * Short sha1 revision of the current git HEAD.
- */
-#define LETHE_GIT_SHORTREV "@LETHE_GIT_SHORTREV@"
+#define LETHE_GIT_FANCY_TAG "@LETHE_GIT_FANCY_TAG@"
