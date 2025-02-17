@@ -5,6 +5,7 @@
 #define lethe_vof_h
 
 #include <core/bdf.h>
+#include <core/interface_tools.h>
 #include <core/simulation_control.h>
 #include <core/vector.h>
 
