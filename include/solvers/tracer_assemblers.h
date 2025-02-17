@@ -283,7 +283,10 @@ public:
 /**
  * @brief Class that assembles the reaction source term of the Tracer equation.
  * It assembles the term:
- * \f$ S = - R \= - k T^a \f$
+ * \f$ S = - R \= - k C \f$
+ * Where C is the tracer concentration and k is a reaction rate prefactor that
+ * changes depending on the underlying model. For power law of base rate
+ * $\alpha$ and order $n$, the model is: \f$ S = - R \= - (\alpha C^(n-1)) C \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

@@ -7,8 +7,9 @@ std::shared_ptr<TracerReactionPrefactorModel>
 TracerReactionPrefactorModel::model_cast(
   const Parameters::Material &material_properties)
 {
-  if (material_properties.tracer_reaction_constant_model ==
-      Parameters::Material::TracerReactionConstantModel::immersed_boundary_tanh)
+  if (material_properties.tracer_reaction_prefactor_model ==
+      Parameters::Material::TracerReactionPrefactorModel::
+        immersed_boundary_tanh)
     return std::make_shared<TanhLevelsetTracerReactionPrefactor>(
       material_properties.immersed_solid_tanh_parameters
         .tracer_reaction_constant_outside,
@@ -16,8 +17,8 @@ TracerReactionPrefactorModel::model_cast(
         .tracer_reaction_constant_inside,
       material_properties.immersed_solid_tanh_parameters.thickness,
       material_properties.tracer_reaction_order);
-  else if (material_properties.tracer_reaction_constant_model ==
-           Parameters::Material::TracerReactionConstantModel::constant)
+  else if (material_properties.tracer_reaction_prefactor_model ==
+           Parameters::Material::TracerReactionPrefactorModel::constant)
     return std::make_shared<ConstantTracerReactionPrefactor>(
       material_properties.tracer_reaction_constant,
       material_properties.tracer_reaction_order);

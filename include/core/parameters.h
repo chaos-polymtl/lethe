@@ -482,12 +482,12 @@ namespace Parameters
       immersed_boundary_tanh
     } tracer_diffusivity_model;
 
-    enum class TracerReactionConstantModel
+    enum class TracerReactionPrefactorModel
     {
       none,
       constant,
       immersed_boundary_tanh
-    } tracer_reaction_constant_model;
+    } tracer_reaction_prefactor_model;
 
     // Struct that contains the parameters to handle physical properties when
     // immersed solids models are used

@@ -113,11 +113,15 @@ Physical Properties
 
 * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
-* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant. At the moment, a constant tracer reaction constant and level set based :math:`\tanh` model are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``>. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_).
+* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant :math:`\alpha`. At the moment, a constant tracer reaction constant and level set based :math:`\tanh` model are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``>. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_). At the moment, only power law reaction consumption rates (:math:`-R`) are implemented:
 
-* The ``tracer reaction constant`` parameter is the reaction constant coefficient of the tracer in units of :math:`\text{Concentration}^{1-\text{order}}\text{Time}^{-\text{order}}` . In SI, this is :math:`(\text{m}^{\text{dim}}\text{g}^{-1})^{1-\text{order}} \text{s}^{-\text{order}}`.
+  .. math::
 
-* The ``tracer reaction order`` parameter is the reaction order of the tracer.
+    S = - R = - (\alpha C^{(n-1)}) C
+
+* The ``tracer reaction constant`` parameter (:math:`\alpha`) is the reaction constant coefficient of the tracer in units of :math:`\text{Concentration}^{1-\text{order}}\text{Time}^{-\text{order}}` . In SI, this is :math:`(\text{m}^{\text{dim}}\text{g}^{-1})^{1-\text{order}} \text{s}^{-\text{order}}`.
+
+* The ``tracer reaction order`` parameter (:math:`n`) is the reaction order of the tracer.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 

@@ -719,7 +719,6 @@ TracerAssemblerReaction<dim>::assemble_matrix(
   // Assembling local matrix
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // With the new formulation, the derivative d/dC of (k * C) is simply k.
       const double reaction_coeff = k[q];
 
       // Update the strong Jacobian with the reaction term contribution:
