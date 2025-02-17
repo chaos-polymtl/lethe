@@ -6,12 +6,12 @@ import os
 import shutil
 
 # Loops
-friction_coefficient = np.array([0.3])
-rolling_friction_coefficient =  np.array([0.05])
-restitution_coeff = np.array([0.9])
+friction_coefficient = np.linspace(0.2,0.5,10)
+rolling_friction_coefficient =  np.linspace(0,0.2,5)
+restitution_coeff =np.linspace(0.8,1,3)
 
 BASE_PREFIX = "rotating-drum"
-Folder = "calibration_"
+folder = "calibration_"
 
 for i in friction_coefficient:
     for j in rolling_friction_coefficient:
@@ -42,7 +42,7 @@ for i in friction_coefficient:
                                           Restitution_coefficient=k)
 
             # New prm name
-            prm_file_name = CASE_PREFIX + ".prm"
+            prm_file_name = BASE_PREFIX + ".prm"
             output_file_path = os.path.join(directory_path, prm_file_name)
 
             # Write
