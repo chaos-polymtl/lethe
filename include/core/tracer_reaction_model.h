@@ -167,7 +167,7 @@ public:
       PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
                                            "tracer_concentration"));
     if (id == field::tracer_concentration)
-      return tracer_reaction_constant *
+      return tracer_reaction_constant * (tracer_reaction_order-1.)*
              pow(field_values.at(field::tracer_concentration),
                  tracer_reaction_order - 2.);
     else
@@ -197,7 +197,7 @@ public:
         for (size_t i = 0; i < jacobian_vector.size(); ++i)
           {
             jacobian_vector[i] =
-              tracer_reaction_constant *
+              tracer_reaction_constant *( tracer_reaction_order - 1.)*
               std::pow(concentration_vector[i], tracer_reaction_order - 2.);
           }
       }
@@ -333,7 +333,7 @@ public:
           tracer_reaction_constant_inside +
           delta_reaction_constant *
             (0.5 + 0.5 * tanh(field_values.at(field::levelset) / thickness));
-        return k * pow(field_values.at(field::tracer_concentration),
+        return k * ( tracer_reaction_order - 1.)* pow(field_values.at(field::tracer_concentration),
                        tracer_reaction_order - 2.);
       }
     else
@@ -377,7 +377,7 @@ public:
                              delta_reaction_constant *
                                (0.5 + 0.5 * tanh(levelset_vec[i] / thickness));
             jacobian_vector[i] =
-              k * pow(concentration_vec[i], tracer_reaction_order - 2.);
+              k * ( tracer_reaction_order - 1.) * pow(concentration_vec[i], tracer_reaction_order - 2.);
           }
       }
     else
