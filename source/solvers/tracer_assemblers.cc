@@ -720,13 +720,17 @@ TracerAssemblerReaction<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double reaction_coeff = k[q];
+      const double C              = scratch_data.tracer_values[q];
 
       // Update the strong Jacobian with the reaction term contribution:
-      // It comes from the derivative -d/dC (k * C) = -k.
+      // It comes from the derivative -d/dC (k * C) = -(k + C*dk/dC).
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           const auto phi_T_j = scratch_data.phi[q][j];
-          strong_jacobian_vec[q][j] += -reaction_coeff * phi_T_j;
+          strong_jacobian_vec[q][j] +=
+            -(reaction_coeff +
+              scratch_data.grad_tracer_reaction_prefactor * C) *
+            phi_T_j;
         }
 
       // Store JxW in a local variable for faster access.
