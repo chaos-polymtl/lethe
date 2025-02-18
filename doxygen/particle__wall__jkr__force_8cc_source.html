@@ -336,339 +336,334 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>            }</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>          <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            {</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>              contact_information.normal_overlap = 0;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>              <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                {</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>                  contact_information.tangential_overlap[d]               = 0;</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>                  contact_information.rolling_resistance_spring_torque[d] = 0;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>                }</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>            }</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        }</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    }</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>}</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>              contact_information.normal_overlap = 0.;</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>              contact_information.tangential_overlap.clear();</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>              contact_information.rolling_resistance_spring_torque.clear();</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            }</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        }</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    }</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>}</div>
 </div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00257" data-start="{" data-end="}">
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno"><a class="line" href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">  257</a></span><a class="code hl_function" href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">ParticleWallJKRForce&lt;dim, PropertiesIndex&gt;::</a></div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><a class="code hl_function" href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">  calculate_particle_floating_wall_contact_force</a>(</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keyword">typename</span> <a class="code hl_typedef" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">DEM::dem_data_structures&lt;dim&gt;::particle_floating_mesh_in_contact</a></div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                              &amp;particle_floating_mesh_in_contact,</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keyword">const</span> <span class="keywordtype">double</span>               dt,</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;torque,</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;force,</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;<a class="code hl_class" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; &amp;solids)</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>{</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>  std::vector&lt;Particles::ParticleIterator&lt;dim&gt;&gt; particle_locations;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>  std::vector&lt;Point&lt;dim&gt;&gt; triangle(this-&gt;vertices_per_triangle);</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> solid_counter = 0; solid_counter &lt; solids.size();</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>       ++solid_counter)</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    {</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>      <span class="comment">// Get translational and rotational velocities and</span></div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>      <span class="comment">// center of rotation</span></div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>      Tensor&lt;1, 3&gt; translational_velocity =</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        solids[solid_counter]-&gt;get_translational_velocity();</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>      Tensor&lt;1, 3&gt; angular_velocity =</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        solids[solid_counter]-&gt;get_angular_velocity();</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>      Point&lt;3&gt; center_of_rotation =</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        solids[solid_counter]-&gt;get_center_of_rotation();</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span> </div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00254" data-start="{" data-end="}">
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno"><a class="line" href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">  254</a></span><a class="code hl_function" href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">ParticleWallJKRForce&lt;dim, PropertiesIndex&gt;::</a></div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><a class="code hl_function" href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">  calculate_particle_floating_wall_contact_force</a>(</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keyword">typename</span> <a class="code hl_typedef" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">DEM::dem_data_structures&lt;dim&gt;::particle_floating_mesh_in_contact</a></div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                              &amp;particle_floating_mesh_in_contact,</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    <span class="keyword">const</span> <span class="keywordtype">double</span>               dt,</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;torque,</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;force,</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;<a class="code hl_class" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; &amp;solids)</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>{</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>  std::vector&lt;Particles::ParticleIterator&lt;dim&gt;&gt; particle_locations;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>  std::vector&lt;Point&lt;dim&gt;&gt; triangle(this-&gt;vertices_per_triangle);</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> solid_counter = 0; solid_counter &lt; solids.size();</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>       ++solid_counter)</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    {</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>      <span class="comment">// Get translational and rotational velocities and</span></div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>      <span class="comment">// center of rotation</span></div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>      Tensor&lt;1, 3&gt; translational_velocity =</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>        solids[solid_counter]-&gt;get_translational_velocity();</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>      Tensor&lt;1, 3&gt; angular_velocity =</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        solids[solid_counter]-&gt;get_angular_velocity();</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>      Point&lt;3&gt; center_of_rotation =</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        solids[solid_counter]-&gt;get_center_of_rotation();</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>      <span class="keyword">auto</span> &amp;particle_floating_mesh_contact_pair =</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        particle_floating_mesh_in_contact[solid_counter];</div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span> </div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>      <span class="keyword">auto</span> &amp;particle_floating_mesh_contact_pair =</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        particle_floating_mesh_in_contact[solid_counter];</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span> </div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;[cut_cell, map_info] : particle_floating_mesh_contact_pair)</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        {</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>          <span class="keywordflow">if</span> (!map_info.empty())</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>            {</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>              <span class="comment">// Clear the particle locations vector for the new cut cell</span></div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>              particle_locations.clear();</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>              <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_particles = map_info.size();</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>              <span class="comment">// Gather all the particles locations in a vector</span></div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>              <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;&amp;contact_info : map_info | boost::adaptors::map_values)</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>                {</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                  particle_locations.push_back(contact_info.particle);</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                }</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span> </div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>              <span class="comment">// Build triangle vector</span></div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> vertex = 0;</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>                   vertex &lt; this-&gt;vertices_per_triangle;</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                   ++vertex)</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                {</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                  <span class="comment">// Find vertex-floating wall distance</span></div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                  triangle[vertex] = cut_cell-&gt;vertex(vertex);</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                }</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span> </div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>              <span class="comment">// Call find_particle_triangle_projection to get the</span></div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>              <span class="comment">// distance and projection of particles on the triangle</span></div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>              <span class="comment">// (floating mesh cell)</span></div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>              <span class="keyword">auto</span> particle_triangle_information = LetheGridTools::</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>                find_particle_triangle_projection&lt;dim, PropertiesIndex&gt;(</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                  triangle, particle_locations, n_particles);</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span> </div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>              <span class="keyword">const</span> std::vector&lt;bool&gt; pass_distance_check =</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                std::get&lt;0&gt;(particle_triangle_information);</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>              <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; projection_points =</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>                std::get&lt;1&gt;(particle_triangle_information);</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>              <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, 3&gt;&gt; normal_vectors =</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>                std::get&lt;2&gt;(particle_triangle_information);</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>              <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_counter = 0;</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span> </div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>              <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;&amp;contact_info : map_info | boost::adaptors::map_values)</div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>                {</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>                  <span class="comment">// If particle passes the distance check</span></div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                  <span class="keywordflow">if</span> (pass_distance_check[particle_counter])</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                    {</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                      <span class="comment">// Define the total force of contact, properties of</span></div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                      <span class="comment">// particle as local parameters</span></div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                      <span class="keyword">auto</span> &amp;particle            = contact_info.particle;</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>                      <span class="keyword">auto</span>  particle_properties = particle-&gt;get_properties();</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;[cut_cell, map_info] : particle_floating_mesh_contact_pair)</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        {</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>          <span class="keywordflow">if</span> (!map_info.empty())</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>            {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>              <span class="comment">// Clear the particle locations vector for the new cut cell</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>              particle_locations.clear();</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>              <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_particles = map_info.size();</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>              <span class="comment">// Gather all the particles locations in a vector</span></div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>              <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;&amp;contact_info : map_info | boost::adaptors::map_values)</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                {</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                  particle_locations.push_back(contact_info.particle);</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>                }</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>              <span class="comment">// Build triangle vector</span></div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> vertex = 0;</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>                   vertex &lt; this-&gt;vertices_per_triangle;</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>                   ++vertex)</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>                {</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>                  <span class="comment">// Find vertex-floating wall distance</span></div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                  triangle[vertex] = cut_cell-&gt;vertex(vertex);</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                }</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>              <span class="comment">// Call find_particle_triangle_projection to get the</span></div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>              <span class="comment">// distance and projection of particles on the triangle</span></div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>              <span class="comment">// (floating mesh cell)</span></div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>              <span class="keyword">auto</span> particle_triangle_information = LetheGridTools::</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                find_particle_triangle_projection&lt;dim, PropertiesIndex&gt;(</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                  triangle, particle_locations, n_particles);</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>              <span class="keyword">const</span> std::vector&lt;bool&gt; pass_distance_check =</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                std::get&lt;0&gt;(particle_triangle_information);</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>              <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; projection_points =</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                std::get&lt;1&gt;(particle_triangle_information);</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>              <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, 3&gt;&gt; normal_vectors =</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                std::get&lt;2&gt;(particle_triangle_information);</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span> </div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>              <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_counter = 0;</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span> </div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>              <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;&amp;contact_info : map_info | boost::adaptors::map_values)</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>                {</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>                  <span class="comment">// If particle passes the distance check</span></div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>                  <span class="keywordflow">if</span> (pass_distance_check[particle_counter])</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>                    {</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>                      <span class="comment">// Define the total force of contact, properties of</span></div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                      <span class="comment">// particle as local parameters</span></div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                      <span class="keyword">auto</span> &amp;particle            = contact_info.particle;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                      <span class="keyword">auto</span>  particle_properties = particle-&gt;get_properties();</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span> </div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                      <span class="keyword">const</span> Point&lt;3&gt; &amp;projection_point =</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>                        projection_points[particle_counter];</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span> </div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>                      <span class="keyword">const</span> Point&lt;3&gt; &amp;projection_point =</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>                        projection_points[particle_counter];</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>                      Point&lt;3&gt; particle_location_3d;</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>                      Point&lt;3&gt; particle_location_3d;</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span> </div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>                      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>                        particle_location_3d = particle-&gt;get_location();</div>
 <div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span> </div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>                      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>                        particle_location_3d = particle-&gt;get_location();</div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>                      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 2)</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>                        particle_location_3d =</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>                          <a class="code hl_function" href="tensors__and__points__dimension__manipulation_8h.html#acfecb15ac889f2f81dbcbcdb364b6485">point_nd_to_3d</a>(particle-&gt;get_location());</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>                      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 2)</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>                        particle_location_3d =</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>                          <a class="code hl_function" href="tensors__and__points__dimension__manipulation_8h.html#acfecb15ac889f2f81dbcbcdb364b6485">point_nd_to_3d</a>(particle-&gt;get_location());</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span> </div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>                      <span class="keyword">const</span> <span class="keywordtype">double</span> particle_triangle_distance =</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>                        particle_location_3d.distance(projection_point);</div>
 <div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span> </div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>                      <span class="keyword">const</span> <span class="keywordtype">double</span> particle_triangle_distance =</div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>                        particle_location_3d.distance(projection_point);</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span> </div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>                      <span class="comment">// Find normal overlap</span></div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>                      <span class="keywordtype">double</span> normal_overlap =</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                        ((particle_properties[PropertiesIndex::dp]) * 0.5) -</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>                        particle_triangle_distance;</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span> </div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>                      <span class="keywordflow">if</span> (normal_overlap &gt; 0)</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>                        {</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>                          contact_info.normal_overlap = normal_overlap;</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>                      <span class="comment">// Find normal overlap</span></div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>                      <span class="keywordtype">double</span> normal_overlap =</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>                        ((particle_properties[PropertiesIndex::dp]) * 0.5) -</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>                        particle_triangle_distance;</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span> </div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                      <span class="keywordflow">if</span> (normal_overlap &gt; 0)</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>                        {</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>                          contact_info.normal_overlap = normal_overlap;</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span> </div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>                          contact_info.normal_vector =</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>                            normal_vectors[particle_counter];</div>
 <div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span> </div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>                          contact_info.normal_vector =</div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>                            normal_vectors[particle_counter];</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span> </div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>                          contact_info.point_on_boundary = projection_point;</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span> </div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>                          contact_info.boundary_id = solid_counter;</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span> </div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>                          <span class="keyword">this</span></div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>                            -&gt;update_particle_floating_wall_contact_information(</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>                              contact_info,</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>                              particle_properties,</div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>                              dt,</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                              translational_velocity,</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                              angular_velocity,</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                              center_of_rotation.distance(</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                                particle_location_3d));</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span> </div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>                          <span class="comment">// This tuple (forces and torques) contains four</span></div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>                          <span class="comment">// elements which are: 1, normal force, 2, tangential</span></div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>                          <span class="comment">// force, 3, tangential torque and 4, rolling</span></div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>                          <span class="comment">// resistance torque, respectively</span></div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>                          std::tuple&lt;Tensor&lt;1, 3&gt;,</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>                                     Tensor&lt;1, 3&gt;,</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>                                     Tensor&lt;1, 3&gt;,</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                                     Tensor&lt;1, 3&gt;&gt;</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>                            forces_and_torques =</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                              this-&gt;calculate_jkr_contact_force_and_torque(</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>                                dt, contact_info, particle_properties);</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span> </div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>                          <span class="comment">// Get particle&#39;s torque and force</span></div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>                          types::particle_index particle_id =</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>                            particle-&gt;get_local_index();</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>                          contact_info.point_on_boundary = projection_point;</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span> </div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>                          contact_info.boundary_id = solid_counter;</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span> </div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>                          <span class="keyword">this</span></div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>                            -&gt;update_particle_floating_wall_contact_information(</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>                              contact_info,</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>                              particle_properties,</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>                              dt,</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>                              translational_velocity,</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>                              angular_velocity,</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>                              center_of_rotation.distance(</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                                particle_location_3d));</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span> </div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                          <span class="comment">// This tuple (forces and torques) contains four</span></div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                          <span class="comment">// elements which are: 1, normal force, 2, tangential</span></div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>                          <span class="comment">// force, 3, tangential torque and 4, rolling</span></div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>                          <span class="comment">// resistance torque, respectively</span></div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>                          std::tuple&lt;Tensor&lt;1, 3&gt;,</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>                                     Tensor&lt;1, 3&gt;,</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>                                     Tensor&lt;1, 3&gt;,</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>                                     Tensor&lt;1, 3&gt;&gt;</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>                            forces_and_torques =</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>                              this-&gt;calculate_jkr_contact_force_and_torque(</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                                dt, contact_info, particle_properties);</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span> </div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                          <span class="comment">// Get particle&#39;s torque and force</span></div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>                          types::particle_index particle_id =</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>                            particle-&gt;get_local_index();</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span> </div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>                          Tensor&lt;1, 3&gt; &amp;particle_torque = torque[particle_id];</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>                          Tensor&lt;1, 3&gt; &amp;particle_force  = force[particle_id];</div>
 <div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span> </div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>                          Tensor&lt;1, 3&gt; &amp;particle_torque = torque[particle_id];</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>                          Tensor&lt;1, 3&gt; &amp;particle_force  = force[particle_id];</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>                          <span class="comment">// Apply the calculated forces and torques on the</span></div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>                          <span class="comment">// particle</span></div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>                          this-&gt;apply_force_and_torque(</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>                            forces_and_torques,</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>                            particle_torque,</div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>                            particle_force,</div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>                            projection_point,</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>                            contact_info.boundary_id);</div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>                        }</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                        {</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                          contact_info.normal_overlap = 0;</div>
-<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
-<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>                            {</div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>                              contact_info.tangential_overlap[d] = 0;</div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>                            }</div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>                        }</div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>                    }</div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>                  particle_counter++;</div>
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>                }</div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>            }</div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>        }</div>
-<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>    }</div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>}</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>                          <span class="comment">// Apply the calculated forces and torques on the</span></div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>                          <span class="comment">// particle</span></div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>                          this-&gt;apply_force_and_torque(</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>                            forces_and_torques,</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>                            particle_torque,</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>                            particle_force,</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>                            projection_point,</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>                            contact_info.boundary_id);</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>                        }</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>                      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>                        {</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>                          contact_info.normal_overlap = 0;</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                          contact_info.tangential_overlap.clear();</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                          contact_info.rolling_resistance_spring_torque.clear();</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                        }</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                    }</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>                  particle_counter++;</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>                }</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>            }</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>        }</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>    }</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>}</div>
 </div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span> </div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span><span class="comment">// Calculates JKR contact force and torques</span></div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>std::tuple&lt;Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;&gt;</div>
-<div class="foldopen" id="foldopen00421" data-start="{" data-end="}">
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno"><a class="line" href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">  421</a></span><a class="code hl_function" href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">ParticleWallJKRForce&lt;dim, PropertiesIndex&gt;::</a></div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span><a class="code hl_function" href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">  calculate_jkr_contact_force_and_torque</a>(</div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>    <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    <a class="code hl_class" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a> &amp;contact_info,</div>
-<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    <span class="keyword">const</span> ArrayView&lt;const double&gt;   &amp;particle_properties)</div>
-<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>{</div>
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>  <span class="comment">// i is the particle, j is the wall.</span></div>
-<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>  <span class="comment">// we need to put a minus sign infront of the normal_vector to respect the</span></div>
-<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>  <span class="comment">// convention (i -&gt; j)</span></div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>  Tensor&lt;1, 3&gt;       normal_vector = -contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a528c805ed9a47e5bfc49ac67cf8e9f86">normal_vector</a>;</div>
-<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_type = particle_properties[PropertiesIndex::type];</div>
-<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span> </div>
-<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> effective_radius =</div>
-<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>    0.5 * particle_properties[PropertiesIndex::dp];</div>
-<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span> </div>
-<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>  <span class="comment">// Calculation of model parameters (beta, sn and st). These values</span></div>
-<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>  <span class="comment">// are used to consider non-linear relation of the contact force to</span></div>
-<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>  <span class="comment">// the normal overlap</span></div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>  <span class="keywordtype">double</span> radius_times_overlap_sqrt =</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    sqrt(particle_properties[PropertiesIndex::dp] * 0.5 *</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>         contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">normal_overlap</a>);</div>
-<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>  <span class="keywordtype">double</span> model_parameter_sn = 2 *</div>
-<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>                              this-&gt;effective_youngs_modulus[particle_type] *</div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>                              radius_times_overlap_sqrt;</div>
-<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span> </div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>  <span class="keywordtype">double</span> model_parameter_st = 8 * this-&gt;effective_shear_modulus[particle_type] *</div>
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>                              radius_times_overlap_sqrt;</div>
-<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span> </div>
-<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>  <span class="comment">// Calculation of the contact patch radius (a) using the analytical solution</span></div>
-<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>  <span class="comment">// describe in the theory guide.</span></div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c0 =</div>
-<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>    Utilities::fixed_power&lt;2&gt;(effective_radius * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">normal_overlap</a>);</div>
-<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c1 = -2. * Utilities::fixed_power&lt;2&gt;(effective_radius) * M_PI *</div>
-<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>                    this-&gt;effective_surface_energy[particle_type] /</div>
-<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>                    this-&gt;effective_youngs_modulus[particle_type];</div>
-<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c2 = -2. * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">normal_overlap</a> * effective_radius;</div>
-<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> P  = -Utilities::fixed_power&lt;2&gt;(c2) / 12. - c0;</div>
-<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> Q  = -Utilities::fixed_power&lt;3&gt;(c2) / 108. + c0 * c2 / 3. -</div>
-<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>                   Utilities::fixed_power&lt;2&gt;(c1) * 0.125;</div>
-<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> root1  = std::max(0.,</div>
-<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>                                (0.25 * Utilities::fixed_power&lt;2&gt;(Q)) +</div>
-<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>                                  (Utilities::fixed_power&lt;3&gt;(P) / 27.));</div>
-<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> U      = std::cbrt(-0.5 * Q + std::sqrt(root1));</div>
-<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> s      = -c2 * (5. / 6.) + U - P / (3. * U);</div>
-<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> w      = std::sqrt(std::max(1e-16, c2 + 2. * s));</div>
-<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> lambda = 0.5 * c1 / w;</div>
-<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> root2  = std::max(1e-16, w * w - 4. * (c2 + s + lambda));</div>
-<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> a      = 0.5 * (w + std::sqrt(root2));</div>
-<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span> </div>
-<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>  <span class="comment">// Calculation of normal damping and tangential spring and dashpot constants</span></div>
-<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>  <span class="comment">// using particle and wall properties.</span></div>
-<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>  <span class="comment">// There is no minus sign here since model_parameter_beta is negative or</span></div>
-<div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>  <span class="comment">// equal to zero.</span></div>
-<div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> normal_damping_constant =</div>
-<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>    1.8257 * this-&gt;model_parameter_beta[particle_type] * <span class="comment">// 2. * sqrt(5./6.)</span></div>
-<div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>    sqrt(model_parameter_sn * particle_properties[PropertiesIndex::mass]);</div>
-<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span> </div>
-<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>  <span class="comment">// Tangential spring constant is set as a negative just like in the other</span></div>
-<div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>  <span class="comment">// particle-wall models. This must be taken into account for the square root</span></div>
-<div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>  <span class="comment">// in the tangential_damping_calculation.</span></div>
-<div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span>  <span class="keywordtype">double</span> tangential_spring_constant =</div>
-<div class="line"><a id="l00482" name="l00482"></a><span class="lineno">  482</span>    -8. * this-&gt;effective_shear_modulus[particle_type] *</div>
-<div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>    radius_times_overlap_sqrt;</div>
-<div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span> </div>
-<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>  <span class="comment">// There is no minus sign here since model_parameter_beta is negative or</span></div>
-<div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>  <span class="comment">// equal to zero.</span></div>
-<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> tangential_damping_constant =</div>
-<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>    normal_damping_constant *</div>
-<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>    sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));</div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span> </div>
-<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>  <span class="comment">// Calculation of the normal force coefficient (F_n_JKR)</span></div>
-<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> normal_force_norm =</div>
-<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>    4. * this-&gt;effective_youngs_modulus[particle_type] *</div>
-<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>      Utilities::fixed_power&lt;3&gt;(a) / (3. * effective_radius) -</div>
-<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>    std::sqrt(8 * M_PI * this-&gt;effective_surface_energy[particle_type] *</div>
-<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>              this-&gt;effective_youngs_modulus[particle_type] *</div>
-<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>              Utilities::fixed_power&lt;3&gt;(a)) +</div>
-<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>    normal_damping_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#adf9ba5eac230730acd52ade238ecf3a3">normal_relative_velocity</a>;</div>
-<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span> </div>
-<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>  <span class="comment">// Calculation of normal force using the normal_force_norm and the</span></div>
-<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>  <span class="comment">// normal vector.</span></div>
-<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>  Tensor&lt;1, 3&gt; normal_force = normal_force_norm * normal_vector;</div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span> </div>
-<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>  <span class="comment">// Calculation of tangential forces.</span></div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>  Tensor&lt;1, 3&gt; damping_tangential_force =</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>    tangential_damping_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#ad558e190a2cf82c5b71de369f33e7f2a">tangential_relative_velocity</a>;</div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>  Tensor&lt;1, 3&gt; tangential_force =</div>
-<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>    tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a> +</div>
-<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>    damping_tangential_force;</div>
-<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>  <span class="keywordtype">double</span> tangential_force_norm = tangential_force.norm();</div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span> </div>
-<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>  <span class="comment">// JKR theory says that the coulomb threshold must be modified with the</span></div>
-<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>  <span class="comment">// pull-out force. (Thornton 1991)</span></div>
-<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> modified_coulomb_threshold =</div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>    (normal_force_norm + 3. * M_PI *</div>
-<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>                           this-&gt;effective_surface_energy[particle_type] *</div>
-<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>                           effective_radius) *</div>
-<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>    this-&gt;effective_coefficient_of_friction[particle_type];</div>
-<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span> </div>
-<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>  <span class="comment">// Check for gross sliding</span></div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>  <span class="keywordflow">if</span> (tangential_force_norm &gt; modified_coulomb_threshold)</div>
-<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>    {</div>
-<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>      <span class="comment">// Gross sliding occurs and the tangential overlap and tangential</span></div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>      <span class="comment">// force are limited to Coulomb&#39;s criterion</span></div>
-<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a> =</div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>        (modified_coulomb_threshold *</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>           (tangential_force / (tangential_force_norm + DBL_MIN)) -</div>
-<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>         damping_tangential_force) /</div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>        (tangential_spring_constant + DBL_MIN);</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span> </div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span><span class="comment">// Calculates JKR contact force and torques</span></div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>std::tuple&lt;Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;&gt;</div>
+<div class="foldopen" id="foldopen00416" data-start="{" data-end="}">
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno"><a class="line" href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">  416</a></span><a class="code hl_function" href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">ParticleWallJKRForce&lt;dim, PropertiesIndex&gt;::</a></div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span><a class="code hl_function" href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">  calculate_jkr_contact_force_and_torque</a>(</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>    <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>    <a class="code hl_class" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a> &amp;contact_info,</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    <span class="keyword">const</span> ArrayView&lt;const double&gt;   &amp;particle_properties)</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>{</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>  <span class="comment">// i is the particle, j is the wall.</span></div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>  <span class="comment">// we need to put a minus sign infront of the normal_vector to respect the</span></div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>  <span class="comment">// convention (i -&gt; j)</span></div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>  Tensor&lt;1, 3&gt;       normal_vector = -contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a528c805ed9a47e5bfc49ac67cf8e9f86">normal_vector</a>;</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_type = particle_properties[PropertiesIndex::type];</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span> </div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> effective_radius =</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>    0.5 * particle_properties[PropertiesIndex::dp];</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span> </div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>  <span class="comment">// Calculation of model parameters (beta, sn and st). These values</span></div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>  <span class="comment">// are used to consider non-linear relation of the contact force to</span></div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>  <span class="comment">// the normal overlap</span></div>
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>  <span class="keywordtype">double</span> radius_times_overlap_sqrt =</div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>    sqrt(particle_properties[PropertiesIndex::dp] * 0.5 *</div>
+<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>         contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">normal_overlap</a>);</div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>  <span class="keywordtype">double</span> model_parameter_sn = 2 *</div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>                              this-&gt;effective_youngs_modulus[particle_type] *</div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>                              radius_times_overlap_sqrt;</div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span> </div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>  <span class="keywordtype">double</span> model_parameter_st = 8 * this-&gt;effective_shear_modulus[particle_type] *</div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>                              radius_times_overlap_sqrt;</div>
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span> </div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>  <span class="comment">// Calculation of the contact patch radius (a) using the analytical solution</span></div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>  <span class="comment">// describe in the theory guide.</span></div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c0 =</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>    Utilities::fixed_power&lt;2&gt;(effective_radius * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">normal_overlap</a>);</div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c1 = -2. * Utilities::fixed_power&lt;2&gt;(effective_radius) * M_PI *</div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>                    this-&gt;effective_surface_energy[particle_type] /</div>
+<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>                    this-&gt;effective_youngs_modulus[particle_type];</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c2 = -2. * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">normal_overlap</a> * effective_radius;</div>
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> P  = -Utilities::fixed_power&lt;2&gt;(c2) / 12. - c0;</div>
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> Q  = -Utilities::fixed_power&lt;3&gt;(c2) / 108. + c0 * c2 / 3. -</div>
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>                   Utilities::fixed_power&lt;2&gt;(c1) * 0.125;</div>
+<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> root1  = std::max(0.,</div>
+<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>                                (0.25 * Utilities::fixed_power&lt;2&gt;(Q)) +</div>
+<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>                                  (Utilities::fixed_power&lt;3&gt;(P) / 27.));</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> U      = std::cbrt(-0.5 * Q + std::sqrt(root1));</div>
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> s      = -c2 * (5. / 6.) + U - P / (3. * U);</div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> w      = std::sqrt(std::max(1e-16, c2 + 2. * s));</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> lambda = 0.5 * c1 / w;</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> root2  = std::max(1e-16, w * w - 4. * (c2 + s + lambda));</div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> a      = 0.5 * (w + std::sqrt(root2));</div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span> </div>
+<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>  <span class="comment">// Calculation of normal damping and tangential spring and dashpot constants</span></div>
+<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>  <span class="comment">// using particle and wall properties.</span></div>
+<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>  <span class="comment">// There is no minus sign here since model_parameter_beta is negative or</span></div>
+<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>  <span class="comment">// equal to zero.</span></div>
+<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> normal_damping_constant =</div>
+<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>    1.8257 * this-&gt;model_parameter_beta[particle_type] * <span class="comment">// 2. * sqrt(5./6.)</span></div>
+<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>    sqrt(model_parameter_sn * particle_properties[PropertiesIndex::mass]);</div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span> </div>
+<div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>  <span class="comment">// Tangential spring constant is set as a negative just like in the other</span></div>
+<div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>  <span class="comment">// particle-wall models. This must be taken into account for the square root</span></div>
+<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>  <span class="comment">// in the tangential_damping_calculation.</span></div>
+<div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>  <span class="keywordtype">double</span> tangential_spring_constant =</div>
+<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span>    -8. * this-&gt;effective_shear_modulus[particle_type] *</div>
+<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>    radius_times_overlap_sqrt;</div>
+<div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span> </div>
+<div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>  <span class="comment">// There is no minus sign here since model_parameter_beta is negative or</span></div>
+<div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span>  <span class="comment">// equal to zero.</span></div>
+<div class="line"><a id="l00482" name="l00482"></a><span class="lineno">  482</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> tangential_damping_constant =</div>
+<div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>    normal_damping_constant *</div>
+<div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>    sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));</div>
+<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span> </div>
+<div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>  <span class="comment">// Calculation of the normal force coefficient (F_n_JKR)</span></div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> normal_force_norm =</div>
+<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>    4. * this-&gt;effective_youngs_modulus[particle_type] *</div>
+<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>      Utilities::fixed_power&lt;3&gt;(a) / (3. * effective_radius) -</div>
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>    std::sqrt(8 * M_PI * this-&gt;effective_surface_energy[particle_type] *</div>
+<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>              this-&gt;effective_youngs_modulus[particle_type] *</div>
+<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>              Utilities::fixed_power&lt;3&gt;(a)) +</div>
+<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>    normal_damping_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#adf9ba5eac230730acd52ade238ecf3a3">normal_relative_velocity</a>;</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span> </div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>  <span class="comment">// Calculation of normal force using the normal_force_norm and the</span></div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>  <span class="comment">// normal vector.</span></div>
+<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>  Tensor&lt;1, 3&gt; normal_force = normal_force_norm * normal_vector;</div>
+<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span> </div>
+<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>  <span class="comment">// Calculation of tangential forces.</span></div>
+<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>  Tensor&lt;1, 3&gt; damping_tangential_force =</div>
+<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>    tangential_damping_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#ad558e190a2cf82c5b71de369f33e7f2a">tangential_relative_velocity</a>;</div>
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>  Tensor&lt;1, 3&gt; tangential_force =</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a> +</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>    damping_tangential_force;</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>  <span class="keywordtype">double</span> tangential_force_norm = tangential_force.norm();</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>  <span class="comment">// JKR theory says that the coulomb threshold must be modified with the</span></div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>  <span class="comment">// pull-out force. (Thornton 1991)</span></div>
+<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> modified_coulomb_threshold =</div>
+<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>    (normal_force_norm + 3. * M_PI *</div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>                           this-&gt;effective_surface_energy[particle_type] *</div>
+<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>                           effective_radius) *</div>
+<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>    this-&gt;effective_coefficient_of_friction[particle_type];</div>
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span> </div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>  <span class="comment">// Check for gross sliding</span></div>
+<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>  <span class="keywordflow">if</span> (tangential_force_norm &gt; modified_coulomb_threshold)</div>
+<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>    {</div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>      <span class="comment">// Gross sliding occurs and the tangential overlap and tangential</span></div>
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>      <span class="comment">// force are limited to Coulomb&#39;s criterion</span></div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a> =</div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>        (modified_coulomb_threshold *</div>
+<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>           (tangential_force / (tangential_force_norm + DBL_MIN)) -</div>
+<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>         damping_tangential_force) /</div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>        (tangential_spring_constant + DBL_MIN);</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span> </div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>      tangential_force =</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        (tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a>) +</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>        damping_tangential_force;</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>    }</div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span> </div>
-<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>      tangential_force =</div>
-<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>        (tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a>) +</div>
-<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>        damping_tangential_force;</div>
-<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>    }</div>
-<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span> </div>
-<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>  <span class="comment">// Calculation torque caused by tangential force</span></div>
-<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>  <span class="comment">// We add the minus sign here since the tangential_force is applied on the</span></div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>  <span class="comment">// particle is in the opposite direction</span></div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>  Tensor&lt;1, 3&gt; tangential_torque =</div>
-<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>    cross_product_3d((0.5 * particle_properties[PropertiesIndex::dp] *</div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>                      normal_vector),</div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>                     -tangential_force);</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span> </div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>  <span class="comment">// We need to compute the normal spring constant for case where we use the</span></div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>  <span class="comment">// EPSD rolling resistance model.</span></div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>  <span class="keywordtype">double</span> normal_spring_constant = 0.66665 * model_parameter_sn;</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span> </div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>  <span class="comment">// Rolling resistance torque</span></div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>  Tensor&lt;1, 3&gt; rolling_resistance_torque =</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>    (this-&gt;*calculate_rolling_resistance_torque)(</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>      particle_properties,</div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>      this-&gt;effective_coefficient_of_rolling_friction[particle_type],</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>      this-&gt;effective_coefficient_of_rolling_viscous_damping[particle_type],</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>      normal_force.norm(),</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>      dt,</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>      normal_spring_constant,</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a528c805ed9a47e5bfc49ac67cf8e9f86">normal_vector</a>,</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#ac9b3c405410ab567525ff5db26951da5">rolling_resistance_spring_torque</a>);</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span> </div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>  <span class="keywordflow">return</span> std::make_tuple(normal_force,</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>                         tangential_force,</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>                         tangential_torque,</div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>                         rolling_resistance_torque);</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>}</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>  <span class="comment">// Calculation torque caused by tangential force</span></div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>  <span class="comment">// We add the minus sign here since the tangential_force is applied on the</span></div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>  <span class="comment">// particle is in the opposite direction</span></div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>  Tensor&lt;1, 3&gt; tangential_torque =</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>    cross_product_3d((0.5 * particle_properties[PropertiesIndex::dp] *</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>                      normal_vector),</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>                     -tangential_force);</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span> </div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>  <span class="comment">// We need to compute the normal spring constant for case where we use the</span></div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>  <span class="comment">// EPSD rolling resistance model.</span></div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>  <span class="keywordtype">double</span> normal_spring_constant = 0.66665 * model_parameter_sn;</div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span> </div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>  <span class="comment">// Rolling resistance torque</span></div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>  Tensor&lt;1, 3&gt; rolling_resistance_torque =</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>    (this-&gt;*calculate_rolling_resistance_torque)(</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>      particle_properties,</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>      this-&gt;effective_coefficient_of_rolling_friction[particle_type],</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>      this-&gt;effective_coefficient_of_rolling_viscous_damping[particle_type],</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>      normal_force.norm(),</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>      dt,</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>      normal_spring_constant,</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#a528c805ed9a47e5bfc49ac67cf8e9f86">normal_vector</a>,</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#ac9b3c405410ab567525ff5db26951da5">rolling_resistance_spring_torque</a>);</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span> </div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>  <span class="keywordflow">return</span> std::make_tuple(normal_force,</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>                         tangential_force,</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>                         tangential_torque,</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>                         rolling_resistance_torque);</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>}</div>
 </div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span> </div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span> </div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;2, DEM::DEMProperties::PropertiesIndex&gt;</a>;</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;</a>;</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;3, DEM::DEMProperties::PropertiesIndex&gt;</a>;</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;</a>;</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span> </div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span> </div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;2, DEM::DEMProperties::PropertiesIndex&gt;</a>;</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;</a>;</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;3, DEM::DEMProperties::PropertiesIndex&gt;</a>;</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParticleWallJKRForce.html">ParticleWallJKRForce&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;</a>;</div>
 <div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition</b> <a href="dem__solver__parameters_8h_source.html#l00016">dem_solver_parameters.h:17</a></div></div>
 <div class="ttc" id="aclassDEMSolverParameters_html_a31f718dd8b672529e5a68b96e0bbea05"><div class="ttname"><a href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">DEMSolverParameters::lagrangian_physical_properties</a></div><div class="ttdeci">Parameters::Lagrangian::LagrangianPhysicalProperties lagrangian_physical_properties</div><div class="ttdef"><b>Definition</b> <a href="dem__solver__parameters_8h_source.html#l00025">dem_solver_parameters.h:25</a></div></div>
 <div class="ttc" id="aclassDEMSolverParameters_html_a5131e3688171e04535b53f23b59354bb"><div class="ttname"><a href="classDEMSolverParameters.html#a5131e3688171e04535b53f23b59354bb">DEMSolverParameters::model_parameters</a></div><div class="ttdeci">Parameters::Lagrangian::ModelParameters model_parameters</div><div class="ttdef"><b>Definition</b> <a href="dem__solver__parameters_8h_source.html#l00027">dem_solver_parameters.h:27</a></div></div>
@@ -691,9 +686,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassParticleWallJKRForce_html"><div class="ttname"><a href="classParticleWallJKRForce.html">ParticleWallJKRForce</a></div><div class="ttdoc">Calculation of the JKR particle-wall contact force using the information obtained from the fine searc...</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8h_source.html#l00024">particle_wall_jkr_force.h:26</a></div></div>
 <div class="ttc" id="aclassParticleWallJKRForce_html_a323406c941225dca2396edc7365aa962"><div class="ttname"><a href="classParticleWallJKRForce.html#a323406c941225dca2396edc7365aa962">ParticleWallJKRForce::calculate_particle_wall_contact_force</a></div><div class="ttdeci">virtual void calculate_particle_wall_contact_force(typename DEM::dem_data_structures&lt; dim &gt;::particle_wall_in_contact &amp;particle_wall_pairs_in_contact, const double dt, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force) override</div><div class="ttdoc">Carries out the calculation of the particle-wall contact force using JKR model.</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8cc_source.html#l00149">particle_wall_jkr_force.cc:150</a></div></div>
 <div class="ttc" id="aclassParticleWallJKRForce_html_aac5a6a2d3b54cf5025e030628c1e1c97"><div class="ttname"><a href="classParticleWallJKRForce.html#aac5a6a2d3b54cf5025e030628c1e1c97">ParticleWallJKRForce::ParticleWallJKRForce</a></div><div class="ttdeci">ParticleWallJKRForce(const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, const std::vector&lt; types::boundary_id &gt; &amp;boundary_index={})</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8cc_source.html#l00011">particle_wall_jkr_force.cc:11</a></div></div>
-<div class="ttc" id="aclassParticleWallJKRForce_html_abd0caeda04b4b0d4cca2acd9afa118af"><div class="ttname"><a href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">ParticleWallJKRForce::calculate_jkr_contact_force_and_torque</a></div><div class="ttdeci">std::tuple&lt; Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt; &gt; calculate_jkr_contact_force_and_torque(const double dt, particle_wall_contact_info&lt; dim &gt; &amp;contact_info, const ArrayView&lt; const double &gt; &amp;particle_properties)</div><div class="ttdoc">Carries out the calculation of the particle-wall JKR contact force and torques based on the updated v...</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8cc_source.html#l00421">particle_wall_jkr_force.cc:422</a></div></div>
+<div class="ttc" id="aclassParticleWallJKRForce_html_abd0caeda04b4b0d4cca2acd9afa118af"><div class="ttname"><a href="classParticleWallJKRForce.html#abd0caeda04b4b0d4cca2acd9afa118af">ParticleWallJKRForce::calculate_jkr_contact_force_and_torque</a></div><div class="ttdeci">std::tuple&lt; Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt; &gt; calculate_jkr_contact_force_and_torque(const double dt, particle_wall_contact_info&lt; dim &gt; &amp;contact_info, const ArrayView&lt; const double &gt; &amp;particle_properties)</div><div class="ttdoc">Carries out the calculation of the particle-wall JKR contact force and torques based on the updated v...</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8cc_source.html#l00416">particle_wall_jkr_force.cc:417</a></div></div>
 <div class="ttc" id="aclassParticleWallJKRForce_html_abe6865a8fb006f734c061b5d2d56ea01"><div class="ttname"><a href="classParticleWallJKRForce.html#abe6865a8fb006f734c061b5d2d56ea01">ParticleWallJKRForce::calculate_rolling_resistance_torque</a></div><div class="ttdeci">FuncPtrType calculate_rolling_resistance_torque</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8h_source.html#l00037">particle_wall_jkr_force.h:37</a></div></div>
-<div class="ttc" id="aclassParticleWallJKRForce_html_ae96c3742821e0dcad6239c4060eae203"><div class="ttname"><a href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">ParticleWallJKRForce::calculate_particle_floating_wall_contact_force</a></div><div class="ttdeci">virtual void calculate_particle_floating_wall_contact_force(typename DEM::dem_data_structures&lt; dim &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact, const double dt, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt; &gt; &gt; &amp;solids) override</div><div class="ttdoc">Carries out the calculation of particle-floating mesh contact force using JKR model.</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8cc_source.html#l00257">particle_wall_jkr_force.cc:258</a></div></div>
+<div class="ttc" id="aclassParticleWallJKRForce_html_ae96c3742821e0dcad6239c4060eae203"><div class="ttname"><a href="classParticleWallJKRForce.html#ae96c3742821e0dcad6239c4060eae203">ParticleWallJKRForce::calculate_particle_floating_wall_contact_force</a></div><div class="ttdeci">virtual void calculate_particle_floating_wall_contact_force(typename DEM::dem_data_structures&lt; dim &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact, const double dt, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt; &gt; &gt; &amp;solids) override</div><div class="ttdoc">Carries out the calculation of particle-floating mesh contact force using JKR model.</div><div class="ttdef"><b>Definition</b> <a href="particle__wall__jkr__force_8cc_source.html#l00254">particle_wall_jkr_force.cc:255</a></div></div>
 <div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition</b> <a href="serial__solid_8h_source.html#l00048">serial_solid.h:49</a></div></div>
 <div class="ttc" id="aclassparticle__wall__contact__info_html"><div class="ttname"><a href="classparticle__wall__contact__info.html">particle_wall_contact_info</a></div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00030">contact_info.h:31</a></div></div>
 <div class="ttc" id="aclassparticle__wall__contact__info_html_a4dcf98dca50108f9cc6d25854c7fab80"><div class="ttname"><a href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">particle_wall_contact_info::normal_overlap</a></div><div class="ttdeci">double normal_overlap</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00087">contact_info.h:87</a></div></div>

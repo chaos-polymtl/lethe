@@ -111,6 +111,8 @@ Inheritance diagram for Insertion&lt; dim &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae5a96094bdccbbe99b9b5fcb7a480629" id="r_ae5a96094bdccbbe99b9b5fcb7a480629"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ae5a96094bdccbbe99b9b5fcb7a480629">Insertion</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
 <tr class="separator:ae5a96094bdccbbe99b9b5fcb7a480629"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a335c82a92eb5eb0142a57fd5b9392152" id="r_a335c82a92eb5eb0142a57fd5b9392152"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a335c82a92eb5eb0142a57fd5b9392152">~Insertion</a> ()</td></tr>
+<tr class="separator:a335c82a92eb5eb0142a57fd5b9392152"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7b6cf7393246d7d5b3ffeec6d721a14" id="r_ab7b6cf7393246d7d5b3ffeec6d721a14"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ab7b6cf7393246d7d5b3ffeec6d721a14">insert</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)=0</td></tr>
 <tr class="separator:ab7b6cf7393246d7d5b3ffeec6d721a14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad090ee85ee022ca32b837150ff4fa728" id="r_ad090ee85ee022ca32b837150ff4fa728"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ad090ee85ee022ca32b837150ff4fa728">serialize</a> (boost::archive::text_oarchive &amp;ar, const unsigned int)=0</td></tr>
@@ -219,7 +221,40 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion_8cc_source.html#l00010">10</a> of file <a class="el" href="insertion_8cc_source.html">insertion.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion_8h_source.html#l00210">Insertion&lt; dim &gt;::change_to_triangulation</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00188">Parameters::Lagrangian::InsertionInfo::clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00188">Parameters::Lagrangian::InsertionInfo::clear_box_point_2</a>, <a class="el" href="insertion_8h_source.html#l00195">Insertion&lt; dim &gt;::distributions_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00026">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion_8h_source.html#l00209">Insertion&lt; dim &gt;::mark_for_update</a>, <a class="el" href="insertion_8h_source.html#l00201">Insertion&lt; dim &gt;::p_max</a>, and <a class="el" href="insertion_8h_source.html#l00201">Insertion&lt; dim &gt;::p_min</a>.</p>
+<p class="reference">References <a class="el" href="insertion_8h_source.html#l00221">Insertion&lt; dim &gt;::change_to_triangulation</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00188">Parameters::Lagrangian::InsertionInfo::clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00188">Parameters::Lagrangian::InsertionInfo::clear_box_point_2</a>, <a class="el" href="insertion_8h_source.html#l00206">Insertion&lt; dim &gt;::distributions_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00026">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion_8h_source.html#l00220">Insertion&lt; dim &gt;::mark_for_update</a>, <a class="el" href="insertion_8h_source.html#l00212">Insertion&lt; dim &gt;::p_max</a>, and <a class="el" href="insertion_8h_source.html#l00212">Insertion&lt; dim &gt;::p_min</a>.</p>
+
+</div>
+</div>
+<a id="a335c82a92eb5eb0142a57fd5b9392152" name="a335c82a92eb5eb0142a57fd5b9392152"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a335c82a92eb5eb0142a57fd5b9392152">&#9670;&#160;</a></span>~Insertion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt;::~<a class="el" href="classInsertion.html">Insertion</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Carries out the destruction of the insertion class. </p>
+
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00066">66</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+
+<p class="reference">References <a class="el" href="insertion_8h_source.html#l00221">Insertion&lt; dim &gt;::change_to_triangulation</a>.</p>
 
 </div>
 </div>
@@ -660,7 +695,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00185">185</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00196">196</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -686,7 +721,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00185">185</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00196">196</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -712,7 +747,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00210">210</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00221">221</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -738,7 +773,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00195">195</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00206">206</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -764,7 +799,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00206">206</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00217">217</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -790,7 +825,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00204">204</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00215">215</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -816,7 +851,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00177">177</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00188">188</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -842,7 +877,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00191">191</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00202">202</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -868,7 +903,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00209">209</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00220">220</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -894,7 +929,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00188">188</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00199">199</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -920,7 +955,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00180">180</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00191">191</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -946,7 +981,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00201">201</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00212">212</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -972,7 +1007,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00201">201</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00212">212</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -998,7 +1033,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00214">214</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00225">225</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -1024,7 +1059,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00198">198</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00209">209</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
