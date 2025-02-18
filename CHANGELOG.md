@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MINOR The neighboring threshold of some application test for the lethe-particles executable were using a value of 20 when it should be in the range of 1.0 to 1.5 . Concerned were updated to a value of 1.3 .  [#1427](https://github.com/chaos-polymtl/lethe/pull/1427)
+
+
+## [Master] - 2025-02-15
+
+### Added
+
 - MAJOR A new rolling resistance model called the elastic-plastic spring-dashpot model has been added to the DEM. This model will help when dealing with static DEM problem, like in the realization of a heap of particle.[#1417](https://github.com/chaos-polymtl/lethe/pull/1417)
 
 ## [Master] - 2025-02-14
