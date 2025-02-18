@@ -59,6 +59,7 @@ PhysicalPropertiesManager::initialize(
   required_fields[field::pressure]                  = false;
   required_fields[field::phase_order_cahn_hilliard] = false;
   required_fields[field::levelset]                  = false;
+  required_fields[field::tracer_concentration]      = false;
 
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
@@ -94,6 +95,14 @@ PhysicalPropertiesManager::initialize(
       tracer_diffusivity.push_back(
         TracerDiffusivityModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*tracer_diffusivity[f]);
+
+      tracer_reaction_prefactor.push_back(
+        TracerReactionPrefactorModel::model_cast(
+          physical_properties.fluids[f]));
+      establish_fields_required_by_model(*tracer_reaction_prefactor[f]);
+
+      tracer_reaction_order.push_back(
+        physical_properties.fluids[f].tracer_reaction_order);
 
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.fluids[f]));
@@ -137,6 +146,15 @@ PhysicalPropertiesManager::initialize(
         TracerDiffusivityModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(
         *tracer_diffusivity[s + number_of_fluids]);
+
+      tracer_reaction_prefactor.push_back(
+        TracerReactionPrefactorModel::model_cast(
+          physical_properties.solids[s]));
+      establish_fields_required_by_model(
+        *tracer_reaction_prefactor[s + number_of_fluids]);
+
+      tracer_reaction_order.push_back(
+        physical_properties.fluids[s].tracer_reaction_order);
 
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.solids[s]));

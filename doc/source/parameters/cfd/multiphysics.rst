@@ -22,7 +22,6 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set VOF                             = false
     # Cahn-Hilliard equations
     set cahn hilliard                   = false
-
   end
 
 

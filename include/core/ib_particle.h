@@ -64,7 +64,7 @@ public:
   /**
    * @brief Compute the evaluation of the signed distance function of this shape.
    *
-   * Most levelset functions used here come from Inigo Quilez:
+   * Most level set functions used here come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
    *
    * @param[in] p Point at which the evaluation is performed.

@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2025-02-18
 
+### Added
+
+- MINOR In the tracer physics, a new feature is added that allows to take into account single species reaction of arbitrary reaction constant and order. This feature works in CG or DG, with or without immersed solids. [#1411](https://github.com/chaos-polymtl/lethe/pull/1411)
+
+## [Master] - 2025-02-18
+
 ### Fixed
 
 - MAJOR Since [#1417](https://github.com/chaos-polymtl/lethe/pull/1417), the restart_moving_receptable test had a segfault at the end of the simulation in semi-reproducible ways. After using valgrind, it was found that the boost signal that was connecting the Insertion class and the triangulation was causing this segfault when the triangulation was destructed. This was because the Insertion class was destructed prior, but the boost signals were still connected. To solve this issue, the Insertion class now has a destructor that disconnect the boost signal before destructing the whole object. [#1425](https://github.com/chaos-polymtl/lethe/pull/1425)
@@ -14,7 +20,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR The neighboring threshold of some application test for the lethe-particles executable were using a value of 20 when it should be in the range of 1.0 to 1.5 . Concerned were updated to a value of 1.3 .  [#1427](https://github.com/chaos-polymtl/lethe/pull/1427)
-
 
 ## [Master] - 2025-02-15
 

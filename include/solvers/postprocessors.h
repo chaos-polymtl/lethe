@@ -555,14 +555,14 @@ private:
 };
 
 /**
- * @brief Compute levelset field for a given shape within a domain.
+ * @brief Compute level set field for a given shape within a domain.
  */
 template <int dim>
 class LevelsetPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
   /**
-   * @brief Constuctor of the levelset postprocessor.
+   * @brief Constuctor of the level set postprocessor.
    *
    * @param[in] shape Geometrical entity.
    */
@@ -609,7 +609,7 @@ private:
 };
 
 /**
- * @brief Compute a levelset gradient vector field for a given shape within a
+ * @brief Compute a level set gradient vector field for a given shape within a
  * domain.
  */
 template <int dim>
@@ -617,7 +617,7 @@ class LevelsetGradientPostprocessor : public DataPostprocessorVector<dim>
 {
 public:
   /**
-   * @brief Constructor for the levelset gradient postprocessor
+   * @brief Constructor for the level set gradient postprocessor
    *
    * @param[in] shape Geometrical entity.
    */

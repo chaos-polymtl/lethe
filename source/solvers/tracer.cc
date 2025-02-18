@@ -60,6 +60,14 @@ Tracer<dim>::setup_assemblers()
       this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerCore<dim>>(this->simulation_control));
     }
+
+  auto reaction_constant_model =
+    simulation_parameters.physical_properties_manager
+      .get_tracer_reaction_prefactor();
+  if (!std::dynamic_pointer_cast<NoneTracerReactionPrefactor>(
+        reaction_constant_model))
+    this->assemblers.emplace_back(
+      std::make_shared<TracerAssemblerReaction<dim>>(this->simulation_control));
 }
 
 template <int dim>
