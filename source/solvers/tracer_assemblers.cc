@@ -729,7 +729,7 @@ TracerAssemblerReaction<dim>::assemble_matrix(
           const auto phi_T_j = scratch_data.phi[q][j];
           strong_jacobian_vec[q][j] +=
             -(reaction_coeff +
-              scratch_data.grad_tracer_reaction_prefactor * C) *
+              scratch_data.grad_tracer_reaction_prefactor[q] * C) *
             phi_T_j;
         }
 
