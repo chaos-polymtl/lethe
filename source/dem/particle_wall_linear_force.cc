@@ -220,11 +220,9 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
             }
           else
             {
-              for (int d = 0; d < dim; ++d)
-                {
-                  contact_information.tangential_overlap[d]               = 0;
-                  contact_information.rolling_resistance_spring_torque[d] = 0;
-                }
+              contact_information.normal_overlap = 0.;
+              contact_information.tangential_overlap.clear();
+              contact_information.rolling_resistance_spring_torque.clear();
             }
         }
     }
@@ -381,14 +379,12 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
                       else
                         {
                           contact_info.normal_overlap = 0;
-                          for (int d = 0; d < dim; ++d)
-                            {
-                              contact_info.tangential_overlap[d] = 0;
-                            }
+                          contact_info.tangential_overlap.clear();
+                          contact_info.rolling_resistance_spring_torque.clear();
                         }
                     }
-                  particle_counter++;
                 }
+              particle_counter++;
             }
         }
     }

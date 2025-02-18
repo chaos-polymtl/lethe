@@ -3,7 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2025-02-15
+## [Master] - 2025-02-18
+
+### Fixed
+
+- MAJOR Since [#1417](https://github.com/chaos-polymtl/lethe/pull/1417), the restart_moving_receptable test had a segfault at the end of the simulation in semi-reproducible ways. After using valgrind, it was found that the boost signal that was connecting the Insertion class and the triangulation was causing this segfault when the triangulation was destructed. This was because the Insertion class was destructed prior, but the boost signals were still connected. To solve this issue, the Insertion class now has a destructor that disconnect the boost signal before destructing the whole object. [#1425](https://github.com/chaos-polymtl/lethe/pull/1425)
+
+## [Master] - 2025-02-17
 
 ### Added
 

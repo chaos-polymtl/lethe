@@ -45,6 +45,7 @@ public:
     double       normal_overlap;
     double       normal_relative_velocity;
     Tensor<1, 3> tangential_overlap;
+    Tensor<1, 3> rolling_resistance_spring_torque;
     std::vector<Tensor<1, 3>>
       tangential_relative_velocity; // keep each step of RK4 in memory
   };

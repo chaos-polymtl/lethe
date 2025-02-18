@@ -59,6 +59,17 @@ public:
               &size_distribution_object_container,
             const parallel::distributed::Triangulation<dim> &triangulation,
             const DEMSolverParameters<dim>                  &dem_parameters);
+  /**
+   * @brief Carries out the destruction of the insertion class.
+   *
+   */
+  ~Insertion()
+  {
+    // This boost signal needs to be disconnected before being destroyed,
+    // otherwise a segfault could occur when the triangulation will be
+    // destroyed.
+    this->change_to_triangulation.disconnect();
+  };
 
   /**
    * @brief This function is overridden by the volume_insertion, plane_insertion,
