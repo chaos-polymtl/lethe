@@ -530,6 +530,11 @@ public:
   std::vector<double>                  tracer_diffusivity_1;
   std::vector<double>                  tracer_reaction_prefactor;
 
+  // Gradient of the tracer reaction prefactor with respect to the concentration
+  // This is calculated by deriving the prefactor by the concentration
+  // (dk/dC)
+  std::vector<double> grad_tracer_reaction_prefactor;
+
   // FEValues for the Tracer problem
   FEValues<dim>          fe_values_tracer;
   FEInterfaceValues<dim> fe_interface_values_tracer;
