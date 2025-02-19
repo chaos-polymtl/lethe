@@ -34,7 +34,10 @@ Visualization<dim, PropertiesIndex>::build_patches(
       const unsigned n_components = properties[field_position].second;
 
       // Check to see if the property is a vector
-      if (n_components == dim)
+      // By default we assume that even 2D simulations have 3 components
+      // Since the velocity and the angular velocity are stored in 3D
+      // even for 2D simulations
+      if (n_components == 3)
         {
           // The proeprty is a vector, thus we set that the components
           // are part of a vector. Do not forget that since we added the ID

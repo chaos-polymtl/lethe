@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-19
+
+### Fixed
+
+- MINOR The vtu output for 2D DEM and CFD-DEM simulations were not able to display the velocity and the angular velocity correctly. This is because the data is always 3D in the simulations even for 2D simulations. This has been fixed by always writing velocity and angular velocity as 3D vectors even for 2D simulations.[#1427](https://github.com/chaos-polymtl/lethe/pull/1427)
+
 ## [Master] - 2025-02-18
 
 ### Added
