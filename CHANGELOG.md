@@ -25,6 +25,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The neighboring threshold of some application test for the lethe-particles executable were using a value of 20 when it should be in the range of 1.0 to 1.5 . Concerned were updated to a value of 1.3 .  [#1427](https://github.com/chaos-polymtl/lethe/pull/1427)
 
+### Added
+
+- MINOR A new example showcasing heat transfer in a cooling fin.[#1426](https://github.com/chaos-polymtl/lethe/pull/1426)
+
 ## [Master] - 2025-02-15
 
 ### Added

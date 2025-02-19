@@ -47,17 +47,19 @@ Multiphysics
 
       multiphysics_2 [label="Heat Transfer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/heat-transfer.html"];
 
-      multiphysics_2_1 [label="Rayleigh-Bénard Convection", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html"];
+      multiphysics_2_1 [label="Rayleigh-Bénard Convection", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/cooling-fin/cooling-fin.html"];
 
-      multiphysics_2_2 [label="Stefan Problem: Melting of a Solid", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/stefan-problem/stefan-problem.html"];
+      multiphysics_2_2 [label="Rayleigh-Bénard Convection", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html"];
 
-      multiphysics_2_3 [label="Warming up a Viscous Fluid", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html"];
+      multiphysics_2_3 [label="Stefan Problem: Melting of a Solid", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/stefan-problem/stefan-problem.html"];
 
-      multiphysics_2_4 [label="Melting Cavity", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/melting-cavity/melting-cavity.html"];
+      multiphysics_2_4 [label="Warming up a Viscous Fluid", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html"];
+
+      multiphysics_2_5 [label="Melting Cavity", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/melting-cavity/melting-cavity.html"];
       
-      multiphysics_2_5 [label="Static Irradiation of a Bare Plate", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/static-irradiation/static-irradiation.html"];
+      multiphysics_2_6 [label="Static Irradiation of a Bare Plate", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/static-irradiation/static-irradiation.html"];
 
-      multiphysics_2_6 [label="Concentric Heat Exchanger", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html"];
+      multiphysics_2_7 [label="Concentric Heat Exchanger", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html"];
 
       multiphysics_3 [label="Tracer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer.html"];  
 
@@ -92,6 +94,7 @@ Multiphysics
       multiphysics_2 -> multiphysics_2_4:w;
       multiphysics_2 -> multiphysics_2_5:w;
       multiphysics_2 -> multiphysics_2_6:w;
+      multiphysics_2 -> multiphysics_2_7:w;
 
       multiphysics_3 -> multiphysics_3_1:w;
 
