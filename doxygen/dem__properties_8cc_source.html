@@ -113,10 +113,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>          PropertiesIndex::n_properties);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        properties[PropertiesIndex::type]    = std::make_pair(<span class="stringliteral">&quot;type&quot;</span>, 1);</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        properties[PropertiesIndex::dp]      = std::make_pair(<span class="stringliteral">&quot;diameter&quot;</span>, 1);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        properties[PropertiesIndex::v_x]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, dim);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        properties[PropertiesIndex::v_x]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, 3);</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        properties[PropertiesIndex::v_y]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, 1);</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        properties[PropertiesIndex::v_z]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, 1);</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        properties[PropertiesIndex::omega_x] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, dim);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        properties[PropertiesIndex::omega_x] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, 3);</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        properties[PropertiesIndex::omega_y] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, 1);</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        properties[PropertiesIndex::omega_z] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, 1);</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        properties[PropertiesIndex::mass]    = std::make_pair(<span class="stringliteral">&quot;mass&quot;</span>, 1);</div>
@@ -131,20 +131,20 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>          PropertiesIndex::n_properties);</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        properties[PropertiesIndex::type]    = std::make_pair(<span class="stringliteral">&quot;type&quot;</span>, 1);</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        properties[PropertiesIndex::dp]      = std::make_pair(<span class="stringliteral">&quot;diameter&quot;</span>, 1);</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        properties[PropertiesIndex::v_x]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, dim);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        properties[PropertiesIndex::v_x]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, 3);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        properties[PropertiesIndex::v_y]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, 1);</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        properties[PropertiesIndex::v_z]     = std::make_pair(<span class="stringliteral">&quot;velocity&quot;</span>, 1);</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        properties[PropertiesIndex::omega_x] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, dim);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        properties[PropertiesIndex::omega_x] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, 3);</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        properties[PropertiesIndex::omega_y] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, 1);</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        properties[PropertiesIndex::omega_z] = std::make_pair(<span class="stringliteral">&quot;omega&quot;</span>, 1);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        properties[PropertiesIndex::fem_force_x] =</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>          std::make_pair(<span class="stringliteral">&quot;fem_force&quot;</span>, dim);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>          std::make_pair(<span class="stringliteral">&quot;fem_force&quot;</span>, 3);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        properties[PropertiesIndex::fem_force_y] =</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>          std::make_pair(<span class="stringliteral">&quot;fem_force&quot;</span>, 1);</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        properties[PropertiesIndex::fem_force_z] =</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>          std::make_pair(<span class="stringliteral">&quot;fem_force&quot;</span>, 1);</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        properties[PropertiesIndex::fem_torque_x] =</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>          std::make_pair(<span class="stringliteral">&quot;fem_torque&quot;</span>, dim);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>          std::make_pair(<span class="stringliteral">&quot;fem_torque&quot;</span>, 3);</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        properties[PropertiesIndex::fem_torque_y] =</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>          std::make_pair(<span class="stringliteral">&quot;fem_torque&quot;</span>, 1);</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        properties[PropertiesIndex::fem_torque_z] =</div>
