@@ -65,7 +65,7 @@ The simulation is done in steady state without mesh adaptation.
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection is used to to disable fluid dynamics and enable the heat transfer physics
+The ``multiphysics`` subsection is used to to disable fluid dynamics and enable the heat transfer physics.
 
 .. code-block:: text
 
