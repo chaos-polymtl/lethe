@@ -1,0 +1,27 @@
+<map id="multiphysics_diagram" name="multiphysics_diagram">
+<area shape="rect" id="node1" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/multiphysics.html" title="Multiphysics" alt="" coords="2,610,62,645"/>
+<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/vof.html" title="VOF" alt="" coords="133,219,161,254"/>
+<area shape="rect" id="node13" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/heat-transfer.html" title="Heat Transfer" alt="" coords="114,588,181,623"/>
+<area shape="rect" id="node21" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer.html" title="Tracer" alt="" coords="130,697,165,732"/>
+<area shape="rect" id="node23" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html" title="CHNS" alt="" coords="130,784,165,819"/>
+<area shape="rect" id="node3" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/dam-break/dam-break.html" title="Dam&#45;Break" alt="" coords="281,2,338,37"/>
+<area shape="rect" id="node4" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html" title="Rayleigh&#45;Taylor Instability" alt="" coords="251,45,368,80"/>
+<area shape="rect" id="node5" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/static-bubble/static-bubble.html" title="Static Bubble" alt="" coords="277,89,342,124"/>
+<area shape="rect" id="node6" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rising-bubble/rising-bubble.html" title="Rising Bubble" alt="" coords="276,132,343,167"/>
+<area shape="rect" id="node7" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html" title="Sloshing in a Rectangular Tank" alt="" coords="239,176,380,210"/>
+<area shape="rect" id="node8" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/capillary-wave/capillary-wave.html" title="Capillary Wave" alt="" coords="273,219,346,254"/>
+<area shape="rect" id="node9" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html" title="Rayleigh&#45;Plateau Instability" alt="" coords="247,263,371,297"/>
+<area shape="rect" id="node10" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/3d-dam-break/3d-dam-break.html" title="3D Dam&#45;Break with an Obstacle" alt="" coords="237,306,382,341"/>
+<area shape="rect" id="node11" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html" title="Water Injection in a Closed Cell" alt="" coords="239,349,380,384"/>
+<area shape="rect" id="node12" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/air-bubble-compression/air-bubble-compression.html" title="Air Bubble Compression" alt="" coords="253,393,366,428"/>
+<area shape="rect" id="node14" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/cooling-fin/cooling-fin.html" title="Rayleigh&#45;Bénard Convection" alt="" coords="244,436,375,471"/>
+<area shape="rect" id="node15" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html" title="Rayleigh&#45;Bénard Convection" alt="" coords="244,480,375,515"/>
+<area shape="rect" id="node16" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/stefan-problem/stefan-problem.html" title="Stefan Problem: Melting of a Solid" alt="" coords="233,523,386,558"/>
+<area shape="rect" id="node17" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html" title="Warming up a Viscous Fluid" alt="" coords="246,567,373,601"/>
+<area shape="rect" id="node18" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/melting-cavity/melting-cavity.html" title="Melting Cavity" alt="" coords="275,610,343,645"/>
+<area shape="rect" id="node19" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/static-irradiation/static-irradiation.html" title="Static Irradiation of a Bare Plate" alt="" coords="237,654,381,688"/>
+<area shape="rect" id="node20" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html" title="Concentric Heat Exchanger" alt="" coords="247,697,372,732"/>
+<area shape="rect" id="node22" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer.html" title="Tracer in Static Mixer" alt="" coords="260,740,358,775"/>
+<area shape="rect" id="node24" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/jurins-law/jurins-law.html" title="Jurin&#39;s Law" alt="" coords="281,784,337,819"/>
+<area shape="rect" id="node25" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html" title="Shear Bubble Detachment" alt="" coords="249,827,370,862"/>
+</map>

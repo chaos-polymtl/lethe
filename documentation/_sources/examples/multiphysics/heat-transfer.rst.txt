@@ -7,6 +7,7 @@ Heat Transfer
     :glob:
     :titlesonly:
 
+    cooling-fin/cooling-fin
     rayleigh-benard-convection/rayleigh-benard-convection
     stefan-problem/stefan-problem
     warming-up-a-viscous-fluid/warming-up-a-viscous-fluid
