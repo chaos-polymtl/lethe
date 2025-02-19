@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022, 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
@@ -12,12 +12,19 @@ import matplotlib.pyplot as plt
 import pyvista as pv
 import argparse
 
+#Plot font and colors
+font = {'weight' : 'normal',
+        'size'   : 13}
+
+plt.rc('font', **font)
+
 
 #--------------------------------------------
 # Main
 #--------------------------------------------
 
 parser = argparse.ArgumentParser(description='Arguments for the validation of the fin')
+parser.add_argument("--vtu", type=str, help="VTU file", required=True)
 parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 
@@ -36,13 +43,14 @@ x_analytical = np.linspace(0,L,100)
 m = np.sqrt(P*h/k/A)
 T_analytical = T_inf + (T_b-T_inf) * np.cosh(m*(L-x_analytical))/np.cosh(m*L)
 
-
-
+analytical_flux = k*A*m*(T_b-T_inf)*np.tanh(m*L)
+print("Analytical heat flux: ", analytical_flux)
 
 #--------------------------------------------
 # Simulation Data
 # Load VTU file
-vtu_file="output/out.00004.00000.vtu"
+#--------------------------------------------
+vtu_file=args.vtu
 sim = pv.read(vtu_file)
 sim.set_active_scalars("temperature")
 
@@ -57,10 +65,11 @@ sampled_data=sim.sample_over_line(a, b, resolution=50)
 x = sampled_data["Distance"]
 T = sampled_data["temperature"][:]
 
-plt.plot(x,T,'o',mfc='None',label="Lethe")
-plt.plot(x_analytical,T_analytical,color="black",label="Analytical solution")
+plt.plot(x/L,T,'o',mfc='None',label="Lethe")
+plt.plot(x_analytical/L,T_analytical,color="black",label="Analytical solution")
 
-plt.xlabel("x")
+plt.xlabel("x/L")
 plt.ylabel("T")
 plt.legend()
+plt.savefig("temperature_fin.png",dpi=200)
 plt.show()

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -12,10 +12,8 @@ set dimension = 3
 
 subsection simulation control
   set method           = steady
-  set output frequency = 1
   set output name      = out
   set output path      = ./output/
-  set number mesh adapt = 3
 end
 
 #---------------------------------------------------
@@ -23,8 +21,6 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order    = 1
-  set pressure order    = 1
   set temperature order = 2
 end
 
@@ -47,8 +43,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_cylinder
-  set grid arguments     = 20 : 0.01 : 0.1 
-  set initial refinement = 0
+  set grid arguments     = 10 : 0.01 : 0.1 
+  set initial refinement = 3
 end
 
 #---------------------------------------------------
@@ -58,14 +54,6 @@ end
 subsection multiphysics
   set fluid dynamics = false
   set heat transfer  = true
-end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = uniform
 end
 
 #---------------------------------------------------
@@ -132,12 +120,12 @@ subsection boundary conditions heat transfer
 end
 
 #---------------------------------------------------
-# Source term
+# Postprocessing
+#---------------------------------------------------
 
-subsection source term
-  subsection heat transfer
-    set Function expression = 0
-  end
+subsection post-processing
+  set verbosity                        = verbose
+  set calculate heat flux              = true
 end
 
 #---------------------------------------------------
@@ -152,11 +140,6 @@ subsection non-linear solver
   end
 end
 
-subsection post-processing
-  set verbosity                        = quiet
-  set calculate heat flux              = true
-  set calculate temperature statistics = true
-end
 #---------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
