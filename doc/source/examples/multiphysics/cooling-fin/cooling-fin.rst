@@ -27,7 +27,7 @@ Both files mentioned below are located in the example's folder (``examples/multi
 Description of the Case
 -----------------------
 
-A cylindrical fin of length :math:`L=0.2` and radius :math:`R=0.01` is fixed to a wall at a constant temperature :math:`T_b`. The radial surface of the fin is subject to natural convection following Newton's law of cooling with :math:`h=10` and :math:`T_{\infty}=20`. The material from which the fin is made has a thermal conductivity :math:`k=100\mathrm{W/m/K}`. The geometry of this example is illustrated below. 
+A cylindrical fin of length :math:`L=0.2` and radius :math:`R=0.01` is fixed to a wall at a constant temperature :math:`T_b=100`. The radial surface of the fin is subject to natural convection following Newton's law of cooling with :math:`h=10` and :math:`T_{\infty}=20`. The material from which the fin is made has a thermal conductivity :math:`k=100\mathrm{W/m/K}`. The geometry of this example is illustrated below. 
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/schematic.svg                                                                                 |
