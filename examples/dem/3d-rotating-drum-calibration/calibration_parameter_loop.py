@@ -6,7 +6,7 @@ import os
 import shutil
 
 # Loops
-friction_coefficient = np.linspace(0.2,0.5,10)
+friction_coefficient = np.linspace(0.2,0.5,5)
 rolling_friction_coefficient =  np.linspace(0,0.2,5)
 restitution_coeff =np.linspace(0.8,1,3)
 
