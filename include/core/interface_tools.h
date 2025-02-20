@@ -7,6 +7,7 @@
 #include <deal.II/base/function.h>
 
 #include <deal.II/fe/fe.h>
+#include <deal.II/fe/fe_q.h>
 
 #include <deal.II/grid/grid_tools.h>
 
