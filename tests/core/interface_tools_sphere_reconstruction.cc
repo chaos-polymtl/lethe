@@ -73,7 +73,8 @@ test()
 
       /* Reconstruct the interface. This method returns maps containing the
       surface vertices and cells of the reconstruction in volume cell-wise
-      fashion. The key of the maps is the volume cell and only the intersected cells are store in the maps.*/
+      fashion. The key of the maps is the volume cell and only the intersected
+      cells are store in the maps.*/
       InterfaceTools::reconstruct_interface(mapping,
                                             dof_handler,
                                             fe,
