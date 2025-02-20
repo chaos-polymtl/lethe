@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -10,14 +10,11 @@
 
 #include <solvers/fluid_dynamics_matrix_free.h>
 
-#include <deal.II/base/multithread_info.h>
-
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/precondition.h>
-#include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/sparse_matrix_tools.h>
 #include <deal.II/lac/vector.h>
