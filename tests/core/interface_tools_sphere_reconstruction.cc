@@ -35,7 +35,7 @@ test()
   const Point<3> sphere_center = Point<3>({0.5, 0.5, 0.5});
   const double   sphere_radius = 0.25;
 
-  Vector<double> error_volume(3);
+  Vector<double> error_area(3);
 
   for (unsigned int n = 0; n < 3; n++)
     {
@@ -54,28 +54,48 @@ test()
         Functions::SignedDistance::Sphere<3>(sphere_center, sphere_radius),
         signed_distance);
 
-      std::map<types::global_cell_index, std::vector<Point<dim>>>
-        interface_reconstruction_vertices,
-        std::map<types::global_cell_index, std::vector<CellData<dim - 1>>>
-          interface_reconstruction_cells,
-        std::set<types::global_dof_index> intersected_dofs
+      std::map<types::global_cell_index, std::vector<Point<3>>>
+        interface_reconstruction_vertices;
+      std::map<types::global_cell_index, std::vector<CellData<3 - 1>>>
+                                        interface_reconstruction_cells;
+      std::set<types::global_dof_index> intersected_dofs;
 
-        const double volume = InterfaceTools::reconstruct_interface(
-          mapping,
-          dof_handler,
-          fe,
-          signed_distance,
-          triangulation.get_communicator());
+      InterfaceTools::reconstruct_interface(mapping,
+                                            dof_handler,
+                                            fe,
+                                            signed_distance,
+                                            interface_reconstruction_vertices,
+                                            interface_reconstruction_cells,
+                                            intersected_dofs);
 
-      error_volume[n] =
-        abs(4.0 * M_PI * std::pow(sphere_radius, 3) / 3.0 - volume);
+      double area = 0.0;
+      for (auto &intersected_cell : interface_reconstruction_cells)
+        {
+          const unsigned int cell_index = intersected_cell.first;
 
-      deallog << "The volume error for ref. lev. " << n + 3
-              << " is : " << error_volume[n] << std::endl;
+          // Create interface recontruction triangulation (surface
+          // triangulation) in the intersected volume cell
+          std::vector<Point<3>> surface_vertices =
+            interface_reconstruction_vertices.at(cell_index);
+          std::vector<CellData<3 - 1>> surface_cells = intersected_cell.second;
+
+          Triangulation<3 - 1, 3> surface_triangulation;
+          surface_triangulation.create_triangulation(surface_vertices,
+                                                     surface_cells,
+                                                     {});
+
+          area += GridTools::volume(surface_triangulation);
+        }
+
+
+      error_area[n] = abs(4.0 * M_PI * std::pow(sphere_radius, 2) - area);
+
+      deallog << "The area error for ref. lev. " << n + 3
+              << " is : " << error_area[n] << std::endl;
     }
 
-  const double convergence_order = log(error_volume[2] / error_volume[1]) /
-                                   log(error_volume[1] / error_volume[0]);
+  const double convergence_order =
+    log(error_area[2] / error_area[1]) / log(error_area[1] / error_area[0]);
 
   deallog << "The convergence is : " << convergence_order << std::endl;
 }
