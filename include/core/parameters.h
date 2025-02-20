@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -872,7 +872,20 @@ namespace Parameters
     // perpendicular plane to the laser beam orientation are stored in the
     // following parameters (x = 0, y = 1, z = 2)
     unsigned int perpendicular_plane_coordinate_one;
+
+    // Beam axis
+    Tensor<1, dim> beam_axis;
+
     unsigned int perpendicular_plane_coordinate_two;
+
+    // rotation angle of the laser axis in rad
+    double rotation_angle;
+
+    // rotation axis
+    Tensor<1, dim> rotation_axis;
+
+    // rotation matrix
+    Tensor<2, dim> rotation_matrix;
 
     // Laser scan path indicates the path of the laser focal point during a
     // simulation

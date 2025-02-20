@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-20
+
+### Added
+
+- MINOR This PR adds the possibility to rotate the laser around one axis when using the gaussian_heat_flux_vof_interface model. [#1421](https://github.com/chaos-polymtl/lethe/pull/1421)
+
 ## [Master] - 2025-02-19
 
 ### Fixed

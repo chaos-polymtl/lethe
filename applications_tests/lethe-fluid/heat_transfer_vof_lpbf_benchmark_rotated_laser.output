@@ -1,0 +1,56 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       4096
+   Number of degrees of freedom: 19652
+   Volume of triangulation:      0.216
+   Number of thermal degrees of freedom: 4913
+   Number of VOF degrees of freedom: 4913
+Temperature statistics on fluid: 
+	     Min: 298
+	     Max: 298
+	 Average: 298
+	 Std-Dev: 8.2558e-11
+
+**********************************************************************************
+Transient iteration: 1        Time: 8e-08    Time step: 8e-08    CFL: 0.000339023
+**********************************************************************************
+Temperature statistics on fluid: 
+	     Min: 298
+	     Max: 307.231
+	 Average: 298.038
+	 Std-Dev: 0.354979
+
+**********************************************************************************
+Transient iteration: 2        Time: 2.12e-07 Time step: 1.32e-07 CFL: 0.000274073
+**********************************************************************************
+Temperature statistics on fluid: 
+	     Min: 298
+	     Max: 322.442
+	 Average: 298.101
+	 Std-Dev: 0.940176
+
+**********************************************************************************
+Transient iteration: 3        Time: 4.12e-07 Time step: 2e-07    CFL: 0.000469108
+**********************************************************************************
+Temperature statistics on fluid: 
+	     Min: 298
+	     Max: 345.434
+	 Average: 298.196
+	 Std-Dev: 1.82534
+
+**********************************************************************************
+Transient iteration: 4        Time: 6.12e-07 Time step: 2e-07    CFL: 0.000711688
+**********************************************************************************
+Temperature statistics on fluid: 
+	     Min: 298
+	     Max: 368.357
+	 Average: 298.291
+	 Std-Dev: 2.70861
+
+**********************************************************************************
+Transient iteration: 5        Time: 8.12e-07 Time step: 2e-07    CFL: 0.000686416
+**********************************************************************************
+Temperature statistics on fluid: 
+	     Min: 298
+	     Max: 391.209
+	 Average: 298.386
+	 Std-Dev: 3.58999

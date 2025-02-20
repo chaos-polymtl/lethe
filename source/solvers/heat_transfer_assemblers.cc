@@ -1,7 +1,8 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/lethe_grid_tools.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -1015,13 +1016,9 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
 
       // Get laser location
       Point<dim> laser_location;
-      laser_location[0] = laser_scan_path.value(
-        laser_location, laser_parameters->perpendicular_plane_coordinate_one);
-      if constexpr (dim == 3)
+      for (unsigned int d = 0; d < dim; ++d)
         {
-          laser_location[1] = laser_scan_path.value(
-            laser_location,
-            laser_parameters->perpendicular_plane_coordinate_two);
+          laser_location[d] = laser_scan_path.value(laser_location, d);
         }
 
       // Get laser location on the operation surface
@@ -1039,33 +1036,21 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
       // assembling right hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          // Get quadrature point location on surface to calculate its distance
-          // from the laser focal point in a perpendicular plane to the
-          // direction of emission
-          Point<dim - 1> quadrature_point_on_surface;
-          quadrature_point_on_surface[0] =
-            scratch_data.quadrature_points
-              [q][laser_parameters->perpendicular_plane_coordinate_one];
-          if constexpr (dim == 3)
-            {
-              quadrature_point_on_surface[1] =
-                scratch_data.quadrature_points
-                  [q][laser_parameters->perpendicular_plane_coordinate_two];
-            }
-
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
 
           const double filtered_phase_gradient_value_q_norm =
             scratch_data.filtered_phase_gradient_values[q].norm();
 
+          const double r = LetheGridTools::find_point_line_distance(
+            laser_location,
+            laser_parameters->beam_axis,
+            scratch_data.quadrature_points[q]);
+
           // Calculate the strong residual for GLS stabilization
           double laser_heat_source =
             absorptivity * laser_power *
-            exp(-1.0 * concentration_factor *
-                std::pow(laser_location_on_surface.distance(
-                           quadrature_point_on_surface),
-                         2.0) /
+            exp(-1.0 * concentration_factor * std::pow(r, 2.0) /
                 (beam_radius * beam_radius));
 
           if constexpr (dim == 2)

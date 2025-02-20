@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_lethe_grid_tools_h
@@ -315,6 +315,43 @@ namespace LetheGridTools
   double
   find_point_triangle_distance(const std::vector<Point<dim>> &triangle_vertices,
                                const Point<dim>              &point);
+
+  /**
+   * @brief Calculate the minimum distance between a point and a line (defined using
+   * its orign and direction). The full calculation is taken from
+   * Geometric Tools for Computer Graphics, Eberly 2003 Chapter 10.2 - Point
+   * to linear component. The entire reference is available at:
+   * https://www.sciencedirect.com/science/article/pii/B9781558605947500138
+   * A full implementation of the  above reference is also available here:
+   * https://www.geometrictools.com/Documentation/DistancePointLine.pdf
+   * Variables name are taken straight from this reference to ensure a better
+   * readability.
+   *
+   * @return A distance
+   *
+   * @param[in] line_origin Origin of the line (any point on the line)
+   * @param[in] line_direction Vector tangent to the line
+   * @param[in] point A point for which we want to find the minimum distance to
+   * the line
+   *
+   * return distance
+   *
+   */
+  template <int dim>
+  inline double
+  find_point_line_distance(const Point<dim>     &line_origin,
+                           const Tensor<1, dim> &line_direction,
+                           const Point<dim>     &point)
+  {
+    Tensor<1, dim> diff = point - line_origin;
+
+    double t_0 = line_direction * diff;
+    t_0 /= line_direction.norm();
+
+    const Point<dim> closest_point_on_line = line_origin + t_0 * line_direction;
+
+    return point.distance(closest_point_on_line);
+  }
 
   /**
    * @brief
