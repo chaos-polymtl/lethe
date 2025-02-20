@@ -2,6 +2,7 @@ add_library(lethe-fem-dem
   # Sources
   cfd_dem_coupling.cc
   cfd_dem_simulation_parameters.cc
+  fluid_dynamics_vans_matrix_free.cc
   fluid_dynamics_sharp.cc
   fluid_dynamics_vans.cc
   ib_particles_dem.cc
@@ -12,6 +13,7 @@ add_library(lethe-fem-dem
   # Headers
   ../../include/fem-dem/cfd_dem_coupling.h
   ../../include/fem-dem/cfd_dem_simulation_parameters.h
+  ../../include/fem-dem/fluid_dynamics_vans_matrix_free.h
   ../../include/fem-dem/fluid_dynamics_sharp.h
   ../../include/fem-dem/fluid_dynamics_vans.h
   ../../include/fem-dem/ib_particles_dem.h
