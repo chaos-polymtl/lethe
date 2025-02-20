@@ -274,3 +274,26 @@ InterfaceTools::reconstruct_interface(
         }
     }
 }
+
+template void
+InterfaceTools::reconstruct_interface(
+  const Mapping<2>       &mapping,
+  const DoFHandler<2>    &dof_handler,
+  const FiniteElement<2> &fe,
+  const Vector<double>   &level_set_vector,
+  std::map<types::global_cell_index, std::vector<Point<2>>>
+    &interface_reconstruction_vertices,
+  std::map<types::global_cell_index, std::vector<CellData<1>>>
+                                    &interface_reconstruction_cells,
+  std::set<types::global_dof_index> &intersected_dofs);
+template void
+InterfaceTools::reconstruct_interface(
+  const Mapping<3>       &mapping,
+  const DoFHandler<3>    &dof_handler,
+  const FiniteElement<3> &fe,
+  const Vector<double>   &level_set_vector,
+  std::map<types::global_cell_index, std::vector<Point<3>>>
+    &interface_reconstruction_vertices,
+  std::map<types::global_cell_index, std::vector<CellData<2>>>
+                                    &interface_reconstruction_cells,
+  std::set<types::global_dof_index> &intersected_dofs);
