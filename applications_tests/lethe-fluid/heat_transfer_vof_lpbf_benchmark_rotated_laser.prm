@@ -361,17 +361,17 @@ subsection non-linear solver
   subsection fluid dynamics
     set tolerance      = 1e-4
     set max iterations = 20
-    set verbosity      = quiet
+    set verbosity      = verbose
   end
   subsection heat transfer
     set tolerance      = 100
     set max iterations = 20
-    set verbosity      = quiet
+    set verbosity      = verbose
   end
   subsection VOF
     set tolerance      = 1e-4
     set max iterations = 20
-    set verbosity      = quiet
+    set verbosity      = verbose
   end
 end
 
@@ -381,7 +381,7 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
+    set verbosity                             = verbose
     set method                                = gmres
     set relative residual                     = 1e-3
     set minimum residual                      = 1e-5
@@ -391,7 +391,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
   end
   subsection heat transfer
-    set verbosity                             = quiet
+    set verbosity                             = verbose
     set method                                = gmres
     set relative residual                     = 1e-2
     set minimum residual                      = 1e-1
@@ -401,7 +401,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
   end
   subsection VOF
-    set verbosity                             = quiet
+    set verbosity                             = verbose
     set method                                = gmres
     set relative residual                     = 1e-3
     set minimum residual                      = 1e-5
