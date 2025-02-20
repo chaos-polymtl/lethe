@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-20
+
+### Added
+
+- MINOR New functionalities for interface problems are added. The PR includes the computation of the volume enclosed by the level 0 of a
+level-set field and the surface reconstruction of the interface described by the level 0. [#1429](https://github.com/chaos-polymtl/lethe/pull/1429)
+
 ## [Master] - 2025-02-19
 
 ### Fixed
