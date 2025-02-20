@@ -9,6 +9,7 @@ file(COPY taylorCouette.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY box.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY cylinder_manifold.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY lpbf_benchmark_mesh.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file(COPY lpbf_benchmark_mesh_3D.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY cylinder_close_outlet.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY jurins-law-2d-mesh-dimensioned.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 

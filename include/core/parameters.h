@@ -878,7 +878,7 @@ namespace Parameters
 
     unsigned int perpendicular_plane_coordinate_two;
 
-    // roatation angle of the laser axis in rad
+    // rotation angle of the laser axis in rad
     double rotation_angle;
 
     // rotation axis

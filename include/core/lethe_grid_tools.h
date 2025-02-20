@@ -317,7 +317,7 @@ namespace LetheGridTools
                                const Point<dim>              &point);
 
   /**
-   * @brief Calculates the distance between points and a line (defined using
+   * @brief Calculate the minimum distance between a point and a line (defined using
    * its orign and direction). The full calculation is taken from
    * Geometric Tools for Computer Graphics, Eberly 2003 Chapter 10.2 - Point
    * to linear component. The entire reference is available at:
@@ -331,8 +331,8 @@ namespace LetheGridTools
    *
    * @param[in] line_origin Origin of the line (any point on the line)
    * @param[in] line_direction Vector tangent to the line
-   * @param[in] point A point for which we want to find the distance to the
-   * triangle
+   * @param[in] point A point for which we want to find the minimum distance to
+   * the line
    *
    * return distance
    *
@@ -348,9 +348,9 @@ namespace LetheGridTools
     double t_0 = line_direction * diff;
     t_0 /= line_direction.norm();
 
-    const Point<dim> closet_point_on_line = line_origin + t_0 * line_direction;
+    const Point<dim> closest_point_on_line = line_origin + t_0 * line_direction;
 
-    return point.distance(closet_point_on_line);
+    return point.distance(closest_point_on_line);
   }
 
   /**

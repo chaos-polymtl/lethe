@@ -1686,7 +1686,7 @@ namespace Parameters
         "beam rotation angle",
         "0.0",
         Patterns::Double(),
-        "Angle of rotation of the beam axis with respect to the axis defined by the beam orientation parameter");
+        "Angle of rotation in rad of the beam axis with respect to the axis defined by the beam orientation parameter");
 
       prm.declare_entry(
         "beam rotation axis",

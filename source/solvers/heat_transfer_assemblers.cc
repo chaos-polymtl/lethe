@@ -1016,11 +1016,9 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
 
       // Get laser location
       Point<dim> laser_location;
-      laser_location[0] = laser_scan_path.value(laser_location, 0);
-      laser_location[1] = laser_scan_path.value(laser_location, 1);
-      if constexpr (dim == 3)
+      for (unsigned int d = 0; d < dim; ++d)
         {
-          laser_location[2] = laser_scan_path.value(laser_location, 2);
+          laser_location[d] = laser_scan_path.value(laser_location, d);
         }
 
       // Get laser location on the operation surface
