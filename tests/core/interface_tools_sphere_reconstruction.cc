@@ -21,6 +21,14 @@
 void
 test()
 {
+  /* This test checks the interface reconstruction of the level 0 of a
+  level-set field using the InterfaceTools::reconstruct_interface function. The
+  level-set field of interest is the one describing a sphere. The reconstruction
+  is computed for 3 mesh refinements and the test checks the error on the area
+  of the reconstructed surface triangulation and the convergence rate of the
+  method (formally 2). The area is computed using dealii GridTools::volume()
+  method.
+  */
   Triangulation<3> triangulation;
   DoFHandler<3>    dof_handler;
   FE_Q<3>          fe(1);
@@ -37,6 +45,7 @@ test()
 
   Vector<double> error_area(3);
 
+  // Loop for the mesh convergence study
   for (unsigned int n = 0; n < 3; n++)
     {
       triangulation.refine_global(n);
@@ -48,18 +57,23 @@ test()
 
       signed_distance.reinit(dof_handler.n_dofs());
 
+      // Set the level-set field of the sphere
       VectorTools::interpolate(
         mapping,
         dof_handler,
         Functions::SignedDistance::Sphere<3>(sphere_center, sphere_radius),
         signed_distance);
 
+      // Initialize data structure for the interface reconstruction
       std::map<types::global_cell_index, std::vector<Point<3>>>
         interface_reconstruction_vertices;
-      std::map<types::global_cell_index, std::vector<CellData<3 - 1>>>
+      std::map<types::global_cell_index, std::vector<CellData<2>>>
                                         interface_reconstruction_cells;
       std::set<types::global_dof_index> intersected_dofs;
 
+      /* Reconstruct the interface. This method returns maps containing the
+      surface vertices and cells of the reconstruction in volume cell-wise
+      fashion. The key of the maps is the volume cell and only the intersected cells are store in the maps.*/
       InterfaceTools::reconstruct_interface(mapping,
                                             dof_handler,
                                             fe,
@@ -69,25 +83,28 @@ test()
                                             intersected_dofs);
 
       double area = 0.0;
+
+      // Loop on the intersected volume cells
       for (auto &intersected_cell : interface_reconstruction_cells)
         {
           const unsigned int cell_index = intersected_cell.first;
 
-          // Create interface recontruction triangulation (surface
-          // triangulation) in the intersected volume cell
+          /* Create interface recontruction triangulation (surface
+          triangulation) in the intersected volume cell */
           std::vector<Point<3>> surface_vertices =
             interface_reconstruction_vertices.at(cell_index);
-          std::vector<CellData<3 - 1>> surface_cells = intersected_cell.second;
+          std::vector<CellData<2>> surface_cells = intersected_cell.second;
 
-          Triangulation<3 - 1, 3> surface_triangulation;
+          Triangulation<2, 3> surface_triangulation;
           surface_triangulation.create_triangulation(surface_vertices,
                                                      surface_cells,
                                                      {});
 
+          // Compute the area of the surface triangulation
           area += GridTools::volume(surface_triangulation);
         }
 
-
+      // Compute and store the area error
       error_area[n] = abs(4.0 * M_PI * std::pow(sphere_radius, 2) - area);
 
       deallog << "The area error for ref. lev. " << n + 3

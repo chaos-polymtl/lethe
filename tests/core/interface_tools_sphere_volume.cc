@@ -21,6 +21,12 @@
 void
 test()
 {
+  /* This test checks the computation of the volume enclosed by the level 0 of a
+  level-set field using the InterfaceTools::compute_volume function. The
+  level-set field of interest is the one describing a sphere. The volume is
+  computed for 3 mesh refinements and the test checks the error on the volume
+  and the convergence rate of the method (formally 2).
+  */
   Triangulation<3> triangulation;
   DoFHandler<3>    dof_handler;
   FE_Q<3>          fe(1);
@@ -37,6 +43,7 @@ test()
 
   Vector<double> error_volume(3);
 
+  // Loop for the mesh convergence study
   for (unsigned int n = 0; n < 3; n++)
     {
       triangulation.refine_global(n);
@@ -48,12 +55,14 @@ test()
 
       signed_distance.reinit(dof_handler.n_dofs());
 
+      // Set the level-set field of the sphere
       VectorTools::interpolate(
         mapping,
         dof_handler,
         Functions::SignedDistance::Sphere<3>(sphere_center, sphere_radius),
         signed_distance);
 
+      // Compute the volume of the sphere
       const double volume =
         InterfaceTools::compute_volume(mapping,
                                        dof_handler,
@@ -61,6 +70,7 @@ test()
                                        signed_distance,
                                        triangulation.get_communicator());
 
+      // Compute and store the volume error
       error_volume[n] =
         abs(4.0 * M_PI * std::pow(sphere_radius, 3) / 3.0 - volume);
 
@@ -68,6 +78,7 @@ test()
               << " is : " << error_volume[n] << std::endl;
     }
 
+  // Compute the rate of convergence
   const double convergence_order = log(error_volume[2] / error_volume[1]) /
                                    log(error_volume[1] / error_volume[0]);
 
