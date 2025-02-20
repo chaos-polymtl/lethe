@@ -88,5 +88,6 @@ deal_ii_pickup_tests()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-fluid/mms3d_isothermal_compressible_ns_gls.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid/gls_droplet_marangoni_effect.debug PROPERTIES TIMEOUT 2000)
+  set_tests_properties(lethe-fluid/heat_transfer_vof_lpbf_benchmark_rotated_laser.debug PROPERTIES TIMEOUT 2000)
 
 endif()
