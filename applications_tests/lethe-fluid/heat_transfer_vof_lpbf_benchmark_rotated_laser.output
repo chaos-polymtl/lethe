@@ -10,12 +10,6 @@ Temperature statistics on fluid:
 	 Average: 298
 	 Std-Dev: 8.2558e-11
 
-----------------------
-VOF Mass Conservation
-----------------------
-    time     volume_fluid_0 mass_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 momentum-z_fluid_0 volume_fluid_1 mass_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 momentum-z_fluid_1 sharpening_threshold 
-0.000000e+00   6.075000e-02 1.083780e-10       2.400379e-10       0.000000e+00       0.000000e+00   1.552500e-01 6.862050e-07       5.792794e-08       0.000000e+00       0.000000e+00         5.000000e-01 
-
 **********************************************************************************
 Transient iteration: 1        Time: 8e-08    Time step: 8e-08    CFL: 0.000339023
 **********************************************************************************
@@ -24,12 +18,6 @@ Temperature statistics on fluid:
 	     Max: 307.231
 	 Average: 298.038
 	 Std-Dev: 0.354979
-
-----------------------
-VOF Mass Conservation
-----------------------
-    time     volume_fluid_0 mass_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 momentum-z_fluid_0 volume_fluid_1 mass_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 momentum-z_fluid_1 sharpening_threshold 
-8.000000e-08   6.075000e-02 1.083780e-10       6.720725e-09       8.079750e-11       2.099241e-15   1.552500e-01 6.862050e-07       1.051333e-06       1.156220e-08       1.891723e-13         5.000000e-01 
 
 **********************************************************************************
 Transient iteration: 2        Time: 2.12e-07 Time step: 1.32e-07 CFL: 0.000274073
@@ -40,12 +28,6 @@ Temperature statistics on fluid:
 	 Average: 298.101
 	 Std-Dev: 0.940176
 
-----------------------
-VOF Mass Conservation
-----------------------
-    time     volume_fluid_0 mass_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 momentum-z_fluid_0 volume_fluid_1 mass_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 momentum-z_fluid_1 sharpening_threshold 
-2.120000e-07   6.074999e-02 1.083780e-10       8.277170e-09       1.393243e-10       6.746740e-16   1.552500e-01 6.862051e-07       1.244134e-06       2.225396e-08      -2.037522e-12         5.000000e-01 
-
 **********************************************************************************
 Transient iteration: 3        Time: 4.12e-07 Time step: 2e-07    CFL: 0.000469108
 **********************************************************************************
@@ -54,12 +36,6 @@ Temperature statistics on fluid:
 	     Max: 345.434
 	 Average: 298.196
 	 Std-Dev: 1.82534
-
-----------------------
-VOF Mass Conservation
-----------------------
-    time     volume_fluid_0 mass_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 momentum-z_fluid_0 volume_fluid_1 mass_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 momentum-z_fluid_1 sharpening_threshold 
-4.120000e-07   6.074996e-02 1.083779e-10       8.180683e-09       1.644912e-10       1.652852e-15   1.552500e-01 6.862052e-07       1.219548e-06       2.637091e-08       1.162632e-12         5.000000e-01 
 
 **********************************************************************************
 Transient iteration: 4        Time: 6.12e-07 Time step: 2e-07    CFL: 0.000711688
@@ -70,12 +46,6 @@ Temperature statistics on fluid:
 	 Average: 298.291
 	 Std-Dev: 2.70861
 
-----------------------
-VOF Mass Conservation
-----------------------
-    time     volume_fluid_0 mass_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 momentum-z_fluid_0 volume_fluid_1 mass_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 momentum-z_fluid_1 sharpening_threshold 
-6.120000e-07   6.074993e-02 1.083779e-10       7.890692e-09       1.622458e-10       3.454436e-14   1.552501e-01 6.862053e-07       1.167820e-06       2.549940e-08       4.368555e-12         5.000000e-01 
-
 **********************************************************************************
 Transient iteration: 5        Time: 8.12e-07 Time step: 2e-07    CFL: 0.000686416
 **********************************************************************************
@@ -84,24 +54,3 @@ Temperature statistics on fluid:
 	     Max: 391.209
 	 Average: 298.386
 	 Std-Dev: 3.58999
-
-----------------------
-VOF Mass Conservation
-----------------------
-    time     volume_fluid_0 mass_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 momentum-z_fluid_0 volume_fluid_1 mass_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 momentum-z_fluid_1 sharpening_threshold 
-8.120000e-07   6.074991e-02 1.083778e-10       7.804788e-09       1.587043e-10       1.407016e-15   1.552501e-01 6.862054e-07       1.145831e-06       2.468890e-08      -4.887060e-13         5.000000e-01 
-
-***********************************************************************************
-Transient iteration: 6        Time: 1.012e-06 Time step: 2e-07    CFL: 0.000666788
-***********************************************************************************
-Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 413.991
-	 Average: 298.481
-	 Std-Dev: 4.46947
-
-----------------------
-VOF Mass Conservation
-----------------------
-    time     volume_fluid_0 mass_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 momentum-z_fluid_0 volume_fluid_1 mass_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 momentum-z_fluid_1 sharpening_threshold 
-1.012000e-06   6.074988e-02 1.083778e-10       7.803153e-09       1.605791e-10       6.380472e-14   1.552501e-01 6.862055e-07       1.136379e-06       2.477209e-08       9.336813e-12         5.000000e-01 
