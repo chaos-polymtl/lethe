@@ -9,6 +9,7 @@ add_library(lethe-core
   grids.cc
   ib_particle.cc
   ib_stencil.cc
+  interface_tools.cc
   lethe_grid_tools.cc
   manifolds.cc
   mesh_controller.cc
@@ -50,6 +51,7 @@ add_library(lethe-core
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver.h
   ../../include/core/interface_property_model.h
+  ../../include/core/interface_tools.h
   ../../include/core/kinsol_newton_non_linear_solver.h
   ../../include/core/lethe_grid_tools.h
   ../../include/core/manifolds.h
