@@ -4,6 +4,10 @@
 
 #include <solvers/fluid_dynamics_matrix_free.h>
 
+#include <fem-dem/cfd_dem_simulation_parameters.h>
+#include <fem-dem/void_fraction.h>
+
+
 /**
  * @brief A solver for the incompressible Navier-Stokes equations implemented
  * in a matrix-free fashion.
@@ -31,17 +35,29 @@ public:
   FluidDynamicsVANSMatrixFree(SimulationParameters<dim> &nsparam);
 
   /**
-   * @brief Destructor.
-   *
-   */
-  ~FluidDynamicsVANSMatrixFree();
-
-  /**
    * @brief Solve the problem defined by simulation parameters by iterating
    * through time or through the mesh refinements.
    */
   virtual void
   solve();
 
-private:
+protected:
+  /// Simulatio parameters for CFD-DEM simulations
+  CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
+
+  /// Mapping used for the particles
+  MappingQGeneric<dim> particle_mapping;
+
+  /// Particle-handler used to store particles in CFD-DEM simulations
+  Particles::ParticleHandler<dim, dim> particle_handler;
+
+  /// Object that manages the void fraction calculation from functions
+  /// or from parameters.
+  VoidFractionBase<dim> void_fraction_manager;
+
+
+  /// Member variables which are used to manage boundary conditions
+  bool           has_periodic_boundaries;
+  Tensor<1, dim> periodic_offset;
+  unsigned int   periodic_direction;
 };

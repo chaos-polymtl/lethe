@@ -9,41 +9,58 @@
 
 #include <fem-dem/fluid_dynamics_vans_matrix_free.h>
 
-#include <deal.II/base/multithread_info.h>
-
-#include <deal.II/dofs/dof_tools.h>
-
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/precondition.h>
-#include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
-#include <deal.II/lac/sparse_matrix_tools.h>
-#include <deal.II/lac/vector.h>
 
-#include <deal.II/multigrid/mg_coarse.h>
-#include <deal.II/multigrid/mg_constrained_dofs.h>
-#include <deal.II/multigrid/mg_matrix.h>
-#include <deal.II/multigrid/mg_smoother.h>
-#include <deal.II/multigrid/mg_tools.h>
-#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 #include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
-#include <deal.II/multigrid/mg_transfer_matrix_free.h>
-#include <deal.II/multigrid/multigrid.h>
-
-#include <deal.II/numerics/vector_tools.h>
 
 template <int dim>
-FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
-  SimulationParameters<dim> &nsparam)
-  : FluidDynamicsMatrixFree<dim>(nsparam)
+FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
+  SimulationParameters<dim> &param)
+  : FluidDynamicsMatrixFree<dim>(param.cfd_parameters)
+  , cfd_dem_simulation_parameters(param)
+  , particle_mapping(1)
+  , particle_handler(
+      *this->triangulation,
+      particle_mapping,
+      DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>())
+  , void_fraction_manager(
+      &(*this->triangulation),
+      param.void_fraction,
+      this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver.at(
+        PhysicsID::fluid_dynamics),
+      &particle_handler,
+      this->cfd_dem_simulation_parameters.cfd_parameters.fem_parameters
+        .void_fraction_order,
+      this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
+      this->pcout)
+  , has_periodic_boundaries(false)
 {
   AssertThrow(
-    nsparam.fem_parameters.velocity_order ==
-      nsparam.fem_parameters.pressure_order,
+    param.fem_parameters.velocity_order == param.fem_parameters.pressure_order,
     dealii::ExcMessage(
       "Matrix free Volume-Averaged Navier-Stokes does not support different orders for the velocity and the pressure!"));
 
+
+  unsigned int n_pbc = 0;
+  for (auto const &[id, type] :
+       cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          if (n_pbc++ > 1)
+            {
+              throw std::runtime_error(
+                "GLS VANS solver does not support more than one periodic boundary condition.");
+            }
+          else
+            {
+              has_periodic_boundaries = true;
+            }
+        }
+    }
 
   // The default MatrixFree solver sets a system_operator. We override the
   // Navier-Stokes operator with the volume-averaged Navier-Stokes operator.
@@ -54,14 +71,8 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
 }
 
 template <int dim>
-FluidDynamicsMatrixFree<dim>::~FluidDynamicsMatrixFree()
-{
-  this->dof_handler.clear();
-}
-
-template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::solve()
+FluidDynamicsVANSMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
@@ -97,7 +108,7 @@ FluidDynamicsMatrixFree<dim>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-          NavierStokesBase<dim, VectorType, IndexSet>::refine_mesh();
+          this->refine_mesh();
         }
 
       if (is_bdf(this->simulation_control->get_assembly_method()))
@@ -105,7 +116,7 @@ FluidDynamicsMatrixFree<dim>::solve()
           this->computing_timer.enter_subsection(
             "Calculate time derivative previous solutions");
 
-          calculate_time_derivative_previous_solutions();
+          this->calculate_time_derivative_previous_solutions();
           this->time_derivative_previous_solutions.update_ghost_values();
           this->system_operator->evaluate_time_derivative_previous_solutions(
             this->time_derivative_previous_solutions);
@@ -124,11 +135,11 @@ FluidDynamicsMatrixFree<dim>::solve()
 
       if (this->simulation_parameters.timer.type ==
           Parameters::Timer::Type::iteration)
-        print_mg_setup_times();
+        this->print_mg_setup_times();
     }
 
   if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
-    print_mg_setup_times();
+    this->print_mg_setup_times();
 
   this->finish_simulation();
 }
