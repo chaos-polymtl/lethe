@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Verify if the time average temperature calculation leads to a segfault. The validity of the temperature average is tested in tests/solvers. This is the heat_transfer_conduction in solid test. The subsections post-processing, mesh refinement and restart have been added.
+# Based on the heat_transfer_average_temperature test. Checks if restarting with a different initial time for average temperature and heat flux parameter leads to a segfault. A warning message should appear saying that the checkpointed time-averaged temperature and heat flux have been initialized/reinitialized.
+
 
 # Listing of Parameters
 #----------------------
@@ -152,6 +153,7 @@ end
 
 subsection post-processing
   set calculate average temperature and heat flux = true
+  set initial time for average temperature and heat flux = 0.04
 end
 
 #---------------------------------------------------

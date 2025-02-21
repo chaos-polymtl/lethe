@@ -141,5 +141,17 @@ AverageScalar<dim>::read(const std::string &prefix)
   return sum_vectors;
 }
 
+template <int dim>
+void
+AverageScalar<dim>::reinit_average_after_restart(const IndexSet &locally_owned_dofs,
+                                                 const IndexSet &locally_relevant_dofs,
+                                                 const MPI_Comm &mpi_communicator)
+{
+  sum_scalar_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                        locally_relevant_dofs,
+                                        mpi_communicator);             
+  average_calculation = false;
+}
+
 template class AverageScalar<2>;
 template class AverageScalar<3>;

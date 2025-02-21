@@ -790,20 +790,6 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Ouput the time average temperature and time average heat flux
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
-      // Start calculating after the initial time for the average temperature
-      // and average heat flux
-      if (this->simulation_control->get_current_time() >
-          simulation_parameters.post_processing
-              .initial_time_for_average_temp_and_hf -
-            1e-6 * simulation_control->get_time_step())
-        {
-          this->average_temperature->calculate_average_scalar(
-            this->present_solution,
-            this->simulation_parameters.post_processing,
-            simulation_control->get_current_time(),
-            simulation_control->get_time_step());
-        }
-
       this->average_temperature_to_output =
         this->average_temperature->get_average_scalar();
       data_out.add_data_vector(dof_handler,
@@ -1059,6 +1045,23 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         this->write_heat_flux(domain_name);
     }
 
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
+    {
+      // Start calculating after the initial time for the average temperature
+      // and average heat flux
+      if (this->simulation_control->get_current_time() >
+          simulation_parameters.post_processing
+              .initial_time_for_average_temp_and_hf -
+            1e-6 * simulation_control->get_time_step())
+        {
+          this->average_temperature->calculate_average_scalar(
+            this->present_solution,
+            this->simulation_parameters.post_processing,
+            simulation_control->get_current_time(),
+            simulation_control->get_time_step());
+        }
+    }
+
   // Liquid fraction
   if (simulation_parameters.post_processing.calculate_liquid_fraction)
     {
@@ -1256,8 +1259,13 @@ HeatTransfer<dim>::read_checkpoint()
 
   solution_transfer->deserialize(input_vectors);
 
-  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf){
+    if (this->simulation_parameters.post_processing.initial_time_for_average_temp_and_hf > (this->simulation_control->get_current_time() + 1e-8)){
+      this->pcout << "Warning: The checkpointed time-averaged temperature and heat flux have been initialized/reinitialized because the initial averaging time has not yet been reached." << std::endl;
+      this->average_temperature->reinit_average_after_restart(this->locally_owned_dofs,this->locally_relevant_dofs,mpi_communicator);
+    }    
     this->average_temperature->sanitize_after_restart();
+    }
 
   present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
