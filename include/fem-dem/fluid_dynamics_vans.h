@@ -4,12 +4,8 @@
 #ifndef lethe_fluid_dynamics_vans_h
 #define lethe_fluid_dynamics_vans_h
 
-#include <core/bdf.h>
-#include <core/dem_properties.h>
-#include <core/grids.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
-#include <core/time_integration_utilities.h>
 
 #include <solvers/fluid_dynamics_matrix_based.h>
 #include <solvers/postprocessing_cfd.h>
@@ -19,17 +15,10 @@
 #include <fem-dem/vans_assemblers.h>
 #include <fem-dem/void_fraction.h>
 
-#include <deal.II/distributed/tria.h>
-
 #include <deal.II/fe/mapping_q.h>
 
-#include <deal.II/particles/generators.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
-
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
 
 using namespace dealii;
 
@@ -40,7 +29,6 @@ using namespace dealii;
  * the flow is solved
  *
  * @ingroup solvers
- * @author Toni EL Geitani, 2020
  */
 
 template <int dim>
@@ -196,10 +184,6 @@ protected:
   const double GLS_u_scale = 1;
   double       pressure_drop;
 
-  bool           has_periodic_boundaries;
-  Tensor<1, dim> periodic_offset;
-  unsigned int   periodic_direction;
-
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
@@ -207,10 +191,13 @@ protected:
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_periodic_cell;
 
-protected:
   Particles::ParticleHandler<dim, dim> particle_handler;
 
   VoidFractionBase<dim> void_fraction_manager;
+
+  bool           has_periodic_boundaries;
+  Tensor<1, dim> periodic_offset;
+  unsigned int   periodic_direction;
 };
 
 #endif
