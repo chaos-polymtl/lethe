@@ -10,4 +10,3 @@ deal_ii_pickup_tests()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(core/interface_tools_sphere_reconstruction.debug PROPERTIES TIMEOUT 2000)
 endif()
-  
