@@ -143,6 +143,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1" id="r_a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">find_point_triangle_distance</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a0441112a1d2ecc434246a30f9ef098a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6" id="r_a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">find_point_line_distance</a> (const Point&lt; dim &gt; &amp;line_origin, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;point)</td></tr>
+<tr class="separator:a90583db59423ee4e85fff79df1cb0bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ac39192d5fabd9d06ba64a2a7150c5693" name="ac39192d5fabd9d06ba64a2a7150c5693"></a>
@@ -718,6 +721,64 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01222">1222</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
+
+</div>
+</div>
+<a id="a90583db59423ee4e85fff79df1cb0bf6" name="a90583db59423ee4e85fff79df1cb0bf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90583db59423ee4e85fff79df1cb0bf6">&#9670;&#160;</a></span>find_point_line_distance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double LetheGridTools::find_point_line_distance </td>
+          <td>(</td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>line_origin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>line_direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>point</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the minimum distance between a point and a line (defined using its orign and direction). The full calculation is taken from Geometric Tools for Computer Graphics, Eberly 2003 Chapter 10.2 - Point to linear component. The entire reference is available at: <a href="https://www.sciencedirect.com/science/article/pii/B9781558605947500138">https://www.sciencedirect.com/science/article/pii/B9781558605947500138</a> A full implementation of the above reference is also available here: <a href="https://www.geometrictools.com/Documentation/DistancePointLine.pdf">https://www.geometrictools.com/Documentation/DistancePointLine.pdf</a> Variables name are taken straight from this reference to ensure a better readability. </p>
+<dl class="section return"><dt>Returns</dt><dd>A distance</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">line_origin</td><td>Origin of the line (any point on the line) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">line_direction</td><td>Vector tangent to the line </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td>A point for which we want to find the minimum distance to the line</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>return distance </p>
+
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00342">342</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
 
 </div>
 </div>

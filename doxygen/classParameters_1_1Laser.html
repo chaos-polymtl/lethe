@@ -144,8 +144,16 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a2540c76686edb825030f30907d20cea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08eabab3ba0c338383315c1baea9584c" id="r_a08eabab3ba0c338383315c1baea9584c"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#a08eabab3ba0c338383315c1baea9584c">perpendicular_plane_coordinate_one</a></td></tr>
 <tr class="separator:a08eabab3ba0c338383315c1baea9584c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1528392a89bfe238ff9331e35eb024a" id="r_ab1528392a89bfe238ff9331e35eb024a"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#ab1528392a89bfe238ff9331e35eb024a">beam_axis</a></td></tr>
+<tr class="separator:ab1528392a89bfe238ff9331e35eb024a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91363ebfa9e6aa2676b7f87024b7d326" id="r_a91363ebfa9e6aa2676b7f87024b7d326"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#a91363ebfa9e6aa2676b7f87024b7d326">perpendicular_plane_coordinate_two</a></td></tr>
 <tr class="separator:a91363ebfa9e6aa2676b7f87024b7d326"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5067b496d9d961de4797e4387c32add3" id="r_a5067b496d9d961de4797e4387c32add3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#a5067b496d9d961de4797e4387c32add3">rotation_angle</a></td></tr>
+<tr class="separator:a5067b496d9d961de4797e4387c32add3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a883b18b03e6ca59001d87b4112d09183" id="r_a883b18b03e6ca59001d87b4112d09183"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#a883b18b03e6ca59001d87b4112d09183">rotation_axis</a></td></tr>
+<tr class="separator:a883b18b03e6ca59001d87b4112d09183"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b8ac2fb0b8307233d3cec2da3c0734c" id="r_a8b8ac2fb0b8307233d3cec2da3c0734c"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 2, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#a8b8ac2fb0b8307233d3cec2da3c0734c">rotation_matrix</a></td></tr>
+<tr class="separator:a8b8ac2fb0b8307233d3cec2da3c0734c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a99d4767fd77d4ecfa5d9de5b0c610f" id="r_a6a99d4767fd77d4ecfa5d9de5b0c610f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#a6a99d4767fd77d4ecfa5d9de5b0c610f">laser_scan_path</a></td></tr>
 <tr class="separator:a6a99d4767fd77d4ecfa5d9de5b0c610f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75db00793ab2931723bf68e836663849" id="r_a75db00793ab2931723bf68e836663849"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Laser.html#a75db00793ab2931723bf68e836663849">start_time</a></td></tr>
@@ -267,7 +275,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01690">1690</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01702">1702</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 </div>
 </div>
@@ -287,6 +295,24 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00807">807</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="ab1528392a89bfe238ff9331e35eb024a" name="ab1528392a89bfe238ff9331e35eb024a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1528392a89bfe238ff9331e35eb024a">&#9670;&#160;</a></span>beam_axis</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt;1, dim&gt; <a class="el" href="classParameters_1_1Laser.html">Parameters::Laser</a>&lt; dim &gt;::beam_axis</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00877">877</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -392,7 +418,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00883">883</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00896">896</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -446,7 +472,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00879">879</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00892">892</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -516,7 +542,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00875">875</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00879">879</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -534,7 +560,61 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00886">886</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00899">899</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a5067b496d9d961de4797e4387c32add3" name="a5067b496d9d961de4797e4387c32add3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5067b496d9d961de4797e4387c32add3">&#9670;&#160;</a></span>rotation_angle</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classParameters_1_1Laser.html">Parameters::Laser</a>&lt; dim &gt;::rotation_angle</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00882">882</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a883b18b03e6ca59001d87b4112d09183" name="a883b18b03e6ca59001d87b4112d09183"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a883b18b03e6ca59001d87b4112d09183">&#9670;&#160;</a></span>rotation_axis</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt;1, dim&gt; <a class="el" href="classParameters_1_1Laser.html">Parameters::Laser</a>&lt; dim &gt;::rotation_axis</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00885">885</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a8b8ac2fb0b8307233d3cec2da3c0734c" name="a8b8ac2fb0b8307233d3cec2da3c0734c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b8ac2fb0b8307233d3cec2da3c0734c">&#9670;&#160;</a></span>rotation_matrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt;2, dim&gt; <a class="el" href="classParameters_1_1Laser.html">Parameters::Laser</a>&lt; dim &gt;::rotation_matrix</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00888">888</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -552,7 +632,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00882">882</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00895">895</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

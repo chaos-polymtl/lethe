@@ -446,6 +446,8 @@
   set start time           = 0.0
   set end time             = 1.0
   set beam orientation     = z-
+  set beam rotation angle  = 0.0
+  set beam rotation axis   = 0.0, 0.0, 1.0
 
   subsection path
     set Function expression = 0.0; 0.0
@@ -479,6 +481,13 @@ end
 <p class="admonition-title">Attention</p>
 <p>In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.</p>
 </div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">angle</span></code> and <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> parameters allow to rotate the beam axis (given by <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">orientation</span></code>) of an angle <span class="math notranslate nohighlight">\(\theta\)</span> in radians around the specified rotation axis, described by its tangent vector <span class="math notranslate nohighlight">\(\vec{t}_\text{rot}\)</span>. It is only available for the <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> model, and the <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> is only used in 3D simulations. The rotation is performed using the matrix for rotation <span class="math notranslate nohighlight">\(R(\vec{t}_\text{rot}, \theta)\)</span> following:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\vec{t}_\text{laser,rot} = R(\vec{t}_\text{rot}, \theta)\vec{t}_\text{laser}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\vec{t}_\text{laser}\)</span> is the initial beam tangent vector, given by the <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">orientation</span></code> parameter, and <span class="math notranslate nohighlight">\(\vec{t}_\text{laser}\)</span> is the rotated one.</p>
 </li>
 <li><p>In the <code class="docutils literal notranslate"><span class="pre">path</span></code> subsection, the laser scanning path is defined using a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code>: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the <a class="reference internal" href="volume_of_fluid.html"><span class="doc">Volume of Fluid (Multiphase Flow)</span></a> solver, the <code class="docutils literal notranslate"><span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code> subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:</p>

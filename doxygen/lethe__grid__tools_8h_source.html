@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">lethe_grid_tools.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="lethe__grid__tools_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<a href="lethe__grid__tools_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_lethe_grid_tools_h</span></div>
@@ -411,52 +411,91 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>                               <span class="keyword">const</span> Point&lt;dim&gt;              &amp;point);</div>
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span><span class="comment"></span> </div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span><span class="comment">   * @brief</span></div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span><span class="comment">   * A functor that provides a unique and uniformly distributed hash for a</span></div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span><span class="comment">   * a cell. Used to store cells in hash sets.</span></div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen00325" data-start="{" data-end="};">
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1hash__cell.html">  325</a></span>  <span class="keyword">struct </span><a class="code hl_struct" href="structLetheGridTools_1_1hash__cell.html">hash_cell</a></div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>  {</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    std::size_t</div>
-<div class="foldopen" id="foldopen00328" data-start="{" data-end="}">
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1hash__cell.html#a60644bdcd456235b534dbb6052674475">  328</a></span>    <a class="code hl_function" href="structLetheGridTools_1_1hash__cell.html#a60644bdcd456235b534dbb6052674475">operator()</a>(</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>      <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell) <span class="keyword">const</span> <span class="keyword">noexcept</span></div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>    {</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>      <span class="keywordflow">return</span> std::hash&lt;int&gt;()(cell-&gt;global_active_cell_index());</div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>    }</div>
-</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>  };</div>
-</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span><span class="comment"></span> </div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span><span class="comment">   * @brief</span></div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span><span class="comment">   * A functor that provides a way to check if two cells are the same cell.</span></div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span><span class="comment">   * Used to store cells in hash sets.</span></div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span><span class="comment">   * @brief Calculate the minimum distance between a point and a line (defined using</span></div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span><span class="comment">   * its orign and direction). The full calculation is taken from</span></div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span><span class="comment">   * Geometric Tools for Computer Graphics, Eberly 2003 Chapter 10.2 - Point</span></div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="comment">   * to linear component. The entire reference is available at:</span></div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="comment">   * https://www.sciencedirect.com/science/article/pii/B9781558605947500138</span></div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span><span class="comment">   * A full implementation of the  above reference is also available here:</span></div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span><span class="comment">   * https://www.geometrictools.com/Documentation/DistancePointLine.pdf</span></div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span><span class="comment">   * Variables name are taken straight from this reference to ensure a better</span></div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span><span class="comment">   * readability.</span></div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span><span class="comment">   * @return A distance</span></div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span><span class="comment">   * @param[in] line_origin Origin of the line (any point on the line)</span></div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span><span class="comment">   * @param[in] line_direction Vector tangent to the line</span></div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span><span class="comment">   * @param[in] point A point for which we want to find the minimum distance to</span></div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span><span class="comment">   * the line</span></div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span><span class="comment">   * return distance</span></div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span><span class="comment">   */</span></div>
 <div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen00341" data-start="{" data-end="};">
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1equal__cell.html">  341</a></span>  <span class="keyword">struct </span><a class="code hl_struct" href="structLetheGridTools_1_1equal__cell.html">equal_cell</a></div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>  {</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>    std::size_t</div>
-<div class="foldopen" id="foldopen00344" data-start="{" data-end="}">
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1equal__cell.html#a8358ff43c6f2c810b966e1e3b8d83f80">  344</a></span>    <a class="code hl_function" href="structLetheGridTools_1_1equal__cell.html#a8358ff43c6f2c810b966e1e3b8d83f80">operator()</a>(<span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell1,</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>               <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell2)</div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>      <span class="keyword">const</span> <span class="keyword">noexcept</span></div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    {</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>      <span class="keywordflow">return</span> cell1-&gt;global_active_cell_index() ==</div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>             cell2-&gt;global_active_cell_index();</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    }</div>
-</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>  };</div>
-</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>  <span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen00342" data-start="{" data-end="}">
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno"><a class="line" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">  342</a></span>  <a class="code hl_function" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">find_point_line_distance</a>(<span class="keyword">const</span> Point&lt;dim&gt;     &amp;line_origin,</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>                           <span class="keyword">const</span> Tensor&lt;1, dim&gt; &amp;line_direction,</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>                           <span class="keyword">const</span> Point&lt;dim&gt;     &amp;point)</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>  {</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>    Tensor&lt;1, dim&gt; diff = point - line_origin;</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span> </div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>    <span class="keywordtype">double</span> t_0 = line_direction * diff;</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    t_0 /= line_direction.norm();</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span> </div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    <span class="keyword">const</span> Point&lt;dim&gt; closest_point_on_line = line_origin + t_0 * line_direction;</div>
 <div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span> </div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>} <span class="comment">// namespace LetheGridTools</span></div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>    <span class="keywordflow">return</span> point.distance(closest_point_on_line);</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>  }</div>
 </div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span> </div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span><span class="preprocessor">#endif </span><span class="comment">// lethe_lethegridtools_h</span></div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span><span class="comment"></span> </div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span><span class="comment">   * @brief</span></div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span><span class="comment">   * A functor that provides a unique and uniformly distributed hash for a</span></div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span><span class="comment">   * a cell. Used to store cells in hash sets.</span></div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen00362" data-start="{" data-end="};">
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1hash__cell.html">  362</a></span>  <span class="keyword">struct </span><a class="code hl_struct" href="structLetheGridTools_1_1hash__cell.html">hash_cell</a></div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>  {</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    std::size_t</div>
+<div class="foldopen" id="foldopen00365" data-start="{" data-end="}">
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1hash__cell.html#a60644bdcd456235b534dbb6052674475">  365</a></span>    <a class="code hl_function" href="structLetheGridTools_1_1hash__cell.html#a60644bdcd456235b534dbb6052674475">operator()</a>(</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>      <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell) <span class="keyword">const</span> <span class="keyword">noexcept</span></div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>    {</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>      <span class="keywordflow">return</span> std::hash&lt;int&gt;()(cell-&gt;global_active_cell_index());</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>    }</div>
+</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>  };</div>
+</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span><span class="comment"></span> </div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span><span class="comment">   * @brief</span></div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span><span class="comment">   * A functor that provides a way to check if two cells are the same cell.</span></div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span><span class="comment">   * Used to store cells in hash sets.</span></div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen00378" data-start="{" data-end="};">
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1equal__cell.html">  378</a></span>  <span class="keyword">struct </span><a class="code hl_struct" href="structLetheGridTools_1_1equal__cell.html">equal_cell</a></div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>  {</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    std::size_t</div>
+<div class="foldopen" id="foldopen00381" data-start="{" data-end="}">
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno"><a class="line" href="structLetheGridTools_1_1equal__cell.html#a8358ff43c6f2c810b966e1e3b8d83f80">  381</a></span>    <a class="code hl_function" href="structLetheGridTools_1_1equal__cell.html#a8358ff43c6f2c810b966e1e3b8d83f80">operator()</a>(<span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell1,</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>               <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell2)</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>      <span class="keyword">const</span> <span class="keyword">noexcept</span></div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    {</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>      <span class="keywordflow">return</span> cell1-&gt;global_active_cell_index() ==</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>             cell2-&gt;global_active_cell_index();</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    }</div>
+</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>  };</div>
+</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span> </div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>} <span class="comment">// namespace LetheGridTools</span></div>
+</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span> </div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span><span class="preprocessor">#endif </span><span class="comment">// lethe_lethegridtools_h</span></div>
 <div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition</b> <a href="serial__solid_8h_source.html#l00048">serial_solid.h:49</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html"><div class="ttname"><a href="namespaceLetheGridTools.html">LetheGridTools</a></div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00019">lethe_grid_tools.h:20</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_a0441112a1d2ecc434246a30f9ef098a1"><div class="ttname"><a href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a></div><div class="ttdeci">double find_point_triangle_distance(const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</div><div class="ttdoc">Calculates the distance between points and a triangle (defined using three vertices)....</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l01496">lethe_grid_tools.cc:1496</a></div></div>
@@ -467,6 +506,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceLetheGridTools_html_a401a70d91df8702b067cd42f6fe38a60"><div class="ttname"><a href="namespaceLetheGridTools.html#a401a70d91df8702b067cd42f6fe38a60">LetheGridTools::vertices_cell_mapping_with_periodic_boundaries</a></div><div class="ttdeci">void vertices_cell_mapping_with_periodic_boundaries(const DoFHandler&lt; dim &gt; &amp;dof_handler, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map)</div><div class="ttdoc">Map the vertex index to the cells on periodic boundaries that includes the periodic coinciding vertex...</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00050">lethe_grid_tools.cc:50</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_a68ee3cd11181c7c37df2568d416a9cdb"><div class="ttname"><a href="namespaceLetheGridTools.html#a68ee3cd11181c7c37df2568d416a9cdb">LetheGridTools::find_cells_around_cell</a></div><div class="ttdeci">std::vector&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; find_cells_around_cell(std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)</div><div class="ttdoc">Return a vector of cells around a cell including vertex neighbors.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00365">lethe_grid_tools.cc:365</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_a8d97c7d2159ec1d7de69ef8127d0aef0"><div class="ttname"><a href="namespaceLetheGridTools.html#a8d97c7d2159ec1d7de69ef8127d0aef0">LetheGridTools::project_to_d_linear_object</a></div><div class="ttdeci">std::pair&lt; std::pair&lt; Point&lt; spacedim &gt;, bool &gt;, Tensor&lt; 1, spacedim &gt; &gt; project_to_d_linear_object(const typename DoFHandler&lt; structdim, spacedim &gt;::active_cell_iterator &amp;object, const Point&lt; spacedim &gt; &amp;trial_point)</div><div class="ttdoc">A copy of the project_to_d_linear from dealii that also outputs the normal of the flat.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00560">lethe_grid_tools.cc:560</a></div></div>
+<div class="ttc" id="anamespaceLetheGridTools_html_a90583db59423ee4e85fff79df1cb0bf6"><div class="ttname"><a href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">LetheGridTools::find_point_line_distance</a></div><div class="ttdeci">double find_point_line_distance(const Point&lt; dim &gt; &amp;line_origin, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;point)</div><div class="ttdoc">Calculate the minimum distance between a point and a line (defined using its orign and direction)....</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00342">lethe_grid_tools.h:342</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_abbbc4eafb0ca7d4f9a37b9846b88c0df"><div class="ttname"><a href="namespaceLetheGridTools.html#abbbc4eafb0ca7d4f9a37b9846b88c0df">LetheGridTools::find_boundary_cells_in_sphere</a></div><div class="ttdeci">std::vector&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; find_boundary_cells_in_sphere(const DoFHandler&lt; dim &gt; &amp;dof_handler, const Point&lt; dim &gt; &amp;center, const double radius)</div><div class="ttdoc">Function returns all the boundary cells with at least one vertex in a sphere.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00250">lethe_grid_tools.cc:250</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_ac058976c029ac7386e2f20452efee01c"><div class="ttname"><a href="namespaceLetheGridTools.html#ac058976c029ac7386e2f20452efee01c">LetheGridTools::find_cell_around_point_with_neighbors</a></div><div class="ttdeci">DoFHandler&lt; dim &gt;::active_cell_iterator find_cell_around_point_with_neighbors(const DoFHandler&lt; dim &gt; &amp;dof_handler, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const Point&lt; dim &gt; &amp;point)</div><div class="ttdoc">Return the cell around a point based on an initial guess of a nearby cell.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00337">lethe_grid_tools.cc:337</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_ac39192d5fabd9d06ba64a2a7150c5693"><div class="ttname"><a href="namespaceLetheGridTools.html#ac39192d5fabd9d06ba64a2a7150c5693">LetheGridTools::cell_cut_by_flat</a></div><div class="ttdeci">bool cell_cut_by_flat(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const typename DoFHandler&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell_flat)</div><div class="ttdoc">Return a bool that indicates if a cell is cut by a flat cell.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00790">lethe_grid_tools.cc:790</a></div></div>
@@ -476,10 +516,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceLetheGridTools_html_af6a74f315f517328ba077f841587a5c3"><div class="ttname"><a href="namespaceLetheGridTools.html#af6a74f315f517328ba077f841587a5c3">LetheGridTools::find_cells_around_flat_cell</a></div><div class="ttdeci">std::vector&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; find_cells_around_flat_cell(const DoFHandler&lt; dim &gt; &amp;dof_handler, const typename DoFHandler&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map)</div><div class="ttdoc">Return a vector of cells around a flat cell in spacedim. A flat cell has a dim of spacedim-1.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00912">lethe_grid_tools.cc:912</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00033">fluid_dynamics_matrix_free.h:34</a></div></div>
 <div class="ttc" id="aserial__solid_8h_html"><div class="ttname"><a href="serial__solid_8h.html">serial_solid.h</a></div></div>
-<div class="ttc" id="astructLetheGridTools_1_1equal__cell_html"><div class="ttname"><a href="structLetheGridTools_1_1equal__cell.html">LetheGridTools::equal_cell</a></div><div class="ttdoc">A functor that provides a way to check if two cells are the same cell. Used to store cells in hash se...</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00341">lethe_grid_tools.h:342</a></div></div>
-<div class="ttc" id="astructLetheGridTools_1_1equal__cell_html_a8358ff43c6f2c810b966e1e3b8d83f80"><div class="ttname"><a href="structLetheGridTools_1_1equal__cell.html#a8358ff43c6f2c810b966e1e3b8d83f80">LetheGridTools::equal_cell::operator()</a></div><div class="ttdeci">std::size_t operator()(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell1, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell2) const noexcept</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00344">lethe_grid_tools.h:344</a></div></div>
-<div class="ttc" id="astructLetheGridTools_1_1hash__cell_html"><div class="ttname"><a href="structLetheGridTools_1_1hash__cell.html">LetheGridTools::hash_cell</a></div><div class="ttdoc">A functor that provides a unique and uniformly distributed hash for a a cell. Used to store cells in ...</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00325">lethe_grid_tools.h:326</a></div></div>
-<div class="ttc" id="astructLetheGridTools_1_1hash__cell_html_a60644bdcd456235b534dbb6052674475"><div class="ttname"><a href="structLetheGridTools_1_1hash__cell.html#a60644bdcd456235b534dbb6052674475">LetheGridTools::hash_cell::operator()</a></div><div class="ttdeci">std::size_t operator()(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell) const noexcept</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00328">lethe_grid_tools.h:328</a></div></div>
+<div class="ttc" id="astructLetheGridTools_1_1equal__cell_html"><div class="ttname"><a href="structLetheGridTools_1_1equal__cell.html">LetheGridTools::equal_cell</a></div><div class="ttdoc">A functor that provides a way to check if two cells are the same cell. Used to store cells in hash se...</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00378">lethe_grid_tools.h:379</a></div></div>
+<div class="ttc" id="astructLetheGridTools_1_1equal__cell_html_a8358ff43c6f2c810b966e1e3b8d83f80"><div class="ttname"><a href="structLetheGridTools_1_1equal__cell.html#a8358ff43c6f2c810b966e1e3b8d83f80">LetheGridTools::equal_cell::operator()</a></div><div class="ttdeci">std::size_t operator()(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell1, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell2) const noexcept</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00381">lethe_grid_tools.h:381</a></div></div>
+<div class="ttc" id="astructLetheGridTools_1_1hash__cell_html"><div class="ttname"><a href="structLetheGridTools_1_1hash__cell.html">LetheGridTools::hash_cell</a></div><div class="ttdoc">A functor that provides a unique and uniformly distributed hash for a a cell. Used to store cells in ...</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00362">lethe_grid_tools.h:363</a></div></div>
+<div class="ttc" id="astructLetheGridTools_1_1hash__cell_html_a60644bdcd456235b534dbb6052674475"><div class="ttname"><a href="structLetheGridTools_1_1hash__cell.html#a60644bdcd456235b534dbb6052674475">LetheGridTools::hash_cell::operator()</a></div><div class="ttdeci">std::size_t operator()(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell) const noexcept</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00365">lethe_grid_tools.h:365</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
