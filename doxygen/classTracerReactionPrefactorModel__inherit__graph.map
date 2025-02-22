@@ -1,0 +1,11 @@
+<map id="TracerReactionPrefactorModel" name="TracerReactionPrefactorModel">
+<area shape="rect" id="Node000001" title="Abstract class to calculate the tracer reaction prefactor." alt="" coords="224,55,441,80"/>
+<area shape="rect" id="Node000003" href="$classConstantTracerReactionPrefactor.html" title="Constant tracer reaction prefactor." alt="" coords="489,5,724,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="417,50,535,28,536,33,418,55"/>
+<area shape="rect" id="Node000004" href="$classNoneTracerReactionPrefactor.html" title="Dummy tracer reaction prefactor model." alt="" coords="501,55,712,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="455,65,501,65,501,70,455,70"/>
+<area shape="rect" id="Node000005" href="$classTanhLevelsetTracerReactionPrefactor.html" title="Tanh level&#45;set&#45;dependent tracer reaction prefactor." alt="" coords="505,105,708,145"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="408,80,511,102,510,107,407,85"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,55,176,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,65,224,65,224,70,190,70"/>
+</map>

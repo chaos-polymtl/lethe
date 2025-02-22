@@ -371,7 +371,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Most value functions assume that the particle's position is at the origin and that the shape is aligned with one of the main axes. This function returns a point that is rotated and translated, in accordance with the current shape position and orientation, so that subsequent calculations for the value function are made more easily; it abstracts a step that is required in the value function for most shapes. </p>
-<p>Returns the centered and aligned point used on the levelset evaluation.</p>
+<p>Returns the centered and aligned point used on the level set evaluation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point that will be recentered and realigned </td></tr>
@@ -1015,7 +1015,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return the curvature of the levelset at a given point. </p>
+<p>Return the curvature of the level set at a given point. </p>
 
 <p>Reimplemented in <a class="el" href="classSphere.html#ac2ded1d768510df6814ddc537b2ee249">Sphere&lt; dim &gt;</a>.</p>
 
@@ -1127,7 +1127,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>This function applies the inverse operation of align_and_center. </p>
-<p>Returns the centered and aligned point used on the levelset evaluation in the global reference frame.</p>
+<p>Returns the centered and aligned point used on the level set evaluation in the global reference frame.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point that will be centered and aligned in the global reference frame. </td></tr>
@@ -1464,7 +1464,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return the evaluation of the signed distance function of this solid at the given point evaluation point Most levelset functions implemented come from Inigo Quilez: iquilezles.org/articles/distfunctions. </p>
+<p>Return the evaluation of the signed distance function of this solid at the given point evaluation point Most level set functions implemented come from Inigo Quilez: iquilezles.org/articles/distfunctions. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
