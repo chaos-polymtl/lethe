@@ -528,6 +528,12 @@ public:
   std::vector<double>                  tracer_diffusivity_face;
   std::vector<double>                  tracer_diffusivity_0;
   std::vector<double>                  tracer_diffusivity_1;
+  std::vector<double>                  tracer_reaction_prefactor;
+
+  // Gradient of the tracer reaction prefactor with respect to the concentration
+  // This is calculated by deriving the prefactor by the concentration
+  // (dk/dC)
+  std::vector<double> grad_tracer_reaction_prefactor;
 
   // FEValues for the Tracer problem
   FEValues<dim>          fe_values_tracer;
@@ -542,8 +548,6 @@ public:
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
   std::vector<Point<dim>> face_quadrature_points;
-
-
 
   // Tracer values
   std::vector<double>              tracer_values;

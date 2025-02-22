@@ -1300,7 +1300,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
       // referential
       Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-      // The levelset value of all component shapes is computed
+      // The level set value of all component shapes is computed
       std::map<unsigned int, double>         constituent_shapes_values;
       std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
       for (auto const &[component_id, component] : constituents)
@@ -1339,7 +1339,7 @@ CompositeShape<dim>::value_with_cell_guess(
       // referential
       Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-      // The levelset value of all component shapes is computed
+      // The level set value of all component shapes is computed
       std::map<unsigned int, double>         constituent_shapes_values;
       std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
       for (auto const &[component_id, component] : constituents)
@@ -1379,7 +1379,7 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
       // We align and center the evaluation point according to the shape
       // referential
       Point<dim> centered_point = this->align_and_center(evaluation_point);
-      // The levelset value and gradient of all component shapes is computed
+      // The level set value and gradient of all component shapes is computed
       std::map<unsigned int, double>         constituent_shapes_values;
       std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
       for (auto const &[component_id, component] : constituents)
@@ -1430,7 +1430,7 @@ CompositeShape<dim>::gradient_with_cell_guess(
       // We align and center the evaluation point according to the shape
       // referential
       Point<dim> centered_point = this->align_and_center(evaluation_point);
-      // The levelset value and gradient of all component shapes is computed
+      // The level set value and gradient of all component shapes is computed
       std::map<unsigned int, double>         constituent_shapes_values;
       std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
       for (auto const &[component_id, component] : constituents)

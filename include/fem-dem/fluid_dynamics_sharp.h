@@ -280,7 +280,7 @@ private:
 
   /**
    * @brief output_field_hook
-   * Adds the levelset output field to the output
+   * Adds the level set output field to the output
    */
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;

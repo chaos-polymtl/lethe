@@ -98,7 +98,7 @@ public:
   /**
    * @brief Return the evaluation of the signed distance function of this solid
    * at the given point evaluation point
-   * Most levelset functions implemented come from Inigo Quilez:
+   * Most level set functions implemented come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
    *
    * @param evaluation_point The point at which the function will be evaluated
@@ -1069,7 +1069,7 @@ public:
 
   /**
    * @brief
-   * Return the curvature of the levelset at a given point.
+   * Return the curvature of the level set at a given point.
    */
   virtual double
   local_curvature_radius(Point<dim> p)
@@ -1258,7 +1258,7 @@ public:
    * for the value function are made more easily; it abstracts a step that is
    * required in the value function for most shapes.
    *
-   * Returns the centered and aligned point used on the levelset evaluation.
+   * Returns the centered and aligned point used on the level set evaluation.
    *
    * @param evaluation_point The point that will be recentered and realigned
    * @return The aligned and centered point
@@ -1270,7 +1270,7 @@ public:
    * @brief
    * This function applies the inverse operation of align_and_center
    *
-   * Returns the centered and aligned point used on the levelset evaluation in
+   * Returns the centered and aligned point used on the level set evaluation in
    * the global reference frame.
    *
    * @param evaluation_point The point that will be centered and aligned in the global reference frame.
@@ -1475,7 +1475,7 @@ public:
 
   /**
    * @brief
-   * Return the curvature of the levelset at a given point
+   * Return the curvature of the level set at a given point
    *
    * @param p The point where the curvature is evaluated.
    */
@@ -1484,7 +1484,7 @@ public:
 
   /**
    * @brief
-   * Return the curvature of the levelset at a given point using the
+   * Return the curvature of the level set at a given point using the
    * @param cell The cell that is likely to contain the evaluation point
    * @param p The point where the curvature is evaluated.
    */
@@ -2258,7 +2258,7 @@ public:
   /**
    * @brief Constructs an assembly of shapes into a composite shape from a vector of shapes.
    * This constructor is mainly used for outputting multiple shapes with a
-   * global levelset function defined as a union.
+   * global level set function defined as a union.
    * @param constituents_vector The shapes from which this composite sphere will be composed
    */
   CompositeShape(std::vector<std::shared_ptr<Shape<dim>>> constituents_vector,
@@ -3181,7 +3181,7 @@ private:
   // Entries of this map contain vectors of tuples containing the cell
   // barycenter, diameter and likely nodes that are in that cell. The various
   // elements of the vector are the tuples which contain information on the
-  // RBF nodes that affect the levelset evaluation in this cell. Note: the
+  // RBF nodes that affect the level set evaluation in this cell. Note: the
   // division of RBF nodes is made by separating nodes by which active cells
   // they are in, and then these RBF nodes groups are referenced by the cells
   // in a subsequent cell (by using a vector of pointers). This is required to

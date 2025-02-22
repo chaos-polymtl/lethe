@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-22
+
+### Added
+
+- MINOR In the tracer physics, a new feature is added that allows to take into account single species reaction of arbitrary reaction constant and order. This feature works in CG or DG, with or without immersed solids. [#1411](https://github.com/chaos-polymtl/lethe/pull/1411)
+
 ## [Master] - 2025-02-20
 
 ### Added

@@ -27,7 +27,7 @@ using TracerAssemblerBase =
 /**
  * @brief Class that assembles the core of the Tracer equation.
  * This class assembles the weak form of:
- * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$ with an SUPG
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2T = S \f$ with an SUPG
  * stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -68,7 +68,7 @@ public:
 /**
  * @brief Class that assembles the core (cells) of the Tracer equation for DG elements.
  * This class assembles the weak form of:
- * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2T =S \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -278,6 +278,48 @@ public:
                StabilizedDGMethodsCopyData  &copy_data) override;
 
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
+};
+
+/**
+ * @brief Class that assembles the reaction source term of the Tracer equation.
+ * It assembles the term:
+ * \f$ S = - R \= - k C \f$
+ * Where C is the tracer concentration and k is a reaction rate prefactor that
+ * changes depending on the underlying model. For power law of base rate
+ * $\alpha$ and order $n$, the model is: \f$ S = - R \= - (\alpha C^(n-1)) C \f$
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class TracerAssemblerReaction : public TracerAssemblerBase<dim>
+{
+public:
+  TracerAssemblerReaction(
+    const std::shared_ptr<SimulationControl> &simulation_control)
+    : simulation_control(simulation_control)
+  {}
+
+  /**
+   * @brief Assembles the matrix
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+  /**
+   * @brief Assembles the rhs
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 

@@ -12,28 +12,33 @@ Physical Properties
     set reference temperature = 0
     subsection fluid 0
       # Rheology
-      set rheological model          = newtonian
-      set kinematic viscosity        = 1
-      
+      set rheological model   = newtonian
+      set kinematic viscosity = 1
+
       # Density
-      set density model              = constant
-      set density                    = 1
-      
+      set density model = constant
+      set density       = 1
+
       # Specific heat
-      set specific heat model        = constant
-      set specific heat              = 1
-      
+      set specific heat model = constant
+      set specific heat       = 1
+
       # Thermal conductivity
       set thermal conductivity model = constant
       set thermal conductivity       = 1
-      
+
       # Thermal expansion
-      set thermal expansion model    = constant
-      set thermal expansion          = 0
-      
+      set thermal expansion model = constant
+      set thermal expansion       = 0
+
       # Tracer diffusivity
-      set tracer diffusivity model   = constant
-      set tracer diffusivity         = 0
+      set tracer diffusivity model = constant
+      set tracer diffusivity       = 0
+
+      # Tracer reaction
+      set tracer reaction constant model = none
+      set tracer reaction constant       = 0
+      set tracer reaction order          = 1
     end
 
     set number of solids = 0
@@ -42,8 +47,8 @@ Physical Properties
     subsection material interaction 0
       set type = fluid-fluid
       subsection fluid-fluid interaction
-        set first fluid id              = 0
-        set second fluid id             = 1
+        set first fluid id  = 0
+        set second fluid id = 1
 
         # Surface tension
         set surface tension model                       = constant
@@ -52,7 +57,7 @@ Physical Properties
         set temperature-driven surface tension gradient = 0
         set liquidus temperature                        = 0
         set solidus temperature                         = 0
-        
+
         # Mobility Cahn-Hilliard
         set cahn hilliard mobility model    = constant
         set cahn hilliard mobility constant = 1e-7
@@ -60,8 +65,8 @@ Physical Properties
 
       # if fluid-solid interaction
       subsection fluid-solid interaction
-        set fluid id                    = 0
-        set solid id                    = 0
+        set fluid id = 0
+        set solid id = 0
 
         # Surface tension
         set surface tension model                       = constant
@@ -73,7 +78,7 @@ Physical Properties
       end
     end
   end
- 
+
 * The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `Two Phase Simulations`_ .
 
 * The ``reference temperature`` parameter specifies the reference temperature used in the calculation of some physical properties or the thermal expansion force.
@@ -104,9 +109,19 @@ Physical Properties
 
     where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_\text{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
 
-  * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as well (described more in `Immersed Solid Models`_).
+* The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as well (described more in `Immersed Solid Models`_).
 
-  * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
+* The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
+
+* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant :math:`\alpha`. At the moment, a constant tracer reaction constant and level set based :math:`\tanh` model are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``>. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_). At the moment, only power law reaction consumption rates (:math:`-R`) are implemented:
+
+  .. math::
+
+    S = - R = - (\alpha C^{(n-1)}) C
+
+* The ``tracer reaction constant`` parameter (:math:`\alpha`) is the reaction constant coefficient of the tracer in units of :math:`\text{Concentration}^{1-\text{order}}\text{Time}^{-\text{order}}` . In SI, this is :math:`(\text{m}^{\text{dim}}\text{g}^{-1})^{1-\text{order}} \text{s}^{-\text{order}}`.
+
+* The ``tracer reaction order`` parameter (:math:`n`) is the reaction order of the tracer.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
@@ -135,11 +150,11 @@ Physical Properties
     * The ``reference state temperature`` parameter is the temperature of the reference state at which the ``surface tension coefficient`` is evaluated. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
 
     * The ``temperature-driven surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
-    
+
     * The ``solidus temperature`` and ``liquidus temperature`` parameters are used in the calculation of the surface tension using the ``phase_change`` surface tension model (see `Surface Tension Models`_).
-      
+
     * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the pair of fluid. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
-      
+
     * The ``cahn hilliard mobility coefficient`` parameter is the constant mobility coefficient of the two interacting fluids used in the Cahn-Hilliard equations. Its units are :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`.
 
   * In the ``fluid-solid`` subsection we define the fluid-solid pair and their physical properties.
@@ -150,7 +165,7 @@ Physical Properties
 
     * The ``surface tension model``  and ``surface tension coefficient`` are the same as described in the ``fluid-fluid`` subsection above.
 
-.. note:: 
+.. note::
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
 
 
@@ -161,7 +176,7 @@ Material Physical Property Models
 
 Two Phase Simulations
 ~~~~~~~~~~~~~~~~~~~~~~
-.. note:: 
+.. note::
   Two phase simulations require that either ``set VOF = true`` or ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
 
 For two phases, the properties are defined for each fluid. Default values are:
@@ -189,7 +204,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 * ``number of fluids = 2`` is required for a free surface simulation, otherwise an error will be thrown in the terminal.
 * ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the :doc:`initial_conditions` subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
 
-.. warning:: 
+.. warning::
   Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
 
 
@@ -201,7 +216,7 @@ Conjugate Heat Transfer
 Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be set to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
 
 .. warning::
-  This is an experimental feature. It has not been tested on a large range of application cases. 
+  This is an experimental feature. It has not been tested on a large range of application cases.
 
 .. code-block:: text
 
@@ -215,11 +230,11 @@ Conjugate heat transfer enables the addition of solid regions in which the fluid
       # Density
       set density model              = constant
       set density                    = 1
-      
+
       # Specific heat
       set specific heat model        = constant
       set specific heat              = 1
-      
+
       # Thermal conductivity
       set thermal conductivity model = constant
       set thermal conductivity       = 1
@@ -235,7 +250,7 @@ Immersed solid models can be used to affect specific behavior to immersed solids
 
 The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. The intent behind these models is to define physical properties in the fluid and solid phases as well as in the transition regions.
 
-The ``tracer diffusivity model`` parameter sets which diffusivity model is used. The default model is ``constant``, which uses a constant ``tracer diffusivity``. The alternative is ``immersed solid tanh``, whose parameters are defined as such, with :math:`D` being the tracer diffusivity (outside and inside), :math:`\lambda` being signed distance and :math:`t` the thickness of the transition zone between both diffusivity values:
+The ``tracer diffusivity model`` and ``tracer reaction constant model`` parameters set which models are used. The default models are ``constant``, which use constant ``tracer diffusivity`` and ``tracer reaction constant``. The equation of the ``immersed solid tanh`` model is defined as follows. :math:`D` is the tracer property (outside and inside), :math:`\lambda` is the signed distance and :math:`t` the thickness of the transition zone between both property values:
 
 .. math::
 
@@ -246,12 +261,15 @@ The ``tracer diffusivity model`` parameter sets which diffusivity model is used.
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
-        set kinematic viscosity = 0.01
+        set kinematic viscosity      = 0.01
         set tracer diffusivity model = immersed solid tanh
+        set tracer reaction order    = 1
         subsection immersed solid tanh
-          set tracer diffusivity inside    = 1
-          set tracer diffusivity outside   = 1
-          set thickness                    = 1
+          set tracer diffusivity inside        = 1
+          set tracer diffusivity outside       = 1
+          set tracer reaction constant inside  = 0
+          set tracer reaction constant outside = 0
+          set thickness                        = 1
         end
       end
     end
@@ -259,6 +277,10 @@ The ``tracer diffusivity model`` parameter sets which diffusivity model is used.
 * The ``tracer diffusivity inside`` parameter represents the desired diffusivity inside of the solid.
 
 * The ``tracer diffusivity outside`` parameter represents the desired diffusivity outside of the solid.
+
+* The ``tracer reaction constant inside`` parameter represents the desired reaction constant inside of the solid.
+
+* The ``tracer reaction constant outside`` parameter represents the desired reaction constant outside of the solid.
 
 * The ``thickness`` parameter represents thickness of the applied :math:`\tanh` function.
 

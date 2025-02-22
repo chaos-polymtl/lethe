@@ -98,7 +98,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
     VOF            = prm.get_bool("VOF");
     cahn_hilliard  = prm.get_bool("cahn hilliard");
 
-    // subparameter for heat_transfer
+    // subparameters for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
     buoyancy_force      = prm.get_bool("buoyancy force");
   }

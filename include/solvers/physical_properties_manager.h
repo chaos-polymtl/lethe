@@ -12,6 +12,7 @@
 #include <core/thermal_conductivity_model.h>
 #include <core/thermal_expansion_model.h>
 #include <core/tracer_diffusivity_model.h>
+#include <core/tracer_reaction_model.h>
 
 using namespace dealii;
 
@@ -152,6 +153,14 @@ public:
                          const unsigned int material_id = 0) const
   {
     return tracer_diffusivity[calculate_global_id(fluid_id, material_id)];
+  }
+
+  std::shared_ptr<TracerReactionPrefactorModel>
+  get_tracer_reaction_prefactor(const unsigned int fluid_id    = 0,
+                                const unsigned int material_id = 0) const
+  {
+    return tracer_reaction_prefactor[calculate_global_id(fluid_id,
+                                                         material_id)];
   }
 
   std::shared_ptr<SurfaceTensionModel>
@@ -360,7 +369,10 @@ private:
   std::vector<std::shared_ptr<RheologicalModel>>         rheology;
   std::vector<std::shared_ptr<ThermalExpansionModel>>    thermal_expansion;
   std::vector<std::shared_ptr<TracerDiffusivityModel>>   tracer_diffusivity;
-  std::vector<std::shared_ptr<SurfaceTensionModel>>      surface_tension;
+  std::vector<std::shared_ptr<TracerReactionPrefactorModel>>
+                                                    tracer_reaction_prefactor;
+  std::vector<double>                               tracer_reaction_order;
+  std::vector<std::shared_ptr<SurfaceTensionModel>> surface_tension;
   std::vector<std::shared_ptr<MobilityCahnHilliardModel>>
                                        mobility_cahn_hilliard;
   std::vector<Parameters::PhaseChange> phase_change_parameters;

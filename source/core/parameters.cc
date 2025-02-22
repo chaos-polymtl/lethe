@@ -425,11 +425,18 @@ namespace Parameters
                         "1.0",
                         Patterns::Double(),
                         "Tracer diffusivity inside the immersed solid");
-      prm.declare_entry(
-        "tracer diffusivity outside",
-        "1.0",
-        Patterns::Double(),
-        "Tracer diffusivity outside (or at the edge of) the immersed solid");
+      prm.declare_entry("tracer diffusivity outside",
+                        "1.0",
+                        Patterns::Double(),
+                        "Tracer diffusivity outside the immersed solid");
+      prm.declare_entry("tracer reaction constant inside",
+                        "0.0",
+                        Patterns::Double(),
+                        "Tracer reaction constant inside the immersed solid");
+      prm.declare_entry("tracer reaction constant outside",
+                        "0.0",
+                        Patterns::Double(),
+                        "Tracer reaction constant outside the immersed solid");
       prm.declare_entry("thickness",
                         "1.0",
                         Patterns::Double(),
@@ -446,7 +453,11 @@ namespace Parameters
     {
       tracer_diffusivity_inside  = prm.get_double("tracer diffusivity inside");
       tracer_diffusivity_outside = prm.get_double("tracer diffusivity outside");
-      thickness                  = prm.get_double("thickness");
+      tracer_reaction_constant_inside =
+        prm.get_double("tracer reaction constant inside");
+      tracer_reaction_constant_outside =
+        prm.get_double("tracer reaction constant outside");
+      thickness = prm.get_double("thickness");
 
       // Diffusivity is in L^2 T^-1
       tracer_diffusivity_inside *= dimensions.diffusivity_scaling;
@@ -1067,11 +1078,33 @@ namespace Parameters
         Patterns::Selection("constant|immersed solid tanh"),
         "Model used for the calculation of the tracer diffusivity"
         "Choices are <constant|immersed solid tanh>.");
+
       prm.declare_entry(
         "tracer diffusivity",
         "0",
         Patterns::Double(),
         "Tracer diffusivity for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+
+      prm.declare_entry(
+        "tracer reaction constant model",
+        "constant",
+        Patterns::Selection("none|constant|immersed solid tanh"),
+        "Model used for the calculation of the tracer reaction constant"
+        "Choices are <none|constant|immersed solid tanh>.");
+
+      prm.declare_entry(
+        "tracer reaction constant",
+        "0",
+        Patterns::Double(),
+        "Tracer reaction constant for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+
+      prm.declare_entry(
+        "tracer reaction order",
+        "1",
+        Patterns::Double(),
+        "Tracer reaction order for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
       // Declaration of the immersed solids models parameters
@@ -1250,6 +1283,21 @@ namespace Parameters
       tracer_diffusivity = prm.get_double("tracer diffusivity");
       // Diffusivity is in L^2 T^-1
       tracer_diffusivity *= dimensions.diffusivity_scaling;
+
+      //-------------------
+      // Tracer reaction constant
+      //-------------------
+      op = prm.get("tracer reaction constant model");
+      if (op == "none")
+        tracer_reaction_prefactor_model = TracerReactionPrefactorModel::none;
+      else if (op == "immersed solid tanh")
+        tracer_reaction_prefactor_model =
+          TracerReactionPrefactorModel::immersed_boundary_tanh;
+      else
+        tracer_reaction_prefactor_model =
+          TracerReactionPrefactorModel::constant;
+      tracer_reaction_constant = prm.get_double("tracer reaction constant");
+      tracer_reaction_order    = prm.get_double("tracer reaction order");
 
       // Parsing of the immersed solids models parameters
       immersed_solid_tanh_parameters.parse_parameters(prm, dimensions);

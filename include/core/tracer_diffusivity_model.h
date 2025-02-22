@@ -98,13 +98,13 @@ private:
 };
 
 /**
- * @brief Diffusivity that depends on the levelset
+ * @brief Diffusivity that depends on the level set
  */
 class TanhLevelsetTracerDiffusivity : public TracerDiffusivityModel
 {
 public:
   /**
-   * @brief Constructor of the levelset-dependent diffusivity model.
+   * @brief Constructor of the level set-dependent diffusivity model.
    *
    * @param[in] p_tracer_diffusivity_outside Diffusivity outside the solid
    * @param[in] p_tracer_diffusivity_inside Diffusivity inside the solid
@@ -126,7 +126,7 @@ public:
    * @brief Compute the diffusivity.
    *
    * @param[in] field_values Values of the various fields on which the property
-   * may depend. In this case, the diffusivity depends on the levelset.
+   * may depend. In this case, the diffusivity depends on the level set.
    * The map stores a single value per field.
    *
    * @return Value of the diffusivity computed with the @p field_values.
@@ -147,7 +147,7 @@ public:
    * @brief Compute a vector of diffusivity.
    *
    * @param[in] field_vectors Vectors of the fields on which the diffusivity
-   * may depend. In this case, the diffusivity depends on the levelset. The map
+   * may depend. In this case, the diffusivity depends on the level set. The map
    * stores a vector of values per field.
    *
    * @param[out] property_vector Vectors of computed diffusivities.
