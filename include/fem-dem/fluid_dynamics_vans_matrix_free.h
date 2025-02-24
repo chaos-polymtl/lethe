@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-
+#ifndef lethe_fluid_dynamics_vans_matrix_free_h
+#define lethe_fluid_dynamics_vans_matrix_free_h
 #include <solvers/fluid_dynamics_matrix_free.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
@@ -30,19 +31,42 @@ public:
    * @brief Constructor that sets the finite element degree and system operator
    * according to simulation parameters.
    *
-   * @param[in] nsparam Relevant parameters for the solver.
+   * @param[in] param Relevant parameters for the solver.
    */
-  FluidDynamicsVANSMatrixFree(SimulationParameters<dim> &nsparam);
+  FluidDynamicsVANSMatrixFree(CFDDEMSimulationParameters<dim> &param);
 
   /**
    * @brief Solve the problem defined by simulation parameters by iterating
    * through time or through the mesh refinements.
    */
   virtual void
-  solve();
+  solve() override;
 
 protected:
-  /// Simulatio parameters for CFD-DEM simulations
+  /**
+   * @brief Setups the degree of freedoms, but also takes care of setting up
+   * the degrees of freedom for the void fraction.
+   */
+  virtual void
+  setup_dofs() override;
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step, but also manages the time-step end for the void
+   * fraction.
+   */
+
+  virtual void
+  finish_time_step_fd();
+
+  /**
+   * @brief a function for adding data vectors to the data_out object for
+   * post_processing additional results
+   */
+  virtual void
+  output_field_hook(DataOut<dim> &data_out) override;
+
+  /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
   /// Mapping used for the particles
@@ -61,3 +85,4 @@ protected:
   Tensor<1, dim> periodic_offset;
   unsigned int   periodic_direction;
 };
+#endif

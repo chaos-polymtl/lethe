@@ -836,8 +836,7 @@ FluidDynamicsVANS<dim>::solve()
   this->finish_simulation();
 }
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the
-// library is valid before we actually compile the solver This greatly
-// helps with debugging
+// Pre-compile the 2D and 3D solver to ensure that the
+// library is valid before we actually compile the solver
 template class FluidDynamicsVANS<2>;
 template class FluidDynamicsVANS<3>;
