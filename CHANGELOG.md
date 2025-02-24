@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR The function get_properties_name() did not contain the pair corresponding to "volumetric_contribution". As consequence, the CFD-DEM vtu files would not have this property and would have an empty property instead. This PR adds this modification to the changelog as the addition of the property was pushed straight to master. The hash or the commit that pushes it to master is: 3dd817096cd2f5056902ace464e1aef9358c4ef8. []()
+- MINOR The function get_properties_name() did not contain the pair corresponding to "volumetric_contribution". As consequence, the CFD-DEM vtu files would not have this property and would have an empty property instead. This PR adds this modification to the changelog as the addition of the property was pushed straight to master. The hash or the commit that pushes it to master is: 3dd817096cd2f5056902ace464e1aef9358c4ef8. [#1430](https://github.com/chaos-polymtl/lethe/pull/1430)
 
 ## [Master] - 2025-02-22
 
