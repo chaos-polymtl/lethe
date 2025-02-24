@@ -1,5 +1,5 @@
 
-DEAL::The area error for ref. lev. 3 is : 0.0152120
-DEAL::The area error for ref. lev. 4 is : 0.00384002
-DEAL::The area error for ref. lev. 5 is : 0.000240900
-DEAL::The convergence is : 2.01136
+DEAL::The area error for ref. lev. 3 is: 0.0637268
+DEAL::The area error for ref. lev. 4 is: 0.0152120
+DEAL::The area error for ref. lev. 5 is: 0.00384002
+DEAL::The convergence is: 1.98603
