@@ -8,6 +8,7 @@
 #include <core/utilities.h>
 
 #include <fem-dem/fluid_dynamics_vans_matrix_free.h>
+#include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
 
 #include <deal.II/grid/grid_tools.h>
 
@@ -18,7 +19,7 @@
 
 template <int dim>
 FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
-  SimulationParameters<dim> &param)
+  CFDDEMSimulationParameters<dim> &param)
   : FluidDynamicsMatrixFree<dim>(param.cfd_parameters)
   , cfd_dem_simulation_parameters(param)
   , particle_mapping(1)
@@ -38,12 +39,6 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
       this->pcout)
   , has_periodic_boundaries(false)
 {
-  AssertThrow(
-    param.fem_parameters.velocity_order == param.fem_parameters.pressure_order,
-    dealii::ExcMessage(
-      "Matrix free Volume-Averaged Navier-Stokes does not support different orders for the velocity and the pressure!"));
-
-
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
@@ -64,11 +59,40 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
 
   // The default MatrixFree solver sets a system_operator. We override the
   // Navier-Stokes operator with the volume-averaged Navier-Stokes operator.
-  /*
-  system_operator =
-    std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
-    */
+  this->system_operator = std::make_shared<VANSOperator<dim, double>>();
 }
+
+template <int dim>
+void
+FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
+{
+  FluidDynamicsMatrixFree<dim>::setup_dofs();
+
+  void_fraction_manager.setup_dofs();
+  void_fraction_manager.setup_constraints(
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+}
+
+template <int dim>
+void
+FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
+{
+  // Void fraction percolation must be done before the time step is finished to
+  // ensure that the checkpointed information is correct
+  void_fraction_manager.percolate_void_fraction();
+
+  FluidDynamicsMatrixFree<dim>::finish_time_step();
+}
+
+template <int dim>
+void
+FluidDynamicsVANSMatrixFree<dim>::output_field_hook(DataOut<dim> &data_out)
+{
+  data_out.add_data_vector(void_fraction_manager.dof_handler,
+                           void_fraction_manager.void_fraction_locally_relevant,
+                           "void_fraction");
+}
+
 
 template <int dim>
 void
@@ -129,6 +153,20 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               this->flow_control.get_beta());
         }
 
+      // Calculate the void fraction and evaluate it within the matrix-free
+      // operator
+      {
+        TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
+        void_fraction_manager.calculate_void_fraction(
+          this->simulation_control->get_current_time());
+
+        // The base matrix-free operator is not aware of the void fraction. We
+        // must do a cast here to ensure that the operator is of the right type
+        if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
+              this->system_operator.get()))
+          mf_operator->evaluate_void_fraction(void_fraction_manager);
+      }
+
       this->iterate();
       this->postprocess(false);
       this->finish_time_step();
@@ -143,3 +181,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
   this->finish_simulation();
 }
+
+// Pre-compile the 2D and 3D solver to ensure that the
+// library is valid before we actually compile the solver
+template class FluidDynamicsVANSMatrixFree<2>;
+template class FluidDynamicsVANSMatrixFree<3>;
