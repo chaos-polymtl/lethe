@@ -55,6 +55,35 @@ evaluate_function(const Function<dim>                       &function,
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam Number Abstract type for number across the class (i.e., double).
+ * @param function Function to evaluate.
+ * @param p_vectorized Batch of points to evaluate function at.
+ * @return Tensor<1, components, VectorizedArray<Number>> Batch of evaluated values.
+ */
+template <int dim, typename Number>
+Tensor<1, dim, VectorizedArray<Number>>
+evaluate_function_gradient(
+  const Function<dim>                       &function,
+  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+{
+  Tensor<1, dim, VectorizedArray<Number>> result;
+  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
+    {
+      Point<dim> p;
+      for (unsigned int d = 0; d < dim; ++d)
+        p[d] = p_vectorized[d][v];
+
+      Tensor<1, dim> gradient = function.gradient(p);
+      for (unsigned int d = 0; d < dim; ++d)
+        result[d][v] = gradient[d];
+    }
+  return result;
+}
+
+/**
+ * @brief Matrix free helper function
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam Number Abstract type for number across the class (i.e., double).
  * @tparam components Number of solution components.
  * @param function Function to evaluate.
  * @param p_vectorized Batch of points to evaluate function at.
