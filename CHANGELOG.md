@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-03
+
+### Added
+
+- MINOR New functionalities for interface problems are added. The PR includes the computation of the volume enclosed by a given iso-level of a level-set field and the surface reconstruction of the interface described by the level 0. [#1429](https://github.com/chaos-polymtl/lethe/pull/1429)
 
 ## [Master] - 2025-02-28
 
@@ -35,9 +40,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR This PR adds the possibility to rotate the laser around one axis when using the gaussian_heat_flux_vof_interface model. [#1421](https://github.com/chaos-polymtl/lethe/pull/1421)
-
-- MINOR New functionalities for interface problems are added. The PR includes the computation of the volume enclosed by the level 0 of a
-level-set field and the surface reconstruction of the interface described by the level 0. [#1429](https://github.com/chaos-polymtl/lethe/pull/1429)
 
 ## [Master] - 2025-02-19
 
