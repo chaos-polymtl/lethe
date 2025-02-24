@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-24
+
+### Fixed
+
+- MINOR The function get_properties_name() did not contain the pair corresponding to "volumetric_contribution". As consequence, the CFD-DEM vtu files would not have this property and would have an empty property instead. This PR adds this modification to the changelog as the addition of the property was pushed straight to master. The hash or the commit that pushes it to master is: 3dd817096cd2f5056902ace464e1aef9358c4ef8. []()
+
 ## [Master] - 2025-02-22
 
 ### Added
