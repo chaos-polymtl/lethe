@@ -27,17 +27,6 @@ VANSOperator<dim, number>::evaluate_void_fraction(
   typename MatrixFree<dim, number>::AdditionalData additional_data;
   additional_data.mapping_update_flags = (update_values | update_gradients);
 
-  // Matrix_free_void_fraction is reinit with the quadrature of the
-  // Navier-Stokes equations and not it's own quadrature rule.
-  /*
-  matrix_free_void_fraction.reinit(
-    (*void_fraction_manager.mapping),
-    void_fraction_manager.dof_handler,
-    void_fraction_manager.void_fraction_constraints,
-    this->quadrature,
-    additional_data);
-    */
-
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
 
@@ -69,9 +58,9 @@ VANSOperator<dim, number>::evaluate_void_fraction(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q,∇·δu) + (v, ε ∂t δu) + (v, ε (u·∇)δu) + (v, ε (δu·∇)u) - (∇·v, ε δp) +  ε
- * ν(∇v,∇δu) (Weak form Jacobian), plus three additional terms in the case of
- * SUPG-PSPG stabilization:
+ * (q,∇·δu) + (v, ε ∂t δu) + (v, ε (u·∇)δu) + (v, ε (δu·∇)u) - (∇·v, ε δp) +
+ * ε*ν(∇v,∇δu)  +  ν(v,∇ε∇δu)(Weak form Jacobian), plus three additional terms
+ * in the case of SUPG-PSPG stabilization:
  * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τ·∇q (PSPG Jacobian)
  * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τu·∇v (SUPG Jacobian
  * Part 1)
@@ -153,10 +142,15 @@ VANSOperator<dim, number>::do_cell_integral_local(
           // ν(∇v,ɛ∇δu)
           gradient_result[i] =
             this->kinematic_viscosity * vf_value * gradient[i];
+          // ν(v,∇ɛ∇δu)
+          value_result[i] +=
+            this->kinematic_viscosity * vf_gradient * gradient[i];
           // -(∇·v,ɛδp)
           gradient_result[i][i] += -vf_value * value[dim];
-          // +(q,∇δu)
-          value_result[dim] += gradient[i][i];
+          // +(q,ɛ∇·δu)
+          value_result[dim] += vf_value * gradient[i][i];
+          // +(q,∇ɛ·δu)
+          value_result[dim] += vf_gradient[i] * value[i];
 
           for (unsigned int k = 0; k < dim; ++k)
             {
@@ -294,8 +288,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q, ∇·u) + (v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) + ɛν(∇v,∇u) - (v,ɛf) (Weak
- * form), plus two additional terms in the case of SUPG-PSPG stabilization:
+ * (q, ∇·u) + (v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) + ɛν(∇v,∇u) + ν(v,∇u∇ɛ) -
+ * (v,ɛf) (Weak form), plus two additional terms in the case of SUPG-PSPG
+ * stabilization:
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τ∇·q (PSPG term)
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τu·∇v (SUPG term),
  * plus two additional terms in the case of full gls stabilization:
@@ -381,9 +376,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // νɛ(∇v,∇u)
               gradient_result[i] =
                 this->kinematic_viscosity * vf_value * gradient[i];
-              // ν(v,∇u∇ɛ)
-              value_result[i] =
-                this->kinematic_viscosity * vf_gradient * gradient[i];
+
               // -(∇·v,ɛp)
               gradient_result[i][i] += -vf_value * value[dim];
               // -(v,p∇ɛ)
@@ -396,12 +389,17 @@ VANSOperator<dim, number>::local_evaluate_residual(
                 value_result[i] += vf_value * (*bdf_coefs)[0] * value[i] +
                                    previous_time_derivatives[i];
 
+              // +(q,ɛ∇·u)
+              value_result[dim] += vf_value * gradient[i][i];
+              // +(q,∇ɛ·u)
+              value_result[dim] += value[i] * vf_gradient[i];
 
-              // +(q,∇·u)
-              value_result[dim] += gradient[i][i];
 
               for (unsigned int k = 0; k < dim; ++k)
                 {
+                  // ν(v,∇u∇ɛ)
+                  value_result[i] +=
+                    this->kinematic_viscosity * gradient[i][k] * vf_gradient[k];
                   // +(v,ɛ(u·∇)u)
                   value_result[i] += vf_value * gradient[i][k] * value[k];
                 }
@@ -412,12 +410,10 @@ VANSOperator<dim, number>::local_evaluate_residual(
             {
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // (-νɛ∆u -ν∇u∇ɛ + ɛ(u·∇)u)·τ∇q
+                  // (-νɛ∆u + ɛ(u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
                     tau * (-vf_value * this->kinematic_viscosity *
-                             hessian_diagonal[i][k] -
-                           this->kinematic_viscosity * vf_gradient[k] *
-                             gradient[i][k] +
+                             hessian_diagonal[i][k] +
                            gradient[i][k] * value[k]);
                 }
               // +(-ɛf)·τ∇q
@@ -473,7 +469,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
                         {
                           for (unsigned int l = 0; l < dim; ++l)
                             {
-                              // (-νɛ∆u + ɛ(u·∇)u)τ(−ν∆v)
+                              // (-νɛ∆u - ν∇ɛ∇u + ɛ(u·∇)u)τ(−ν∆v)
                               hessian_result[i][k][k] +=
                                 tau * -this->kinematic_viscosity *
                                 (-vf_value * this->kinematic_viscosity *
