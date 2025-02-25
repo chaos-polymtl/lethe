@@ -77,7 +77,7 @@ VANSOperator<dim, number>::evaluate_void_fraction(
  * Part 1)
  * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian Part 2),
  * plus two additional terms in the case of full gls stabilization:
- * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
+ * \+ (ɛ∂t δu +ɛ(u·∇)δu + ɛ(δu·∇)u + ɛ∇δp - νɛ∆δu)τ(−ν∆v) (GLS Jacobian)
  * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
  */
 template <int dim, typename number>
@@ -135,8 +135,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
       // Gather void fraction value and gradient
-      auto void_fraction_value = this->void_fraction(cell, q);
-      // auto void_fraction_gradient = this->void_fraction_gradient(cell, q);
+      auto vf_value    = this->void_fraction(cell, q);
+      auto vf_gradient = this->void_fraction_gradient(cell, q);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -150,22 +150,24 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
-          // ν(∇v,∇δu)
-          gradient_result[i] = this->kinematic_viscosity * gradient[i];
-          // -(∇·v,δp)
-          gradient_result[i][i] += -value[dim];
+          // ν(∇v,ɛ∇δu)
+          gradient_result[i] =
+            this->kinematic_viscosity * vf_value * gradient[i];
+          // -(∇·v,ɛδp)
+          gradient_result[i][i] += -vf_value * value[dim];
           // +(q,∇δu)
           value_result[dim] += gradient[i][i];
 
           for (unsigned int k = 0; k < dim; ++k)
             {
-              // +(v,(u·∇)δu + (δu·∇)u)
-              value_result[i] += gradient[i][k] * previous_values[k] +
-                                 previous_gradient[i][k] * value[k];
+              // +(v,ɛ(u·∇)δu + ɛ(δu·∇)u)
+              value_result[i] +=
+                vf_value * gradient[i][k] * previous_values[k] +
+                vf_value * previous_gradient[i][k] * value[k];
             }
-          // +(v,∂t δu)
+          // +(v,ɛ ∂t δu)
           if (transient)
-            value_result[i] += (*bdf_coefs)[0] * value[i];
+            value_result[i] += vf_value * (*bdf_coefs)[0] * value[i];
         }
 
       // PSPG Jacobian
@@ -173,18 +175,20 @@ VANSOperator<dim, number>::do_cell_integral_local(
         {
           for (unsigned int k = 0; k < dim; ++k)
             {
-              // (-ν∆δu + (u·∇)δu + (δu·∇)u)·τ∇q
+              // (-νɛ∆δu + ɛ(u·∇)δu + ɛ(δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
-                       gradient[i][k] * previous_values[k] +
-                       previous_gradient[i][k] * value[k]);
+                tau * (-vf_value * this->kinematic_viscosity *
+                         hessian_diagonal[i][k] +
+                       vf_value * gradient[i][k] * previous_values[k] +
+                       vf_value * previous_gradient[i][k] * value[k]);
             }
-          // +(∂t δu)·τ∇q
+          // +ɛ(∂t δu)·τ∇q
           if (transient)
-            gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
+            gradient_result[dim][i] +=
+              tau * vf_value * (*bdf_coefs)[0] * value[i];
         }
-      // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
+      // (ɛ∇δp)τ·∇q
+      gradient_result[dim] += tau * vf_value * gradient[dim];
 
       // SUPG Jacobian
       for (unsigned int i = 0; i < dim; ++i)
@@ -194,40 +198,41 @@ VANSOperator<dim, number>::do_cell_integral_local(
               // Part 1
               for (unsigned int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(u·∇)v
+                  // +(ɛ(u·∇)δu + ɛ(δu·∇)u - νɛ∆δu)τ(u·∇)v
                   gradient_result[i][k] +=
-                    tau * previous_values[k] *
+                    tau * vf_value * previous_values[k] *
                     (gradient[i][l] * previous_values[l] +
-                     previous_gradient[i][l] * value[l] -
+                     vf_value * previous_gradient[i][l] * value[l] -
                      this->kinematic_viscosity * hessian_diagonal[i][l]);
                 }
-              // +(∇δp)τ(u·∇)v
+              // +(ɛ∇δp)τ(u·∇)v
               gradient_result[i][k] +=
-                tau * previous_values[k] * (gradient[dim][i]);
+                tau * vf_value * previous_values[k] * (gradient[dim][i]);
 
-              // +(∂t δu)τ(u·∇)v
+              // +(ɛ∂t δu)τ(u·∇)v
               if (transient)
-                gradient_result[i][k] +=
-                  tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
+                gradient_result[i][k] += tau * previous_values[k] * vf_value *
+                                         ((*bdf_coefs)[0] * value[i]);
 
 
               // Part 2
               for (unsigned int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)u - ν∆u)τ(δu·∇)v
+                  // +(ɛ(u·∇)u - νɛ∆u)τ(δu·∇)v
                   gradient_result[i][k] +=
-                    tau * value[k] *
+                    tau * value[k] * vf_value *
                     (previous_gradient[i][l] * previous_values[l] -
                      this->kinematic_viscosity *
                        previous_hessian_diagonal[i][l]);
                 }
-              // +(∇p - f)τ(δu·∇)v
+              // +(ɛ∇p - ɛf)τ(δu·∇)v
               gradient_result[i][k] +=
-                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
+                tau * value[k] * vf_value *
+                (previous_gradient[dim][i] - source_value[i]);
 
-              // +(∂t u)τ(δu·∇)v
+              // +(ɛ∂t u)τ(δu·∇)v
               if (transient)
-                gradient_result[i][k] += tau * value[k] *
+                gradient_result[i][k] += tau * value[k] * vf_value *
                                          ((*bdf_coefs)[0] * previous_values[i] +
                                           previous_time_derivatives[i]);
             }
@@ -245,24 +250,25 @@ VANSOperator<dim, number>::do_cell_integral_local(
                     {
                       for (unsigned int l = 0; l < dim; ++l)
                         {
-                          // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
+                          // +(ɛ(u·∇)δu + ɛ(δu·∇)u - νɛ∆δu)τ(−ν∆v)
                           hessian_result[i][k][k] +=
-                            tau * -this->kinematic_viscosity *
+                            tau * -this->kinematic_viscosity * vf_value *
                             (gradient[i][l] * previous_values[l] +
                              previous_gradient[i][l] * value[l] -
                              this->kinematic_viscosity *
                                hessian_diagonal[i][l]);
                         }
 
-                      // +(∇δp)τ(−ν∆v)
-                      hessian_result[i][k][k] +=
-                        tau * -this->kinematic_viscosity * (gradient[dim][i]);
+                      // +(ɛ∇δp)τ(−ν∆v)
+                      hessian_result[i][k][k] += tau *
+                                                 -this->kinematic_viscosity *
+                                                 (vf_value * gradient[dim][i]);
 
-                      // +(∂t δu)τ(−ν∆v)
+                      // +(ɛ∂t δu)τ(−ν∆v)
                       if (transient)
-                        hessian_result[i][k][k] += tau *
-                                                   -this->kinematic_viscosity *
-                                                   ((*bdf_coefs)[0] * value[i]);
+                        hessian_result[i][k][k] +=
+                          tau * -this->kinematic_viscosity *
+                          (vf_value * (*bdf_coefs)[0] * value[i]);
                     }
 
                   // LSIC term
@@ -288,12 +294,12 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form),
- * plus two additional terms in the case of SUPG-PSPG stabilization:
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term),
+ * (q, ∇·u) + (v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) + ɛν(∇v,∇u) - (v,ɛf) (Weak
+ * form), plus two additional terms in the case of SUPG-PSPG stabilization:
+ * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τ∇·q (PSPG term)
+ * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τu·∇v (SUPG term),
  * plus two additional terms in the case of full gls stabilization:
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
+ * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τ(−ν∆v) (GLS term)
  * \+ (∇·u)τ'(∇·v) (LSIC term).
  */
 template <int dim, typename number>
@@ -350,6 +356,10 @@ VANSOperator<dim, number>::local_evaluate_residual(
           if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
 
+          // Gather void fraction value and gradient
+          auto vf_value    = this->void_fraction(cell, q);
+          auto vf_gradient = this->void_fraction_gradient(cell, q);
+
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
           if (transient)
@@ -368,17 +378,18 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Weak form
           for (unsigned int i = 0; i < dim; ++i)
             {
-              // ν(∇v,∇u)
-              gradient_result[i] = this->kinematic_viscosity * gradient[i];
-              // -(∇·v,p)
-              gradient_result[i][i] += -value[dim];
-              // +(v,-f)
-              value_result[i] = -source_value[i];
+              // νɛ(∇v,∇u)
+              gradient_result[i] =
+                this->kinematic_viscosity * vf_value * gradient[i];
+              // -(∇·v,ɛp)
+              gradient_result[i][i] += -vf_value * value[dim];
+              // +(v,-ɛf)
+              value_result[i] = -vf_value * source_value[i];
 
-              // +(v,∂t u)
+              // +(v,ɛ∂t u)
               if (transient)
-                value_result[i] +=
-                  (*bdf_coefs)[0] * value[i] + previous_time_derivatives[i];
+                value_result[i] += vf_value * (*bdf_coefs)[0] * value[i] +
+                                   previous_time_derivatives[i];
 
 
               // +(q,∇·u)
@@ -386,8 +397,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // +(v,(u·∇)u)
-                  value_result[i] += gradient[i][k] * value[k];
+                  // +(v,ɛ(u·∇)u)
+                  value_result[i] += vf_value * gradient[i][k] * value[k];
                 }
             }
 
@@ -396,21 +407,23 @@ VANSOperator<dim, number>::local_evaluate_residual(
             {
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // (-ν∆u + (u·∇)u)·τ∇q
+                  // (-νɛ∆u + ɛ(u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
-                    tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                    tau * (-vf_value * this->kinematic_viscosity *
+                             hessian_diagonal[i][k] +
                            gradient[i][k] * value[k]);
                 }
-              // +(-f)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
+              // +(-ɛf)·τ∇q
+              gradient_result[dim][i] += tau * (-vf_value * source_value[i]);
 
-              // +(∂t u)·τ∇q
+              // +(ɛ∂t u)·τ∇q
               if (transient)
-                gradient_result[dim][i] += tau * ((*bdf_coefs)[0] * value[i] +
-                                                  previous_time_derivatives[i]);
+                gradient_result[dim][i] +=
+                  tau * (vf_value * (*bdf_coefs)[0] * value[i] +
+                         previous_time_derivatives[i]);
             }
-          // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
+          // +ɛ(∇p)τ∇·q
+          gradient_result[dim] += tau * vf_value * gradient[dim];
 
           // SUPG term
           for (unsigned int i = 0; i < dim; ++i)
@@ -419,24 +432,25 @@ VANSOperator<dim, number>::local_evaluate_residual(
                 {
                   for (unsigned int l = 0; l < dim; ++l)
                     {
-                      // (-ν∆u)τ(u·∇)v
+                      // (-νɛ∆u)τ(u·∇)v
                       gradient_result[i][k] +=
-                        -tau * this->kinematic_viscosity * value[k] *
+                        -tau * this->kinematic_viscosity * vf_value * value[k] *
                         hessian_diagonal[i][l];
 
-                      // + ((u·∇)u)τ(u·∇)v
+                      // + (ɛ(u·∇)u)τ(u·∇)v
                       gradient_result[i][k] +=
-                        tau * value[k] * gradient[i][l] * value[l];
+                        tau * vf_value * value[k] * gradient[i][l] * value[l];
                     }
-                  // + (∇p - f)τ(u·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] * (gradient[dim][i] - source_value[i]);
+                  // + (ɛ∇p - ɛf)τ(u·∇)v
+                  gradient_result[i][k] += tau * value[k] * vf_value *
+                                           (gradient[dim][i] - source_value[i]);
 
-                  // + (∂t u)τ(u·∇)v
+                  // + (ɛ∂t u)τ(u·∇)v
                   if (transient)
-                    gradient_result[i][k] += tau * value[k] *
-                                             ((*bdf_coefs)[0] * value[i] +
-                                              previous_time_derivatives[i]);
+                    gradient_result[i][k] +=
+                      tau * value[k] *
+                      (vf_value * (*bdf_coefs)[0] * value[i] +
+                       previous_time_derivatives[i]);
                 }
             }
 
@@ -452,23 +466,23 @@ VANSOperator<dim, number>::local_evaluate_residual(
                         {
                           for (unsigned int l = 0; l < dim; ++l)
                             {
-                              // (-ν∆u + (u·∇)u)τ(−ν∆v)
+                              // (-νɛ∆u + ɛ(u·∇)u)τ(−ν∆v)
                               hessian_result[i][k][k] +=
                                 tau * -this->kinematic_viscosity *
-                                (-this->kinematic_viscosity *
+                                (-vf_value * this->kinematic_viscosity *
                                    hessian_diagonal[i][l] +
-                                 gradient[i][l] * value[l]);
+                                 vf_value * gradient[i][l] * value[l]);
                             }
-                          // + (∇p - f)τ(−ν∆v)
+                          // + ɛ(∇p - f)τ(−ν∆v)
                           hessian_result[i][k][k] +=
-                            tau * -this->kinematic_viscosity *
+                            tau * -this->kinematic_viscosity * vf_value *
                             (gradient[dim][i] - source_value[i]);
 
-                          // + (∂t u)τ(−ν∆v)
+                          // + (ɛ∂t u)τ(−ν∆v)
                           if (transient)
                             hessian_result[i][k][k] +=
                               tau * -this->kinematic_viscosity *
-                              ((*bdf_coefs)[0] * value[i] +
+                              (vf_value * (*bdf_coefs)[0] * value[i] +
                                previous_time_derivatives[i]);
                         }
 
