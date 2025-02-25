@@ -149,36 +149,34 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>          std::make_pair(<span class="stringliteral">&quot;fem_torque&quot;</span>, 1);</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        properties[PropertiesIndex::fem_torque_z] =</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>          std::make_pair(<span class="stringliteral">&quot;fem_torque&quot;</span>, 1);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        properties[PropertiesIndex::volumetric_contribution] =</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>          std::make_pair(<span class="stringliteral">&quot;volumetric_contribution&quot;</span>, 1);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        properties[PropertiesIndex::volumetric_contribution] =</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>          std::make_pair(<span class="stringliteral">&quot;volumetric_contribution&quot;</span>, 1);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        properties[PropertiesIndex::mass] = std::make_pair(<span class="stringliteral">&quot;mass&quot;</span>, 1);</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        properties[PropertiesIndex::mass] = std::make_pair(<span class="stringliteral">&quot;mass&quot;</span>, 1);</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keywordflow">return</span> properties;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>      }</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  }</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keywordflow">return</span> properties;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>      }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  }</div>
 </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="foldopen" id="foldopen00070" data-start="{" data-end="}">
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ade54a377f922743a7f95d6ef22428104">   70</a></span>  <a class="code hl_function" href="namespaceDEM.html#ade54a377f922743a7f95d6ef22428104">get_number_properties</a>()</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordflow">return</span> PropertiesIndex::n_properties;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ade54a377f922743a7f95d6ef22428104">   68</a></span>  <a class="code hl_function" href="namespaceDEM.html#ade54a377f922743a7f95d6ef22428104">get_number_properties</a>()</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordflow">return</span> PropertiesIndex::n_properties;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  }</div>
 </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;2, DEM::DEMProperties::PropertiesIndex&gt;;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;3, DEM::DEMProperties::PropertiesIndex&gt;;</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a1d097609895dec9229dcd8dba67632dc">   80</a></span>  <span class="keyword">template</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <a class="code hl_function" href="namespaceDEM.html#a1d097609895dec9229dcd8dba67632dc">DEM::get_number_properties&lt;DEM::DEMProperties::PropertiesIndex&gt;</a>();</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a0ef37e346bfc528db20972726d5001ae">   82</a></span>  <span class="keyword">template</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <a class="code hl_function" href="namespaceDEM.html#a0ef37e346bfc528db20972726d5001ae">DEM::get_number_properties&lt;DEM::CFDDEMProperties::PropertiesIndex&gt;</a>();</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>} <span class="comment">// namespace DEM</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;2, DEM::DEMProperties::PropertiesIndex&gt;;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;2, DEM::CFDDEMProperties::PropertiesIndex&gt;;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;3, DEM::DEMProperties::PropertiesIndex&gt;;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keyword">template</span> <span class="keyword">class </span>ParticleProperties&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a1d097609895dec9229dcd8dba67632dc">   78</a></span>  <span class="keyword">template</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  <a class="code hl_function" href="namespaceDEM.html#a1d097609895dec9229dcd8dba67632dc">DEM::get_number_properties&lt;DEM::DEMProperties::PropertiesIndex&gt;</a>();</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a0ef37e346bfc528db20972726d5001ae">   80</a></span>  <span class="keyword">template</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <a class="code hl_function" href="namespaceDEM.html#a0ef37e346bfc528db20972726d5001ae">DEM::get_number_properties&lt;DEM::CFDDEMProperties::PropertiesIndex&gt;</a>();</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>} <span class="comment">// namespace DEM</span></div>
 <div class="ttc" id="aclassDEM_1_1ParticleProperties_html_ae8bbaccc0e3dad899903c49dbbd1a612"><div class="ttname"><a href="classDEM_1_1ParticleProperties.html#ae8bbaccc0e3dad899903c49dbbd1a612">DEM::ParticleProperties::get_properties_name</a></div><div class="ttdeci">static std::vector&lt; std::pair&lt; std::string, int &gt; &gt; get_properties_name()</div><div class="ttdoc">Return the names of each DEM property. Used to properly generate output files.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8cc_source.html#l00013">dem_properties.cc:13</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="anamespaceDEM_1_1CFDDEMProperties_html_ae9734b9d29480269e4764c5092d87b2f"><div class="ttname"><a href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a></div><div class="ttdeci">PropertiesIndex</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00057">dem_properties.h:58</a></div></div>
@@ -186,7 +184,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00010">dem_properties.h:11</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_a0ef37e346bfc528db20972726d5001ae"><div class="ttname"><a href="namespaceDEM.html#a0ef37e346bfc528db20972726d5001ae">DEM::get_number_properties&lt; DEM::CFDDEMProperties::PropertiesIndex &gt;</a></div><div class="ttdeci">template unsigned int DEM::get_number_properties&lt; DEM::CFDDEMProperties::PropertiesIndex &gt;()</div></div>
 <div class="ttc" id="anamespaceDEM_html_a1d097609895dec9229dcd8dba67632dc"><div class="ttname"><a href="namespaceDEM.html#a1d097609895dec9229dcd8dba67632dc">DEM::get_number_properties&lt; DEM::DEMProperties::PropertiesIndex &gt;</a></div><div class="ttdeci">template unsigned int DEM::get_number_properties&lt; DEM::DEMProperties::PropertiesIndex &gt;()</div></div>
-<div class="ttc" id="anamespaceDEM_html_ade54a377f922743a7f95d6ef22428104"><div class="ttname"><a href="namespaceDEM.html#ade54a377f922743a7f95d6ef22428104">DEM::get_number_properties</a></div><div class="ttdeci">unsigned int get_number_properties()</div><div class="ttdoc">Return the number of properties stored on each particle.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8cc_source.html#l00070">dem_properties.cc:70</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ade54a377f922743a7f95d6ef22428104"><div class="ttname"><a href="namespaceDEM.html#ade54a377f922743a7f95d6ef22428104">DEM::get_number_properties</a></div><div class="ttdeci">unsigned int get_number_properties()</div><div class="ttdoc">Return the number of properties stored on each particle.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8cc_source.html#l00068">dem_properties.cc:68</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
