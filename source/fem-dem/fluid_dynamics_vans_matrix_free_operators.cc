@@ -373,16 +373,18 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Weak form
           for (unsigned int i = 0; i < dim; ++i)
             {
-              // νɛ(∇v,∇u)
+              // ν(∇v,ɛ∇u)
               gradient_result[i] =
                 this->kinematic_viscosity * vf_value * gradient[i];
 
               // -(∇·v,ɛp)
               gradient_result[i][i] += -vf_value * value[dim];
+
+              // -(v,ɛf)
+              value_result[i] = -vf_value * source_value[i];
+
               // -(v,p∇ɛ)
               value_result[i] += -vf_gradient[i] * value[dim];
-              // +(v,-ɛf)
-              value_result[i] = -vf_value * source_value[i];
 
               // +(v,ɛ∂t u)
               if (transient)
@@ -393,7 +395,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
               value_result[dim] += vf_value * gradient[i][i];
               // +(q,∇ɛ·u)
               value_result[dim] += value[i] * vf_gradient[i];
-
 
               for (unsigned int k = 0; k < dim; ++k)
                 {
