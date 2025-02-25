@@ -30,12 +30,16 @@ test()
   method.
   */
   Triangulation<3> triangulation;
-  DoFHandler<3>    dof_handler;
-  FE_Q<3>          fe(1);
-  MappingQ<3>      mapping(1);
+
+  DoFHandler<3> dof_handler;
+  FE_Q<3>       fe(1);
+  MappingQ<3>   mapping(1);
 
   const Point<3> p_0 = Point<3>({0, 0, 0});
   const Point<3> p_1 = Point<3>({1, 1, 1});
+
+  GridGenerator::hyper_rectangle(triangulation, p_0, p_1);
+  triangulation.refine_global(3);
 
   const Point<3> sphere_center = Point<3>({0.5, 0.5, 0.5});
   const double   sphere_radius = 0.25;
@@ -45,9 +49,6 @@ test()
   // Loop for the mesh convergence study
   for (unsigned int n = 0; n < 3; n++)
     {
-      GridGenerator::hyper_rectangle(triangulation, p_0, p_1);
-      triangulation.refine_global(n + 3);
-
       dof_handler.reinit(triangulation);
       dof_handler.distribute_dofs(fe);
 
@@ -108,6 +109,7 @@ test()
 
       deallog << "The area error for ref. lev. " << n + 3
               << " is: " << error_area[n] << std::endl;
+      triangulation.refine_global(1);
     }
 
   const double convergence_order =
