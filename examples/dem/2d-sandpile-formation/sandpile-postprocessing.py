@@ -26,7 +26,7 @@ rollingmethod = args.rollingmethod
 start = 475
 
 # Number of sampled particles for the angle
-n_sample = 8
+n_angle_sample = 8
 
 # Height of the bottom part of the mesh
 h = 0.57
@@ -40,12 +40,10 @@ time = particle.time_list
 
 
 # Sampling points
-x_sample = np.linspace(-0.5,-0.1,n_sample)
-distance_sample = np.linspace(-0.9,-0.9,100)
+x_sample = np.linspace(-0.5,-0.1,n_angle_sample)
 
 # Values where the heights are stored
-y_sample = np.zeros(n_sample)
-height_sample = np.zeros(100)
+y_sample = np.zeros(n_angle_sample)
 
 # Values where the height of the pile is stored
 height = np.zeros(len(time)-start)
@@ -55,7 +53,6 @@ D = 0.0089 # D is the distance in which particle are considered around the sampl
 for i in range(start, len(time)):
 
     df_load = particle.get_df(i)
-    # We do a scalar product to find the velocity in the new frame of reference.
     df = pd.DataFrame(np.copy(df_load.points), columns=['x', 'y','z'])
 
     height[i-start] += df['y'].max() + h
@@ -73,10 +70,8 @@ for i in range(start, len(time)):
             df_to_sample = df_filtered[df_filtered['dist'] < D]
 
             # Take the highest particle around the sampled one
-            df_sampled = df_to_sample.nlargest(1, 'y') # utiliser .idxmax et .loc ?
+            df_sampled = df_to_sample.nlargest(1, 'y') # utiliser .idxmax et .loc ou .max direct?
             y_sample[index] += df_sampled['y']
-
-
 
 
 p = np.polyfit(x_sample, y_sample,1)
@@ -108,19 +103,22 @@ paper_height = paper_data['Curve1'].to_numpy()
 
 # Plot the evolution of the height of the pile
 plt.figure()
-plt.plot(time[start:],height,label= "Lethe-DEM " + rollingmethod)
-plt.plot(paper_time,paper_height,label= "Ai2010 " + rollingmethod)
+plt.plot(time[start:],height, label= "Lethe-DEM " + rollingmethod)
+plt.plot(paper_time,paper_height, '--', label= "Ai2010 " + rollingmethod)
 plt.legend()
+plt.title("Evolution of the height of the pile with model " + rollingmethod)
 plt.xlabel('Time (s)')
 plt.ylabel('Height of the pile (m)')
 plt.yticks(np.arange(0.1, 0.32, 0.02))
 plt.xticks(np.arange(0, 60, 10))
+plt.savefig("comparison_" + rollingmethod)
 plt.show()
 
 
 # Export data to csv
-data = pd.DataFrame({'time': time[start:], 'height':height})
-data.to_csv(folder + '/height_' + rollingmethod + '.csv')
+data_height = pd.DataFrame({'time': time[start:], 'height':height})
+data_height.to_csv(folder + '/height_' + rollingmethod + '.csv')
+
 
 
 
