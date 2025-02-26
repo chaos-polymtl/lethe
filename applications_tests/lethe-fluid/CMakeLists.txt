@@ -83,14 +83,14 @@ file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation 
 file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature.${_build_type}/mpirun=1/")
 
-file(COPY heat_transfer_average_temperature_restart_files/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
-file(COPY heat_transfer_average_temperature_restart_files/L2Error_HT.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
-file(COPY heat_transfer_average_temperature_restart_files/restart.averagescalar DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
-file(COPY heat_transfer_average_temperature_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
-file(COPY heat_transfer_average_temperature_restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
-file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
-file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
-file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_modified_average_temperature_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/L2Error_HT.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/restart.averagescalar DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
 
 deal_ii_pickup_tests()
 
