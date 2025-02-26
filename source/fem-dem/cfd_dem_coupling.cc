@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include "core/dem_properties.h"
 #include <core/grids.h>
 #include <core/solutions_output.h>
 
@@ -11,6 +12,7 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
+#include <deal.II/base/data_out_base.h>
 
 #include <fstream>
 #include <sstream>
@@ -921,7 +923,28 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
           force);
     }
 }
+/*
+template <int dim>
+void
+CFDDEMSolver<dim>::write_quadrature_centered_method_spheres()
+{
+  const std::string folder = dem_parameters.simulation_control.output_folder;
+  const std::string quadrature_output_file_name = dem_parameters.simulation_control.ouput_name + "_quadrature_sphere";
+  const unsigned int iter = this->simulation_control->get_step_number();
+  const double       time = this->simulation_control->get_current_time();
+  const unsigned int group_files = dem_parameters.simulation_control.group_files;
 
+  // Write spheres as particles
+  Visualization<dim, DEM::DEMProperties::PropertiesIndex> quadrature_sphere_out;
+
+  // Make patches
+  std::vector<DataOutBase::Patch<dim>> sphere_patches;
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      
+    }
+}
+*/
 template <int dim>
 void
 CFDDEMSolver<dim>::write_dem_output_results()

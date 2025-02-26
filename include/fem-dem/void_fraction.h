@@ -11,6 +11,7 @@
 #include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/index_set.h>
+#include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/utilities.h>
 
 #include <deal.II/distributed/tria_base.h>
