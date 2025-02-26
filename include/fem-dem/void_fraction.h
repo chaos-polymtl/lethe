@@ -133,9 +133,18 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe         = std::make_shared<FE_Q<dim>>(fe_degree);
-        mapping    = std::make_shared<MappingQ<dim>>(fe->degree);
-        quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        fe      = std::make_shared<FE_Q<dim>>(fe_degree);
+        mapping = std::make_shared<MappingQ<dim>>(fe->degree);
+        if (this->void_fraction_parameters->qcm_quadrature_rule ==
+            Parameters::VoidFractionQCMRule::gauss)
+          quadrature = std::make_shared<QGauss<dim>>(
+            this->void_fraction_parameters->qcm_n_quadrature_points);
+        else if (this->void_fraction_parameters->qcm_quadrature_rule ==
+                 Parameters::VoidFractionQCMRule::gauss_lobatto)
+          quadrature = std::make_shared<QGaussLobatto<dim>>(
+            this->void_fraction_parameters->qcm_n_quadrature_points);
+        else
+          quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
       }
   }
 

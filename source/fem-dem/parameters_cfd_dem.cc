@@ -3,6 +3,8 @@
 
 #include <fem-dem/parameters_cfd_dem.h>
 
+#include <deal.II/base/patterns.h>
+
 namespace Parameters
 {
   template <int dim>
@@ -45,6 +47,16 @@ namespace Parameters
       "false",
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
+    prm.declare_entry(
+      "quadrature rule",
+      "gauss",
+      Patterns::Selection("gauss|gauss-lobatto"),
+      "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme");
+    prm.declare_entry(
+      "n quadrature points",
+      "-1",
+      Patterns::Integer(),
+      "Number of quadrature points per cell used in the QCM void fraction scheme");
     prm.leave_subsection();
   }
 
@@ -63,7 +75,7 @@ namespace Parameters
     else if (op == "spm")
       mode = Parameters::VoidFractionMode::spm;
     else
-      throw(std::runtime_error("Invalid voidfraction model"));
+      throw(std::runtime_error("Invalid void fraction calculation scheme"));
     prm.enter_subsection("function");
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
@@ -74,6 +86,40 @@ namespace Parameters
     particle_refinement_factor = prm.get_integer("particle refinement factor");
     qcm_sphere_diameter        = prm.get_double("qcm sphere diameter");
     qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
+    const std::string qcm_quadrature_rule_op = prm.get("quadrature rule");
+
+    if (mode == Parameters::VoidFractionMode::qcm)
+      {
+        if (qcm_quadrature_rule_op == "gauss")
+          qcm_quadrature_rule = Parameters::VoidFractionQCMRule::gauss;
+        else if (qcm_quadrature_rule_op == "gauss-lobatto")
+          qcm_quadrature_rule = Parameters::VoidFractionQCMRule::gauss_lobatto;
+        else
+          throw(std::runtime_error(
+            "Invalid quadrature rule for QCM void fraction scheme. Options are 'gauss' or 'gauss-lobatto'"));
+      }
+
+    qcm_n_quadrature_points = prm.get_integer("n quadrature points");
+
+    if (qcm_quadrature_rule == Parameters::VoidFractionQCMRule::gauss)
+      {
+        // Ensure coherence with default
+        if (qcm_n_quadrature_points == -1)
+          qcm_n_quadrature_points = 2;
+        if (qcm_n_quadrature_points < 1)
+          throw(std::runtime_error(
+            "For the QCM void fraction scheme using Gauss ('gauss') quadrature rule, the minimum number of quadrature points is 1"));
+      }
+    else if (qcm_quadrature_rule ==
+             Parameters::VoidFractionQCMRule::gauss_lobatto)
+      {
+        // Ensure coherence with default
+        if (qcm_n_quadrature_points == -1)
+          qcm_n_quadrature_points = 3;
+        if (qcm_n_quadrature_points < 3)
+          throw(std::runtime_error(
+            "For the QCM void fraction scheme using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
+      }
 
     prm.leave_subsection();
   }
