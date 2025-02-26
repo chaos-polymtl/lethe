@@ -1268,12 +1268,21 @@ HeatTransfer<dim>::read_checkpoint()
 
   solution_transfer->deserialize(input_vectors);
 
-  if (simulation_parameters.post_processing.calculate_average_temp_and_hf){
-    if (this->simulation_parameters.post_processing.initial_time_for_average_temp_and_hf > (this->simulation_control->get_current_time() + 1e-8)){
-      this->pcout << "Warning: The checkpointed time-averaged temperature and heat flux have been initialized/reinitialized because the initial averaging time has not yet been reached." << std::endl;
-      this->average_temperature->reinit_average_after_restart(this->locally_owned_dofs,this->locally_relevant_dofs,mpi_communicator);
-    }    
-    this->average_temperature->sanitize_after_restart();
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
+    {
+      if (this->simulation_parameters.post_processing
+            .initial_time_for_average_temp_and_hf >
+          (this->simulation_control->get_current_time() + 1e-8))
+        {
+          this->pcout
+            << "Warning: The checkpointed time-averaged temperature and heat flux have been initialized/reinitialized because the initial averaging time has not yet been reached."
+            << std::endl;
+          this->average_temperature->reinit_average_after_restart(
+            this->locally_owned_dofs,
+            this->locally_relevant_dofs,
+            mpi_communicator);
+        }
+      this->average_temperature->sanitize_after_restart();
     }
 
   present_solution = distributed_system;
@@ -1631,8 +1640,9 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
           else
             {
               // calculate the average using the time average temperature
-              fe_values_ht.get_function_values(this->average_temperature->get_average_scalar(),
-                                              local_temperature_values);              
+              fe_values_ht.get_function_values(
+                this->average_temperature->get_average_scalar(),
+                local_temperature_values);
             }
 
           if (gather_vof)
@@ -1734,9 +1744,10 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      std::string temperature_label = time_average ? "Time-averaged temperature statistics on " : "Temperature statistics on ";
-      this->pcout << temperature_label << domain_name << ": "
-                  << std::endl;
+      std::string temperature_label =
+        time_average ? "Time-averaged temperature statistics on " :
+                       "Temperature statistics on ";
+      this->pcout << temperature_label << domain_name << ": " << std::endl;
       this->pcout << "\t     Min: " << minimum_temperature << std::endl;
       this->pcout << "\t     Max: " << maximum_temperature << std::endl;
       this->pcout << "\t Average: " << temperature_average << std::endl;
@@ -1757,8 +1768,10 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
     {
       this->statistics_table.add_value("min_time_average", minimum_temperature);
       this->statistics_table.add_value("max_time_average", maximum_temperature);
-      this->statistics_table.add_value("time_average_average", temperature_average);
-      this->statistics_table.add_value("std-dev_time_average", temperature_std_deviation);
+      this->statistics_table.add_value("time_average_average",
+                                       temperature_average);
+      this->statistics_table.add_value("std-dev_time_average",
+                                       temperature_std_deviation);
     }
 }
 

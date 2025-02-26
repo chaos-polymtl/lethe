@@ -197,11 +197,11 @@ protected:
   {
     postprocess_fd(first_iteration);
     multiphysics->postprocess(first_iteration);
-      
+
     if (this->simulation_control->is_output_iteration())
-    {
-      this->write_output_results(present_solution);
-    }
+      {
+        this->write_output_results(present_solution);
+      }
   };
 
   /**

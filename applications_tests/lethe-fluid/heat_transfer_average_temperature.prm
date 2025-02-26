@@ -143,7 +143,7 @@ subsection analytical solution
   subsection temperature
     set Function expression = 50 - (40/0.01) * x
   end
-  set filename = L2Error #heat_transfer_average_temperature_restart_files/L2Error
+  #set filename = L2Error #heat_transfer_average_temperature_restart_files/L2Error
 end
 
 #---------------------------------------------------
@@ -151,18 +151,15 @@ end
 #---------------------------------------------------
 
 subsection post-processing
+
+  set verbosity = verbose
+
   set calculate average temperature and heat flux = true
-end
-
-#---------------------------------------------------
-# Subsection restart
-#---------------------------------------------------
-
-subsection restart
-  set checkpoint = false
-  set frequency  = 1
-  set filename = restart #heat_transfer_average_temperature_restart_files/restart
-  set restart = true
+  set initial time for average temperature and heat flux = 0.01
+  
+  # Thermal postprocessing
+  set calculate temperature statistics = true
+  
 end
 
 #---------------------------------------------------

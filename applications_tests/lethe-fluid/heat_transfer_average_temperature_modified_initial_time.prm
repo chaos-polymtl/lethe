@@ -3,7 +3,6 @@
 
 # Based on the heat_transfer_average_temperature test. Checks if restarting with a different initial time for average temperature and heat flux parameter leads to a segfault. A warning message should appear saying that the checkpointed time-averaged temperature and heat flux have been initialized/reinitialized.
 
-
 # Listing of Parameters
 #----------------------
 
@@ -152,15 +151,19 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-
-  set verbosity = verbose
-
   set calculate average temperature and heat flux = true
-  set initial time for average temperature and heat flux = 0.01
-  
-  # Thermal postprocessing
-  set calculate temperature statistics = true
-  
+  set initial time for average temperature and heat flux = 0.04
+end
+
+#---------------------------------------------------
+# Subsection restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = false
+  set frequency  = 1
+  set filename = restart #heat_transfer_average_temperature_restart_files/restart
+  set restart = true
 end
 
 #---------------------------------------------------
