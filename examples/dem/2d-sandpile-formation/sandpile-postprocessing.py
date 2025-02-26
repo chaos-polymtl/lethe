@@ -1,0 +1,129 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import argparse
+from sklearn.metrics import r2_score
+
+from lethe_pyvista_tools import *
+
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 2d-sandpile DEM example')
+parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
+parser.add_argument("--prm", type=str, help="prm file", required=True)
+parser.add_argument("--regression", action="store_true", default=False, help="Plot the least squares regression",required=False)
+parser.add_argument("--rollingmethod", type=str, choices=["constant", "viscous", "epsd"], help="Rolling resistance method. Must be one of: constant, viscous, or epsd.", required=True)
+args, leftovers=parser.parse_known_args()
+
+# Simulation folder
+folder=args.folder
+
+# Rolling resistance method
+rollingmethod = args.rollingmethod
+
+# Starting vtu id for the height of the pile
+start = 475
+
+# Number of sampled particles for the angle
+n_sample = 8
+
+# Height of the bottom part of the mesh
+h = 0.57
+
+# Load lethe data
+pvd_name = 'out.pvd'
+ignore_data = ['type', 'volumetric contribution', 'torque', 'fem_torque',
+               'fem_force']
+particle = lethe_pyvista_tools(folder, args.prm,pvd_name, ignore_data=ignore_data)
+time = particle.time_list
+
+
+# Sampling points
+x_sample = np.linspace(-0.5,-0.1,n_sample)
+distance_sample = np.linspace(-0.9,-0.9,100)
+
+# Values where the heights are stored
+y_sample = np.zeros(n_sample)
+height_sample = np.zeros(100)
+
+# Values where the height of the pile is stored
+height = np.zeros(len(time)-start)
+
+D = 0.0089 # D is the distance in which particle are considered around the sampling points (diameter of the biggest particle)
+
+for i in range(start, len(time)):
+
+    df_load = particle.get_df(i)
+    # We do a scalar product to find the velocity in the new frame of reference.
+    df = pd.DataFrame(np.copy(df_load.points), columns=['x', 'y','z'])
+
+    height[i-start] += df['y'].max() + h
+
+    if i==len(time)-1 :
+
+        for index, x_loc in enumerate(x_sample):
+
+            df_filtered = df.copy()
+
+            # Compute the distance between each particle and the sampling point
+            df_filtered['dist'] = ((df_filtered['x']-x_loc)** 2) ** 0.5
+            
+            # Keep the particles close to the sampled point
+            df_to_sample = df_filtered[df_filtered['dist'] < D]
+
+            # Take the highest particle around the sampled one
+            df_sampled = df_to_sample.nlargest(1, 'y') # utiliser .idxmax et .loc ?
+            y_sample[index] += df_sampled['y']
+
+
+
+
+p = np.polyfit(x_sample, y_sample,1)
+
+R2 = r2_score(y_sample,np.polyval(p,x_sample))
+print("R2: ", R2)
+print("Slope: ",p[0])
+print("Angle: ",np.arctan(p[0])*180/np.pi)
+
+
+if (args.regression):
+    # Plot the least squares regression used to calculate the angle
+    plt.figure()
+    plt.plot(x_sample, y_sample,'s',label='Sampled points')
+    plt.plot(x_sample, np.polyval(p,x_sample),'--',label='Linear fit')
+    plt.legend()
+    plt.show()
+
+
+# Write the angle on a file
+with open(folder+"/angle_" + rollingmethod + ".txt", "w") as file:
+    file.write("Angle\n")
+    file.write(f"{np.arctan(p[0])*180/np.pi}\n")
+
+# Read data from paper
+paper_data = pd.read_csv('extraction_model_' + rollingmethod + '.csv')
+paper_time = paper_data['x'].to_numpy()
+paper_height = paper_data['Curve1'].to_numpy()
+
+# Plot the evolution of the height of the pile
+plt.figure()
+plt.plot(time[start:],height,label= "Lethe-DEM " + rollingmethod)
+plt.plot(paper_time,paper_height,label= "Ai2010 " + rollingmethod)
+plt.legend()
+plt.xlabel('Time (s)')
+plt.ylabel('Height of the pile (m)')
+plt.yticks(np.arange(0.1, 0.32, 0.02))
+plt.xticks(np.arange(0, 60, 10))
+plt.show()
+
+
+# Export data to csv
+data = pd.DataFrame({'time': time[start:], 'height':height})
+data.to_csv(folder + '/height_' + rollingmethod + '.csv')
+
+
+
+
+
+
