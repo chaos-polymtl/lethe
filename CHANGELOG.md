@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2025-02-24
 
+### Fixed and added
+
+- MINOR The temperature and heat average calculated with the calculate average temperature and heat flux parameter in the post-processing subsection was updating the average at every output iteration instead of at every time iteration. A mechanism to set the temperature and heat flux average to 0 after a restart if initial time for average temperature and heat flux is greater than the simulation time was also added. [#1431](https://github.com/chaos-polymtl/lethe/pull/1431)
+
+## [Master] - 2025-02-24
+
 ### Fixed
 
 - MINOR The function get_properties_name() did not contain the pair corresponding to "volumetric_contribution". As consequence, the CFD-DEM vtu files would not have this property and would have an empty property instead. This PR adds this modification to the changelog as the addition of the property was pushed straight to master. The hash or the commit that pushes it to master is: 3dd817096cd2f5056902ace464e1aef9358c4ef8. [#1430](https://github.com/chaos-polymtl/lethe/pull/1430)
