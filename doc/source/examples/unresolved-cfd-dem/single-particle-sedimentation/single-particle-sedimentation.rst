@@ -42,26 +42,26 @@ The syntax of this parameter file is flexible. Parameters do not need to be spec
 Mesh
 ~~~~~
 
-In this example, we are simulating a rectangular channel. We use the deal.II GridGenerator in order to generate a hyper rectangle that is subdivided along its height. The following portion of the DEM parameter file shows the function called:
+In this example, we are simulating a rectangular-based tank. We use the deal.II GridGenerator in order to generate a hyper rectangle that is subdivided along its height. The following portion of the DEM parameter file shows the function called:
 
 .. code-block:: text
 
     subsection mesh
       set type                                = dealii
       set grid type                           = subdivided_hyper_rectangle
-      set grid arguments                      = 20,25,20:-0.02663,0,-0.02663:0.02663,0.1,0.02663:true
+      set grid arguments                      = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:true
       set initial refinement                  = 0
       set expand particle-wall contact search = false
     end
 
 
-.. note::
+.. important::
     The grid of the particle insertion needs to be the same used in the unresolved CFD-DEM simulation. If you wish to use another mesh refinement, the particle insertion mesh needs to be adapted accordingly.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time step in this case is the same as the time end. Since we only seek to insert the particles at the top of the channel, we only require 1 insertion time step. We do not need the particles to be packed, therefore by doing this, the particles will be inserted, but will not fall under the action of gravity.
+The time step in this case is the same as the time end. Since we only seek to insert the particle at the top of the channel, we only require 1 insertion time step. We do not need the particle to accelarate, therefore by doing this, the particles will be inserted, but will not fall under the action of gravity.
 
 
 .. code-block:: text
@@ -120,9 +120,9 @@ The gravity is set to 0 as we only need to insert the particles in the specified
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform
-        set diameter                          = 0.002
-        set number                            = 8379
-        set density particles                 = 1200
+        set diameter                          = 0.002663
+        set number                            = 1
+        set density particles                 = 1029
         set young modulus particles           = 1e6
         set poisson ratio particles           = 0.25
         set restitution coefficient particles = 0.97
@@ -139,19 +139,18 @@ The gravity is set to 0 as we only need to insert the particles in the specified
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-We insert the particles uniformly in the specified insertion box at the top of the channel.
+We use the list insertion method to insert the single particle in our domain. This is quite convenient, since we can tell exactly what is the position of the particle. We set the insertion frequency to 2000, which is the same as the time end. This way, the particle will be inserted at the top of the channel at the end of the DEM simulation.
 
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = volume
-      set inserted number of particles at each time step = 8379
+      set insertion method                               = list
+      set list x = 0
+      set list y = 0.08
+      set list z = 0
       set insertion frequency                            = 2000
-      set insertion box points coordinates               = -0.025, 0.3, -0.025 : 0.026, 0.396, 0.026
-      set insertion distance threshold                   = 1.2
-      set insertion maximum offset                       = 0.
-      set insertion prn seed                             = 19
     end
+
 
 ---------------------------
 Running the DEM Simulation
@@ -162,15 +161,6 @@ Launching the simulation is as simple as specifying the executable name and the 
   :class: copy-button
 
   lethe-particles initial-particles.prm
-
-or in parallel (where 8 represents the number of processors)
-
-.. code-block:: text
-  :class: copy-button
-
-  mpirun -np 8 lethe-particles initial-particles.prm
-
-The figure below shows the particles inserted at the top of the channel at the end of the DEM simulation.
 
 .. image:: images/packing.png
     :alt: inserted particles at the top of the channel
@@ -270,7 +260,7 @@ For the boundary conditions, we choose a slip boundary condition on all the wall
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This section is identical to the one previously mentioned for the DEM simulation of particle insertion. The only difference is the definition of gravity. For the vertical case, we set :math:`g_y = -9.81` and :math:`g_x = g_z = 0`. For the inclined case, we determine the gravity by setting: :math:`g_x = \frac{-9.81}{cos \theta}, \; g_y = \frac{-9.81}{sin \theta}, \; g_z = 0` where :math:`\theta` is the angle of inclination with the vertical.
+This section is identical to the one previously mentioned for the DEM simulation of particle insertion. The only difference is the definition of gravity. For the vertical case, we set :math:`g_y = -9.81` and :math:`g_x = g_z = 0`
 
 The additional sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are descrichannel in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
