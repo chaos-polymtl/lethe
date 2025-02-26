@@ -137,16 +137,19 @@ VANSOperator<dim, number>::do_cell_integral_local(
       const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
 
       // Weak form Jacobian
+      value_result[dim] = 0;
       for (unsigned int i = 0; i < dim; ++i)
         {
           // ν(∇v,ɛ∇δu)
           gradient_result[i] =
             this->kinematic_viscosity * vf_value * gradient[i];
           // ν(v,∇ɛ∇δu)
-          value_result[i] +=
+          value_result[i] =
             this->kinematic_viscosity * vf_gradient * gradient[i];
           // -(∇·v,ɛδp)
           gradient_result[i][i] += -vf_value * value[dim];
+          // -(v,p∇ɛ)
+          value_result[i] += -vf_gradient[i] * value[dim];
           // +(q,ɛ∇·δu)
           value_result[dim] += vf_value * gradient[i][i];
           // +(q,∇ɛ·δu)
@@ -370,6 +373,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::gradient_type gradient_result;
           typename FECellIntegrator::hessian_type  hessian_result;
 
+          value_result[dim] = 0;
           // Weak form
           for (unsigned int i = 0; i < dim; ++i)
             {
