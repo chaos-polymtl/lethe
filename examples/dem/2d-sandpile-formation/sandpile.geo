@@ -1,37 +1,52 @@
 SetFactory("Built-in");
 
+
+// Geometry variables
+upper_right    = 0.505;
+upper_left     = - upper_right;
+upper_height   = 1;
+angle_height   = 0.57;
+channel_right  = 0.035;
+channel_left   = - channel_right;
+upper_channel_height = 0;
+bottom_channel_height = -0.22;
+bottom_right   = 1;
+bottom_left    = - bottom_right;
+bottom_height  = -0.57;
+
+
 //+
-Point(1) = {-0.505, 1, 0, 1.0};
+Point(1) = {upper_left, upper_height, 0, 1.0};
 //+
-Point(2) = {-0.035, 1, 0, 1.0};
+Point(2) = {channel_left, upper_height, 0, 1.0};
 //+
-Point(3) = {0.035, 1, 0, 1.0};
+Point(3) = {channel_right, upper_height, 0, 1.0};
 //+
-Point(4) = {0.505, 1, 0, 1.0};
+Point(4) = {upper_right, upper_height, 0, 1.0};
 //+
-Point(5) = {0.505, 0.57, 0, 1.0};
+Point(5) = {upper_right, angle_height, 0, 1.0};
 //+
-Point(6) = {0.035, 0, 0, 1.0};
+Point(6) = {channel_right, upper_channel_height, 0, 1.0};
 //+
-Point(7) = {0.035, -0.220, 0, 1.0};
+Point(7) = {channel_right, bottom_channel_height, 0, 1.0};
 //+
-Point(8) = {1, -0.220, 0, 1.0};
+Point(8) = {bottom_right, bottom_channel_height, 0, 1.0};
 //+
-Point(9) = {1, -0.570, 0, 1.0};
+Point(9) = {bottom_right, bottom_height, 0, 1.0};
 //+
-Point(10) = {0.035, -0.57, 0, 1.0};
+Point(10) = {channel_right, bottom_height, 0, 1.0};
 //+
-Point(11) = {-0.035, -0.57, 0, 1.0};
+Point(11) = {channel_left, bottom_height, 0, 1.0};
 //+
-Point(12) = {-1, -0.570, 0, 1.0};
+Point(12) = {bottom_left, bottom_height, 0, 1.0};
 //+
-Point(13) = {-1, -0.220, 0, 1.0};
+Point(13) = {bottom_left, bottom_channel_height, 0, 1.0};
 //+
-Point(14) = {-0.035, -0.220, 0,  1.0};
+Point(14) = {channel_left, bottom_channel_height, 0,  1.0};
 //+
-Point(15) = {-0.035, 0, 0, 1.0};
+Point(15) = {channel_left, upper_channel_height, 0, 1.0};
 //+
-Point(16) = {-0.505, 0.57, 0, 1.0};
+Point(16) = {upper_left, angle_height, 0, 1.0};
 //+
 
 //0.57 au lieu de 0.6 sur Points 5 et 16 ie 50.49 degres au lieu de 51.92 (52 dans le papier) pour eviter les pertes de particules
