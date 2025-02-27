@@ -417,9 +417,9 @@ VANSOperator<dim, number>::local_evaluate_residual(
                 {
                   // (-νɛ∆u + ɛ(u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
-                    tau * (-vf_value * this->kinematic_viscosity *
-                             hessian_diagonal[i][k] +
-                           gradient[i][k] * value[k]);
+                    tau * vf_value *
+                    (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                     gradient[i][k] * value[k]);
                 }
               // +(-ɛf)·τ∇q
               gradient_result[dim][i] += tau * (-vf_value * source_value[i]);
