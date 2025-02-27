@@ -270,15 +270,16 @@ Evolution of the Height of the Pile
 
 The following image compares the evolution of the height of the pile with the results of J. Ai *et al.*.
 
-.. image:: images/comparison.png
+.. image:: images/height-comparison.png
     :alt: Height comparison
     :align: center
 
 
+The next image shows the evolution of the height of the pile with rolling resistance model epsd using different prn seeds.
 
-
-
-
+.. image:: images/different_prn_seeds.png
+    :alt: Height comparison
+    :align: center
 
 
 ---------
