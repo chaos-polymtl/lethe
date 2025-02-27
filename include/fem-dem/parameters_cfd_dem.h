@@ -31,10 +31,10 @@ namespace Parameters
     spm  // The satellite point method (divided approach)
   };
 
-  enum class VoidFractionQCMRule
+  enum class VoidFractionQuadratureRule
   {
-    gauss, // Apply gauss quadrature rule (default)
-    gauss_lobatto
+    gauss,        // Apply gauss quadrature rule (default)
+    gauss_lobatto // Apply gauss-lobatto quadrature rule
   };
 
   enum class DragModel
@@ -78,8 +78,8 @@ namespace Parameters
     unsigned int                   particle_refinement_factor;
     double                         qcm_sphere_diameter;
     bool                           qcm_sphere_equal_cell_volume;
-    VoidFractionQCMRule            qcm_quadrature_rule;
-    int                            qcm_n_quadrature_points;
+    VoidFractionQuadratureRule     quadrature_rule;
+    int                            n_quadrature_points;
   };
 
   struct CFDDEM

@@ -11,6 +11,7 @@
 #include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/index_set.h>
+#include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/utilities.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -135,16 +136,30 @@ public:
         // Usual case, for quad/hex meshes
         fe      = std::make_shared<FE_Q<dim>>(fe_degree);
         mapping = std::make_shared<MappingQ<dim>>(fe->degree);
-        if (this->void_fraction_parameters->qcm_quadrature_rule ==
-            Parameters::VoidFractionQCMRule::gauss)
-          quadrature = std::make_shared<QGauss<dim>>(
-            this->void_fraction_parameters->qcm_n_quadrature_points);
-        else if (this->void_fraction_parameters->qcm_quadrature_rule ==
-                 Parameters::VoidFractionQCMRule::gauss_lobatto)
-          quadrature = std::make_shared<QGaussLobatto<dim>>(
-            this->void_fraction_parameters->qcm_n_quadrature_points);
-        else
-          quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        if (this->void_fraction_parameters->quadrature_rule ==
+            Parameters::VoidFractionQuadratureRule::gauss)
+          {
+            if (this->void_fraction_parameters->n_quadrature_points == -1)
+              quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+            else if (this->void_fraction_parameters->n_quadrature_points >= 1)
+              quadrature = std::make_shared<QGauss<dim>>(
+                this->void_fraction_parameters->n_quadrature_points);
+            else
+              throw(std::runtime_error(
+                "For void fraction using Gauss ('gauss') quadrature rule, the minimum number of quadrature points is 1"));
+          }
+        if (this->void_fraction_parameters->quadrature_rule ==
+            Parameters::VoidFractionQuadratureRule::gauss_lobatto)
+          {
+            if (this->void_fraction_parameters->n_quadrature_points == -1)
+              quadrature = std::make_shared<QGaussLobatto<dim>>(fe->degree + 2);
+            else if (this->void_fraction_parameters->n_quadrature_points >= 3)
+              quadrature = std::make_shared<QGaussLobatto<dim>>(
+                this->void_fraction_parameters->n_quadrature_points);
+            else
+              throw(std::runtime_error(
+                "For void fraction using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
+          }
       }
   }
 
