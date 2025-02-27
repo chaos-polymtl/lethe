@@ -60,16 +60,23 @@ The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ and was 
     end
 
 
-.. image:: images/mesh-sandpile.png
+.. figure:: images/mesh-sandpile.png
     :width: 300
     :alt: Mesh
     :align: center
+
     2D mesh of the hopper
 
+
 .. note::
-  Don't forget to generate the mesh using the following line.
-  :class: copy-button
-    gmsh -2 sandpile.geo
+
+   Don't forget to generate the mesh using the following line:
+
+   .. code-block:: bash
+      :class: copy-button
+
+      gmsh -2 sandpile.geo
+
 
 
 Lagrangian Physical Properties
@@ -258,10 +265,11 @@ Visualisation with Paraview
 
 The simulation can be visualised using Paraview as seen below.
 
-.. image:: images/formed-sandpile.png
+.. figure:: images/formed-sandpile.png
     :width: 300
     :alt: Mesh
     :align: center
+
     Sandpile at the end of the simulation
 
 
@@ -282,9 +290,9 @@ The next image shows the evolution of the height of the pile with rolling resist
     :align: center
 
 
----------
+-------------
 References
----------
+-------------
 
 .. [#Ai2010] \Jun Ai, Jian-Fei Chen, J. Michael Rotter, and Jin Y. Ooi. "Assessment of Rolling Resistance Models in Discrete Element Simulations." *Powder Technology*, vol. 206, no. 3, 2011, pp. 269-282. ScienceDirect. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S0032591010005164
  
