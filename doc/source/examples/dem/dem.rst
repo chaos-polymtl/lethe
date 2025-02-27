@@ -55,7 +55,7 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_9 [label="Silo", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/silo/silo.html"]; 
 
-      dem_10 [label="Sandpile", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile/sandpile.html"]; 
+      dem_10 [label="Sandpile", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile-formation/sandpile-formation.html"]; 
 
       dem_11 [label="Rectangular Hopper", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rectangular-hopper/rectangular-hopper.html"];
 
