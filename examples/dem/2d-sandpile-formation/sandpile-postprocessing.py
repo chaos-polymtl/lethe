@@ -23,7 +23,7 @@ folder=args.folder
 rollingmethod = args.rollingmethod
 
 # Starting vtu id for the height of the pile
-start = 475
+start = 500
 
 # Number of sampled particles for the angle
 n_angle_sample = 8
@@ -42,7 +42,7 @@ time = particle.time_list
 # Sampling points
 x_sample = np.linspace(-0.5,-0.1,n_angle_sample)
 
-# Values where the heights are stored
+# Values where the heights are stored to calculate the angle of repose
 y_sample = np.zeros(n_angle_sample)
 
 # Values where the height of the pile is stored
@@ -74,13 +74,13 @@ for i in range(start, len(time)):
             y_sample[index] += df_sampled['y']
 
 
+# Results of the regression
 p = np.polyfit(x_sample, y_sample,1)
 
 R2 = r2_score(y_sample,np.polyval(p,x_sample))
 print("R2: ", R2)
 print("Slope: ",p[0])
 print("Angle: ",np.arctan(p[0])*180/np.pi)
-
 
 if (args.regression):
     # Plot the least squares regression used to calculate the angle
@@ -92,32 +92,35 @@ if (args.regression):
 
 
 # Write the angle on a file
-with open(folder+"/angle_" + rollingmethod + ".txt", "w") as file:
+with open(folder+"/data/angle_" + rollingmethod + ".txt", "w") as file:
     file.write("Angle\n")
     file.write(f"{np.arctan(p[0])*180/np.pi}\n")
 
-# Read data from paper
-paper_data = pd.read_csv('extraction_model_' + rollingmethod + '.csv')
+
+# Read height data from paper
+paper_data = pd.read_csv('data/reference/extraction_model_' + rollingmethod + '.csv')
 paper_time = paper_data['x'].to_numpy()
 paper_height = paper_data['Curve1'].to_numpy()
+
 
 # Plot the evolution of the height of the pile
 plt.figure()
 plt.plot(time[start:],height, label= "Lethe-DEM " + rollingmethod)
 plt.plot(paper_time,paper_height, '--', label= "Ai2010 " + rollingmethod)
 plt.legend()
+plt.grid()
 plt.title("Evolution of the height of the pile with model " + rollingmethod)
 plt.xlabel('Time (s)')
 plt.ylabel('Height of the pile (m)')
 plt.yticks(np.arange(0.1, 0.32, 0.02))
 plt.xticks(np.arange(0, 60, 10))
-plt.savefig("comparison_" + rollingmethod)
+plt.savefig(folder + '/data/comparison_' + rollingmethod)
 plt.show()
 
 
-# Export data to csv
+# Export simulation data to csv
 data_height = pd.DataFrame({'time': time[start:], 'height':height})
-data_height.to_csv(folder + '/height_' + rollingmethod + '.csv')
+data_height.to_csv(folder + '/data/height_' + rollingmethod + '.csv')
 
 
 
