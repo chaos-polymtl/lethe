@@ -116,7 +116,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Height of the pile (m)')
 plt.yticks(np.arange(0.1, 0.32, 0.02))
 plt.xticks(np.arange(0, 60, 10))
-plt.savefig(folder + '/data/comparison_' + rollingmethod)
+plt.savefig(folder + '/data/figure-height-comparison-' + rollingmethod)
 plt.show()
 
 
