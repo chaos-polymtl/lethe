@@ -1,5 +1,5 @@
 ==================================
-Sandpile formation
+Sandpile Formation
 ==================================
 
 This example simulates the formation of a sandpile using the discrete element method (DEM). 
@@ -48,7 +48,7 @@ Mesh
 ~~~~
 
 The mesh is a hopper with 50.5° angle generated with GMSH, with a channel connecting the hopper to the part with the flat surface.
-The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ base case and was handled in order to generate a structured mesh.
+The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ and was handled in order to generate a structured mesh.
 
 .. code-block:: text
 
@@ -65,6 +65,11 @@ The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ base cas
     :alt: Mesh
     :align: center
     2D mesh of the hopper
+
+.. note::
+  Don't forget to generate the mesh using the following line.
+  :class: copy-button
+    gmsh -2 sandpile.geo
 
 
 Lagrangian Physical Properties
@@ -120,10 +125,6 @@ Model Parameters
         set dynamic contact search size coefficient = 0.8
         set neighborhood threshold                  = 1.3
       end
-      subsection load balancing
-        set load balance method = frequent
-        set frequency           = 10000
-      end
       set particle particle contact force method = hertz_mindlin_limit_overlap
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet
@@ -132,9 +133,8 @@ Model Parameters
     end
 
 .. note::
-  The Load balancing subsection could be deleted as the number of particles is quite small.
-  When the Elastic-Plastic Spring-Dashpot rolling resistance model is seleted here, f needs to be specified (f=0 here).
-
+  When the Elastic-Plastic Spring-Dashpot (epsd) rolling resistance model is selected, f needs to be specified (f=0 here).
+  More information regarding the DEM Model parameters is given in the Lethe documentation, i.e. `DEM Model Parameters <../../../parameters/dem/model_parameters.html>`_.
 
 Particle Insertion
 ~~~~~~~~~~~~~~~~~~
@@ -150,28 +150,28 @@ Particles are inserted in an insertion box in the upper part of the hopper. In t
       set insertion box points coordinates               = -0.34, 0.7 : 0.34, 1.2
       set insertion distance threshold                   = 1.5
       set insertion maximum offset                       = 0.1
-      set insertion prn seed                             = 19
+      set insertion prn seed                             = 20
     end
 
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The simulation runs for 10 seconds of real time. We output the simulation results every 1000 iterations.
+The simulation runs for 15 seconds of real time. We output the simulation results every 1000 iterations.
 
 .. code-block:: text
 
     subsection simulation control
       set time step        = 2e-5
-      set time end         = 10
+      set time end         = 15
       set log frequency    = 1000
       set output frequency = 1000
       set output path      = ./output/
     end
 
 .. note::
-  To compare with the results of J.Ai *et al.*, the end time should be set at 50s. 
-  It can be reduced to 10s to see the fully formed sandpile but the height of the pile may continue to decrease after 10s, particularly with the constant rolling resistance model.
+  To compare with the results of J.Ai *et al.*, the end time should be set at 50s or at least 35s to see the progression of the curve. 
+  It can be reduced to 15s to see the fully formed sandpile but the height of the pile may continue to decrease after 15s, particularly with the constant rolling resistance model.
 
 
 Floating Walls
@@ -210,9 +210,6 @@ The simulation can be launched with
    mpirun -np 2 lethe-particles sandpile.prm
 
 
-.. note::
- This example needs a simulation time of approximately 3 minutes on 2 processors when end time is set at 10s.
-
 
 ---------------
 Post-processing
@@ -234,7 +231,7 @@ It is possible to run the post-processing code with the following line. The argu
 The code prints the values of R2 and the slope (from the regression) and the angle of repose.
 
 .. note::
-  The argument --rolling method can be either epsd, viscous or constant and should be the same as the one selected in the prm file.
+  The argument --rollingmethod can be either epsd, viscous or constant and should be the same as the "rolling resistance torque method" in the prm file.
   The argument --regression can be added to plot the least squares regression used to calculate the angle of repose.
 
 .. important::
@@ -258,7 +255,7 @@ The simulation can be visualised using Paraview as seen below.
     Sandpile at the end of the simulation
 
 
-Evolution of the height of the pile
+Evolution of the Height of the Pile
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following image compares the evolution of the height of the pile with the results of J. Ai *et al.*.
@@ -275,9 +272,9 @@ The following image compares the evolution of the height of the pile with the re
 
 
 ---------
-Reference
+References
 ---------
 
-.. [#Ai2010] \S. Jun Ai, Jian-Fei Chen, J. Michael Rotter, and Jin Y. Ooi. "Assessment of Rolling Resistance Models in Discrete Element Simulations." *Powder Technology*, vol. 206, no. 3, 2011, pp. 269-282. ScienceDirect. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S0032591010005164
+.. [#Ai2010] \Jun Ai, Jian-Fei Chen, J. Michael Rotter, and Jin Y. Ooi. "Assessment of Rolling Resistance Models in Discrete Element Simulations." *Powder Technology*, vol. 206, no. 3, 2011, pp. 269-282. ScienceDirect. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S0032591010005164
  
-.. [#Zuriguel2007] \S. I. Zuriguel, T. Mullin, J. M. Rotter. "Effect of Particle Shape on the Stress Dip Under a Sandpile." *Physical Review Letters*, vol. 98, no. 2, 2007, p. 028001. [Online]. Available: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.98.028001
+.. [#Zuriguel2007] \I. Zuriguel, T. Mullin, J. M. Rotter. "Effect of Particle Shape on the Stress Dip Under a Sandpile." *Physical Review Letters*, vol. 98, no. 2, 2007, p. 028001. [Online]. Available: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.98.028001
