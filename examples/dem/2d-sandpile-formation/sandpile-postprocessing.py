@@ -7,6 +7,8 @@ import pandas as pd
 import argparse
 from sklearn.metrics import r2_score
 
+import sys
+sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 2d-sandpile DEM example')
