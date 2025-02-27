@@ -193,6 +193,14 @@ public:
     sum_reynolds_shear_stress_dt  = sum_rss_dt_with_ghost_cells;
   }
 
+  /**
+   * @brief Reinitialize the values of sum_velocities_dt_with_ghost_cells vector to 0 and the average_calculation flag to false. If the initial time for average velocities parameter is greater than the simulation time, the checkpointed time average velocities are ignored after a restart. This allows users to restart a simulation with a different averaging start time.
+   */
+  void
+  reinit_average_after_restart(const DofsType &locally_owned_dofs,
+                               const DofsType &locally_relevant_dofs,
+                               const MPI_Comm &mpi_communicator);
+
 private:
   /**
    * @brief Inverse for total time for averaging.

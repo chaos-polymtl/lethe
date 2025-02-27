@@ -28,26 +28,30 @@ AverageScalar<dim>::calculate_average_scalar(
   dt = time_step;
 
   // When averaging scalar begins
-  if (current_time >= (initial_time - epsilon) && !average_calculation)
+  if (current_time >= (initial_time - epsilon))
     {
-      average_calculation = true;
-      real_initial_time   = current_time;
+      if (!average_calculation)
+        {
+          real_initial_time = current_time;
 
-      // Store the first dt value in case dt varies.
-      dt_0 = dt;
+          // Store the first dt value in case dt varies.
+          dt_0 = dt;
+
+          average_calculation = true;
+        }
+
+      // Calculate (scalar*dt) at each time step and accumulates the values
+      scalar_dt.equ(dt, local_evaluation_point);
+
+      sum_scalar_dt += scalar_dt;
+
+      // Get the inverse of the time since the beginning of the time averaging
+      total_time_for_average = (current_time - real_initial_time) + dt_0;
+      inv_range_time         = 1. / total_time_for_average;
+
+      // Calculate the average scalars.
+      average_scalar.equ(inv_range_time, sum_scalar_dt);
     }
-
-  // Calculate (scalar*dt) at each time step and accumulates the values
-  scalar_dt.equ(dt, local_evaluation_point);
-
-  sum_scalar_dt += scalar_dt;
-
-  // Get the inverse of the time since the beginning of the time averaging
-  total_time_for_average = (current_time - real_initial_time) + dt_0;
-  inv_range_time         = 1. / total_time_for_average;
-
-  // Calculate the average scalars.
-  average_scalar.equ(inv_range_time, sum_scalar_dt);
 }
 
 template <int dim>

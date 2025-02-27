@@ -31,27 +31,29 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   dt = time_step;
 
   // When averaging velocities begins
-  if (current_time >= (initial_time - epsilon) && !average_calculation)
+  if (current_time >= (initial_time - epsilon))
     {
-      average_calculation = true;
-      real_initial_time   = current_time;
+      if (!average_calculation)
+        {
+          average_calculation = true;
+          real_initial_time   = current_time;
 
-      // Store the first dt value in case dt varies.
-      dt_0 = dt;
+          // Store the first dt value in case dt varies.
+          dt_0 = dt;
+        }
+      // Calculate (u*dt) at each time step and accumulate the values
+      velocity_dt.equ(dt, local_evaluation_point);
+      sum_velocity_dt += velocity_dt;
+
+      // Get the inverse of the time since the beginning of the time averaging
+      total_time_for_average = (current_time - real_initial_time) + dt_0;
+      inv_range_time         = 1. / total_time_for_average;
+
+      // Calculate the average velocities.
+      average_velocities.equ(inv_range_time, sum_velocity_dt);
+
+      this->calculate_reynolds_stresses(local_evaluation_point);
     }
-
-  // Calculate (u*dt) at each time step and accumulate the values
-  velocity_dt.equ(dt, local_evaluation_point);
-  sum_velocity_dt += velocity_dt;
-
-  // Get the inverse of the time since the beginning of the time averaging
-  total_time_for_average = (current_time - real_initial_time) + dt_0;
-  inv_range_time         = 1. / total_time_for_average;
-
-  // Calculate the average velocities.
-  average_velocities.equ(inv_range_time, sum_velocity_dt);
-
-  this->calculate_reynolds_stresses(local_evaluation_point);
 }
 
 
@@ -410,6 +412,24 @@ AverageVelocities<dim, VectorType, DofsType>::read(const std::string &prefix)
   return sum_vectors;
 }
 
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::reinit_average_after_restart(
+  const DofsType &locally_owned_dofs,
+  const DofsType &locally_relevant_dofs,
+  const MPI_Comm &mpi_communicator)
+{
+  sum_velocity_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                          locally_relevant_dofs,
+                                          mpi_communicator);
+  sum_rns_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                     locally_relevant_dofs,
+                                     mpi_communicator);
+  sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                     locally_relevant_dofs,
+                                     mpi_communicator);
+  average_calculation = false;
+}
 
 template class AverageVelocities<2, GlobalVectorType, IndexSet>;
 

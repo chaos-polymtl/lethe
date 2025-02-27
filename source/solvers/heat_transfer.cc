@@ -965,19 +965,11 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
-      // Start calculating after the initial time for the average temperature
-      // and average heat flux
-      if (this->simulation_control->get_current_time() >
-          simulation_parameters.post_processing
-              .initial_time_for_average_temp_and_hf -
-            1e-6 * simulation_control->get_time_step())
-        {
-          this->average_temperature->calculate_average_scalar(
-            this->present_solution,
-            this->simulation_parameters.post_processing,
-            simulation_control->get_current_time(),
-            simulation_control->get_time_step());
-        }
+      this->average_temperature->calculate_average_scalar(
+        this->present_solution,
+        this->simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
     }
 
   // Set-up domain name for output files
@@ -1270,12 +1262,14 @@ HeatTransfer<dim>::read_checkpoint()
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
+      // Reset the time-averaged temperature and heat flux if the initial time
+      // for averaging has not been reached
       if (this->simulation_parameters.post_processing
             .initial_time_for_average_temp_and_hf >
           (this->simulation_control->get_current_time() + 1e-8))
         {
           this->pcout
-            << "Warning: The checkpointed time-averaged temperature and heat flux have been initialized/reinitialized because the initial averaging time has not yet been reached."
+            << "Warning: The checkpointed time-averaged temperature and heat flux have been reinitialized because the initial averaging time has not yet been reached."
             << std::endl;
           this->average_temperature->reinit_average_after_restart(
             this->locally_owned_dofs,

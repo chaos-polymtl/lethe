@@ -115,7 +115,7 @@ This subsection controls the post-processing other than the forces and torque on
 
 .. tip::
 
-    The ``initial time for average temperature and heat flux`` can be modified before restarting a simulation. If the ``initial time for average temperature heat flux`` parameter is greater than the simulation time at the restart, the temperature and heat flux time average is reinitialized. This approach allows the use of completed simulations as initial conditions while still enabling the computation of time-averaged quantities.
+    The ``initial time for average temperature and heat flux`` or ``initial time for average velocity`` can be modified before restarting a simulation. If the ``initial time for average temperature heat flux`` or ``initial time for average velocity`` parameters are greater than the simulation time at the restart, the temperature and heat flux time average is reinitialized. This approach allows the use of completed simulations as initial conditions while still enabling the computation of time-averaged quantities.
 
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 

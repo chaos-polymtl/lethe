@@ -1375,21 +1375,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer,
                            "Calculate average velocities");
-
-      // Calculate average velocities when the time reaches the initial time.
-      // time >= initial time with the epsilon as tolerance.
-      const double dt = simulation_control->get_time_step();
-      if (simulation_control->get_current_time() >
-          (simulation_parameters.post_processing
-             .initial_time_for_average_velocities -
-           1e-6 * dt))
-        {
-          this->average_velocities->calculate_average_velocities(
-            this->local_evaluation_point,
-            simulation_parameters.post_processing,
-            simulation_control->get_current_time(),
-            dt);
-        }
+      this->average_velocities->calculate_average_velocities(
+        this->local_evaluation_point,
+        simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
     }
 
   if (this->simulation_parameters.post_processing.calculate_kinetic_energy)
@@ -2177,7 +2167,24 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   if (simulation_parameters.post_processing.calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
         Parameters::InitialConditionType::average_velocity_profile)
-    this->average_velocities->sanitize_after_restart();
+    {
+      // Reset the time-averaged velocities if the initial time for averaging
+      // has not been reached
+      if (this->simulation_parameters.post_processing
+            .initial_time_for_average_temp_and_hf >
+          (this->simulation_control->get_current_time() + 1e-8))
+        {
+          this->pcout
+            << "Warning: The checkpointed time-averaged velocity has been reinitialized because the initial averaging time has not yet been reached."
+            << std::endl;
+          this->average_velocities->reinit_average_after_restart(
+            this->locally_owned_dofs,
+            this->locally_relevant_dofs,
+            mpi_communicator);
+        }
+
+      this->average_velocities->sanitize_after_restart();
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>

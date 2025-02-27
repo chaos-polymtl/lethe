@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed and added
 
-- MINOR The temperature and heat average calculated with the calculate average temperature and heat flux parameter in the post-processing subsection was updating the average at every output iteration instead of at every time iteration. A mechanism to set the temperature and heat flux average to 0 after a restart if initial time for average temperature and heat flux is greater than the simulation time was also added. [#1431](https://github.com/chaos-polymtl/lethe/pull/1431)
+- MINOR Temperature and heat flux time averaged quantities were computed at every output iteration instead of at every time iteration. A mechanism was also added to reset the averaged quantities to zero after a restart if the initial averaging time exceeds the simulation time. [#1431](https://github.com/chaos-polymtl/lethe/pull/1431)
 
 ## [Master] - 2025-02-24
 

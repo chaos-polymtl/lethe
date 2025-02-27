@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Based on the heat_transfer_average_temperature test. Checks if restarting with a different initial time for average temperature and heat flux parameter leads to a segfault. A warning message should appear saying that the checkpointed time-averaged temperature and heat flux have been initialized/reinitialized.
-
 # Listing of Parameters
 #----------------------
 
@@ -14,7 +12,7 @@ set dimension = 2
 
 subsection simulation control
   set method            = bdf1
-  set time end          = 0.05
+  set time end          = 0.02
   set time step         = 0.01
   set number mesh adapt = 0
   set output name       = conduction
@@ -157,10 +155,10 @@ end
 #---------------------------------------------------
 
 subsection restart
-  set checkpoint = false
+  set checkpoint = true
   set frequency  = 1
   set filename = restart
-  set restart = true
+  set restart = false
 end
 
 #---------------------------------------------------

@@ -11,7 +11,7 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      0.001
    Number of thermal degrees of freedom: 1541
 Reading heat transfer checkpoint
-Warning: The checkpointed time-averaged temperature and heat flux have been initialized/reinitialized because the initial averaging time has not yet been reached.
+Warning: The checkpointed time-averaged temperature and heat flux have been reinitialized because the initial averaging time has not yet been reached.
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0       
