@@ -1,8 +1,0 @@
-Simulation control
-dt_0 2e-05
-dt_1 2e-05
-dt_2 2e-05
-dt_3 2e-05
-CFL  0
-Time 30
-Iter 1500000
