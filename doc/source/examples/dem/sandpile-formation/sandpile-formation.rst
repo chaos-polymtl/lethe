@@ -60,7 +60,7 @@ The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ and was 
     end
 
 
-.. image:: images/sandpile_mesh.png
+.. image:: images/mesh-sandpile.png
     :width: 300
     :alt: Mesh
     :align: center
@@ -258,7 +258,7 @@ Visualisation with Paraview
 
 The simulation can be visualised using Paraview as seen below.
 
-.. image:: images/sandpile-paraview.png
+.. image:: images/formed-sandpile.png
     :width: 300
     :alt: Mesh
     :align: center
@@ -270,14 +270,14 @@ Evolution of the Height of the Pile
 
 The following image compares the evolution of the height of the pile with the results of J. Ai *et al.*.
 
-.. image:: images/height-comparison.png
+.. image:: images/figure-height-comparison.png
     :alt: Height comparison
     :align: center
 
 
 The next image shows the evolution of the height of the pile with rolling resistance model epsd using different prn seeds.
 
-.. image:: images/different_prn_seeds.png
+.. image:: images/figure-height-different-prn-seeds.png
     :alt: Height comparison
     :align: center
 
