@@ -12,7 +12,7 @@ set dimension = 2
 
 subsection simulation control
   set time step        = 2e-5
-  set time end         = 15
+  set time end         = 50
   set log frequency    = 1000
   set output frequency = 1000
   set output path      = ./output/
