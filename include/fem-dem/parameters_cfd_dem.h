@@ -79,7 +79,7 @@ namespace Parameters
     double                         qcm_sphere_diameter;
     bool                           qcm_sphere_equal_cell_volume;
     VoidFractionQuadratureRule     quadrature_rule;
-    int                            n_quadrature_points;
+    unsigned int                   n_quadrature_points;
   };
 
   struct CFDDEM
