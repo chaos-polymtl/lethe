@@ -1264,9 +1264,9 @@ HeatTransfer<dim>::read_checkpoint()
     {
       // Reset the time-averaged temperature and heat flux if the initial time
       // for averaging has not been reached
-      if (this->simulation_parameters.post_processing
-            .initial_time_for_average_temp_and_hf >
-          (this->simulation_control->get_current_time() + 1e-8))
+      if ((this->simulation_parameters.post_processing
+            .initial_time_for_average_temp_and_hf + 1e-8) >
+          this->simulation_control->get_current_time())
         {
           this->pcout
             << "Warning: The checkpointed time-averaged temperature and heat flux have been reinitialized because the initial averaging time has not yet been reached."
@@ -1694,8 +1694,19 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
       if (cell->is_locally_owned())
         {
           fe_values_ht.reinit(cell);
-          fe_values_ht.get_function_values(this->present_solution,
-                                           local_temperature_values);
+          
+          if (!time_average)
+            {
+              fe_values_ht.get_function_values(this->present_solution,
+                                               local_temperature_values);
+            }
+          else
+            {
+              // calculate the average using the time average temperature
+              fe_values_ht.get_function_values(
+                this->average_temperature->get_average_scalar(),
+                local_temperature_values);
+            }
 
           if (gather_vof)
             {

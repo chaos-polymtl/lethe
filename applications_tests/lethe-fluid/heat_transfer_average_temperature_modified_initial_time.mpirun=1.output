@@ -18,6 +18,16 @@ Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0
 *******************************************************************************
 L2 error velocity: 0
 L2 error temperature : 1.00274e-06
+Temperature statistics on fluid: 
+	     Min: 10.133
+	     Max: 49.867
+	 Average: 30
+	 Std-Dev: 11.5223
+Time-averaged temperature statistics on fluid: 
+	     Min: 10.133
+	     Max: 49.867
+	 Average: 30
+	 Std-Dev: 11.5223
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0       
@@ -28,12 +38,32 @@ Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0
    Number of thermal degrees of freedom: 1993
 L2 error velocity: 0
 L2 error temperature : 2.32585e-08
+Temperature statistics on fluid: 
+	     Min: 10.1322
+	     Max: 49.8678
+	 Average: 30
+	 Std-Dev: 11.5433
+Time-averaged temperature statistics on fluid: 
+	     Min: 10.1326
+	     Max: 49.8674
+	 Average: 30
+	 Std-Dev: 11.5328
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.05     Time step: 0.01     CFL: 0       
 *******************************************************************************
 L2 error velocity: 0
 L2 error temperature : 5.39828e-10
+Temperature statistics on fluid: 
+	     Min: 10.1321
+	     Max: 49.8679
+	 Average: 30
+	 Std-Dev: 11.5464
+Time-averaged temperature statistics on fluid: 
+	     Min: 10.1324
+	     Max: 49.8676
+	 Average: 30
+	 Std-Dev: 11.5373
  time  error_velocity 
 0.0100   0.000000e+00 
 0.0200   0.000000e+00 
@@ -45,4 +75,4 @@ cells error_temperature
  1408      4.344287e-05 
  1408      1.002740e-06 
  1792      2.325845e-08 
- 1792      5.398281e-10
+ 1792      5.398281e-10 

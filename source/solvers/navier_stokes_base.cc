@@ -2171,8 +2171,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
       // Reset the time-averaged velocities if the initial time for averaging
       // has not been reached
       if (this->simulation_parameters.post_processing
-            .initial_time_for_average_temp_and_hf >
-          (this->simulation_control->get_current_time() + 1e-8))
+            .initial_time_for_average_velocities + 1e-8 >
+          this->simulation_control->get_current_time())
         {
           this->pcout
             << "Warning: The checkpointed time-averaged velocity has been reinitialized because the initial averaging time has not yet been reached."

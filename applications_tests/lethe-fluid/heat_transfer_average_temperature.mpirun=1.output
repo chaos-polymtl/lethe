@@ -4,15 +4,15 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      0.001
    Number of thermal degrees of freedom: 1089
 Temperature statistics on fluid: 
-             Min: 14.2265
-             Max: 45.7735
-         Average: 30
-         Std-Dev: 2.88675
+	     Min: 14.2265
+	     Max: 45.7735
+	 Average: 30
+	 Std-Dev: 2.88675
 Time-averaged temperature statistics on fluid: 
-             Min: 0
-             Max: 0
-         Average: 0
-         Std-Dev: 30.1386
+	     Min: 0
+	     Max: 0
+	 Average: 0
+	 Std-Dev: 0
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
@@ -20,15 +20,15 @@ Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0
 L2 error velocity: 0
 L2 error temperature : 0.00196471
 Temperature statistics on fluid: 
-             Min: 10.4304
-             Max: 49.5696
-         Average: 30
-         Std-Dev: 10.363
+	     Min: 10.4304
+	     Max: 49.5696
+	 Average: 30
+	 Std-Dev: 10.363
 Time-averaged temperature statistics on fluid: 
-             Min: 10.4304
-             Max: 49.5696
-         Average: 30
-         Std-Dev: 10.363
+	     Min: 10.4304
+	     Max: 49.5696
+	 Average: 30
+	 Std-Dev: 10.363
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0       
@@ -40,15 +40,15 @@ Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0
 L2 error velocity: 0
 L2 error temperature : 4.34429e-05
 Temperature statistics on fluid: 
-             Min: 10.139
-             Max: 49.861
-         Average: 30
-         Std-Dev: 11.381
+	     Min: 10.139
+	     Max: 49.861
+	 Average: 30
+	 Std-Dev: 11.381
 Time-averaged temperature statistics on fluid: 
-             Min: 10.1771
-             Max: 49.8229
-         Average: 30
-         Std-Dev: 11.381
+	     Min: 10.1771
+	     Max: 49.8229
+	 Average: 30
+	 Std-Dev: 10.8675
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0       
@@ -56,15 +56,15 @@ Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0
 L2 error velocity: 0
 L2 error temperature : 1.00274e-06
 Temperature statistics on fluid: 
-             Min: 10.133
-             Max: 49.867
-         Average: 30
-         Std-Dev: 11.5223
+	     Min: 10.133
+	     Max: 49.867
+	 Average: 30
+	 Std-Dev: 11.5223
 Time-averaged temperature statistics on fluid: 
-             Min: 10.1624
-             Max: 49.8376
-         Average: 30
-         Std-Dev: 11.5223
+	     Min: 10.1624
+	     Max: 49.8376
+	 Average: 30
+	 Std-Dev: 11.0841
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0       
@@ -76,15 +76,15 @@ Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0
 L2 error velocity: 0
 L2 error temperature : 2.32585e-08
 Temperature statistics on fluid: 
-             Min: 10.1322
-             Max: 49.8678
-         Average: 30
-         Std-Dev: 11.5433
+	     Min: 10.1322
+	     Max: 49.8678
+	 Average: 30
+	 Std-Dev: 11.5433
 Time-averaged temperature statistics on fluid: 
-             Min: 10.1549
-             Max: 49.8451
-         Average: 30
-         Std-Dev: 11.5433
+	     Min: 10.1549
+	     Max: 49.8451
+	 Average: 30
+	 Std-Dev: 11.1982
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.05     Time step: 0.01     CFL: 0       
@@ -92,15 +92,15 @@ Transient iteration: 5        Time: 0.05     Time step: 0.01     CFL: 0
 L2 error velocity: 0
 L2 error temperature : 5.39828e-10
 Temperature statistics on fluid: 
-             Min: 10.1321
-             Max: 49.8679
-         Average: 30
-         Std-Dev: 11.5464
+	     Min: 10.1321
+	     Max: 49.8679
+	 Average: 30
+	 Std-Dev: 11.5464
 Time-averaged temperature statistics on fluid: 
-             Min: 10.1503
-             Max: 49.8497
-         Average: 30
-         Std-Dev: 11.5464
+	     Min: 10.1503
+	     Max: 49.8497
+	 Average: 30
+	 Std-Dev: 11.2675
  time  error_velocity 
 0.0100   0.000000e+00 
 0.0200   0.000000e+00 
@@ -112,4 +112,4 @@ cells error_temperature
  1408      4.344287e-05 
  1408      1.002740e-06 
  1792      2.325845e-08 
- 1792      5.398281e-10
+ 1792      5.398281e-10 

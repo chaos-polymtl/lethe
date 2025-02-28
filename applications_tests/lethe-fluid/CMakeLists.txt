@@ -82,6 +82,7 @@ file(COPY heat_transfer_average_temperature_restart_files/restart.simulationcont
 file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_average_temperature_restart_files/temperature_statistics.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
 
 deal_ii_pickup_tests()
 
