@@ -11,7 +11,6 @@
 #include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/index_set.h>
-#include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/utilities.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -139,7 +138,7 @@ public:
         if (this->void_fraction_parameters->quadrature_rule ==
             Parameters::VoidFractionQuadratureRule::gauss)
           {
-            if (this->void_fraction_parameters->n_quadrature_points == -1)
+            if (this->void_fraction_parameters->n_quadrature_points == 0)
               quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
             else if (this->void_fraction_parameters->n_quadrature_points >= 1)
               quadrature = std::make_shared<QGauss<dim>>(
@@ -151,7 +150,7 @@ public:
         if (this->void_fraction_parameters->quadrature_rule ==
             Parameters::VoidFractionQuadratureRule::gauss_lobatto)
           {
-            if (this->void_fraction_parameters->n_quadrature_points == -1)
+            if (this->void_fraction_parameters->n_quadrature_points == 0)
               quadrature = std::make_shared<QGaussLobatto<dim>>(fe->degree + 2);
             else if (this->void_fraction_parameters->n_quadrature_points >= 3)
               quadrature = std::make_shared<QGaussLobatto<dim>>(

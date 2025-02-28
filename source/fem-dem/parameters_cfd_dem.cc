@@ -52,7 +52,7 @@ namespace Parameters
       "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme");
     prm.declare_entry(
       "n quadrature points",
-      "-1",
+      "0",
       Patterns::Integer(),
       "Number of quadrature points per cell used in the QCM void fraction scheme");
     prm.leave_subsection();
