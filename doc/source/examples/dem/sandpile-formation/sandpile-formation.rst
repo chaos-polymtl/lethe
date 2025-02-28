@@ -61,7 +61,7 @@ The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ and was 
 
 
 .. figure:: images/mesh-sandpile.png
-    :width: 600
+    :width: 500
     :alt: Mesh
     :align: center
 
@@ -272,7 +272,7 @@ Visualisation with Paraview
 The simulation can be visualised using Paraview as seen below.
 
 .. figure:: images/formed-sandpile.png
-    :width: 400
+    :width: 600
     :alt: Mesh
     :align: center
 
@@ -284,7 +284,8 @@ Evolution of the Height of the Pile
 
 The following image compares the evolution of the height of the pile with the results of J. Ai *et al.*.
 
-.. image:: images/figure-height-comparison.png
+.. figure:: images/figure-height-comparison.png
+    :width: 500
     :alt: Height comparison
     :align: center
 
