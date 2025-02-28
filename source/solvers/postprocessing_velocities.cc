@@ -10,9 +10,9 @@
 template <int dim, typename VectorType, typename DofsType>
 AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   DoFHandler<dim> &dof_handler)
-  : solution_transfer_sum_velocity_dt(dof_handler)
-  , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler)
-  , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler)
+  : solution_transfer_sum_velocity_dt(dof_handler, true)
+  , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler, true)
+  , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler, true)
   , total_time_for_average(0.0)
   , average_calculation(false)
 {}
