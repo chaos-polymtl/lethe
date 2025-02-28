@@ -41,10 +41,10 @@ particle = lethe_pyvista_tools(folder, args.prm,pvd_name, ignore_data=ignore_dat
 time = particle.time_list
 
 
-# Sampling points
+# Sampling points for the angle of repose
 x_sample = np.linspace(-0.5,-0.1,n_angle_sample)
 
-# Values where the heights are stored to calculate the angle of repose
+# Values where the heights are stored for the angle of repose
 y_sample = np.zeros(n_angle_sample)
 
 # Values where the height of the pile is stored
@@ -72,7 +72,7 @@ for i in range(start, len(time)):
             df_to_sample = df_filtered[df_filtered['dist'] < D]
 
             # Take the highest particle around the sampled one
-            df_sampled = df_to_sample.nlargest(1, 'y') # utiliser .idxmax et .loc ou .max direct?
+            df_sampled = df_to_sample.nlargest(1, 'y')
             y_sample[index] += df_sampled['y']
 
 
@@ -101,14 +101,12 @@ with open(folder+"/data/angle_" + rollingmethod + ".txt", "w") as file:
 
 # Read height data from paper
 paper_data = pd.read_csv('data/reference/extraction_model_' + rollingmethod + '.csv')
-paper_time = paper_data['x'].to_numpy()
-paper_height = paper_data['Curve1'].to_numpy()
 
 
 # Plot the evolution of the height of the pile
 plt.figure()
 plt.plot(time[start:],height, label= "Lethe-DEM " + rollingmethod)
-plt.plot(paper_time,paper_height, '--', label= "Ai2010 " + rollingmethod)
+plt.plot(paper_data['x'],paper_data['Curve1'], '--', label= "Ai2010 " + rollingmethod)
 plt.legend()
 plt.grid()
 plt.title("Evolution of the height of the pile with model " + rollingmethod)

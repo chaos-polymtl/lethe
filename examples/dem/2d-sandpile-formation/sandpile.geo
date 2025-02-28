@@ -52,8 +52,6 @@ Point(15) = {channel_left, upper_channel_height, 0, 1.0};
 Point(16) = {upper_left, angle_height, 0, 1.0};
 //+
 
-//0.57 au lieu de 0.6 sur Points 5 et 16 ie 50.49 degres au lieu de 51.92 (52 dans le papier) pour eviter les pertes de particules
-
 // Upper left
 Line(1) = {1, 2};
 Line(2) = {2, 15};

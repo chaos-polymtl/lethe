@@ -29,15 +29,9 @@ for i, x in enumerate(rollingmethod):
     df_sim = pd.read_csv(sim_file)
     df_paper = pd.read_csv(paper_file)
 
-    # Convert the DataFrames to NumPy arrays
-    time_sim = df_sim['time'].to_numpy()
-    time_paper = df_paper['x'].to_numpy()
-    height_sim = df_sim['height'].to_numpy()
-    height_paper = df_paper['Curve1'].to_numpy()
-
     # Plot the heights of the simulation and of the paper
-    plt.plot(time_sim, height_sim, label="Lethe-DEM " + x, color=color[i])
-    plt.plot(time_paper, height_paper, '--', label="Ai2010 " + x, color=color[i])
+    plt.plot(df_sim['time'], df_sim['height'], label="Lethe-DEM " + x, color=color[i])
+    plt.plot(df_paper['x'], df_paper['Curve1'], '--', label="Ai2010 " + x, color=color[i])
 
 
 plt.legend()
