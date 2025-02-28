@@ -3,6 +3,15 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+## [Master] - 2025-02-28
+
+### Fixed
+
+- MINOR Simulation with dynamic mesh adaptation and the matrix-free solver could sometimes crash during the mesh adaptation stage due to the SolutionTransfer. This has been fixed by enabling averaging of the SolutionTransfer to reconcile incoherence between multiple cells. [#1436](https://github.com/chaos-polymtl/lethe/pull/1436)
+
+- MINOR Simulation with dynamic mesh adaptation and time-averaging of the velocity field carried out using the lethe-fluid-matrix-free solver would crash with a thrown error. This was caused by the fact that solution transfer with deal.II vector requires ghosted vectors whereas solution transfer with Trilinos vectors requires locally_owned vectors. This has been fixed by adding a const expression to adapt the behaviour depending on the vector type. [#1436](https://github.com/chaos-polymtl/lethe/pull/1436)
+
 ## [Master] - 2025-02-27
 
 ### Added
