@@ -140,12 +140,9 @@ public:
           {
             if (this->void_fraction_parameters->n_quadrature_points == 0)
               quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
-            else if (this->void_fraction_parameters->n_quadrature_points >= 1)
+            else
               quadrature = std::make_shared<QGauss<dim>>(
                 this->void_fraction_parameters->n_quadrature_points);
-            else
-              throw(std::runtime_error(
-                "For void fraction using Gauss ('gauss') quadrature rule, the minimum number of quadrature points is 1"));
           }
         if (this->void_fraction_parameters->quadrature_rule ==
             Parameters::VoidFractionQuadratureRule::gauss_lobatto)
