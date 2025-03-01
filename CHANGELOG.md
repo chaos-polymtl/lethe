@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-02-27
+
+### Added
+
+- MINOR Add two parameters to the unresolved CFD-DEM simulations using the QCM void fraction scheme, allowing to choose the quadrature rule and the number of quadrature points used in the void fraction calculation. This implementation includes the Gauss quadrature rule (default) with 2 quadrature points as default and Gauss-Lobatto quadrature rule with 3 quadrature points as default. [#1432](https://github.com/chaos-polymtl/lethe/pull/1432)
+
 ## [Master] - 2025-02-24
 
 ### Fixed

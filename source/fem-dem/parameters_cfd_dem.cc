@@ -45,6 +45,16 @@ namespace Parameters
       "false",
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
+    prm.declare_entry(
+      "quadrature rule",
+      "gauss",
+      Patterns::Selection("gauss|gauss-lobatto"),
+      "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme");
+    prm.declare_entry(
+      "n quadrature points",
+      "0",
+      Patterns::Integer(),
+      "Number of quadrature points per cell used in the QCM void fraction scheme");
     prm.leave_subsection();
   }
 
@@ -63,7 +73,7 @@ namespace Parameters
     else if (op == "spm")
       mode = Parameters::VoidFractionMode::spm;
     else
-      throw(std::runtime_error("Invalid voidfraction model"));
+      throw(std::runtime_error("Invalid void fraction calculation scheme"));
     prm.enter_subsection("function");
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
@@ -74,6 +84,17 @@ namespace Parameters
     particle_refinement_factor = prm.get_integer("particle refinement factor");
     qcm_sphere_diameter        = prm.get_double("qcm sphere diameter");
     qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
+    const std::string quadrature_rule_op = prm.get("quadrature rule");
+
+    if (quadrature_rule_op == "gauss")
+      quadrature_rule = Parameters::VoidFractionQuadratureRule::gauss;
+    else if (quadrature_rule_op == "gauss-lobatto")
+      quadrature_rule = Parameters::VoidFractionQuadratureRule::gauss_lobatto;
+    else
+      throw(std::runtime_error(
+        "Invalid quadrature rule for the void fraction calculation scheme. Options are 'gauss' or 'gauss-lobatto'"));
+
+    n_quadrature_points = prm.get_integer("n quadrature points");
 
     prm.leave_subsection();
   }

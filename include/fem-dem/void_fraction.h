@@ -133,9 +133,29 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe         = std::make_shared<FE_Q<dim>>(fe_degree);
-        mapping    = std::make_shared<MappingQ<dim>>(fe->degree);
-        quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        fe      = std::make_shared<FE_Q<dim>>(fe_degree);
+        mapping = std::make_shared<MappingQ<dim>>(fe->degree);
+        if (this->void_fraction_parameters->quadrature_rule ==
+            Parameters::VoidFractionQuadratureRule::gauss)
+          {
+            if (this->void_fraction_parameters->n_quadrature_points == 0)
+              quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+            else
+              quadrature = std::make_shared<QGauss<dim>>(
+                this->void_fraction_parameters->n_quadrature_points);
+          }
+        if (this->void_fraction_parameters->quadrature_rule ==
+            Parameters::VoidFractionQuadratureRule::gauss_lobatto)
+          {
+            if (this->void_fraction_parameters->n_quadrature_points == 0)
+              quadrature = std::make_shared<QGaussLobatto<dim>>(fe->degree + 2);
+            else if (this->void_fraction_parameters->n_quadrature_points >= 3)
+              quadrature = std::make_shared<QGaussLobatto<dim>>(
+                this->void_fraction_parameters->n_quadrature_points);
+            else
+              throw(std::runtime_error(
+                "For void fraction using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
+          }
       }
   }
 
