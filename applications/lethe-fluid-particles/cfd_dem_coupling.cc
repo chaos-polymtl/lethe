@@ -4,6 +4,9 @@
 #include "fem-dem/cfd_dem_coupling.h"
 
 #include <core/parameters.h>
+#include <core/utilities.h>
+
+#include <cstdlib>
 
 int
 main(int argc, char *argv[])
@@ -12,16 +15,32 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
+      ConditionalOStream pcout(
+        std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
-      if (argc != 2)
+
+      auto [options, args] = parse_args(argc, argv);
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+      if (options["-V"])
         {
-          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-          std::exit(1);
+          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+          print_version_info(pcout);
+          return EXIT_SUCCESS;
+        }
+#endif
+
+      if (args.empty())
+        {
+          pcout << "Usage:" << argv[0] << " input_file" << std::endl;
+          return EXIT_FAILURE;
         }
 
-      const unsigned int                  dim = get_dimension(argv[1]);
+      const std::string file_name(args[0]);
+
+      const unsigned int                  dim = get_dimension(file_name);
       const Parameters::SizeOfSubsections size_of_subsections =
-        Parameters::get_size_of_subsections(argv[1]);
+        Parameters::get_size_of_subsections(file_name);
 
       if (dim == 2)
         {
@@ -29,8 +48,10 @@ main(int argc, char *argv[])
           CFDDEMSimulationParameters<2> NSparam;
           NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           NSparam.parse(prm);
+
+          print_parameters_to_output_file(pcout, prm, file_name);
 
           CFDDEMSolver<2> problem(NSparam);
           problem.solve();
@@ -42,8 +63,10 @@ main(int argc, char *argv[])
           CFDDEMSimulationParameters<3> NSparam;
           NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           NSparam.parse(prm);
+
+          print_parameters_to_output_file(pcout, prm, file_name);
 
           CFDDEMSolver<3> problem(NSparam);
           problem.solve();
