@@ -66,7 +66,7 @@ write_checkpoint(
   std::ofstream oss_insertion_obj(insertion_object_filename);
   boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
                                                  boost::archive::no_header);
-  insertion_object->serialize(oa_insertion_obj, 0);
+  insertion_object->serialize(oa_insertion_obj);
 
   // Checkpoint the serial solid objects one by one
   for (unsigned int i = 0; i < solid_objects.size(); ++i)

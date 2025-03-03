@@ -99,7 +99,7 @@ read_checkpoint(
   std::ifstream iss_insertion_obj(insertion_object_filename);
   boost::archive::text_iarchive ia_insertion_obj(iss_insertion_obj,
                                                  boost::archive::no_header);
-  insertion_object->deserialize(ia_insertion_obj, 0);
+  insertion_object->deserialize(ia_insertion_obj);
 
   // Load solid surfaces
   for (unsigned int i = 0; i < solid_surfaces.size(); ++i)
