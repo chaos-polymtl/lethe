@@ -41,9 +41,6 @@ main(int argc, char *argv[])
       const Parameters::SizeOfSubsections size_of_subsections =
         Parameters::get_size_of_subsections(file_name);
 
-      bool print_parameters = get_print_parameters_bool(file_name);
-      pcout << print_parameters << std::endl;
-
       if (dim == 2)
         {
           ParameterHandler        prm;
@@ -53,8 +50,7 @@ main(int argc, char *argv[])
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
-          if (print_parameters)
-            print_parameters_to_output_file(pcout, prm, file_name);
+          print_parameters_to_output_file(pcout, prm, file_name);
 
           FluidDynamicsMatrixFree<2> problem(NSparam);
           problem.solve();
@@ -69,8 +65,7 @@ main(int argc, char *argv[])
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
-          if (print_parameters)
-            print_parameters_to_output_file(pcout, prm, file_name);
+          print_parameters_to_output_file(pcout, prm, file_name);
 
           FluidDynamicsMatrixFree<3> problem(NSparam);
           problem.solve();

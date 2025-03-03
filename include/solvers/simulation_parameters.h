@@ -75,18 +75,11 @@ public:
                       Patterns::Integer(),
                       "Dimension of the problem");
 
-    // Two parameters to print the parameter file to
-    // the output file of the application
     prm.declare_entry("print parameters",
-                      "false",
-                      Patterns::Bool(),
-                      "Print parameter file in output");
-
-    prm.declare_entry("settings",
-                      "only changed",
-                      Patterns::Selection("only changed|all"),
-                      "Print all the parameters in the parameter"
-                      "file or only the ones that are not the default");
+                      "none",
+                      Patterns::Selection("none|only changed|all"),
+                      "Print all the parameters, or only"
+                      "the changed parameters or none");
 
     dimensionality.declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
