@@ -14,7 +14,7 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler)
   , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler)
   , total_time_for_average(0.0)
-  , average_calculation(false)
+  , has_started_averaging(false)
 {}
 
 template <int dim, typename VectorType, typename DofsType>
@@ -33,9 +33,9 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   // When averaging velocities begins
   if (current_time >= (initial_time - epsilon))
     {
-      if (!average_calculation)
+      if (!has_started_averaging)
         {
-          average_calculation = true;
+          has_started_averaging = true;
           real_initial_time   = current_time;
 
           // Store the first dt value in case dt varies.
@@ -383,7 +383,7 @@ AverageVelocities<dim, VectorType, DofsType>::save(const std::string &prefix)
   std::ofstream output(filename.c_str());
   output << "Average velocities" << std::endl;
   output << "dt_0 " << dt_0 << std::endl;
-  output << "Average_calculation_boolean " << average_calculation << std::endl;
+  output << "has_started_averaging_boolean " << has_started_averaging << std::endl;
   output << "Real_initial_time " << real_initial_time << std::endl;
 
   return av_set_transfer;
@@ -406,7 +406,7 @@ AverageVelocities<dim, VectorType, DofsType>::read(const std::string &prefix)
   std::string buffer;
   std::getline(input, buffer);
   input >> buffer >> dt_0;
-  input >> buffer >> average_calculation;
+  input >> buffer >> has_started_averaging;
   input >> buffer >> real_initial_time;
 
   return sum_vectors;
@@ -414,21 +414,17 @@ AverageVelocities<dim, VectorType, DofsType>::read(const std::string &prefix)
 
 template <int dim, typename VectorType, typename DofsType>
 void
-AverageVelocities<dim, VectorType, DofsType>::reinit_average_after_restart(
-  const DofsType &locally_owned_dofs,
-  const DofsType &locally_relevant_dofs,
-  const MPI_Comm &mpi_communicator)
+AverageVelocities<dim, VectorType, DofsType>::zero_average_after_restart()
 {
-  sum_velocity_dt_with_ghost_cells.reinit(locally_owned_dofs,
-                                          locally_relevant_dofs,
-                                          mpi_communicator);
-  sum_rns_dt_with_ghost_cells.reinit(locally_owned_dofs,
-                                     locally_relevant_dofs,
-                                     mpi_communicator);
-  sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
-                                     locally_relevant_dofs,
-                                     mpi_communicator);
-  average_calculation = false;
+  sum_velocity_dt_with_ghost_cells = 0.0;
+  sum_rns_dt_with_ghost_cells      = 0.0;
+  sum_rss_dt_with_ghost_cells      = 0.0;
+
+  sum_velocity_dt = 0.0;
+  sum_reynolds_normal_stress_dt = 0.0;
+  sum_reynolds_shear_stress_dt = 0.0;
+
+  has_started_averaging = false;
 }
 
 template class AverageVelocities<2, GlobalVectorType, IndexSet>;

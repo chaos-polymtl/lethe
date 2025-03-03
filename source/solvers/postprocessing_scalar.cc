@@ -11,7 +11,7 @@ template <int dim>
 AverageScalar<dim>::AverageScalar(const DoFHandler<dim> &dof_handler)
   : solution_transfer_sum_scalar_dt(dof_handler)
   , total_time_for_average(0.0)
-  , average_calculation(false)
+  , has_started_averaging(false)
 {}
 
 template <int dim>
@@ -30,14 +30,14 @@ AverageScalar<dim>::calculate_average_scalar(
   // When averaging scalar begins
   if (current_time >= (initial_time - epsilon))
     {
-      if (!average_calculation)
+      if (!has_started_averaging)
         {
           real_initial_time = current_time;
 
           // Store the first dt value in case dt varies.
           dt_0 = dt;
 
-          average_calculation = true;
+          has_started_averaging = true;
         }
 
       // Calculate (scalar*dt) at each time step and accumulates the values
@@ -119,7 +119,7 @@ AverageScalar<dim>::save(const std::string &prefix)
   std::ofstream output(filename.c_str());
   output << "Average scalar" << std::endl;
   output << "dt_0 " << dt_0 << std::endl;
-  output << "Average_calculation_boolean " << average_calculation << std::endl;
+  output << "has_started_averaging_boolean " << has_started_averaging << std::endl;
   output << "Real_initial_time " << real_initial_time << std::endl;
 
   return avg_scalar_set_transfer;
@@ -139,7 +139,7 @@ AverageScalar<dim>::read(const std::string &prefix)
   std::string buffer;
   std::getline(input, buffer);
   input >> buffer >> dt_0;
-  input >> buffer >> average_calculation;
+  input >> buffer >> has_started_averaging;
   input >> buffer >> real_initial_time;
 
   return sum_vectors;
@@ -147,15 +147,12 @@ AverageScalar<dim>::read(const std::string &prefix)
 
 template <int dim>
 void
-AverageScalar<dim>::reinit_average_after_restart(
-  const IndexSet &locally_owned_dofs,
-  const IndexSet &locally_relevant_dofs,
-  const MPI_Comm &mpi_communicator)
+AverageScalar<dim>::zero_average_after_restart()
 {
-  sum_scalar_dt_with_ghost_cells.reinit(locally_owned_dofs,
-                                        locally_relevant_dofs,
-                                        mpi_communicator);
-  average_calculation = false;
+  sum_scalar_dt_with_ghost_cells = 0.0;
+  sum_scalar_dt                  = 0.0;
+
+  has_started_averaging = false;
 }
 
 template class AverageScalar<2>;

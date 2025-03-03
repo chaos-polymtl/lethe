@@ -1011,7 +1011,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                                          monitored_fluid,
                                          domain_name,
                                          false);
-
+      // Postprocess the temperature statistics again to calculate the spatial average of the time average temperature. Flag time average is set to true. 
       if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
         {
           postprocess_temperature_statistics(gather_vof,
@@ -1262,19 +1262,15 @@ HeatTransfer<dim>::read_checkpoint()
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
-      // Reset the time-averaged temperature and heat flux if the initial time
-      // for averaging has not been reached
+      // Reset the time-averaged temperature and heat flux if the initial time for averaging has not been reached
       if ((this->simulation_parameters.post_processing
-            .initial_time_for_average_temp_and_hf + 1e-8) >
+            .initial_time_for_average_temp_and_hf + 1e-6 * simulation_control->get_time_step()) >
           this->simulation_control->get_current_time())
         {
           this->pcout
             << "Warning: The checkpointed time-averaged temperature and heat flux have been reinitialized because the initial averaging time has not yet been reached."
             << std::endl;
-          this->average_temperature->reinit_average_after_restart(
-            this->locally_owned_dofs,
-            this->locally_relevant_dofs,
-            mpi_communicator);
+          this->average_temperature->zero_average_after_restart();
         }
       this->average_temperature->sanitize_after_restart();
     }
