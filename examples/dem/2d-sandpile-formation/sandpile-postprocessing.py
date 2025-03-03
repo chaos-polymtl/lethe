@@ -1,11 +1,27 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+######################################################################
+# Import Libraries
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
 from sklearn.metrics import r2_score
+
+# Set plot parameters
+plt.rcParams['figure.figsize'] = (10,8)
+plt.rcParams['lines.markersize'] = '11'
+plt.rcParams['lines.markeredgewidth'] = 2
+plt.rcParams['legend.fancybox'] = False
+plt.rcParams['font.size'] = 20
+plt.rcParams['font.family']='DejaVu Serif'
+plt.rcParams['legend.handlelength']=1.5
+plt.rcParams['lines.linewidth'] = 2
+
+######################################################################
+
 
 import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
@@ -109,7 +125,7 @@ plt.plot(time[start:],height, label= "Lethe-DEM " + rollingmethod)
 plt.plot(paper_data['x'],paper_data['Curve1'], '--', label= "Ai2010 " + rollingmethod)
 plt.legend()
 plt.grid()
-plt.title("Evolution of the height of the pile with model " + rollingmethod)
+plt.title("Evolution of the height of the pile with model " + rollingmethod, pad=25)
 plt.xlabel('Time (s)')
 plt.ylabel('Height of the pile (m)')
 plt.yticks(np.arange(0.1, 0.32, 0.02))
