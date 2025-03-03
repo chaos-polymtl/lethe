@@ -793,11 +793,7 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
   const std::string print_parameters =
     get_last_value_of_parameter(file_name, "print parameters");
 
-  if (print_parameters == "none")
-    {
-      return;
-    }
-  else if (print_parameters == "only changed")
+  if (print_parameters == "only changed")
     {
 #if DEAL_II_VERSION_GTE(9, 7, 0)
       prm.print_parameters(pcout.get_stream(),
@@ -805,6 +801,7 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                              ParameterHandler::OutputStyle::Short |
                              ParameterHandler::KeepDeclarationOrder |
                              ParameterHandler::KeepOnlyChanged);
+      pcout << std::endl << std::endl;
 #else
       AssertThrow(
         false,
@@ -812,14 +809,14 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
           "To print only changed parameters you need a version of deal.II >= 9.7.0."));
 #endif
     }
-  else
+  else if (print_parameters == "all")
     {
       prm.print_parameters(pcout.get_stream(),
                            ParameterHandler::OutputStyle::PRM |
                              ParameterHandler::OutputStyle::Short |
                              ParameterHandler::KeepDeclarationOrder);
+      pcout << std::endl << std::endl;
     }
-  pcout << std::endl << std::endl;
 }
 
 /**
@@ -831,14 +828,12 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
 inline void
 print_version_info(const ConditionalOStream &pcout)
 {
-  // Erase the first v
-  std::string lethe_tag = LETHE_GIT_FANCY_TAG;
-  lethe_tag.erase(0, 1);
+  // Copy them to be able to delete the first v
+  std::string lethe_tag  = LETHE_GIT_FANCY_TAG;
+  std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;
 
-  // DEAL_II_GIT_FANCY_TAG.erase(0, 1);
-
-  pcout << "lethe/" << LETHE_GIT_FANCY_TAG << " deal.II/"
-        << DEAL_II_GIT_FANCY_TAG << std::endl;
+  pcout << "lethe/" << lethe_tag.erase(0, 1) << " deal.II/"
+        << dealii_tag.erase(0, 1) << std::endl;
   pcout << std::endl;
 }
 
