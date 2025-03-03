@@ -21,7 +21,7 @@
 void
 test()
 {
-  /* This test checks the interface reconstruction of the level 0 of a
+  /* This test checks the interface reconstruction of the level 0.1 of a
   level-set field using the InterfaceTools::reconstruct_interface function. The
   level-set field of interest is the one describing a sphere. The reconstruction
   is computed for 3 mesh refinements and the test checks the error on the area
@@ -43,6 +43,7 @@ test()
 
   const Point<3> sphere_center = Point<3>({0.5, 0.5, 0.5});
   const double   sphere_radius = 0.25;
+  const double   iso_level     = 0.1;
 
   Vector<double> error_area(3);
 
@@ -78,6 +79,7 @@ test()
                                             dof_handler,
                                             fe,
                                             signed_distance,
+                                            iso_level,
                                             interface_reconstruction_vertices,
                                             interface_reconstruction_cells,
                                             intersected_dofs);
@@ -105,7 +107,8 @@ test()
         }
 
       // Compute and store the area error
-      error_area[n] = abs(4.0 * M_PI * std::pow(sphere_radius, 2) - area);
+      error_area[n] =
+        abs(4.0 * M_PI * std::pow(sphere_radius + iso_level, 2) - area);
 
       deallog << "The area error for ref. lev. " << n + 3
               << " is: " << error_area[n] << std::endl;

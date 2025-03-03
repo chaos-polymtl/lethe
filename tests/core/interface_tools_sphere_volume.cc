@@ -21,8 +21,8 @@
 void
 test()
 {
-  /* This test checks the computation of the volume enclosed by the level 0 of a
-  level-set field using the InterfaceTools::compute_volume function. The
+  /* This test checks the computation of the volume enclosed by the level 0.1 of
+  a level-set field using the InterfaceTools::compute_volume function. The
   level-set field of interest is the one describing a sphere. The volume is
   computed for 3 mesh refinements and the test checks the error on the volume
   and the convergence rate of the method (formally 2).
@@ -40,6 +40,7 @@ test()
 
   const Point<3> sphere_center = Point<3>({0.5, 0.5, 0.5});
   const double   sphere_radius = 0.25;
+  const double   iso_level     = 0.1;
 
   Vector<double> error_volume(3);
 
@@ -66,11 +67,12 @@ test()
                                        dof_handler,
                                        fe,
                                        signed_distance,
+                                       iso_level,
                                        triangulation.get_communicator());
 
       // Compute and store the volume error
       error_volume[n] =
-        abs(4.0 * M_PI * std::pow(sphere_radius, 3) / 3.0 - volume);
+        abs(4.0 * M_PI * std::pow(sphere_radius + iso_level, 3) / 3.0 - volume);
 
       deallog << "The volume error for ref. lev. " << n + 3
               << " is: " << error_volume[n] << std::endl;

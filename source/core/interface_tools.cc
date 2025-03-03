@@ -3,84 +3,6 @@
 
 #include <core/interface_tools.h>
 
-
-template <int dim, typename VectorType, typename FEType>
-InterfaceTools::CellWiseFunction<dim, VectorType, FEType>::CellWiseFunction(
-  const unsigned int p_fe_degree)
-  : fe(p_fe_degree)
-{
-  n_cell_wise_dofs = fe.dofs_per_cell;
-}
-
-template <int dim, typename VectorType, typename FEType>
-void
-InterfaceTools::CellWiseFunction<dim, VectorType, FEType>::set_active_cell(
-  const VectorType &in_local_dof_values)
-{
-  cell_dof_values = in_local_dof_values;
-}
-
-template <int dim, typename VectorType, typename FEType>
-double
-InterfaceTools::CellWiseFunction<dim, VectorType, FEType>::value(
-  const Point<dim>  &point,
-  const unsigned int component) const
-{
-  double value = 0;
-  for (unsigned int i = 0; i < n_cell_wise_dofs; ++i)
-    value += cell_dof_values[i] * fe.shape_value_component(i, point, component);
-
-  return value;
-}
-
-template <int dim, typename VectorType, typename FEType>
-Tensor<1, dim>
-InterfaceTools::CellWiseFunction<dim, VectorType, FEType>::gradient(
-  const Point<dim>  &point,
-  const unsigned int component) const
-{
-  Tensor<1, dim> gradient;
-  for (unsigned int i = 0; i < n_cell_wise_dofs; ++i)
-    gradient +=
-      cell_dof_values[i] * fe.shape_grad_component(i, point, component);
-
-  return gradient;
-}
-
-template <int dim, typename VectorType, typename FEType>
-SymmetricTensor<2, dim>
-InterfaceTools::CellWiseFunction<dim, VectorType, FEType>::hessian(
-  const Point<dim>  &point,
-  const unsigned int component) const
-{
-  Tensor<2, dim> hessian;
-  for (unsigned int i = 0; i < n_cell_wise_dofs; ++i)
-    hessian +=
-      cell_dof_values[i] * fe.shape_grad_grad_component(i, point, component);
-
-  return symmetrize(hessian);
-}
-
-/**
- * @brief
- * Compute the volume enclosed by the 0 level of a level-set field
- * inside a cell. The inside volume is computed, defined by negative values of
- * the level-set field.
- *
- * @param[in] fe_point_evaluation FePointEvaluation
- *
- * @param[in] cell Cell for which the volume is computed
- *
- * @param[in] cell_dof_values cell DOFs value of the level set field
- *
- * @param[in] corr correction to apply to the DOF values (constant for all
- * DOFs)
- *
- * @param[in] n_quad_points number of quadrature points for the volume
- * integration faces
- *
- * @return cell-wise volume
- */
 template <int dim>
 double
 InterfaceTools::compute_cell_wise_volume(
@@ -131,29 +53,13 @@ InterfaceTools::compute_cell_wise_volume(
   return inside_cell_volume;
 }
 
-/**
- * @brief
- * Compute the volume enclosed by the 0 level of a level set field
- * in the domain. The inside volume is computed, defined by negative values of
- * the level-set field.
- *
- * @param[in] mapping Mapping of the domain
- *
- * @param[in] dof_handler DofHandler associated to the triangulation on which
- * the volume is computed
- *
- * @param[in] level_set_vector Level-set vector
- *
- * @param[in] mpi_communicator MPI communicator
- *
- * @return Volume enclosed by the 0 level
- */
 template <int dim, typename VectorType>
 double
 InterfaceTools::compute_volume(const Mapping<dim>       &mapping,
                                const DoFHandler<dim>    &dof_handler,
                                const FiniteElement<dim> &fe,
                                const VectorType         &level_set_vector,
+                               const double              iso_level,
                                const MPI_Comm           &mpi_communicator)
 {
   FEPointEvaluation<1, dim> fe_point_evaluation(
@@ -171,10 +77,11 @@ InterfaceTools::compute_volume(const Mapping<dim>       &mapping,
                                cell_dof_level_set_values.begin(),
                                cell_dof_level_set_values.end());
 
+          const double level_set_correction = -iso_level;
           volume += compute_cell_wise_volume(fe_point_evaluation,
                                              cell,
                                              cell_dof_level_set_values,
-                                             0.0,
+                                             level_set_correction,
                                              cell->get_fe().degree + 1);
         }
     }
@@ -188,42 +95,16 @@ InterfaceTools::compute_volume(const Mapping<2>       &mapping,
                                const DoFHandler<2>    &dof_handler,
                                const FiniteElement<2> &fe,
                                const Vector<double>   &level_set_vector,
+                               const double            iso_level,
                                const MPI_Comm         &mpi_communicator);
 template double
 InterfaceTools::compute_volume(const Mapping<3>       &mapping,
                                const DoFHandler<3>    &dof_handler,
                                const FiniteElement<3> &fe,
                                const Vector<double>   &level_set_vector,
+                               const double            iso_level,
                                const MPI_Comm         &mpi_communicator);
 
-/**
- * @brief
- * Reconstruct the interface defined by the 0 level of a level set field
- * in the domain.
- *
- * @param[in] mapping Mapping of the domain
- *
- * @param[in] dof_handler DofHandler associated to the triangulation for which
- * the interface is reconstructed
- *
- * @param[in] fe Finite element
- *
- * @param[in] level_set_vector Level-set vector
- *
- * @param[in,out] interface_reconstruction_vertices Cell-wise map of the
- * reconstructed surface vertices. The map contains vectors storing the
- * vertices of the reconstructed surface for each intersected volume cell
- * (dim).
- *
- * @param[in,out] interface_reconstruction_cells Cell-wise map of the
- * reconstructed surface cells. The map contains vectors storing the cell
- * (dim-1) of the reconstructed surface for each intersected volume cell
- * (dim).
- *
- * @param[in,out] intersected_dofs Set of DOFs that belong to intersected
- * volume cell (dim).
- *
- */
 template <int dim, typename VectorType>
 void
 InterfaceTools::reconstruct_interface(
@@ -231,6 +112,7 @@ InterfaceTools::reconstruct_interface(
   const DoFHandler<dim>    &dof_handler,
   const FiniteElement<dim> &fe,
   const VectorType         &level_set_vector,
+  const double              iso_level,
   std::map<types::global_cell_index, std::vector<Point<dim>>>
     &interface_reconstruction_vertices,
   std::map<types::global_cell_index, std::vector<CellData<dim - 1>>>
@@ -251,7 +133,7 @@ InterfaceTools::reconstruct_interface(
           std::vector<CellData<dim - 1>> surface_cells;
 
           marching_cube.process_cell(
-            cell, level_set_vector, 0.0, surface_vertices, surface_cells);
+            cell, level_set_vector, iso_level, surface_vertices, surface_cells);
 
           // If the cell is intersected, reconstruct the interface in it
           if (surface_vertices.size() != 0)
@@ -281,6 +163,7 @@ InterfaceTools::reconstruct_interface(
   const DoFHandler<2>    &dof_handler,
   const FiniteElement<2> &fe,
   const Vector<double>   &level_set_vector,
+  const double            iso_level,
   std::map<types::global_cell_index, std::vector<Point<2>>>
     &interface_reconstruction_vertices,
   std::map<types::global_cell_index, std::vector<CellData<1>>>
@@ -292,6 +175,7 @@ InterfaceTools::reconstruct_interface(
   const DoFHandler<3>    &dof_handler,
   const FiniteElement<3> &fe,
   const Vector<double>   &level_set_vector,
+  const double            iso_level,
   std::map<types::global_cell_index, std::vector<Point<3>>>
     &interface_reconstruction_vertices,
   std::map<types::global_cell_index, std::vector<CellData<2>>>
