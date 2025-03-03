@@ -17,13 +17,13 @@ main(int argc, char *argv[])
       ConditionalOStream pcout(
         std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
-      pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
 
       auto [options, args] = parse_args(argc, argv);
 
 #if DEAL_II_VERSION_GTE(9, 7, 0)
       if (options["-V"])
         {
+          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
           print_version_info(pcout);
           return EXIT_SUCCESS;
         }
