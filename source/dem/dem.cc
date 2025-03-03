@@ -246,7 +246,7 @@ std::function<void()>
 DEMSolver<dim, PropertiesIndex>::set_contact_search_iteration_function()
 {
   using namespace Parameters::Lagrangian;
-  ModelParameters::ContactDetectionMethod &contact_detection_method =
+ ModelParameters::ContactDetectionMethod contact_detection_method =
     parameters.model_parameters.contact_detection_method;
 
   switch (contact_detection_method)
@@ -303,7 +303,7 @@ std::shared_ptr<Integrator<dim, PropertiesIndex>>
 DEMSolver<dim, PropertiesIndex>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
-  ModelParameters::IntegrationMethod integration_method =
+  Parameters::Lagrangian::ModelParameters::IntegrationMethod integration_method =
     parameters.model_parameters.integration_method;
 
   switch (integration_method)
