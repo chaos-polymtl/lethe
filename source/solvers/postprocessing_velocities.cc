@@ -36,7 +36,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
       if (!has_started_averaging)
         {
           has_started_averaging = true;
-          real_initial_time   = current_time;
+          real_initial_time     = current_time;
 
           // Store the first dt value in case dt varies.
           dt_0 = dt;
@@ -383,7 +383,8 @@ AverageVelocities<dim, VectorType, DofsType>::save(const std::string &prefix)
   std::ofstream output(filename.c_str());
   output << "Average velocities" << std::endl;
   output << "dt_0 " << dt_0 << std::endl;
-  output << "has_started_averaging_boolean " << has_started_averaging << std::endl;
+  output << "has_started_averaging_boolean " << has_started_averaging
+         << std::endl;
   output << "Real_initial_time " << real_initial_time << std::endl;
 
   return av_set_transfer;
@@ -420,9 +421,9 @@ AverageVelocities<dim, VectorType, DofsType>::zero_average_after_restart()
   sum_rns_dt_with_ghost_cells      = 0.0;
   sum_rss_dt_with_ghost_cells      = 0.0;
 
-  sum_velocity_dt = 0.0;
+  sum_velocity_dt               = 0.0;
   sum_reynolds_normal_stress_dt = 0.0;
-  sum_reynolds_shear_stress_dt = 0.0;
+  sum_reynolds_shear_stress_dt  = 0.0;
 
   has_started_averaging = false;
 }

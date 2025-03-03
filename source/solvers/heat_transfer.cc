@@ -1011,7 +1011,9 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                                          monitored_fluid,
                                          domain_name,
                                          false);
-      // Postprocess the temperature statistics again to calculate the spatial average of the time average temperature. Flag time average is set to true. 
+      // Postprocess the temperature statistics again to calculate the spatial
+      // average of the time average temperature. Flag time average is set to
+      // true.
       if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
         {
           postprocess_temperature_statistics(gather_vof,
@@ -1262,9 +1264,11 @@ HeatTransfer<dim>::read_checkpoint()
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
-      // Reset the time-averaged temperature and heat flux if the initial time for averaging has not been reached
+      // Reset the time-averaged temperature and heat flux if the initial time
+      // for averaging has not been reached
       if ((this->simulation_parameters.post_processing
-            .initial_time_for_average_temp_and_hf + 1e-6 * simulation_control->get_time_step()) >
+             .initial_time_for_average_temp_and_hf +
+           1e-6 * simulation_control->get_time_step()) >
           this->simulation_control->get_current_time())
         {
           this->pcout
@@ -1690,7 +1694,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
       if (cell->is_locally_owned())
         {
           fe_values_ht.reinit(cell);
-          
+
           if (!time_average)
             {
               fe_values_ht.get_function_values(this->present_solution,

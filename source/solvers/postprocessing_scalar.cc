@@ -119,7 +119,8 @@ AverageScalar<dim>::save(const std::string &prefix)
   std::ofstream output(filename.c_str());
   output << "Average scalar" << std::endl;
   output << "dt_0 " << dt_0 << std::endl;
-  output << "has_started_averaging_boolean " << has_started_averaging << std::endl;
+  output << "has_started_averaging_boolean " << has_started_averaging
+         << std::endl;
   output << "Real_initial_time " << real_initial_time << std::endl;
 
   return avg_scalar_set_transfer;

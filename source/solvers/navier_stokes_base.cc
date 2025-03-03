@@ -2164,18 +2164,24 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  // Reset the average velocity profile if the initial time to average the velocities has not been reached. Disabled if the initial condition is an average velocity profile.
-  if (simulation_parameters.post_processing.calculate_average_velocities & this->simulation_parameters.initial_condition->type !=
-        Parameters::InitialConditionType::average_velocity_profile){
-      if ((this->simulation_parameters.post_processing.initial_time_for_average_velocities + 1e-6 * simulation_control->get_time_step()) >
+  // Reset the average velocity profile if the initial time to average the
+  // velocities has not been reached. Disabled if the initial condition is an
+  // average velocity profile.
+  if (simulation_parameters.post_processing.calculate_average_velocities &
+      this->simulation_parameters.initial_condition->type !=
+        Parameters::InitialConditionType::average_velocity_profile)
+    {
+      if ((this->simulation_parameters.post_processing
+             .initial_time_for_average_velocities +
+           1e-6 * simulation_control->get_time_step()) >
           this->simulation_control->get_current_time())
         {
           this->pcout
             << "Warning: The checkpointed time-averaged velocity has been reinitialized because the initial averaging time has not yet been reached."
             << std::endl;
           this->average_velocities->zero_average_after_restart();
-        }            
-  }
+        }
+    }
 
   if (simulation_parameters.post_processing.calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
