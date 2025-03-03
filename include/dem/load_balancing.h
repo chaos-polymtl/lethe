@@ -47,6 +47,7 @@ public:
     iteration_check_function = set_iteration_check_function();
 
     // Parameters related to the total cell weight
+    cell_weight_function   = model_parameters.cell_weight_function;
     particle_weight        = model_parameters.load_balance_particle_weight;
     inactive_status_factor = model_parameters.inactive_load_balancing_factor;
     active_status_factor   = model_parameters.active_load_balancing_factor;
@@ -362,6 +363,8 @@ private:
    * @brief Default hard-coded load weight of a cell.
    */
   const unsigned int cell_weight = 1000;
+
+  std::shared_ptr<Function<3>> cell_weight_function;
 
   /**
    * @brief Load weight of a particle, the default parameters is 10000.

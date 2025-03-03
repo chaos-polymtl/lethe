@@ -288,6 +288,8 @@ namespace Parameters
       // Particle-particle, particle-wall broad and fine search frequency
       unsigned int contact_detection_frequency;
 
+      std::shared_ptr<Function<3>> cell_weight_function;
+
       // The particle weight based on a default cell weight of 1000
       unsigned int load_balance_particle_weight;
 

@@ -195,7 +195,7 @@ std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
 CFDDEMSolver<dim>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
-  ModelParameters::IntegrationMethod integration_method =
+ ModelParameters::IntegrationMethod integration_method =
     dem_parameters.model_parameters.integration_method;
 
   switch (integration_method)
