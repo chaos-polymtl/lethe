@@ -10,9 +10,9 @@
 template <int dim, typename VectorType, typename DofsType>
 AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   DoFHandler<dim> &dof_handler)
-  : solution_transfer_sum_velocity_dt(dof_handler)
-  , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler)
-  , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler)
+  : solution_transfer_sum_velocity_dt(dof_handler, true)
+  , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler, true)
+  , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler, true)
   , total_time_for_average(0.0)
   , average_calculation(false)
 {}
@@ -347,17 +347,40 @@ template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::post_mesh_adaptation()
 {
-  solution_transfer_sum_velocity_dt.interpolate(sum_velocity_dt);
-  solution_transfer_sum_reynolds_normal_stress_dt.interpolate(
-    sum_reynolds_normal_stress_dt);
-  solution_transfer_sum_reynolds_shear_stress_dt.interpolate(
-    sum_reynolds_shear_stress_dt);
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    {
+      // When the vector are deal.II vectors, the solution transfer expects a
+      // vector with ghost entries
+      solution_transfer_sum_velocity_dt.interpolate(
+        sum_velocity_dt_with_ghost_cells);
+      solution_transfer_sum_reynolds_normal_stress_dt.interpolate(
+        sum_rns_dt_with_ghost_cells);
+      solution_transfer_sum_reynolds_shear_stress_dt.interpolate(
+        sum_rss_dt_with_ghost_cells);
+
+      sum_velocity_dt               = sum_velocity_dt_with_ghost_cells;
+      sum_reynolds_normal_stress_dt = sum_rns_dt_with_ghost_cells;
+      sum_reynolds_shear_stress_dt  = sum_rss_dt_with_ghost_cells;
+    }
+  else
+    {
+      // When the vectors are trilinos vectors, the solution transfer expects a
+      // locally_owned vector
+      solution_transfer_sum_velocity_dt.interpolate(sum_velocity_dt);
+      solution_transfer_sum_reynolds_normal_stress_dt.interpolate(
+        sum_reynolds_normal_stress_dt);
+      solution_transfer_sum_reynolds_shear_stress_dt.interpolate(
+        sum_reynolds_shear_stress_dt);
 
 
 
-  sum_velocity_dt_with_ghost_cells = sum_velocity_dt;
-  sum_rns_dt_with_ghost_cells      = sum_reynolds_normal_stress_dt;
-  sum_rss_dt_with_ghost_cells      = sum_reynolds_shear_stress_dt;
+      sum_velocity_dt_with_ghost_cells = sum_velocity_dt;
+      sum_rns_dt_with_ghost_cells      = sum_reynolds_normal_stress_dt;
+      sum_rss_dt_with_ghost_cells      = sum_reynolds_shear_stress_dt;
+    }
+
+
 
   update_average_velocities();
 }
