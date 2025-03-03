@@ -81,7 +81,7 @@ public:
    * @param ar Output archive where the attributes are stored.
    */
   virtual void
-  serialize(boost::archive::text_oarchive &ar, const unsigned int) override
+  serialize(boost::archive::text_oarchive &ar) override
   {
     ar &remaining_particles_of_each_type &current_inserting_particle_type;
   }
@@ -93,7 +93,7 @@ public:
    *
    */
   virtual void
-  deserialize(boost::archive::text_iarchive &ar, const unsigned int) override
+  deserialize(boost::archive::text_iarchive &ar) override
   {
     ar &remaining_particles_of_each_type &current_inserting_particle_type;
   }

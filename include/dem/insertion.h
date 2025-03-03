@@ -96,7 +96,7 @@ public:
    *
    */
   virtual void
-  serialize(boost::archive::text_oarchive &ar, const unsigned int) = 0;
+  serialize(boost::archive::text_oarchive &ar) = 0;
 
 
   /**
@@ -109,7 +109,7 @@ public:
    *
    */
   virtual void
-  deserialize(boost::archive::text_iarchive &ar, const unsigned int) = 0;
+  deserialize(boost::archive::text_iarchive &ar) = 0;
 
 protected:
   /**
