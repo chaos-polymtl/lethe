@@ -17,8 +17,8 @@ subsection simulation control
   set time end          = 0.05
   set time step         = 0.01
   set number mesh adapt = 0
-  set output name       = conduction
-  set output frequency  = 0
+  set output name       = heat_transfer_average_temperature_out
+  set output frequency  = 1
 end
 
 #---------------------------------------------------
@@ -143,7 +143,6 @@ subsection analytical solution
   subsection temperature
     set Function expression = 50 - (40/0.01) * x
   end
-  #set filename = L2Error #heat_transfer_average_temperature_restart_files/L2Error
 end
 
 #---------------------------------------------------
