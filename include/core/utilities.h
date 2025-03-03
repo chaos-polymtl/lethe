@@ -488,15 +488,6 @@ unsigned int
 get_dimension(const std::string &file_name);
 
 /**
- * @brief Read in the parameter file whether the parameters should
- * be printed or not.
- *
- * @param file_name The parameters file name passed to the application.
- */
-bool
-get_print_parameters_bool(const std::string &file_name);
-
-/**
  * @brief Extract the maximum value between the number of boundary conditions and the number of manifolds from the file.
 This value is linked to the "number" string defined in the simulation parameter
 file. It provides an estimate for the amount of parameters or manifolds and is
@@ -799,29 +790,35 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const ParameterHandler   &prm,
                                 const std::string        &file_name)
 {
-  const std::string print_parameter_settings =
-    get_last_value_of_parameter(file_name, "settings");
+  const std::string print_parameters =
+    get_last_value_of_parameter(file_name, "print parameters");
 
-  if (print_parameter_settings == "only changed")
-    prm.print_parameters(pcout.get_stream(),
-                         ParameterHandler::OutputStyle::PRM |
-                           ParameterHandler::OutputStyle::Short |
-                           ParameterHandler::KeepDeclarationOrder
+  if (print_parameters == "none")
+    {
+      return;
+    }
+  else if (print_parameters == "only changed")
+    {
 #if DEAL_II_VERSION_GTE(9, 7, 0)
-                           | ParameterHandler::KeepOnlyChanged
+      prm.print_parameters(pcout.get_stream(),
+                           ParameterHandler::OutputStyle::PRM |
+                             ParameterHandler::OutputStyle::Short |
+                             ParameterHandler::KeepDeclarationOrder |
+                             ParameterHandler::KeepOnlyChanged);
 #else
-                             Assert(
-                               false,
-                               ExcMessage(
-                                 "To print only parameter with changed values you need a version of deal.II >= 9.7.0."));
+      AssertThrow(
+        false,
+        ExcMessage(
+          "To print only changed parameters you need a version of deal.II >= 9.7.0."));
 #endif
-    );
+    }
   else
-    prm.print_parameters(pcout.get_stream(),
-                         ParameterHandler::OutputStyle::PRM |
-                           ParameterHandler::OutputStyle::Short |
-                           ParameterHandler::KeepDeclarationOrder);
-
+    {
+      prm.print_parameters(pcout.get_stream(),
+                           ParameterHandler::OutputStyle::PRM |
+                             ParameterHandler::OutputStyle::Short |
+                             ParameterHandler::KeepDeclarationOrder);
+    }
   pcout << std::endl << std::endl;
 }
 
@@ -836,7 +833,7 @@ print_version_info(const ConditionalOStream &pcout)
 {
   // Erase the first v
   std::string lethe_tag = LETHE_GIT_FANCY_TAG;
-  lethe_tag.erase(0,1);
+  lethe_tag.erase(0, 1);
 
   // DEAL_II_GIT_FANCY_TAG.erase(0, 1);
 
