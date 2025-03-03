@@ -17,8 +17,8 @@ We organize the DEM examples from the simplest to the most complicated example:
     small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing
     rotating-drum/rotating-drum
     rotation-of-box/rotation-of-box
-    silo/silo
     sandpile-formation/sandpile-formation
+    silo/silo
     rectangular-hopper/rectangular-hopper
     granular-dam-break/granular-dam-break
     plate-discharge/plate-discharge
@@ -53,9 +53,9 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_8 [label="Rotation of Box", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rotation-of-box/rotation-of-box.html"];
 
-      dem_9 [label="Silo", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/silo/silo.html"]; 
+      dem_9 [label="Sandpile", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile-formation/sandpile-formation.html"]; 
 
-      dem_10 [label="Sandpile", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile-formation/sandpile-formation.html"]; 
+      dem_10 [label="Silo", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/silo/silo.html"]; 
 
       dem_11 [label="Rectangular Hopper", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rectangular-hopper/rectangular-hopper.html"];
 

@@ -192,8 +192,8 @@ The simulation runs for 50 seconds of real time. We output the simulation result
 Floating Wall
 ~~~~~~~~~~~~~~
 
-The floating wall is handled as explained in the `Silo example <../silo/silo.html>`_.
-In this example, a floating wall is used during the filling stage, from 0 to :math:`4.5` s. The wall is located at the bottom of the hopper, before the channel.
+The floating wall is a temporary flat wall, used here to hold the particles in the hopper during the filling stage, from 0 to :math:`4.5` s. 
+It is located at the bottom of the hopper, before the channel.
 
 .. code-block:: text
 
