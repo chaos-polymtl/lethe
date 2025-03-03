@@ -14,7 +14,7 @@ Features
 - Solvers: ``lethe-particles``
 - Two-dimensional problem
 - Bi-dispersed particles
-- Floating Wall
+- Floating wall
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
 
@@ -189,7 +189,7 @@ The simulation runs for 50 seconds of real time. We output the simulation result
   It can be reduced to 15 s to see the fully formed sandpile but the height of the pile is only measured after 10 s and may continue to decrease after 15 s, particularly with the constant rolling resistance model.
 
 
-Floating Walls
+Floating Wall
 ~~~~~~~~~~~~~~
 
 The floating wall is handled as explained in the `Silo example <../silo/silo.html>`_.
