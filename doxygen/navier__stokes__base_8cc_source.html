@@ -986,7 +986,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span> </div>
 <div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>      <span class="comment">// Solution transfer objects for all the solutions</span></div>
 <div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>      parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>        solution_transfer(this-&gt;dof_handler);</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>        solution_transfer(this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>      std::vector&lt;parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;&gt;</div>
 <div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>        previous_solutions_transfer;</div>
 <div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>      <span class="comment">// Important to reserve to prevent pointer dangling</span></div>
@@ -995,7 +995,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>        {</div>
 <div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>          previous_solutions_transfer.emplace_back(</div>
 <div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>            parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;(</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>              this-&gt;dof_handler));</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>              this-&gt;dof_handler, <span class="keyword">true</span>));</div>
 <div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;</div>
 <div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>                          VectorType,</div>
 <div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>                          LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
@@ -1005,11 +1005,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>        }</div>
 <div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span> </div>
 <div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>      parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>        solution_transfer_m1(this-&gt;dof_handler);</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>        solution_transfer_m1(this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>      parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>        solution_transfer_m2(this-&gt;dof_handler);</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>        solution_transfer_m2(this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>      parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>        solution_transfer_m3(this-&gt;dof_handler);</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>        solution_transfer_m3(this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span> </div>
 <div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType,</div>
 <div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>                                   LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
@@ -1240,7 +1240,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span> </div>
 <div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>  <span class="comment">// Solution transfer objects for all the solutions</span></div>
 <div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; solution_transfer(</div>
-<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>    this-&gt;dof_handler);</div>
+<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span>  std::vector&lt;parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;&gt;</div>
 <div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span>    previous_solutions_transfer;</div>
 <div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span>  <span class="comment">// Important to reserve to prevent pointer dangling</span></div>
@@ -1249,7 +1249,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01103" name="l01103"></a><span class="lineno"> 1103</span>    {</div>
 <div class="line"><a id="l01104" name="l01104"></a><span class="lineno"> 1104</span>      previous_solutions_transfer.emplace_back(</div>
 <div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span>        parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;(</div>
-<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span>          this-&gt;dof_handler));</div>
+<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span>          this-&gt;dof_handler, <span class="keyword">true</span>));</div>
 <div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType,</div>
 <div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>                                   LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
 <div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>        previous_solutions[i].update_ghost_values();</div>
@@ -1315,11 +1315,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01167" name="l01167"></a><span class="lineno"> 1167</span> </div>
 <div class="line"><a id="l01168" name="l01168"></a><span class="lineno"> 1168</span>  <span class="comment">// Solution transfer objects for all the solutions</span></div>
 <div class="line"><a id="l01169" name="l01169"></a><span class="lineno"> 1169</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; solution_transfer(</div>
-<div class="line"><a id="l01170" name="l01170"></a><span class="lineno"> 1170</span>    this-&gt;dof_handler);</div>
+<div class="line"><a id="l01170" name="l01170"></a><span class="lineno"> 1170</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l01171" name="l01171"></a><span class="lineno"> 1171</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; solution_transfer_m2(</div>
-<div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span>    this-&gt;dof_handler);</div>
+<div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; solution_transfer_m3(</div>
-<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span>    this-&gt;dof_handler);</div>
+<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span> </div>
 <div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType,</div>
 <div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span>                               LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
@@ -1337,7 +1337,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01189" name="l01189"></a><span class="lineno"> 1189</span>    {</div>
 <div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span>      previous_solutions_transfer.emplace_back(</div>
 <div class="line"><a id="l01191" name="l01191"></a><span class="lineno"> 1191</span>        parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt;(</div>
-<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"> 1192</span>          this-&gt;dof_handler));</div>
+<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"> 1192</span>          this-&gt;dof_handler, <span class="keyword">true</span>));</div>
 <div class="line"><a id="l01193" name="l01193"></a><span class="lineno"> 1193</span> </div>
 <div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span>      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType,</div>
 <div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span>                                   LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
@@ -2321,7 +2321,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02159" name="l02159"></a><span class="lineno"> 2159</span>      x_system[i + 1] = &amp;distributed_previous_solutions[i];</div>
 <div class="line"><a id="l02160" name="l02160"></a><span class="lineno"> 2160</span>    }</div>
 <div class="line"><a id="l02161" name="l02161"></a><span class="lineno"> 2161</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; system_trans_vectors(</div>
-<div class="line"><a id="l02162" name="l02162"></a><span class="lineno"> 2162</span>    this-&gt;dof_handler);</div>
+<div class="line"><a id="l02162" name="l02162"></a><span class="lineno"> 2162</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l02163" name="l02163"></a><span class="lineno"> 2163</span> </div>
 <div class="line"><a id="l02164" name="l02164"></a><span class="lineno"> 2164</span>  <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_average_velocities ||</div>
 <div class="line"><a id="l02165" name="l02165"></a><span class="lineno"> 2165</span>      this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
@@ -2984,7 +2984,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02804" name="l02804"></a><span class="lineno"> 2804</span>    }</div>
 <div class="line"><a id="l02805" name="l02805"></a><span class="lineno"> 2805</span> </div>
 <div class="line"><a id="l02806" name="l02806"></a><span class="lineno"> 2806</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; system_trans_vectors(</div>
-<div class="line"><a id="l02807" name="l02807"></a><span class="lineno"> 2807</span>    this-&gt;dof_handler);</div>
+<div class="line"><a id="l02807" name="l02807"></a><span class="lineno"> 2807</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l02808" name="l02808"></a><span class="lineno"> 2808</span>  system_trans_vectors.prepare_for_serialization(sol_set_transfer);</div>
 <div class="line"><a id="l02809" name="l02809"></a><span class="lineno"> 2809</span> </div>
 <div class="line"><a id="l02810" name="l02810"></a><span class="lineno"> 2810</span>  multiphysics-&gt;write_checkpoint();</div>
