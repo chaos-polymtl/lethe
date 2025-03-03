@@ -38,7 +38,7 @@ In the first stage of the simulation (0-4.5s), particles are filled into the hop
 Then, at 4.5s, particles are discharged through a narrow channel onto a flat surface where a pile is formed.
 We compare the evolution of the height of the pile for the different rolling resistance models with the results obtained by J. Ai *et al.* [#Ai2010]_.
 The angle of repose is also calculated, so as to be compared to the one from the experiment conducted by Zuriguel *et al.* [#Zuriguel2007]_.
-We expect that the Elastic-Plastic Spring-Dashpot model will give closer results to the height and angle from the experiment than the viscous model or the constant torque model. Indeed, the constant torque model produces an oscillation that can prevent the pile from reaching a stable state and the viscous model is not adapted here as the viscous effects are not major.
+We expect that the Elastic-Plastic Spring-Dashpot model will give closer results to the height and angle from the experiment than the viscous model or the constant torque model. Indeed, the constant torque model produces an oscillation that can prevent the pile from reaching a stable state and the viscous model is not adapted here as the viscous effects are not sufficient to stabilize the pile at its real height.
 
 --------------
 Parameter File
@@ -48,7 +48,7 @@ Mesh
 ~~~~
 
 The mesh is a hopper with 50.5° angle generated with GMSH, with a channel connecting the hopper to the part with the flat surface.
-The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ and was handled in order to generate a structured mesh.
+The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ and the mesh generated with gmsh is structured.
 
 .. code-block:: text
 
@@ -93,7 +93,7 @@ The following properties are chosen according to the J. Ai *et al.* paper:
 * Friction coefficient of particle-particle (0.8)
 * Rolling resistance coefficient of particle-particle (0.3)
 
-The same properties were given to the wall as they were not specified.
+The same properties were given to the wall as they were not specified in the original article.
 
 .. code-block:: text
 
@@ -121,7 +121,7 @@ The same properties were given to the wall as they were not specified.
 
 .. note::
 
-  Only the value of the restitution coefficient was not given in the paper.
+  Only the value of the restitution coefficient was not given in the reference paper.
 
 
 Model Parameters
@@ -166,7 +166,7 @@ Particles are inserted in an insertion box in the upper part of the hopper. In t
 
 .. note::
 
-  Due partly to the bi-dispersed simulation, changing the prn seed to a different value can lead to different results.
+  Due partly to the bi-dispersed particle size distribution, changing the prn seed to a different value can lead to different results since it changes the initial configuration of the particles.
 
 
 Simulation Control
@@ -290,7 +290,7 @@ The following image compares the evolution of the height of the pile with the re
     :align: center
 
 Considering the height of the pile measured in the experiment by Zuriguel *et al.* was 28 cm, the results with model epsd are satisfying.
-As predicted, with the constant model, the pile takes a lot of time to stabilise but results are closed to those obtained by J. Ai *et al*. Regarding the viscous model, the pile does remain constant like with epsd but the height is underestimated.
+As predicted, with the constant model, the pile takes a lot of time to stabilize but results are close to those obtained by J. Ai *et al*. Regarding the viscous model, the pile does remain constant like with the epsd model but the height is lower than what is observed in the experiments.
 
 The difference with J. Ai *et al* simulation could be related to there being two sizes of particles. As they are inserted, the particles are placed randomly according to the prn seed chosen, which can lead to a difference in the height of the pile.
 The next image shows the evolution of the height of the pile with rolling resistance model epsd using different prn seeds.
