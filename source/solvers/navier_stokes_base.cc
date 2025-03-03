@@ -2169,7 +2169,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   // average velocity profile.
   if (simulation_parameters.post_processing.calculate_average_velocities &
       (this->simulation_parameters.initial_condition->type !=
-        Parameters::InitialConditionType::average_velocity_profile))
+       Parameters::InitialConditionType::average_velocity_profile))
     {
       if ((this->simulation_parameters.post_processing
              .initial_time_for_average_velocities +
