@@ -1,0 +1,192 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This test case runs a transient flow simulation around a cylinder
+# with time-averaging of the velocity field enabled. This test
+# used to crash the matrix-free solver a the first mesh adaptation
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf1
+  set time end          = 0.5
+  set time step         = 0.1
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+
+subsection forces
+  set verbosity             = verbose
+  set calculate force       = true
+  set calculate torque      = false
+  set output precision      = 10
+  set calculation frequency = 1
+  set output frequency      = 1
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set calculate average velocities      = true
+  set initial time for average velocity = 0
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.01
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type      = gmsh
+  set file name = ../cylinder_structured.msh
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0 
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = outlet
+    set beta = 1
+  end
+end
+
+#---------------------------------------------------
+# Manifolds
+#---------------------------------------------------
+
+subsection manifolds
+  set number = 1
+  subsection manifold 0
+    set id                = 0
+    set type              = spherical
+    set point coordinates = 8, 8
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                 = kelly
+  set variable             = velocity
+  set fraction type        = fraction
+  set max number elements  = 70000
+  set max refinement level = 2
+  set min refinement level = 0
+  set frequency            = 1
+  set fraction refinement  = 0.2
+  set fraction coarsening  = 0.05
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-4
+    set max iterations = 20
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity          = quiet
+    set method             = gmres
+    set max iters          = 200
+    set max krylov vectors = 200
+    set relative residual  = 1e-2
+    set minimum residual   = 1e-6
+    set preconditioner     = gcmg
+    set mg verbosity       = quiet
+
+    # Smoother
+    set mg smoother iterations     = 5
+    set mg smoother eig estimation = true
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+  end
+end
