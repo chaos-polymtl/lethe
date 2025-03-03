@@ -2,19 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_signed_distance_h
-#  define lethe_signed_distance_h
+#define lethe_signed_distance_h
 
-#  include <deal.II/distributed/tria.h>
+#include <solvers/physics_subequations_solver.h>
 
-#  include <deal.II/dofs/dof_handler.h>
+#include <deal.II/distributed/tria.h>
 
-#  include <deal.II/fe/fe_q.h>
-#  include <deal.II/fe/mapping_q.h>
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/mapping_q.h>
 
 using namespace dealii;
 
 template <int dim, typename VectorType>
-class SignedDistanceSolver
+class SignedDistanceSolver : PhysicsSubequationsSolverBase
 {
 public:
   /**
@@ -395,4 +397,6 @@ private:
 
   /// Set of DoFs belonging to intersected cells
   std::set<types::global_dof_index> intersected_dofs;
-}
+};
+
+#endif
