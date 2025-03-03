@@ -3,7 +3,7 @@ Sandpile Formation
 ==================================
 
 This example simulates the formation of a sandpile using the discrete element method (DEM). 
-The simulation is based on the simulation of J. Ai *et al.* [#Ai2010]_, meant to reproduce the 2D photoelastic sandpile experiments led by Zuriguel *et al.* [#Zuriguel2007]_.
+It is based on the simulation of Ai *et al.* [#Ai2010]_, meant to reproduce the 2D photoelastic sandpile experiments led by Zuriguel *et al.* [#Zuriguel2007]_.
 More information regarding the DEM parameters is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
 
 
@@ -15,7 +15,7 @@ Features
 - Two-dimensional problem
 - Bi-dispersed particles
 - Floating Wall
-- Postprocessing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
+- Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
 
 ----------------------------
@@ -27,16 +27,16 @@ All files mentioned below are located in the example's folder (``examples/dem/2d
 - Geometry file: ``sandpile.geo``
 - Mesh file: ``sandpile.msh``
 - Parameters file: ``sandpile.prm``
-- Postprocessing Python script: ``sandpile-postprocessing.py``
+- Post-processing Python script: ``sandpile-postprocessing.py``
 
 
 -----------------------
 Description of the Case
 -----------------------
 
-In the first stage of the simulation (0-4.5s), particles are filled into the hopper. 
-Then, at 4.5s, particles are discharged through a narrow channel onto a flat surface where a pile is formed.
-We compare the evolution of the height of the pile for the different rolling resistance models with the results obtained by J. Ai *et al.* [#Ai2010]_.
+In the first stage of the simulation (:math:`0-4.5` s), particles are filled into the hopper. 
+Then, at :math:`4.5` s, particles are discharged through a narrow channel onto a flat surface where a pile is formed.
+We compare the evolution of the height of the pile for the different rolling resistance models with the results obtained by Ai *et al.* [#Ai2010]_.
 The angle of repose is also calculated, so as to be compared to the one from the experiment conducted by Zuriguel *et al.* [#Zuriguel2007]_.
 We expect that the Elastic-Plastic Spring-Dashpot model will give closer results to the height and angle from the experiment than the viscous model or the constant torque model. Indeed, the constant torque model produces an oscillation that can prevent the pile from reaching a stable state and the viscous model is not adapted here as the viscous effects are not sufficient to stabilize the pile at its real height.
 
@@ -72,26 +72,25 @@ The geometry follows the one used by Zuriguel *et al.* [#Zuriguel2007]_ and the 
 
   The mesh can be generated using the following line:
 
-   .. code-block:: bash
-      :class: copy-button
+  .. code-block:: text
+    :class: copy-button
 
-      gmsh -2 sandpile.geo
-
+    gmsh -2 sandpile.geo
 
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The 3000 particles are bi-dispersed, with 2500 having a diameter of 6.9 mm and 500 having a diameter of 8.9 mm.
+The :math:`3000` particles are bi-dispersed, with :math:`2500` having a diameter of :math:`6.9` mm and :math:`500` having a diameter of :math:`8.9` mm.
 
-The following properties are chosen according to the J. Ai *et al.* paper:
+The following properties are chosen according to the Ai *et al.* paper:
 
-* Custom distribution of disks with 70% of disks with a 6.9 mm diameter and 30% with an 8.9 mm diameter
-* Density (1056 :math:`kg/m^3`)
-* Young's modulus (4 MPa)
-* Poisson's ratio (0.49)
-* Friction coefficient of particle-particle (0.8)
-* Rolling resistance coefficient of particle-particle (0.3)
+* Custom distribution of disks with :math:`70%` of disks with a :math:`6.9` mm diameter and :math:`30%` with an :math:`8.9` mm diameter
+* Density (:math:`1056\;\text{kg}/\text{m}^3`)
+* Young's modulus (:math:`4` MPa)
+* Poisson's ratio (:math:`0.49`)
+* Friction coefficient of particle-particle (:math:`0.8)``
+* Rolling resistance coefficient of particle-particle (:math:`0.3`)
 
 The same properties were given to the wall as they were not specified in the original article.
 
@@ -121,7 +120,7 @@ The same properties were given to the wall as they were not specified in the ori
 
 .. note::
 
-  Only the value of the restitution coefficient was not given in the reference paper.
+  Only the value of the restitution coefficient was not given in the reference paper but it did not impact much the height of the pile.
 
 
 Model Parameters
@@ -144,8 +143,8 @@ Model Parameters
 
 .. note::
 
-  Only when the Elastic-Plastic Spring-Dashpot (epsd) rolling resistance model is selected should f be specified (f=0 here).
-  More information regarding the DEM Model parameters is given in the Lethe documentation, i.e. `DEM Model Parameters <../../../parameters/dem/model_parameters.html>`_.
+  Only when the EPSD rolling resistance model is selected should the ``f coefficient`` be specified (``f coefficient = 0.0`` here).
+  More information regarding the DEM model parameters is given in the Lethe documentation, i.e. `DEM Model Parameters <../../../parameters/dem/model_parameters.html>`_.
 
 Particle Insertion
 ~~~~~~~~~~~~~~~~~~
@@ -166,7 +165,7 @@ Particles are inserted in an insertion box in the upper part of the hopper. In t
 
 .. note::
 
-  Due partly to the bi-dispersed particle size distribution, changing the prn seed to a different value can lead to different results since it changes the initial configuration of the particles.
+  Due partly to the bi-dispersed particle size distribution, changing the ``prn seed`` to a different value can lead to different results since it changes the initial configuration of the particles.
 
 
 Simulation Control
@@ -186,15 +185,15 @@ The simulation runs for 50 seconds of real time. We output the simulation result
 
 .. note::
 
-  To compare with the results of J.Ai *et al.*, the end time should be set at 50 s or at least 35 s to see the progression of the curve. 
+  To compare with the results of Ai *et al.*, the end time should be set at 50 s or at least 35 s to see the progression of the curve. 
   It can be reduced to 15 s to see the fully formed sandpile but the height of the pile is only measured after 10 s and may continue to decrease after 15 s, particularly with the constant rolling resistance model.
 
 
 Floating Walls
 ~~~~~~~~~~~~~~
 
-Floating wall is handled as explained in the `Silo example <../silo/silo.html>`_.
-In this example, a floating wall is used during the filling stage, from 0 to 4.5s. The wall is located at the bottom of the hopper, before the channel.
+The floating wall is handled as explained in the `Silo example <../silo/silo.html>`_.
+In this example, a floating wall is used during the filling stage, from 0 to :math:`4.5` s. The wall is located at the bottom of the hopper, before the channel.
 
 .. code-block:: text
 
@@ -225,14 +224,17 @@ The simulation can be launched with
 
    mpirun -np 2 lethe-particles sandpile.prm
 
+.. note::
+
+  If the end time is set at :math:`50` s, this example needs a simulation time of approximately 25 minutes on 2 cores.
 
 
 ---------------
 Post-processing
 ---------------
 
-A Python post-processing code called ``sandpile-postprocessing.py`` is provided with this example. It is used to measure the height of the pile at each time set, starting at 10.02s so that the pile is already formed. It also calculates the angle of repose of the pile, based on the last frame.
-It compares the data generated by the simulation to data from J.Ai *et al.* [#Ai2010]_ for the selected rolling resistance model.
+A Python post-processing code called ``sandpile-postprocessing.py`` is provided with this example. It is used to measure the height of the pile at each time set, starting at :math:`10.02` s so that the pile is already formed. It also calculates the angle of repose of the pile, based on the last frame.
+It compares the data generated by the simulation to the one from Ai *et al.* [#Ai2010]_ for the selected rolling resistance model.
 
 It is possible to run the post-processing code with the following line. The arguments are the simulation path, the prm file name and the rolling resistance model used.
 
@@ -241,18 +243,16 @@ It is possible to run the post-processing code with the following line. The argu
 
     python3 sandpile-postprocessing.py  --folder ./ --prm sandpile.prm --rollingmethod epsd
 
-
-The code prints the values of the coefficient of determination :math:`R^2`, the slope (from the regression), and the angle of repose.
-
-.. important::
-
-  The argument --rollingmethod can be either epsd, viscous or constant and should be the same as the "rolling resistance torque method" in the prm file.
-  The argument --regression can be added to plot the least squares regression used to calculate the angle of repose.
-
 .. important::
 
     You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
+.. important::
+
+  The argument `--rollingmethod` can be either epsd, viscous or constant and should be the same as the ``rolling resistance torque method`` in the prm file.
+  The argument `--regression` can be added to plot the least squares regression used to calculate the angle of repose.
+
+The code prints the values of the coefficient of determination :math:`R^2`, the slope (from the regression), and the angle of repose.
 
 When you have launched the simulation and the post-processing (with the right argument) for each rolling resistance model (constant, epsd, viscous), launch the following to compare different models.
 
@@ -282,29 +282,30 @@ The simulation can be visualised using Paraview as seen below.
 Evolution of the Height of the Pile
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following image compares the evolution of the height of the pile with the results of J. Ai *et al.*.
+The following figure compares the evolution of the height of the pile with the results of Ai *et al.*
 
 .. figure:: images/figure-height-comparison.png
     :width: 500
     :alt: Height comparison
     :align: center
 
-Considering the height of the pile measured in the experiment by Zuriguel *et al.* was 28 cm, the results with model epsd are satisfying.
-As predicted, with the constant model, the pile takes a lot of time to stabilize but results are close to those obtained by J. Ai *et al*. Regarding the viscous model, the pile does remain constant like with the epsd model but the height is lower than what is observed in the experiments.
+Considering the height of the pile measured in the experiment by Zuriguel *et al.* was :math:`28` cm, the results with model EPSD are satisfying.
+As predicted, with the constant model, the pile takes a lot of time to stabilize but results are close to those obtained by Ai *et al.* Regarding the viscous model, the pile does remain constant like with the EPSD model but the height is lower than what is observed in the experiments.
 
-The difference with J. Ai *et al* simulation could be related to there being two sizes of particles. As they are inserted, the particles are placed randomly according to the prn seed chosen, which can lead to a difference in the height of the pile.
-The next image shows the evolution of the height of the pile with rolling resistance model epsd using different prn seeds.
+The difference with the Ai *et al.* simulation could be due to the fact that there are two sizes of particles. As they are inserted, the particles are placed randomly according to the chosen ``prn seed``, which can lead to a difference in the height of the pile.
+
+The next figure shows the evolution of the height of the pile with rolling resistance model EPSD using different PRN seeds.
 
 .. image:: images/figure-height-different-prn-seeds.png
     :alt: Height comparison
     :align: center
 
-This confirms changing the prn seed leads to different heights but the results remain around 24 cm.
+This confirms changing the PRN seed leads to different heights but the results remain around :math:`24` cm.
 
 -------------
 References
 -------------
 
-.. [#Ai2010] \Jun Ai, Jian-Fei Chen, J. Michael Rotter, and Jin Y. Ooi. "Assessment of Rolling Resistance Models in Discrete Element Simulations." *Powder Technology*, vol. 206, no. 3, 2011, pp. 269-282. ScienceDirect. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S0032591010005164
+.. [#Ai2010] \J. Ai, Jian-Fei Chen, J. Michael Rotter, and Jin Y. Ooi. "Assessment of Rolling Resistance Models in Discrete Element Simulations." *Powder Technology*, vol. 206, no. 3, 2011, pp. 269-282. ScienceDirect. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S0032591010005164
  
 .. [#Zuriguel2007] \I. Zuriguel, T. Mullin, J. M. Rotter. "Effect of Particle Shape on the Stress Dip Under a Sandpile." *Physical Review Letters*, vol. 98, no. 2, 2007, p. 028001. [Online]. Available: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.98.028001

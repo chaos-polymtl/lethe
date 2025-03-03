@@ -17,8 +17,8 @@ plt.rcParams['lines.markeredgewidth'] = 2
 plt.rcParams['legend.fancybox'] = False
 plt.rcParams['font.size'] = 20
 plt.rcParams['font.family']='DejaVu Serif'
-plt.rcParams['legend.handlelength']=1.3
-plt.rcParams['lines.linewidth'] = 2
+plt.rcParams['legend.handlelength']=2
+plt.rcParams['lines.linewidth'] = 3
 
 ######################################################################
 
