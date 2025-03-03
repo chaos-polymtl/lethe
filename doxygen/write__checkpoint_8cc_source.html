@@ -160,7 +160,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  std::ofstream oss_insertion_obj(insertion_object_filename);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                                                 boost::archive::no_header);</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  insertion_object-&gt;serialize(oa_insertion_obj, 0);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  insertion_object-&gt;serialize(oa_insertion_obj);</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  <span class="comment">// Checkpoint the serial solid objects one by one</span></div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; solid_objects.size(); ++i)</div>

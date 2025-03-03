@@ -115,10 +115,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a335c82a92eb5eb0142a57fd5b9392152"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7b6cf7393246d7d5b3ffeec6d721a14" id="r_ab7b6cf7393246d7d5b3ffeec6d721a14"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ab7b6cf7393246d7d5b3ffeec6d721a14">insert</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)=0</td></tr>
 <tr class="separator:ab7b6cf7393246d7d5b3ffeec6d721a14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad090ee85ee022ca32b837150ff4fa728" id="r_ad090ee85ee022ca32b837150ff4fa728"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ad090ee85ee022ca32b837150ff4fa728">serialize</a> (boost::archive::text_oarchive &amp;ar, const unsigned int)=0</td></tr>
-<tr class="separator:ad090ee85ee022ca32b837150ff4fa728"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9aaf50f7896e20d9f3a1ee5c644196b0" id="r_a9aaf50f7896e20d9f3a1ee5c644196b0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a9aaf50f7896e20d9f3a1ee5c644196b0">deserialize</a> (boost::archive::text_iarchive &amp;ar, const unsigned int)=0</td></tr>
-<tr class="separator:a9aaf50f7896e20d9f3a1ee5c644196b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1a40e2170d1de2098ef2672a62103c1" id="r_aa1a40e2170d1de2098ef2672a62103c1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#aa1a40e2170d1de2098ef2672a62103c1">serialize</a> (boost::archive::text_oarchive &amp;ar)=0</td></tr>
+<tr class="separator:aa1a40e2170d1de2098ef2672a62103c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62c8d44efdff9e519ded751acd0f009f" id="r_a62c8d44efdff9e519ded751acd0f009f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a62c8d44efdff9e519ded751acd0f009f">deserialize</a> (boost::archive::text_iarchive &amp;ar)=0</td></tr>
+<tr class="separator:a62c8d44efdff9e519ded751acd0f009f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -375,8 +375,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a9aaf50f7896e20d9f3a1ee5c644196b0" name="a9aaf50f7896e20d9f3a1ee5c644196b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9aaf50f7896e20d9f3a1ee5c644196b0">&#9670;&#160;</a></span>deserialize()</h2>
+<a id="a62c8d44efdff9e519ded751acd0f009f" name="a62c8d44efdff9e519ded751acd0f009f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62c8d44efdff9e519ded751acd0f009f">&#9670;&#160;</a></span>deserialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -390,18 +390,8 @@ template&lt;int dim&gt; </div>
           <td class="memname">virtual void <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt;::deserialize </td>
           <td>(</td>
           <td class="paramtype">boost::archive::text_iarchive &amp;&#160;</td>
-          <td class="paramname"><em>ar</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>ar</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -419,7 +409,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classInsertionFile.html#a5cce4465bc2a7af7d176c80e76f4b57c">InsertionFile&lt; dim &gt;</a>, <a class="el" href="classInsertionList.html#a824d61f3f71adce52b4a55e9901e0d92">InsertionList&lt; dim &gt;</a>, <a class="el" href="classInsertionPlane.html#a260105505b4a6f37e39587ebad5dac1a">InsertionPlane&lt; dim &gt;</a>, and <a class="el" href="classInsertionVolume.html#afa6a770cf17680ff6a3153a1aca4222b">InsertionVolume&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classInsertionFile.html#a8f0d79dff093dd46e3eca5e772ac5df3">InsertionFile&lt; dim &gt;</a>, <a class="el" href="classInsertionList.html#a7f9919ccae880531235b9fd432e0e57c">InsertionList&lt; dim &gt;</a>, <a class="el" href="classInsertionPlane.html#abb49ad602a54b3df7fb51e3ba26b261f">InsertionPlane&lt; dim &gt;</a>, and <a class="el" href="classInsertionVolume.html#a4bba02fae226a869c65e6f06c259e2f4">InsertionVolume&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -624,8 +614,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ad090ee85ee022ca32b837150ff4fa728" name="ad090ee85ee022ca32b837150ff4fa728"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad090ee85ee022ca32b837150ff4fa728">&#9670;&#160;</a></span>serialize()</h2>
+<a id="aa1a40e2170d1de2098ef2672a62103c1" name="aa1a40e2170d1de2098ef2672a62103c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1a40e2170d1de2098ef2672a62103c1">&#9670;&#160;</a></span>serialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -639,18 +629,8 @@ template&lt;int dim&gt; </div>
           <td class="memname">virtual void <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt;::serialize </td>
           <td>(</td>
           <td class="paramtype">boost::archive::text_oarchive &amp;&#160;</td>
-          <td class="paramname"><em>ar</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>ar</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -668,7 +648,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classInsertionFile.html#a8a829f0036403ebf58449da9581e968f">InsertionFile&lt; dim &gt;</a>, <a class="el" href="classInsertionList.html#a377bfcf5a43e5f37712e13570b8b138e">InsertionList&lt; dim &gt;</a>, <a class="el" href="classInsertionPlane.html#af2d5f8ac13d470d5976076aa6c1fb276">InsertionPlane&lt; dim &gt;</a>, and <a class="el" href="classInsertionVolume.html#a9049abfccc0119849d92d017f543c1e1">InsertionVolume&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classInsertionFile.html#ae154c9d91bff787c0b80b19f594188ce">InsertionFile&lt; dim &gt;</a>, <a class="el" href="classInsertionList.html#a2a9d0d49a0e34d1a3e602e0b0ba1f6e5">InsertionList&lt; dim &gt;</a>, <a class="el" href="classInsertionPlane.html#a2317145795a7d94021d925bd4f0407f2">InsertionPlane&lt; dim &gt;</a>, and <a class="el" href="classInsertionVolume.html#afa9c697fd0273a9d6756b330606dbb42">InsertionVolume&lt; dim &gt;</a>.</p>
 
 </div>
 </div>

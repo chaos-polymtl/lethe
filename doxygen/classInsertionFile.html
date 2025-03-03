@@ -107,10 +107,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a20d5e3971e190897efb8710ca1266966"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a202ee0aad205e130b0e6e729c759b853" id="r_a202ee0aad205e130b0e6e729c759b853"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionFile.html#a202ee0aad205e130b0e6e729c759b853">assign_particle_properties_for_file_insertion</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;<a class="el" href="classInsertion.html#ad0a52bf0b712bcf669b0948737e13cd3">inserted_this_step_this_proc</a>, std::map&lt; std::string, std::vector&lt; double &gt; &gt; &amp;particles_data, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
 <tr class="separator:a202ee0aad205e130b0e6e729c759b853"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a829f0036403ebf58449da9581e968f" id="r_a8a829f0036403ebf58449da9581e968f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionFile.html#a8a829f0036403ebf58449da9581e968f">serialize</a> (boost::archive::text_oarchive &amp;ar, const unsigned int) override</td></tr>
-<tr class="separator:a8a829f0036403ebf58449da9581e968f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5cce4465bc2a7af7d176c80e76f4b57c" id="r_a5cce4465bc2a7af7d176c80e76f4b57c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionFile.html#a5cce4465bc2a7af7d176c80e76f4b57c">deserialize</a> (boost::archive::text_iarchive &amp;ar, const unsigned int) override</td></tr>
-<tr class="separator:a5cce4465bc2a7af7d176c80e76f4b57c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae154c9d91bff787c0b80b19f594188ce" id="r_ae154c9d91bff787c0b80b19f594188ce"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionFile.html#ae154c9d91bff787c0b80b19f594188ce">serialize</a> (boost::archive::text_oarchive &amp;ar) override</td></tr>
+<tr class="separator:ae154c9d91bff787c0b80b19f594188ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f0d79dff093dd46e3eca5e772ac5df3" id="r_a8f0d79dff093dd46e3eca5e772ac5df3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionFile.html#a8f0d79dff093dd46e3eca5e772ac5df3">deserialize</a> (boost::archive::text_iarchive &amp;ar) override</td></tr>
+<tr class="separator:a8f0d79dff093dd46e3eca5e772ac5df3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classInsertion')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim &gt;</a></td></tr>
 <tr class="memitem:ae5a96094bdccbbe99b9b5fcb7a480629 inherit pub_methods_classInsertion" id="r_ae5a96094bdccbbe99b9b5fcb7a480629"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ae5a96094bdccbbe99b9b5fcb7a480629">Insertion</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
 <tr class="separator:ae5a96094bdccbbe99b9b5fcb7a480629 inherit pub_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -286,8 +286,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a5cce4465bc2a7af7d176c80e76f4b57c" name="a5cce4465bc2a7af7d176c80e76f4b57c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5cce4465bc2a7af7d176c80e76f4b57c">&#9670;&#160;</a></span>deserialize()</h2>
+<a id="a8f0d79dff093dd46e3eca5e772ac5df3" name="a8f0d79dff093dd46e3eca5e772ac5df3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f0d79dff093dd46e3eca5e772ac5df3">&#9670;&#160;</a></span>deserialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -301,18 +301,8 @@ template&lt;int dim&gt; </div>
           <td class="memname">virtual void <a class="el" href="classInsertionFile.html">InsertionFile</a>&lt; dim &gt;::deserialize </td>
           <td>(</td>
           <td class="paramtype">boost::archive::text_iarchive &amp;&#160;</td>
-          <td class="paramname"><em>ar</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>ar</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -330,7 +320,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classInsertion.html#a9aaf50f7896e20d9f3a1ee5c644196b0">Insertion&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classInsertion.html#a62c8d44efdff9e519ded751acd0f009f">Insertion&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="insertion__file_8h_source.html#l00089">89</a> of file <a class="el" href="insertion__file_8h_source.html">insertion_file.h</a>.</p>
 
@@ -398,8 +388,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a8a829f0036403ebf58449da9581e968f" name="a8a829f0036403ebf58449da9581e968f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a829f0036403ebf58449da9581e968f">&#9670;&#160;</a></span>serialize()</h2>
+<a id="ae154c9d91bff787c0b80b19f594188ce" name="ae154c9d91bff787c0b80b19f594188ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae154c9d91bff787c0b80b19f594188ce">&#9670;&#160;</a></span>serialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -413,18 +403,8 @@ template&lt;int dim&gt; </div>
           <td class="memname">virtual void <a class="el" href="classInsertionFile.html">InsertionFile</a>&lt; dim &gt;::serialize </td>
           <td>(</td>
           <td class="paramtype">boost::archive::text_oarchive &amp;&#160;</td>
-          <td class="paramname"><em>ar</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>ar</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -442,7 +422,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classInsertion.html#ad090ee85ee022ca32b837150ff4fa728">Insertion&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classInsertion.html#aa1a40e2170d1de2098ef2672a62103c1">Insertion&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="insertion__file_8h_source.html#l00076">76</a> of file <a class="el" href="insertion__file_8h_source.html">insertion_file.h</a>.</p>
 

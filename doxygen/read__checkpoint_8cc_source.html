@@ -193,7 +193,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  std::ifstream iss_insertion_obj(insertion_object_filename);</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  boost::archive::text_iarchive ia_insertion_obj(iss_insertion_obj,</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                                                 boost::archive::no_header);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  insertion_object-&gt;deserialize(ia_insertion_obj, 0);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  insertion_object-&gt;deserialize(ia_insertion_obj);</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  <span class="comment">// Load solid surfaces</span></div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; solid_surfaces.size(); ++i)</div>
