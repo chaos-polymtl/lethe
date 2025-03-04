@@ -71,8 +71,9 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
             {
               // Apply the cell weight
 #if DEAL_II_VERSION_GTE(9, 7, 0)
-              Point<dim> cell_barycenter =  cell->center();
-              load_weight += static_cast<int>( cell_weight_function->value(cell_barycenter));
+              Point<dim> cell_barycenter = cell->center();
+              load_weight +=
+                static_cast<int>(cell_weight_function->value(cell_barycenter));
 #else
               load_weight += cell_weight;
 #endif
