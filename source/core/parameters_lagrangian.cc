@@ -726,7 +726,8 @@ namespace Parameters
                             Patterns::Integer(),
                             "Checking frequency for dynamic load-balancing");
 
-          auto cell_weight_function_parsed = std::make_shared<Functions::ParsedFunction<dim>>(1);
+          auto cell_weight_function_parsed =
+            std::make_shared<Functions::ParsedFunction<dim>>(1);
 #if DEAL_II_VERSION_GTE(9, 7, 0)
           cell_weight_function_parsed->declare_parameters(prm, 1, "1000");
 #else
@@ -934,10 +935,11 @@ namespace Parameters
             {
               throw(std::runtime_error("Invalid load-balance method "));
             }
-          auto cell_weight_function_parsed = std::make_shared<Functions::ParsedFunction<dim>>(1);
+          auto cell_weight_function_parsed =
+            std::make_shared<Functions::ParsedFunction<dim>>(1);
           cell_weight_function_parsed->parse_parameters(prm);
 
-          cell_weight_function = cell_weight_function_parsed;
+          cell_weight_function         = cell_weight_function_parsed;
           load_balance_particle_weight = prm.get_integer("particle weight");
         }
         prm.leave_subsection();
