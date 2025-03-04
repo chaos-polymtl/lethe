@@ -140,7 +140,7 @@ public:
   }
 
   /**
-   * @brief Reinitialize the values of sum_scalar_dt_with_ghost_cells vector to 0 and the has_started_averaging flag to false. If the initial time for average temperature and heat flux parameter is greater than the simulation time, the checkpointed time average heat flux is ignored after a restart. This allows users to restart a simulation with a different averaging start time.
+   * @brief Reinitialize the values of sum_scalar_dt_with_ghost_cells vector to 0 and the has_started_averaging flag to false. If the initial time for average temperature and heat flux parameter is greater than the simulation time, the checkpointed time-averaged heat flux is ignored after a restart. This allows users to restart a simulation with a different averaging start time.
    */
   void
   zero_average_after_restart();

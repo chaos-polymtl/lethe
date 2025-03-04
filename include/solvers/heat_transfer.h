@@ -504,7 +504,7 @@ private:
    *
    * @param domain_name String indicating the monitored_fluid in the output filename.
    *
-   * @param time_average Boolean true when calculating the spacial average of the temperature time average solution.
+   * @param time_average Boolean true when calculating the spacial average of the time-averaged temperature solution.
    */
 
   void

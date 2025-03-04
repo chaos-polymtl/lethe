@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Verify if the time average temperature calculation leads to a segfault. The validity of the temperature average is tested in tests/solvers. This is the heat_transfer_conduction in solid test. The subsections post-processing, mesh refinement and restart have been added.
+# Verify if the time-averaged temperature calculation leads to a segfault. The validity of the average temperature is tested in tests/solvers. This is the heat_transfer_conduction in solid test. The subsections post-processing, mesh refinement and restart have been added.
 
 # Listing of Parameters
 #----------------------

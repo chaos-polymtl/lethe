@@ -1012,7 +1012,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                                          domain_name,
                                          false);
       // Postprocess the temperature statistics again to calculate the spatial
-      // average of the time average temperature. Flag time average is set to
+      // average of the time-averaged temperature. Flag time_average is set to
       // true.
       if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
         {
@@ -1633,7 +1633,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
             }
           else
             {
-              // calculate the average using the time average temperature
+              // calculate the average using the time-averaged temperature
               fe_values_ht.get_function_values(
                 this->average_temperature->get_average_scalar(),
                 local_temperature_values);
@@ -1702,7 +1702,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
             }
           else
             {
-              // calculate the average using the time average temperature
+              // calculate the average using the time-averaged temperature
               fe_values_ht.get_function_values(
                 this->average_temperature->get_average_scalar(),
                 local_temperature_values);
