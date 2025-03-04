@@ -144,6 +144,17 @@ public:
       this->triangulation,
       this->simulation_control,
       this->multiphysics);
+
+    if (simulation_parameters.multiphysics.vof_parameters
+          .geometric_interface_reinitialization.enable)
+      {
+        std::make_shared<InterfaceTools::SignedDistanceSolver<dim>>(
+          triangulation,
+          fe,
+          simulation_parameters.multiphysics.vof_parameters
+            .geometric_interface_reinitialization
+            .max_reinitialization_distance);
+      }
   }
 
   /**
@@ -674,6 +685,13 @@ private:
   void
   reinitialize_interface_with_algebraic_method();
 
+  /**
+   * @brief Reinitialize the interface between fluids using the geometric
+   * approach.
+   */
+  void
+  reinitialize_interface_with_geometric_method();
+  
   GlobalVectorType nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *multiphysics;
@@ -750,6 +768,9 @@ private:
 
   // Phase fraction filter
   std::shared_ptr<VolumeOfFluidFilterBase> filter;
+
+  // Signed distance solver for geometric redistanciation
+  std::shared_ptr<InterfaceTools::SignedDistanceSolver> signed_distance_solver;
 };
 
 
