@@ -66,7 +66,7 @@ end
 
 subsection post-processing
   set calculate average velocities      = true
-  set initial time for average velocity = 1.5
+  set initial time for average velocity = 1.4
 end
 
 #---------------------------------------------------

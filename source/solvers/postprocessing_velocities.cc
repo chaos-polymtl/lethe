@@ -14,7 +14,7 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler, true)
   , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler, true)
   , total_time_for_average(0.0)
-  , average_calculation(false)
+  , has_started_averaging(false)
 {}
 
 template <int dim, typename VectorType, typename DofsType>
@@ -31,27 +31,29 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   dt = time_step;
 
   // When averaging velocities begins
-  if (current_time >= (initial_time - epsilon) && !average_calculation)
+  if (current_time >= (initial_time - epsilon))
     {
-      average_calculation = true;
-      real_initial_time   = current_time;
+      if (!has_started_averaging)
+        {
+          has_started_averaging = true;
+          real_initial_time     = current_time;
 
-      // Store the first dt value in case dt varies.
-      dt_0 = dt;
+          // Store the first dt value in case dt varies.
+          dt_0 = dt;
+        }
+      // Calculate (u*dt) at each time step and accumulate the values
+      velocity_dt.equ(dt, local_evaluation_point);
+      sum_velocity_dt += velocity_dt;
+
+      // Get the inverse of the time since the beginning of the time averaging
+      total_time_for_average = (current_time - real_initial_time) + dt_0;
+      inv_range_time         = 1. / total_time_for_average;
+
+      // Calculate the average velocities.
+      average_velocities.equ(inv_range_time, sum_velocity_dt);
+
+      this->calculate_reynolds_stresses(local_evaluation_point);
     }
-
-  // Calculate (u*dt) at each time step and accumulate the values
-  velocity_dt.equ(dt, local_evaluation_point);
-  sum_velocity_dt += velocity_dt;
-
-  // Get the inverse of the time since the beginning of the time averaging
-  total_time_for_average = (current_time - real_initial_time) + dt_0;
-  inv_range_time         = 1. / total_time_for_average;
-
-  // Calculate the average velocities.
-  average_velocities.equ(inv_range_time, sum_velocity_dt);
-
-  this->calculate_reynolds_stresses(local_evaluation_point);
 }
 
 
@@ -404,7 +406,8 @@ AverageVelocities<dim, VectorType, DofsType>::save(const std::string &prefix)
   std::ofstream output(filename.c_str());
   output << "Average velocities" << std::endl;
   output << "dt_0 " << dt_0 << std::endl;
-  output << "Average_calculation_boolean " << average_calculation << std::endl;
+  output << "has_started_averaging_boolean " << has_started_averaging
+         << std::endl;
   output << "Real_initial_time " << real_initial_time << std::endl;
 
   return av_set_transfer;
@@ -427,12 +430,26 @@ AverageVelocities<dim, VectorType, DofsType>::read(const std::string &prefix)
   std::string buffer;
   std::getline(input, buffer);
   input >> buffer >> dt_0;
-  input >> buffer >> average_calculation;
+  input >> buffer >> has_started_averaging;
   input >> buffer >> real_initial_time;
 
   return sum_vectors;
 }
 
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::zero_average_after_restart()
+{
+  sum_velocity_dt_with_ghost_cells = 0.0;
+  sum_rns_dt_with_ghost_cells      = 0.0;
+  sum_rss_dt_with_ghost_cells      = 0.0;
+
+  sum_velocity_dt               = 0.0;
+  sum_reynolds_normal_stress_dt = 0.0;
+  sum_reynolds_shear_stress_dt  = 0.0;
+
+  has_started_averaging = false;
+}
 
 template class AverageVelocities<2, GlobalVectorType, IndexSet>;
 

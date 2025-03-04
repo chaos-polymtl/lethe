@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -1375,21 +1375,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer,
                            "Calculate average velocities");
-
-      // Calculate average velocities when the time reaches the initial time.
-      // time >= initial time with the epsilon as tolerance.
-      const double dt = simulation_control->get_time_step();
-      if (simulation_control->get_current_time() >
-          (simulation_parameters.post_processing
-             .initial_time_for_average_velocities -
-           1e-6 * dt))
-        {
-          this->average_velocities->calculate_average_velocities(
-            this->local_evaluation_point,
-            simulation_parameters.post_processing,
-            simulation_control->get_current_time(),
-            dt);
-        }
+      this->average_velocities->calculate_average_velocities(
+        this->local_evaluation_point,
+        simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
     }
 
   if (this->simulation_parameters.post_processing.calculate_kinetic_energy)
@@ -1694,10 +1684,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                 }
             }
         }
-    }
-  if (this->simulation_control->is_output_iteration())
-    {
-      this->write_output_results(present_solution);
     }
 }
 
@@ -2178,10 +2164,31 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
+  // Reset the average velocity profile if the initial time to average the
+  // velocities has not been reached. Disabled if the initial condition is an
+  // average velocity profile.
+  if (simulation_parameters.post_processing.calculate_average_velocities &
+      (this->simulation_parameters.initial_condition->type !=
+       Parameters::InitialConditionType::average_velocity_profile))
+    {
+      if ((this->simulation_parameters.post_processing
+             .initial_time_for_average_velocities +
+           1e-6 * simulation_control->get_time_step()) >
+          this->simulation_control->get_current_time())
+        {
+          this->pcout
+            << "Warning: The checkpointed time-averaged velocity has been reinitialized because the initial averaging time has not yet been reached."
+            << std::endl;
+          this->average_velocities->zero_average_after_restart();
+        }
+    }
+
   if (simulation_parameters.post_processing.calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
         Parameters::InitialConditionType::average_velocity_profile)
-    this->average_velocities->sanitize_after_restart();
+    {
+      this->average_velocities->sanitize_after_restart();
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>

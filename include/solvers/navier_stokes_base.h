@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_base_h
@@ -197,6 +197,11 @@ protected:
   {
     postprocess_fd(first_iteration);
     multiphysics->postprocess(first_iteration);
+
+    if (this->simulation_control->is_output_iteration())
+      {
+        this->write_output_results(this->present_solution);
+      }
   };
 
   /**
@@ -238,6 +243,7 @@ protected:
             multiphysics->set_initial_conditions();
             this->postprocess_fd(true);
             multiphysics->postprocess(true);
+            this->write_output_results(this->present_solution);
           }
         ref_iter++;
       }
