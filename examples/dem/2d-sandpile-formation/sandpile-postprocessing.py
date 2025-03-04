@@ -29,7 +29,6 @@ from lethe_pyvista_tools import *
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 2d-sandpile DEM example')
 parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
-parser.add_argument("--prm", type=str, help="prm file", required=True)
 parser.add_argument("--regression", action="store_true", default=False, help="Plot the least squares regression",required=False)
 parser.add_argument("--rollingmethod", type=str, choices=["constant", "viscous", "epsd"], help="Rolling resistance method. Must be one of: constant, viscous, or epsd.", required=True)
 args, leftovers=parser.parse_known_args()
@@ -50,10 +49,10 @@ n_angle_sample = 8
 h = 0.57
 
 # Load lethe data
-pvd_name = 'out.pvd'
-ignore_data = ['type', 'volumetric contribution', 'torque', 'fem_torque',
-               'fem_force']
-particle = lethe_pyvista_tools(folder, args.prm,pvd_name, ignore_data=ignore_data)
+pvd_name = 'sandpile_' + rollingmethod + '.pvd'
+prm_file = 'sandpile-' + rollingmethod + '.prm'
+ignore_data = ['type', 'volumetric contribution', 'torque', 'fem_torque','fem_force']
+particle = lethe_pyvista_tools(folder, prm_file, pvd_name, ignore_data=ignore_data)
 time = particle.time_list
 
 
@@ -110,7 +109,7 @@ if (args.regression):
 
 
 # Write the angle on a file
-with open(folder+"/data/angle_" + rollingmethod + ".txt", "w") as file:
+with open("data/angle_" + rollingmethod + ".txt", "w") as file:
     file.write("Angle\n")
     file.write(f"{np.arctan(p[0])*180/np.pi}\n")
 
@@ -122,7 +121,7 @@ paper_data = pd.read_csv('data/reference/extraction_model_' + rollingmethod + '.
 # Plot the evolution of the height of the pile
 plt.figure()
 plt.plot(time[start:],height, label= "Lethe-DEM " + rollingmethod)
-plt.plot(paper_data['x'],paper_data['Curve1'], '--', label= "Ai2010 " + rollingmethod)
+plt.plot(paper_data['x'],paper_data['Curve1'], '--', label= "Ai et al. (2010) " + rollingmethod)
 plt.legend()
 plt.grid()
 plt.title("Evolution of the height of the pile with model " + rollingmethod, pad=25)
@@ -130,7 +129,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Height of the pile (m)')
 plt.yticks(np.arange(0.1, 0.32, 0.02))
 plt.xticks(np.arange(0, 60, 10))
-plt.savefig(folder + '/data/figure-height-comparison-' + rollingmethod)
+plt.savefig('data/figure-height-comparison-' + rollingmethod)
 plt.show()
 
 

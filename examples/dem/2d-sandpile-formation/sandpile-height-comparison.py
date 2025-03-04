@@ -37,7 +37,7 @@ for i, x in enumerate(rollingmethod):
     if not os.path.exists(sim_file):
         print("Before launching this code, make sure you have \n"    
               "- launched the simulation for rolling resistance models constant, viscous and epsd \n"    
-              "- launched sandpile-postprocessing.py after each simulation and using the right command\n" 
+              "- launched sandpile-postprocessing.py for each rolling resistance model and using the right command\n" 
               "See Lethe-Documentation for more details\n")
         raise FileNotFoundError('Error: The file ' + sim_file + ' does not exist.')
 
@@ -47,7 +47,7 @@ for i, x in enumerate(rollingmethod):
 
     # Plot the heights of the simulation and of the paper
     plt.plot(df_sim['time'], df_sim['height'], label="Lethe-DEM " + x, color=color[i])
-    plt.plot(df_paper['x'], df_paper['Curve1'], '--', label="Ai2010 " + x, color=color[i])
+    plt.plot(df_paper['x'], df_paper['Curve1'], '--', label="Ai et al. (2010) " + x, color=color[i])
 
 
 plt.subplots_adjust(top=0.8, left=0.2, right=0.9)
