@@ -59,7 +59,8 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
 
   // The default MatrixFree solver sets a system_operator. We override the
   // Navier-Stokes operator with the volume-averaged Navier-Stokes operator.
-  this->system_operator = std::make_shared<VANSOperator<dim, double>>();
+  this->system_operator = std::make_shared<VANSOperator<dim, double>>(
+    cfd_dem_simulation_parameters.cfd_dem);
 }
 
 template <int dim>
