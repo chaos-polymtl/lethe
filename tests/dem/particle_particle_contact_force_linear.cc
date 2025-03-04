@@ -6,30 +6,7 @@
  * contact force  is checked.
  */
 
-// Deal.II
-#include <deal.II/base/parameter_handler.h>
-
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/tria.h>
-
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
-
-// Lethe
-#include <core/dem_properties.h>
-
-#include <dem/dem_contact_manager.h>
-#include <dem/particle_particle_contact_force.h>
-
-
-// Tests (with common definitions)
-#include <../tests/tests.h>
-
-using namespace dealii;
+#include <../tests/dem/contact_force.h>
 
 template <int dim, typename PropertiesIndex>
 void
@@ -91,37 +68,35 @@ test()
   Point<3> position2 = {0.40499, 0, 0};
   int      id2       = 1;
 
+  // Set the velocity and angular velocity of the particles
+  Tensor<1, dim> v1{{0.01,0,0}};
+  Tensor<1, dim> omega1{{0,0,0}};
+  Tensor<1, dim> v2{{0,0,0}};
+  Tensor<1, dim> omega2{{0,0,0}};
+
+  // Set the mass and type
+  double mass = 1;
+  int type = 0;
+
+  // Construct particle iterators from particle positions
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim>::active_cell_iterator cell1 =
     GridTools::find_active_cell_around_point(triangulation,
                                              particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[PropertiesIndex::type]    = 0;
-  pit1->get_properties()[PropertiesIndex::dp]      = particle_diameter;
-  pit1->get_properties()[PropertiesIndex::v_x]     = 0.01;
-  pit1->get_properties()[PropertiesIndex::v_y]     = 0;
-  pit1->get_properties()[PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[PropertiesIndex::omega_x] = 0;
-  pit1->get_properties()[PropertiesIndex::omega_y] = 0;
-  pit1->get_properties()[PropertiesIndex::omega_z] = 0;
-  pit1->get_properties()[PropertiesIndex::mass]    = 1;
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
     GridTools::find_active_cell_around_point(triangulation,
                                              particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
-    particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[PropertiesIndex::type]    = 0;
-  pit2->get_properties()[PropertiesIndex::dp]      = particle_diameter;
-  pit2->get_properties()[PropertiesIndex::v_x]     = 0;
-  pit2->get_properties()[PropertiesIndex::v_y]     = 0;
-  pit2->get_properties()[PropertiesIndex::v_z]     = 0;
-  pit2->get_properties()[PropertiesIndex::omega_x] = 0;
-  pit2->get_properties()[PropertiesIndex::omega_y] = 0;
-  pit2->get_properties()[PropertiesIndex::omega_z] = 0;
-  pit2->get_properties()[PropertiesIndex::mass]    = 1;
+    particle_handler.insert_particle(particle2, cell2);  
+
+
+  // Set particle properties
+  set_particle_properties<dim, DEM::DEMProperties::PropertiesIndex>(type, pit1, particle_diameter, v1, omega1, mass);
+  set_particle_properties<dim, DEM::DEMProperties::PropertiesIndex>(type, pit2, particle_diameter, v2, omega2, mass);
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
