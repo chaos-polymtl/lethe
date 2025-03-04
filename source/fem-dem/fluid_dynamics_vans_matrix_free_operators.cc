@@ -28,6 +28,7 @@ VANSOperator<dim, number>::evaluate_void_fraction(
 
   void_fraction.reinit(n_cells, integrator.n_q_points);
   void_fraction_gradient.reinit(n_cells, integrator.n_q_points);
+  grad_div_gamma.reinit(n_cells, integrator.n_q_points);
 
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
@@ -46,6 +47,15 @@ VANSOperator<dim, number>::evaluate_void_fraction(
             evaluate_function_gradient<dim, number>(
               (void_fraction_manager.void_fraction_parameters->void_fraction),
               point_batch);
+
+          // Get the velocity magnitude to calculate the grad_div constant
+          VectorizedArray<number> u_mag_squared = 0;
+          for (unsigned int k = 0; k < dim; ++k)
+            u_mag_squared +=
+              Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+          VectorizedArray<number> u = std::sqrt(u_mag_squared);
+          grad_div_gamma(cell, q) =
+            this->kinematic_viscosity + cfd_dem_parameters.cstar * u;
         }
     }
 
@@ -182,6 +192,21 @@ VANSOperator<dim, number>::do_cell_integral_local(
         }
       // (ɛ∇δp)τ·∇q
       gradient_result[dim] += tau * vf_value * gradient[dim];
+
+      // Grad-div stabilization Jacobian
+      // (∇·v,γ(ɛ∇·δu+δu·∇ɛ))
+      if (cfd_dem_parameters.grad_div == true)
+        {
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  gradient_result[i][i] +=
+                    grad_div_gamma(cell, q) *
+                    (vf_value * gradient[k][k] + value[k] * vf_gradient[k]);
+                }
+            }
+        }
 
       // SUPG Jacobian
       for (unsigned int i = 0; i < dim; ++i)
@@ -396,6 +421,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // +(q,∇ɛ·u)
               value_result[dim] += value[i] * vf_gradient[i];
 
+
+
               for (unsigned int k = 0; k < dim; ++k)
                 {
                   // ν(v,∇u∇ɛ)
@@ -429,6 +456,21 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // +ɛ(∇p)τ∇·q
           gradient_result[dim] += tau * vf_value * gradient[dim];
 
+          // Grad-div stabilization
+          // (∇·v,γ(ɛ∇·u+u·∇ɛ))
+          if (cfd_dem_parameters.grad_div == true)
+            {
+              for (unsigned int i = 0; i < dim; ++i)
+                {
+                  for (unsigned int k = 0; k < dim; ++k)
+                    {
+                      gradient_result[i][i] +=
+                        grad_div_gamma(cell, q) *
+                        (vf_value * gradient[k][k] + value[k] * vf_gradient[k]);
+                    }
+                }
+            }
+
           // SUPG term
           for (unsigned int i = 0; i < dim; ++i)
             {
@@ -457,6 +499,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
                        previous_time_derivatives[i]);
                 }
             }
+
 
           if (this->stabilization ==
               Parameters::Stabilization::NavierStokesStabilization::gls)
