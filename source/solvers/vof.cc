@@ -1157,6 +1157,15 @@ VolumeOfFluid<dim>::modify_solution()
        0))
     reinitialize_interface_with_algebraic_method();
 
+  // Apply geometric interface reinitialization
+  if (simulation_parameters.multiphysics.vof_parameters
+        .geometric_interface_reinitialization.enable &&
+      (simulation_control->get_step_number() %
+         simulation_parameters.multiphysics.vof_parameters
+           .geometric_interface_reinitialization.reinitialization_frequency ==
+       0))
+    reinitialize_interface_with_geometric_method();
+
   // Apply filter to phase fraction values
   apply_phase_filter();
 
@@ -2432,6 +2441,11 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
   this->nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
 }
+
+template <int dim>
+void
+VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
+{}
 
 template class VolumeOfFluid<2>;
 template class VolumeOfFluid<3>;

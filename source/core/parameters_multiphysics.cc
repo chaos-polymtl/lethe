@@ -125,6 +125,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
     algebraic_interface_reinitialization.declare_parameters(prm);
+    geometric_interface_reinitialization.declare_parameters(prm);
 
     prm.declare_entry("viscous dissipative fluid",
                       "fluid 1",
@@ -158,6 +159,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     surface_tension_force.parse_parameters(prm);
     phase_filter.parse_parameters(prm);
     algebraic_interface_reinitialization.parse_parameters(prm);
+    geometric_interface_reinitialization.parse_parameters(prm);
 
     // Viscous dissipative fluid
     const std::string op = prm.get("viscous dissipative fluid");
@@ -470,7 +472,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "frequency",
       "1",
       Patterns::Integer(),
-      "Reinitialization frequency (number of pseudo-time-steps) at which the "
+      "Reinitialization frequency (number of time-steps) at which the "
       "interface algebraic reinitialization process will be applied to the VOF "
       "phase fraction field.");
     prm.declare_entry(
@@ -537,6 +539,76 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
       throw(std::invalid_argument("Invalid verbosity level\n "
                                   "Options are: \n"
                                   " <quiet|verbose|extra verbose>"));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
+  dealii::ParameterHandler &prm)
+{
+  prm.enter_subsection("geometric interface reinitialization");
+  {
+    prm.declare_entry(
+      "enable",
+      "false",
+      Patterns::Bool(),
+      "Enables the interface reinitialization with the geometric method "
+      "<true|false>");
+    prm.declare_entry(
+      "output signed distance",
+      "false",
+      Patterns::Bool(),
+      "Enables pvtu format outputs of the geometric interface reinitialization "
+      "steps <true|false>");
+    prm.declare_entry(
+      "frequency",
+      "1",
+      Patterns::Integer(),
+      "Reinitialization frequency (number of time-steps) at which the "
+      "interface geometric reinitialization process will be applied to the VOF "
+      "phase fraction field.");
+    prm.declare_entry("max reinitialization distance",
+                      "1.",
+                      Patterns::Double(),
+                      "Maximum reinitialization distance value");
+    prm.declare_entry("tanh thickness",
+                      "1.",
+                      Patterns::Double(),
+                      "Interface thickness for the tanh transformation");
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose"),
+      "States whether the output from the geometric interface reinitialization "
+      "should be printed."
+      "Choices are <quiet|verbose>.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters(
+  dealii::ParameterHandler &prm)
+{
+  prm.enter_subsection("geometric interface reinitialization");
+  {
+    this->enable                     = prm.get_bool("enable");
+    this->output_signed_distance     = prm.get_bool("output signed distance");
+    this->reinitialization_frequency = prm.get_integer("frequency");
+    this->max_reinitialization_distance =
+      prm.get_double("max reinitialization distance");
+    this->tanh_thickness = prm.get_double("tanh thickness");
+
+    const std::string op2 = prm.get("verbosity");
+    if (op2 == "quiet")
+      this->verbosity = Parameters::Verbosity::quiet;
+    else if (op2 == "verbose")
+      this->verbosity = Parameters::Verbosity::verbose;
+    else
+      throw(std::invalid_argument("Invalid verbosity level\n "
+                                  "Options are: \n"
+                                  " <quiet|verbose>"));
   }
   prm.leave_subsection();
 }

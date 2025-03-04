@@ -16,7 +16,7 @@
 using namespace dealii;
 
 template <int dim, typename VectorType>
-class SignedDistanceSolver : PhysicsSubequationsSolverBase
+class SignedDistanceSolver
 {
 public:
   /**
