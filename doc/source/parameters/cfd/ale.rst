@@ -24,6 +24,6 @@ The ALE velocity field is specified through the ``velocity`` subsection.
 
 * The ``Function expression`` parameter sets the expression for the ALE velocity field in regards to :math:`u` and :math:`v`  for a 2D simulation and to :math:`u`, :math:`v`, :math:`w` for a 3D simulation.
 
-.. warning:: The current implementation of the ALE module does not support time-dependent or non-divergence velocity fields.
+.. warning:: The current implementation of the ALE module does not support time-dependent or divergence-free velocity fields.
 
 
