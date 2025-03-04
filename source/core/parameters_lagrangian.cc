@@ -604,8 +604,9 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+    template <int dim>
     void
-    ModelParameters::declare_parameters(ParameterHandler &prm)
+    ModelParameters<dim>::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("model parameters");
       {
@@ -643,6 +644,13 @@ namespace Parameters
                             Patterns::Integer(),
                             "Checking frequency for dynamic load-balancing");
 
+          auto cell_weight_function_parsed =
+            std::make_shared<Functions::ParsedFunction<dim>>(1);
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+          cell_weight_function_parsed->declare_parameters(prm, 1, "1000");
+#else
+          cell_weight_function_parsed->declare_parameters(prm, 1);
+#endif
           prm.declare_entry(
             "particle weight",
             "2000",
@@ -770,8 +778,9 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+    template <int dim>
     void
-    ModelParameters::parse_parameters(ParameterHandler &prm)
+    ModelParameters<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("model parameters");
       {
@@ -844,7 +853,11 @@ namespace Parameters
             {
               throw(std::runtime_error("Invalid load-balance method "));
             }
+          auto cell_weight_function_parsed =
+            std::make_shared<Functions::ParsedFunction<dim>>(1);
+          cell_weight_function_parsed->parse_parameters(prm);
 
+          cell_weight_function         = cell_weight_function_parsed;
           load_balance_particle_weight = prm.get_integer("particle weight");
         }
         prm.leave_subsection();
@@ -1529,6 +1542,8 @@ namespace Parameters
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
+    template class ModelParameters<2>;
+    template class ModelParameters<3>;
     template class FloatingGrid<2>;
     template class FloatingGrid<3>;
     template class GridMotion<2>;
