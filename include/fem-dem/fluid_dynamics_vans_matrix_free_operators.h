@@ -77,6 +77,20 @@ protected:
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const override;
 
+  /**
+   * @brief Calculate gamma grad-div stabilization constant for the VANS equations
+   *
+   * @param[in] velocity magnitude of the velocity at the quadrature point
+   * @param[in,out] kinematic_viscosity
+   * @param[in] c_star scaling constante with units of length
+   */
+  inline double
+  calculate_gamma(const double velocity,
+                  const double kinematic_viscosity,
+                  const double c_star)
+  {
+    return kinematic_viscosity + c_star * velocity;
+  }
 
 
   /// Table with correct alignment for vectorization to store the values of the
@@ -86,6 +100,10 @@ protected:
   /// Table with correct alignment for vectorization to store the values of the
   /// void fraction gradient
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// void fraction
+  Table<2, VectorizedArray<number>> grad_div_gamma;
 
   ///  Internal copy of the CFD-DEM parameters. This is used for grad-div
   ///  stabilization, but also to switch between form A and B of the VANS
