@@ -70,8 +70,13 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
           if (cell->is_locally_owned())
             {
               // Apply the cell weight
+#if DEAL_II_VERSION_GTE(9, 7, 0)
               Point<dim> cell_barycenter =  cell->center();
               load_weight += static_cast<int>( cell_weight_function->value(cell_barycenter));
+#else
+              load_weight += cell_weight;
+#endif
+
 
               // Get the mobility status of the cell and the number of particles
               const unsigned int cell_mobility_status =
