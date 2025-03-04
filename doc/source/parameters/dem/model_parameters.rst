@@ -102,7 +102,7 @@ All contact force models are described in the :doc:`../../theory/multiphase/cfd_
 
 * ``particle particle contact force method`` controls the particle-particle contact force model. The following models are available in Lethe: ``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, ``hertz_JKR``, ``DMT`` and ``linear``.
   
-* ``particle wall contact force method`` controls the particle-wall contact force model used. The following models are available: ``linear``, ``non-linear``, ``JKR`` and ``DMT``.
+* ``particle wall contact force method`` controls the particle-wall contact force model used. The following models are available: ``linear``, ``nonlinear``, ``JKR`` and ``DMT``.
 
 * ``dmt cut-off threshold`` controls the distance at witch the non contact forces are being negleted for the DMT cohesive force model.
 
