@@ -246,8 +246,9 @@ std::function<void()>
 DEMSolver<dim, PropertiesIndex>::set_contact_search_iteration_function()
 {
   using namespace Parameters::Lagrangian;
- typename ModelParameters<dim>::ContactDetectionMethod contact_detection_method =
-    parameters.model_parameters.contact_detection_method;
+  typename ModelParameters<dim>::ContactDetectionMethod
+    contact_detection_method =
+      parameters.model_parameters.contact_detection_method;
 
   switch (contact_detection_method)
     {

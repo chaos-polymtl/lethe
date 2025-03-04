@@ -124,7 +124,8 @@ public:
           return [&] { check_load_balance_frequent(); };
         case ModelParameters<dim>::LoadBalanceMethod::dynamic:
           return [&] { check_load_balance_dynamic(); };
-        case ModelParameters<dim>::LoadBalanceMethod::dynamic_with_sparse_contacts:
+        case ModelParameters<
+          dim>::LoadBalanceMethod::dynamic_with_sparse_contacts:
           return [&] { check_load_balance_with_sparse_contacts(); };
         default: // Default is no load balance (none)
           return [&]() { return; };
