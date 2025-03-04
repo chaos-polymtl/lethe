@@ -27,7 +27,7 @@ All files mentioned below are located in the example's folder (``examples/dem/2d
 - Geometry file: ``sandpile.geo``
 - Mesh file: ``sandpile.msh``
 - Parameter files: ``sandpile-epsd.prm``, ``sandpile-constant.prm``, ``sandpile-viscous.prm``
-- Post-processing Python script: ``sandpile-postprocessing.py``
+- Post-processing Python scripts: ``sandpile-postprocessing.py``, ``sandpile-height-comparison.py``
 
 
 -----------------------
