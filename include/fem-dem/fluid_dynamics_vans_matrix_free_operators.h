@@ -27,7 +27,10 @@ public:
 
 
   // TODO - Document
-  VANSOperator();
+  VANSOperator(const Parameters::CFDDEM &cfd_dem_parameters)
+    : NavierStokesOperatorBase<dim, number>()
+    , cfd_dem_parameters(cfd_dem_parameters)
+  {}
 
   // TODO - Document
   void
@@ -75,19 +78,19 @@ protected:
     const std::pair<unsigned int, unsigned int> &range) const override;
 
 
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
-   * of the void fraction
-   *
-   */
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// void fraction
   Table<2, VectorizedArray<number>> void_fraction;
 
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
-   * of the void fraction gradient
-   *
-   */
+  /// Table with correct alignment for vectorization to store the values of the
+  /// void fraction gradient
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
+
+  ///  Internal copy of the CFD-DEM parameters. This is used for grad-div
+  ///  stabilization, but also to switch between form A and B of the VANS
+  ///  equations.
+  const Parameters::CFDDEM cfd_dem_parameters;
 };
 
 #endif
