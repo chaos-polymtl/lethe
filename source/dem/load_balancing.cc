@@ -71,8 +71,7 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
             {
               // Apply the cell weight
               Point<dim> cell_barycenter =  cell->center();
-              load_weight += static_cast<int>( cell_weight_function->value(point_nd_to_3d(cell_barycenter)));
-                //cell_weight;
+              load_weight += static_cast<int>( cell_weight_function->value(cell_barycenter));
 
               // Get the mobility status of the cell and the number of particles
               const unsigned int cell_mobility_status =

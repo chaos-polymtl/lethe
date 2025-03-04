@@ -18,7 +18,7 @@ set_particle_wall_contact_force_model(
   std::vector<types::boundary_id> boundary_index =
     triangulation.get_boundary_ids();
   if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
+      Parameters::Lagrangian::ModelParameters<dim>::ParticleWallContactForceModel::
         linear)
     {
       particle_wall_contact_force_object =
@@ -26,7 +26,7 @@ set_particle_wall_contact_force_model(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
+           Parameters::Lagrangian::ModelParameters<dim>::
              ParticleWallContactForceModel::nonlinear)
     {
       particle_wall_contact_force_object =
@@ -34,7 +34,7 @@ set_particle_wall_contact_force_model(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
+           Parameters::Lagrangian::ModelParameters<dim>::
              ParticleWallContactForceModel::JKR)
     {
       particle_wall_contact_force_object =
@@ -42,7 +42,7 @@ set_particle_wall_contact_force_model(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
+           Parameters::Lagrangian::ModelParameters<dim>::
              ParticleWallContactForceModel::DMT)
     {
       particle_wall_contact_force_object =

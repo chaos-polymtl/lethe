@@ -246,14 +246,14 @@ std::function<void()>
 DEMSolver<dim, PropertiesIndex>::set_contact_search_iteration_function()
 {
   using namespace Parameters::Lagrangian;
- ModelParameters::ContactDetectionMethod contact_detection_method =
+ typename ModelParameters<dim>::ContactDetectionMethod contact_detection_method =
     parameters.model_parameters.contact_detection_method;
 
   switch (contact_detection_method)
     {
-      case ModelParameters::ContactDetectionMethod::constant:
+      case ModelParameters<dim>::ContactDetectionMethod::constant:
         return [&] { check_contact_search_iteration_constant(); };
-      case ModelParameters::ContactDetectionMethod::dynamic:
+      case ModelParameters<dim>::ContactDetectionMethod::dynamic:
         return [&] { check_contact_search_iteration_dynamic(); };
       default:
         throw(std::runtime_error("Invalid contact detection method."));
@@ -303,15 +303,15 @@ std::shared_ptr<Integrator<dim, PropertiesIndex>>
 DEMSolver<dim, PropertiesIndex>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
-  Parameters::Lagrangian::ModelParameters::IntegrationMethod integration_method =
+  typename ModelParameters<dim>::IntegrationMethod integration_method =
     parameters.model_parameters.integration_method;
 
   switch (integration_method)
     {
-      case ModelParameters::IntegrationMethod::velocity_verlet:
+      case ModelParameters<dim>::IntegrationMethod::velocity_verlet:
         return std::make_shared<
           VelocityVerletIntegrator<dim, PropertiesIndex>>();
-      case ModelParameters::IntegrationMethod::explicit_euler:
+      case ModelParameters<dim>::IntegrationMethod::explicit_euler:
         return std::make_shared<
           ExplicitEulerIntegrator<dim, PropertiesIndex>>();
       default:
