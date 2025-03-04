@@ -24,7 +24,7 @@ public:
   Parameters::Lagrangian::LagrangianPhysicalProperties
                                                  lagrangian_physical_properties;
   Parameters::Lagrangian::InsertionInfo          insertion_info;
-  Parameters::Lagrangian::ModelParameters<dim>        model_parameters;
+  Parameters::Lagrangian::ModelParameters<dim>   model_parameters;
   Parameters::Lagrangian::FloatingWalls<dim>     floating_walls;
   Parameters::Lagrangian::BCDEM                  boundary_conditions;
   Parameters::Lagrangian::FloatingGrid<dim>      floating_grid;
