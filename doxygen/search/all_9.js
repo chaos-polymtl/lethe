@@ -54,11 +54,12 @@ var searchData=
   ['hess_5fphi_5fpotential_51',['hess_phi_potential',['../classCahnHilliardScratchData.html#aadc251e41bfc5ed35eba9e076fdd48d5',1,'CahnHilliardScratchData']]],
   ['hess_5fphi_5ft_52',['hess_phi_T',['../classHeatTransferScratchData.html#ae13fc302aa6530c26d795df0dba067a3',1,'HeatTransferScratchData']]],
   ['hess_5fphi_5fu_53',['hess_phi_u',['../classNavierStokesScratchData.html#aa34d4aaa0898052080018672890aa933',1,'NavierStokesScratchData']]],
-  ['hill_5fgeometry_54',['hill_geometry',['../classPeriodicHillsGrid.html#ac2ebbe3b29d8072ec2c43f0b95cfe4b6',1,'PeriodicHillsGrid']]],
-  ['hole_5fradius_55',['hole_radius',['../classDeathStar.html#a871728bde6ff92de7ae7240cb11ea772',1,'DeathStar']]],
-  ['hp_56',['hp',['../structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedad2ccda10db94c2b5d51beed10484c025',1,'Parameters::LinearSolver']]],
-  ['ht_57',['ht',['../classParsedFunctionCustom.html#a37fc5500a2a1238585ce4dd62c86b163',1,'ParsedFunctionCustom']]],
-  ['htboundaryconditions_58',['HTBoundaryConditions',['../classBoundaryConditions_1_1HTBoundaryConditions.html',1,'BoundaryConditions']]],
-  ['hyper_5frectangle_59',['hyper_rectangle',['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda37c0074da66fc8173cb16591045af43a',1,'Shape']]],
-  ['hyperrectangle_60',['hyperrectangle',['../classHyperRectangle.html#a6fccd48e250c2d6c850e8a173ca9a2dc',1,'HyperRectangle::HyperRectangle()'],['../classHyperRectangle.html',1,'HyperRectangle&lt; dim &gt;']]]
+  ['hessian_54',['hessian',['../classInterfaceTools_1_1CellWiseFunction.html#a80cbb30376899c78d07a5795b1b5f464',1,'InterfaceTools::CellWiseFunction']]],
+  ['hill_5fgeometry_55',['hill_geometry',['../classPeriodicHillsGrid.html#ac2ebbe3b29d8072ec2c43f0b95cfe4b6',1,'PeriodicHillsGrid']]],
+  ['hole_5fradius_56',['hole_radius',['../classDeathStar.html#a871728bde6ff92de7ae7240cb11ea772',1,'DeathStar']]],
+  ['hp_57',['hp',['../structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedad2ccda10db94c2b5d51beed10484c025',1,'Parameters::LinearSolver']]],
+  ['ht_58',['ht',['../classParsedFunctionCustom.html#a37fc5500a2a1238585ce4dd62c86b163',1,'ParsedFunctionCustom']]],
+  ['htboundaryconditions_59',['HTBoundaryConditions',['../classBoundaryConditions_1_1HTBoundaryConditions.html',1,'BoundaryConditions']]],
+  ['hyper_5frectangle_60',['hyper_rectangle',['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda37c0074da66fc8173cb16591045af43a',1,'Shape']]],
+  ['hyperrectangle_61',['hyperrectangle',['../classHyperRectangle.html#a6fccd48e250c2d6c850e8a173ca9a2dc',1,'HyperRectangle::HyperRectangle()'],['../classHyperRectangle.html',1,'HyperRectangle&lt; dim &gt;']]]
 ];

@@ -21,6 +21,7 @@ var searchData=
   ['heattransferassemblerviscousdissipationvof_18',['HeatTransferAssemblerViscousDissipationVOF',['../classHeatTransferAssemblerViscousDissipationVOF.html#a94f484ab778fae038d70af4639243731',1,'HeatTransferAssemblerViscousDissipationVOF']]],
   ['heattransferassemblervofevaporation_19',['HeatTransferAssemblerVOFEvaporation',['../classHeatTransferAssemblerVOFEvaporation.html#ae33de94f95814799e6f1becc9597e533',1,'HeatTransferAssemblerVOFEvaporation']]],
   ['heattransferscratchdata_20',['heattransferscratchdata',['../classHeatTransferScratchData.html#a53545fd09fb56659eacbe9f4fc617c8d',1,'HeatTransferScratchData::HeatTransferScratchData(const PhysicalPropertiesManager properties_manager, const FiniteElement&lt; dim &gt; &amp;fe_ht, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const FiniteElement&lt; dim &gt; &amp;fe_fd, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature, const double delta_T_ref)'],['../classHeatTransferScratchData.html#aaa4b7b3a2d5fd1212e99d3080365841e',1,'HeatTransferScratchData::HeatTransferScratchData(const HeatTransferScratchData&lt; dim &gt; &amp;sd)']]],
-  ['hill_5fgeometry_21',['hill_geometry',['../classPeriodicHillsGrid.html#ac2ebbe3b29d8072ec2c43f0b95cfe4b6',1,'PeriodicHillsGrid']]],
-  ['hyperrectangle_22',['HyperRectangle',['../classHyperRectangle.html#a6fccd48e250c2d6c850e8a173ca9a2dc',1,'HyperRectangle']]]
+  ['hessian_21',['hessian',['../classInterfaceTools_1_1CellWiseFunction.html#a80cbb30376899c78d07a5795b1b5f464',1,'InterfaceTools::CellWiseFunction']]],
+  ['hill_5fgeometry_22',['hill_geometry',['../classPeriodicHillsGrid.html#ac2ebbe3b29d8072ec2c43f0b95cfe4b6',1,'PeriodicHillsGrid']]],
+  ['hyperrectangle_23',['HyperRectangle',['../classHyperRectangle.html#a6fccd48e250c2d6c850e8a173ca9a2dc',1,'HyperRectangle']]]
 ];

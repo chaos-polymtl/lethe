@@ -1,9 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,77,83,102"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,121,83,146"/>
 <area shape="rect" id="Node000001" href="$classCahnHilliardFunctionDefined.html" title="Class that implements a boundary conditions for the Cahn&#45;Hilliard equation where the phase and chemic..." alt="" coords="137,5,343,45"/>
-<area shape="poly" id="edge48_Node000000_Node000001" title=" " alt="" coords="89,69,130,55,167,43,169,48,132,60,91,74"/>
-<area shape="rect" id="Node000002" href="$classNavierStokesFunctionDefined.html" title="This class implements a boundary conditions for the Navier&#45;Stokes equation where the velocity compone..." alt="" coords="133,69,347,109"/>
-<area shape="poly" id="edge49_Node000000_Node000002" title=" " alt="" coords="96,87,133,87,133,92,96,92"/>
-<area shape="rect" id="Node000003" href="$classNavierStokesPressureFunctionDefined.html" title="This class implements a pressure boundary condition for the Navier&#45;Stokes equations." alt="" coords="131,133,349,173"/>
-<area shape="poly" id="edge50_Node000000_Node000003" title=" " alt="" coords="91,104,132,119,169,131,167,136,130,124,89,109"/>
+<area shape="poly" id="edge48_Node000000_Node000001" title=" " alt="" coords="64,108,93,80,129,55,156,43,158,48,132,60,97,85,68,112"/>
+<area shape="rect" id="Node000002" href="$classInterfaceTools_1_1CellWiseFunction.html" title="Scalar function defined by the DOF values of a single cell. Based on the CellWiseFunction and RefSpac..." alt="" coords="140,70,340,125"/>
+<area shape="poly" id="edge49_Node000000_Node000002" title=" " alt="" coords="96,121,139,113,140,118,97,126"/>
+<area shape="rect" id="Node000003" href="$classNavierStokesFunctionDefined.html" title="This class implements a boundary conditions for the Navier&#45;Stokes equation where the velocity compone..." alt="" coords="133,149,347,189"/>
+<area shape="poly" id="edge50_Node000000_Node000003" title=" " alt="" coords="97,140,134,147,133,152,96,145"/>
+<area shape="rect" id="Node000004" href="$classNavierStokesPressureFunctionDefined.html" title="This class implements a pressure boundary condition for the Navier&#45;Stokes equations." alt="" coords="131,213,349,253"/>
+<area shape="poly" id="edge51_Node000000_Node000004" title=" " alt="" coords="70,154,98,177,132,199,159,211,157,216,129,204,95,182,66,158"/>
 </map>
