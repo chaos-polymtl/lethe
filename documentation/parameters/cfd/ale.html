@@ -436,11 +436,11 @@
 <h1>Arbitrary Lagrangian-Eulerian<a class="headerlink" href="#arbitrary-lagrangian-eulerian" title="Link to this heading">#</a></h1>
 <p>Lethe contains a small Arbitrary Lagrangian-Eulerian (ALE) module which enables the user to simulate domains which are moving at time and space-dependent velocities. All physics support the ALE module.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection ALE
- set enable                = false
+ set enable = false
 
- subsection uvw
+ subsection velocity
    set Function expression = 0; 0 # In 2D : u;v
-     or
+   # or
    set Function expression = 0; 0; 0 #In 3D u;v;w
  end
 
@@ -448,12 +448,15 @@ end
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span></code> parameter is set to true if the ALE velocity should be substracted from the fluid velocity.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> if the ALE velocity should be subtracted from the fluid velocity.</p></li>
+</ul>
+<p>The ALE velocity field is specified through the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> subsection.</p>
+<ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> parameter sets the expression for the ALE velocity field in regards to <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span>  for a 2D simulation and to <span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(v\)</span>, <span class="math notranslate nohighlight">\(w\)</span> for a 3D simulation.</p></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The current implementation of the ALE module does not support time-dependent or non-divergence velocity fields</p>
+<p>The current implementation of the ALE module does not support time-dependent or non divergence-free velocity fields.</p>
 </div>
 </section>
 

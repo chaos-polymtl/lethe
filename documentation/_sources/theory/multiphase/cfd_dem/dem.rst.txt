@@ -230,7 +230,7 @@ Where:
 * :math:`\mathbf{\Delta M}_{r,t}^\mathrm{k}` incremental elastic rolling resistance torque;
 * :math:`M\mathrm{^{m}_{r}}` limiting spring torque which is achieved at a full angular mobilisation;
 * :math:`I_\mathrm{e}` effective inertia;
-* :math:`C_\mathrm{r}^\mathrm{crit}}` rolling critical viscous damping constant;
+* :math:`C_\mathrm{r}^{\mathrm{crit}}` rolling critical viscous damping constant;
 * :math:`C_\mathrm{r}` rolling viscous damping constant;
 * :math:`f` full mobilisation model parameter;
 

@@ -467,6 +467,9 @@
   # Maximum number of elements
   set max number elements      = 100000000
 
+  # Enabling the mesh adaptation controller to obtain a constant number of elements
+  mesh refinement controller   = false
+
   # Number of initial (pre-solve) refinement steps
   set initial refinement steps = 0
 
@@ -556,7 +559,7 @@ end
 </dl>
 </li>
 <li><p>The maximum number of elements in the entire domain can be controlled with the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">number</span> <span class="pre">elements</span></code> parameter.</p></li>
-<li><p>The boolean parameter <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">mesh</span> <span class="pre">refinement</span> <span class="pre">controller</span></code> activates a controller that overrides the value of the of <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> parameter. If activated, the controller will try to maintain the total number of elements in the domain equal to the value of <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">number</span> <span class="pre">elements</span></code> parameter. The control is done using a PID controller.</p></li>
+<li><p>The boolean parameter <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">refinement</span> <span class="pre">controller</span></code> activates a controller that overrides the value of the <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> parameter. If activated, the controller will try to maintain the total number of elements in the domain equal to the value of <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">number</span> <span class="pre">elements</span></code> parameter. The control is done using a PID controller.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
