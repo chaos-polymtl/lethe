@@ -1,0 +1,19 @@
+<map id="dem_diagram" name="dem_diagram">
+<area shape="rect" id="node1" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/dem.html" title="Discrete Element \nMethod (DEM)" alt="" coords="4,408,164,456"/>
+<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/bouncing-particle/bouncing-particle.html" title="Bouncing Particle" alt="" coords="375,4,532,40"/>
+<area shape="rect" id="node3" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/oblique-wall-impact/oblique-wall-impact.html" title="Oblique Wall Impact" alt="" coords="365,59,543,95"/>
+<area shape="rect" id="node4" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/packing-in-circle/packing-in-circle.html" title="Packing in Circle" alt="" coords="378,113,529,150"/>
+<area shape="rect" id="node5" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/packing-in-ball/packing-in-ball.html" title="Packing in Ball" alt="" coords="386,168,521,204"/>
+<area shape="rect" id="node6" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html" title="Small Scale Rotating Drum" alt="" coords="337,223,570,259"/>
+<area shape="rect" id="node7" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing.html" title="Small Scale Rotating Drum Postprocessing" alt="" coords="273,277,634,314"/>
+<area shape="rect" id="node8" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rotating-drum/rotating-drum.html" title="Rotating Drum" alt="" coords="387,332,520,368"/>
+<area shape="rect" id="node9" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rotation-of-box/rotation-of-box.html" title="Rotation of Box" alt="" coords="383,386,524,423"/>
+<area shape="rect" id="node10" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile-formation/sandpile-formation.html" title="Sandpile" alt="" coords="411,441,497,478"/>
+<area shape="rect" id="node11" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/silo/silo.html" title="Silo" alt="" coords="426,496,481,532"/>
+<area shape="rect" id="node12" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rectangular-hopper/rectangular-hopper.html" title="Rectangular Hopper" alt="" coords="365,550,542,587"/>
+<area shape="rect" id="node13" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granular-dam-break/granular-dam-break.html" title="Granular Dam&#45;Break" alt="" coords="362,605,545,641"/>
+<area shape="rect" id="node14" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/plate-discharge/plate-discharge.html" title="Plate Discharge" alt="" coords="382,660,526,696"/>
+<area shape="rect" id="node15" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/bunny-drill/bunny-drill.html" title="Bunny Drill" alt="" coords="402,714,505,751"/>
+<area shape="rect" id="node16" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granular-mixer/granular-mixer.html" title="Granular Mixer" alt="" coords="386,769,522,805"/>
+<area shape="rect" id="node17" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granuheap/granuheap.html" title="Granuheap" alt="" coords="401,824,507,860"/>
+</map>

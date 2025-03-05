@@ -17,6 +17,7 @@ We organize the DEM examples from the simplest to the most complicated example:
     small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing
     rotating-drum/rotating-drum
     rotation-of-box/rotation-of-box
+    sandpile-formation/sandpile-formation
     silo/silo
     rectangular-hopper/rectangular-hopper
     granular-dam-break/granular-dam-break
@@ -52,19 +53,21 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_8 [label="Rotation of Box", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rotation-of-box/rotation-of-box.html"];
 
-      dem_9 [label="Silo", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/silo/silo.html"]; 
+      dem_9 [label="Sandpile", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile-formation/sandpile-formation.html"]; 
 
-      dem_10 [label="Rectangular Hopper", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rectangular-hopper/rectangular-hopper.html"];
+      dem_10 [label="Silo", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/silo/silo.html"]; 
 
-      dem_11 [label="Granular Dam-Break", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granular-dam-break/granular-dam-break.html"];
+      dem_11 [label="Rectangular Hopper", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rectangular-hopper/rectangular-hopper.html"];
 
-      dem_12 [label="Plate Discharge", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/plate-discharge/plate-discharge.html"];
+      dem_12 [label="Granular Dam-Break", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granular-dam-break/granular-dam-break.html"];
 
-      dem_13 [label="Bunny Drill", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/bunny-drill/bunny-drill.html"];
+      dem_13 [label="Plate Discharge", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/plate-discharge/plate-discharge.html"];
 
-      dem_14 [label="Granular Mixer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granular-mixer/granular-mixer.html"];
+      dem_14 [label="Bunny Drill", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/bunny-drill/bunny-drill.html"];
 
-      dem_15 [label="Granuheap", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granuheap/granuheap.html"];
+      dem_15 [label="Granular Mixer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granular-mixer/granular-mixer.html"];
+
+      dem_16 [label="Granuheap", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granuheap/granuheap.html"];
 
       dem -> dem_1:w;
       dem -> dem_2:w;
@@ -81,4 +84,5 @@ We organize the DEM examples from the simplest to the most complicated example:
       dem -> dem_13:w;
       dem -> dem_14:w;
       dem -> dem_15:w;
+      dem -> dem_16:w;     
     }
