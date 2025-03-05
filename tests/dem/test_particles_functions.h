@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 
-#ifndef tests_particle_particle_contact_force_h
-#define tests_particle_particle_contact_force_h
+#ifndef test_particles_functions_h
+#define test_particles_functions_h
 
 
 // Deal.II
@@ -41,10 +41,11 @@
  */
 template <int dim>
 Particles::ParticleIterator<dim>
-construct_particle_iterator(Particles::ParticleHandler<dim> &particle_handler,
-                            parallel::distributed::Triangulation<dim> &triangulation,
-                            Point<3> &position,
-                            int id)
+construct_particle_iterator(
+  Particles::ParticleHandler<dim>           &particle_handler,
+  parallel::distributed::Triangulation<dim> &triangulation,
+  Point<3>                                  &position,
+  int                                        id)
 {
   typename Triangulation<dim>::active_cell_iterator cell =
     GridTools::find_active_cell_around_point(triangulation, position);
@@ -66,25 +67,30 @@ construct_particle_iterator(Particles::ParticleHandler<dim> &particle_handler,
  * @param omega Particle angular velocity.
  */
 template <int dim, typename PropertiesIndex>
-void 
+void
 set_particle_properties(Particles::ParticleIterator<dim> &pit,
-                        int type,
-                        double particle_diameter,
-                        double mass,
-                        Tensor<1, dim> &v,
-                        Tensor<1, dim> &omega)
+                        int                               type,
+                        double                            particle_diameter,
+                        double                            mass,
+                        Tensor<1, dim>                   &v,
+                        Tensor<1, dim>                   &omega)
 {
   pit->get_properties()[PropertiesIndex::type]    = type;
   pit->get_properties()[PropertiesIndex::dp]      = particle_diameter;
   pit->get_properties()[PropertiesIndex::mass]    = mass;
   pit->get_properties()[PropertiesIndex::v_x]     = v[0];
   pit->get_properties()[PropertiesIndex::omega_x] = omega[0];
-  if (dim>1) {pit->get_properties()[PropertiesIndex::v_y]     = v[1];
-              pit->get_properties()[PropertiesIndex::omega_y] = omega[1];}
-  if (dim>2) {pit->get_properties()[PropertiesIndex::v_z]     = v[2];
-              pit->get_properties()[PropertiesIndex::omega_z] = omega[2];}
-
+  if (dim > 1)
+    {
+      pit->get_properties()[PropertiesIndex::v_y]     = v[1];
+      pit->get_properties()[PropertiesIndex::omega_y] = omega[1];
+    }
+  if (dim > 2)
+    {
+      pit->get_properties()[PropertiesIndex::v_z]     = v[2];
+      pit->get_properties()[PropertiesIndex::omega_z] = omega[2];
+    }
 }
 
 
-#endif //tests_particle_particle_contact_force_h
+#endif // test_particles_functions_h

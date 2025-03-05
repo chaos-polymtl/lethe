@@ -7,7 +7,7 @@
  */
 
 
-#include <../tests/dem/tests_particle_particle_contact_force.h>
+#include <../tests/dem/test_particles_functions.h>
 
 
 template <int dim, typename PropertiesIndex>
@@ -23,29 +23,29 @@ test()
                             true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
-  MappingQ<dim>            mapping(1);
+  MappingQ<dim> mapping(1);
 
   // Defining general simulation parameters
-  DEMSolverParameters<dim> dem_parameters;
-  Parameters::Lagrangian::LagrangianPhysicalProperties &lagrangian_prop = 
+  DEMSolverParameters<dim>                              dem_parameters;
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lagrangian_prop =
     dem_parameters.lagrangian_physical_properties;
-  Parameters::Lagrangian::ModelParameters              &model_param     = 
+  Parameters::Lagrangian::ModelParameters &model_param =
     dem_parameters.model_parameters;
-  
-  Tensor<1, dim>  g{{0, 0, -9.81}};
-  double          dt                   = 0.00001;
-  double          particle_diameter    = 0.005;
-  lagrangian_prop.particle_type_number = 1;
-  lagrangian_prop.youngs_modulus_particle[0] = 50000000;
-  lagrangian_prop.poisson_ratio_particle[0] = 0.3;
-  lagrangian_prop.restitution_coefficient_particle[0] = 0.5;
-  lagrangian_prop.friction_coefficient_particle[0] = 0.5;
+
+  Tensor<1, dim> g{{0, 0, -9.81}};
+  double         dt                                               = 0.00001;
+  double         particle_diameter                                = 0.005;
+  lagrangian_prop.particle_type_number                            = 1;
+  lagrangian_prop.youngs_modulus_particle[0]                      = 50000000;
+  lagrangian_prop.poisson_ratio_particle[0]                       = 0.3;
+  lagrangian_prop.restitution_coefficient_particle[0]             = 0.5;
+  lagrangian_prop.friction_coefficient_particle[0]                = 0.5;
   lagrangian_prop.rolling_viscous_damping_coefficient_particle[0] = 0.5;
-  lagrangian_prop.rolling_friction_coefficient_particle[0] = 0.1;
-  lagrangian_prop.surface_energy_particle[0] = 0.;
-  lagrangian_prop.hamaker_constant_particle[0] = 0.;
-  lagrangian_prop.density_particle[0] = 2500;
-  model_param.rolling_resistance_method =
+  lagrangian_prop.rolling_friction_coefficient_particle[0]        = 0.1;
+  lagrangian_prop.surface_energy_particle[0]                      = 0.;
+  lagrangian_prop.hamaker_constant_particle[0]                    = 0.;
+  lagrangian_prop.density_particle[0]                             = 2500;
+  model_param.rolling_resistance_method                           =
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
@@ -64,24 +64,25 @@ test()
 
 
   // Inserting two particles in contact
-  Point<3>                 position1 = {0.4, 0, 0};
-  int                      id1       = 0;
-  Point<3>                 position2 = {0.40499, 0, 0};
-  int                      id2       = 1;
+  Point<3> position1 = {0.4, 0, 0};
+  int      id1       = 0;
+  Point<3> position2 = {0.40499, 0, 0};
+  int      id2       = 1;
 
-  // Constructing particle iterators from particle positions (inserting particles)
+  // Constructing particle iterators from particle positions (inserting
+  // particles)
   Particles::ParticleIterator<dim> pit1 = construct_particle_iterator<dim>(
     particle_handler, triangulation, position1, id1);
   Particles::ParticleIterator<dim> pit2 = construct_particle_iterator<dim>(
     particle_handler, triangulation, position2, id2);
 
   // Setting particle properties
-  Tensor<1, dim> v1{{0.01,0,0}};
-  Tensor<1, dim> omega1{{0,0,0}};
-  Tensor<1, dim> v2{{0,0,0}};
-  Tensor<1, dim> omega2{{0,0,0}};
-  double mass = 1;
-  int type = 0;
+  Tensor<1, dim> v1{{0.01, 0, 0}};
+  Tensor<1, dim> omega1{{0, 0, 0}};
+  Tensor<1, dim> v2{{0, 0, 0}};
+  Tensor<1, dim> omega2{{0, 0, 0}};
+  double         mass = 1;
+  int            type = 0;
   set_particle_properties<dim, PropertiesIndex>(
     pit1, type, particle_diameter, mass, v1, omega1);
   set_particle_properties<dim, PropertiesIndex>(
