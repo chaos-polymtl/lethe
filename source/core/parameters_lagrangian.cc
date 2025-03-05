@@ -726,13 +726,21 @@ namespace Parameters
                             Patterns::Integer(),
                             "Checking frequency for dynamic load-balancing");
 
+
           auto cell_weight_function_parsed =
             std::make_shared<Functions::ParsedFunction<dim>>(1);
+          prm.enter_subsection("cell weight function");
+          {
 #if DEAL_II_VERSION_GTE(9, 7, 0)
-          cell_weight_function_parsed->declare_parameters(prm, 1, "1000");
+            cell_weight_function_parsed->declare_parameters(prm, 1, "1000");
+
 #else
-          cell_weight_function_parsed->declare_parameters(prm, 1);
+            cell_weight_function_parsed->declare_parameters(prm, 1);
+
 #endif
+          }
+          prm.leave_subsection();
+
           prm.declare_entry(
             "particle weight",
             "2000",
@@ -937,9 +945,14 @@ namespace Parameters
             }
           auto cell_weight_function_parsed =
             std::make_shared<Functions::ParsedFunction<dim>>(1);
-          cell_weight_function_parsed->parse_parameters(prm);
 
-          cell_weight_function         = cell_weight_function_parsed;
+          prm.enter_subsection("cell weight function");
+          {
+            cell_weight_function_parsed->parse_parameters(prm);
+
+            cell_weight_function         = cell_weight_function_parsed;
+          }
+          prm.leave_subsection();
           load_balance_particle_weight = prm.get_integer("particle weight");
         }
         prm.leave_subsection();

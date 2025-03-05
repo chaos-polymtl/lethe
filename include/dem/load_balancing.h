@@ -194,7 +194,24 @@ public:
   inline void
   connect_weight_signals()
   {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+
+    triangulation->signals.weight.connect(
+      [&](const typename Triangulation<dim>::cell_iterator &cell,
+          const typename Triangulation<dim>::CellStatus) -> unsigned int {
+        return static_cast<int>(cell_weight_function->value(cell->center()));
+      });
+
+    triangulation->signals.weight.connect(
+      [&](const typename parallel::distributed::Triangulation<
+            dim>::cell_iterator &cell,
+          const typename parallel::distributed::Triangulation<dim>::CellStatus
+            status) -> unsigned int {
+        return this->calculate_total_cell_weight(cell, status);
+      });
+
+#elif (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 7)
     triangulation->signals.weight.connect(
       [&](const typename Triangulation<dim>::cell_iterator &,
           const typename Triangulation<dim>::CellStatus) -> unsigned int {
