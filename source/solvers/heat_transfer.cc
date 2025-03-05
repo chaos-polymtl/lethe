@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -790,20 +790,6 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Ouput the time average temperature and time average heat flux
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
-      // Start calculating after the initial time for the average temperature
-      // and average heat flux
-      if (this->simulation_control->get_current_time() >
-          simulation_parameters.post_processing
-              .initial_time_for_average_temp_and_hf -
-            1e-6 * simulation_control->get_time_step())
-        {
-          this->average_temperature->calculate_average_scalar(
-            this->present_solution,
-            this->simulation_parameters.post_processing,
-            simulation_control->get_current_time(),
-            simulation_control->get_time_step());
-        }
-
       this->average_temperature_to_output =
         this->average_temperature->get_average_scalar();
       data_out.add_data_vector(dof_handler,
@@ -977,6 +963,15 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         }
     }
 
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
+    {
+      this->average_temperature->calculate_average_scalar(
+        this->present_solution,
+        this->simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
+    }
+
   // Set-up domain name for output files
   Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.post_processing.postprocessed_fluid;
@@ -1014,7 +1009,18 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
     {
       postprocess_temperature_statistics(gather_vof,
                                          monitored_fluid,
-                                         domain_name);
+                                         domain_name,
+                                         false);
+      // Postprocess the temperature statistics again to calculate the spatial
+      // average of the time-averaged temperature. Flag time_average is set to
+      // true.
+      if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
+        {
+          postprocess_temperature_statistics(gather_vof,
+                                             monitored_fluid,
+                                             domain_name,
+                                             true);
+        }
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -1257,7 +1263,21 @@ HeatTransfer<dim>::read_checkpoint()
   solution_transfer->deserialize(input_vectors);
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
-    this->average_temperature->sanitize_after_restart();
+    {
+      // Reset the time-averaged temperature and heat flux if the initial time
+      // for averaging has not been reached
+      if ((this->simulation_parameters.post_processing
+             .initial_time_for_average_temp_and_hf +
+           1e-6 * simulation_control->get_time_step()) >
+          this->simulation_control->get_current_time())
+        {
+          this->pcout
+            << "Warning: The checkpointed time-averaged temperature and heat flux have been reinitialized because the initial averaging time has not yet been reached."
+            << std::endl;
+          this->average_temperature->zero_average_after_restart();
+        }
+      this->average_temperature->sanitize_after_restart();
+    }
 
   present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1559,7 +1579,8 @@ void
 HeatTransfer<dim>::postprocess_temperature_statistics(
   const bool                       gather_vof,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name)
+  const std::string                domain_name,
+  const bool                       time_average)
 {
   const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
@@ -1604,8 +1625,19 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
         {
           // Gather heat transfer information
           fe_values_ht.reinit(cell);
-          fe_values_ht.get_function_values(this->present_solution,
-                                           local_temperature_values);
+
+          if (!time_average)
+            {
+              fe_values_ht.get_function_values(this->present_solution,
+                                               local_temperature_values);
+            }
+          else
+            {
+              // calculate the average using the time-averaged temperature
+              fe_values_ht.get_function_values(
+                this->average_temperature->get_average_scalar(),
+                local_temperature_values);
+            }
 
           if (gather_vof)
             {
@@ -1662,8 +1694,19 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
       if (cell->is_locally_owned())
         {
           fe_values_ht.reinit(cell);
-          fe_values_ht.get_function_values(this->present_solution,
-                                           local_temperature_values);
+
+          if (!time_average)
+            {
+              fe_values_ht.get_function_values(this->present_solution,
+                                               local_temperature_values);
+            }
+          else
+            {
+              // calculate the average using the time-averaged temperature
+              fe_values_ht.get_function_values(
+                this->average_temperature->get_average_scalar(),
+                local_temperature_values);
+            }
 
           if (gather_vof)
             {
@@ -1706,8 +1749,10 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Temperature statistics on " << domain_name << ": "
-                  << std::endl;
+      std::string temperature_label =
+        time_average ? "Time-averaged temperature statistics on " :
+                       "Temperature statistics on ";
+      this->pcout << temperature_label << domain_name << ": " << std::endl;
       this->pcout << "\t     Min: " << minimum_temperature << std::endl;
       this->pcout << "\t     Max: " << maximum_temperature << std::endl;
       this->pcout << "\t Average: " << temperature_average << std::endl;
@@ -1715,12 +1760,24 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
     }
 
   // Fill table
-  this->statistics_table.add_value(
-    "time", this->simulation_control->get_current_time());
-  this->statistics_table.add_value("min", minimum_temperature);
-  this->statistics_table.add_value("max", maximum_temperature);
-  this->statistics_table.add_value("average", temperature_average);
-  this->statistics_table.add_value("std-dev", temperature_std_deviation);
+  if (!time_average)
+    {
+      this->statistics_table.add_value(
+        "time", this->simulation_control->get_current_time());
+      this->statistics_table.add_value("min", minimum_temperature);
+      this->statistics_table.add_value("max", maximum_temperature);
+      this->statistics_table.add_value("average", temperature_average);
+      this->statistics_table.add_value("std-dev", temperature_std_deviation);
+    }
+  else
+    {
+      this->statistics_table.add_value("min_time_average", minimum_temperature);
+      this->statistics_table.add_value("max_time_average", maximum_temperature);
+      this->statistics_table.add_value("time_average_average",
+                                       temperature_average);
+      this->statistics_table.add_value("std-dev_time_average",
+                                       temperature_std_deviation);
+    }
 }
 
 template <int dim>

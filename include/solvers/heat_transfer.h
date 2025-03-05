@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_heat_transfer_h
@@ -503,13 +503,16 @@ private:
    * to the phase of interest.
    *
    * @param domain_name String indicating the monitored_fluid in the output filename.
+   *
+   * @param time_average Boolean true when calculating the spacial average of the time-averaged temperature solution.
    */
 
   void
   postprocess_temperature_statistics(
     const bool                       gather_vof,
     const Parameters::FluidIndicator monitored_fluid,
-    const std::string                domain_name);
+    const std::string                domain_name,
+    const bool                       time_average);
 
   /**
    * @brief Post-processing. Write the temperature statistics to an output file.

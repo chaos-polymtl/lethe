@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Verify if the time-averaged temperature calculation leads to a segfault. The validity of the average temperature is tested in tests/solvers. This is the heat_transfer_conduction in solid test. The subsections post-processing, mesh refinement and restart have been added.
+# Based on the heat_transfer_average_temperature test. Checks if restarting with a different initial time for average temperature and heat flux parameter leads to a segfault. A warning message should appear saying that the checkpointed time-averaged temperature and heat flux have been initialized/reinitialized.
 
 # Listing of Parameters
 #----------------------
@@ -17,8 +17,8 @@ subsection simulation control
   set time end          = 0.05
   set time step         = 0.01
   set number mesh adapt = 0
-  set output name       = heat_transfer_average_temperature_out
-  set output frequency  = 1
+  set output name       = conduction
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
@@ -50,9 +50,7 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set thermal conductivity model = constant
     set thermal conductivity       = 60
-    set specific heat model        = constant
     set specific heat              = 20
     set density                    = 2000
     set kinematic viscosity        = 0.01
@@ -150,15 +148,23 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-
-  set verbosity = verbose
-
   set calculate average temperature and heat flux = true
-  set initial time for average temperature and heat flux = 0.01
-  
+  set initial time for average temperature and heat flux = 0.02
+
   # Thermal postprocessing
+  set verbosity = verbose
   set calculate temperature statistics = true
-  
+end
+
+#---------------------------------------------------
+# Subsection restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = false
+  set frequency  = 1
+  set filename = restart
+  set restart = true
 end
 
 #---------------------------------------------------

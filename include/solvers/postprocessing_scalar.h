@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_average_scalar_in_time_h
@@ -139,6 +139,12 @@ public:
     sum_scalar_dt = sum_scalar_dt_with_ghost_cells;
   }
 
+  /**
+   * @brief Reinitialize the values of sum_scalar_dt_with_ghost_cells vector to 0 and the has_started_averaging flag to false. If the initial time for average temperature and heat flux parameter is greater than the simulation time, the checkpointed time-averaged heat flux is ignored after a restart. This allows users to restart a simulation with a different averaging start time.
+   */
+  void
+  zero_average_after_restart();
+
 private:
   /**
    * @brief Vector to store the scalar field multiplied by time step.
@@ -208,7 +214,7 @@ private:
    * @brief Track whether we are within the averaging time period.
    *
    */
-  bool average_calculation;
+  bool has_started_averaging;
 };
 
 #endif

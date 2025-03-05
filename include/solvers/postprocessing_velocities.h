@@ -193,6 +193,12 @@ public:
     sum_reynolds_shear_stress_dt  = sum_rss_dt_with_ghost_cells;
   }
 
+  /**
+   * @brief Reinitialize the values of sum_velocities_dt_with_ghost_cells vector to 0 and the has_started_averaging flag to false. If the initial time for average velocities parameter is greater than the simulation time, the checkpointed time average velocities are ignored after a restart. This allows users to restart a simulation with a different averaging start time.
+   */
+  void
+  zero_average_after_restart();
+
 private:
   /**
    * @brief Inverse for total time for averaging.
@@ -347,7 +353,7 @@ private:
    * @brief Track whether we are within the averaging time period.
    *
    */
-  bool average_calculation;
+  bool has_started_averaging;
 
   /**
    * @brief Number of degrees of freedom per vertex needed to calculate correctly
