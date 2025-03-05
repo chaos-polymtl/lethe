@@ -26,7 +26,14 @@ public:
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
 
 
-  // TODO - Document
+  /**
+   * @brief Constructor for the VANS operator
+   *
+   * @param[in] cfd_dem_parameters The CFD-DEM parameters used for the
+   simulation. These parameters are notably used to distinguish between model A
+   and model B as well as to establish grad-div stabilization.
+
+   */
   VANSOperator(const Parameters::CFDDEM &cfd_dem_parameters)
     : NavierStokesOperatorBase<dim, number>()
     , cfd_dem_parameters(cfd_dem_parameters)
@@ -43,7 +50,16 @@ public:
         "Only model A of the VANS equation is supported by the VANS matrix-free solver"));
   }
 
-  // TODO - Document
+  /**
+   * @brief Evaluates the void fraction and the void fraction gradient
+   * at the quadrature point
+   *
+   * @param[in] void_fraction_manager The manager of the void fraction which is
+   * used to gather the void fraction solution. NOTE: At the present time, only
+   * void fractions derived from functions are supported. This is because we
+   * actually directly use the function instead of using the dof_handler
+   * associated with the void fraction. This will be fixed in future work.
+   */
   void
   evaluate_void_fraction(const VoidFractionBase<dim> &void_fraction_manager);
 

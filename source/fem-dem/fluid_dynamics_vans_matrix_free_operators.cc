@@ -18,6 +18,12 @@ void
 VANSOperator<dim, number>::evaluate_void_fraction(
   const VoidFractionBase<dim> &void_fraction_manager)
 {
+  AssertThrow(
+    void_fraction_manager.void_fraction_parameters->mode ==
+      Parameters::VoidFractionMode::function,
+    ExcMessage(
+      "The VANS matrix free solver only supports void fractions established using a function. Void fraction derived from functions will be developed in a future version of Lethe."));
+
   this->timer.enter_subsection("operator::evaluate_void_fraction");
 
   typename MatrixFree<dim, number>::AdditionalData additional_data;
