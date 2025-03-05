@@ -37,6 +37,7 @@
  * @param triangulation Triangulation to access the information of the cells.
  * @param position Postion of the particle.
  * @param id Id of the particle.
+ * @return Particle iterator with the inserted particle.
  */
 template <int dim>
 Particles::ParticleIterator<dim>
@@ -75,13 +76,13 @@ set_particle_properties(Particles::ParticleIterator<dim> &pit,
 {
   pit->get_properties()[PropertiesIndex::type]    = type;
   pit->get_properties()[PropertiesIndex::dp]      = particle_diameter;
+  pit->get_properties()[PropertiesIndex::mass]    = mass;
   pit->get_properties()[PropertiesIndex::v_x]     = v[0];
   pit->get_properties()[PropertiesIndex::omega_x] = omega[0];
   if (dim>1) {pit->get_properties()[PropertiesIndex::v_y]     = v[1];
               pit->get_properties()[PropertiesIndex::omega_y] = omega[1];}
   if (dim>2) {pit->get_properties()[PropertiesIndex::v_z]     = v[2];
               pit->get_properties()[PropertiesIndex::omega_z] = omega[2];}
-  pit->get_properties()[PropertiesIndex::mass]    = mass;
 
 }
 
