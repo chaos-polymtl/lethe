@@ -61,7 +61,8 @@ protected:
 
   /**
    * @brief a function for adding data vectors to the data_out object for
-   * post_processing additional results
+   * post_processing additional results. In this case, the void fraction field
+   * is added to the outputs.
    */
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;

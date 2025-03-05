@@ -74,8 +74,6 @@ protected:
   evaluate_non_linear_term_and_calculate_tau(
     const VectorType &newton_step) override;
 
-
-
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
    * the values, and according to the Jacobian of the discretized
