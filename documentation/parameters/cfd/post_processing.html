@@ -549,11 +549,17 @@ end
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">average</span> <span class="pre">temperature</span> <span class="pre">and</span> <span class="pre">heat</span> <span class="pre">flux</span></code>: controls if calculation of time-averaged temperature and time-averaged heat flux is enabled.</dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">temperature</span></code>: initial time used for the average temperature calculations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">temperature</span> <span class="pre">and</span> <span class="pre">heat</span> <span class="pre">flux</span></code>: initial time used for the average temperature and heat flux calculations.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">temperature</span> <span class="pre">and</span> <span class="pre">heat</span> <span class="pre">flux</span></code> or <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">velocity</span></code> can be modified before restarting a simulation. If the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">temperature</span> <span class="pre">heat</span> <span class="pre">flux</span></code> or <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">velocity</span></code> parameters are greater than the simulation time at the restart, the time-averaged temperature and heat flux are reinitialized. This approach allows the use of completed simulations as initial conditions while still enabling the computation of time-averaged quantities.</p>
+</div>
+<ul>
 <li><dl>
 <dt><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">pressure</span> <span class="pre">drop</span></code>: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.</dt><dd><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">inlet</span> <span class="pre">boundary</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">outlet</span> <span class="pre">boundary</span> <span class="pre">id</span></code>: define the IDs for inlet and outlet boundaries, respectively.</p></li>

@@ -117,6 +117,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad018b134f104e2aa574f7d329f5f1a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6864668fdf65c4cabbf7b8d4e6a3627e" id="r_a6864668fdf65c4cabbf7b8d4e6a3627e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a6864668fdf65c4cabbf7b8d4e6a3627e">sanitize_after_restart</a> ()</td></tr>
 <tr class="separator:a6864668fdf65c4cabbf7b8d4e6a3627e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7b044e2a586833fd4687dbfa5352252" id="r_ae7b044e2a586833fd4687dbfa5352252"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#ae7b044e2a586833fd4687dbfa5352252">zero_average_after_restart</a> ()</td></tr>
+<tr class="separator:ae7b044e2a586833fd4687dbfa5352252"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -166,8 +168,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:af3c111556e181fa4a78ebbbf6fcc0fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa81e1f99c1d82fc2b22c5510840200d" id="r_afa81e1f99c1d82fc2b22c5510840200d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#afa81e1f99c1d82fc2b22c5510840200d">total_time_for_average</a></td></tr>
 <tr class="separator:afa81e1f99c1d82fc2b22c5510840200d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05039712ccbc3316135d95e6b75453ea" id="r_a05039712ccbc3316135d95e6b75453ea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a05039712ccbc3316135d95e6b75453ea">average_calculation</a></td></tr>
-<tr class="separator:a05039712ccbc3316135d95e6b75453ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada12c7d48e732898dfa7596e7a505cc1" id="r_ada12c7d48e732898dfa7596e7a505cc1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#ada12c7d48e732898dfa7596e7a505cc1">has_started_averaging</a></td></tr>
+<tr class="separator:ada12c7d48e732898dfa7596e7a505cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a355cc96abe684e1d55dfd8099c77d0eb" id="r_a355cc96abe684e1d55dfd8099c77d0eb"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a355cc96abe684e1d55dfd8099c77d0eb">n_dofs_per_vertex</a></td></tr>
 <tr class="separator:a355cc96abe684e1d55dfd8099c77d0eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -303,7 +305,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00084">84</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00086">86</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
@@ -337,7 +339,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00097">97</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00225">AverageVelocities&lt; dim, VectorType, DofsType &gt;::average_velocities</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00231">AverageVelocities&lt; dim, VectorType, DofsType &gt;::get_av</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00231">AverageVelocities&lt; dim, VectorType, DofsType &gt;::average_velocities</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00237">AverageVelocities&lt; dim, VectorType, DofsType &gt;::get_av</a>.</p>
 
 </div>
 </div>
@@ -371,7 +373,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00109">109</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00257">AverageVelocities&lt; dim, VectorType, DofsType &gt;::get_rns</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00251">AverageVelocities&lt; dim, VectorType, DofsType &gt;::reynolds_normal_stresses</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00263">AverageVelocities&lt; dim, VectorType, DofsType &gt;::get_rns</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00257">AverageVelocities&lt; dim, VectorType, DofsType &gt;::reynolds_normal_stresses</a>.</p>
 
 </div>
 </div>
@@ -405,7 +407,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00121">121</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00283">AverageVelocities&lt; dim, VectorType, DofsType &gt;::get_rss</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00277">AverageVelocities&lt; dim, VectorType, DofsType &gt;::reynolds_shear_stresses</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00289">AverageVelocities&lt; dim, VectorType, DofsType &gt;::get_rss</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00283">AverageVelocities&lt; dim, VectorType, DofsType &gt;::reynolds_shear_stresses</a>.</p>
 
 </div>
 </div>
@@ -460,7 +462,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00290">290</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00292">292</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
@@ -483,7 +485,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Reestablish solution vectors after dynamic mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00348">348</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00350">350</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
@@ -506,7 +508,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Prepare average velocity object for dynamic mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00333">333</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00335">335</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
@@ -537,7 +539,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Vector with average values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00415">415</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00418">418</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
@@ -570,7 +572,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00189">189</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00245">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_reynolds_normal_stress_dt</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00271">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_reynolds_shear_stress_dt</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00296">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_rns_dt_with_ghost_cells</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00303">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_rss_dt_with_ghost_cells</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00219">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_velocity_dt</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00289">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_velocity_dt_with_ghost_cells</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__velocities_8h_source.html#l00251">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_reynolds_normal_stress_dt</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00277">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_reynolds_shear_stress_dt</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00302">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_rns_dt_with_ghost_cells</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00309">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_rss_dt_with_ghost_cells</a>, <a class="el" href="postprocessing__velocities_8h_source.html#l00225">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_velocity_dt</a>, and <a class="el" href="postprocessing__velocities_8h_source.html#l00295">AverageVelocities&lt; dim, VectorType, DofsType &gt;::sum_velocity_dt_with_ghost_cells</a>.</p>
 
 </div>
 </div>
@@ -601,7 +603,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Vector with average values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00390">390</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00392">392</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
@@ -622,39 +624,34 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00060">60</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00062">62</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a05039712ccbc3316135d95e6b75453ea" name="a05039712ccbc3316135d95e6b75453ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05039712ccbc3316135d95e6b75453ea">&#9670;&#160;</a></span>average_calculation</h2>
+<a id="ae7b044e2a586833fd4687dbfa5352252" name="ae7b044e2a586833fd4687dbfa5352252"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7b044e2a586833fd4687dbfa5352252">&#9670;&#160;</a></span>zero_average_after_restart()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::average_calculation</td>
+          <td class="memname">void <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::zero_average_after_restart </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p>Track whether we are within the averaging time period. </p>
+<p>Reinitialize the values of sum_velocities_dt_with_ghost_cells vector to 0 and the has_started_averaging flag to false. If the initial time for average velocities parameter is greater than the simulation time, the checkpointed time average velocities are ignored after a restart. This allows users to restart a simulation with a different averaging start time. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00350">350</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8cc_source.html#l00441">441</a> of file <a class="el" href="postprocessing__velocities_8cc_source.html">postprocessing_velocities.cc</a>.</p>
 
 </div>
 </div>
+<h2 class="groupheader">Member Data Documentation</h2>
 <a id="a1bf176d8cb26d2933280a6a47c6b69b0" name="a1bf176d8cb26d2933280a6a47c6b69b0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1bf176d8cb26d2933280a6a47c6b69b0">&#9670;&#160;</a></span>average_velocities</h2>
 
@@ -679,7 +676,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector to store average velocities. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00225">225</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00231">231</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -707,7 +704,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00332">332</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00338">338</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -735,7 +732,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Store the first time step in case it varies. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00207">207</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00213">213</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -763,7 +760,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Getter vector for the average velocities. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00231">231</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00237">237</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -791,7 +788,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Getter vector for the average Reynolds normal stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00257">257</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00263">263</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -819,7 +816,35 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Getter vector for the average Reynolds shear stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00283">283</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00289">289</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+
+</div>
+</div>
+<a id="ada12c7d48e732898dfa7596e7a505cc1" name="ada12c7d48e732898dfa7596e7a505cc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada12c7d48e732898dfa7596e7a505cc1">&#9670;&#160;</a></span>has_started_averaging</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::has_started_averaging</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Track whether we are within the averaging time period. </p>
+
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00356">356</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -847,7 +872,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Inverse for total time for averaging. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00201">201</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00207">207</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -875,7 +900,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Number of degrees of freedom per vertex needed to calculate correctly Reynolds stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00357">357</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00363">363</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -903,7 +928,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Initial time of the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00338">338</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00344">344</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -931,7 +956,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector to store the velocities multiplied by the time step to calculate the normal stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00238">238</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00244">244</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -959,7 +984,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector with average Reynolds normal stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00251">251</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00257">257</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -987,7 +1012,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector to store the velocities multiplied by the time step to calculate the shear stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00264">264</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00270">270</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1015,7 +1040,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector with average average Reynolds shear stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00277">277</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00283">283</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1043,7 +1068,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Object used to transfer the average Reynolds normal stresses in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00318">318</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00324">324</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1071,7 +1096,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Object used to transfer the average Reynolds shear stresses in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00326">326</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00332">332</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1099,7 +1124,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Object used to transfer the average velocities in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00310">310</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00316">316</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1127,7 +1152,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector to store sum of the velocities multiplied by the time step to calculate the normal stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00245">245</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00251">251</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1155,7 +1180,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector to store the sum the velocities multiplied by the time step to calculate the shear stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00271">271</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00277">277</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1183,7 +1208,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Ghosted vector to store sum of the velocities multiplied by the time step to calculate the normal stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00296">296</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00302">302</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1211,7 +1236,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Ghosted vector to store the sum the velocities multiplied by the time step to calculate the shear stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00303">303</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00309">309</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1239,7 +1264,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector to store the sum of all the velocities multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00219">219</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00225">225</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1267,7 +1292,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Ghosted vector to store the sum of all the velocities multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00289">289</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00295">295</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1295,7 +1320,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Total period of time for averaging. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00344">344</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00350">350</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1323,7 +1348,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Vector to store the velocity multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00213">213</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00219">219</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>

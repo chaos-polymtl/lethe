@@ -88,7 +88,7 @@ var searchData=
   ['postprocess_5fliquid_5ffraction_85',['postprocess_liquid_fraction',['../classHeatTransfer.html#a7c42d40b5cbb4d2bd779819315bad8c0',1,'HeatTransfer']]],
   ['postprocess_5fsolid_5fforces_86',['postprocess_solid_forces',['../classFluidDynamicsNitsche.html#aec4e63543b8e49913e4401d39974b92f',1,'FluidDynamicsNitsche']]],
   ['postprocess_5fsolid_5ftorques_87',['postprocess_solid_torques',['../classFluidDynamicsNitsche.html#a6d59f648f0608cd90e25f780935218de',1,'FluidDynamicsNitsche']]],
-  ['postprocess_5ftemperature_5fstatistics_88',['postprocess_temperature_statistics',['../classHeatTransfer.html#aa75b57e4606a04c8760576839dca3ee7',1,'HeatTransfer']]],
+  ['postprocess_5ftemperature_5fstatistics_88',['postprocess_temperature_statistics',['../classHeatTransfer.html#a7ff114068319d0f41a69eb1b1b1c0df7',1,'HeatTransfer']]],
   ['postprocess_5fthermal_5fenergy_5fin_5ffluid_89',['postprocess_thermal_energy_in_fluid',['../classHeatTransfer.html#ab70fe9d2931fbf1ddbadc881a747f44a',1,'HeatTransfer']]],
   ['postprocess_5ftracer_5fflow_5frate_90',['postprocess_tracer_flow_rate',['../classTracer.html#af90f22587fcaa2edc164be3b7af9b6df',1,'Tracer::postprocess_tracer_flow_rate(const GlobalVectorType &amp;current_solution_fd)'],['../classTracer.html#a3330097d0fbcbe57535ea0a397b9894e',1,'Tracer::postprocess_tracer_flow_rate(const VectorType &amp;current_solution_fd)']]],
   ['postprocessing_5fforces_91',['postprocessing_forces',['../classNavierStokesBase.html#aeac63e5c8291a3e2314914f1605969ff',1,'NavierStokesBase']]],

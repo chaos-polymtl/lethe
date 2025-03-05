@@ -111,7 +111,11 @@ This subsection controls the post-processing other than the forces and torque on
     * ``initial time for average velocity``: initial time used for the average velocities calculations.
 
 * ``calculate average temperature and heat flux``: controls if calculation of time-averaged temperature and time-averaged heat flux is enabled.
-    * ``initial time for average temperature``: initial time used for the average temperature calculations.
+    * ``initial time for average temperature and heat flux``: initial time used for the average temperature and heat flux calculations.
+
+.. tip::
+
+    The ``initial time for average temperature and heat flux`` or ``initial time for average velocity`` can be modified before restarting a simulation. If the ``initial time for average temperature heat flux`` or ``initial time for average velocity`` parameters are greater than the simulation time at the restart, the time-averaged temperature and heat flux are reinitialized. This approach allows the use of completed simulations as initial conditions while still enabling the computation of time-averaged quantities.
 
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
