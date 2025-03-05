@@ -47,7 +47,7 @@ test()
   lagrangian_prop.hamaker_constant_particle[0]                    = 0.;
   lagrangian_prop.rolling_friction_wall                           = 0.1;
   lagrangian_prop.density_particle[0]                             = 2500;
-  model_param.rolling_resistance_method                           =
+  model_param.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
