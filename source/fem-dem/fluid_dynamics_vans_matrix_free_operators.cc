@@ -11,6 +11,34 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
 {
   NavierStokesOperatorBase<dim, number>::
     evaluate_non_linear_term_and_calculate_tau(newton_step);
+
+  // Evaluate the grad-div stabilization constant
+  const unsigned int n_cells = this->matrix_free.n_cell_batches();
+  FECellIntegrator   integrator(this->matrix_free);
+
+  grad_div_gamma.reinit(n_cells, integrator.n_q_points);
+
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      integrator.reinit(cell);
+      integrator.read_dof_values_plain(newton_step);
+
+      // Integrator must update the values since the velocity
+      // magnitude is used to calculate the grad-div stabilization constant.
+      integrator.evaluate(EvaluationFlags::values);
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          // Get the velocity magnitude to calculate the grad_div constant
+          VectorizedArray<number> u_mag_squared = 0;
+          for (unsigned int k = 0; k < dim; ++k)
+            u_mag_squared +=
+              Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+          VectorizedArray<number> u = std::sqrt(u_mag_squared);
+          grad_div_gamma(cell, q) =
+            this->kinematic_viscosity + cfd_dem_parameters.cstar * u;
+        }
+    }
 }
 
 template <int dim, typename number>
@@ -26,17 +54,11 @@ VANSOperator<dim, number>::evaluate_void_fraction(
 
   this->timer.enter_subsection("operator::evaluate_void_fraction");
 
-  typename MatrixFree<dim, number>::AdditionalData additional_data;
-  additional_data.mapping_update_flags =
-    (update_values | update_quadrature_points);
-
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
 
   void_fraction.reinit(n_cells, integrator.n_q_points);
   void_fraction_gradient.reinit(n_cells, integrator.n_q_points);
-  grad_div_gamma.reinit(n_cells, integrator.n_q_points);
-
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
@@ -54,15 +76,6 @@ VANSOperator<dim, number>::evaluate_void_fraction(
             evaluate_function_gradient<dim, number>(
               (void_fraction_manager.void_fraction_parameters->void_fraction),
               point_batch);
-
-          // Get the velocity magnitude to calculate the grad_div constant
-          VectorizedArray<number> u_mag_squared = 0;
-          for (unsigned int k = 0; k < dim; ++k)
-            u_mag_squared +=
-              Utilities::fixed_power<2>(integrator.get_value(q)[k]);
-          VectorizedArray<number> u = std::sqrt(u_mag_squared);
-          grad_div_gamma(cell, q) =
-            this->kinematic_viscosity + cfd_dem_parameters.cstar * u;
         }
     }
 
@@ -145,8 +158,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           this->time_derivatives_previous_solutions(cell, q);
 
       // Get stabilization parameter
-      const auto tau      = this->stabilization_parameter[cell][q];
-      const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+      const auto tau = this->stabilization_parameter[cell][q];
 
       // Weak form Jacobian
       value_result[dim] = 0;
@@ -350,8 +362,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
               this->time_derivatives_previous_solutions(cell, q);
 
           // Get stabilization parameter
-          const auto tau      = this->stabilization_parameter[cell][q];
-          const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+          const auto tau = this->stabilization_parameter[cell][q];
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
