@@ -186,10 +186,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
             {
               // (-νɛ∆δu + ɛ(u·∇)δu + ɛ(δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                tau *
-                vf_value(-this->kinematic_viscosity * hessian_diagonal[i][k] +
-                         gradient[i][k] * previous_values[k] +
-                         previous_gradient[i][k] * value[k]);
+                tau * vf_value *
+                (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                 gradient[i][k] * previous_values[k] +
+                 previous_gradient[i][k] * value[k]);
             }
           // +ɛ(∂t δu)·τ∇q
           if (transient)
