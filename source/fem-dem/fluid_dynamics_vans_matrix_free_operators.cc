@@ -78,9 +78,8 @@ VANSOperator<dim, number>::evaluate_void_fraction(
  * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τu·∇v (SUPG Jacobian
  * Part 1)
  * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian Part 2),
- * plus two additional terms in the case of full gls stabilization:
- * \+ (ɛ∂t δu +ɛ(u·∇)δu + ɛ(δu·∇)u + ɛ∇δp - νɛ∆δu)τ(−ν∆v) (GLS Jacobian)
- * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
+ * in the case of additional grad-div stabilization
+ * + (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term)
  */
 template <int dim, typename number>
 void
@@ -161,7 +160,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
             this->kinematic_viscosity * vf_gradient * gradient[i];
           // -(∇·v,ɛδp)
           gradient_result[i][i] += -vf_value * value[dim];
-          // -(v,p∇ɛ)
+          // -(v,δp∇ɛ)
           value_result[i] += -vf_gradient[i] * value[dim];
           // +(q,ɛ∇·δu)
           value_result[dim] += vf_value * gradient[i][i];
@@ -172,8 +171,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
             {
               // +(v,ɛ(u·∇)δu + ɛ(δu·∇)u)
               value_result[i] +=
-                vf_value * gradient[i][k] * previous_values[k] +
-                vf_value * previous_gradient[i][k] * value[k];
+                vf_value * (gradient[i][k] * previous_values[k] +
+                            previous_gradient[i][k] * value[k]);
             }
           // +(v,ɛ ∂t δu)
           if (transient)
@@ -187,10 +186,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
             {
               // (-νɛ∆δu + ɛ(u·∇)δu + ɛ(δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                tau * (-vf_value * this->kinematic_viscosity *
-                         hessian_diagonal[i][k] +
-                       vf_value * gradient[i][k] * previous_values[k] +
-                       vf_value * previous_gradient[i][k] * value[k]);
+                tau *
+                vf_value(-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                         gradient[i][k] * previous_values[k] +
+                         previous_gradient[i][k] * value[k]);
             }
           // +ɛ(∂t δu)·τ∇q
           if (transient)
@@ -239,7 +238,6 @@ VANSOperator<dim, number>::do_cell_integral_local(
                 gradient_result[i][k] += tau * previous_values[k] * vf_value *
                                          ((*bdf_coefs)[0] * value[i]);
 
-
               // Part 2
               for (unsigned int l = 0; l < dim; ++l)
                 {
@@ -260,46 +258,6 @@ VANSOperator<dim, number>::do_cell_integral_local(
                 gradient_result[i][k] += tau * value[k] * vf_value *
                                          ((*bdf_coefs)[0] * previous_values[i] +
                                           previous_time_derivatives[i]);
-            }
-        }
-
-      if (this->stabilization ==
-          Parameters::Stabilization::NavierStokesStabilization::gls)
-        {
-          // GLS Jacobian
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  if (this->enable_hessians_jacobian)
-                    {
-                      for (unsigned int l = 0; l < dim; ++l)
-                        {
-                          // +(ɛ(u·∇)δu + ɛ(δu·∇)u - νɛ∆δu)τ(−ν∆v)
-                          hessian_result[i][k][k] +=
-                            tau * -this->kinematic_viscosity * vf_value *
-                            (gradient[i][l] * previous_values[l] +
-                             previous_gradient[i][l] * value[l] -
-                             this->kinematic_viscosity *
-                               hessian_diagonal[i][l]);
-                        }
-
-                      // +(ɛ∇δp)τ(−ν∆v)
-                      hessian_result[i][k][k] += tau *
-                                                 -this->kinematic_viscosity *
-                                                 (vf_value * gradient[dim][i]);
-
-                      // +(ɛ∂t δu)τ(−ν∆v)
-                      if (transient)
-                        hessian_result[i][k][k] +=
-                          tau * -this->kinematic_viscosity *
-                          (vf_value * (*bdf_coefs)[0] * value[i]);
-                    }
-
-                  // LSIC term
-                  // (∇·δu)τ'(∇·v)
-                  gradient_result[i][i] += tau_lsic * gradient[k][k];
-                }
             }
         }
 
@@ -324,9 +282,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
  * stabilization:
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τ∇·q (PSPG term)
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τu·∇v (SUPG term),
- * plus two additional terms in the case of full gls stabilization:
- * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τ(−ν∆v) (GLS term)
- * \+ (∇·u)τ'(∇·v) (LSIC term).
+ * With additional grad-div stabilization
+ * (∇·v,γ(ɛ∇·u+u·∇ɛ)) (grad-div term)
  */
 template <int dim, typename number>
 void
@@ -504,46 +461,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
                       tau * value[k] *
                       (vf_value * (*bdf_coefs)[0] * value[i] +
                        previous_time_derivatives[i]);
-                }
-            }
-
-
-          if (this->stabilization ==
-              Parameters::Stabilization::NavierStokesStabilization::gls)
-            {
-              // GLS term
-              for (unsigned int i = 0; i < dim; ++i)
-                {
-                  for (unsigned int k = 0; k < dim; ++k)
-                    {
-                      if (this->enable_hessians_residual)
-                        {
-                          for (unsigned int l = 0; l < dim; ++l)
-                            {
-                              // (-νɛ∆u - ν∇ɛ∇u + ɛ(u·∇)u)τ(−ν∆v)
-                              hessian_result[i][k][k] +=
-                                tau * -this->kinematic_viscosity *
-                                (-vf_value * this->kinematic_viscosity *
-                                   hessian_diagonal[i][l] +
-                                 vf_value * gradient[i][l] * value[l]);
-                            }
-                          // + ɛ(∇p - f)τ(−ν∆v)
-                          hessian_result[i][k][k] +=
-                            tau * -this->kinematic_viscosity * vf_value *
-                            (gradient[dim][i] - source_value[i]);
-
-                          // + (ɛ∂t u)τ(−ν∆v)
-                          if (transient)
-                            hessian_result[i][k][k] +=
-                              tau * -this->kinematic_viscosity *
-                              (vf_value * (*bdf_coefs)[0] * value[i] +
-                               previous_time_derivatives[i]);
-                        }
-
-                      // LSIC term
-                      // (∇·u)τ'(∇·v)
-                      gradient_result[i][i] += tau_lsic * gradient[k][k];
-                    }
                 }
             }
 
