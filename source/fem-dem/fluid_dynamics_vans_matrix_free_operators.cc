@@ -27,7 +27,8 @@ VANSOperator<dim, number>::evaluate_void_fraction(
   this->timer.enter_subsection("operator::evaluate_void_fraction");
 
   typename MatrixFree<dim, number>::AdditionalData additional_data;
-  additional_data.mapping_update_flags = (update_values | update_gradients);
+  additional_data.mapping_update_flags =
+    (update_values | update_quadrature_points);
 
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
