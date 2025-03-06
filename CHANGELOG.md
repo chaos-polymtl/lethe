@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Remove muParser and custom parsed function class (reversal of [#1143](https://github.com/chaos-polymtl/lethe/pull/1143), [#1153](https://github.com/chaos-polymtl/lethe/pull/1153), [#1160](https://github.com/chaos-polymtl/lethe/pull/1160)). [#1452](https://github.com/chaos-polymtl/lethe/pull/1452)
+## [Master] - 2025-03-06
+
+### Added
+
+- MAJOR A first version of the lethe-fluid-vans-matrix-free solver is added. This version supports all of the preconditioners of the regular matrix-free solver. However, it is limited right now to void fraction fields which are defined using analytical functions and not from particles. Furthermore, it does not support any particle-fluid coupling. [#1448](https://github.com/chaos-polymtl/lethe/pull/1448)
 
 ## [Master] - 2025-03-03
 
