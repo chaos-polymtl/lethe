@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+
 # This script is used to compare the simulation results of a single particle sedimentation to the analytical solution.
 # It will plot the results of the particle position and velocity as a function of time and compare it to the analytical solution given the particle and fluid pvd files paths.
 
