@@ -12,6 +12,7 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
+
 #include <deal.II/base/data_out_base.h>
 
 #include <fstream>
@@ -929,10 +930,11 @@ void
 CFDDEMSolver<dim>::write_quadrature_centered_method_spheres()
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
-  const std::string quadrature_output_file_name = dem_parameters.simulation_control.ouput_name + "_quadrature_sphere";
-  const unsigned int iter = this->simulation_control->get_step_number();
-  const double       time = this->simulation_control->get_current_time();
-  const unsigned int group_files = dem_parameters.simulation_control.group_files;
+  const std::string quadrature_output_file_name =
+dem_parameters.simulation_control.ouput_name + "_quadrature_sphere"; const
+unsigned int iter = this->simulation_control->get_step_number(); const double
+time = this->simulation_control->get_current_time(); const unsigned int
+group_files = dem_parameters.simulation_control.group_files;
 
   // Write spheres as particles
   Visualization<dim, DEM::DEMProperties::PropertiesIndex> quadrature_sphere_out;
@@ -941,7 +943,7 @@ CFDDEMSolver<dim>::write_quadrature_centered_method_spheres()
   std::vector<DataOutBase::Patch<dim>> sphere_patches;
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
-      
+
     }
 }
 */
