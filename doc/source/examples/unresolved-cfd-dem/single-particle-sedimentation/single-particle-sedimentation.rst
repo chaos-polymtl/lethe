@@ -1,5 +1,5 @@
 ==================================
-Single particle sedimentation
+Single Particle Sedimentation
 ==================================
 
 It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters used in the DEM and CFD-DEM solvers.
@@ -12,6 +12,8 @@ Features
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 - Simulates a single particle sedimentation in water
+- Use of ``qcm`` void fraction scheme with ``gauss-lobatto`` quadrature
+- Python post-processing script using `PyVista <https://docs.pyvista.org/>`_
 
 
 ---------------------------
@@ -20,7 +22,7 @@ Files Used in This Example
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/single-particle-sedimentation``).
 
-- Parameter file for initial particles generation: ``initial-particles.prm``
+- Parameter file for initial particles generation: ``initial-particle.prm``
 - Parameter file for CFD-DEM simulation of the Boycott effect: ``single-particle-sedimentation.prm``
 
 
@@ -32,6 +34,7 @@ This example simulates the sedimentation of a single particle in a water tank du
 
 This is a most probably the simplest application case of CFD-DEM we can think and hence, it is very useful to understand the basics of the method. In Lethe, we use examples such as this to not only guide the user on how to launch a simple example but also track the performance of our code.
 
+In our case, we have used this case to assess the grid convergence of the `quadrature centered method (QCM) <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_, by Geitani and Blais [#geitani2023]_, on reconvering the adequate void fraction and terminal velocity of the sedimenting particle. We use the properties given by Ferreira et al. [#ferreira2023]_ for the particle and fluid.
 
 -------------------
 DEM Parameter File
@@ -54,6 +57,8 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
       set expand particle-wall contact search = false
     end
 
+.. note::
+    Note that the grid size uses the particle size as reference. This is important because we intended to assess the grid convergence of the case.
 
 .. important::
     The grid of the particle insertion needs to be the same used in the unresolved CFD-DEM simulation. If you wish to use another mesh refinement, the particle insertion mesh needs to be adapted accordingly.
@@ -160,20 +165,20 @@ Launching the simulation is as simple as specifying the executable name and the 
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles initial-particles.prm
+  lethe-particles initial-particle.prm
 
-.. image:: images/packing.png
-    :alt: inserted particles at the top of the channel
+.. image:: images/particle_insertion.png
+    :alt: inserted particle at the top of the channel
     :align: center
 
-After the particles have been inserted it is now possible to simulate the sedimentation of particles.
+After the particle has been inserted it is now possible to simulate its sedimentation.
 
 
 -----------------------
 CFD-DEM Parameter File
 -----------------------
 
-The CFD simulation is to be carried out using the particles inserted within the previous step. We will discuss the different parameter file sections. We introduce the different sections of the parameter file ``single-particle-sedimentation.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
+The CFD simulation is to be carried out using the particles inserted within the previous step. We will discuss the different parameter file sections. We introduce the different sections of the parameter file ``single-particle-sedimentation.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,23 +200,22 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`1115.6` and a kinematic viscosity of :math:`0.00000177` as to simulate the flow of a sugar-water solution with :math:`20` % by weight sugar at :math:`20^{\circ}` C.
-The dynamic viscosity of a 20 % sugar-water solution by weight at :math:`20^{\circ} C` is 1.97 cP.
+The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`996.8 kg/cm^3` and a kinematic viscosity of :math:`0.0000008379 m^2/s` as to simulate the particle sedimentation in water.
 
 
 .. code-block:: text
 
     subsection physical properties
       subsection fluid 0
-        set kinematic viscosity = 0.00000177
-        set density             = 1115.6
+        set kinematic viscosity = 0.0000008379
+        set density             = 996.8
       end
     end
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-For the initial conditions, we choose zero initial conditions for the velocity.
+We choose zero initial conditions for the velocity.
 
 .. code-block:: text
 
@@ -267,22 +271,28 @@ The additional sections for the CFD-DEM simulations are the void fraction subsec
 Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Since we are calculating the void fraction using the particle insertion of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem.
-We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
-For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Unlike the other schemes, we do not smooth the void fraction as we usually do using the PCM and SPM void fraction schemes since QCM is continuous in time and space.
+We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/void-fraction.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``.
+
+We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Then, we set the diameter of the QCM sphere to be twice the size of our particle's diameter. We also set an smoothing length that of 10 times the particle diameter. Lastly, we choose the ``gauss-lobatto`` quadrature rule with 5 quadrature points. Details on these parameters are also available on the `documentation on void fraction parameters <../../../theory/unresolved_cfd-dem/void-fraction.html>`_.
 
 .. code-block:: text
 
     subsection void fraction
       set mode                         = qcm
       set qcm sphere equal cell volume = false
+      set qcm sphere diameter          = 0.005326
       set read dem                     = true
       set dem file name                = dem
+      set l2 smoothing length          = 0.02663
+      set quadrature rule              = gauss-lobatto
+      set n quadrature points          = 5
     end
+
 
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We also enable grad-div stabilization in order to improve local mass conservation. If we were using PCM and SPM void fraction schemes, the void fraction time derivative should be disabled as the time variation of the void fraction will lead to unstable simulations. The source of such instability is the first term of the continuity equation :math:`\rho_f \frac{\partial \varepsilon_f}{\partial t}`, which is stiff and unstable for the slightest temporal discontinuity of the void fraction and as :math:`\Delta t \to 0`. However, as we are using the QCM void fraction scheme, this term can be enabled. Usually, this term is neglected, however; disabling this term affects the results as we are no longer solving for the actual `Volume Averaged Navier-Stokes equations <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_. Therefore, we should not neglect this term based on numerical reasoning without any physical explanation.
+We enable grad-div stabilization in order to improve local mass conservation. If we were using PCM and SPM void fraction schemes, the void fraction time derivative should be disabled as the time variation of the void fraction will lead to unstable simulations. The source of such instability is the first term of the continuity equation :math:`\rho_f \frac{\partial \varepsilon_f}{\partial t}`, which is stiff and unstable for the slightest temporal discontinuity of the void fraction and as :math:`\Delta t \to 0`. However, as we are using the QCM void fraction scheme, this term can be enabled. Usually, this term is neglected, however; disabling this term affects the results as we are no longer solving for the actual `Volume Averaged Navier-Stokes equations <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_. Therefore, we should not neglect this term based on numerical reasoning without any physical explanation.
 
 .. code-block:: text
 
@@ -293,11 +303,12 @@ We also enable grad-div stabilization in order to improve local mass conservatio
       set buoyancy force                = true
       set shear force                   = true
       set pressure force                = true
-      set drag model                    = difelice
-      set coupling frequency            = 250
+      set drag model                    = rong
+      set coupling frequency            = 100
       set grad-div length scale         = 0.005
       set vans model                    = modelA
     end
+
 
 We determine the drag model to be used for the calculation of particle-fluid forces. We enable buoyancy, drag, shear and pressure forces. For drag, we use the Di Felice model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. Other possible option is model B.
 
@@ -351,14 +362,56 @@ The simulation is run using the ``lethe-fluid-particles`` application.  Assuming
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid-particles boycott-effect.prm
+  lethe-fluid-particles single-particle-sedimentation.prm
+
+---------------
+Post-processing
+---------------
+A Python post-processing code called ``single_particle_sedimentation.py`` is provided with this example. It is used to plot the same quantities we show in the results of this example for a single simulation. The script uses the `PyVista <https://docs.pyvista.org/>`_ library to plot the results.
+
+Running the script is as simple as launching the following command:
+
+.. code-block:: text
+  :class: copy-button
+
+    python3 single_particle_sedimentation.py --particle_pvd $PATH_TO_YOUR_PARTICLE_PVD --fluid_pvd $PATH_TO_YOUR_FLUID_PVD
+
+
 
 --------
 Results
 --------
 
-The results are shown in an animation below. The sedimentation of the particles in a vertical and inclined channel demonstrate different behaviors. This clearly shows the boycott effect as the fluid circulates in the inclined channel resulting in a larger velocity for both the fluid and particles. Thus, the particles fall further compared to the vertical channel where the fluid velocity is almost null, and the particles' acceleration is low.
+As explained, this example is meant to assess QCM's mesh independency. For this, we need to put some limts to our unresolved CFD-DEM approach, namely:
+
+* Currently, when looping through the cells, we can only have access to informations about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be very expensive. Hence, the finest element we use is of the same size of the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter).
+* We do not want our quadrature sphere size to change with the element size. So, we set the ``qcm sphere equal cell volume`` to ``false`` and set the sphere diameter to be twice the particle's diameter for all mesh refinements (:math:`D_{qcm}/d_p = 2.0` corresponding to an approximated maximum quadrature sphere size :math:`D_{qcm}` we can have for the finest mesh :math:`S_c/d_p = 1.0`).
+* Regardless of the QCM sphere size, we need to guarantee the spheres together cover our entire domain so that we conserve mass (i.e., have all particles accounted for while calculating the void fraction). However, if we use the same number and size of QCM spheres for all meshes, eventually we will have uncovered areas of our domain. To avoid this, we increase the number of quadrature points used in the void fraction calculation by applying ``set n quadrature points = 5`` (this number can be increased for coarser meshes). We use the same number of quadrature points for all mesh refinements to avoid any bias in the results.
+* Also to improve domain coveraged, we use Gauss-Lobatto quadrature rule as the quadrature points are more evenly distributed than the default Gauss.
+* Lastly, we need to consistently refine our meshes so that the particle falls in the same relative position to our degrees of freedom. This is important because if we analyze how our void fraction value evolves in a line conciding with the particle's falling trajectory, the magnitudes of the projected void fraction will vary with how far the particle is from the degrees of freedom.
+
+The above factors considered, we can now look at the results. First, we show a video of the particle falling in the fluid for the finest among our meshes. The arrows stand for the velocity of the surrounding fluid. It is nice to observe how the particle "pushes" the fluid away while falling.
 
 .. raw:: html
+    
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/LgpIKRKKEmQ" title="Particle sedimentation in water with Unresolved CFD-DEM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/ZyY5C6o6R8Q" frameborder="0" allowfullscreen></iframe>
+The same simulation was run for 4 different mesh refinements, :math:`S_c/d_p` of 1.0, 1.7, 2.0, 3.3; and 3 different void fraction smoothing lengths, :math:`L/d_p` of 2, 5, and 10. First, we compare the results of the particle velocity with the analytical solution using Dallavalle's drag correlation. As shown in the following figure, all results were pretty close to the expected analytical results. In special, the coarser the mesh and the smaller the smoothing length, the more results approximate to the analytical results. However, the difference is incipient, which indicates any solution would be valid.
+
+.. image:: images/terminal_velocity.png
+    :alt: terminal velocity of the particle
+    :align: center
+
+
+We also compare the void fraction convergence in a line conciding with the particle's falling trajectory. As shown in the following figure, regardless of the void fraction smoothing length, the void fraction converges with the mesh refinement, which is a good indicator of the QCM's mesh independency.
+
+.. image:: images/voidfraction_convergence.png
+    :alt: void fraction convergence in a line conciding with the particle's falling trajectory
+    :align: center
+
+---------
+Reference
+---------
+.. [#geitani2023] \T. el Geitani and B. Blais, “Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations”, *Industrial & Engineering Chemistry Research*, vol. 62, Mar. 2023. doi: `10.1021/acs.iecr.3c00172 <https://doi.org/10.1021/acs.iecr.3c00172>`_\.
+
+.. [#ferreira2023] \V. O. Ferreira, T. E. Geitani, D. Silva, B. Blais, and G. C. Lopes, “In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds,” *Powder Technol.*, vol. 426, pp. 118652, Aug. 2023, doi: `10.1016/j.powtec.2023.118652 <https://doi.org/10.1016/j.powtec.2023.118652>`_\.
