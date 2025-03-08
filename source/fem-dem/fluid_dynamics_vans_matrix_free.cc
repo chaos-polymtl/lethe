@@ -22,9 +22,10 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
   : FluidDynamicsMatrixFree<dim>(param.cfd_parameters)
   , cfd_dem_simulation_parameters(param)
+  , particle_mapping(1)
   , particle_handler(
       *this->triangulation,
-      MappingQGeneric<dim>(1),
+      particle_mapping,
       DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>())
   , void_fraction_manager(
       &(*this->triangulation),

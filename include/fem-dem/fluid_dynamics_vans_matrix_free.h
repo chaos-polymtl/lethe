@@ -71,6 +71,9 @@ protected:
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
+  /// Mapping used for the particles
+  MappingQGeneric<dim> particle_mapping;
+
   /// Particle-handler used to store particles in CFD-DEM simulations
   Particles::ParticleHandler<dim, dim> particle_handler;
 
