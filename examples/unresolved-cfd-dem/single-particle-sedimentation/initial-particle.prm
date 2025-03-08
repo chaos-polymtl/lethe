@@ -76,6 +76,14 @@ subsection lagrangian physical properties
   set rolling friction wall        = 0.1
 end
 
+--------------------------------------------------- 
+# Boundary conditions DEM 
+#--------------------------------------------------- 
+ 
+subsection DEM boundary conditions 
+  set number of boundary conditions = 0
+end
+
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
@@ -85,12 +93,6 @@ subsection insertion info
   set list x = 0
   set list y = 0.08
   set list z = 0
-  # set inserted number of particles at each time step = 8379
-  set insertion frequency                            = 2000
-  # set insertion box points coordinates               = -0.025, 0.35, -0.025 : 0.026, 0.396, 0.026
-  # set insertion distance threshold                   = 1.2
-  # set insertion maximum offset                       = 0.
-  # set insertion prn seed                             = 19
 end
 
 #---------------------------------------------------
