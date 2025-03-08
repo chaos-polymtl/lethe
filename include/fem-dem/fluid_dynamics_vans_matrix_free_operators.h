@@ -11,8 +11,7 @@
 using namespace dealii;
 
 /**
- * @brief A class that serves as base for all the matrix-free
- * Navier-Stokes operators.
+ * @brief Implements the matrix-free operator for the VANS equations
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).
