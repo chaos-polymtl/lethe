@@ -26,7 +26,7 @@
 using namespace dealii;
 
 /**
- * @brief Matrix free helper function
+ * @brief Evaluate the value of a function at a batch of points to obtain a vectorized array of numbers
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam Number Abstract type for number across the class (i.e., double).
@@ -51,13 +51,13 @@ evaluate_function(const Function<dim>                       &function,
 }
 
 /**
- * @brief Matrix free helper function
+ * @brief Evaluate the gradient of a function at a batch of points to obtain a tensor of vectorized arrays
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam Number Abstract type for number across the class (i.e., double).
  * @param function Function to evaluate.
  * @param p_vectorized Batch of points to evaluate function at.
- * @return Tensor<1, components, VectorizedArray<Number>> Batch of evaluated values.
+ * @return Tensor<1, components, VectorizedArray<Number>> Batch of evaluated gradients.
  */
 template <int dim, typename Number>
 Tensor<1, dim, VectorizedArray<Number>>
@@ -80,7 +80,7 @@ evaluate_function_gradient(
 }
 
 /**
- * @brief Matrix free helper function
+ * @brief Evaluate the value of a function at a batch of points to obtain a tensor of vectorized arrays
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam Number Abstract type for number across the class (i.e., double).
@@ -361,7 +361,6 @@ public:
   void
   evaluate_time_derivative_previous_solutions(
     const VectorType &time_derivative_previous_solutions);
-
 
   /**
    * @brief Store the values of the source term calculated if dynamic control
