@@ -76,7 +76,7 @@ subsection lagrangian physical properties
   set rolling friction wall        = 0.1
 end
 
---------------------------------------------------- 
+#--------------------------------------------------- 
 # Boundary conditions DEM 
 #--------------------------------------------------- 
  
@@ -89,7 +89,7 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = list
+  set insertion method = list
   set list x = 0
   set list y = 0.08
   set list z = 0
@@ -107,7 +107,3 @@ subsection mesh
   set expand particle-wall contact search = false
 end
 
-subsection post-processing
- # Enable output of grid, granular temperature, and particles' average velocity
- set lagrangian post-processing = true
-end
