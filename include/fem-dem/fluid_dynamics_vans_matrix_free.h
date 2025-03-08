@@ -3,6 +3,7 @@
 
 #ifndef lethe_fluid_dynamics_vans_matrix_free_h
 #define lethe_fluid_dynamics_vans_matrix_free_h
+
 #include <solvers/fluid_dynamics_matrix_free.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
@@ -10,8 +11,8 @@
 
 
 /**
- * @brief A solver for the incompressible Navier-Stokes equations implemented
- * in a matrix-free fashion.
+ * @brief A solver for the Volume-Averaged incompressible Navier-Stokes equations
+ *  implemented in a matrix-free fashion.
  *
  * A matrix-free stabilized solver for the Volume-Averaged incompressible
  * Navier-Stokes (VANS) equations implemented in a matrix-free fashion with a
@@ -29,7 +30,9 @@ class FluidDynamicsVANSMatrixFree : public FluidDynamicsMatrixFree<dim>
 public:
   /**
    * @brief Constructor that sets the finite element degree and system operator
-   * according to simulation parameters.
+   * according to simulation parameters. It initializes the CFD-DEM parameters,
+   * the particle mapping, the particle handler, and the void fraction manager.  
+   * It also checks whether there are periodic boundaries.
    *
    * @param[in] param Relevant parameters for the solver.
    */
@@ -44,25 +47,23 @@ public:
 
 protected:
   /**
-   * @brief Setups the degree of freedoms, but also takes care of setting up
-   * the degrees of freedom for the void fraction.
+   * @brief Setup the degree of freedom of the flow solver and the degrees of freedom
+   *and constraints for the void fraction.
    */
   virtual void
   setup_dofs() override;
 
   /**
    * @brief finish_time_step
-   * Finishes the time step, but also manages the time-step end for the void
+   * Finishes the time step and manages the time-step end for the void
    * fraction.
    */
-
   virtual void
   finish_time_step_fd();
 
   /**
-   * @brief a function for adding data vectors to the data_out object for
-   * post_processing additional results. In this case, the void fraction field
-   * is added to the outputs.
+   * @brief Add data vectors to the data_out object for post_processing
+   * additional results. In this case, the void fraction field is added.
    */
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
