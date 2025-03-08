@@ -31,7 +31,7 @@ public:
   /**
    * @brief Constructor that sets the finite element degree and system operator
    * according to simulation parameters. It initializes the CFD-DEM parameters,
-   * the particle mapping, the particle handler, and the void fraction manager.  
+   * the particle mapping, the particle handler, and the void fraction manager.
    * It also checks whether there are periodic boundaries.
    *
    * @param[in] param Relevant parameters for the solver.
@@ -70,9 +70,6 @@ protected:
 
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
-
-  /// Mapping used for the particles
-  MappingQGeneric<dim> particle_mapping;
 
   /// Particle-handler used to store particles in CFD-DEM simulations
   Particles::ParticleHandler<dim, dim> particle_handler;
