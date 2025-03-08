@@ -53,11 +53,11 @@ end
 #---------------------------------------------------
 
 subsection cfd-dem
-  set grad div       = true
-  set vans model     = modelA
-  set pressure force = false
-  set shear force    = false
-  set grad-div length scale         = 1
+  set grad div              = true
+  set vans model            = modelA
+  set pressure force        = false
+  set shear force           = false
+  set grad-div length scale = 1
 end
 
 #---------------------------------------------------
@@ -74,7 +74,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number                = 4
   set fix pressure constant = true
 
   subsection bc 0
@@ -111,7 +111,7 @@ end
 subsection analytical solution
   set enable = true
   subsection uvwp
-    set Function expression = 1/(0.5-0.25*tanh(50*x)) ; 0 ; 0 
+    set Function expression = 1/(0.5-0.25*tanh(50*x)) ; 0 ; 0
   end
 end
 
@@ -141,16 +141,16 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method            = gmres
-    set relative residual = 1e-3
-    set minimum residual  = 1e-9
-    set preconditioner    = gcmg
-    set verbosity         = quiet
-    set mg verbosity                   = quiet
+    set method                          = gmres
+    set relative residual               = 1e-3
+    set minimum residual                = 1e-9
+    set preconditioner                  = gcmg
+    set verbosity                       = quiet
+    set mg verbosity                    = quiet
     set mg smoother iterations          = 1
     set mg smoother eig estimation      = true
     set mg smoother preconditioner type = additive schwarz method
-    set eig estimation verbosity       = quiet
+    set eig estimation verbosity        = quiet
     #coarse-grid solver
     set mg coarse grid solver = direct
   end

@@ -70,8 +70,8 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 1
-    set fix pressure constant = true
+  set number                = 1
+  set fix pressure constant = true
 
   subsection bc 0
     set id   = 0
@@ -94,7 +94,7 @@ end
 #---------------------------------------------------
 
 subsection analytical solution
-  set enable = true
+  set enable    = true
   set verbosity = verbose
   subsection uvwp
     set Function expression = -2*sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; 2*cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)*sin(pi*y)
@@ -128,20 +128,20 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-  set method            = gmres
-  set max iters         = 1000
-  set relative residual = 1e-3
-  set minimum residual  = 1e-8
-  set preconditioner    = gcmg
-  set verbosity         = quiet
-  set max krylov vectors = 1000
-  set mg verbosity                   = quiet
-  set mg smoother iterations          = 1
-  set mg smoother eig estimation      = true
-  set mg smoother preconditioner type = additive schwarz method
-  set eig estimation smoothing range = 5
-  set eig estimation cg n iterations = 20
-  set eig estimation verbosity       = quiet
-  set mg coarse grid solver = direct
+    set method                          = gmres
+    set max iters                       = 1000
+    set relative residual               = 1e-3
+    set minimum residual                = 1e-8
+    set preconditioner                  = gcmg
+    set verbosity                       = quiet
+    set max krylov vectors              = 1000
+    set mg verbosity                    = quiet
+    set mg smoother iterations          = 1
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = additive schwarz method
+    set eig estimation smoothing range  = 5
+    set eig estimation cg n iterations  = 20
+    set eig estimation verbosity        = quiet
+    set mg coarse grid solver           = direct
   end
 end

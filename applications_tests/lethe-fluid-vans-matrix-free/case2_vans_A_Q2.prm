@@ -74,7 +74,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number                = 4
   set fix pressure constant = true
 
   subsection bc 0
@@ -169,16 +169,16 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method            = gmres
-    set relative residual = 1e-3
-    set minimum residual  = 1e-9
-    set preconditioner    = gcmg
-    set verbosity         = quiet
-    set mg verbosity                   = quiet
+    set method                          = gmres
+    set relative residual               = 1e-3
+    set minimum residual                = 1e-9
+    set preconditioner                  = gcmg
+    set verbosity                       = quiet
+    set mg verbosity                    = quiet
     set mg smoother iterations          = 1
     set mg smoother eig estimation      = true
     set mg smoother preconditioner type = additive schwarz method
-    set eig estimation verbosity       = quiet
+    set eig estimation verbosity        = quiet
     #coarse-grid solver
     set mg coarse grid solver = direct
   end
