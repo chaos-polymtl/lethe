@@ -362,8 +362,11 @@ private:
   parallel::DistributedTriangulationBase<dim> *triangulation;
 
 public:
-  // TODO: To move to private
+  /// TODO: To move to private
   /// Parameters for the calculation of the void fraction
+  /// Right now this is used for the VANS matrix-free solver
+  /// to directly calculate the void fraction from the function itself.
+  /// The function will be removed back to private in a future PR.
   std::shared_ptr<Parameters::VoidFractionParameters<dim>>
     void_fraction_parameters;
 
