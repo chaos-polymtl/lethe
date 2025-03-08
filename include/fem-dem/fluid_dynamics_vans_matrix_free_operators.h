@@ -29,8 +29,8 @@ public:
    * @brief Constructor for the VANS operator
    *
    * @param[in] cfd_dem_parameters The CFD-DEM parameters used for the
-   simulation. These parameters are notably used to distinguish between model A
-   and model B as well as to establish grad-div stabilization.
+   * simulation. These parameters are notably used to distinguish between model A
+   * and model B as well as to establish grad-div stabilization.
 
    */
   VANSOperator(const Parameters::CFDDEM &cfd_dem_parameters)
@@ -50,14 +50,14 @@ public:
   }
 
   /**
-   * @brief Evaluates the void fraction and the void fraction gradient
-   * at the quadrature point
+   * @brief Evaluate the void fraction and the void fraction gradient
+   * at the quadrature points.
    *
    * @param[in] void_fraction_manager The manager of the void fraction which is
    * used to gather the void fraction solution. NOTE: At the present time, only
    * void fractions derived from functions are supported. This is because we
-   * actually directly use the function instead of using the dof_handler
-   * associated with the void fraction. This will be fixed in future work.
+   * directly use the function instead of using the dof_handler associated
+   * with the void fraction. This will be fixed in future work.
    */
   void
   evaluate_void_fraction(const VoidFractionBase<dim> &void_fraction_manager);
@@ -65,7 +65,7 @@ public:
 protected:
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
-   * in the Jacobian and pre-calculate the stabilization parameter tau.
+   * in the Jacobian and pre-calculate the stabilization parameters tau and gamma.
    *
    * @param[in] newton_step Vector of the last newton step.
    */
@@ -126,7 +126,7 @@ protected:
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
 
   /// Table with correct alignment for vectorization to store the values of the
-  /// void fraction
+  /// grad-div gamma parameter
   Table<2, VectorizedArray<number>> grad_div_gamma;
 
   ///  Internal copy of the CFD-DEM parameters. This is used for grad-div

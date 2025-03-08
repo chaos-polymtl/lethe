@@ -700,10 +700,10 @@ public:
 /**
  * @brief Calculate gamma grad-div stabilization constant for the VANS equations
  *
- * @param[in] velocity magnitude of the velocity at the quadrature point
+ * @param[in] velocity Magnitude of the velocity at the quadrature point
  * @param[in] kinematic_viscosity
- * @param[in] h The selement size
- * @param[in] c_star scaling constante with units of length
+ * @param[in] h The element size
+ * @param[in] c_star Scaling constant with units of length
  */
 inline double
 calculate_gamma(double velocity,
