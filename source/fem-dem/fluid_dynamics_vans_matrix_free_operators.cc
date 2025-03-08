@@ -84,15 +84,16 @@ VANSOperator<dim, number>::evaluate_void_fraction(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q,∇·δu) + (v, ε ∂t δu) + (v, ε (u·∇)δu) + (v, ε (δu·∇)u) - (∇·v, ε δp) +
- * ε*ν(∇v,∇δu)  +  ν(v,∇ε∇δu)(Weak form Jacobian), plus three additional terms
- * in the case of SUPG-PSPG stabilization:
+ * (q,ε∇·δu) + (q,δu·∇ε)  (Continuity equation)
+ * \+ (v, ε ∂t δu) + (v, ε (u·∇)δu) + (v, ε (δu·∇)u)
+ * \- (∇·v, ε δp) - (v,p∇ε)
+ * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   (VANS equations),
+ * plus three additional terms in the case of SUPG-PSPG stabilization:
  * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τ·∇q (PSPG Jacobian)
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τu·∇v (SUPG Jacobian
- * Part 1)
- * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian Part 2),
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τu·∇v (SUPG Jacobian P.1)
+ * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian P.2),
  * in the case of additional grad-div stabilization
- * + (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term)
+ * \+ (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term)
  */
 template <int dim, typename number>
 void
@@ -289,8 +290,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q, ∇·u) + (v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) + ɛν(∇v,∇u) + ν(v,∇u∇ɛ) -
- * (v,ɛf) (Weak form), plus two additional terms in the case of SUPG-PSPG
+ * (q, ɛ ∇·u) + (q, u·∇ɛ) (Continuity equation)
+ * \+(v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) - (v,p∇ɛ)
+ * \+ ɛν(∇v,∇u) + ν(v,∇u∇ɛ) - (v,ɛf) (Weak form of VANS),
+ * plus two additional terms in the case of SUPG-PSPG
  * stabilization:
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τ∇·q (PSPG term)
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τu·∇v (SUPG term),

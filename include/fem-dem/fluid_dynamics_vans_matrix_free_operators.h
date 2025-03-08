@@ -29,7 +29,8 @@ public:
    * @brief Constructor for the VANS operator
    *
    * @param[in] cfd_dem_parameters The CFD-DEM parameters used for the
-   * simulation. These parameters are notably used to distinguish between model A
+   * simulation. These parameters are notably used to distinguish between model
+   A
    * and model B as well as to establish grad-div stabilization.
 
    */
@@ -65,7 +66,8 @@ public:
 protected:
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
-   * in the Jacobian and pre-calculate the stabilization parameters tau and gamma.
+   * in the Jacobian and pre-calculate the stabilization parameters tau and
+   * gamma.
    *
    * @param[in] newton_step Vector of the last newton step.
    */
