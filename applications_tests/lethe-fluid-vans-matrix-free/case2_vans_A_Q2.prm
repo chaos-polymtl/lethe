@@ -179,7 +179,6 @@ subsection linear solver
     set mg smoother eig estimation      = true
     set mg smoother preconditioner type = additive schwarz method
     set eig estimation verbosity        = quiet
-    #coarse-grid solver
-    set mg coarse grid solver = direct
+    set mg coarse grid solver           = direct
   end
 end

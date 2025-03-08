@@ -136,8 +136,6 @@ subsection linear solver
     set mg smoother iterations          = 1
     set mg smoother eig estimation      = true
     set mg smoother preconditioner type = additive schwarz method
-    set eig estimation smoothing range  = 5
-    set eig estimation cg n iterations  = 20
     set eig estimation verbosity        = quiet
     set mg coarse grid solver           = direct
   end
