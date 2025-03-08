@@ -396,8 +396,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // +(q,∇ɛ·u)
               value_result[dim] += value[i] * vf_gradient[i];
 
-
-
               for (unsigned int k = 0; k < dim; ++k)
                 {
                   // ν(v,∇u∇ɛ)

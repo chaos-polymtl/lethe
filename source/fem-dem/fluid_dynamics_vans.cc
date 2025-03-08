@@ -32,7 +32,6 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
       this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
       this->pcout)
   , has_periodic_boundaries(false)
-
 {
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :

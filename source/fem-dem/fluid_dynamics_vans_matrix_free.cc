@@ -94,7 +94,6 @@ FluidDynamicsVANSMatrixFree<dim>::output_field_hook(DataOut<dim> &data_out)
                            "void_fraction");
 }
 
-
 template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::solve()
