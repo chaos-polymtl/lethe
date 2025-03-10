@@ -87,7 +87,7 @@ test()
 
   // linear
 
-  contact_output linear_output =
+  auto [time_linear, force_linear, overlap_linear] =
     simul_full_contact<dim,
                        PropertiesIndex,
                        ParticleParticleContactForceModel::linear,
@@ -117,7 +117,7 @@ test()
 
   // hertz_mindlin_limit_overlap
 
-  contact_output hmlo_output = simul_full_contact<
+  auto [time_hmlo, force_hmlo, overlap_hmlo] = simul_full_contact<
     dim,
     PropertiesIndex,
     ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,

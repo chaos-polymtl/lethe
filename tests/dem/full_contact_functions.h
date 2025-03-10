@@ -24,13 +24,6 @@ struct initial_particles_properties
   double         diameter;
 };
 
-struct contact_output
-{
-  std::vector<double> time;
-  std::vector<double> force;
-  std::vector<double> overlap;
-};
-
 
 /**
  * @brief Set the force and torque at 0 for each particle.
@@ -85,13 +78,13 @@ using namespace Parameters::Lagrangian;
  * @param neighborhood_threshold Threshold value of contact detection.
  * @param filename Name of file where force and overlap are written.
  *
- * @return contact_output Struct with the vectors of time, force and overlap.
+ * @return Tuple of vectors of time, force and overlap.
  */
 template <int dim,
           typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
-struct contact_output
+std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
 simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                    Particles::ParticleHandler<dim>           &particle_handler,
                    DEMContactManager<dim, PropertiesIndex>   &contact_manager,
@@ -104,7 +97,9 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                    std::string filename)
 
 {
-  contact_output output;
+  std::vector<double> output_time;
+  std::vector<double> output_force;
+  std::vector<double> output_overlap;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -138,7 +133,7 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                                rolling_friction_model>
     force_object(dem_parameters);
 
-
+  // Defining local variables
   auto   particle0       = particle_handler.begin();
   auto   particle1       = std::next(particle0);
   bool   CONTACT_ONGOING = true;
@@ -154,7 +149,7 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   file << "time,force,overlap"
        << "\n";
 
-  while (CONTACT_ONGOING and iteration < max_iteration)
+  while (CONTACT_ONGOING && iteration < max_iteration)
     {
       // Reinitializing forces
       reinitialize_force(particle_handler, torque, force);
@@ -184,10 +179,11 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
         force);
 
 
-      distance = (particle0->get_location() - particle1->get_location()).norm();
+      distance =
+        (particle0->get_location()).distance(particle1->get_location());
 
       // Checking if contact is still ongoing (positive overlap)
-      if (overlap >= 0 and (p.diameter - distance) < 0)
+      if (overlap >= 0 && (p.diameter - distance) < 0)
         {
           CONTACT_ONGOING = false;
         }
@@ -196,13 +192,13 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
 
       // Printing on file and storing contact force and overlap at each output
       // step and at the end of contact
-      if (iteration % output_step == 0 or not CONTACT_ONGOING)
+      if (iteration % output_step == 0 || !CONTACT_ONGOING)
         {
           norm_force = (force[particle0->get_id()]).norm();
           file << time << "," << norm_force << "," << overlap << "\n";
-          output.time.push_back(time);
-          output.force.push_back(norm_force);
-          output.overlap.push_back(overlap);
+          output_time.push_back(time);
+          output_force.push_back(norm_force);
+          output_overlap.push_back(overlap);
         }
 
       if (not CONTACT_ONGOING)
@@ -226,7 +222,7 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
     }
 
   file.close();
-  return output;
+  return std::make_tuple(output_time, output_force, output_overlap);
 }
 
 
