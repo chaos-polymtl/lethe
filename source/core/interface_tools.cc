@@ -287,6 +287,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance(
 template class InterfaceTools::SignedDistanceSolver<2, GlobalVectorType>;
 template class InterfaceTools::SignedDistanceSolver<3, GlobalVectorType>;
 
+#ifndef LETHE_USE_LDV
 template class InterfaceTools::
   SignedDistanceSolver<2, LinearAlgebra::distributed::Vector<double>>;
 template class InterfaceTools::
