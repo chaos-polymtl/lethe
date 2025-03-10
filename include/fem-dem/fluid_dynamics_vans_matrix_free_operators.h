@@ -29,7 +29,7 @@ public:
    * @brief Constructor for the VANS operator
    *
    * @param[in] cfd_dem_parameters The CFD-DEM parameters used for the
-   * simulation. These parameters are notably used to distinguish between 
+   * simulation. These parameters are notably used to distinguish between
    * model A and model B as well as to establish grad-div stabilization.
 
    */
