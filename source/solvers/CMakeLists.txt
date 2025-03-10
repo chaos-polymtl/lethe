@@ -79,7 +79,6 @@ add_library(lethe-solvers
   ../../include/solvers/postprocessing_velocities.h
   ../../include/solvers/postprocessors_smoothing.h
   ../../include/solvers/postprocessors.h
-  ../../include/solvers/signed_distance.h
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/source_terms.h
   ../../include/solvers/stabilization.h
