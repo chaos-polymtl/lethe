@@ -48,14 +48,13 @@ public:
 protected:
   /**
    * @brief Setup the degree of freedom of the flow solver and the degrees of freedom
-   *and constraints for the void fraction.
+   * and constraints for the void fraction.
    */
   virtual void
   setup_dofs() override;
 
   /**
-   * @brief finish_time_step
-   * Finishes the time step and manages the time-step end for the void
+   * @brief Finish the time step and manage the time-step end for the void
    * fraction.
    */
   virtual void
