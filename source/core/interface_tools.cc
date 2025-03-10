@@ -292,3 +292,4 @@ template class InterfaceTools::
   SignedDistanceSolver<2, LinearAlgebra::distributed::Vector<double>>;
 template class InterfaceTools::
   SignedDistanceSolver<3, LinearAlgebra::distributed::Vector<double>>;
+#endif
