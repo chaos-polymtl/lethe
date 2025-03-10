@@ -28,8 +28,9 @@ DeclException1(
   << std::endl
   << "Interface sharpening model requires an integer sharpening frequency larger than 0.");
 
-DeclException2(
+DeclException3(
   MultipleInterfaceResettingMethods,
+  bool,
   bool,
   bool,
   << "Only one type of interface resetting mechanism can be used in a simulation.\n"
@@ -37,6 +38,8 @@ DeclException2(
   << std::boolalpha << " - VOF interface sharpening is set to " << arg1
   << std::endl
   << " - VOF algebraic interface reinitialization is set to " << arg2
+  << std::endl
+  << " - VOF geometric interface reinitialization is set to " << arg3
   << std::endl);
 
 void
@@ -107,11 +110,16 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
 
   // Check if multiple interface resetting methods are used
   AssertThrow(
-    !(this->vof_parameters.sharpening.enable &&
-      this->vof_parameters.algebraic_interface_reinitialization.enable),
+    !((this->vof_parameters.sharpening.enable &&
+       this->vof_parameters.algebraic_interface_reinitialization.enable) ||
+      (this->vof_parameters.sharpening.enable &&
+       this->vof_parameters.geometric_interface_reinitialization.enable) ||
+      (this->vof_parameters.algebraic_interface_reinitialization.enable &&
+       this->vof_parameters.geometric_interface_reinitialization.enable)),
     MultipleInterfaceResettingMethods(
       this->vof_parameters.sharpening.enable,
-      this->vof_parameters.algebraic_interface_reinitialization.enable));
+      this->vof_parameters.algebraic_interface_reinitialization.enable,
+      this->vof_parameters.geometric_interface_reinitialization.enable));
 
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
 }

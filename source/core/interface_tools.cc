@@ -240,7 +240,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve(
-  const MPI_Comm &mpi_communicator)
+  const MPI_Comm & /*mpi_communicator*/)
 {
   // Incomplete method! It only initialize the distance for now.
   initialize_distance();
@@ -272,7 +272,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance(
 {
   VectorType tmp_local_level_set(this->locally_owned_dofs, mpi_communicator);
 
-  // Loop on the DoFs to be compatible with the difference in vector type between level_set and signed_distance
+  // Loop on the DoFs to be compatible with the difference in vector type
+  // between level_set and signed_distance
   for (auto p : this->locally_owned_dofs)
     {
       tmp_local_level_set(p) = signed_distance(p);

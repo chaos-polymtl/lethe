@@ -304,7 +304,14 @@ namespace InterfaceTools
                                       &interface_reconstruction_cells,
     std::set<types::global_dof_index> &intersected_dofs);
 
-
+  /**
+   * @brief Solver to compute the signed distance from a given level of a level-set field. It is based on the method proposed by Ausas (2010).
+   *
+   * @tparam dim An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   *
+   * @tparam VectorType The vector type of the level-set vector.
+   */
   template <int dim, typename VectorType>
   class SignedDistanceSolver
   {
@@ -315,20 +322,25 @@ namespace InterfaceTools
      * @param[in] background_triangulation Shared pointer to the triangulation
      * of the domain
      *
-     * @param[in] background_fe Shared pointer to the dinite element
+     * @param[in] background_fe Shared pointer to the finite element
      * discretizing the domain
      *
      * @param[in] p_max_distance Maximum reinitialization distance value
+     *
+     * @param[in] p_iso_level Iso-level from which the signed distance is
+     * computed
      *
      */
     SignedDistanceSolver(
       std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                           background_triangulation,
       std::shared_ptr<FiniteElement<dim>> background_fe,
-      const double                        p_max_distance)
+      const double                        p_max_distance,
+      const double                        p_iso_level)
       : dof_handler(*background_triangulation)
       , fe(background_fe)
       , max_distance(p_max_distance)
+      , iso_level(p_iso_level)
       , pcout(std::cout,
               (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
     {
@@ -339,7 +351,7 @@ namespace InterfaceTools
      * @brief setup_dofs
      *
      * Initialize the degree of freedom and the memory
-     * associated with them for fluid dynamics and enabled auxiliary physics.
+     * associated with them
      */
     void
     setup_dofs(const MPI_Comm &mpi_communicator);
@@ -350,7 +362,7 @@ namespace InterfaceTools
      * Set the level-set field from the main solver. For example, when using the
      * current SignedDistanceSolver for the geometric redistanciation of the VOF
      * phase fraction, the level-set field comes from the VOF solver and is
-     * described by the corresponding DoFHandler.
+     * described by the corresponding VOF DoFHandler.
      *
      * @param[in] background_dof_handler DoFHandler corresponding to the
      * level-set field solver
@@ -368,7 +380,8 @@ namespace InterfaceTools
     /**
      * @brief solve
      *
-     * Solve for the signed distance from the 0-level of the level-set vector.
+     * Solve for the signed distance from the given level of the level-set
+     * vector.
      */
     void
     solve(const MPI_Comm &mpi_communicator);
@@ -401,7 +414,7 @@ namespace InterfaceTools
 
     /**
      * @brief Attach the solution vector to the DataOut provided. This function
-     * enable the auxiliary physics to output their solution via the core
+     * enable the auxiliary physics to output their solution via the background
      * solver.
      *
      * @param[in,out] data_out DataOut reponsible for solution output
@@ -457,22 +470,22 @@ namespace InterfaceTools
     compute_second_neighbors_distance(const MPI_Comm &mpi_communicator);
 
     /**
-     * @brief Compute the signed_distance from the distance and the sign of the
-     * signed_distance entries
+     * @brief Compute the signed_distance from the distance vector and the sign of the
+     * signed_distance vector entries
      */
     void
     compute_signed_distance_from_distance();
 
     /**
      * @brief Compute the cell-wise volume correction to match the volume englobed
-     * by the level 0 of the level_set field in each element
+     * by the given level of the level_set field in each element
      */
     void
     compute_cell_wise_volume_correction();
 
     /**
-     * @brief Correct the global volume to match the volume englobed by the level
-     * 0 of the level_set field
+     * @brief Correct the global volume to match the volume englobed by the given level
+     * of the level_set field
      *
      * @param[in] mpi_communicator MPI communicator
      */
@@ -483,7 +496,7 @@ namespace InterfaceTools
      * @brief Return the local id of the opposite faces to the given local DOF
      * (works for quad only).
      *
-     * @param[in] local_dof_id Local id of the DOF
+     * @param[in] local_dof_id Local id of the DoF in the cell
      *
      * @param[out] local_opposite_faces The vector containing the id of the
      * opposite faces
@@ -647,6 +660,10 @@ namespace InterfaceTools
     /// Maximum redistanciation distance
     const double max_distance;
 
+    /// Iso-level describing the interface from which the signed distance is
+    /// computed
+    const double iso_level;
+
     /// Parallel output stream
     ConditionalOStream pcout;
 
@@ -695,44 +712,6 @@ namespace InterfaceTools
     /// Set of DoFs belonging to intersected cells
     std::set<types::global_dof_index> intersected_dofs;
   };
-
-  // template <int dim, typename VectorType>
-  // void
-  // SignedDistanceSolver<dim, VectorType>::setup_dofs(const MPI_Comm
-  // &mpi_communicator)
-  // {
-  //   dof_handler.distribute_dofs(fe);
-  //
-  //   locally_owned_dofs = dof_handler.locally_owned_dofs();
-  //   locally_relevant_dofs =
-  //     DoFTools::extract_locally_relevant_dofs(dof_handler);
-  //   locally_active_dofs = DoFTools::extract_locally_active_dofs(dof_handler);
-  //
-  //   level_set.reinit(locally_owned_dofs,
-  //                    locally_relevant_dofs,
-  //                    mpi_communicator);
-  //
-  //   signed_distance.reinit(locally_owned_dofs,
-  //                          locally_active_dofs,
-  //                          mpi_communicator);
-  //   signed_distance_with_ghost.reinit(locally_owned_dofs,
-  //                                     locally_active_dofs,
-  //                                     mpi_communicator);
-  //
-  //   distance.reinit(locally_owned_dofs, locally_active_dofs,
-  //   mpi_communicator); distance_with_ghost.reinit(locally_owned_dofs,
-  //                              locally_active_dofs,
-  //                              mpi_communicator);
-  //
-  //   volume_correction.reinit(locally_owned_dofs,
-  //                            locally_active_dofs,
-  //                            mpi_communicator);
-  //
-  //   constraints.clear();
-  //   constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  //   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
-  //   constraints.close();
-  // }
 } // namespace InterfaceTools
 
 #endif

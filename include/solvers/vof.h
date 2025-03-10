@@ -153,8 +153,8 @@ public:
           triangulation,
           fe,
           simulation_parameters.multiphysics.vof_parameters
-            .geometric_interface_reinitialization
-            .max_reinitialization_distance);
+            .geometric_interface_reinitialization.max_reinitialization_distance,
+          0.0);
       }
   }
 

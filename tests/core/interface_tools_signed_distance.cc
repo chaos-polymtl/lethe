@@ -97,7 +97,10 @@ test()
   std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
     signed_distance_solver = std::make_shared<
       InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
-      background_triangulation, background_fe, max_reinitialization_distance);
+      background_triangulation,
+      background_fe,
+      max_reinitialization_distance,
+      0.0);
 
   signed_distance_solver->setup_dofs(mpi_communicator);
   signed_distance_solver->set_level_set_from_background_mesh(
