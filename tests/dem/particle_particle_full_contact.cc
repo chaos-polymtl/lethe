@@ -1,14 +1,37 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-/**
- * @brief In this test, the performance of linear (Hookean) particle-particle
- * contact force  is checked.
- */
-
 
 #include <../tests/dem/full_contact_functions.h>
 
+
+/**
+ * @brief Write time, force, torque and overlap on the log for the full duration of contact.
+ * @param output Output of function simul_full_contact.
+ */
+void
+log_contact_output(full_contact_output &output)
+{
+  if (output.time.empty())
+    {
+      deallog << "Error. Contact not found or not ending (too many iterations)."
+              << std::endl;
+      return;
+    }
+  int time_size = output.time.size();
+  for (int i = 0; i < time_size; ++i)
+    {
+      deallog << "At time " << std::setw(15) << output.time[i]
+              << std::defaultfloat << " force is " << std::setw(10)
+              << output.force[i][0] << " " << std::setw(10)
+              << output.force[i][1] << " " << std::setw(10)
+              << output.force[i][2] << " torque is " << std::setw(10)
+              << output.torque[i][0] << " " << std::setw(10)
+              << output.torque[i][1] << " " << std::setw(10)
+              << output.torque[i][2] << " overlap is " << std::setw(10)
+              << output.overlap[i] << std::endl;
+    }
+}
 
 
 template <int dim, typename PropertiesIndex>
@@ -57,37 +80,37 @@ test()
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, DEM::get_number_properties<PropertiesIndex>());
 
-  // Creating containers manager for finding cell neighbor and also broad and
-  // fine particle-particle search objects
+  // Creating containers manager
   DEMContactManager<dim, PropertiesIndex> contact_manager;
 
-  // Finding cell neighbors list, it is required for finding the broad search
-  // pairs in the contact_manager
+  // Finding cell neighbors list
   typename dem_data_structures<dim>::periodic_boundaries_cells_info
     dummy_pbc_info;
   contact_manager.execute_cell_neighbors_search(triangulation, dummy_pbc_info);
 
-  // Inserting two particles at distance 0
-  Point<dim>                        position1 = {0.4, 0, 0};
-  Point<dim>                        position2 = {0.405, 0, 0};
-  Tensor<1, dim>                    v1{{0.01, 0, 0}};
-  Tensor<1, dim>                    w1{{0, 0, 0}};
-  Tensor<1, dim>                    v2{{0, 0, 0}};
-  Tensor<1, dim>                    w2{{0, 0, 0}};
-  initial_particles_properties<dim> particle_properties = {
-    {position1, position2}, // initial positions
-    {0, 1},                 // id
-    0,                      // type
-    {v1, v2},               // initial velocities
-    {w1, w2},               // initial angular velocities
-    1,                      // mass
-    particle_diameter       // diameter
+  // Setting initial properties of particle 0 and 1
+  Point<dim>                       position1 = {0.4, 0, 0};
+  Point<dim>                       position2 = {0.405, 0, 0};
+  Tensor<1, dim>                   v1{{0.01, 0, 0}};
+  Tensor<1, dim>                   w1{{0, 0, 0}};
+  Tensor<1, dim>                   v2{{0, 0, 0}};
+  Tensor<1, dim>                   w2{{0, 0, 0}};
+  initial_particle_properties<dim> particle_properties = {
+    {position1, position2},                // initial positions
+    {0, 1},                                // id
+    {0, 0},                                // type
+    {v1, v2},                              // initial velocities
+    {w1, w2},                              // initial angular velocities
+    {1, 1},                                // mass
+    {particle_diameter, particle_diameter} // diameter
   };
 
 
-  // linear
+  // linear contact force model
 
-  auto [time_linear, force_linear, overlap_linear] =
+  deallog << "For the linear contact force model." << std::endl;
+
+  full_contact_output linear_output =
     simul_full_contact<dim,
                        PropertiesIndex,
                        ParticleParticleContactForceModel::linear,
@@ -103,21 +126,16 @@ test()
       neighborhood_threshold,
       "linear");
 
-  auto particle0 = particle_handler.begin();
-  deallog << "The new position of particle 0 after end of contact is ("
-          << particle0->get_location()[0] << " " << particle0->get_location()[1]
-          << " " << particle0->get_location()[2] << ") with linear force."
+  log_contact_output(linear_output);
+
+
+  // hertz_mindlin_limit_overlap contact force model
+
+  deallog << " " << std::endl
+          << "For the hertz_mindlin_limit_overlap contact force model."
           << std::endl;
 
-
-
-  particle_handler.clear_particles();
-
-
-
-  // hertz_mindlin_limit_overlap
-
-  auto [time_hmlo, force_hmlo, overlap_hmlo] = simul_full_contact<
+  full_contact_output hmlo_output = simul_full_contact<
     dim,
     PropertiesIndex,
     ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
@@ -132,11 +150,7 @@ test()
                                                   neighborhood_threshold,
                                                   "hmlo");
 
-  auto particle = particle_handler.begin();
-  deallog << "The new position of particle 0 after end of contact is ("
-          << particle->get_location()[0] << " " << particle->get_location()[1]
-          << " " << particle->get_location()[2]
-          << ") with hertz_mindlin_limit_overlap force." << std::endl;
+  log_contact_output(hmlo_output);
 }
 
 int
