@@ -149,11 +149,10 @@ We use the list insertion method to insert the single particle in our domain. Th
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = list
-      set list x = 0
-      set list y = 0.08
-      set list z = 0
-      set insertion frequency                            = 2000
+      set insertion method = list
+      set list x           = 0
+      set list y           = 0.08
+      set list z           = 0
     end
 
 
@@ -200,7 +199,7 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`996.8`  kg/cm^3 and a kinematic viscosity of :math:`0.0000008379` m^2/s as to simulate the particle sedimentation in water.
+The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :math:`0.0000008379` m\ :sup:`2`/s as to simulate the particle sedimentation in water.
 
 
 .. code-block:: text
@@ -309,7 +308,7 @@ We enable grad-div stabilization in order to improve local mass conservation. If
     end
 
 
-We determine the drag model to be used for the calculation of particle-fluid forces. We enable buoyancy, drag, shear and pressure forces. For drag, we use the Di Felice model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. Other possible option is model B.
+We determine the drag model to be used for the calculation of particle-fluid forces. We enable buoyancy, drag, shear and pressure forces. For drag, we use the Rong model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. Other possible option is model B.
 
 
 Non-linear Solver

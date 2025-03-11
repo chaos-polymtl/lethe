@@ -76,11 +76,11 @@ subsection lagrangian physical properties
   set rolling friction wall        = 0.1
 end
 
-#--------------------------------------------------- 
-# Boundary conditions DEM 
-#--------------------------------------------------- 
- 
-subsection DEM boundary conditions 
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
   set number of boundary conditions = 0
 end
 
@@ -90,9 +90,9 @@ end
 
 subsection insertion info
   set insertion method = list
-  set list x = 0
-  set list y = 0.08
-  set list z = 0
+  set list x           = 0
+  set list y           = 0.08
+  set list z           = 0
 end
 
 #---------------------------------------------------
@@ -106,4 +106,3 @@ subsection mesh
   set initial refinement                  = 0
   set expand particle-wall contact search = false
 end
-
