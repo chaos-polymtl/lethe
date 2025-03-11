@@ -200,7 +200,7 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`996.8 kg/cm^3` and a kinematic viscosity of :math:`0.0000008379 m^2/s` as to simulate the particle sedimentation in water.
+The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`996.8`  kg/cm^3 and a kinematic viscosity of :math:`0.0000008379` m^2/s as to simulate the particle sedimentation in water.
 
 
 .. code-block:: text
