@@ -89,18 +89,18 @@ test()
   contact_manager.execute_cell_neighbors_search(triangulation, dummy_pbc_info);
 
   // Setting initial properties of particle 0 and 1
-  Point<dim>                       position1 = {0.4, 0, 0};
-  Point<dim>                       position2 = {0.405, 0, 0};
-  Tensor<1, dim>                   v1{{0.01, 0, 0}};
+  Point<dim>                       position0 = {0.4, 0, 0};
+  Point<dim>                       position1 = {0.405, 0, 0};
+  Tensor<1, dim>                   v0{{0.01, 0, 0}};
+  Tensor<1, dim>                   w0{{0, 0, 0}};
+  Tensor<1, dim>                   v1{{0, 0, 0}};
   Tensor<1, dim>                   w1{{0, 0, 0}};
-  Tensor<1, dim>                   v2{{0, 0, 0}};
-  Tensor<1, dim>                   w2{{0, 0, 0}};
   initial_particle_properties<dim> particle_properties = {
-    {position1, position2},                // initial positions
+    {position0, position1},                // initial positions
     {0, 1},                                // id
     {0, 0},                                // type
-    {v1, v2},                              // initial velocities
-    {w1, w2},                              // initial angular velocities
+    {v0, v1},                              // initial velocities
+    {w0, w1},                              // initial angular velocities
     {1, 1},                                // mass
     {particle_diameter, particle_diameter} // diameter
   };
