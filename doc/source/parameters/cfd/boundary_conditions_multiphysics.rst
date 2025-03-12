@@ -153,27 +153,31 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 Cahn-Hilliard
 ^^^^^^^^^^^^^^
 
-For Cahn-Hilliard boundary conditions, the available ``types`` are ``noflux`` (default), ``dirichlet``, ``angle_of_contact``, and ``free_angle``. The parameters for each type of Cahn-Hilliard boundary conditions are:
+For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (default), ``noflux``, ``dirichlet``, ``angle_of_contact``, and ``free_angle``. The parameters for each type of Cahn-Hilliard boundary conditions are:
 
 .. code-block:: text
 
   subsection boundary conditions cahn hilliard
-    set number         = 3
+    set number         = 4
     set time dependent = false
     subsection bc 0
         set id            = 0
+        set type          = none
+     end
+    subsection bc 1
+        set id            = 1
         set type          = dirichlet
         subsection phi
             set Function expression = 0
         end
      end
-    subsection bc 1
-      set id              = 1
+    subsection bc 2
+      set id              = 2
       set type            = angle_of_contact
       set angle value     = 90 # The angle is given in degrees (°)
     end
-    subsection bc 2
-      set id              = 2
+    subsection bc 3
+      set id              = 3
       set type            = free_angle
     end
   end
@@ -186,8 +190,11 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``noflux`` (d
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
 * ``type``: Type of boundary condition being imposed. At the moment, the choices are:
-    * ``noflux`` (default): no phase leaves the simulation domain.
+    * ``none`` (default): for which nothing happens.
+    * ``noflux``: no phase leaves the simulation domain.
     * ``dirichlet``: Imposes a given phase order parameter function on the boundary. This function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
     * ``angle_of_contact``: Imposes a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).
     * ``free_angle``: Leaves the angle as a free variable to be solved.
 
+.. note::
+    For periodic boundary conditions, there is no need to specify anything in the ``boundary conditions cahn hilliard`` subsection. The periodic boundary condition must be specified in the ``boundary conditions`` subsection (see :doc:`boundary_conditions_cfd`).
