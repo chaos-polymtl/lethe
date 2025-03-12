@@ -40,6 +40,7 @@ We use this case to assess the grid convergence of the `quadrature centered meth
 DEM Parameter File
 -------------------
 
+The DEM subsections are as follows.
 
 Mesh
 ~~~~~
@@ -55,7 +56,7 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
     end
 
 .. note::
-    Note that the grid size uses the particle size as reference. This is important because we intended to assess the grid convergence of the case.
+    The grid is 20x40x20 times the particle diameter.
 
 .. important::
     The grid of the particle insertion needs to be the same used in the unresolved CFD-DEM simulation. If you wish to use another mesh refinement, the particle insertion mesh needs to be adapted accordingly.
@@ -86,25 +87,6 @@ We save the files obtained from the single iteration by setting the `frequency =
       set checkpoint = true
       set frequency  = 1
       set filename   = dem
-    end
-
-
-Model Parameters
-~~~~~~~~~~~~~~~~~
-
-The DEM model parameters are:
-
-.. code-block:: text
-
-    subsection model parameters
-      subsection contact detection
-        set contact detection method = dynamic
-        set neighborhood threshold   = 1.3
-      end
-      set rolling resistance torque method       = constant_resistance
-      set particle particle contact force method = hertz_mindlin_limit_force
-      set particle wall contact force method     = nonlinear
-      set integration method                     = velocity_verlet
     end
 
 Lagrangian Physical Properties
@@ -148,7 +130,7 @@ Assuming that the ``lethe-particles`` executable is within your path, the simula
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles initial-particle.prm
+  lethe-particles initial-particles.prm
 
 You can visualize the insertion with Paraview:
 
@@ -184,7 +166,7 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :math:`0.0000008379` m\ :sup:`2`/s as to simulate the particle sedimentation in water.
+We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :math:`0.0000008379` m\ :sup:`2`/s as to simulate the particle sedimentation in water at :math:`25^\circ\text{C}` (same conditions as in Ferreira et al. [#ferreira2023]_).
 
 
 .. code-block:: text
@@ -222,11 +204,11 @@ For the boundary conditions, we choose a slip boundary condition on all the wall
       end
       subsection bc 2
         set id   = 2
-        set type = noslip
+        set type = slip
       end
       subsection bc 3
         set id   = 3
-        set type = noslip
+        set type = slip
       end
       subsection bc 4
         set id   = 4
@@ -268,7 +250,7 @@ We want the radius of our volume averaging sphere to be equal to the length of t
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We enable grad-div stabilization in order to improve local mass conservation. If we were using PCM and SPM void fraction schemes, the void fraction time derivative should be disabled as the time variation of the void fraction will lead to unstable simulations. The source of such instability is the first term of the continuity equation :math:`\rho_f \frac{\partial \varepsilon_f}{\partial t}`, which is stiff and unstable for the slightest temporal discontinuity of the void fraction and as :math:`\Delta t \to 0`. However, as we are using the QCM void fraction scheme, this term can be enabled. Usually, this term is neglected, however; disabling this term affects the results as we are no longer solving for the actual `Volume Averaged Navier-Stokes equations <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html>`_. Therefore, we should not neglect this term based on numerical reasoning without any physical explanation.
+The CFD-DEM section is:
 
 .. code-block:: text
 
@@ -278,7 +260,7 @@ We enable grad-div stabilization in order to improve local mass conservation. If
       set drag force                    = true
       set buoyancy force                = true
       set shear force                   = false
-      set pressure force              = false
+      set pressure force                = false
       set drag model                    = rong
       set coupling frequency            = 100
       set grad-div length scale         = 0.005
@@ -292,19 +274,7 @@ For drag, we use the Rong model to determine the momentum transfer exchange coef
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-.. code-block:: text
-
-    subsection non-linear solver
-      subsection fluid dynamics
-        set solver           = inexact_newton
-        set tolerance        = 1e-8
-        set max iterations   = 10
-        set verbosity        = verbose
-        set matrix tolerance = 0.75
-      end
-    end
-
-We use the ``inexact_newton`` solver as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
+We simply use the default non-linear solver for this simulation.
 
 Linear Solver
 ~~~~~~~~~~~~~
@@ -322,7 +292,6 @@ Linear Solver
         set ilu preconditioner absolute tolerance = 1e-12
         set ilu preconditioner relative tolerance = 1
         set verbosity                             = verbose
-        set max krylov vectors                    = 500
       end
     end
 
@@ -361,7 +330,7 @@ As explained, this example is meant to assess QCM's mesh independency. For this,
 
 * Currently, when looping through the cells, we can only have access to informations about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be computationnaly expensive. Hence, the finest element we use is of the same size of the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter).
 * We do not want our quadrature sphere size to change with the element size. So, we set the ``qcm sphere equal cell volume`` to ``false`` and set the sphere diameter to be twice the particle's diameter for all mesh refinements (:math:`D_{qcm}/d_p = 2.0` corresponding to an approximated maximum quadrature sphere size :math:`D_{qcm}` we can have for the finest mesh :math:`S_c/d_p = 1.0`).
-* Regardless of the QCM sphere size, we need to guarantee the spheres together cover our entire domain so that we conserve mass (i.e., have all particles accounted for while calculating the void fraction). However, if we use the same number and size of QCM spheres for all meshes, eventually we will have uncovered areas of our domain. To avoid this, we increase the number of quadrature points used in the void fraction calculation by applying ``set n quadrature points = 5`` (this number can be increased for coarser meshes). We use the same number of quadrature points for all mesh refinements to avoid any bias in the results.
+* Regardless of the QCM sphere size, we need to guarantee the spheres together cover our entire domain so that we conserve mass (i.e., have all particles accounted for while calculating the void fraction). However, if we use the same number and size of QCM spheres for all meshes, eventually we will have uncovered regions of our domain. To avoid this, we increase the number of quadrature points used in the void fraction calculation by applying ``set n quadrature points = 5`` (this number can be increased for coarser meshes). We use the same number of quadrature points for all mesh refinements to avoid any bias in the results.
 * To improve domain coverage, we use Gauss-Lobatto quadrature rule as the quadrature points are more evenly distributed than the default Gauss quadrature.
 * Lastly, we need to consistently refine our meshes so that the particle falls in the same relative position to our degrees of freedom. This is important because if we analyze how our void fraction value evolves in a line conciding with the particle's falling trajectory, the magnitudes of the projected void fraction will vary with how far the particle is from the degrees of freedom.
 
