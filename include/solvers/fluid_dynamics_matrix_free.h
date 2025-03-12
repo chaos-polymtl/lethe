@@ -110,6 +110,9 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const std::shared_ptr<FESystem<dim>>      fe);
 
+  virtual void
+  create_level_operator(const unsigned int level) = 0;
+
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
    * needed for the geometric multigrid preconditioner.
@@ -307,6 +310,8 @@ public:
     typename MFNavierStokesPreconditionGMGBase<dim>::VectorType;
   using MGVectorType =
     typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType;
+  using MGNumber = typename MFNavierStokesPreconditionGMGBase<dim>::MGNumber;
+
 
   /**
    * Constructor.
@@ -320,6 +325,9 @@ public:
     const std::shared_ptr<Function<dim>>      forcing_function,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const std::shared_ptr<FESystem<dim>>      fe);
+
+  void
+  create_level_operator(const unsigned int level) override;
 
   void
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
