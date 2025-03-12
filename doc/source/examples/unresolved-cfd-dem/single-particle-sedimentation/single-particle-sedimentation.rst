@@ -30,22 +30,21 @@ Both files mentioned below are located in the example's folder (``examples/unres
 Description of the Case
 -----------------------
 
-This example simulates the sedimentation of a single particle in a water tank due to gravity. As all unresolved CFD-DEM applications and examples, we start it by introducing the particle in our domain by running a DEM simulation (using ``lethe-particles``). The DEM simulation generates checkpoint files that will be used by our unresolved CFD-DEM application (``lethe-fluid-particles``) to determine the initial position of the particle.
+This example simulates the sedimentation of a single particle in a water tank due to gravity. As all unresolved CFD-DEM applications and examples, we start it by introducing the particle in our domain by running a DEM simulation (using ``lethe-particles``). The DEM simulation generates checkpoint files that will be used by our unresolved CFD-DEM application (``lethe-fluid-particles``) to determine the initial state (position, velocity, etc.) of the particles.
 
-This is most probably the simplest application case of CFD-DEM we can think of and hence, it is very useful to understand the basics of the method. In Lethe, we use examples such as this not to only guide the user on how to launch a simple example but also to track the performance of our code.
+This is most probably the simplest application case of CFD-DEM we can think of and hence, it is very useful to learn the fundamentals of the method. In Lethe, we use examples such as this not to only guide the user on how to launch a simple example but also to track the performance of our code.
 
-In our case, we have used this case to assess the grid convergence of the `quadrature centered method (QCM) <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_, by Geitani and Blais [#geitani2023]_. We check if the adequate void fraction is recovered and we monitor the terminal velocity of the sedimenting particle. We use the properties given by Ferreira et al. [#ferreira2023]_ for the particle and fluid.
+We use this case to assess the grid convergence of the `quadrature centered method (QCM) <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_, by Geitani and Blais [#geitani2023]_. We check if the adequate void fraction is recovered and we monitor the terminal velocity of the sedimenting particle. We use the properties given by Ferreira et al. [#ferreira2023]_ for the particle and fluid.
 
 -------------------
 DEM Parameter File
 -------------------
 
-The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
 
 Mesh
 ~~~~~
 
-In this example, we are simulating a rectangular-based tank. We use the deal.II GridGenerator in order to generate a hyper rectangle that is subdivided along its height. The following portion of the DEM parameter file shows the function called:
+In this example, we are simulating a rectangular-based tank. We use the deal.II GridGenerator in order to generate a hyper rectangle that is subdivided along its height:
 
 .. code-block:: text
 
@@ -66,7 +65,7 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time step in this case is the same as the time end. Since we only seek to insert the particle at the top of the channel, we only require 1 insertion time step. We do not need the particle to accelerate, therefore by doing this, the particle will be inserted, but will not fall under the action of gravity.
+The time step in this case is the same as the time end. Since we only seek to insert the particle at the top of the channel, we only require 1 insertion time step. 
 
 
 .. code-block:: text
@@ -74,7 +73,6 @@ The time step in this case is the same as the time end. Since we only seek to in
    subsection simulation control
       set time step        = 1e-6
       set time end         = 1e-6
-      set log frequency    = 1000
       set output frequency = 1
       set output path      = ./output_dem/
     end
@@ -97,7 +95,7 @@ We save the files obtained from the single iteration by setting the frequency = 
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-The section on model parameters is explained in the DEM examples. We show the chosen parameters for this section:
+The DEM model parameters are:
 
 .. code-block:: text
 
@@ -105,7 +103,6 @@ The section on model parameters is explained in the DEM examples. We show the ch
       subsection contact detection
         set contact detection method = dynamic
         set neighborhood threshold   = 1.3
-        set frequency                = 1
       end
       set rolling resistance torque method       = constant_resistance
       set particle particle contact force method = hertz_mindlin_limit_force
@@ -116,7 +113,7 @@ The section on model parameters is explained in the DEM examples. We show the ch
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gravity is set to 0 as we only need to insert the particles in the specified insertion box.
+The gravity is set to 0 since the DEM simulation only loads the particles.
 
 .. code-block:: text
 
@@ -128,23 +125,13 @@ The gravity is set to 0 as we only need to insert the particles in the specified
         set diameter                          = 0.002663
         set number                            = 1
         set density particles                 = 1029
-        set young modulus particles           = 1e6
-        set poisson ratio particles           = 0.25
-        set restitution coefficient particles = 0.97
-        set friction coefficient particles    = 0.3
-        set rolling friction particles        = 0.1
       end
-      set young modulus wall           = 1e6
-      set poisson ratio wall           = 0.25
-      set restitution coefficient wall = 0.97
-      set friction coefficient wall    = 0.3
-      set rolling friction wall        = 0.1
     end
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-We use the list insertion method to insert the single particle in our domain. This is quite convenient, since we can tell exactly what is the position of the particle. We set the insertion frequency to 2000, which is the same as the time end. This way, the particle will be inserted at the top of the channel at the end of the DEM simulation.
+We use the list insertion method to insert a single particle in our domain at a specific location:
 
 .. code-block:: text
 
@@ -159,7 +146,7 @@ We use the list insertion method to insert the single particle in our domain. Th
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched on a single processor by typing:
+Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
   :class: copy-button
@@ -170,14 +157,14 @@ Launching the simulation is as simple as specifying the executable name and the 
     :alt: inserted particle at the top of the channel
     :align: center
 
-After the particle has been inserted it is now possible to simulate its sedimentation.
+The particle has been inserted it is now possible to simulate its sedimentation.
 
 
 -----------------------
 CFD-DEM Parameter File
 -----------------------
 
-The CFD simulation is to be carried out using the particle inserted within the previous step. We will discuss the different parameter file sections. We introduce the different sections of the parameter file ``single-particle-sedimentation.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_.
+The CFD simulation is to be carried out using the particle inserted within the previous step. We introduce the different sections of the parameter file ``single-particle-sedimentation.prm`` needed to run this simulation. 
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -199,7 +186,7 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :math:`0.0000008379` m\ :sup:`2`/s as to simulate the particle sedimentation in water.
+We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :math:`0.0000008379` m\ :sup:`2`/s as to simulate the particle sedimentation in water.
 
 
 .. code-block:: text
@@ -214,16 +201,9 @@ The physical properties subsection allows us to determine the density and viscos
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-We choose zero initial conditions for the velocity.
+We choose zero initial conditions for the velocity, which is the default initial condition.
 
 .. code-block:: text
-
-    subsection initial conditions
-      set type = nodal
-      subsection uvwp
-        set Function expression = 0; 0; 0; 0
-      end
-    end
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -299,8 +279,8 @@ We enable grad-div stabilization in order to improve local mass conservation. If
       set void fraction time derivative = true
       set drag force                    = true
       set buoyancy force                = true
-      set shear force                   = true
-      set pressure force                = true
+      set shear force                   = false
+      set pressure force              = false
       set drag model                    = rong
       set coupling frequency            = 100
       set grad-div length scale         = 0.005
@@ -308,7 +288,7 @@ We enable grad-div stabilization in order to improve local mass conservation. If
     end
 
 
-We determine the drag model to be used for the calculation of particle-fluid forces. We enable buoyancy, drag, shear and pressure forces. For drag, we use the Rong model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. Other possible option is model B.
+For drag, we use the Rong model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. 
 
 
 Non-linear Solver
@@ -336,7 +316,7 @@ Linear Solver
     subsection linear solver
       subsection fluid dynamics
         set method                                = gmres
-        set max iters                             = 5000
+        set max iters                             = 500
         set relative residual                     = 1e-3
         set minimum residual                      = 1e-10
         set preconditioner                        = ilu
@@ -344,7 +324,7 @@ Linear Solver
         set ilu preconditioner absolute tolerance = 1e-12
         set ilu preconditioner relative tolerance = 1
         set verbosity                             = verbose
-        set max krylov vectors                    = 200
+        set max krylov vectors                    = 500
       end
     end
 
@@ -381,26 +361,26 @@ Results
 
 As explained, this example is meant to assess QCM's mesh independency. For this, we need to put some limts to our unresolved CFD-DEM approach, namely:
 
-* Currently, when looping through the cells, we can only have access to informations about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be very expensive. Hence, the finest element we use is of the same size of the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter).
+* Currently, when looping through the cells, we can only have access to informations about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be computationnaly expensive. Hence, the finest element we use is of the same size of the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter).
 * We do not want our quadrature sphere size to change with the element size. So, we set the ``qcm sphere equal cell volume`` to ``false`` and set the sphere diameter to be twice the particle's diameter for all mesh refinements (:math:`D_{qcm}/d_p = 2.0` corresponding to an approximated maximum quadrature sphere size :math:`D_{qcm}` we can have for the finest mesh :math:`S_c/d_p = 1.0`).
 * Regardless of the QCM sphere size, we need to guarantee the spheres together cover our entire domain so that we conserve mass (i.e., have all particles accounted for while calculating the void fraction). However, if we use the same number and size of QCM spheres for all meshes, eventually we will have uncovered areas of our domain. To avoid this, we increase the number of quadrature points used in the void fraction calculation by applying ``set n quadrature points = 5`` (this number can be increased for coarser meshes). We use the same number of quadrature points for all mesh refinements to avoid any bias in the results.
-* Also to improve domain coverage, we use Gauss-Lobatto quadrature rule as the quadrature points are more evenly distributed than the default Gauss quadrature.
+* To improve domain coverage, we use Gauss-Lobatto quadrature rule as the quadrature points are more evenly distributed than the default Gauss quadrature.
 * Lastly, we need to consistently refine our meshes so that the particle falls in the same relative position to our degrees of freedom. This is important because if we analyze how our void fraction value evolves in a line conciding with the particle's falling trajectory, the magnitudes of the projected void fraction will vary with how far the particle is from the degrees of freedom.
 
-The above factors considered, we can now look at the results. First, we show a video of the particle falling in the fluid for the finest among our meshes. The arrows stand for the velocity of the surrounding fluid. It is nice to observe how the particle "pushes" the fluid away while falling.
+The above factors considered, we can now analyse the results. First, we show a video of the particle falling in the fluid for the finest mesh. The arrows stand for the velocity of the surrounding fluid. 
 
 .. raw:: html
     
     <iframe width="560" height="315" src="https://www.youtube.com/embed/LgpIKRKKEmQ" title="Particle sedimentation in water with Unresolved CFD-DEM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-The same simulation was run for 4 different mesh refinements, :math:`S_c/d_p` of 1.0, 1.7, 2.0, 3.3; and 3 different void fraction smoothing lengths, :math:`L/d_p` of 2, 5, and 10. First, we compare the results of the particle velocity with the analytical solution using Dallavalle's drag correlation. As shown in the following figure, all results are close to the expected analytical results. Specifically, the coarser the mesh and the smaller the smoothing length, the results approximate more to the analytical results. However, the difference is incipient, which indicates any solution would be valid.
+The same simulation is run for 4 different mesh refinements, :math:`S_c/d_p` of 1.0, 1.7, 2.0, 3.3; and 3 different void fraction smoothing lengths, :math:`L/d_p` of 2, 5, and 10. First, we compare the results of the particle velocity with the analytical solution using Dallavalle's drag correlation. As shown in the following figure, all results are close to the expected analytical results. Specifically, the coarser the mesh and the smaller the smoothing length, the results approximate more to the analytical results. However, the difference is incipient, which indicates any solution would be valid.
 
 .. image:: images/terminal_velocity.png
     :alt: terminal velocity of the particle
     :align: center
 
 
-We also compare the void fraction convergence in a line conciding with the particle's falling trajectory. As shown in the following figure, regardless of the void fraction smoothing length, the void fraction converges with the mesh refinement, which is a good indicator of the QCM's mesh independency.
+We also compare the void fraction convergence in a line conciding with the particle's falling trajectory. As shown in the following figure, regardless of the void fraction smoothing length, the void fraction converges with the mesh refinement, which is a good indicator of the QCM's mesh independence.
 
 .. image:: images/voidfraction_convergence.png
     :alt: void fraction convergence in a line conciding with the particle's falling trajectory
