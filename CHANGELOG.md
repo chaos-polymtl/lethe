@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-11
+
+### Added
+
+- MINOR Remove muParser and custom parsed function class (reversal of [#1143](https://github.com/chaos-polymtl/lethe/pull/1143), [#1153](https://github.com/chaos-polymtl/lethe/pull/1153), [#1160](https://github.com/chaos-polymtl/lethe/pull/1160)). [#1452](https://github.com/chaos-polymtl/lethe/pull/1452)
+
 ## [Master] - 2025-03-03
 
 ### Added
