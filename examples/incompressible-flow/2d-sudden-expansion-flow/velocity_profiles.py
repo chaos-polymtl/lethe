@@ -35,33 +35,35 @@ if (Re != 70 and Re != 610):
 folder = "./Reynolds" + str(Re) +'/'
 
 # VARIABLES
-L_out = 1.0     # Outlet length
-L_in = 0.08     # Inlet length
-h_in = 0.005    # Half height of inlet
-h_out = 0.01    # Half height of outlet
-h = 0.01        # constriction diameter
+L_out = 1.0                     # Outlet length
+L_in = 0.08                     # Inlet length
+L_out = L_in + L_out            # Total length
+h_in = 0.005                    # Half height of inlet
+h_out = 0.01                    # Half height of outlet
+h = 0.01                        # constriction diameter
 plt.rc('axes', labelsize=14)
-L_out = L_in + L_out
 
 # LOAD REFERENCE DATA
 if (Re == 70):
+    # Durst et al, Re=70, numerical
     ref_Re70_data = [f"./Reynolds70/Reference-Data/Durst-Re70-{x}mm.txt"
                      for x in [10, 35, 50, 140]]
     ref_Re70 = [np.loadtxt(file, delimiter=",", skiprows=1) for file in ref_Re70_data]
-
+    # Durst et al, Re=70, experimental
     refexp_Re70_data = [f"./Reynolds70/Reference-Data/Durst-Re70exp-{x}mm.txt"
                     for x in [10, 35, 50, 140]]
     refexp_Re70 = [np.loadtxt(file, delimiter=",", skiprows=1) for file in refexp_Re70_data]
-
+    # Kanna et al, Re=70, numerical
     ref2_Re70_data = [f"./Reynolds70/Reference-Data/Kanna-Re70-{x}mm.txt"
                         for x in [35, 50, 140]]
     ref2_Re70 = [np.loadtxt(file, delimiter=",", skiprows=1) for file in ref2_Re70_data]
 
 if (Re == 610):
+    # Durst et al, Re=610, numerical
     ref_Re610_data = [f"./Reynolds610/Reference-Data/Durst-Re610-{x}mm.txt"
                     for x in [10, 35, 50, 140, 200, 290, 440, 600]]
     ref_Re610 = [np.loadtxt(file, delimiter=",", skiprows=1) for file in ref_Re610_data]
-
+    # Durst et al, Re=610, experimental
     refexp_Re610_data = [f"./Reynolds610/Reference-Data/Durst-Re610exp-{x}mm.txt"
                     for x in [10, 35, 50, 140, 200, 290, 440, 600]]
     refexp_Re610 = [np.loadtxt(file, delimiter=",", skiprows=1) for file in refexp_Re610_data]
@@ -77,7 +79,6 @@ for filename in os.listdir(folder):
         number = int(match.group(1))
         if number > max_number:
             max_number = number
-
 
 u_moy_in = 1            # Inflow mean velocity
 u_moy_out = 0.5         # Outflow mean velocity
@@ -162,7 +163,6 @@ for row in range(a.shape[0]):
         plt.axis([0,2*h,-0.25,1])
         plt.savefig(f'Reynolds610-{row}.png')
 
-    
 # VELOCITY PROFILE AT OUTLET
 # Comparison with Poiseuille analytical solution
 a_outlet = np.array([L_out, 0,  0])
@@ -189,6 +189,3 @@ if (Re == 70):
     plt.savefig('Reynolds70-poiseuille.png')
 elif (Re == 610):
     plt.savefig('Reynolds610-poiseuille.png')
-
-# Save animation
-
