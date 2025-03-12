@@ -30,9 +30,9 @@ Both files mentioned below are located in the example's folder (``examples/unres
 Description of the Case
 -----------------------
 
-This example simulates the sedimentation of a single particle in a water tank due to gravity. As all unresolved CFD-DEM applications and examples, we start it by introducing the particle in our domain by running a DEM simulation (using ``lethe-particles``). The DEM simulation generates checkpoint files that will be used by our unresolved CFD-DEM application (``lethe-fluid-particles``) to determine the initial state (position, velocity, etc.) of the particles.
+This example simulates the sedimentation of a single particle in a water tank due to gravity. As all unresolved CFD-DEM applications and examples, we start by introducing the particle in our domain by running a DEM simulation (using ``lethe-particles``). The DEM simulation generates checkpoint files that will be used by our unresolved CFD-DEM application (``lethe-fluid-particles``) to determine the initial state (position, velocity, etc.) of the particles.
 
-This is most probably the simplest application case of CFD-DEM we can think of and hence, it is very useful to learn the fundamentals of the method. In Lethe, we use examples such as this not to only guide the user on how to launch a simple example but also to track the performance of our code.
+This is most probably the simplest application case of CFD-DEM we can think of and hence, it is very useful to learn the fundamentals of the method. In Lethe, we use examples such as this to guide the user on how to launch a simple example and to track the performance of our code.
 
 We use this case to assess the grid convergence of the `quadrature centered method (QCM) <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_, by Geitani and Blais [#geitani2023]_. We check if the adequate void fraction is recovered and we monitor the terminal velocity of the sedimenting particle. We use the properties given by Ferreira et al. [#ferreira2023]_ for the particle and fluid.
 
@@ -44,7 +44,7 @@ DEM Parameter File
 Mesh
 ~~~~~
 
-In this example, we are simulating a rectangular-based tank. We use the deal.II GridGenerator in order to generate a hyper rectangle that is subdivided along its height:
+In this example, we are simulating a rectangular-based tank. We use the deal.II GridGenerator to generate a hyper rectangle that is subdivided along its height:
 
 .. code-block:: text
 
@@ -52,8 +52,6 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
       set type                                = dealii
       set grid type                           = subdivided_hyper_rectangle
       set grid arguments                      = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:true
-      set initial refinement                  = 0
-      set expand particle-wall contact search = false
     end
 
 .. note::
@@ -80,14 +78,13 @@ The time step in this case is the same as the time end. Since we only seek to in
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
-We save the files obtained from the single iteration by setting the frequency = 1. These files will be used to start the CFD-DEM simulation.
+We save the files obtained from the single iteration by setting the `frequency = 1`. These files will be used to start the CFD-DEM simulation.
 
 .. code-block:: text
 
     subsection restart
       set checkpoint = true
       set frequency  = 1
-      set restart    = false
       set filename   = dem
     end
 
@@ -113,7 +110,7 @@ The DEM model parameters are:
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gravity is set to 0 since the DEM simulation only loads the particles.
+The gravity is set to :math:`0` since the DEM simulation only loads the particle.
 
 .. code-block:: text
 
@@ -153,6 +150,8 @@ Assuming that the ``lethe-particles`` executable is within your path, the simula
 
   lethe-particles initial-particle.prm
 
+You can visualize the insertion with Paraview:
+
 .. image:: images/particle_insertion.png
     :alt: inserted particle at the top of the channel
     :align: center
@@ -164,7 +163,7 @@ The particle has been inserted it is now possible to simulate its sedimentation.
 CFD-DEM Parameter File
 -----------------------
 
-The CFD simulation is to be carried out using the particle inserted within the previous step. We introduce the different sections of the parameter file ``single-particle-sedimentation.prm`` needed to run this simulation. 
+The CFD simulation is carried out using the particle inserted within the previous step. We introduce the different sections of the parameter file ``single-particle-sedimentation.prm`` needed to run this simulation. 
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,7 +174,6 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 
     subsection simulation control
       set method               = bdf1
-      set number mesh adapt    = 0
       set output name          = result_
       set output frequency     = 20
       set time end             = 2
@@ -193,7 +191,7 @@ We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :m
 
     subsection physical properties
       subsection fluid 0
-        set kinematic viscosity = 0.0000008379
+        set kinematic viscosity = 8.379e-7
         set density             = 996.8
       end
     end
