@@ -36,8 +36,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type      = gmsh
-  set file name = ../two-dimensional-jet.msh
+  set type               = gmsh
+  set file name          = ../two-dimensional-jet.msh
   set initial refinement = 0
 end
 
@@ -46,15 +46,15 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set variable                    = velocity
-  set type                        = kelly
-  set fraction refinement         = 0.05
-  set fraction coarsening         = 0
-  set frequency                   = 5
-  set min refinement level        = 0
-  set max refinement level        = 2
-  set max number elements         = 250000
-  set mesh refinement controller  = true
+  set variable                   = velocity
+  set type                       = kelly
+  set fraction refinement        = 0.05
+  set fraction coarsening        = 0
+  set frequency                  = 5
+  set min refinement level       = 0
+  set max refinement level       = 2
+  set max number elements        = 250000
+  set mesh refinement controller = true
 end
 
 #---------------------------------------------------
@@ -109,8 +109,8 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity      = verbose
-    set tolerance      = 1e-4
+    set verbosity = verbose
+    set tolerance = 1e-4
   end
 end
 
@@ -120,13 +120,13 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
-    set method                                = gmres
-    set max iters                             = 500
-    set max krylov vectors                    = 500
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-6
-    set preconditioner                        = amg
-    set amg preconditioner ilu fill           = 1
+    set verbosity                   = verbose
+    set method                      = gmres
+    set max iters                   = 500
+    set max krylov vectors          = 500
+    set relative residual           = 1e-3
+    set minimum residual            = 1e-6
+    set preconditioner              = amg
+    set amg preconditioner ilu fill = 1
   end
 end
