@@ -54,7 +54,7 @@ protected:
   setup_dofs() override;
 
   /**
-   * @brief Finish the time step and manage the time-step end for the void
+   * @brief Finish the time-step and manage the time-step end for the void
    * fraction.
    */
   virtual void
