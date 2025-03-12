@@ -191,26 +191,26 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
     force_object(dem_parameters);
 
   // Defining local variables
-  auto          particle_0         = particle_handler.begin();
-  auto          particle_1         = std::next(particle_0);
-  bool          contact_is_ongoing = true;
-  double        time               = 0;
-  const int     max_iteration      = 10000;
-  double        normal_overlap     = -1;
-  double        distance;
-  Point<3>     &position_0 = particle_0->get_location();
-  Point<3>     &position_1 = particle_1->get_location();
-  Tensor<1, 3> &force_0    = force[particle_0->get_id()];
-  Tensor<1, 3> &torque_0   = torque[particle_0->get_id()];
-  Tensor<1, 3>  tangential_overlap{{0, 0, 0}};
-  Tensor<1, 3>  velocity_0;
-  Tensor<1, 3>  velocity_1;
-  Tensor<1, 3>  omega_0;
-  Tensor<1, 3>  omega_1;
-  Tensor<1, 3>  normal_unit_vector;
-  Tensor<1, 3>  relative_velocity;
-  Tensor<1, 3>  tangential_relative_velocity;
-  const double  force_calculation_threshold_distance =
+  auto               particle_0         = particle_handler.begin();
+  auto               particle_1         = std::next(particle_0);
+  bool               contact_is_ongoing = true;
+  double             time               = 0;
+  const unsigned int max_iteration      = 10000;
+  double             normal_overlap     = -1;
+  double             distance;
+  Point<3>          &position_0 = particle_0->get_location();
+  Point<3>          &position_1 = particle_1->get_location();
+  Tensor<1, 3>      &force_0    = force[particle_0->get_id()];
+  Tensor<1, 3>      &torque_0   = torque[particle_0->get_id()];
+  Tensor<1, 3>       tangential_overlap{{0, 0, 0}};
+  Tensor<1, 3>       velocity_0;
+  Tensor<1, 3>       velocity_1;
+  Tensor<1, 3>       omega_0;
+  Tensor<1, 3>       omega_1;
+  Tensor<1, 3>       normal_unit_vector;
+  Tensor<1, 3>       relative_velocity;
+  Tensor<1, 3>       tangential_relative_velocity;
+  const double       force_calculation_threshold_distance =
     cut_off_factor * 0.5 * (p.diameter[0] + p.diameter[1]);
 
   // Open file and write names of columns
