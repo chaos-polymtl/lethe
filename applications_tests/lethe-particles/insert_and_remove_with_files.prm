@@ -79,11 +79,11 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                = file
-  set insertion frequency             = 100
-  set list of input files             = ../particles_00.input, ../particles_01.input
+  set insertion method               = file
+  set insertion frequency            = 100
+  set list of input files            = ../particles_00.input, ../particles_01.input
   set removal box points coordinates = 0., -1., -1.: 1., 1., 1.
-  set remove particles              = true
+  set remove particles               = true
 end
 
 #---------------------------------------------------
@@ -97,4 +97,3 @@ subsection mesh
   set initial refinement                  = 2
   set expand particle-wall contact search = false
 end
-

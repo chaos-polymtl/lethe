@@ -163,8 +163,8 @@ subsection post-processing
   set initial time for average velocity = 30e-4
 
   # Tracer post-processing
-  set calculate tracer flow rate  = true
-  set tracer flow rate name       = tracer_flow_rate
+  set calculate tracer flow rate = true
+  set tracer flow rate name      = tracer_flow_rate
 end
 
 subsection timer
@@ -208,4 +208,3 @@ subsection linear solver
     set force linear solver continuation      = false
   end
 end
-

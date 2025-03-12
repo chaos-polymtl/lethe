@@ -11,10 +11,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step        = 1e-5
-  set time end         = 0.22 # = 0.10 to generate the restart files.
-  set log frequency    = -1
-  
+  set time step     = 1e-5
+  set time end      = 0.22 # = 0.10 to generate the restart files.
+  set log frequency = -1
+
   set output frequency = 0
 end
 
@@ -31,9 +31,9 @@ end
 #---------------------------------------------------
 
 subsection restart
-  set checkpoint = false     # = true to generate the restart files.
+  set checkpoint = false # = true to generate the restart files.
   set frequency  = 10000
-  set restart    = true       # = false to generate the restart files.
+  set restart    = true # = false to generate the restart files.
   set filename   = restart_file_insertion
 end
 

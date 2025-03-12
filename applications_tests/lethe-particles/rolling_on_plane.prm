@@ -11,12 +11,11 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 2e-10
-  set time end          = 1e-5
-  set log frequency     = 50000
-  set output frequency  = 50000
+  set time step        = 2e-10
+  set time end         = 1e-5
+  set log frequency    = 50000
+  set output frequency = 50000
 end
-
 
 #---------------------------------------------------
 # Timer
@@ -43,7 +42,6 @@ subsection model parameters
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
   set rolling resistance torque method       = no_resistance
-
 end
 
 #---------------------------------------------------
@@ -54,14 +52,14 @@ subsection lagrangian physical properties
   set g                        = 0.0, 0.0, -10.0
   set number of particle types = 1
   subsection particle type 0
-    set size distribution type                 = uniform
-    set diameter                               = 0.005
-    set number of particles                    = 1
-    set density particles                      = 4000
-    set young modulus particles                = 380e9
-    set poisson ratio particles                = 0.23
-    set restitution coefficient particles      = 0.8
-    set friction coefficient particles         = 1.0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number of particles               = 1
+    set density particles                 = 4000
+    set young modulus particles           = 380e9
+    set poisson ratio particles           = 0.23
+    set restitution coefficient particles = 0.8
+    set friction coefficient particles    = 1.0
   end
   set young modulus wall           = 70e9
   set poisson ratio wall           = 0.25
@@ -78,7 +76,7 @@ subsection insertion info
   set insertion frequency = 10000
   set list x              = 1.
   set list y              = 1.
-  set list z                = 0.0025
+  set list z              = 0.0025
   set list velocity x     = 1.0
   set list velocity y     = 0.0
   set list velocity z     = 0.
@@ -93,10 +91,10 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type                                = dealii
-  set grid type                           = hyper_cube
-  set grid arguments                      = 0 : 2 : false
-  set initial refinement                  = 0
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 2 : false
+  set initial refinement = 0
 end
 
 #---------------------------------------------------
@@ -106,7 +104,7 @@ end
 subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0
-    set boundary id         = 0
-    set type                = fixed_wall
+    set boundary id = 0
+    set type        = fixed_wall
   end
 end

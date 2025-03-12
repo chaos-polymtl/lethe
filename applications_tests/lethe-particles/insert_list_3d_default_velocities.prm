@@ -89,8 +89,8 @@ subsection insertion info
   set list velocity z     = 0.250
   set list omega x        = 0.000
 
-  set list omega z        = 0.000
-  set list diameters      = 0.005 , 0.005
+  set list omega z   = 0.000
+  set list diameters = 0.005 , 0.005
 end
 
 #---------------------------------------------------

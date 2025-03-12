@@ -217,9 +217,9 @@ end
 
 subsection restart
   set checkpoint = false
-  set filename = check_point
-  set frequency = 1
-  set restart = true
+  set filename   = check_point
+  set frequency  = 1
+  set restart    = true
 end
 
 #---------------------------------------------------

@@ -116,7 +116,7 @@ subsection solid objects
         set Function expression = 0 ; 0  ; 0
       end
 
-      set center of rotation =  0.1, 0., 0.05
+      set center of rotation = 0.1, 0., 0.05
     end
   end
 end

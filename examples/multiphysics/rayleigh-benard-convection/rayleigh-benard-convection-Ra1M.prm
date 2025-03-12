@@ -194,19 +194,19 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                                 = verbose
-    set method                                    = gmres
-    set max iters                                 = 1000
-    set relative residual                         = 1e-6
-    set minimum residual                          = 1e-8
-    set preconditioner                            = amg
+    set verbosity         = verbose
+    set method            = gmres
+    set max iters         = 1000
+    set relative residual = 1e-6
+    set minimum residual  = 1e-8
+    set preconditioner    = amg
   end
   subsection heat transfer
-    set verbosity                             = verbose
-    set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-6
-    set minimum residual                      = 1e-8
-    set preconditioner                        = ilu
+    set verbosity         = verbose
+    set method            = gmres
+    set max iters         = 1000
+    set relative residual = 1e-6
+    set minimum residual  = 1e-8
+    set preconditioner    = ilu
   end
 end

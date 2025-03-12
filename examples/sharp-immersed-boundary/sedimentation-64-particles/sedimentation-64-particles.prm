@@ -97,7 +97,7 @@ subsection boundary conditions
   end
   subsection bc 5
     set id   = 5
-    set type = outlet 
+    set type = outlet
     set beta = 0
   end
 end

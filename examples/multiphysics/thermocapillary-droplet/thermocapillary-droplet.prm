@@ -51,7 +51,7 @@ subsection VOF
     set max iterations          = 50
     set monitored fluid         = fluid 1
     set tolerance               = 1e-7
-    set verbosity = verbose
+    set verbosity               = verbose
   end
   subsection surface tension force
     set enable                                   = true

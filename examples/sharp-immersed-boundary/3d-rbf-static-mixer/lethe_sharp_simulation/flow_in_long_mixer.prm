@@ -136,4 +136,3 @@ subsection linear solver
     set force linear solver continuation      = false
   end
 end
-

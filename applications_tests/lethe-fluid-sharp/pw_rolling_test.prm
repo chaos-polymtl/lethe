@@ -3,47 +3,58 @@
 
 # Listing of Parameters
 #----------------------
+
 set dimension = 3
+
 #---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
   set method             = bdf2
   set bdf startup method = multiple step bdf
   set time step          = 0.005 # Time step
-  set time end           = 0.01    # End time of simulation
-  set output name        = out    # Prefix for VTU outputs
-  set output frequency   = 0      # Frequency of simulation output
-  set subdivision        = 1      # Mesh subdivision when output end
+  set time end           = 0.01  # End time of simulation
+  set output name        = out   # Prefix for VTU outputs
+  set output frequency   = 0     # Frequency of simulation output
+  set subdivision        = 1     # Mesh subdivision when output end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 0.6041666666666
     set density             = 0
   end
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 1,1,1: 0,0,0 : 10 , 10 ,10 : true
   set initial refinement = 1
 end
+
 #---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
   set number = 6
   subsection bc 0
@@ -72,9 +83,11 @@ subsection boundary conditions
     set beta = 0
   end
 end
+
 #---------------------------------------------------
 # IB particles
 #---------------------------------------------------
+
 subsection particles
   set assemble Navier-Stokes inside particles = false
   set number of particles                     = 1
@@ -94,13 +107,13 @@ subsection particles
     subsection gravity
       set Function expression = 0;-981;0
     end
-     subsection wall physical properties
-        set wall friction coefficient         = 1
-        set wall poisson ratio                = 0.3
-        set wall restitution coefficient      = 1
-        set wall rolling friction coefficient = 0
-        set wall youngs modulus               = 100000000
-      end
+    subsection wall physical properties
+      set wall friction coefficient         = 1
+      set wall poisson ratio                = 0.3
+      set wall restitution coefficient      = 1
+      set wall rolling friction coefficient = 0
+      set wall youngs modulus               = 100000000
+    end
   end
   subsection particle info 0
     set type             = sphere
@@ -116,15 +129,17 @@ subsection particles
       set Function expression = 1; 0; 0
     end
     subsection physical properties
-      set density = 0.001120
-      set restitution coefficient      = 0.3
-      set friction coefficient         = 1
+      set density                 = 0.001120
+      set restitution coefficient = 0.3
+      set friction coefficient    = 1
     end
   end
 end
+
 #---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
   # Fraction of coarsened elements
   set fraction coarsening = 0.3
@@ -146,9 +161,11 @@ subsection mesh adaptation
   # Variable for kelly estimationChoices are <velocity|pressure>.
   set variable = velocity
 end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
   # Type of initial conditionChoices are <L2projection|viscous|nodal>.
   set type = nodal
@@ -156,9 +173,11 @@ subsection initial conditions
     set Function expression = 0; 0; 0;0
   end
 end
+
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity             = quiet
@@ -168,15 +187,19 @@ subsection non-linear solver
     set force rhs calculation = true
   end
 end
+
 #---------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
   set verbosity = verbose
 end
+
 #---------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
   subsection fluid dynamics
     set method                                = gmres

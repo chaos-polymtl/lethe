@@ -11,9 +11,9 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step     = 1e-5
-  set time end      = 0.10
-  set log frequency = 1000
+  set time step        = 1e-5
+  set time end         = 0.10
+  set log frequency    = 1000
   set output frequency = 0
 end
 
