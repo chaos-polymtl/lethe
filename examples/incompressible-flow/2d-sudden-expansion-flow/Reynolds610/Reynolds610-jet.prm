@@ -38,7 +38,6 @@ end
 subsection mesh
   set type               = gmsh
   set file name          = ../two-dimensional-jet.msh
-  set initial refinement = 0
 end
 
 #---------------------------------------------------
