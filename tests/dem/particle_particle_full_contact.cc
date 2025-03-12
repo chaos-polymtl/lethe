@@ -40,12 +40,12 @@ test()
 {
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  int                                       hyper_cube_length = 1;
+  const int                                 hyper_cube_length = 1;
   GridGenerator::hyper_cube(triangulation,
                             -1 * hyper_cube_length,
                             hyper_cube_length,
                             true);
-  int refinement_number = 2;
+  const int refinement_number = 2;
   triangulation.refine_global(refinement_number);
   MappingQ<dim> mapping(1);
 
@@ -57,10 +57,10 @@ test()
   Parameters::Lagrangian::ModelParameters &model_param =
     dem_parameters.model_parameters;
 
-  Tensor<1, dim> g{{0, 0, 0}};
-  double         dt                                               = 0.00001;
-  double         particle_diameter                                = 0.005;
-  unsigned int   output_interval                                  = 10;
+  Tensor<1, dim>     g{{0, 0, 0}};
+  const double       dt                                           = 0.00001;
+  const double       particle_diameter                            = 0.005;
+  const unsigned int output_frequency                             = 10;
   lagrangian_prop.particle_type_number                            = 1;
   lagrangian_prop.youngs_modulus_particle[0]                      = 50000000;
   lagrangian_prop.poisson_ratio_particle[0]                       = 0.3;
@@ -89,20 +89,20 @@ test()
   contact_manager.execute_cell_neighbors_search(triangulation, dummy_pbc_info);
 
   // Setting initial properties of particle 0 and 1
-  Point<dim>                       position0 = {0.4, 0, 0};
-  Point<dim>                       position1 = {0.405, 0, 0};
-  Tensor<1, dim>                   v0{{0.01, 0, 0}};
-  Tensor<1, dim>                   w0{{0, 0, 0}};
-  Tensor<1, dim>                   v1{{0, 0, 0}};
-  Tensor<1, dim>                   w1{{0, 0, 0}};
+  Point<dim>                       position_0 = {0.4, 0, 0};
+  Point<dim>                       position_1 = {0.405, 0, 0};
+  Tensor<1, dim>                   velocity_0{{0.01, 0, 0}};
+  Tensor<1, dim>                   omega_0{{0, 0, 0}};
+  Tensor<1, dim>                   velocity_1{{0, 0, 0}};
+  Tensor<1, dim>                   omega_1{{0, 0, 0}};
   initial_particle_properties<dim> particle_properties = {
-    {position0, position1},                // initial positions
-    {0, 1},                                // id
-    {0, 0},                                // type
-    {v0, v1},                              // initial velocities
-    {w0, w1},                              // initial angular velocities
-    {1, 1},                                // mass
-    {particle_diameter, particle_diameter} // diameter
+    {position_0, position_1},              // initial positions
+    {0, 1},                                // ids
+    {0, 0},                                // types
+    {velocity_0, velocity_1},              // initial velocities
+    {omega_0, omega_1},                    // initial angular velocities
+    {1, 1},                                // masses
+    {particle_diameter, particle_diameter} // diameters
   };
 
 
@@ -122,7 +122,7 @@ test()
       particle_properties,
       g,
       dt,
-      output_interval,
+      output_frequency,
       neighborhood_threshold,
       0, // cut_off_factor to allow contact forces without contact
       "linear");
@@ -147,7 +147,7 @@ test()
                                                   particle_properties,
                                                   g,
                                                   dt,
-                                                  output_interval,
+                                                  output_frequency,
                                                   neighborhood_threshold,
                                                   0,
                                                   "hmlo");
