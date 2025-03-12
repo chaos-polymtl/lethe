@@ -275,7 +275,8 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                                             normal_unit_vector));
       tangential_relative_velocity =
         relative_velocity -
-        ((relative_velocity * normal_unit_vector) * normal_unit_vector);
+        scalar_product(relative_velocity, normal_unit_vector) *
+          normal_unit_vector;
       tangential_overlap += tangential_relative_velocity * dt;
 
       // Printing on file and storing data at each output interval
