@@ -820,8 +820,7 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
             }
 
-          this->mg_operators[level] =
-            std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+          this->create_level_operator(level);
 
           this->mg_operators[level]->reinit(
             *mapping,
@@ -1225,8 +1224,7 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
             }
 
-          this->mg_operators[level] =
-            std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+          this->create_level_operator(level);
 
           this->mg_operators[level]->reinit(
             *mapping,
@@ -1908,6 +1906,15 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_ILU()
   coarse_grid_precondition =
     std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
       precondition_ilu);
+}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::create_level_operator(
+  const unsigned int level)
+{
+  this->mg_operators[level] =
+    std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
 }
 
 template <int dim>
