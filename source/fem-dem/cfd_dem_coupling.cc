@@ -320,7 +320,7 @@ CFDDEMSolver<dim>::read_dem()
   Particles::ParticleHandler<dim> temporary_particle_handler(
     *this->triangulation,
     this->particle_mapping,
-    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
+    DEM::CFDDEMProperties::n_properties);
 
   ia >> temporary_particle_handler;
 

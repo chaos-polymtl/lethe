@@ -1272,7 +1272,7 @@ public:
     , w(p_w)
   {}
 
-  virtual double
+  double
   value(const Point<dim> &point, const unsigned int component) const override;
 };
 
@@ -1321,7 +1321,7 @@ public:
     , p(p_p)
   {}
 
-  virtual double
+  double
   value(const Point<dim> &point, unsigned int component) const override;
 };
 

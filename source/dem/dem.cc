@@ -41,9 +41,7 @@ DEMSolver<dim, PropertiesIndex>::DEMSolver(
   , checkpoint_controller(parameters.restart)
   , triangulation(this->mpi_communicator)
   , mapping(1)
-  , particle_handler(triangulation,
-                     mapping,
-                     DEM::get_number_properties<PropertiesIndex>())
+  , particle_handler(triangulation, mapping, PropertiesIndex::n_properties)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
