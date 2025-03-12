@@ -22,7 +22,7 @@ Files Used in This Example
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/single-particle-sedimentation``).
 
-- Parameter file for initial particles generation: ``initial-particle.prm``
+- Parameter file for initial particles generation: ``initial-particles.prm``
 - Parameter file for CFD-DEM simulation of the Boycott effect: ``single-particle-sedimentation.prm``
 
 

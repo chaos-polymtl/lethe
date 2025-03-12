@@ -77,14 +77,6 @@ subsection lagrangian physical properties
 end
 
 #---------------------------------------------------
-# Boundary conditions DEM
-#---------------------------------------------------
-
-subsection DEM boundary conditions
-  set number of boundary conditions = 0
-end
-
-#---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
 
