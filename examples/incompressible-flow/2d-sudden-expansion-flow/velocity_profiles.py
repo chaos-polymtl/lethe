@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
-Postprocessing code for 2D-backward-facing-step example
-Computes velocity distributions at outlet and
-compares it with analytical solution (Poiseuille)
+Postprocessing code for 2D-sudden-expansion-flow example
+Computes velocity distributions at different cross sections and
+compares it with literature results and analytical solution (Poiseuille)
 """
 
 import numpy as np
@@ -17,9 +17,7 @@ import argparse
 ########################################
 ########################################
 
-# EXAMPLE TO COMPUTE VELOCITY DISTRIBUTION AT VARIOUS CROSS SECTIONS
-# NOTE : THIS FILE MUST BE IN THE "2d-sudden-expansion-flow" DIRECTORY TO 
-#        WORK PROPERLY
+# NOTE: This file must be in the "2d-sudden-expansion-flow" directory to work properly
 
 # Parse Reynolds number
 parser = argparse.ArgumentParser(description='Arguments to compute the velocity distribution at outlet')
@@ -34,7 +32,7 @@ if (Re != 70 and Re != 610):
 #Define folder path according to Re
 folder = "./Reynolds" + str(Re) +'/'
 
-# VARIABLES
+# Variables
 L_out = 1.0                     # Outlet length
 L_in = 0.08                     # Inlet length
 L_out = L_in + L_out            # Total length
@@ -43,7 +41,7 @@ h_out = 0.01                    # Half height of outlet
 h = 0.01                        # constriction diameter
 plt.rc('axes', labelsize=14)
 
-# LOAD REFERENCE DATA
+# Load reference data
 if (Re == 70):
     # Durst et al, Re=70, numerical
     ref_Re70_data = [f"./Reynolds70/Reference-Data/Durst-Re70-{x}mm.txt"
@@ -68,8 +66,8 @@ if (Re == 610):
                     for x in [10, 35, 50, 140, 200, 290, 440, 600]]
     refexp_Re610 = [np.loadtxt(file, delimiter=",", skiprows=1) for file in refexp_Re610_data]
 
-# DATA EXTRACTION
-#  Iterate through files in directory, we find the maximum number of files and the last file
+# Data extraction
+# Iterate through files in directory, we find the maximum number of files and the last file
 max_number = -1
 pattern = re.compile(r'sudden-expansion-flow-output\.(\d+)\.00000.vtu')
 
@@ -85,12 +83,12 @@ u_moy_out = 0.5         # Outflow mean velocity
 u_max_Re70 = 1.48635    # Maximum velocity at Re=70
 u_max_Re610 = 1.32786   # Maximum velocity at Re=610
 
-# EXACT SOLUTION
+# Exact solution
 k_out = -3/2*u_moy_out/h_out**2
 y_out_an = np.linspace(-h_out, h_out, 1001)
 u_out_an = k_out*(y_out_an**2-h_out**2)
 
-# VELOCITY PROFILES ALONG THE DOMAIN
+# Velocity profiles along the domain
 file = (folder + '/sudden-expansion-flow-output.' 
         + f'{max_number:05d}' + '.00000.vtu')
 if (Re == 70):
@@ -163,7 +161,7 @@ for row in range(a.shape[0]):
         plt.axis([0,2*h,-0.25,1])
         plt.savefig(f'Reynolds610-{row}.png')
 
-# VELOCITY PROFILE AT OUTLET
+# Velocity profile at outlet
 # Comparison with Poiseuille analytical solution
 a_outlet = np.array([L_out, 0,  0])
 b_outlet = np.array([L_out, 2*h, 0])
