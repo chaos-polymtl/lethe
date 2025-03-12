@@ -24,6 +24,8 @@ Both files mentioned below are located in the example's folder (``examples/unres
 
 - Parameter file for initial particles generation: ``initial-particles.prm``
 - Parameter file for CFD-DEM simulation of the Boycott effect: ``single-particle-sedimentation.prm``
+- Post-processing script: ``single_particle_sedimentation.py``
+- Module for post-processing script: ``single_particle_sedimentation_funcs.py``
 
 
 -----------------------
@@ -50,10 +52,11 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
 .. code-block:: text
 
     subsection mesh
-      set type                                = dealii
-      set grid type                           = subdivided_hyper_rectangle
-      set grid arguments                      = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:true
+      set type           = dealii
+      set grid type      = subdivided_hyper_rectangle
+      set grid arguments = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:true
     end
+
 
 .. note::
     The grid is 20x40x20 times the particle diameter.
@@ -69,7 +72,7 @@ The time step in this case is the same as the time end. Since we only seek to in
 
 .. code-block:: text
 
-   subsection simulation control
+    subsection simulation control
       set time step        = 1e-6
       set time end         = 1e-6
       set output frequency = 1
@@ -100,12 +103,13 @@ The gravity is set to :math:`0` since the DEM simulation only loads the particle
       set g                        = 0.0, 0.0, 0.0
       set number of particle types = 1
       subsection particle type 0
-        set size distribution type            = uniform
-        set diameter                          = 0.002663
-        set number                            = 1
-        set density particles                 = 1029
+        set size distribution type = uniform
+        set diameter               = 0.002663
+        set number of particles    = 1
+        set density particles      = 1029
       end
     end
+
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
@@ -115,10 +119,11 @@ We use the list insertion method to insert a single particle in our domain at a 
 .. code-block:: text
 
     subsection insertion info
-      set insertion method = list
-      set list x           = 0
-      set list y           = 0.08
-      set list z           = 0
+      set insertion frequency = 1
+      set insertion method    = list
+      set list x              = 0
+      set list y              = 0.08
+      set list z              = 0
     end
 
 
@@ -155,13 +160,14 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 .. code-block:: text
 
     subsection simulation control
-      set method               = bdf1
-      set output name          = result_
-      set output frequency     = 20
-      set time end             = 2
-      set time step            = 0.005
-      set output path          = ./output/
+      set method           = bdf1
+      set output name      = result_
+      set output frequency = 10
+      set time end         = 2
+      set time step        = 0.005
+      set output path      = ./output/
     end
+
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -173,17 +179,11 @@ We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :m
 
     subsection physical properties
       subsection fluid 0
-        set kinematic viscosity = 8.379e-7
-        set density             = 996.8
+        set kinematic viscosity = 0.0000008379
+        set density             = 996.7775
       end
     end
 
-Initial Conditions
-~~~~~~~~~~~~~~~~~~
-
-We choose zero initial conditions for the velocity, which is the default initial condition.
-
-.. code-block:: text
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,6 +220,7 @@ For the boundary conditions, we choose a slip boundary condition on all the wall
       end
     end
 
+
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -228,10 +229,10 @@ This section is identical to the one previously mentioned for the DEM simulation
 
 Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Since we are calculating the void fraction using the particle insertion of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem.
-We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/void-fraction.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``.
+Since we are calculating the void fraction using the particle insertion of the DEM simulation. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the ``dem file name = dem``.
+We choose to use the quadrature centered method (`QCM <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``.
 
-We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We do not want the volume of the sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Then, we set the diameter of the QCM sphere to be twice the size of our particle's diameter. We also set the smoothing length equal to 10 times the particle diameter. Lastly, we choose the ``gauss-lobatto`` quadrature rule with 5 quadrature points. More details on these parameters are available on the `documentation on void fraction parameters <../../../theory/unresolved_cfd-dem/void-fraction.html>`_.
+We do not want the volume of the sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Then, we set the diameter of the QCM sphere to be twice the size of our particle's diameter. We also set the smoothing length equal to 10 times the particle diameter. Lastly, we choose the ``gauss-lobatto`` quadrature rule with 5 quadrature points. More details on these parameters are available on the `documentation on void fraction parameters <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_.
 
 .. code-block:: text
 
