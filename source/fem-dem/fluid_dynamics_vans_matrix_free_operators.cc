@@ -18,7 +18,6 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
 
   grad_div_gamma.reinit(n_cells, integrator.n_q_points);
 
-
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
       integrator.reinit(cell);
