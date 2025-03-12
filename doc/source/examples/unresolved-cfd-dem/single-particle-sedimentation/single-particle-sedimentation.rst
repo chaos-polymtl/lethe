@@ -20,7 +20,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/single-particle-sedimentation``).
+All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/single-particle-sedimentation``).
 
 - Parameter file for initial particles generation: ``initial-particles.prm``
 - Parameter file for CFD-DEM simulation of the Boycott effect: ``single-particle-sedimentation.prm``
@@ -188,7 +188,7 @@ We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :m
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the boundary conditions, we choose a slip boundary condition on all the walls of the channel and the channel except the bottom and the top of the channel where a no-slip boundary condition is imposed. For more information about the boundary conditions, please refer to the `Boundary Conditions Section <../../../parameters/cfd/boundary_conditions_cfd.html>`_
+For the boundary conditions, we choose a slip boundary condition on all the walls of the channel.
 
 .. code-block:: text
 
