@@ -1,22 +1,12 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "fem-dem/fluid_dynamics_vans_matrix_free.h"
 
 #include <core/revision.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/revision.h>
-
-std::string
-concatenate_strings(const int argc, char **argv)
-{
-  std::string result = std::string(argv[0]);
-
-  for (int i = 1; i < argc; ++i)
-    result = result + " " + std::string(argv[i]);
-
-  return result;
-}
 
 int
 main(int argc, char *argv[])
