@@ -231,6 +231,12 @@ public:
   /// DoFHandler that manages the void fraction
   DoFHandler<dim> dof_handler;
 
+  /// Mapping for the void fraction
+  std::shared_ptr<Mapping<dim>> mapping;
+
+  /// Quadrature for the void fraction
+  std::shared_ptr<Quadrature<dim>> quadrature;
+
   /// The solutions are made public instead of using getters
   /// Solution of the void fraction at previous time steps
   std::vector<GlobalVectorType> previous_void_fraction;
@@ -252,6 +258,7 @@ public:
   /// object has to be made public because the boundary conditions are set
   /// outside of the object for now.
   AffineConstraints<double> void_fraction_constraints;
+
 
 
 private:
@@ -354,16 +361,16 @@ private:
   /// Triangulation
   parallel::DistributedTriangulationBase<dim> *triangulation;
 
-  /// Mapping for the void fraction
-  std::shared_ptr<Mapping<dim>> mapping;
-
-  /// Quadrature for the void fraction
-  std::shared_ptr<Quadrature<dim>> quadrature;
-
+public:
+  /// TODO: To move to private
   /// Parameters for the calculation of the void fraction
+  /// Right now this is used for the VANS matrix-free solver
+  /// to directly calculate the void fraction from the function itself.
+  /// The function will be removed back to private in a future PR.
   std::shared_ptr<Parameters::VoidFractionParameters<dim>>
     void_fraction_parameters;
 
+private:
   /// Linear solvers for the calculation of the void fraction
   const Parameters::LinearSolver linear_solver_parameters;
 

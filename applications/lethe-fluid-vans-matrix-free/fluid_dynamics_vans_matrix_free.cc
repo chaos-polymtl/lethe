@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "solvers/fluid_dynamics_matrix_free.h"
+#include "fem-dem/fluid_dynamics_vans_matrix_free.h"
 
 #include <core/revision.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/revision.h>
-
 
 int
 main(int argc, char *argv[])
@@ -50,8 +50,8 @@ main(int argc, char *argv[])
 
       if (dim == 2)
         {
-          ParameterHandler        prm;
-          SimulationParameters<2> NSparam;
+          ParameterHandler              prm;
+          CFDDEMSimulationParameters<2> NSparam;
           NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
           prm.parse_input(file_name);
@@ -68,14 +68,14 @@ main(int argc, char *argv[])
             );
           pcout << std::endl << std::endl;
 
-          FluidDynamicsMatrixFree<2> problem(NSparam);
+          FluidDynamicsVANSMatrixFree<2> problem(NSparam);
           problem.solve();
         }
 
       else if (dim == 3)
         {
-          ParameterHandler        prm;
-          SimulationParameters<3> NSparam;
+          ParameterHandler              prm;
+          CFDDEMSimulationParameters<3> NSparam;
           NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
           prm.parse_input(file_name);
@@ -92,7 +92,7 @@ main(int argc, char *argv[])
             );
           pcout << std::endl << std::endl;
 
-          FluidDynamicsMatrixFree<3> problem(NSparam);
+          FluidDynamicsVANSMatrixFree<3> problem(NSparam);
           problem.solve();
         }
       else

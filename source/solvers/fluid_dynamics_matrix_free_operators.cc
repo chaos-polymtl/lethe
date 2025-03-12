@@ -64,57 +64,7 @@ create_bool_dof_mask(const FiniteElement<dim, spacedim> &fe,
   return bool_dof_mask;
 }
 
-/**
- * @brief Matrix free helper function
- *
- * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam Number Abstract type for number across the class (i.e., double).
- * @param function Function to evaluate.
- * @param p_vectorized Batch of points to evaluate function at.
- * @return VectorizedArray<Number> Batch of evaluated values.
- */
-template <int dim, typename Number>
-VectorizedArray<Number>
-evaluate_function(const Function<dim>                       &function,
-                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
-{
-  VectorizedArray<Number> result;
-  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
-    {
-      Point<dim> p;
-      for (unsigned int d = 0; d < dim; ++d)
-        p[d] = p_vectorized[d][v];
-      result[v] = function.value(p);
-    }
-  return result;
-}
 
-/**
- * @brief Matrix free helper function
- *
- * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam Number Abstract type for number across the class (i.e., double).
- * @tparam components Number of solution components.
- * @param function Function to evaluate.
- * @param p_vectorized Batch of points to evaluate function at.
- * @return Tensor<1, components, VectorizedArray<Number>> Batch of evaluated values.
- */
-template <int dim, typename Number, int components>
-Tensor<1, components, VectorizedArray<Number>>
-evaluate_function(const Function<dim>                       &function,
-                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
-{
-  Tensor<1, components, VectorizedArray<Number>> result;
-  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
-    {
-      Point<dim> p;
-      for (unsigned int d = 0; d < dim; ++d)
-        p[d] = p_vectorized[d][v];
-      for (unsigned int d = 0; d < components; ++d)
-        result[d][v] = function.value(p, d);
-    }
-  return result;
-}
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()

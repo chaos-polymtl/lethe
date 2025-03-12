@@ -459,6 +459,9 @@ private:
   void
   setup_ILU();
 
+
+
+protected:
   /**
    * @brief Prints the setup times for the geometric multigrid preconditioner.
    *
@@ -466,7 +469,6 @@ private:
   void
   print_mg_setup_times();
 
-protected:
   /**
    * @brief Matrix-free operator in used for all the matrix-vector multiplications calls (vmult).
    *

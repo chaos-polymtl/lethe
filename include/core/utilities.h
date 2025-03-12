@@ -753,5 +753,25 @@ extract_values_from_map(const std::map<key, val> &map)
   return values;
 }
 
+/**
+ * @brief Concatenate words which are passed from the command line to a main function
+ * into a single string in which the words are seperated by space.
+ *
+ * @param[in] argc number of arguments in C style.
+ * @param[in] argv arguments themselves in C style.
+ */
+
+inline std::string
+concatenate_strings(const int argc, char **argv)
+{
+  std::string result = std::string(argv[0]);
+
+  for (int i = 1; i < argc; ++i)
+    result = result + " " + std::string(argv[i]);
+
+  return result;
+}
+
+
 
 #endif

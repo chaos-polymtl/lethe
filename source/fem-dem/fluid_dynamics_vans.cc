@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/grids.h>
 #include <core/lethe_grid_tools.h>
 
 #include <dem/particle_handler_conversion.h>
@@ -8,10 +9,6 @@
 #include <fem-dem/void_fraction.h>
 
 #include <deal.II/base/work_stream.h>
-
-#include <deal.II/dofs/dof_tools.h>
-
-#include <deal.II/numerics/vector_tools.h>
 
 // Constructor for class FluidDynamicsVANS
 template <int dim>
@@ -34,6 +31,7 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
         .void_fraction_order,
       this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
       this->pcout)
+  , has_periodic_boundaries(false)
 {
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
@@ -837,8 +835,7 @@ FluidDynamicsVANS<dim>::solve()
   this->finish_simulation();
 }
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the
-// library is valid before we actually compile the solver This greatly
-// helps with debugging
+// Pre-compile the 2D and 3D solver to ensure that the
+// library is valid before we actually compile the solver
 template class FluidDynamicsVANS<2>;
 template class FluidDynamicsVANS<3>;
