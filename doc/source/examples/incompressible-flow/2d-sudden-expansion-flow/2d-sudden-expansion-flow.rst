@@ -205,7 +205,7 @@ Whilst the tolerance is kept at ``1e-6`` for :math:`\textrm{Re} = 70`, it is adj
 Linear Solver
 ~~~~~~~~~~~~~
 
-A GMRES iterative solver with ILU preconditioner is used for the low-Reynolds number case:
+A GMRES iterative solver with ILU preconditioner is used:
 
 .. code-block:: text
 
@@ -217,29 +217,12 @@ A GMRES iterative solver with ILU preconditioner is used for the low-Reynolds nu
         set max krylov vectors                    = 500
         set relative residual                     = 1e-3
         set minimum residual                      = 1e-7
-        set preconditioner                        = ilu
-        set ilu preconditioner fill               = 2
-        set ilu preconditioner absolute tolerance = 1e-12
-        set ilu preconditioner relative tolerance = 1.00
-      end
-    end
-
-For the high-Reynolds number case, the AMG preconditioner was used instead:
-
-.. code-block:: text
-
-    subsection linear solver
-      subsection fluid dynamics
-        set verbosity                             = verbose
-        set method                                = gmres
-        set max iters                             = 500
-        set max krylov vectors                    = 500
-        set relative residual                     = 1e-3
-        set minimum residual                      = 1e-6
         set preconditioner                        = amg
         set amg preconditioner ilu fill           = 1
       end
     end
+
+The only parameter changed between the low- and high-Reynolds number simulations is the minimum residual, with is changed to ``1e-6`` for :math:`\textrm{Re = 610}`.
 
 -----------------------
 Running the Simulations
