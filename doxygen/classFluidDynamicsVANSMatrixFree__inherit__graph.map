@@ -1,0 +1,9 @@
+<map id="FluidDynamicsVANSMatrixFree&lt; dim &gt;" name="FluidDynamicsVANSMatrixFree&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="A solver for the Volume&#45;Averaged incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free ..." alt="" coords="6,269,230,309"/>
+<area shape="rect" id="Node000002" href="$classFluidDynamicsMatrixFree.html" title="A solver for the incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free fashion." alt="" coords="23,181,213,221"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,235,121,269,115,269,115,235"/>
+<area shape="rect" id="Node000003" href="$classNavierStokesBase.html" title=" " alt="" coords="5,79,231,133"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="121,147,121,181,115,181,115,147"/>
+<area shape="rect" id="Node000004" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="11,5,225,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="121,44,121,79,115,79,115,44"/>
+</map>
