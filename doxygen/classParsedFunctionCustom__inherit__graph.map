@@ -1,7 +1,0 @@
-<map id="ParsedFunctionCustom&lt; n_components &gt;" name="ParsedFunctionCustom&lt; n_components &gt;">
-<area shape="rect" id="Node000001" title="Wrapper based on muParser to deal with arbitrary expressions." alt="" coords="271,30,441,70"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="22,5,206,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,29,271,36,270,41,219,35"/>
-<area shape="rect" id="Node000003" href="$classinternalFunctionParserCustom_1_1ParserImplementation.html" title="Class that interfaces with muParser." alt="" coords="5,55,223,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="236,63,270,59,271,64,237,68"/>
-</map>

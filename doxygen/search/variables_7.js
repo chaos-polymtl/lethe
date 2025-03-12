@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['h_0',['h',['../classParsedFunctionCustom.html#af1114c9da2996020b02ed0cb8d3ca1ca',1,'ParsedFunctionCustom::h'],['../classBoundaryConditions_1_1HTBoundaryConditions.html#a63fd1fb158b3b9214a84c715eb249454',1,'BoundaryConditions::HTBoundaryConditions::h'],['../classParticleDetectorInteractions.html#aef249d1dcaa0fa6b2f877252ac2ed0cb',1,'ParticleDetectorInteractions::h']]],
+  ['h_0',['h',['../classParticleDetectorInteractions.html#aef249d1dcaa0fa6b2f877252ac2ed0cb',1,'ParticleDetectorInteractions::h'],['../classBoundaryConditions_1_1HTBoundaryConditions.html#a63fd1fb158b3b9214a84c715eb249454',1,'BoundaryConditions::HTBoundaryConditions::h']]],
   ['half_5flength_1',['half_length',['../classCylinder.html#a61761b17c9291f6cae66bbf5528db011',1,'Cylinder']]],
   ['half_5flengths_2',['half_lengths',['../classSuperquadric.html#afb0e43158fb41d79db46bf8ef7954055',1,'Superquadric::half_lengths'],['../classHyperRectangle.html#a3127b564ccfca11c86f4a37639970db0',1,'HyperRectangle::half_lengths']]],
   ['hamaker_5fconstant_5fparticle_3',['hamaker_constant_particle',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a194a3076e5771ead3f83efe7372d62a9',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
@@ -22,6 +22,5 @@ var searchData=
   ['hess_5fphi_5fpotential_19',['hess_phi_potential',['../classCahnHilliardScratchData.html#aadc251e41bfc5ed35eba9e076fdd48d5',1,'CahnHilliardScratchData']]],
   ['hess_5fphi_5ft_20',['hess_phi_T',['../classHeatTransferScratchData.html#ae13fc302aa6530c26d795df0dba067a3',1,'HeatTransferScratchData']]],
   ['hess_5fphi_5fu_21',['hess_phi_u',['../classNavierStokesScratchData.html#aa34d4aaa0898052080018672890aa933',1,'NavierStokesScratchData']]],
-  ['hole_5fradius_22',['hole_radius',['../classDeathStar.html#a871728bde6ff92de7ae7240cb11ea772',1,'DeathStar']]],
-  ['ht_23',['ht',['../classParsedFunctionCustom.html#a37fc5500a2a1238585ce4dd62c86b163',1,'ParsedFunctionCustom']]]
+  ['hole_5fradius_22',['hole_radius',['../classDeathStar.html#a871728bde6ff92de7ae7240cb11ea772',1,'DeathStar']]]
 ];

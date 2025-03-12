@@ -43,13 +43,11 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules an
   module load StdEnv/2023
   module load trilinos/15.1.1
   module load parmetis/4.0.3
-  module load muparser/2.3.4
   module load p4est/2.8.6
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTTRILINOS/lib64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTP4EST/lib64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTMUPARSER/lib/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
 
   export DEAL_II_DIR=$HOME/dealii/inst/
@@ -171,13 +169,11 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
   module load StdEnv/2023
   module load trilinos/15.1.1
   module load parmetis/4.0.3
-  module load muparser/2.3.4
   module load p4est/2.8.6
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTTRILINOS/lib64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTP4EST/lib64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTMUPARSER/lib/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/

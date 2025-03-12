@@ -1,3 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classIBStencil.html" title="Define where the sharp immersed&#45;boundaries are imposed on Eulerian grid." alt="" coords="5,5,140,31"/>
+<area shape="rect" id="Node000000" href="$classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,80,140,105"/>
+<area shape="rect" id="Node000001" href="$classInsertionFile.html" title=" " alt="" coords="201,5,358,31"/>
+<area shape="poly" id="edge52_Node000000_Node000001" title=" " alt="" coords="111,72,187,39,224,28,226,33,189,45,113,76"/>
+<area shape="rect" id="Node000002" href="$classInsertionList.html" title=" " alt="" coords="201,55,358,80"/>
+<area shape="poly" id="edge53_Node000000_Node000002" title=" " alt="" coords="153,80,200,74,201,80,154,85"/>
+<area shape="rect" id="Node000003" href="$classInsertionPlane.html" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="194,104,365,129"/>
+<area shape="poly" id="edge54_Node000000_Node000003" title=" " alt="" coords="154,99,194,104,194,109,153,105"/>
+<area shape="rect" id="Node000004" href="$classInsertionVolume.html" title=" " alt="" coords="188,153,371,179"/>
+<area shape="poly" id="edge55_Node000000_Node000004" title=" " alt="" coords="115,109,189,138,229,151,228,156,187,143,113,114"/>
 </map>

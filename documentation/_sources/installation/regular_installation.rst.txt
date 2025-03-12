@@ -37,13 +37,6 @@ In case you are using Ubuntu, you will need to `update the backports <https://la
   sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
   sudo apt update
 
-A dependency required by Lethe, and that deal.II needs to be compiled with, is muParser:
-
-.. code-block:: text
-  :class: copy-button
-
-  sudo apt-get install libmuparser-dev
-
 To install deal.II, run:
 
 .. code-block:: text
@@ -85,13 +78,6 @@ The following packages (which are specified after line 57) should be installed:
     PACKAGES="${PACKAGES} once:p4est"
     PACKAGES="${PACKAGES} once:trilinos"
     PACKAGES="${PACKAGES} dealii"
-
-A dependency required by Lethe, and that deal.II needs to be compiled with, is muParser:
-
-.. code-block:: text
-  :class: copy-button
-
-  sudo apt-get install libmuparser-dev
 
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
@@ -223,7 +209,7 @@ Configure deal.II in a build folder at the same level as the source code
   mkdir build
   cd build
 
-Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries. You also need to ensure that muParser is installed.
+Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.
 
 .. code-block:: text
   :class: copy-button

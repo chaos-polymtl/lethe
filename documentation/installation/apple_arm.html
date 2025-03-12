@@ -445,10 +445,7 @@
 <p>The easiest way to install deal.II and its dependencies under Mac OS is through the Candi toolset. Consequently, this is the only procedure which is explained here. Even under these condition, we will see that the procedure is shaky at best.</p>
 <section id="installing-deal-ii-using-candi-step-1">
 <h2>Installing deal.II Using Candi (Step #1)<a class="headerlink" href="#installing-deal-ii-using-candi-step-1" title="Link to this heading">#</a></h2>
-<p>To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following <a class="reference external" href="https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX">procedure</a> on the deal.II wiki can be followed. You also need to ensure that muParser is installed:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>brew install muparser
-</pre></div>
-</div>
+<p>To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following <a class="reference external" href="https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX">procedure</a> on the deal.II wiki can be followed.</p>
 <p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">$HOME/software/</span></code>). You can edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file if you want to force the installation of the deal.II master version instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code> on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.</p>
 <p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.</p>
 <p>From the candi folder, the installation of candi can be launched using:</p>

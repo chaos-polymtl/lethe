@@ -105,14 +105,7 @@ This is done following `this procedure <https://www.dealii.org/download.html#:~:
   sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
   sudo apt update
 
-2. |linux_shell| A dependency required by Lethe, and that deal.II needs to be compiled with, is muParser:
-
-.. code-block:: text
-  :class: copy-button
-
-  sudo apt-get install libmuparser-dev
-
-3. |linux_shell| To install deal.II, run:
+2. |linux_shell| To install deal.II, run:
 
 .. code-block:: text
   :class: copy-button
@@ -149,7 +142,7 @@ Installing deal.II using Candi (Step #1)
   bc libgmp-dev build-essential autoconf automake cmake \
   libtool gfortran libboost-all-dev zlib1g-dev openmpi-bin \
   openmpi-common libopenmpi-dev libblas3 libblas-dev \
-  liblapack3 liblapack-dev libsuitesparse-dev libmuparser-dev
+  liblapack3 liblapack-dev libsuitesparse-dev
 
 
 .. tip::
