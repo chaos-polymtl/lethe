@@ -1,0 +1,186 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+# ---------------------
+
+set dimension = 2
+
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf1
+  set output name       = periodic
+  set output frequency  = 1
+  set time end          = 2e-3
+  set time step         = 5e-4
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set cahn hilliard = true
+end
+
+#---------------------------------------------------
+# Dimensionality
+#---------------------------------------------------
+
+subsection dimensionality
+  set length = 0.001
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -1, -1 : 1, 1 : true
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = phase_cahn_hilliard
+  set fraction type            = fraction
+  set max refinement level     = 5
+  set min refinement level     = 2
+  set frequency                = 1
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.01
+  set initial refinement steps = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set kinematic viscosity = 8e-5
+    set density             = 1
+  end
+  subsection fluid 1
+    set kinematic viscosity = 1e-4
+    set density             = 2000
+  end
+  set number of material interactions = 1
+  subsection material interaction 0
+    subsection fluid-fluid interaction
+      set surface tension coefficient     = 7.3e-2
+      set cahn hilliard mobility model    = constant
+      set cahn hilliard mobility constant = 1e-7
+    end
+  end
+end
+
+#---------------------------------------------------
+# Cahn Hilliard
+#---------------------------------------------------
+
+subsection cahn hilliard
+  set potential smoothing coefficient = 0
+
+  subsection epsilon
+    set method    = automatic
+    set verbosity = quiet
+  end
+end
+
+#---------------------------------------------------
+# Boundary conditions Cahn-Hilliard
+#---------------------------------------------------
+
+subsection boundary conditions cahn hilliard
+  set number = 4
+end
+
+#---------------------------------------------------
+# Boundary conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set id   = 0
+    set type          = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set id   = 2
+    set type          = periodic
+    set periodic_id        = 3
+    set periodic_direction = 1
+  end
+end
+
+#---------------------------------------------------
+# Initial conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection cahn hilliard
+    set Function expression = 2 * rand_seed(42) - 1; 0
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set Function expression = 0; -9810; 0
+  end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-2
+    set max iterations = 20
+  end
+  subsection cahn hilliard
+    set verbosity      = quiet
+    set tolerance      = 1e-2
+    set max iterations = 20
+  end
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity               = quiet
+    set max iters               = 500
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-3
+    set ilu preconditioner fill = 1
+    set max krylov vectors      = 300
+  end
+  subsection cahn hilliard
+    set verbosity               = quiet
+    set max iters               = 500
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-3
+    set ilu preconditioner fill = 1
+    set max krylov vectors      = 300
+  end
+end
