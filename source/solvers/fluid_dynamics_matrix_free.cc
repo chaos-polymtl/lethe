@@ -543,7 +543,7 @@ namespace dealii
 } // namespace dealii
 
 template <int dim>
-MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
+MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   const SimulationParameters<dim>          &simulation_parameters,
   const DoFHandler<dim>                    &dof_handler,
   const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
@@ -1272,7 +1272,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::initialize(
+MFNavierStokesPreconditionGMGBase<dim>::initialize(
   const std::shared_ptr<SimulationControl> &simulation_control,
   FlowControl<dim>                         &flow_control,
   const VectorType                         &present_solution,
@@ -1778,8 +1778,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
-                                          const VectorType &src) const
+MFNavierStokesPreconditionGMGBase<dim>::vmult(VectorType       &dst,
+                                              const VectorType &src) const
 {
   if (this->ls_multigrid_preconditioner)
     this->ls_multigrid_preconditioner->vmult(dst, src);
@@ -1799,7 +1799,7 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
+MFNavierStokesPreconditionGMGBase<dim>::print_relevant_info() const
 {
   if (this->coarse_grid_solver_control ||
       this->coarse_grid_solver_control_intermediate)
@@ -1826,23 +1826,23 @@ MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
 template <int dim>
 const MGLevelObject<std::shared_ptr<NavierStokesOperatorBase<
   dim,
-  typename MFNavierStokesPreconditionGMG<dim>::MGNumber>>> &
-MFNavierStokesPreconditionGMG<dim>::get_mg_operators() const
+  typename MFNavierStokesPreconditionGMGBase<dim>::MGNumber>>> &
+MFNavierStokesPreconditionGMGBase<dim>::get_mg_operators() const
 {
   return this->mg_operators;
 }
 
 template <int dim>
 const MGLevelObject<std::shared_ptr<PreconditionBase<
-  typename MFNavierStokesPreconditionGMG<dim>::MGVectorType>>> &
-MFNavierStokesPreconditionGMG<dim>::get_mg_smoother_preconditioners() const
+  typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType>>> &
+MFNavierStokesPreconditionGMGBase<dim>::get_mg_smoother_preconditioners() const
 {
   return this->mg_smoother_preconditioners;
 }
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::setup_AMG()
+MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
 {
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
 
@@ -1954,7 +1954,7 @@ MFNavierStokesPreconditionGMG<dim>::setup_AMG()
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::setup_ILU()
+MFNavierStokesPreconditionGMGBase<dim>::setup_ILU()
 {
   int current_preconditioner_fill_level =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1978,6 +1978,26 @@ MFNavierStokesPreconditionGMG<dim>::setup_ILU()
     std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
       precondition_ilu);
 }
+
+template <int dim>
+MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
+  const SimulationParameters<dim>          &simulation_parameters,
+  const DoFHandler<dim>                    &dof_handler,
+  const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
+  const std::shared_ptr<Mapping<dim>>      &mapping,
+  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const std::shared_ptr<FESystem<dim>>      fe)
+  : MFNavierStokesPreconditionGMGBase<dim>(simulation_parameters,
+                                           dof_handler,
+                                           dof_handler_fe_q_iso_q1,
+                                           mapping,
+                                           cell_quadrature,
+                                           forcing_function,
+                                           simulation_control,
+                                           fe)
+{}
 
 template <int dim>
 FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(

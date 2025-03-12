@@ -41,7 +41,7 @@ namespace dealii
  * matrix-free solver.
  */
 template <int dim>
-class MFNavierStokesPreconditionGMG
+class MFNavierStokesPreconditionGMGBase
 {
   using Number = double;
 
@@ -99,7 +99,7 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
-  MFNavierStokesPreconditionGMG(
+  MFNavierStokesPreconditionGMGBase(
     const SimulationParameters<dim>          &simulation_parameters,
     const DoFHandler<dim>                    &dof_handler,
     const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
@@ -293,6 +293,30 @@ public:
   mutable TimerOutput mg_vmult_timer;
 };
 
+/**
+ * @brief A geometric multigrid preconditioner implementation for
+ * incompressible flow.
+ */
+template <int dim>
+class MFNavierStokesPreconditionGMG
+  : public MFNavierStokesPreconditionGMGBase<dim>
+{
+public:
+  /**
+   * Constructor.
+   */
+  MFNavierStokesPreconditionGMG(
+    const SimulationParameters<dim>          &simulation_parameters,
+    const DoFHandler<dim>                    &dof_handler,
+    const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
+    const std::shared_ptr<Mapping<dim>>      &mapping,
+    const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const std::shared_ptr<FESystem<dim>>      fe);
+
+private:
+};
 
 /**
  * @brief A solver for the incompressible Navier-Stokes equations implemented
@@ -479,7 +503,7 @@ protected:
    * @brief Geometric multigrid preconditioner.
    *
    */
-  std::shared_ptr<MFNavierStokesPreconditionGMG<dim>> gmg_preconditioner;
+  std::shared_ptr<MFNavierStokesPreconditionGMGBase<dim>> gmg_preconditioner;
 
   /**
    * @brief Implicit LU preconditioner.
