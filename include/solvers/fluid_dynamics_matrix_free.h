@@ -43,6 +43,7 @@ namespace dealii
 template <int dim>
 class MFNavierStokesPreconditionGMGBase
 {
+protected:
   using Number = double;
 
 #ifndef LETHE_GMG_USE_FLOAT
@@ -120,7 +121,7 @@ public:
    * @param[in] time_derivative_previous_solutions Vector storing time
    * derivatives of previous solutions.
    */
-  void
+  virtual void
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
@@ -159,7 +160,7 @@ public:
   const MGLevelObject<std::shared_ptr<PreconditionBase<MGVectorType>>> &
   get_mg_smoother_preconditioners() const;
 
-private:
+protected:
   /**
    * @brief Set up AMG object needed for coarse-grid solver or
    * preconditioning.
@@ -302,6 +303,11 @@ class MFNavierStokesPreconditionGMG
   : public MFNavierStokesPreconditionGMGBase<dim>
 {
 public:
+  using VectorType =
+    typename MFNavierStokesPreconditionGMGBase<dim>::VectorType;
+  using MGVectorType =
+    typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType;
+
   /**
    * Constructor.
    */
@@ -314,6 +320,12 @@ public:
     const std::shared_ptr<Function<dim>>      forcing_function,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const std::shared_ptr<FESystem<dim>>      fe);
+
+  void
+  initialize(const std::shared_ptr<SimulationControl> &simulation_control,
+             FlowControl<dim>                         &flow_control,
+             const VectorType                         &present_solution,
+             const VectorType &time_derivative_previous_solutions) override;
 
 private:
 };
