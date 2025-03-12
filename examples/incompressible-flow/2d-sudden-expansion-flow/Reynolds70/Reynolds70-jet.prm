@@ -11,10 +11,10 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = steady
-  set number mesh adapt            = 9
-  set output name                  = sudden-expansion-flow-output
-  set output frequency             = 1
+  set method            = steady
+  set number mesh adapt = 9
+  set output name       = sudden-expansion-flow-output
+  set output frequency  = 1
 end
 
 #---------------------------------------------------
@@ -33,8 +33,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type      = gmsh
-  set file name = ../two-dimensional-jet.msh
+  set type               = gmsh
+  set file name          = ../two-dimensional-jet.msh
   set initial refinement = 0
 end
 
