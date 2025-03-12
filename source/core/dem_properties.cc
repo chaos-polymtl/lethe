@@ -3,8 +3,6 @@
 
 #include <core/dem_properties.h>
 
-#include <deal.II/base/exception_macros.h>
-
 #include <type_traits>
 
 
