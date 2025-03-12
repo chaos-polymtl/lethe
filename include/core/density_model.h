@@ -314,7 +314,8 @@ public:
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be computed.
    *
-   * @param[out] jacobian_vector Vector of computed derivative values of the density
+   * @param[out] jacobian_vector Vector of computed derivative values of the
+   * density
    * with respect to the field of the specified @p id.
    */
   void

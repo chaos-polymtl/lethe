@@ -33,9 +33,7 @@ test()
 
   // Define a particle handler with a particle and properties
   Particles::ParticleHandler<dim> particle_handler(
-    tr,
-    mapping,
-    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
+    tr, mapping, DEM::DEMProperties::PropertiesIndex::n_properties);
   // Inserting one particle in contact with wall
   Point<dim> position1;
   for (int d = 0; d < dim; ++d)
@@ -68,8 +66,7 @@ test()
       deallog << "Particle " << particle->get_id() << std::endl;
       deallog << "Position : " << particle->get_location() << std::endl;
       for (unsigned int i = 0;
-           i <
-           DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>();
+           i < DEM::DEMProperties::PropertiesIndex::n_properties;
            ++i)
         {
           deallog << "Property " << i << " : " << particle->get_properties()[i]
@@ -80,9 +77,7 @@ test()
 
   // Create a second Particle Handler using a second set of properties
   Particles::ParticleHandler<dim> particle_handler_output(
-    tr,
-    mapping,
-    DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>());
+    tr, mapping, DEM::CFDDEMProperties::PropertiesIndex::n_properties);
 
   // Fill the second particle handler using the first one
   convert_particle_handler<dim,
@@ -99,8 +94,7 @@ test()
       deallog << "Particle " << particle->get_id() << std::endl;
       deallog << "Position : " << particle->get_location() << std::endl;
       for (unsigned int i = 0;
-           i <
-           DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>();
+           i < DEM::CFDDEMProperties::PropertiesIndex::n_properties;
            ++i)
         {
           deallog << "Property " << i << " : " << particle->get_properties()[i]

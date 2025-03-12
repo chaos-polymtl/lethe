@@ -80,7 +80,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
+    tr, mapping, PropertiesIndex::n_properties);
   // Inserting one particle in contact with wall
   Point<dim>               position1 = {0.97, 2.05};
   int                      id        = 0;

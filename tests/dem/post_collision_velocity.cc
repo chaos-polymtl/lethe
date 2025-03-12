@@ -101,7 +101,7 @@ test(double coefficient_of_restitution)
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
+    tr, mapping, PropertiesIndex::n_properties);
   // Inserting one particle in contact with wall
   Point<dim>               position = {-0.999, 0, 0};
   int                      id       = 0;
