@@ -27,7 +27,7 @@ using namespace dealii;
  * should be in decreasing order.
  *
  * For example, if the method is a BDF2 (\f$n=2\f$), it uses three values for
- * the time: \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus the @p
+ * the time: \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus, the @p
  * time_steps vector should contain \f$\Delta t_1\f$ and \f$\Delta t_2\f$.
  *
  * @return Vector containing BDF integration coefficient values.
@@ -36,8 +36,8 @@ using namespace dealii;
  */
 Vector<double>
 calculate_bdf_coefficients(
-  const Parameters::SimulationControl::TimeSteppingMethod method,
-  const std::vector<double>                              &time_steps);
+  Parameters::SimulationControl::TimeSteppingMethod method,
+  const std::vector<double>                        &time_steps);
 
 
 /**
@@ -65,12 +65,10 @@ calculate_bdf_coefficients(
  * calculation of BDF coefficients.
  */
 Vector<double>
-delta(const unsigned int    order,
-      const unsigned int    n,
-      const unsigned int    j,
+delta(unsigned int          order,
+      unsigned int          n,
+      unsigned int          j,
       const Vector<double> &times);
-
-
 
 /**
  * @brief Get the maximum number of previous time steps supposed by the BDF
@@ -97,17 +95,17 @@ maximum_number_of_previous_solutions()
  */
 inline unsigned int
 number_of_previous_solutions(
-  Parameters::SimulationControl::TimeSteppingMethod method)
+  const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
       method == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     return 1;
-  else if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+  if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     return 2;
-  else if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+  if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     return 3;
-  else
-    return 0;
+
+  return 0;
 }
 
 /**
@@ -131,7 +129,7 @@ number_of_previous_solutions(
  */
 
 template <typename DataType>
-inline void
+void
 bdf_extrapolate(const std::vector<double>                &time_vector,
                 const std::vector<std::vector<DataType>> &solution_vector,
                 const unsigned int     number_of_previous_solutions,
