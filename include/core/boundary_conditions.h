@@ -950,10 +950,10 @@ namespace BoundaryConditions
   {
     prm.declare_entry(
       "type",
-      "noflux",
-      Patterns::Selection("noflux|dirichlet|angle_of_contact|free_angle"),
+      "none",
+      Patterns::Selection("none|noflux|dirichlet|angle_of_contact|free_angle"),
       "Type of boundary condition for the Cahn-Hilliard equations"
-      "Choices are <noflux|dirichlet|angle_of_contact|free_angle>.");
+      "Choices are <none|noflux|dirichlet|angle_of_contact|free_angle>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1042,6 +1042,10 @@ namespace BoundaryConditions
     this->angle_of_contact[boundary_id] = prm.get_double("angle value");
 
     const std::string op = prm.get("type");
+    if (op == "none")
+      {
+        this->type[boundary_id] = BoundaryType::none;
+      }
     if (op == "noflux")
       {
         this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
