@@ -3,16 +3,21 @@
 
 # Listing of Parameters
 #----------------------
+
 set dimension = 3
+
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
   set enable = true
 end
+
 #---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
   set time step         = 1e-3
   set time end          = 10.
@@ -20,9 +25,11 @@ subsection simulation control
   set output frequency  = -1
   set output boundaries = true
 end
+
 #---------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
   subsection contact detection
     set contact detection method                = dynamic
@@ -36,9 +43,11 @@ subsection model parameters
   set particle wall contact force method     = JKR
   set integration method                     = velocity_verlet
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------s
+
 subsection lagrangian physical properties
   set g                        = 0.0, 0.0, 0.0
   set number of particle types = 1
@@ -59,9 +68,11 @@ subsection lagrangian physical properties
   set friction coefficient wall    = 0.
   set surface energy wall          = 50.
 end
+
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 10000
@@ -76,9 +87,11 @@ subsection insertion info
   set list omega z        = 0.0
   set list diameters      = 2.0
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
   set type                                = dealii
   set grid type                           = hyper_cube
@@ -86,9 +99,11 @@ subsection mesh
   set initial refinement                  = 0
   set expand particle-wall contact search = false
 end
+
 #---------------------------------------------------
 # Boundary Condition
 #---------------------------------------------------
+
 subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0

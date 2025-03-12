@@ -19,7 +19,6 @@ subsection simulation control
   set output boundaries = true
 end
 
-
 #---------------------------------------------------
 # Lagrangian post-processing
 #---------------------------------------------------
@@ -108,10 +107,10 @@ end
 #---------------------------------------------------
 # Testing
 #---------------------------------------------------
+
 subsection test
   set enable = true
-end   
-
+end
 
 #-----------------------------------------
 # Boundary Conditions
@@ -126,7 +125,7 @@ subsection DEM boundary conditions
     set rotational vector = 1,0,0
   end
 
-    subsection boundary condition 1
+  subsection boundary condition 1
     set boundary id       = 1
     set type              = rotational
     set rotational speed  = 0.7
@@ -134,10 +133,10 @@ subsection DEM boundary conditions
   end
 
   subsection boundary condition 2
-    set boundary id       = 2
-    set type              = rotational
-    set rotational speed  = 0.7
-    set rotational vector = 1,0,0
+    set boundary id                = 2
+    set type                       = rotational
+    set rotational speed           = 0.7
+    set rotational vector          = 1,0,0
     set point on rotational vector = 0,0,0
   end
 end

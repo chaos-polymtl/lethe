@@ -150,15 +150,13 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-
   set verbosity = verbose
 
-  set calculate average temperature and heat flux = true
+  set calculate average temperature and heat flux        = true
   set initial time for average temperature and heat flux = 0.01
-  
+
   # Thermal postprocessing
   set calculate temperature statistics = true
-  
 end
 
 #---------------------------------------------------

@@ -65,7 +65,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = custom
     set custom diameters                  = 1.02e-4 , 1.16e-4 , 1.33e-4 , 1.52e-4 , 1.75e-4 , 2.00e-4 , 2.29e-4 , 2.62e-4 , 3.01e-4 , 3.44e-4
-    set custom volume fractions	          = 0.04 , 0.06 , 0.07 , 0.10 , 0.13 , 0.15 , 0.16 , 0.14 , 0.10 , 0.05
+    set custom volume fractions           = 0.04 , 0.06 , 0.07 , 0.10 , 0.13 , 0.15 , 0.16 , 0.14 , 0.10 , 0.05
     set number of particles               = 200000
     set density particles                 = 1922
     set young modulus particles           = 5.94e4
@@ -103,7 +103,7 @@ subsection insertion info
   set insertion distance threshold                   = 1.2
   set insertion maximum offset                       = 0.05
   set insertion prn seed                             = 19
-  set insertion direction sequence                   =  1, 2, 0
+  set insertion direction sequence                   = 1, 2, 0
 end
 
 #---------------------------------------------------
@@ -125,8 +125,8 @@ subsection DEM boundary conditions
   set number of boundary conditions = 1
 
   subsection boundary condition 0
-    set boundary id         = 0
-    set type                = outlet
+    set boundary id = 0
+    set type        = outlet
   end
 end
 
@@ -139,9 +139,9 @@ subsection solid objects
     set number of solids = 2
     subsection solid object 0
       subsection mesh
-        set type                   = gmsh
-        set file name              = cylinder.msh
-        set simplex                = true
+        set type      = gmsh
+        set file name = cylinder.msh
+        set simplex   = true
       end
       subsection translational velocity
         set Function expression = if (t>1.6, 0.05, 0) ; 0 ; 0
@@ -149,9 +149,9 @@ subsection solid objects
     end
     subsection solid object 1
       subsection mesh
-        set type                   = gmsh
-        set file name              = support.msh
-        set simplex                = true
+        set type      = gmsh
+        set file name = support.msh
+        set simplex   = true
       end
     end
   end

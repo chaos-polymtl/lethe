@@ -11,11 +11,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 1e-2
-  set time step        = 5e-6
-  set output name      = static-bubble-chns
-  set output path      = ./output/
+  set method      = bdf2
+  set time end    = 1e-2
+  set time step   = 5e-6
+  set output name = static-bubble-chns
+  set output path = ./output/
 end
 
 #---------------------------------------------------

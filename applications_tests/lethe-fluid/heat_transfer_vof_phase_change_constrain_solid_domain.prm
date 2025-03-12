@@ -151,7 +151,6 @@ subsection boundary conditions VOF
   set number = 4
 end
 
-
 #---------------------------------------------------
 # Constrain Stasis
 #---------------------------------------------------

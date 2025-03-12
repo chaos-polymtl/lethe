@@ -145,8 +145,8 @@ subsection boundary conditions heat transfer
     set type = noflux
   end
   subsection bc 1
-    set id    = 1
-    set type  = temperature
+    set id   = 1
+    set type = temperature
     subsection value
       set Function expression = 80
     end

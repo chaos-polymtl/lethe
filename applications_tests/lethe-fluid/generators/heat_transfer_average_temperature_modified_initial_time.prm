@@ -48,10 +48,10 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set thermal conductivity       = 60
-    set specific heat              = 20
-    set density                    = 2000
-    set kinematic viscosity        = 0.01
+    set thermal conductivity = 60
+    set specific heat        = 20
+    set density              = 2000
+    set kinematic viscosity  = 0.01
   end
 end
 
@@ -149,7 +149,7 @@ subsection post-processing
   set calculate average temperature and heat flux = true
 
   # Thermal postprocessing
-  set verbosity = verbose
+  set verbosity                        = verbose
   set calculate temperature statistics = true
 end
 
@@ -160,8 +160,8 @@ end
 subsection restart
   set checkpoint = true
   set frequency  = 1
-  set filename = restart
-  set restart = false
+  set filename   = restart
+  set restart    = false
 end
 
 #---------------------------------------------------

@@ -11,16 +11,21 @@
 #
 # Listing of Parameters
 #----------------------
+
 set dimension = 3
+
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
   set enable = true
 end
+
 #---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
   set time step         = 5e-7
   set time end          = 0.0175
@@ -29,9 +34,11 @@ subsection simulation control
   set output boundaries = true
   set output path       = ./out/
 end
+
 #---------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
   subsection contact detection
     set contact detection method                = dynamic
@@ -47,12 +54,14 @@ subsection model parameters
   set f coefficient                          = 0.2
   set integration method                     = velocity_verlet
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------s
+
 subsection lagrangian physical properties
-  set g                           = 0.0, -9.81, 0.0
-  set number of particle types    = 1
+  set g                        = 0.0, -9.81, 0.0
+  set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.0001
@@ -72,9 +81,11 @@ subsection lagrangian physical properties
   set rolling friction wall        = 0.3
   set rolling viscous damping wall = 0.3
 end
+
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 10000
@@ -89,9 +100,11 @@ subsection insertion info
   set list omega z        = 0.0    , 6.28318530718,-6.28318530718, 0.0
   set list diameters      = 0.0001 , 0.0001       , 0.0001       , 0.0001
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
   set type                                = dealii
   set grid type                           = hyper_cube
@@ -99,9 +112,11 @@ subsection mesh
   set initial refinement                  = 4
   set expand particle-wall contact search = false
 end
+
 #---------------------------------------------------
 # Boundary Condition
 #---------------------------------------------------
+
 subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0
@@ -111,4 +126,3 @@ subsection DEM boundary conditions
     set rotational vector = 1,0,0
   end
 end
-

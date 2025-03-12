@@ -43,4 +43,3 @@ set output name = solution
 # Path for vtu output files
 
 set output path = ./output/
-

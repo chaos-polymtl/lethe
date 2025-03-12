@@ -111,24 +111,24 @@ subsection boundary conditions
     set periodic_direction = 1
   end
   subsection bc 1
-    set id                 = 0
-    set type               = outlet
-    set beta               = 0
+    set id   = 0
+    set type = outlet
+    set beta = 0
   end
   subsection bc 2
-    set id                 = 1
-    set type               = outlet
-    set beta               = 0
+    set id   = 1
+    set type = outlet
+    set beta = 0
   end
   subsection bc 3
-    set id                 = 4
-    set type               = outlet
-    set beta               = 0
+    set id   = 4
+    set type = outlet
+    set beta = 0
   end
   subsection bc 4
-    set id                 = 5
-    set type               = outlet
-    set beta               = 0
+    set id   = 5
+    set type = outlet
+    set beta = 0
   end
 end
 
@@ -172,10 +172,10 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set solver           = inexact_newton
-    set reuse matrix     = true
-    set tolerance        = 1e-4
-    set verbosity        = quiet
+    set solver       = inexact_newton
+    set reuse matrix = true
+    set tolerance    = 1e-4
+    set verbosity    = quiet
   end
 end
 

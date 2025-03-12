@@ -39,8 +39,8 @@ subsection VOF
     set output auxiliary fields                  = true
   end
   subsection phase filtration
-    set type      = tanh
-    set beta      = 10
+    set type = tanh
+    set beta = 10
   end
 end
 

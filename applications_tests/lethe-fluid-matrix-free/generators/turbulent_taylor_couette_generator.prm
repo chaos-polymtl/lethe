@@ -151,6 +151,6 @@ subsection linear solver
     set eig estimation verbosity       = quiet
 
     # Coarse-grid solver
-    set mg coarse grid solver                 = direct
+    set mg coarse grid solver = direct
   end
 end

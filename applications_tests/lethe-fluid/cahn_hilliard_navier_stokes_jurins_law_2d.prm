@@ -10,11 +10,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set output name       = jurins-law-2d
-  set output frequency  = 0
-  set time end          = 2e-3
-  set time step         = 5e-4
+  set method           = bdf1
+  set output name      = jurins-law-2d
+  set output frequency = 0
+  set time end         = 2e-3
+  set time step        = 5e-4
 end
 
 #---------------------------------------------------

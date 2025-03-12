@@ -156,10 +156,10 @@ subsection boundary conditions VOF
     end
   end
   subsection bc 1
-    set id   = 0
+    set id = 0
   end
   subsection bc 2
-    set id   = 2
+    set id = 2
   end
 end
 
