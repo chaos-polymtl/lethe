@@ -13,7 +13,9 @@
 #include <iomanip>
 #include <string>
 
-
+/**
+ * @brief Store the initial properties of both particles.
+ */
 template <int dim>
 struct initial_particle_properties
 {
@@ -26,13 +28,17 @@ struct initial_particle_properties
   double         diameter[2];
 };
 
-
+/**
+ * @brief Store the output vectors of the time, the force and torque acting on particle 0,
+ * the normal overlap, the tangential overlap and the velocities and angular
+ * velocities for both particles.
+ */
 struct full_contact_output
 {
   std::vector<double>       time;
   std::vector<Tensor<1, 3>> force;
   std::vector<Tensor<1, 3>> torque;
-  std::vector<double>       overlap;
+  std::vector<double>       normal_overlap;
   std::vector<Tensor<1, 3>> tangential_overlap;
   std::vector<Tensor<1, 3>> velocity0;
   std::vector<Tensor<1, 3>> velocity1;
@@ -42,12 +48,12 @@ struct full_contact_output
 
 
 /**
- * @brief Set the force and torque at 0 for each particle.
+ * @brief Set the force and torque to 0 for each particle.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  * @param particle_handler Storage of particles and their accessor functions.
- * @param torque Torque acting on particles
- * @param force Force acting on particles
+ * @param torque Vector of torques acting on each particle.
+ * @param force Vector of forces acting on each particle.
  */
 template <int dim>
 void
@@ -121,27 +127,30 @@ using namespace Parameters::Lagrangian;
  * @param p Initial properties of particles.
  * @param g A constant volumetric body force applied to all particles
  * @param dt Time Step.
- * @param output_step Step at which force and overlap are written on file.
+ * @param output_interval Interval of iterations at which data is written on file and stored for output.
  * @param neighborhood_threshold Threshold value of contact detection.
+ * @param cut_off_factor Factor to allow for contact forces even when particles are not in contact.
  * @param filename Name of file where force and overlap are written.
  *
- * @return Struct of vectors of time, force and torque acting on particle 0, overlap, tangential_overlap, velocities, angular velocities.
+ * @return Struct of vectors of time, force and torque acting on particle 0, normal overlap,
+ * tangential overlap, velocities, angular velocities.
  */
 template <int dim,
           typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
 full_contact_output
-simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
-                   Particles::ParticleHandler<dim>           &particle_handler,
-                   DEMContactManager<dim, PropertiesIndex>   &contact_manager,
-                   DEMSolverParameters<dim>                  &dem_parameters,
-                   initial_particle_properties<dim>          &p,
-                   Tensor<1, 3>                              &g,
-                   double                                     dt,
-                   unsigned int                               output_step,
-                   double      neighborhood_threshold,
-                   std::string filename)
+simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
+                      Particles::ParticleHandler<dim>         &particle_handler,
+                      DEMContactManager<dim, PropertiesIndex> &contact_manager,
+                      DEMSolverParameters<dim>                &dem_parameters,
+                      initial_particle_properties<dim>        &p,
+                      const Tensor<1, 3>                      &g,
+                      const double                             dt,
+                      const unsigned int                       output_interval,
+                      const double neighborhood_threshold,
+                      const double cut_off_factor,
+                      std::string  filename)
 
 {
   // Clearing particle handler
@@ -182,31 +191,33 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
     force_object(dem_parameters);
 
   // Defining local variables
-  auto          particle0       = particle_handler.begin();
-  auto          particle1       = std::next(particle0);
-  bool          CONTACT_ONGOING = true;
-  double        time            = 0;
-  int           max_iteration   = 10000;
-  double        n_overlap       = -1;
+  auto          particle0          = particle_handler.begin();
+  auto          particle1          = std::next(particle0);
+  bool          contact_is_ongoing = true;
+  double        time               = 0;
+  const int     max_iteration      = 10000;
+  double        normal_overlap     = -1;
   double        distance;
   Point<3>     &position0 = particle0->get_location();
   Point<3>     &position1 = particle1->get_location();
   Tensor<1, 3> &force0    = force[particle0->get_id()];
   Tensor<1, 3> &torque0   = torque[particle0->get_id()];
-  Tensor<1, 3>  t_overlap{{0, 0, 0}};
-  Tensor<1, 3>  v0;
-  Tensor<1, 3>  v1;
-  Tensor<1, 3>  w0;
-  Tensor<1, 3>  w1;
+  Tensor<1, 3>  tangential_overlap{{0, 0, 0}};
+  Tensor<1, 3>  velocity0;
+  Tensor<1, 3>  velocity1;
+  Tensor<1, 3>  omega0;
+  Tensor<1, 3>  omega1;
   Tensor<1, 3>  contact_vector;
   Tensor<1, 3>  normal_unit_vector;
   Tensor<1, 3>  relative_velocity;
-  Tensor<1, 3>  t_relative_velocity;
+  Tensor<1, 3>  tangential_relative_velocity;
+  const double  force_calculation_threshold_distance =
+    cut_off_factor * 0.5 * (p.diameter[0] + p.diameter[1]);
 
   // Open file and write names of columns
   std::ofstream file(filename + ".dat", std::ios::binary);
   file
-    << "time force0_x force0_y force0_z torque0_x torque0_y torque0_z overlap t_overlap_x t_overlap_y t_overlapz v0_x v0_y v0_z v1_x v1_y v1_z w0_x w0_y w0_z w1_x w1_y w1_z"
+    << "time force0_x force0_y force0_z torque0_x torque0_y torque0_z normal_overlap tangential_overlap_x tangential_overlap_y tangential_overlap_z velocity0_x velocity0_y velocity0_z velocity1_x velocity1_y velocity1_z omega0_x omega0_y omega0_z omega1_x omega1_y omega1_z"
     << "\n";
 
   for (int iteration = 0; iteration < max_iteration; ++iteration)
@@ -238,60 +249,63 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
         torque,
         force);
 
-
       distance = (position0).distance(position1);
 
-      // Checking if contact is still ongoing (positive overlap)
-      if (n_overlap > 0 &&
-          (0.5 * (p.diameter[0] + p.diameter[1]) - distance) <= 0)
+      // Checking if contact is still ongoing (overlap superior to force
+      // calculation threshold)
+      if (normal_overlap > force_calculation_threshold_distance &&
+          (0.5 * (p.diameter[0] + p.diameter[1]) - distance) <=
+            force_calculation_threshold_distance)
         {
-          CONTACT_ONGOING = false;
+          contact_is_ongoing = false;
         }
 
       // Calculating overlap and tangential overlap
       update_velocities<PropertiesIndex>(particle0->get_properties(),
                                          particle1->get_properties(),
-                                         v0,
-                                         v1,
-                                         w0,
-                                         w1);
-      n_overlap          = 0.5 * (p.diameter[0] + p.diameter[1]) - distance;
+                                         velocity0,
+                                         velocity1,
+                                         omega0,
+                                         omega1);
+      normal_overlap     = 0.5 * (p.diameter[0] + p.diameter[1]) - distance;
       contact_vector     = position1 - position0;
       normal_unit_vector = contact_vector / contact_vector.norm();
-      relative_velocity =
-        v0 - v1 +
-        (cross_product_3d(0.5 * (p.diameter[0] * w0 + p.diameter[1] * w1),
-                          normal_unit_vector));
-      t_relative_velocity =
+      relative_velocity  = velocity0 - velocity1 +
+                          (cross_product_3d(0.5 * (p.diameter[0] * omega0 +
+                                                   p.diameter[1] * omega1),
+                                            normal_unit_vector));
+      tangential_relative_velocity =
         relative_velocity -
         ((relative_velocity * normal_unit_vector) * normal_unit_vector);
-      t_overlap += t_relative_velocity * dt;
+      tangential_overlap += tangential_relative_velocity * dt;
 
-      // Printing on file and storing contact force and overlap at each output
-      // step and at the first step after end of contact
-      if (iteration % output_step == 0 || !CONTACT_ONGOING)
+      // Printing on file and storing data at each output interval
+      //  and at the first iteration after end of contact
+      if (iteration % output_interval == 0 || !contact_is_ongoing)
         {
           file << time << " " << force0[0] << " " << force0[1] << " "
                << force0[2] << " " << torque0[0] << " " << torque0[1] << " "
-               << torque0[2] << " " << n_overlap << " " << t_overlap[0] << " "
-               << t_overlap[1] << " " << t_overlap[2] << " " << v0[0] << " "
-               << v0[1] << " " << v0[2] << " " << v1[0] << " " << v1[1] << " "
-               << v1[2] << " " << w0[0] << " " << w0[1] << " " << w0[2] << " "
-               << w1[0] << " " << w1[1] << " " << w1[2] << "\n";
+               << torque0[2] << " " << normal_overlap << " "
+               << tangential_overlap[0] << " " << tangential_overlap[1] << " "
+               << tangential_overlap[2] << " " << velocity0[0] << " "
+               << velocity0[1] << " " << velocity0[2] << " " << velocity1[0]
+               << " " << velocity1[1] << " " << velocity1[2] << " " << omega0[0]
+               << " " << omega0[1] << " " << omega0[2] << " " << omega1[0]
+               << " " << omega1[1] << " " << omega1[2] << "\n";
 
           output.time.push_back(time);
           output.force.push_back(force0);
           output.torque.push_back(torque0);
-          output.overlap.push_back(n_overlap);
-          output.tangential_overlap.push_back(t_overlap);
-          output.velocity0.push_back(v0);
-          output.velocity1.push_back(v1);
-          output.omega0.push_back(w0);
-          output.omega1.push_back(w1);
+          output.normal_overlap.push_back(normal_overlap);
+          output.tangential_overlap.push_back(tangential_overlap);
+          output.velocity0.push_back(velocity0);
+          output.velocity1.push_back(velocity1);
+          output.omega0.push_back(omega0);
+          output.omega1.push_back(omega1);
         }
 
       // Return output before integration if contact is done
-      if (not CONTACT_ONGOING)
+      if (not contact_is_ongoing)
         {
           file.close();
           return output;
@@ -308,7 +322,7 @@ simul_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
 
   // Return empty output if contact does not start or end after
   // max_iteration iterations.
-  if (n_overlap > 0)
+  if (normal_overlap > force_calculation_threshold_distance)
     {
       std::cout << "Error. Contact not ending after ";
     }

@@ -7,7 +7,7 @@
 
 /**
  * @brief Write time, force, torque and overlap on the log for the full duration of contact.
- * @param output Output of function simul_full_contact.
+ * @param output Output of function simulate_full_contact.
  */
 void
 log_contact_output(full_contact_output &output)
@@ -29,7 +29,7 @@ log_contact_output(full_contact_output &output)
               << output.torque[i][0] << " " << std::setw(10)
               << output.torque[i][1] << " " << std::setw(10)
               << output.torque[i][2] << " overlap is " << std::setw(10)
-              << output.overlap[i] << std::endl;
+              << output.normal_overlap[i] << std::endl;
     }
 }
 
@@ -60,7 +60,7 @@ test()
   Tensor<1, dim> g{{0, 0, 0}};
   double         dt                                               = 0.00001;
   double         particle_diameter                                = 0.005;
-  unsigned int   output_step                                      = 10;
+  unsigned int   output_interval                                  = 10;
   lagrangian_prop.particle_type_number                            = 1;
   lagrangian_prop.youngs_modulus_particle[0]                      = 50000000;
   lagrangian_prop.poisson_ratio_particle[0]                       = 0.3;
@@ -111,10 +111,10 @@ test()
   deallog << "For the linear contact force model." << std::endl;
 
   full_contact_output linear_output =
-    simul_full_contact<dim,
-                       PropertiesIndex,
-                       ParticleParticleContactForceModel::linear,
-                       RollingResistanceMethod::constant_resistance>(
+    simulate_full_contact<dim,
+                          PropertiesIndex,
+                          ParticleParticleContactForceModel::linear,
+                          RollingResistanceMethod::constant_resistance>(
       triangulation,
       particle_handler,
       contact_manager,
@@ -122,8 +122,9 @@ test()
       particle_properties,
       g,
       dt,
-      output_step,
+      output_interval,
       neighborhood_threshold,
+      0, // cut_off_factor to allow contact forces without contact
       "linear");
 
   log_contact_output(linear_output);
@@ -135,7 +136,7 @@ test()
           << "For the hertz_mindlin_limit_overlap contact force model."
           << std::endl;
 
-  full_contact_output hmlo_output = simul_full_contact<
+  full_contact_output hmlo_output = simulate_full_contact<
     dim,
     PropertiesIndex,
     ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
@@ -146,8 +147,9 @@ test()
                                                   particle_properties,
                                                   g,
                                                   dt,
-                                                  output_step,
+                                                  output_interval,
                                                   neighborhood_threshold,
+                                                  0,
                                                   "hmlo");
 
   log_contact_output(hmlo_output);
