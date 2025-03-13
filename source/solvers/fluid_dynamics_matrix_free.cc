@@ -2329,17 +2329,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
         {
           // Create the mg operators if they do not exist to be able
           // to change the viscosity for all of them
-          if (!gmg_preconditioner)
-            gmg_preconditioner =
-              std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
-                this->simulation_parameters,
-                this->dof_handler,
-                this->dof_handler_fe_q_iso_q1,
-                this->mapping,
-                this->cell_quadrature,
-                this->forcing_function,
-                this->simulation_control,
-                this->fe);
+          this->create_GMG();
 
           auto mg_operators = this->gmg_preconditioner->get_mg_operators();
           for (unsigned int level = mg_operators.min_level();
@@ -2447,17 +2437,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
             {
               // Create the mg operators if they do not exist to be able
               // to change the viscosity for all of them
-              if (!gmg_preconditioner)
-                gmg_preconditioner =
-                  std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
-                    this->simulation_parameters,
-                    this->dof_handler,
-                    this->dof_handler_fe_q_iso_q1,
-                    this->mapping,
-                    this->cell_quadrature,
-                    this->forcing_function,
-                    this->simulation_control,
-                    this->fe);
+              this->create_GMG();
 
               auto mg_operators = this->gmg_preconditioner->get_mg_operators();
               for (unsigned int level = mg_operators.min_level();
@@ -2593,10 +2573,8 @@ FluidDynamicsMatrixFree<dim>::calculate_time_derivative_previous_solutions()
 
 template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::setup_GMG()
+FluidDynamicsMatrixFree<dim>::create_GMG()
 {
-  TimerOutput::Scope t(this->computing_timer, "Setup GMG");
-
   if (!gmg_preconditioner)
     gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
       this->simulation_parameters,
@@ -2607,6 +2585,15 @@ FluidDynamicsMatrixFree<dim>::setup_GMG()
       this->forcing_function,
       this->simulation_control,
       this->fe);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::setup_GMG()
+{
+  TimerOutput::Scope t(this->computing_timer, "Setup GMG");
+
+  this->create_GMG();
 
   gmg_preconditioner->initialize(this->simulation_control,
                                  this->flow_control,

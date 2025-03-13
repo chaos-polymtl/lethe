@@ -489,8 +489,13 @@ private:
                      const double relative_residual);
 
   /**
-   * @brief  Setup the geometric multigrid preconditioner and call the solve
-   * function of the linear solver.
+   * @brief  Create the geometric multigrid preconditioner.
+   */
+  void
+  create_GMG();
+
+  /**
+   * @brief  Setup the geometric multigrid preconditioner.
    */
   void
   setup_GMG();
