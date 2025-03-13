@@ -27,7 +27,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 -----------------------
 
-A bidimensional flow goes past a symmetric sudden expansion. The flow enters from the left inlet at a velocity :math:`\mathbf{u} = [1, 0, 0]`, where the inlet slot height is :math:`h = 10mm`. At :math:`x = L_{inlet} = 8h` the flow is fully developed, and a sudden expansion with ratio 2 is placed (:math:`d = h/2`). The outlet length is given by :math:`L_{outlet} = 100h`; all dimensions are identified in the figure bellow.
+A two-dimensional flow goes past a symmetric sudden expansion. The flow enters from the left inlet, where :math:`x=0`, at a velocity :math:`\mathbf{u} = [1, 0, 0] m/s`; the inlet slot height is :math:`h = 10mm`. At :math:`x = L_{inlet} = 8h` the flow is fully developed, and a sudden expansion with ratio 2 is placed (:math:`d = h/2`). The outlet length is given by :math:`L_{outlet} = 100h`; all dimensions are identified in the figure bellow.
 
 .. image:: image/expansion-geometry.png
 
