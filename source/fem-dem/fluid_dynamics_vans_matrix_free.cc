@@ -45,15 +45,15 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const VectorType                         &time_derivative_previous_solutions,
   const VoidFractionBase<dim>              &void_fraction_manager)
 {
+  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
+    dynamic_cast<VANSOperator<dim, MGNumber> *>(this->mg_operators[level].get())
+      ->evaluate_void_fraction(void_fraction_manager);
+
   MFNavierStokesPreconditionGMG<dim>::initialize(
     simulation_control,
     flow_control,
     present_solution,
     time_derivative_previous_solutions);
-
-  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
-    dynamic_cast<VANSOperator<dim, MGNumber> *>(this->mg_operators[level].get())
-      ->evaluate_void_fraction(void_fraction_manager);
 }
 
 template <int dim>
