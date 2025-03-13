@@ -1,6 +1,6 @@
 ARG DEALII_IMAGE_VERSION="v9.6.0"
 
-FROM dealii/dealii:${DEALII_IMAGE_VERSION}-focal as builder
+FROM dealii/dealii:${DEALII_IMAGE_VERSION}-jammy as builder
 
 ARG LETHE_INSTALL_DIR=/opt/lethe
 
