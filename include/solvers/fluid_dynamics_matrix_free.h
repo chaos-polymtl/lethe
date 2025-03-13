@@ -101,14 +101,16 @@ public:
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
   MFNavierStokesPreconditionGMGBase(
-    const SimulationParameters<dim>          &simulation_parameters,
-    const DoFHandler<dim>                    &dof_handler,
-    const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
-    const std::shared_ptr<Mapping<dim>>      &mapping,
-    const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-    const std::shared_ptr<Function<dim>>      forcing_function,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const std::shared_ptr<FESystem<dim>>      fe);
+    const SimulationParameters<dim> &simulation_parameters,
+    const DoFHandler<dim>           &dof_handler,
+    const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
+
+  void
+  reinit(const std::shared_ptr<Mapping<dim>>      &mapping,
+         const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+         const std::shared_ptr<Function<dim>>      forcing_function,
+         const std::shared_ptr<SimulationControl> &simulation_control,
+         const std::shared_ptr<FESystem<dim>>      fe);
 
   virtual void
   create_level_operator(const unsigned int level) = 0;
@@ -317,14 +319,9 @@ public:
    * Constructor.
    */
   MFNavierStokesPreconditionGMG(
-    const SimulationParameters<dim>          &simulation_parameters,
-    const DoFHandler<dim>                    &dof_handler,
-    const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
-    const std::shared_ptr<Mapping<dim>>      &mapping,
-    const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-    const std::shared_ptr<Function<dim>>      forcing_function,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const std::shared_ptr<FESystem<dim>>      fe);
+    const SimulationParameters<dim> &simulation_parameters,
+    const DoFHandler<dim>           &dof_handler,
+    const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
 
   void
   create_level_operator(const unsigned int level) override;

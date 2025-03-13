@@ -544,20 +544,25 @@ namespace dealii
 
 template <int dim>
 MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
-  const SimulationParameters<dim>          &simulation_parameters,
-  const DoFHandler<dim>                    &dof_handler,
-  const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
-  const std::shared_ptr<Mapping<dim>>      &mapping,
-  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-  const std::shared_ptr<Function<dim>>      forcing_function,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const std::shared_ptr<FESystem<dim>>      fe)
+  const SimulationParameters<dim> &simulation_parameters,
+  const DoFHandler<dim>           &dof_handler,
+  const DoFHandler<dim>           &dof_handler_fe_q_iso_q1)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
   , dof_handler_fe_q_iso_q1(dof_handler_fe_q_iso_q1)
   , mg_setup_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
   , mg_vmult_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
+{}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMGBase<dim>::reinit(
+  const std::shared_ptr<Mapping<dim>>      &mapping,
+  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const std::shared_ptr<FESystem<dim>>      fe)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -1919,22 +1924,12 @@ MFNavierStokesPreconditionGMG<dim>::create_level_operator(
 
 template <int dim>
 MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
-  const SimulationParameters<dim>          &simulation_parameters,
-  const DoFHandler<dim>                    &dof_handler,
-  const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
-  const std::shared_ptr<Mapping<dim>>      &mapping,
-  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-  const std::shared_ptr<Function<dim>>      forcing_function,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const std::shared_ptr<FESystem<dim>>      fe)
+  const SimulationParameters<dim> &simulation_parameters,
+  const DoFHandler<dim>           &dof_handler,
+  const DoFHandler<dim>           &dof_handler_fe_q_iso_q1)
   : MFNavierStokesPreconditionGMGBase<dim>(simulation_parameters,
                                            dof_handler,
-                                           dof_handler_fe_q_iso_q1,
-                                           mapping,
-                                           cell_quadrature,
-                                           forcing_function,
-                                           simulation_control,
-                                           fe)
+                                           dof_handler_fe_q_iso_q1)
 {}
 
 template <int dim>
@@ -2580,16 +2575,19 @@ template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::create_GMG()
 {
-  if (!gmg_preconditioner)
-    gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
-      this->simulation_parameters,
-      this->dof_handler,
-      this->dof_handler_fe_q_iso_q1,
-      this->mapping,
-      this->cell_quadrature,
-      this->forcing_function,
-      this->simulation_control,
-      this->fe);
+  if (gmg_preconditioner)
+    return;
+
+  gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
+    this->simulation_parameters,
+    this->dof_handler,
+    this->dof_handler_fe_q_iso_q1);
+
+  gmg_preconditioner->reinit(this->mapping,
+                             this->cell_quadrature,
+                             this->forcing_function,
+                             this->simulation_control,
+                             this->fe);
 }
 
 template <int dim>
