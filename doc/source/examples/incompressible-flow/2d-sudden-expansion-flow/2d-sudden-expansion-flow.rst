@@ -126,7 +126,7 @@ In this case, the algorithm thoroughly discretizes the mesh around the expansion
 
 For :math:`\textrm{Re} = 610`, mesh adaptation was limited by the maximum refinement level, the fraction refinement, and the number of cells, so that the mesh discretization did not become too computationally expensive at the final simulation time. 
 
-Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turlent on the outlet section. 
+Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turlent at the outlet section. 
 The ``mesh refinement controller`` feature aims to maintain the total number of elements constant by changing coarsening and refinement ratios.
 
 .. code-block:: text
@@ -290,7 +290,7 @@ The velocity field variation over time is herein represented:
 
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/wwVpP50ofMw?si=Bew_9zvnK3fZtRs9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-It is noticeable how oscillations happen at higher frequency after :math:`x \approx 0.25` m; before that, the assymetry in the outlet flow only becomes more pronounced after :math:`t \approx 2.5` s. In this region, there is little change in the flow pattern after :math:`t \approx 4` s.
+It is noticeable how oscillations happen at higher frequency after :math:`x \approx 0.25` m; before that, the asymetry in the outlet flow only becomes more pronounced after :math:`t \approx 2.5` s. In this region, there is little change in the flow pattern after :math:`t \approx 4` s.
 
 The velocity profiles at different cross-sections can be visualized using the following command:
 
