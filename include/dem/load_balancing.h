@@ -40,13 +40,14 @@ public:
    */
   inline void
   set_parameters(
-    const Parameters::Lagrangian::ModelParameters &model_parameters)
+    const Parameters::Lagrangian::ModelParameters<dim> &model_parameters)
   {
     // Load balancing method and the setup of the check iteration function
     load_balance_method      = model_parameters.load_balance_method;
     iteration_check_function = set_iteration_check_function();
 
     // Parameters related to the total cell weight
+    cell_weight_function   = model_parameters.cell_weight_function;
     particle_weight        = model_parameters.load_balance_particle_weight;
     inactive_status_factor = model_parameters.inactive_load_balancing_factor;
     active_status_factor   = model_parameters.active_load_balancing_factor;
@@ -117,13 +118,14 @@ public:
 
     switch (load_balance_method)
       {
-        case ModelParameters::LoadBalanceMethod::once:
+        case ModelParameters<dim>::LoadBalanceMethod::once:
           return [&] { check_load_balance_once(); };
-        case ModelParameters::LoadBalanceMethod::frequent:
+        case ModelParameters<dim>::LoadBalanceMethod::frequent:
           return [&] { check_load_balance_frequent(); };
-        case ModelParameters::LoadBalanceMethod::dynamic:
+        case ModelParameters<dim>::LoadBalanceMethod::dynamic:
           return [&] { check_load_balance_dynamic(); };
-        case ModelParameters::LoadBalanceMethod::dynamic_with_sparse_contacts:
+        case ModelParameters<
+          dim>::LoadBalanceMethod::dynamic_with_sparse_contacts:
           return [&] { check_load_balance_with_sparse_contacts(); };
         default: // Default is no load balance (none)
           return [&]() { return; };
@@ -192,7 +194,24 @@ public:
   inline void
   connect_weight_signals()
   {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+
+    triangulation->signals.weight.connect(
+      [&](const typename Triangulation<dim>::cell_iterator &cell,
+          const typename Triangulation<dim>::CellStatus) -> unsigned int {
+        return static_cast<int>(cell_weight_function->value(cell->center()));
+      });
+
+    triangulation->signals.weight.connect(
+      [&](const typename parallel::distributed::Triangulation<
+            dim>::cell_iterator &cell,
+          const typename parallel::distributed::Triangulation<dim>::CellStatus
+            status) -> unsigned int {
+        return this->calculate_total_cell_weight(cell, status);
+      });
+
+#elif (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 7)
     triangulation->signals.weight.connect(
       [&](const typename Triangulation<dim>::cell_iterator &,
           const typename Triangulation<dim>::CellStatus) -> unsigned int {
@@ -349,7 +368,7 @@ private:
   /**
    * @brief The load balancing method chosen by the user.
    */
-  Parameters::Lagrangian::ModelParameters::LoadBalanceMethod
+  typename Parameters::Lagrangian::ModelParameters<dim>::LoadBalanceMethod
     load_balance_method;
 
   /**
@@ -362,6 +381,8 @@ private:
    * @brief Default hard-coded load weight of a cell.
    */
   const unsigned int cell_weight = 1000;
+
+  std::shared_ptr<Function<dim>> cell_weight_function;
 
   /**
    * @brief Load weight of a particle, the default parameters is 10000.
