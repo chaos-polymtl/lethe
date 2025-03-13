@@ -305,7 +305,7 @@ namespace InterfaceTools
     std::set<types::global_dof_index> &intersected_dofs);
 
   /**
-   * @brief Solver to compute the signed distance from a given level of a level-set field. It is based on the method proposed by Ausas (2010).
+   * @brief Solver to compute the signed distance from a given level of a level-set field. It is based on the method proposed in the following article: Ausas, R.F., Dari, E.A. and Buscaglia, G.C. (2011), A geometric mass-preserving redistancing scheme for the level set function. Int. J. Numer. Meth. Fluids, 65: 989-1010. https://doi.org/10.1002/fld.2227.
    *
    * @tparam dim An integer that denotes the dimension of the space in which
    * the problem is solved.
@@ -354,7 +354,7 @@ namespace InterfaceTools
      * associated with them
      */
     void
-    setup_dofs(const MPI_Comm &mpi_communicator);
+    setup_dofs();
 
     /**
      * @brief set_level_set_from_background_mesh
@@ -374,8 +374,7 @@ namespace InterfaceTools
     void
     set_level_set_from_background_mesh(
       const DoFHandler<dim> &background_dof_handler,
-      const VectorType      &background_level_set_vector,
-      const MPI_Comm        &mpi_communicator);
+      const VectorType      &background_level_set_vector);
 
     /**
      * @brief solve
@@ -384,17 +383,17 @@ namespace InterfaceTools
      * vector.
      */
     void
-    solve(const MPI_Comm &mpi_communicator);
+    solve();
 
     /**
-     * @brief Getter methods to get the private attribute signed_distance
+     * @brief Get the private attribute signed_distance
      *
      * @param[in] mpi_communicator MPI communicator
      *
      * @return vector storing the computed signed distance
      */
     VectorType &
-    get_signed_distance(const MPI_Comm &mpi_communicator);
+    get_signed_distance();
 
     /**
      * @brief Output the interface reconstruction used for the signed distance
@@ -417,7 +416,7 @@ namespace InterfaceTools
      * enable the auxiliary physics to output their solution via the background
      * solver.
      *
-     * @param[in,out] data_out DataOut reponsible for solution output
+     * @param[in,out] data_out DataOut responsible for solution output
      */
     void
     attach_solution_to_output(DataOut<dim> &data_out);
@@ -467,7 +466,7 @@ namespace InterfaceTools
      * @param[in] mpi_communicator MPI communicator
      */
     void
-    compute_second_neighbors_distance(const MPI_Comm &mpi_communicator);
+    compute_second_neighbors_distance();
 
     /**
      * @brief Compute the signed_distance from the distance vector and the sign of the
@@ -490,7 +489,7 @@ namespace InterfaceTools
      * @param[in] mpi_communicator MPI communicator
      */
     void
-    conserve_global_volume(const MPI_Comm &mpi_communicator);
+    conserve_global_volume();
 
     /**
      * @brief Return the local id of the opposite faces to the given local DOF
@@ -612,7 +611,7 @@ namespace InterfaceTools
      * 1).
      *
      * @param[in] stencil_real stencil in the real space. The evaluation point
-     * x_n correspon to the first entry.
+     * x_n corresponds to the first entry.
      *
      * @param[in] x_I_real coordinate of the DoF x_I in the real space
      *
@@ -639,7 +638,7 @@ namespace InterfaceTools
 
     /**
      * @brief
-     * Compute the distance accordinf to: d(x_I) = d(x_n) + ||x_I - x_n||
+     * Compute the distance according to: d(x_I) = d(x_n) + ||x_I - x_n||
      *
      * @param[in] x_n_to_x_I_real vector from x_n to x_I in the real space
      *
@@ -693,14 +692,14 @@ namespace InterfaceTools
     /// distance)
     LinearAlgebra::distributed::Vector<double> distance_with_ghost;
 
-    /// Value of the orrection to apply to the signed_distance to match the
+    /// Value of the correction to apply to the signed_distance to match the
     /// cell-wise volume encompassed by the level 0 of level_set
     LinearAlgebra::distributed::Vector<double> volume_correction;
 
-    /// Hanging node contraint
+    /// Hanging node contraints
     AffineConstraints<double> constraints;
 
-    /// Surface vertices of the interface recontruction stored in a cell-wise
+    /// Surface vertices of the interface reconstruction stored in a cell-wise
     /// map (volume cell)
     std::map<types::global_cell_index, std::vector<Point<dim>>>
       interface_reconstruction_vertices;

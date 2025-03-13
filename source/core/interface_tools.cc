@@ -189,6 +189,8 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs(
   const MPI_Comm &mpi_communicator)
 {
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+
   dof_handler.distribute_dofs(*this->fe);
 
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
@@ -224,9 +226,10 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   set_level_set_from_background_mesh(
     const DoFHandler<dim> &background_dof_handler,
-    const VectorType      &background_level_set_vector,
-    const MPI_Comm        &mpi_communicator)
+    const VectorType      &background_level_set_vector)
 {
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+
   VectorType tmp_local_level_set(this->locally_owned_dofs, mpi_communicator);
 
   VectorTools::interpolate_to_different_mesh(background_dof_handler,
@@ -239,10 +242,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
 template <int dim, typename VectorType>
 void
-InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve(
-  const MPI_Comm & /*mpi_communicator*/)
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 {
-  // Incomplete method! It only initialize the distance for now.
+  // Incomplete method! It only initializes the distance for now.
   initialize_distance();
 }
 
@@ -267,9 +269,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
 
 template <int dim, typename VectorType>
 VectorType &
-InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance(
-  const MPI_Comm &mpi_communicator)
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance()
 {
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+
   VectorType tmp_local_level_set(this->locally_owned_dofs, mpi_communicator);
 
   // Loop on the DoFs to be compatible with the difference in vector type
