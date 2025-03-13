@@ -489,6 +489,12 @@ private:
   create_GMG();
 
   /**
+   * @brief  Intialize the geometric multigrid preconditioner.
+   */
+  void
+  initialize_GMG();
+
+  /**
    * @brief  Setup the geometric multigrid preconditioner.
    */
   void
