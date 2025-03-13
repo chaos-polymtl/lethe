@@ -78,7 +78,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties<PropertiesIndex>());
+    triangulation, mapping, PropertiesIndex::n_properties);
 
   // Creating containers manager
   DEMContactManager<dim, PropertiesIndex> contact_manager;
