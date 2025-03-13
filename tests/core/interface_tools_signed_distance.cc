@@ -102,17 +102,16 @@ test()
       max_reinitialization_distance,
       0.0);
 
-  signed_distance_solver->setup_dofs(mpi_communicator);
+  signed_distance_solver->setup_dofs();
   signed_distance_solver->set_level_set_from_background_mesh(
-    background_dof_handler, background_level_set, mpi_communicator);
+    background_dof_handler, background_level_set);
 
   // Solve the signed_distance field. The solve() method only initialize the
   // signed_distance to the max_reinitialization_distance for now.
-  signed_distance_solver->solve(mpi_communicator);
+  signed_distance_solver->solve();
 
   // Get the signed_distance field from the SignedDistanceSolver
-  auto &signed_distance =
-    signed_distance_solver->get_signed_distance(mpi_communicator);
+  auto &signed_distance = signed_distance_solver->get_signed_distance();
 
   // The extrema of signed_distance should be the +/-
   // max_reinitialization_distance. This is a dummy test intended to check the

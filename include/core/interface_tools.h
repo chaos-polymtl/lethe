@@ -368,8 +368,6 @@ namespace InterfaceTools
      * level-set field solver
      *
      * @param[in] background_level_set_vector level-set solution vector
-     *
-     * @param[in] mpi_communicator MPI communicator
      */
     void
     set_level_set_from_background_mesh(
@@ -387,8 +385,6 @@ namespace InterfaceTools
 
     /**
      * @brief Get the private attribute signed_distance
-     *
-     * @param[in] mpi_communicator MPI communicator
      *
      * @return vector storing the computed signed distance
      */
@@ -462,8 +458,6 @@ namespace InterfaceTools
     /**
      * @brief Compute the geometric distance (marching method) between the
      * interface reconstruction and the rest of the dofs (second neighbors)
-     *
-     * @param[in] mpi_communicator MPI communicator
      */
     void
     compute_second_neighbors_distance();
@@ -485,8 +479,6 @@ namespace InterfaceTools
     /**
      * @brief Correct the global volume to match the volume englobed by the given level
      * of the level_set field
-     *
-     * @param[in] mpi_communicator MPI communicator
      */
     void
     conserve_global_volume();

@@ -186,8 +186,7 @@ InterfaceTools::reconstruct_interface(
 
 template <int dim, typename VectorType>
 void
-InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs(
-  const MPI_Comm &mpi_communicator)
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs()
 {
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
 
