@@ -211,7 +211,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   Tensor<1, 3>       relative_velocity;
   Tensor<1, 3>       tangential_relative_velocity;
   const double       force_calculation_threshold_distance =
-    cut_off_factor * 0.5 * (p.diameter[0] + p.diameter[1]);
+   cut_off_factor * 0.5 * (p.diameter[0] + p.diameter[1]);
 
   // Open file and write names of columns
   std::ofstream file(filename + ".dat", std::ios::binary);
@@ -275,8 +275,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                                             normal_unit_vector));
       tangential_relative_velocity =
         relative_velocity -
-        scalar_product(relative_velocity, normal_unit_vector) *
-          normal_unit_vector;
+        ((relative_velocity * normal_unit_vector) * normal_unit_vector);
       tangential_overlap += tangential_relative_velocity * dt;
 
       // Printing on file and storing data at each output interval
@@ -335,7 +334,6 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   file.close();
   return full_contact_output{};
 }
-
 
 
 #endif // full_contact_functions_h

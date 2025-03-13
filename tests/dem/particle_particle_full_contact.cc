@@ -18,8 +18,8 @@ log_contact_output(full_contact_output &output)
               << std::endl;
       return;
     }
-  int time_size = output.time.size();
-  for (int i = 0; i < time_size; ++i)
+  const unsigned int time_size = output.time.size();
+  for (unsigned int i = 0; i < time_size; ++i)
     {
       deallog << "At time " << std::setw(15) << output.time[i]
               << std::defaultfloat << " force is " << std::setw(10)
