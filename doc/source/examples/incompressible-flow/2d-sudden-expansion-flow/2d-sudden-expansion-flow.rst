@@ -27,7 +27,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 -----------------------
 
-A two-dimensional flow goes past a symmetric sudden expansion. The flow enters from the left inlet, where :math:`x=0`, at a velocity :math:`\mathbf{u} = [1, 0, 0] m/s`; the inlet slot height is :math:`h = 10mm`. At :math:`x = L_{inlet} = 8h` the flow is fully developed, and a sudden expansion with ratio 2 is placed (:math:`d = h/2`). The outlet length is given by :math:`L_{outlet} = 100h`; all dimensions are identified in the figure bellow.
+A two-dimensional flow goes past a symmetric sudden expansion. The flow enters from the left inlet, where :math:`x=0`, at a velocity :math:`\mathbf{u} = [1, 0, 0] m/s`; the inlet slot height is :math:`h = 10mm`. At :math:`x = L_{inlet} = 8h` the flow is fully developed, and a sudden expansion with ratio 2 is placed (:math:`d = h/2`). The outlet length is given by :math:`L_{outlet} = 100h`; all dimensions are identified in the figure below.
 
 .. image:: image/expansion-geometry.png
 
@@ -94,7 +94,7 @@ The viscosity :math:`\nu = 1.42857 \times 10^{-4} m^2/s` corresponds to :math:`\
 Mesh
 ~~~~
 
-The mesh is composed by bilinear quadrilateral elements, and the problem geometry was taken from Durst et. al. (1993) [#durst1993]_. The inlet dimension was chosen to be large enough to for the flow to fully develop before the channel expansion.
+The mesh is composed of bilinear quadrilateral elements, and the problem geometry was taken from Durst et. al. (1993) [#durst1993]_. The inlet dimension was chosen to be large enough for the flow to fully develop before the channel expansion.
 
 .. code-block:: text
 
@@ -124,9 +124,9 @@ In this case, the algorithm thoroughly discretizes the mesh around the expansion
 
 .. image:: image/mesh-adaptation-Re70.png
 
-For :math:`\textrm{Re} = 610`, mesh adaptation was limited by the maximum refinement level, the fraction refinement, and the number of cells, so that the mesh discretization did not became too computationally expensive at the final simulation time. 
+For :math:`\textrm{Re} = 610`, mesh adaptation was limited by the maximum refinement level, the fraction refinement, and the number of cells, so that the mesh discretization did not become too computationally expensive at the final simulation time. 
 
-Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becames turlent on the outlet section. 
+Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turlent on the outlet section. 
 The ``mesh refinement controller`` feature aims to maintain the total number of elements constant by changing coarsening and refinement ratios.
 
 .. code-block:: text
@@ -201,7 +201,7 @@ The default ``newton`` non-linear solver is herein adopted.
       end
     end
 
-Whilst the tolerance is kept at ``1e-6`` for :math:`\textrm{Re} = 70`, it is adjusted for ``1e-4`` for :math:`\textrm{Re} = 610`.
+Whilst the tolerance is kept at ``1e-6`` for :math:`\textrm{Re} = 70`, it is adjusted to ``1e-4`` for :math:`\textrm{Re} = 610`.
 
 Linear Solver
 ~~~~~~~~~~~~~
@@ -223,7 +223,7 @@ A GMRES iterative solver with AMG preconditioner is used:
       end
     end
 
-The only parameter changed between the low- and high-Reynolds number simulations is the minimum residual, with is changed to ``1e-6`` for :math:`\textrm{Re = 610}`.
+The only parameter changed between the low- and high-Reynolds number simulations is the minimum residual, which is changed to ``1e-6`` for :math:`\textrm{Re = 610}`.
 
 -----------------------
 Running the Simulations
@@ -256,7 +256,7 @@ It is noticeable that two recirculation zones appear right after the channel exp
 
   python3 velocity_profiles.py -Re 70
 
-in which the flag ``-Re`` indicates the Reynolds number. The obtained figures are reproduced here:
+in which the flag ``-Re`` indicates the Reynolds number. The figures we obtain are:
 
 .. image:: image/Reynolds70-0.png
     :width: 400
@@ -270,7 +270,7 @@ in which the flag ``-Re`` indicates the Reynolds number. The obtained figures ar
 .. image:: image/Reynolds70-3.png
     :width: 400
 
-The first plot at :math:`x = 70mm` indicates the Poiseuille-like flow before the channel expansion. A visible difference is noticed in the velocity profile at :math:`x = 130mm`. Nonetheless, numerical results presented by Kanna et. al. [#kanna2005]_ for this same example coincide with the Lethe curve.
+The first plot at :math:`x = 70mm` shows the Poiseuille-like flow before the channel expansion. A visible difference is noticed in the velocity profile at :math:`x = 130mm`. Nonetheless, numerical results presented by Kanna et. al. [#kanna2005]_ for this same example coincide with the Lethe curve.
 
 At :math:`x = L_{outlet}` the velocity distribution is compared with analytical data, and a great agreement is found:
 
@@ -322,7 +322,7 @@ Similarly to the low-Reynolds number case, the outlet velocity profile is compar
 Possibilities for Extension
 ---------------------------
 
-- **Run the simulation with different Reynolds numbers**: the sudden-expansion flow allows symmetric flow only up to a certain value of :math:`\textrm{Re}`, after which a bifurcation happens and asymmetric dettachment appears. It can be interesting to change :math:`\textrm{Re}` values to find the symmetric/asymmetric flow range.
+- **Run the simulation with different Reynolds numbers**: the sudden-expansion flow allows symmetric flow only up to a certain value of :math:`\textrm{Re}`, after which a bifurcation happens and asymmetric detachment appears. It can be interesting to change :math:`\textrm{Re}` values to find the symmetric/asymmetric flow range.
 - **Alter mesh and solver parameters for the high Reynolds number case**: as previously mentioned, the turbulent flow patterns might differ, for instance, when using a smaller time step, or a higher number of cells.
 - **Simulate a three-dimensional case**: asymmetric effects can be even more pronounced once a three-dimensional flow is simulated and cross-sectional effects are taken into account. 
 
