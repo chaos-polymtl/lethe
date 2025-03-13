@@ -236,7 +236,8 @@ Assuming that the ``lethe-fluid`` executable is within your path, the simulation
 
   mpirun -np j lethe-fluid Reynolds70-jet.prm
 
-where ``j`` is the number of processes for parallel computation. For the case where :math:`\textrm{Re} = 610`, the parameter file should be named ``Reynolds610-jet.prm`` instead.
+where ``j`` is the number of processes for parallel computation. For the case where :math:`\textrm{Re} = 610`, the parameter file should be named ``Reynolds610-jet.prm`` instead. 
+Using 8 cores, the steady-state simulation takes on average :math:`16` seconds, and the transient solution takes approximately :math:`50` minutes.
 
 ----------------------
 Results and Discussion
