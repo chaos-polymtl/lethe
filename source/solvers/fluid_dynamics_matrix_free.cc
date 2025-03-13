@@ -2898,3 +2898,9 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 
 template class FluidDynamicsMatrixFree<2>;
 template class FluidDynamicsMatrixFree<3>;
+
+template class MFNavierStokesPreconditionGMG<2>;
+template class MFNavierStokesPreconditionGMG<3>;
+
+template class MFNavierStokesPreconditionGMGBase<2>;
+template class MFNavierStokesPreconditionGMGBase<3>;

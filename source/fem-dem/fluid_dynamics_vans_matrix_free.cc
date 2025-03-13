@@ -179,6 +179,36 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
   this->finish_simulation();
 }
 
+
+template <int dim>
+void
+FluidDynamicsVANSMatrixFree<dim>::create_GMG()
+{
+  this->gmg_preconditioner =
+    std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
+      this->simulation_parameters,
+      this->dof_handler,
+      this->dof_handler_fe_q_iso_q1);
+
+  this->gmg_preconditioner->reinit(this->mapping,
+                                   this->cell_quadrature,
+                                   this->forcing_function,
+                                   this->simulation_control,
+                                   this->fe);
+}
+
+template <int dim>
+void
+FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
+{
+  dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(
+    this->gmg_preconditioner.get())
+    ->initialize(this->simulation_control,
+                 this->flow_control,
+                 this->present_solution,
+                 this->time_derivative_previous_solutions);
+}
+
 // Pre-compile the 2D and 3D solver to ensure that the
 // library is valid before we actually compile the solver
 template class FluidDynamicsVANSMatrixFree<2>;

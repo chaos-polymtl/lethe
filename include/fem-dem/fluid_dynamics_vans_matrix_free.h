@@ -67,6 +67,12 @@ protected:
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
 
+  void
+  create_GMG() override;
+
+  void
+  initialize_GMG() override;
+
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
