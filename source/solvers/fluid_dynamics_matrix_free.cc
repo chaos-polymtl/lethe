@@ -444,6 +444,24 @@ convert_vector_dealii_to_trilinos(
   out.import_elements(rwv, VectorOperation::insert);
 }
 
+/**
+ * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.
+ *
+ * @tparam number Abstract type for number across the class (i.e., double).
+ * @param out Destination TrilinosWrappers::MPI::Vector vector.
+ * @param in Source LinearAlgebra::distributed::Vector<number> vector.
+ */
+template <typename number>
+void
+convert_vector_trilinos_to_dealii(
+  LinearAlgebra::distributed::Vector<number> &out,
+  const TrilinosWrappers::MPI::Vector        &in)
+{
+  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+  rwv.import_elements(in, VectorOperation::insert);
+  out.import_elements(rwv, VectorOperation::insert);
+}
+
 namespace dealii
 {
   /**
@@ -1280,6 +1298,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   MGLevelObject<MGVectorType> mg_solution(this->minlevel, this->maxlevel);
   MGLevelObject<MGVectorType> mg_time_derivative_previous_solutions(
     this->minlevel, this->maxlevel);
+  MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
+                                                      this->maxlevel);
 
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
@@ -2070,7 +2090,17 @@ FluidDynamicsMatrixFree<dim>::solve()
               this->flow_control.get_beta());
         }
 
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          update_solutions_for_fluid_dynamics();
+          this->system_operator->compute_forcing_term_from_vector(
+            temperature_present_solution,
+            *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
+            this->simulation_parameters.physical_properties_manager);
+        }
+      
       this->iterate();
+
       this->postprocess(false);
       this->finish_time_step();
 
@@ -2227,7 +2257,9 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // Provide relevant solution to multiphysics interface only if other physics
   // apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
-    update_solutions_for_multiphysics();
+    {
+      update_solutions_for_multiphysics();
+    }
 }
 
 template <int dim>
@@ -2701,6 +2733,29 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
 #endif
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
+{
+  TimerOutput::Scope t(this->computing_timer,
+                       "Update solutions for fluid dynamics");
+
+  const auto &heat_solution =
+    *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+
+  const auto &heat_dof_handler =
+    *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+  this->temperature_present_solution.reinit(
+    heat_dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_active_dofs(heat_dof_handler),
+    this->mpi_communicator);
+
+  convert_vector_trilinos_to_dealii(this->temperature_present_solution,
+                                    heat_solution);
+  this->temperature_present_solution.update_ghost_values();
 }
 
 template <int dim>

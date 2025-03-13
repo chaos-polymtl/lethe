@@ -216,6 +216,13 @@ public:
   void
   compute_forcing_term();
 
+
+  void
+  compute_forcing_term_from_vector(
+    const VectorType                &temperature_solution,
+    const DoFHandler<dim>           &temperature_dof_handler,
+    const PhysicalPropertiesManager &physical_properties_manager);
+
   /**
    * @brief Get the total number of DoFs.
    *
@@ -558,7 +565,6 @@ protected:
    */
   double kinematic_viscosity;
 
-
   /**
    * @brief Stabilization type needed to add or remove terms from operator.
    *
@@ -599,6 +605,12 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> forcing_terms;
+
+  /**
+   * @brief Table with precomputed forcing term values.
+   *
+   */
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> gravity_term;
 
   /**
    * @brief Flag to turn the calculation of face terms on or off.
