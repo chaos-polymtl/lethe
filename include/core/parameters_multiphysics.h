@@ -223,6 +223,42 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Parameters for geometric reinitialization of the interface
+   * used with the VOF solver.
+   */
+  struct VOF_GeometricInterfaceReinitialization
+  {
+    /// Enables/Disables the geometric interface reinitialization.
+    bool enable;
+    /// Enables/Disables the output of the signed distance field
+    bool output_signed_distance;
+    /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
+    /// fraction field will be reinitialized
+    int reinitialization_frequency;
+    /// Maximum reinitialization distance value
+    double max_reinitialization_distance;
+    /// Interface thickness for the tanh transformation
+    double tanh_thickness;
+    /// Type of verbosity of the algebraic interface reinitialization solver.
+    Parameters::Verbosity verbosity;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
 
   /**
    * @brief VOF - Defines the parameters for free surface simulations
@@ -236,6 +272,8 @@ namespace Parameters
     Parameters::VOF_PhaseFilter         phase_filter;
     Parameters::VOF_AlgebraicInterfaceReinitialization
       algebraic_interface_reinitialization;
+    Parameters::VOF_GeometricInterfaceReinitialization
+      geometric_interface_reinitialization;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 

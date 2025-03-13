@@ -4,16 +4,34 @@
 #ifndef lethe_interface_tools_h
 #define lethe_interface_tools_h
 
+#include <core/utilities.h>
+#include <core/vector.h>
+
+#include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/data_out_base.h>
 #include <deal.II/base/function.h>
+
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/mapping_fe.h>
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
 #include <deal.II/non_matching/quadrature_generator.h>
+
+#include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/vector_tools.h>
+
+#include <fstream>
+#include <iostream>
 
 using namespace dealii;
 
@@ -286,6 +304,405 @@ namespace InterfaceTools
                                       &interface_reconstruction_cells,
     std::set<types::global_dof_index> &intersected_dofs);
 
+  /**
+   * @brief Solver to compute the signed distance from a given level of a level-set field. It is based on the method proposed in the following article: Ausas, R.F., Dari, E.A. and Buscaglia, G.C. (2011), A geometric mass-preserving redistancing scheme for the level set function. Int. J. Numer. Meth. Fluids, 65: 989-1010. https://doi.org/10.1002/fld.2227.
+   *
+   * @tparam dim An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   *
+   * @tparam VectorType The vector type of the level-set vector.
+   */
+  template <int dim, typename VectorType>
+  class SignedDistanceSolver
+  {
+  public:
+    /**
+     * @brief Base constructor.
+     *
+     * @param[in] background_triangulation Shared pointer to the triangulation
+     * of the domain
+     *
+     * @param[in] background_fe Shared pointer to the finite element
+     * discretizing the domain
+     *
+     * @param[in] p_max_distance Maximum reinitialization distance value
+     *
+     * @param[in] p_iso_level Iso-level from which the signed distance is
+     * computed
+     *
+     */
+    SignedDistanceSolver(
+      std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                          background_triangulation,
+      std::shared_ptr<FiniteElement<dim>> background_fe,
+      const double                        p_max_distance,
+      const double                        p_iso_level)
+      : dof_handler(*background_triangulation)
+      , fe(background_fe)
+      , max_distance(p_max_distance)
+      , iso_level(p_iso_level)
+      , pcout(std::cout,
+              (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
+    {
+      mapping = std::make_shared<MappingFE<dim>>(*fe);
+    }
+
+    /**
+     * @brief setup_dofs
+     *
+     * Initialize the degree of freedom and the memory
+     * associated with them
+     */
+    void
+    setup_dofs();
+
+    /**
+     * @brief set_level_set_from_background_mesh
+     *
+     * Set the level-set field from the main solver. For example, when using the
+     * current SignedDistanceSolver for the geometric redistanciation of the VOF
+     * phase fraction, the level-set field comes from the VOF solver and is
+     * described by the corresponding VOF DoFHandler.
+     *
+     * @param[in] background_dof_handler DoFHandler corresponding to the
+     * level-set field solver
+     *
+     * @param[in] background_level_set_vector level-set solution vector
+     */
+    void
+    set_level_set_from_background_mesh(
+      const DoFHandler<dim> &background_dof_handler,
+      const VectorType      &background_level_set_vector);
+
+    /**
+     * @brief solve
+     *
+     * Solve for the signed distance from the given level of the level-set
+     * vector.
+     */
+    void
+    solve();
+
+    /**
+     * @brief Get the private attribute signed_distance
+     *
+     * @return vector storing the computed signed distance
+     */
+    VectorType &
+    get_signed_distance();
+
+    /**
+     * @brief Output the interface reconstruction used for the signed distance
+     * computations
+     *
+     * @param[in] output_name name of the output file
+     *
+     * @param[in] output_path path to the output file
+     *
+     * @param[in] it iteration number
+     *
+     */
+    void
+    output_interface_reconstruction(const std::string  output_name,
+                                    const std::string  output_path,
+                                    const unsigned int it) const;
+
+    /**
+     * @brief Attach the solution vector to the DataOut provided. This function
+     * enable the auxiliary physics to output their solution via the background
+     * solver.
+     *
+     * @param[in,out] data_out DataOut responsible for solution output
+     */
+    void
+    attach_solution_to_output(DataOut<dim> &data_out);
+
+    /// DoFHandler describing the problem
+    DoFHandler<dim> dof_handler;
+
+  private:
+    /**
+     * @brief Zero the ghost dofs entries of the solution vectors to gain write
+     * access to the ghost elements
+     */
+    void
+    zero_out_ghost_values();
+
+    /**
+     * @brief Update the ghost dofs entries of the solution vectors to gain read
+     * access to the ghost elements
+     */
+    void
+    update_ghost_values();
+
+    /**
+     * @brief Exchange the distance and set it to the minimum value across the
+     * processors by using the compress(VectorOperation::min) function
+     */
+    void
+    exchange_distance();
+
+    /**
+     * @brief Initialize the distance solution vectors to the given max_distance
+     */
+    void
+    initialize_distance();
+
+    /**
+     * @brief Compute the geometric distance (brute force) between the interface
+     * reconstruction and the dofs of the intersected cells (first neighbors)
+     */
+    void
+    compute_first_neighbors_distance();
+
+    /**
+     * @brief Compute the geometric distance (marching method) between the
+     * interface reconstruction and the rest of the dofs (second neighbors)
+     */
+    void
+    compute_second_neighbors_distance();
+
+    /**
+     * @brief Compute the signed_distance from the distance vector and the sign of the
+     * signed_distance vector entries
+     */
+    void
+    compute_signed_distance_from_distance();
+
+    /**
+     * @brief Compute the cell-wise volume correction to match the volume englobed
+     * by the given level of the level_set field in each element
+     */
+    void
+    compute_cell_wise_volume_correction();
+
+    /**
+     * @brief Correct the global volume to match the volume englobed by the given level
+     * of the level_set field
+     */
+    void
+    conserve_global_volume();
+
+    /**
+     * @brief Return the local id of the opposite faces to the given local DOF
+     * (works for quad only).
+     *
+     * @param[in] local_dof_id Local id of the DoF in the cell
+     *
+     * @param[out] local_opposite_faces The vector containing the id of the
+     * opposite faces
+     */
+    inline void
+    get_dof_opposite_faces(unsigned int               local_dof_id,
+                           std::vector<unsigned int> &local_opposite_faces);
+
+    /**
+     * @brief Return the face transformation jacobian (dim-1 x dim-1). This is
+     * required because the distance minimization problem is resolved in the
+     * reference face space (dim-1).
+     *
+     * @param[in] cell_transformation_jac transformation jacobian of the cell
+     * (dim x dim)
+     *
+     * @param[in] local_face_id local id of the face
+     *
+     * @param[out] face_transformation_jac face transformation jacobian (dim-1 x
+     * dim-1) faces
+     */
+    inline void
+    get_face_transformation_jacobian(
+      const DerivativeForm<1, dim, dim> &cell_transformation_jac,
+      const unsigned int                 local_face_id,
+      DerivativeForm<1, dim - 1, dim>   &face_transformation_jac);
+
+    /**
+     * @brief
+     * Transform a point dim-1 in a reference face to a point dim in the
+     * reference cell. This is required because the distance minimization
+     * problem is resolved in the reference face space (dim-1).
+     *
+     * @param[in] x_ref_face point dim-1 in the reference face
+     *
+     * @param[in] local_face_id local id of the face
+     *
+     * @return Point dim in the reference cell
+     */
+    inline Point<dim>
+    transform_ref_face_point_to_ref_cell(const Point<dim - 1> &x_ref_face,
+                                         const unsigned int    local_face_id);
+
+    /**
+     * @brief Compute the residual at the point x_n of the distance minimization
+     * problem for the DoF x_I in the reference face space (dim - 1). In the
+     * real space the residual correspond to: R = grad(d) - (x_I - x_n)/||x_I -
+     * x_n||
+     *
+     *
+     * @param[in] x_n_to_x_I_real vector from x_n to x_I in the real space
+     *
+     * @param[in] distance_gradient gradient of the distance at the point x_n
+     *
+     * @param[in] transformation_jac transformation jacobian of the face
+     *
+     * @param[out] residual_ref residual in the reference face space
+     */
+    inline void
+    compute_residual(const Tensor<1, dim>                  &x_n_to_x_I_real,
+                     const Tensor<1, dim>                  &distance_gradient,
+                     const DerivativeForm<1, dim - 1, dim> &transformation_jac,
+                     Tensor<1, dim - 1>                    &residual_ref);
+
+    /**
+     * @brief Compute the stencil for the numerical jacobian of the distance
+     * minimization problem in the face where the problem is solved
+     *
+     * @param[in] x_ref point in the reference cell space where the jacobian is
+     * evaluated
+     *
+     * @param[in] local_face_id local id of the face in which the numerical
+     * jacobian is required
+     *
+     * @param[in] perturbation value of the perturbation use for the
+     * numerical jacobian computation
+     *
+     * @return vector containing the 2*dim - 1 stencil point. The entries of the
+     * vector are the following:
+     *                                    4
+     *
+     *                               1    0    2
+     *
+     *                                    3
+     * The entry 0 is the current evaluation point x_ref
+     */
+    inline std::vector<Point<dim>>
+    compute_numerical_jacobian_stencil(const Point<dim>   x_ref,
+                                       const unsigned int local_face_id,
+                                       const double       perturbation);
+
+    /**
+     * @brief
+     * Transform the Newton correction in a reference face to a tensor (dim) in
+     * the reference cell. This is required because the distance minimization
+     * problem is resolved in the reference face space (dim-1).
+     *
+     * @param[in] x_ref_face point dim-1 in the reference face
+     *
+     * @param[in] local_face_id local id of the face
+     *
+     * @return tensor dim in the reference cell
+     */
+    inline Tensor<1, dim>
+    transform_ref_face_correction_to_ref_cell(
+      const Vector<double> &correction_ref_face,
+      const unsigned int    local_face_id);
+
+    /**
+     * @brief
+     * Compute the numerical jacobian at the point x_n of the distance
+     * minimization problem for the DoF x_I in the reference face space (dim -
+     * 1).
+     *
+     * @param[in] stencil_real stencil in the real space. The evaluation point
+     * x_n corresponds to the first entry.
+     *
+     * @param[in] x_I_real coordinate of the DoF x_I in the real space
+     *
+     * @param[in] distance_gradients vector storing the distance gradients at
+     * each stencil points
+     *
+     * @param[in] transformation_jacobians vector storing the face
+     * transformation jacobians at each stencil points
+     *
+     * @param[in] perturbation value of the perturbation use for the
+     * numerical jacobian computation
+     *
+     * @param[out] jacobian_matrix jacobian matrix of the minimization problem
+     */
+    inline void
+    compute_numerical_jacobian(
+      const std::vector<Point<dim>>     &stencil_real,
+      const Point<dim>                  &x_I_real,
+      const std::vector<Tensor<1, dim>> &distance_gradients,
+      const std::vector<DerivativeForm<1, dim - 1, dim>>
+                               &transformation_jacobians,
+      const double              perturbation,
+      LAPACKFullMatrix<double> &jacobian_matrix);
+
+    /**
+     * @brief
+     * Compute the distance according to: d(x_I) = d(x_n) + ||x_I - x_n||
+     *
+     * @param[in] x_n_to_x_I_real vector from x_n to x_I in the real space
+     *
+     * @param[in] distance value of the distance at the point x_n
+     *
+     * @return distance between x_I and the interface
+     */
+    inline double
+    compute_distance(const Tensor<1, dim> &x_n_to_x_I_real,
+                     const double          distance);
+
+    /// Finite element discretizing the problem
+    std::shared_ptr<FiniteElement<dim>> fe;
+
+    /// Mapping between the real and reference space
+    std::shared_ptr<Mapping<dim>> mapping;
+
+    /// Maximum redistanciation distance
+    const double max_distance;
+
+    /// Iso-level describing the interface from which the signed distance is
+    /// computed
+    const double iso_level;
+
+    /// Parallel output stream
+    ConditionalOStream pcout;
+
+    /// Set of locally owned DoFs
+    IndexSet locally_owned_dofs;
+
+    /// Set of locally relevant DoFs
+    IndexSet locally_relevant_dofs;
+
+    /// Set of locally active DoFs
+    IndexSet locally_active_dofs;
+
+    /// Level-set field coming from the main solver
+    VectorType level_set;
+
+    /// Solution vector of the signed distance (write only)
+    LinearAlgebra::distributed::Vector<double> signed_distance;
+
+    /// Solution vector of the signed distance with ghost values (read-only
+    /// vesion of signed_distance)
+    LinearAlgebra::distributed::Vector<double> signed_distance_with_ghost;
+
+    /// Solution vector of the distance (write only)
+    LinearAlgebra::distributed::Vector<double> distance;
+
+    /// Solution vector of the distance with ghost values (read-only vesion of
+    /// distance)
+    LinearAlgebra::distributed::Vector<double> distance_with_ghost;
+
+    /// Value of the correction to apply to the signed_distance to match the
+    /// cell-wise volume encompassed by the level 0 of level_set
+    LinearAlgebra::distributed::Vector<double> volume_correction;
+
+    /// Hanging node contraints
+    AffineConstraints<double> constraints;
+
+    /// Surface vertices of the interface reconstruction stored in a cell-wise
+    /// map (volume cell)
+    std::map<types::global_cell_index, std::vector<Point<dim>>>
+      interface_reconstruction_vertices;
+    /// Surface cells of the interface recontruction stored in a cell-wise map
+    /// (volume cell)
+    std::map<types::global_cell_index, std::vector<CellData<dim - 1>>>
+      interface_reconstruction_cells;
+
+    /// Set of DoFs belonging to intersected cells
+    std::set<types::global_dof_index> intersected_dofs;
+  };
 } // namespace InterfaceTools
 
 #endif

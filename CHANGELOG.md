@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-13
+
+### Added
+
+- MINOR This PR adds the (almost) empty architecture of the SignedDistanceSolver and its coupling in the VOF solver (geometric reinitialization method), following the structure of the already existing vof_advection prototype. The parameters associated to the geometric reinitialization method for the VOF solver are also added. [#1451](https://github.com/chaos-polymtl/lethe/pull/1451)
+- 
 ## [Master] - 2025-03-11
 
 ### Added

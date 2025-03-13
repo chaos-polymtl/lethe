@@ -169,6 +169,7 @@ InterfaceTools::reconstruct_interface(
   std::map<types::global_cell_index, std::vector<CellData<1>>>
                                     &interface_reconstruction_cells,
   std::set<types::global_dof_index> &intersected_dofs);
+
 template void
 InterfaceTools::reconstruct_interface(
   const Mapping<3>       &mapping,
@@ -181,3 +182,116 @@ InterfaceTools::reconstruct_interface(
   std::map<types::global_cell_index, std::vector<CellData<2>>>
                                     &interface_reconstruction_cells,
   std::set<types::global_dof_index> &intersected_dofs);
+
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs()
+{
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+
+  dof_handler.distribute_dofs(*this->fe);
+
+  locally_owned_dofs    = dof_handler.locally_owned_dofs();
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_active_dofs   = DoFTools::extract_locally_active_dofs(dof_handler);
+
+  level_set.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+
+  signed_distance.reinit(locally_owned_dofs,
+                         locally_active_dofs,
+                         mpi_communicator);
+  signed_distance_with_ghost.reinit(locally_owned_dofs,
+                                    locally_active_dofs,
+                                    mpi_communicator);
+
+  distance.reinit(locally_owned_dofs, locally_active_dofs, mpi_communicator);
+  distance_with_ghost.reinit(locally_owned_dofs,
+                             locally_active_dofs,
+                             mpi_communicator);
+
+  volume_correction.reinit(locally_owned_dofs,
+                           locally_active_dofs,
+                           mpi_communicator);
+
+  constraints.clear();
+  constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+  constraints.close();
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  set_level_set_from_background_mesh(
+    const DoFHandler<dim> &background_dof_handler,
+    const VectorType      &background_level_set_vector)
+{
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+
+  VectorType tmp_local_level_set(this->locally_owned_dofs, mpi_communicator);
+
+  VectorTools::interpolate_to_different_mesh(background_dof_handler,
+                                             background_level_set_vector,
+                                             dof_handler,
+                                             tmp_local_level_set);
+
+  level_set = tmp_local_level_set;
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
+{
+  // Incomplete method! It only initializes the distance for now.
+  initialize_distance();
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
+{
+  /* Initialization of the active dofs to the max distance we want to
+   redistanciate. It requires a loop on the active dofs to initialize also
+   the distance value of the ghost dofs. Otherwise, they are set to 0.0 by
+   default. */
+  for (auto p : this->locally_active_dofs)
+    {
+      distance(p)            = max_distance;
+      distance_with_ghost(p) = max_distance;
+
+      const double level_set_value  = level_set(p);
+      signed_distance(p)            = max_distance * sgn(level_set_value);
+      signed_distance_with_ghost(p) = max_distance * sgn(level_set_value);
+    }
+}
+
+template <int dim, typename VectorType>
+VectorType &
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance()
+{
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+
+  VectorType tmp_local_level_set(this->locally_owned_dofs, mpi_communicator);
+
+  // Loop on the DoFs to be compatible with the difference in vector type
+  // between level_set and signed_distance
+  for (auto p : this->locally_owned_dofs)
+    {
+      tmp_local_level_set(p) = signed_distance(p);
+    }
+
+  level_set = tmp_local_level_set;
+
+  return level_set;
+}
+
+template class InterfaceTools::SignedDistanceSolver<2, GlobalVectorType>;
+template class InterfaceTools::SignedDistanceSolver<3, GlobalVectorType>;
+
+#ifndef LETHE_USE_LDV
+template class InterfaceTools::
+  SignedDistanceSolver<2, LinearAlgebra::distributed::Vector<double>>;
+template class InterfaceTools::
+  SignedDistanceSolver<3, LinearAlgebra::distributed::Vector<double>>;
+#endif
