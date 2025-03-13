@@ -31,8 +31,8 @@ A two-dimensional flow goes past a symmetric sudden expansion. The flow enters f
 
 .. image:: image/expansion-geometry.png
 
-The sudden-expansion flow is a common fluid dynamics problem in which a fluid jet discharge can be either confined by boundaries or not (free jet). Here a symmetric boundary setup is simulated; at low Reynolds number, it has been reported that the steady-state flow remains symmetric. As the Reynolds number increases, however, the flow symmetry is lost and asymmetric recirculation zones appear. 
-Both stedy-state (:math:`\textrm{Re} =70`) and transient case (:math:`\textrm{Re} = 610`) are presented here.
+The sudden-expansion flow is a common fluid dynamics problem in which a fluid jet discharge can be either confined by boundaries or not (free jet). Here a symmetric boundary setup is simulated; at low Reynolds number, the steady-state flow remains symmetric. As the Reynolds number increases, however, the flow symmetry is lost and asymmetric recirculation zones appear. 
+Both steady-state (:math:`\textrm{Re} =70`) and transient (:math:`\textrm{Re} = 610`) cases are presented here, in which we observe the symmetric and asymetric behaviors, respectively.
 
 --------------
 Parameter File
@@ -126,7 +126,8 @@ In this case, the algorithm thoroughly discretizes the mesh around the expansion
 
 For :math:`\textrm{Re} = 610`, mesh adaptation was limited by the maximum refinement level, the fraction refinement, and the number of cells, so that the mesh discretization did not became too computationally expensive at the final simulation time. 
 
-Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becames turlent on the outlet section.
+Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becames turlent on the outlet section. 
+The ``mesh refinement controller`` feature aims to maintain the total number of elements constant by changing coarsening and refinement ratios.
 
 .. code-block:: text
 
