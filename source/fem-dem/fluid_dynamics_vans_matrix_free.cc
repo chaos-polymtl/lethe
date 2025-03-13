@@ -42,13 +42,18 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const std::shared_ptr<SimulationControl> &simulation_control,
   FlowControl<dim>                         &flow_control,
   const VectorType                         &present_solution,
-  const VectorType                         &time_derivative_previous_solutions)
+  const VectorType                         &time_derivative_previous_solutions,
+  const VoidFractionBase<dim>              &void_fraction_manager)
 {
   MFNavierStokesPreconditionGMG<dim>::initialize(
     simulation_control,
     flow_control,
     present_solution,
     time_derivative_previous_solutions);
+
+  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
+    dynamic_cast<VANSOperator<dim, MGNumber> *>(this->mg_operators[level].get())
+      ->evaluate_void_fraction(void_fraction_manager);
 }
 
 template <int dim>
@@ -242,7 +247,8 @@ FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
     ->initialize(this->simulation_control,
                  this->flow_control,
                  this->present_solution,
-                 this->time_derivative_previous_solutions);
+                 this->time_derivative_previous_solutions,
+                 this->void_fraction_manager);
 }
 
 // Pre-compile the 2D and 3D solver to ensure that the

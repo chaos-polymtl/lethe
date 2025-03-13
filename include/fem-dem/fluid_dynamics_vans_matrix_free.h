@@ -36,7 +36,8 @@ public:
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
-             const VectorType &time_derivative_previous_solutions);
+             const VectorType            &time_derivative_previous_solutions,
+             const VoidFractionBase<dim> &void_fraction_manager);
 
 private:
   const CFDDEMSimulationParameters<dim> &cfd_dem_simulation_parameters;
