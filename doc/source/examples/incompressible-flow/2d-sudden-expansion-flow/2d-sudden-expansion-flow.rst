@@ -190,7 +190,7 @@ The inlet velocity is prescribed on boundary 0 as :math:`u = [1, 0, 0]`, and bou
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The default ``newton`` non-linear solver with ``max iterations = 10`` is herein adopted. 
+The default ``newton`` non-linear solver is herein adopted. 
 
 .. code-block:: text
 
