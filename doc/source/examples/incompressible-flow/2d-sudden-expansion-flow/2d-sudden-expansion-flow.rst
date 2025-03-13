@@ -276,6 +276,7 @@ At :math:`x = L_{outlet}` the velocity distribution is compared with analytical 
 
 .. image:: image/Reynolds70-poiseuille.png
     :align: center
+    :width: 500
 
 :math:`\mathrm{Re}=610`
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -317,6 +318,7 @@ Similarly to the low-Reynolds number case, the outlet velocity profile is compar
 
 .. image:: image/Reynolds610-poiseuille.png
     :align: center
+    :width: 500
 
 ---------------------------
 Possibilities for Extension
