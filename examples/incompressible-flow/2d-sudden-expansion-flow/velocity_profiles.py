@@ -36,10 +36,14 @@ folder = "./Reynolds" + str(Re) +'/'
 L_out = 1.0                     # Outlet length
 L_in = 0.08                     # Inlet length
 L_out = L_in + L_out            # Total length
-h_in = 0.005                    # Half height of inlet
-h_out = 0.01                    # Half height of outlet
 h = 0.01                        # constriction diameter
+
+# Plotting text size
 plt.rc('axes', labelsize=14)
+plt.rc('axes', titlesize=14)
+plt.rc('xtick', labelsize=14)
+plt.rc('ytick', labelsize=14)
+plt.rc('legend', fontsize=14)
 
 # Load reference data
 if (Re == 70):
@@ -84,9 +88,9 @@ u_max_Re70 = 1.48635    # Maximum velocity at Re=70
 u_max_Re610 = 1.32786   # Maximum velocity at Re=610
 
 # Exact solution
-k_out = -3/2*u_moy_out/h_out**2
-y_out_an = np.linspace(-h_out, h_out, 1001)
-u_out_an = k_out*(y_out_an**2-h_out**2)
+k_out = -3/2*u_moy_out/h**2
+y_out_an = np.linspace(-h, h, 1001)
+u_out_an = k_out*(y_out_an**2-h**2)
 
 # Velocity profiles along the domain
 file = (folder + '/sudden-expansion-flow-output.' 
@@ -140,12 +144,13 @@ for row in range(a.shape[0]):
             plt.plot(ref2_Re70[int(row)-1][:,0], ref2_Re70[int(row)-1][:,1], label="Kanna (2005) num.", 
                  marker='^', markerfacecolor='none', linestyle='', linewidth=2.0, color='b')
 
+        plt.xticks(rotation=90)
         plt.xlabel("y [m]")
         plt.ylabel(r'$u/u_{max}$')
-        plt.legend(fontsize=10)
+        plt.legend()
         plt.title(f'Re = 70, x = {int(a[int(row),0]*1e3)}mm')
         plt.axis([0,2*h,0,1])
-        plt.savefig(f'Reynolds70-{row}.png')
+        plt.savefig(f'Reynolds70-{row}.png', bbox_inches='tight')
     elif(Re == 610):
         # Graph
         plt.plot(y, u/u_max_Re610, label="Lethe", linewidth=2.0, color='c')
@@ -154,12 +159,13 @@ for row in range(a.shape[0]):
                  marker='s', markerfacecolor='none', linestyle='', linewidth=2.0, color='k')
         plt.plot(refexp_Re610[int(row)][:,0], refexp_Re610[int(row)][:,1], label="Durst (1993) exp.", 
                  marker='o', markerfacecolor='none', linestyle='', linewidth=2.0, color='r')
+        plt.xticks(rotation=90)
         plt.xlabel("y [m]")
         plt.ylabel(r'$u/u_{max}$')
-        plt.legend(fontsize=10)
+        plt.legend()
         plt.title(f'Re = 610, x = {int(a[int(row),0]*1e3)}mm')
         plt.axis([0,2*h,-0.25,1])
-        plt.savefig(f'Reynolds610-{row}.png')
+        plt.savefig(f'Reynolds610-{row}.png', bbox_inches='tight')
 
 # Velocity profile at outlet
 # Comparison with Poiseuille analytical solution
@@ -177,13 +183,15 @@ plt.plot(y_outlet, u_outlet, label="Lethe", linewidth=2.0, color='c')
 plt.plot(y_out_an+h, u_out_an, label="Analytical Poiseuille Flow", linestyle='--',
          linewidth=2.0, color='k')
 # Graph setup
+plt.xticks(rotation=90)
 plt.xlabel("y [m]")
 plt.ylabel(r'$u$')
-plt.legend(fontsize=10)
+plt.legend()
 plt.axis([0,2*h,0,1])
+
 
 # Save plot
 if (Re == 70):
-    plt.savefig('Reynolds70-poiseuille.png')
+    plt.savefig('Reynolds70-poiseuille.png', bbox_inches='tight')
 elif (Re == 610):
-    plt.savefig('Reynolds610-poiseuille.png')
+    plt.savefig('Reynolds610-poiseuille.png', bbox_inches='tight')
