@@ -15,6 +15,42 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
 
+
+template <int dim>
+MFNavierStokesVANSPreconditionGMG<dim>::MFNavierStokesVANSPreconditionGMG(
+  const CFDDEMSimulationParameters<dim> &param,
+  const DoFHandler<dim>                 &dof_handler,
+  const DoFHandler<dim>                 &dof_handler_fe_q_iso_q1)
+  : MFNavierStokesPreconditionGMG<dim>(param.cfd_parameters,
+                                       dof_handler,
+                                       dof_handler_fe_q_iso_q1)
+  , cfd_dem_simulation_parameters(param)
+{}
+
+template <int dim>
+void
+MFNavierStokesVANSPreconditionGMG<dim>::create_level_operator(
+  const unsigned int level)
+{
+  this->mg_operators[level] = std::make_shared<VANSOperator<dim, MGNumber>>(
+    cfd_dem_simulation_parameters.cfd_dem);
+}
+
+template <int dim>
+void
+MFNavierStokesVANSPreconditionGMG<dim>::initialize(
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  FlowControl<dim>                         &flow_control,
+  const VectorType                         &present_solution,
+  const VectorType                         &time_derivative_previous_solutions)
+{
+  MFNavierStokesPreconditionGMG<dim>::initialize(
+    simulation_control,
+    flow_control,
+    present_solution,
+    time_derivative_previous_solutions);
+}
+
 template <int dim>
 FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
@@ -185,8 +221,8 @@ void
 FluidDynamicsVANSMatrixFree<dim>::create_GMG()
 {
   this->gmg_preconditioner =
-    std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
-      this->simulation_parameters,
+    std::make_shared<MFNavierStokesVANSPreconditionGMG<dim>>(
+      this->cfd_dem_simulation_parameters,
       this->dof_handler,
       this->dof_handler_fe_q_iso_q1);
 
@@ -201,7 +237,7 @@ template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
 {
-  dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(
+  dynamic_cast<MFNavierStokesVANSPreconditionGMG<dim> *>(
     this->gmg_preconditioner.get())
     ->initialize(this->simulation_control,
                  this->flow_control,

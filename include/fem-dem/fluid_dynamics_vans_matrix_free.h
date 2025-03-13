@@ -11,6 +11,38 @@
 
 
 /**
+ * @brief A geometric multigrid preconditioner implementation for
+ * incompressible VANS flow.
+ */
+template <int dim>
+class MFNavierStokesVANSPreconditionGMG
+  : public MFNavierStokesPreconditionGMG<dim>
+{
+public:
+  using VectorType = typename MFNavierStokesPreconditionGMG<dim>::VectorType;
+  using MGVectorType =
+    typename MFNavierStokesPreconditionGMG<dim>::MGVectorType;
+  using MGNumber = typename MFNavierStokesPreconditionGMG<dim>::MGNumber;
+
+  MFNavierStokesVANSPreconditionGMG(
+    const CFDDEMSimulationParameters<dim> &param,
+    const DoFHandler<dim>                 &dof_handler,
+    const DoFHandler<dim>                 &dof_handler_fe_q_iso_q1);
+
+  void
+  create_level_operator(const unsigned int level) override;
+
+  void
+  initialize(const std::shared_ptr<SimulationControl> &simulation_control,
+             FlowControl<dim>                         &flow_control,
+             const VectorType                         &present_solution,
+             const VectorType &time_derivative_previous_solutions);
+
+private:
+  const CFDDEMSimulationParameters<dim> &cfd_dem_simulation_parameters;
+};
+
+/**
  * @brief A solver for the Volume-Averaged incompressible Navier-Stokes equations
  *  implemented in a matrix-free fashion.
  *
