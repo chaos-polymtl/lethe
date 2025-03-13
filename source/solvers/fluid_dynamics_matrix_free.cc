@@ -1275,17 +1275,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMGBase<dim>::initialize(
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  FlowControl<dim>                         &flow_control,
-  const VectorType                         &present_solution,
-  const VectorType                         &time_derivative_previous_solutions)
+MFNavierStokesPreconditionGMGBase<dim>::initialize()
 {
-  (void)simulation_control;
-  (void)flow_control;
-  (void)present_solution;
-  (void)time_derivative_previous_solutions;
-
   // Create smoother, fill parameters for each level and intialize it
   this->mg_setup_timer.enter_subsection("Set up and initialize smoother");
 
@@ -2014,11 +2005,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         }
     }
 
-  MFNavierStokesPreconditionGMGBase<dim>::initialize(
-    simulation_control,
-    flow_control,
-    present_solution,
-    time_derivative_previous_solutions);
+  MFNavierStokesPreconditionGMGBase<dim>::initialize();
 }
 
 template <int dim>

@@ -126,11 +126,8 @@ public:
    * @param[in] time_derivative_previous_solutions Vector storing time
    * derivatives of previous solutions.
    */
-  virtual void
-  initialize(const std::shared_ptr<SimulationControl> &simulation_control,
-             FlowControl<dim>                         &flow_control,
-             const VectorType                         &present_solution,
-             const VectorType &time_derivative_previous_solutions);
+  void
+  initialize();
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
@@ -330,7 +327,7 @@ public:
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
-             const VectorType &time_derivative_previous_solutions) override;
+             const VectorType &time_derivative_previous_solutions);
 
 private:
 };
