@@ -285,6 +285,9 @@ private:
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;
 
+  /// DoF handlers for each of the levels of the global coarsening algorithm
+  MGLevelObject<DoFHandler<dim>> temperature_dof_handlers;
+
 public:
   /// Timer for specific geometric multigrid components.
   mutable TimerOutput mg_setup_timer;
@@ -389,6 +392,10 @@ protected:
    */
   virtual void
   update_solutions_for_multiphysics() override;
+
+
+  virtual void
+  update_solutions_for_fluid_dynamics() override;
 
   /**
    * @brief Calculate and store time derivatives of previous solutions according to
@@ -519,6 +526,9 @@ protected:
    *
    */
   std::vector<TrilinosWrappers::MPI::Vector> multiphysics_previous_solutions;
+
+
+  VectorType temperature_present_solution;
 };
 
 #endif
