@@ -27,7 +27,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 -----------------------
 
-A two-dimensional flow goes past a symmetric sudden expansion. The flow enters from the left inlet, where :math:`x=0`, at a velocity :math:`\mathbf{u} = [1, 0, 0] m/s`; the inlet slot height is :math:`h = 10mm`. At :math:`x = L_{inlet} = 8h` the flow is fully developed, and a sudden expansion with ratio 2 is placed (:math:`d = h/2`). The outlet length is given by :math:`L_{outlet} = 100h`; all dimensions are identified in the figure below.
+A two-dimensional flow goes past a symmetric sudden expansion. The flow enters from the left inlet, where :math:`x=0` m, at a velocity :math:`\mathbf{u} = [1, 0, 0]` m/s; the inlet slot height is :math:`h = 10` mm. At :math:`x = L_{inlet} = 8h` the flow is fully developed, and a sudden expansion with ratio 2 is placed (:math:`d = h/2`). The outlet length is given by :math:`L_{outlet} = 100h`; all dimensions are identified in the figure below.
 
 .. image:: image/expansion-geometry.png
 
@@ -68,7 +68,7 @@ For :math:`\textrm{Re} = 610`, a transient second-order backward differentiation
       set time end         = 15
     end
 
-in which ``adapt``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15s`.
+in which ``adapt``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15` s.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -78,7 +78,7 @@ The definition of the Reynolds number in this problem is given by
 .. math::
     \mathrm{Re} = \frac{u h}{\nu}
 
-where :math:`\nu` is the kinematic viscosity. Considering that the stream velocity is :math:`u = 1 m/s`, the physical properties are then defined as:
+where :math:`\nu` is the kinematic viscosity. Considering that the stream velocity is :math:`u = 1` m/s, the physical properties are then defined as:
 
 .. code-block:: text
 
@@ -89,7 +89,7 @@ where :math:`\nu` is the kinematic viscosity. Considering that the stream veloci
         end
     end
 
-The viscosity :math:`\nu = 1.42857 \times 10^{-4} m^2/s` corresponds to :math:`\textrm{Re} = 70`. For :math:`\textrm{Re} = 610`, that should be changed to :math:`\nu = 1.6393 \times 10^{-5} m^2/s`.
+The viscosity :math:`\nu = 1.42857 \times 10^{-4}` m :math:`^2`/s corresponds to :math:`\textrm{Re} = 70`. For :math:`\textrm{Re} = 610`, that should be changed to :math:`\nu = 1.6393 \times 10^{-5}` m :math:`^2`/s.
 
 Mesh
 ~~~~
@@ -270,7 +270,7 @@ in which the flag ``-Re`` indicates the Reynolds number. The figures we obtain a
 .. image:: image/Reynolds70-3.png
     :width: 400
 
-The first plot at :math:`x = 70mm` shows the Poiseuille-like flow before the channel expansion. A visible difference is noticed in the velocity profile at :math:`x = 130mm`. Nonetheless, numerical results presented by Kanna et. al. [#kanna2005]_ for this same example coincide with the Lethe curve.
+The first plot at :math:`x = 70` mm shows the Poiseuille-like flow before the channel expansion. A visible difference is noticed in the velocity profile at :math:`x = 130` mm. Nonetheless, numerical results presented by Kanna et. al. [#kanna2005]_ for this same example coincide with the Lethe curve.
 
 At :math:`x = L_{outlet}` the velocity distribution is compared with analytical data, and a great agreement is found:
 
@@ -290,7 +290,7 @@ The velocity field variation over time is herein represented:
 
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/wwVpP50ofMw?si=Bew_9zvnK3fZtRs9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-It is noticeable how oscillations happen at higher frequency after :math:`x \approx 0.25m`; before that, the assymetry in the outlet flow only becomes more pronounced after :math:`t \approx 2.5s`. In this region, there is little change in the flow pattern after :math:`t \approx 4s`.
+It is noticeable how oscillations happen at higher frequency after :math:`x \approx 0.25` m; before that, the assymetry in the outlet flow only becomes more pronounced after :math:`t \approx 2.5` s. In this region, there is little change in the flow pattern after :math:`t \approx 4` s.
 
 The velocity profiles at different cross-sections can be visualized using the following command:
 
@@ -299,7 +299,7 @@ The velocity profiles at different cross-sections can be visualized using the fo
 
   python3 velocity_profiles.py -Re 610
 
-Comparing the velocity at the final simulation time with the results presented in Durst. et. al. [#durst1993]_ yields some discrepancies for :math:`x < 300mm`; nonetheless, curves have better agreement closer to the outlet:
+Comparing the velocity at the final simulation time with the results presented in Durst. et. al. [#durst1993]_ yields some discrepancies for :math:`x < 300` mm; nonetheless, curves have better agreement closer to the outlet:
 
 .. image:: image/Reynolds610-5.png
     :width: 400
