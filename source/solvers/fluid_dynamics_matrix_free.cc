@@ -2598,10 +2598,11 @@ FluidDynamicsMatrixFree<dim>::setup_GMG()
 
   this->create_GMG();
 
-  gmg_preconditioner->initialize(this->simulation_control,
-                                 this->flow_control,
-                                 this->present_solution,
-                                 this->time_derivative_previous_solutions);
+  dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
+    ->initialize(this->simulation_control,
+                 this->flow_control,
+                 this->present_solution,
+                 this->time_derivative_previous_solutions);
 }
 
 template <int dim>
