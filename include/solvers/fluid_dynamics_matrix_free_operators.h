@@ -152,15 +152,15 @@ public:
 
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                                  &mapping,
-    const DoFHandler<dim>                               &dof_handler,
-    const AffineConstraints<number>                     &constraints,
-    const Quadrature<dim>                               &quadrature,
-    const std::shared_ptr<Function<dim>>                 forcing_function,
-    const double                                         kinematic_viscosity,
-    const StabilizationType                              stabilization,
-    const unsigned int                                   mg_level,
-    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const Mapping<dim>                       &mapping,
+    const DoFHandler<dim>                    &dof_handler,
+    const AffineConstraints<number>          &constraints,
+    const Quadrature<dim>                    &quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const PhysicalPropertiesManager          &physical_properties_manager,
+    const StabilizationType                   stabilization,
+    const unsigned int                        mg_level,
+    const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual);
@@ -190,15 +190,15 @@ public:
    */
   void
   reinit(
-    const Mapping<dim>                                  &mapping,
-    const DoFHandler<dim>                               &dof_handler,
-    const AffineConstraints<number>                     &constraints,
-    const Quadrature<dim>                               &quadrature,
-    const std::shared_ptr<Function<dim>>                 forcing_function,
-    const double                                         kinematic_viscosity,
-    const StabilizationType                              stabilization,
-    const unsigned int                                   mg_level,
-    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const Mapping<dim>                       &mapping,
+    const DoFHandler<dim>                    &dof_handler,
+    const AffineConstraints<number>          &constraints,
+    const Quadrature<dim>                    &quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const PhysicalPropertiesManager          &physical_properties_manager,
+    const StabilizationType                   stabilization,
+    const unsigned int                        mg_level,
+    const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual);
