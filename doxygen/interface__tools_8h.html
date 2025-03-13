@@ -90,30 +90,91 @@ $(function() {
   <div class="headertitle"><div class="title">interface_tools.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;deal.II/base/function.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="vector_8h_source.html">core/vector.h</a>&gt;</code><br />
+<code>#include &lt;deal.II/base/conditional_ostream.h&gt;</code><br />
+<code>#include &lt;deal.II/base/data_out_base.h&gt;</code><br />
+<code>#include &lt;deal.II/base/function.h&gt;</code><br />
+<code>#include &lt;deal.II/distributed/tria.h&gt;</code><br />
+<code>#include &lt;deal.II/dofs/dof_handler.h&gt;</code><br />
+<code>#include &lt;deal.II/dofs/dof_tools.h&gt;</code><br />
 <code>#include &lt;deal.II/fe/fe.h&gt;</code><br />
 <code>#include &lt;deal.II/fe/fe_q.h&gt;</code><br />
+<code>#include &lt;deal.II/fe/mapping_fe.h&gt;</code><br />
+<code>#include &lt;deal.II/fe/mapping_q.h&gt;</code><br />
 <code>#include &lt;deal.II/grid/grid_tools.h&gt;</code><br />
 <code>#include &lt;deal.II/matrix_free/fe_point_evaluation.h&gt;</code><br />
 <code>#include &lt;deal.II/non_matching/quadrature_generator.h&gt;</code><br />
+<code>#include &lt;deal.II/numerics/data_out.h&gt;</code><br />
+<code>#include &lt;deal.II/numerics/vector_tools.h&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for interface_tools.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="interface__tools_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2interface__tools_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2interface__tools_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2interface__tools_8h">
-<area shape="rect" title=" " alt="" coords="373,5,577,60"/>
-<area shape="rect" title=" " alt="" coords="5,115,172,141"/>
-<area shape="poly" title=" " alt="" coords="374,61,150,115,149,110,373,56"/>
-<area shape="rect" title=" " alt="" coords="196,115,304,141"/>
-<area shape="poly" title=" " alt="" coords="413,63,291,113,289,108,411,58"/>
-<area shape="rect" title=" " alt="" coords="329,115,451,141"/>
-<area shape="poly" title=" " alt="" coords="453,62,412,107,408,103,449,59"/>
-<area shape="rect" title=" " alt="" coords="475,115,646,141"/>
-<area shape="poly" title=" " alt="" coords="502,59,542,103,539,107,498,62"/>
-<area shape="rect" title=" " alt="" coords="671,108,837,148"/>
-<area shape="poly" title=" " alt="" coords="555,58,686,101,684,106,553,63"/>
-<area shape="rect" title=" " alt="" coords="862,108,1041,148"/>
-<area shape="poly" title=" " alt="" coords="578,51,849,104,848,109,577,56"/>
+<area shape="rect" title=" " alt="" coords="2322,5,2526,60"/>
+<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="772,115,887,141"/>
+<area shape="poly" title=" " alt="" coords="2322,43,900,125,900,120,2322,37"/>
+<area shape="rect" title=" " alt="" coords="5,196,179,236"/>
+<area shape="poly" title=" " alt="" coords="2322,38,1951,45,1439,59,926,80,713,94,551,111,446,128,343,150,169,195,167,190,341,145,445,123,550,105,712,89,926,75,1439,54,1951,40,2322,33"/>
+<area shape="rect" title=" " alt="" coords="203,203,389,229"/>
+<area shape="poly" title=" " alt="" coords="2322,39,1988,47,1537,62,1088,83,902,96,760,111,644,130,529,155,348,202,347,197,528,150,643,125,760,105,901,91,1088,78,1537,56,1988,42,2321,33"/>
+<area shape="rect" href="vector_8h.html" title=" " alt="" coords="1369,115,1476,141"/>
+<area shape="poly" title=" " alt="" coords="2322,38,2161,44,1953,56,1722,77,1490,111,1472,114,1471,109,1489,105,1721,72,1953,51,2161,39,2322,33"/>
+<area shape="rect" title=" " alt="" coords="1501,108,1659,148"/>
+<area shape="poly" title=" " alt="" coords="2322,43,2034,68,1856,87,1673,111,1673,105,1855,81,2033,62,2321,38"/>
+<area shape="rect" title=" " alt="" coords="1683,115,1850,141"/>
+<area shape="poly" title=" " alt="" coords="2322,48,2110,75,1863,111,1836,115,1835,110,1862,105,2110,69,2321,43"/>
+<area shape="rect" title=" " alt="" coords="1875,108,2011,148"/>
+<area shape="poly" title=" " alt="" coords="2322,54,2024,110,2024,105,2321,49"/>
+<area shape="rect" title=" " alt="" coords="2035,115,2205,141"/>
+<area shape="poly" title=" " alt="" coords="2339,63,2171,114,2169,109,2338,58"/>
+<area shape="rect" title=" " alt="" coords="2230,115,2338,141"/>
+<area shape="poly" title=" " alt="" coords="2386,62,2314,110,2311,106,2383,58"/>
+<area shape="rect" title=" " alt="" coords="2363,115,2485,141"/>
+<area shape="poly" title=" " alt="" coords="2427,60,2427,101,2421,101,2421,60"/>
+<area shape="rect" title=" " alt="" coords="2510,115,2682,141"/>
+<area shape="poly" title=" " alt="" coords="2474,58,2564,106,2562,111,2471,62"/>
+<area shape="rect" title=" " alt="" coords="2706,115,2873,141"/>
+<area shape="poly" title=" " alt="" coords="2527,57,2732,109,2731,115,2526,63"/>
+<area shape="rect" title=" " alt="" coords="2897,115,3068,141"/>
+<area shape="poly" title=" " alt="" coords="2527,47,2886,105,2912,110,2911,115,2885,111,2526,52"/>
+<area shape="rect" title=" " alt="" coords="3093,108,3259,148"/>
+<area shape="poly" title=" " alt="" coords="2526,40,2774,66,3079,105,3079,111,2773,71,2526,46"/>
+<area shape="rect" title=" " alt="" coords="3284,108,3463,148"/>
+<area shape="poly" title=" " alt="" coords="2526,37,2854,61,3060,80,3271,105,3270,111,3059,86,2853,66,2526,42"/>
+<area shape="rect" title=" " alt="" coords="3487,108,3646,148"/>
+<area shape="poly" title=" " alt="" coords="2526,34,2703,41,2937,54,3202,75,3474,105,3473,111,3201,80,2936,60,2703,46,2526,39"/>
+<area shape="rect" title=" " alt="" coords="3671,108,3841,148"/>
+<area shape="poly" title=" " alt="" coords="2526,33,2731,39,3010,51,3330,72,3658,105,3657,111,3330,78,3010,56,2731,44,2526,38"/>
+<area shape="rect" title=" " alt="" coords="3866,115,3939,141"/>
+<area shape="poly" title=" " alt="" coords="2526,33,2817,38,3201,50,3579,72,3735,87,3854,105,3865,108,3864,113,3853,111,3735,92,3578,77,3201,56,2817,43,2526,38"/>
+<area shape="rect" title=" " alt="" coords="3964,115,4044,141"/>
+<area shape="poly" title=" " alt="" coords="2526,32,2835,38,3248,50,3655,71,3825,87,3953,105,3965,108,3964,114,3951,111,3824,92,3655,77,3247,55,2835,43,2526,38"/>
+<area shape="poly" title=" " alt="" coords="772,136,524,159,361,177,193,199,192,193,361,171,524,153,772,131"/>
+<area shape="rect" title=" " alt="" coords="414,196,549,236"/>
+<area shape="poly" title=" " alt="" coords="783,143,563,197,562,192,782,138"/>
+<area shape="rect" title=" " alt="" coords="573,203,726,229"/>
+<area shape="poly" title=" " alt="" coords="806,143,687,200,685,195,804,138"/>
+<area shape="poly" title=" " alt="" coords="772,141,402,199,373,204,372,198,401,193,771,135"/>
+<area shape="rect" title=" " alt="" coords="750,203,909,229"/>
+<area shape="poly" title=" " alt="" coords="832,141,832,189,827,189,827,141"/>
+<area shape="rect" title=" " alt="" coords="933,196,1073,236"/>
+<area shape="poly" title=" " alt="" coords="854,138,953,187,951,192,852,143"/>
+<area shape="rect" title=" " alt="" coords="1097,196,1237,236"/>
+<area shape="poly" title=" " alt="" coords="875,138,1084,191,1083,196,874,143"/>
+<area shape="rect" title=" " alt="" coords="1261,203,1320,229"/>
+<area shape="poly" title=" " alt="" coords="887,131,1051,151,1151,169,1249,193,1256,196,1254,201,1247,199,1149,174,1050,156,887,136"/>
+<area shape="rect" title=" " alt="" coords="1344,196,1501,236"/>
+<area shape="poly" title=" " alt="" coords="1425,141,1425,182,1420,182,1420,141"/>
+<area shape="rect" title=" " alt="" coords="1525,196,1683,236"/>
+<area shape="poly" title=" " alt="" coords="1448,138,1553,188,1551,193,1446,143"/>
+<area shape="rect" title=" " alt="" coords="1707,196,1885,236"/>
+<area shape="poly" title=" " alt="" coords="1462,138,1490,145,1694,191,1693,196,1489,151,1461,143"/>
+<area shape="rect" title=" " alt="" coords="1910,196,2045,236"/>
+<area shape="poly" title=" " alt="" coords="1460,138,1490,145,1602,163,1691,171,1781,178,1897,193,1896,199,1781,183,1690,176,1601,168,1489,151,1459,143"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -138,6 +199,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
