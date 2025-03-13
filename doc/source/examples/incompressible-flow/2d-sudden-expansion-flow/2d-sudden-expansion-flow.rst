@@ -206,7 +206,7 @@ Whilst the tolerance is kept at ``1e-6`` for :math:`\textrm{Re} = 70`, it is adj
 Linear Solver
 ~~~~~~~~~~~~~
 
-A GMRES iterative solver with ILU preconditioner is used:
+A GMRES iterative solver with AMG preconditioner is used:
 
 .. code-block:: text
 
