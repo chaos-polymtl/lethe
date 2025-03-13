@@ -485,13 +485,13 @@ private:
   /**
    * @brief  Create the geometric multigrid preconditioner.
    */
-  void
+  virtual void
   create_GMG();
 
   /**
    * @brief  Intialize the geometric multigrid preconditioner.
    */
-  void
+  virtual void
   initialize_GMG();
 
   /**
