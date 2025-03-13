@@ -10,11 +10,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set output name       = periodic
-  set output frequency  = 1
-  set time end          = 2e-3
-  set time step         = 5e-4
+  set method           = bdf1
+  set output name      = periodic
+  set output frequency = 1
+  set time end         = 2e-3
+  set time step        = 5e-4
 end
 
 #---------------------------------------------------
@@ -112,14 +112,14 @@ end
 subsection boundary conditions
   set number = 2
   subsection bc 0
-    set id   = 0
-    set type          = periodic
+    set id                 = 0
+    set type               = periodic
     set periodic_id        = 1
     set periodic_direction = 0
   end
   subsection bc 1
-    set id   = 2
-    set type          = periodic
+    set id                 = 2
+    set type               = periodic
     set periodic_id        = 3
     set periodic_direction = 1
   end
