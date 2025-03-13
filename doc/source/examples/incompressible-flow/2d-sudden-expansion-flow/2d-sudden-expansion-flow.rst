@@ -158,7 +158,7 @@ A linear interpolation order is chosen for the velocity and pressure fields for 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The inlet velocity is prescribed on boundary 0 as :math:`u = [1, 0, 0]`, and boundary 1 has a prescribed pressure of :math:`p=0` -- identified as ``outlet`` in Lethe. The upper and lower walls (ID 2) have a no-slip Dirichlet boundary condition.
+The inlet velocity is prescribed on boundary 0 as :math:`u = [1, 0, 0]`, and boundary 1 has a "do-nothing" boundary condition -- identified as ``outlet`` in Lethe. The upper and lower walls (ID 2) have a no-slip Dirichlet boundary condition.
 
 .. code-block:: text
 
