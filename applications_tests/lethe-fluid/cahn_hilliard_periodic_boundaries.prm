@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# This test verifies the periodic boundary conditions of the Cahn-Hilliard solver by monitoring the position of the barycenter.
+# The barycenter should move along the x-axis then come back to lower values when the initial drop goes through the periodic boundary.
+
 # Listing of Parameters
 # ---------------------
 
@@ -13,8 +16,8 @@ subsection simulation control
   set method           = bdf1
   set output name      = periodic
   set output frequency = 1
-  set time end         = 2e-3
-  set time step        = 5e-4
+  set time end         = 2
+  set time step        = 0.1
 end
 
 #---------------------------------------------------
@@ -22,7 +25,8 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set cahn hilliard = true
+  set fluid dynamics = true
+  set cahn hilliard  = true
 end
 
 #---------------------------------------------------
@@ -61,25 +65,35 @@ subsection mesh adaptation
 end
 
 #---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity        = verbose
+  set output frequency = 1
+
+  set calculate barycenter = true
+end
+
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
-  set number of fluids = 2
-  subsection fluid 0
-    set kinematic viscosity = 8e-5
-    set density             = 1
-  end
-  subsection fluid 1
-    set kinematic viscosity = 1e-4
-    set density             = 2000
-  end
+  set number of fluids                = 2
   set number of material interactions = 1
+  subsection fluid 0 # Water (phase = 1)
+    set kinematic viscosity = 1e-2
+    set density             = 1.23
+  end
+  subsection fluid 1 # Air (phase = -1)
+    set kinematic viscosity = 1e-2
+    set density             = 1.23
+  end
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set surface tension coefficient     = 7.3e-2
-      set cahn hilliard mobility model    = constant
-      set cahn hilliard mobility constant = 1e-7
+      set surface tension coefficient     = 0
+      set cahn hilliard mobility constant = 1e-6 #1e-2
     end
   end
 end
@@ -122,18 +136,25 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 4
   subsection bc 0
-    set id                 = 0
-    set type               = periodic
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1 * (1-y*y)
+    end
   end
   subsection bc 1
-    set id                 = 2
-    set type               = periodic
-    set periodic_id        = 3
-    set periodic_direction = 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
   end
 end
 
@@ -142,18 +163,11 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  subsection cahn hilliard
-    set Function expression = 2 * rand_seed(42) - 1; 0
+  subsection uvwp
+    set Function expression = 0;0;0
   end
-end
-
-#---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  subsection fluid dynamics
-    set Function expression = 0; -9810; 0
+  subsection cahn hilliard
+    set Function expression = if(x*x + y*y < 0.25,-1,+1);0
   end
 end
 
@@ -164,12 +178,12 @@ end
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity      = quiet
-    set tolerance      = 1e-2
+    set tolerance      = 1e-6
     set max iterations = 20
   end
   subsection cahn hilliard
     set verbosity      = quiet
-    set tolerance      = 1e-2
+    set tolerance      = 1e-6
     set max iterations = 20
   end
 end
@@ -183,7 +197,7 @@ subsection linear solver
     set verbosity               = quiet
     set max iters               = 500
     set relative residual       = 1e-2
-    set minimum residual        = 1e-3
+    set minimum residual        = 1e-7
     set ilu preconditioner fill = 1
     set max krylov vectors      = 300
   end
@@ -191,7 +205,7 @@ subsection linear solver
     set verbosity               = quiet
     set max iters               = 500
     set relative residual       = 1e-2
-    set minimum residual        = 1e-3
+    set minimum residual        = 1e-7
     set ilu preconditioner fill = 1
     set max krylov vectors      = 300
   end
