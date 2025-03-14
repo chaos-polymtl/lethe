@@ -1854,9 +1854,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
         mg_temperature_solution,
         temperature_present_solution);
 
-
       for (unsigned int l = min_level; l <= max_level; l++)
         {
+          mg_temperature_solution[l].update_ghost_values();
           this->mg_operators[l]->compute_forcing_term_from_vector(
             mg_temperature_solution[l],
             this->temperature_dof_handlers[l],
@@ -2825,13 +2825,18 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
   const auto &heat_dof_handler =
     *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
+  TrilinosWrappers::MPI::Vector temp_heat_solution;
+  temp_heat_solution.reinit(heat_dof_handler.locally_owned_dofs(),
+                            this->mpi_communicator);
+  temp_heat_solution = heat_solution;
+
   this->temperature_present_solution.reinit(
     heat_dof_handler.locally_owned_dofs(),
     DoFTools::extract_locally_active_dofs(heat_dof_handler),
     this->mpi_communicator);
 
   convert_vector_trilinos_to_dealii(this->temperature_present_solution,
-                                    heat_solution);
+                                    temp_heat_solution);
   this->temperature_present_solution.update_ghost_values();
 }
 
