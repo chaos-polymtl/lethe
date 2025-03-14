@@ -2661,16 +2661,16 @@ FluidDynamicsMatrixFree<dim>::setup_GMG()
       this->simulation_control,
       this->fe);
 
-  gmg_preconditioner->initialize(this->simulation_control,
-                                 this->flow_control,
-                                 this->present_solution,
-                                 this->time_derivative_previous_solutions);
-
   if (this->multiphysics->get_active_physics().size() > 1)
     gmg_preconditioner->initialize_auxiliary_physics(
       *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
       this->temperature_present_solution,
       this->simulation_parameters.physical_properties_manager);
+
+  gmg_preconditioner->initialize(this->simulation_control,
+                                 this->flow_control,
+                                 this->present_solution,
+                                 this->time_derivative_previous_solutions);
 }
 
 template <int dim>
