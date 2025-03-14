@@ -150,7 +150,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                       const unsigned int                       output_frequency,
                       const double neighborhood_threshold,
                       const double cut_off_factor,
-                      std::string  filename)
+                      const std::string  filename)
 
 {
   // Clearing particle handler
@@ -248,7 +248,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
         torque,
         force);
 
-      distance = (position_0).distance(position_1);
+      distance = position_0.distance(position_1);
 
       // Checking if contact is still ongoing (overlap superior to force
       // calculation threshold)
@@ -268,7 +268,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                                          omega_1);
       normal_overlap = 0.5 * (p.diameter[0] + p.diameter[1]) - distance;
       normal_unit_vector =
-        (position_1 - position_0) / (position_1 - position_0).norm();
+        (position_1 - position_0) / distance ;
       relative_velocity = velocity_0 - velocity_1 +
                           (cross_product_3d(0.5 * (p.diameter[0] * omega_0 +
                                                    p.diameter[1] * omega_1),
