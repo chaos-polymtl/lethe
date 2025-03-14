@@ -2,7 +2,6 @@
 Boycott Effect
 ==================================
 
-It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters used in the DEM and CFD-DEM solvers.
 
 ----------------------------------
 Features
@@ -34,8 +33,6 @@ This example simulates the sedimentation of a group of particles in a viscous fl
 -------------------
 DEM Parameter File
 -------------------
-
-The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
 
 We introduce the different sections of the parameter file ``boycott-effect.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
 
