@@ -563,9 +563,10 @@ namespace BoundaryConditions
     prm.declare_entry(
       "type",
       "noflux",
-      Patterns::Selection("noflux|temperature|convection-radiation-flux"),
+      Patterns::Selection(
+        "noflux|temperature|convection-radiation-flux|periodic"),
       "Type of boundary condition for heat transfer"
-      "Choices are <noflux|temperature|convection-radiation-flux>.");
+      "Choices are <noflux|temperature|convection-radiation-flux|periodic>.");
 
     prm.declare_entry("id",
                       Utilities::to_string(default_boundary_id, 2),
@@ -815,9 +816,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "outlet",
-                      Patterns::Selection("dirichlet|outlet"),
+                      Patterns::Selection("dirichlet|outlet|periodic"),
                       "Type of boundary condition for tracer"
-                      "Choices are <dirichlet|outlet>.");
+                      "Choices are <dirichlet|outlet|periodic>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1013,9 +1014,10 @@ namespace BoundaryConditions
     prm.declare_entry(
       "type",
       "none",
-      Patterns::Selection("none|noflux|dirichlet|angle_of_contact|free_angle"),
+      Patterns::Selection(
+        "none|noflux|dirichlet|angle_of_contact|free_angle|periodic"),
       "Type of boundary condition for the Cahn-Hilliard equations"
-      "Choices are <none|noflux|dirichlet|angle_of_contact|free_angle>.");
+      "Choices are <none|noflux|dirichlet|angle_of_contact|free_angle|periodic>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1230,9 +1232,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|dirichlet"),
+                      Patterns::Selection("none|dirichlet|periodic"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|dirichlet>.");
+                      "Choices are <none|dirichlet|periodic>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
