@@ -123,13 +123,11 @@ Interface Sharpening
 
 
 
+
 Algebraic Interface Reinitialization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* ``subsection algebraic interface reinitialization``: defines parameters used to reinitialize the interface in VOF simulations. Alike the interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply.
-
-  .. note::
-    A subsection on algebraic interface reinitialization will be added shortly to the :doc:`Volume of Fluid (VOF) Method<../../../theory/multiphase/cfd/vof>` theory guide for additional details on this method.
+* ``subsection algebraic interface reinitialization``: defines parameters used to reinitialize the interface in VOF simulations. Alike the interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method.
 
   * ``enable``: enable the algebraic interface reinitialization.
 

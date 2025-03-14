@@ -55,10 +55,10 @@ To obtain the finite element formulation, we first need the weak formulation. Th
 To ensure that those integrals are well defined in :math:`\Omega`, we chose the appropriate solution spaces:
 
 .. math::
-  \phi \in \Phi(\Omega) = H^1(\Omega)
+  \phi \in \Phi(\Omega) = \mathcal{H}^1(\Omega)
 
 .. math::
-  v \in V(\Omega) = L^2(\Omega)
+  v \in V(\Omega) = \mathcal{L}^2(\Omega)
 
 Thus, the weak problem is:
 
@@ -111,7 +111,7 @@ Interface Diffusion and Sharpening
 
 The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` happens on a larger distance.
 
-Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Two methods are currently available: interface sharpening and interface filtration.
+Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: interface sharpening, algebraic interface reinitialization and interface filtration.
 
 """"""""""""""""""""""""""""""""
 Interface Sharpening
@@ -141,6 +141,81 @@ The phase fraction limiter above will update the phase fraction if it failed to 
 
 where :math:`c` denotes the sharpening threshold, which defines
 a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) [#aliabadi2000]_.
+
+
+""""""""""""""""""""""""""""""""""""""""
+Algebraic Interface Reinitialization
+""""""""""""""""""""""""""""""""""""""""
+
+The algebraic interface reinitialization method consists of compressing and diffusing the interface in the normal direction of the interface. It is done by solving the following transient partial differential equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme:
+
+.. math::
+
+    \underbrace{\frac{\partial\phi_\text{reinit}}{\partial \tau}}_\text{transient}
+     + \underbrace{\nabla \cdot \left[ \phi_\text{reinit} (1-\phi_\text{reinit})\mathbf{n}\right]}_\text{compression}
+    = \underbrace{\varepsilon \nabla \cdot \left[  (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n}\right]}_\text{diffusion}
+
+
+where:
+
+- :math:`\phi_\text{reinit}` is the reinitialized phase fraction;
+
+- :math:`\tau` is the time variable. It is different from the time variable :math:`t` of the actual simulation.
+
+- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert_2}` is the normal vector of the interface with :math:`\nabla \psi` the projected VOF phase gradient, and;
+
+- :math:`\varepsilon = C \, h_\text{min}^d` is the diffusion coefficient with  :math:`h_\text{min}` the smallest cell-size, :math:`C` a constant factor multiplying :math:`h_\text{min}`, and :math:`d` a constant power to which :math:`h_\text{min}` is elevated.
+
+.. note::
+
+    :math:`\nabla \psi` is computed with the VOF phase fraction gradient field and remains constant through the interface reinitialization process of a same global time iteration.
+
+.. note::
+
+    Here, we define the cell-size as being the diameter of:
+
+    - a disk of equivalent area in 2D, and;
+    - a sphere of equivalent volume in 3D.
+
+The equation is solved using the finite element method:
+
+Considering :math:`\upsilon \in V(\Omega)` an arbitrary scalar function on :math:`\Omega` as the test function and :math:`\phi_\text{reinit} \in \Phi(\Omega)`, the weak problem goes as follows:
+
+Find :math:`\phi_\text{reinit} \in \Phi(\Omega) \times [0, \mathrm{\tau}_\text{end}]`
+
+.. math::
+
+    \int_\Omega \upsilon \left(\partial_\tau \phi_\text{reinit} + \nabla \cdot \left[ \phi_\text{reinit} (1-\phi_\text{reinit})\mathbf{n}\right] - \varepsilon \nabla \cdot \left[  (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n}\right]\right)\, \mathrm{d}\Omega = 0 \quad \forall \, \upsilon \in V
+
+As the equation is non-linear, we use the `Newton-Raphson method <https://en.wikipedia.org/wiki/Newton%27s_method>`_ and solve the linear system :math:`\mathcal{J} \, \delta\phi_\text{reinit} = -\mathcal{R}`. We obtain the Residual (:math:`\mathcal{R}`) and Jacobian (:math:`\mathcal{J}`) below.
+
+.. math::
+    \begin{split}
+    \mathcal{R} = & \int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit} \, \mathrm{d}\Omega \\
+                   & + \int_\Omega\upsilon
+                  \left[ \mathbf{n} \cdot \nabla \phi_\text{reinit} - \mathbf{n} \cdot \left(  2 \phi_\text{reinit} \nabla \phi_\text{reinit}\right) +(\phi_\text{reinit} -\phi_\text{reinit}^2) (\nabla \cdot \mathbf{n}) \right] \mathrm{d}\Omega \\
+                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega 
+
+    \end{split}
+
+
+With
+
+.. math::
+
+    \phi_\text{reinit} = \sum_{j=1}^N \phi_{\text{reinit},j} \, \xi_j
+
+where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the reinitialized phase fraction field, the Jacobian reads:
+
+.. math::
+    \begin{split}
+    \mathcal{J} = & \int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega \\
+                   & + \int_\Omega\upsilon
+                  \left[ \mathbf{n} \cdot \left( \nabla \xi_j - 2 \phi_\text{reinit} \nabla \xi_j -2 \xi_j \nabla\phi_\text{reinit} \right) + \left( \xi_j -2\phi_\text{reinit}\xi_j \right) \right] \mathrm{d}\Omega \\
+                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega
+
+    \end{split}
+
 
 
 """"""""""""""""""""""""""""""""
