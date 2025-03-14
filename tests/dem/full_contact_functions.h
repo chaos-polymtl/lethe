@@ -148,9 +148,9 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                       const Tensor<1, 3>                      &g,
                       const double                             dt,
                       const unsigned int                       output_frequency,
-                      const double neighborhood_threshold,
-                      const double cut_off_factor,
-                      const std::string  filename)
+                      const double      neighborhood_threshold,
+                      const double      cut_off_factor,
+                      const std::string filename)
 
 {
   // Clearing particle handler
@@ -266,10 +266,9 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
                                          velocity_1,
                                          omega_0,
                                          omega_1);
-      normal_overlap = 0.5 * (p.diameter[0] + p.diameter[1]) - distance;
-      normal_unit_vector =
-        (position_1 - position_0) / distance ;
-      relative_velocity = velocity_0 - velocity_1 +
+      normal_overlap     = 0.5 * (p.diameter[0] + p.diameter[1]) - distance;
+      normal_unit_vector = (position_1 - position_0) / distance;
+      relative_velocity  = velocity_0 - velocity_1 +
                           (cross_product_3d(0.5 * (p.diameter[0] * omega_0 +
                                                    p.diameter[1] * omega_1),
                                             normal_unit_vector));
