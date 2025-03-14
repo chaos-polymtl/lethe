@@ -126,6 +126,12 @@ public:
              const VectorType                         &present_solution,
              const VectorType &time_derivative_previous_solutions);
 
+  void
+  initialize_auxiliary_physics(
+    const DoFHandler<dim>           &temperature_dof_handler,
+    const VectorType                &temperature_present_solution,
+    const PhysicalPropertiesManager &physical_properties_manager);
+
   /**
    * @brief Calls the v cycle function of the multigrid object.
    *
@@ -285,8 +291,16 @@ private:
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;
 
-  /// DoF handlers for each of the levels of the global coarsening algorithm
+  /// DoF handlers for each of the levels of the global coarsening algorithm for
+  /// the temperature
   MGLevelObject<DoFHandler<dim>> temperature_dof_handlers;
+
+  /// Transfers for each of the levels of the global coarsening algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_temperature;
+
+  /// Transfer operator for global coarsening for the temperature
+  std::shared_ptr<GCTransferType> mg_transfer_gc_temperature;
+
 
 public:
   /// Timer for specific geometric multigrid components.
