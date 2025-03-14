@@ -82,7 +82,7 @@ The time step in this case is the same as the time end. Since we only seek to in
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
-We save the files obtained from the single iteration by setting the `frequency = 1`. These files will be used to start the CFD-DEM simulation.
+We save the files obtained from the single iteration by setting the ``frequency = 1``. These files will be used to start the CFD-DEM simulation.
 
 .. code-block:: text
 
@@ -143,7 +143,7 @@ You can visualize the insertion with Paraview:
     :alt: inserted particle at the top of the channel
     :align: center
 
-The particle has been inserted it is now possible to simulate its sedimentation.
+The particle has been inserted and it is now possible to simulate its sedimentation.
 
 
 -----------------------
@@ -209,7 +209,7 @@ This section is identical to the one previously mentioned for the DEM simulation
 
 Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Since we are calculating the void fraction using the particle insertion of the DEM simulation. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the ``dem file name = dem``.
+Since we are calculating the void fraction using the particle insertion of the DEM simulation, we need to read the DEM files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the ``dem file name = dem``.
 We choose to use the quadrature centered method (`QCM <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``.
 
 We do not want the volume of the sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Then, we set the diameter of the QCM sphere to be twice the size of our particle's diameter. We also set the smoothing length equal to 10 times the particle diameter. Lastly, we choose the ``gauss-lobatto`` quadrature rule with 5 quadrature points. More details on these parameters are available on the `documentation on void fraction parameters <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_.
@@ -252,32 +252,6 @@ The CFD-DEM section is:
 For drag, we use the Rong model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. 
 
 
-Non-linear Solver
-~~~~~~~~~~~~~~~~~
-
-We simply use the default non-linear solver for this simulation.
-
-Linear Solver
-~~~~~~~~~~~~~
-
-.. code-block:: text
-
-    subsection linear solver
-      subsection fluid dynamics
-        set method                                = gmres
-        set max iters                             = 500
-        set relative residual                     = 1e-3
-        set minimum residual                      = 1e-10
-        set preconditioner                        = ilu
-        set ilu preconditioner fill               = 0
-        set ilu preconditioner absolute tolerance = 1e-12
-        set ilu preconditioner relative tolerance = 1
-        set verbosity                             = verbose
-      end
-    end
-
-For more information about the linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
-
 ------------------------------
 Running the CFD-DEM Simulation
 ------------------------------
@@ -292,7 +266,7 @@ The simulation is run using the ``lethe-fluid-particles`` application.  Assuming
 ---------------
 Post-processing
 ---------------
-A Python post-processing code called ``single_particle_sedimentation.py`` is provided with this example. It is used to plot the same quantities we show in the results of this example for a single simulation. The script uses the `PyVista <https://docs.pyvista.org/>`_ library to plot the results.
+A Python post-processing code called ``single_particle_sedimentation.py`` is provided with this example. It is used to plot the velocity and void fraction. The script uses the `PyVista <https://docs.pyvista.org/>`_ library to plot the results.
 
 Running the script is as simple as launching the following command:
 
@@ -307,11 +281,11 @@ Running the script is as simple as launching the following command:
 Results
 --------
 
-As explained, this example is meant to assess QCM's mesh independency. For this, we need to put some limts to our unresolved CFD-DEM approach, namely:
+This example is meant to assess QCM's mesh independency. For this, we need to explain some limitations of our unresolved CFD-DEM approach, namely:
 
-* Currently, when looping through the cells, we can only have access to informations about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be computationnaly expensive. Hence, the finest element we use is of the same size of the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter).
-* We do not want our quadrature sphere size to change with the element size. So, we set the ``qcm sphere equal cell volume`` to ``false`` and set the sphere diameter to be twice the particle's diameter for all mesh refinements (:math:`D_{qcm}/d_p = 2.0` corresponding to an approximated maximum quadrature sphere size :math:`D_{qcm}` we can have for the finest mesh :math:`S_c/d_p = 1.0`).
-* Regardless of the QCM sphere size, we need to guarantee the spheres together cover our entire domain so that we conserve mass (i.e., have all particles accounted for while calculating the void fraction). However, if we use the same number and size of QCM spheres for all meshes, eventually we will have uncovered regions of our domain. To avoid this, we increase the number of quadrature points used in the void fraction calculation by applying ``set n quadrature points = 5`` (this number can be increased for coarser meshes). We use the same number of quadrature points for all mesh refinements to avoid any bias in the results.
+* Currently, when looping through the cells, we can only access to informations about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be computationally expensive. Hence, the finest element we use is of the same size of the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter).
+* We do not want our quadrature sphere size to change with the element size. So, we set the ``qcm sphere equal cell volume`` to ``false`` and set the sphere diameter to be twice the particle's diameter for all mesh refinements (:math:`D_\text{qcm}/d_p = 2.0` corresponding to an approximated maximum quadrature sphere size :math:`D_\text{qcm}` we can have for the finest mesh :math:`S_c/d_p = 1.0`).
+* Regardless of the QCM sphere size, we need to guarantee the spheres together cover our entire domain so that we conserve mass (i.e., have all particles accounted for while calculating the void fraction). However, if we use the same number and size of QCM spheres for all meshes, we will eventually have uncovered regions in our domain. To avoid this, we increase the number of quadrature points used in the void fraction calculation by applying ``set n quadrature points = 5`` (this number can be increased for coarser meshes). We use the same number of quadrature points for all mesh refinements to avoid any bias in the results.
 * To improve domain coverage, we use Gauss-Lobatto quadrature rule as the quadrature points are more evenly distributed than the default Gauss quadrature.
 * Lastly, we need to consistently refine our meshes so that the particle falls in the same relative position to our degrees of freedom. This is important because if we analyze how our void fraction value evolves in a line conciding with the particle's falling trajectory, the magnitudes of the projected void fraction will vary with how far the particle is from the degrees of freedom.
 
@@ -321,7 +295,7 @@ The above factors considered, we can now analyse the results. First, we show a v
     
     <iframe width="560" height="315" src="https://www.youtube.com/embed/LgpIKRKKEmQ" title="Particle sedimentation in water with Unresolved CFD-DEM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-The same simulation is run for 4 different mesh refinements, :math:`S_c/d_p` of 1.0, 1.7, 2.0, 3.3; and 3 different void fraction smoothing lengths, :math:`L/d_p` of 2, 5, and 10. First, we compare the results of the particle velocity with the analytical solution using Dallavalle's drag correlation. As shown in the following figure, all results are close to the expected analytical results. Specifically, the coarser the mesh and the smaller the smoothing length, the results approximate more to the analytical results. However, the difference is incipient, which indicates any solution would be valid.
+The same simulation is run for 4 different mesh refinements, :math:`S_c/d_p = \{1.0, 1.7, 2.0, 3.3\}`; and 3 different void fraction smoothing lengths, :math:`L/d_p = \{2, 5, 10\}`. First, we compare the results of the particle velocity with the analytical solution using Dallavalle's drag correlation. As shown in the following figure, all results are close to the expected analytical results. Specifically, the coarser the mesh and the smaller the smoothing length, the results approximate better the analytical solution. However, the difference is incipient, which indicates any solution would be valid.
 
 .. image:: images/terminal_velocity.png
     :alt: terminal velocity of the particle
