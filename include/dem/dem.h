@@ -157,7 +157,10 @@ private:
 
   /**
    * @brief Check if particles have to be inserted at this iteration and
-   * perform it if necessary.
+   * perform it if necessary.It is done by checking if the remainder of the
+   * division between the current time-step minus one and the insertion
+   * frequency is 0 as to prevent no insertion when it is done in a single
+   * time-step with a frequency of 1.
    */
   void
   insert_particles();
