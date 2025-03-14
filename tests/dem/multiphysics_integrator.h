@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef integrate_temperature_h
-#define integrate_temperature_h
+#ifndef multiphysics_integrator_h
+#define multiphysics_integrator_h
 
 // Deal.ii
 #include <deal.II/particles/particle_handler.h>
@@ -26,14 +26,13 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
        particle != particle_handler.end();
        ++particle)
     {
-      types::particle_index particle_id = particle->get_local_index();
-
-      auto    particle_properties    = particle->get_properties();
-      double &particle_heat_transfer = heat_transfer[particle_id];
-
-      double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
-      unsigned int type   = particle_properties[PropertiesIndex::type];
-      double       heat_capacity =
+      const types::particle_index particle_id = particle->get_local_index();
+      auto         particle_properties        = particle->get_properties();
+      double      &particle_heat_transfer     = heat_transfer[particle_id];
+      const double mass_inverse =
+        1 / particle_properties[PropertiesIndex::mass];
+      const unsigned int type = particle_properties[PropertiesIndex::type];
+      const double       heat_capacity =
         dem_parameters.lagrangian_physical_properties.heat_capacity_particle.at(
           type);
 

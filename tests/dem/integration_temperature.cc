@@ -3,26 +3,14 @@
 
 
 /**
- * @brief This test checks the performance of the temperature integrator.
+ * @brief This test checks the order of the temperature integrator by solving mcdT/dt = -T for two time steps.
  *
  */
 
-// Deal.ii
-#include <deal.II/base/parameter_handler.h>
-
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/tria.h>
-
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_iterator.h>
 
 // Tests (with common definitions)
 #include <../tests/dem/multiphysics_integrator.h>
-
-#include <../tests/tests.h>
+#include <../tests/dem/test_particles_functions.h>
 
 #include <cmath>
 
@@ -49,71 +37,92 @@ test()
   Parameters::Lagrangian::ModelParameters &model_param =
     dem_parameters.model_parameters;
 
-  const double dt                                  = 0.00001;
+  const double dt1                                 = 0.01;
+  const double dt2                                 = 0.005;
+  const double time_step_ratio                     = dt1 / dt2;
+  const double time_final                          = 1;
+  const double heat_capacity                       = 4;
   lagrangian_prop.particle_type_number             = 1;
-  lagrangian_prop.youngs_modulus_particle[0]       = 50000000;
   lagrangian_prop.thermal_conductivity_particle[0] = 0.6;
-  lagrangian_prop.heat_capacity_particle[0]        = 4;
+  lagrangian_prop.heat_capacity_particle[0]        = heat_capacity;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties<PropertiesIndex>());
+    triangulation, mapping, PropertiesIndex::n_properties);
 
   // Inserting one particle and defining its properties
-  Point<3> position1 = {0, 0, 0};
-  int      id        = 0;
+  Point<3>     position  = {0, 0, 0};
+  const int    id        = 0;
+  const double T_initial = 300;
 
-  Particles::Particle<dim> particle1(position1, position1, id);
-  typename Triangulation<dim>::active_cell_iterator particle_cell =
-    GridTools::find_active_cell_around_point(triangulation,
-                                             particle1.get_location());
+  Particles::ParticleIterator<dim> pit1 = construct_particle_iterator<dim>(
+    particle_handler, triangulation, position, id);
 
-  Particles::ParticleIterator<dim> pit =
-    particle_handler.insert_particle(particle1, particle_cell);
+  Tensor<1, dim> v{{0.01, 0, 0}};
+  Tensor<1, dim> omega{{0, 0, 0}};
+  const double   mass     = 1;
+  const int      type     = 0;
+  const double   diameter = 0.005;
+  set_particle_properties<dim, PropertiesIndex>(
+    pit1, type, diameter, mass, v, omega);
 
-  pit->get_properties()[PropertiesIndex::type]    = 0;
-  pit->get_properties()[PropertiesIndex::dp]      = 0.005;
-  pit->get_properties()[PropertiesIndex::v_x]     = 0;
-  pit->get_properties()[PropertiesIndex::v_y]     = 0;
-  pit->get_properties()[PropertiesIndex::v_z]     = 0;
-  pit->get_properties()[PropertiesIndex::omega_x] = 0;
-  pit->get_properties()[PropertiesIndex::omega_y] = 0;
-  pit->get_properties()[PropertiesIndex::omega_z] = 0;
-  pit->get_properties()[PropertiesIndex::mass]    = 1;
-  pit->get_properties()[PropertiesIndex::T]       = 300;
+  pit1->get_properties()[PropertiesIndex::T] = T_initial;
 
+  // Initialize variables
   std::vector<double> heat_transfer;
-  double              heat_source;
+  double              heat_source = 0;
   heat_transfer.push_back(0);
+  double T_analytical;
+  double particle_temperature_error_dt1;
+  double particle_temperature_error_dt2;
+  auto   particle_properties = particle_handler.begin()->get_properties();
 
-  // Calling temperature integrator for max_iteration iterations
-  const unsigned int max_iteration    = 5000;
-  double             time             = 0;
-  int                output_frequency = 10;
-  auto               particle         = particle_handler.begin();
-  std::cout << "time temperature" << std::endl;
-
-  for (unsigned int iteration = 0; iteration < max_iteration; ++iteration)
+  // Calling temperature integrator until time_final with dt1 time step
+  double time = 0;
+  while (time < time_final)
     {
-      heat_source = 400 * cos(time);
+      heat_transfer[0] = -particle_properties[PropertiesIndex::T];
       integrate_temperature<dim, PropertiesIndex>(
-        particle_handler, dem_parameters, dt, heat_transfer, heat_source);
-
-      if (iteration % output_frequency == 0)
-        {
-          std::cout << time << " "
-                    << particle->get_properties()[PropertiesIndex::T]
-                    << std::endl;
-        }
-      time += dt;
+        particle_handler, dem_parameters, dt1, heat_transfer, heat_source);
+      time += dt1;
     }
-  std::cout << time << " " << particle->get_properties()[PropertiesIndex::T]
-            << std::endl;
+
+  // Calculating error with analytical solution
+  T_analytical = exp(-1 / mass * 1 / heat_capacity * time) * T_initial;
+  particle_temperature_error_dt1 =
+    particle_properties[PropertiesIndex::T] - T_analytical;
+
+  // Clear the particle handler and insert a new particle
+  particle_handler.clear_particles();
+
+  Particles::ParticleIterator<dim> pit2 = construct_particle_iterator<dim>(
+    particle_handler, triangulation, position, id);
+
+  set_particle_properties<dim, PropertiesIndex>(
+    pit2, type, diameter, mass, v, omega);
+  pit2->get_properties()[PropertiesIndex::T] = T_initial;
+
+  // Calling temperature integrator until time_final with dt2 time step
+  time = 0;
+  while (time < time_final)
+    {
+      heat_transfer[0] = -particle_properties[PropertiesIndex::T];
+      integrate_temperature<dim, PropertiesIndex>(
+        particle_handler, dem_parameters, dt2, heat_transfer, heat_source);
+      time += dt2;
+    }
+
+  // Calculating error with analytical solution
+  T_analytical = exp(-1 / mass * 1 / heat_capacity * time) * T_initial;
+  particle_temperature_error_dt2 =
+    particle_properties[PropertiesIndex::T] - T_analytical;
 
   // Output
-  deallog << "The temperature of the particle at time " << time
-          << " seconds is: " << particle->get_properties()[PropertiesIndex::T]
-          << "." << std::endl;
+  deallog << "Temperature integration is a "
+          << log(std::abs(particle_temperature_error_dt1 /
+                          particle_temperature_error_dt2)) /
+               log(time_step_ratio)
+          << " order integration scheme." << std::endl;
 }
 
 int
