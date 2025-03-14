@@ -220,13 +220,23 @@ Lasty, in the ``boundary conditions VOF`` subsection we ensure that ``fluid 1`` 
 .. code-block:: text
 
     subsection boundary conditions VOF
-      set number = 4
+      set number = 3
       subsection bc 0
         set id   = 0
         set type = dirichlet
         subsection dirichlet
           set Function expression = if(y^2 <= 1.3110e-6, 1, 0)
         end
+      end
+      subsection bc 1
+        set id                 = 2
+        set type               = periodic
+        set periodic_id        = 3
+        set periodic_direction = 1
+      end
+      subsection bc 2
+        set id   = 1
+        set type = none
       end
     end
 
