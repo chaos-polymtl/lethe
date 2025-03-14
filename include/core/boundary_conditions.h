@@ -88,7 +88,6 @@ namespace BoundaryConditions
    * special case of periodic boundary condition, a periodic matching id
    * (periodic_id) and a periodic direction (0, 1 or 2).
    */
-  template <int dim>
   class BoundaryConditions
   {
   public:
@@ -160,7 +159,7 @@ namespace BoundaryConditions
    * coherently.
    */
   template <int dim>
-  class NSBoundaryConditions : public BoundaryConditions<dim>
+  class NSBoundaryConditions : public BoundaryConditions
   {
   public:
     /// Functions for (u, v, w, p) for all boundaries
@@ -170,8 +169,8 @@ namespace BoundaryConditions
     void
     parse_boundary(ParameterHandler &prm);
     void
-    declare_default_entry(ParameterHandler        &prm,
-                          const types::boundary_id default_boundary_id);
+    declare_default_entry(ParameterHandler  &prm,
+                          types::boundary_id default_boundary_id);
 
     /**
      * @brief Declares the Navier-Stokes boundary conditions
@@ -180,8 +179,8 @@ namespace BoundaryConditions
      * @param number_of_boundary_conditions The number of boundary conditions to be declared. This parameter is generally pre-parsed from a first read of the prm file.
      */
     void
-    declare_parameters(ParameterHandler  &prm,
-                       const unsigned int number_of_boundary_conditions);
+    declare_parameters(ParameterHandler &prm,
+                       unsigned int      number_of_boundary_conditions);
 
     /**
      * @brief Parses the Navier-Stokes boundary conditions
@@ -217,7 +216,7 @@ namespace BoundaryConditions
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
-   * @param i_bc The boundary condition id.
+   * @param default_boundary_id Default value of the boundary id. This corresponds to the number of the boundary condition subsection.
    */
   template <int dim>
   void
@@ -298,8 +297,6 @@ namespace BoundaryConditions
    * @brief Parse the information for a boundary condition
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
-   *
-   * @param i_bc The boundary condition number (and not necessarily it's id).
    */
   template <int dim>
   void
@@ -514,7 +511,7 @@ namespace BoundaryConditions
    */
 
   template <int dim>
-  class HTBoundaryConditions : public BoundaryConditions<dim>
+  class HTBoundaryConditions : public BoundaryConditions
   {
   public:
     std::map<types::boundary_id,
@@ -535,11 +532,11 @@ namespace BoundaryConditions
     double Stefan_Boltzmann_constant;
 
     void
-    declare_default_entry(ParameterHandler        &prm,
-                          const types::boundary_id default_boundary_id);
+    declare_default_entry(ParameterHandler  &prm,
+                          types::boundary_id default_boundary_id);
     void
-    declare_parameters(ParameterHandler  &prm,
-                       const unsigned int number_of_boundary_conditions);
+    declare_parameters(ParameterHandler &prm,
+                       unsigned int      number_of_boundary_conditions);
     void
     parse_boundary(ParameterHandler &prm);
     void
@@ -555,7 +552,7 @@ namespace BoundaryConditions
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
-   * @param i_bc The boundary condition id.
+   * @param default_boundary_id Default value given to the boundary id.
    */
   template <int dim>
   void
@@ -608,6 +605,8 @@ namespace BoundaryConditions
    * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param number_of_boundary_conditions Number of boundary conditions
    */
   template <int dim>
   void
@@ -648,8 +647,6 @@ namespace BoundaryConditions
    * @brief Parse the information for a boundary condition
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
-   *
-   * @param i_bc The boundary condition number (and not necessarily it's id).
    */
 
   template <int dim>
@@ -745,13 +742,10 @@ namespace BoundaryConditions
    * @brief This class manages the boundary conditions for Tracer solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
-   *  - if bc type is "dirichlet" (Dirichlet condition), "value" is the
-   * double passed to the deal.ii ConstantFunction
-
    */
 
   template <int dim>
-  class TracerBoundaryConditions : public BoundaryConditions<dim>
+  class TracerBoundaryConditions : public BoundaryConditions
   {
   public:
     std::map<types::boundary_id,
@@ -760,11 +754,11 @@ namespace BoundaryConditions
 
 
     void
-    declare_default_entry(ParameterHandler        &prm,
-                          const types::boundary_id default_boundary_id);
+    declare_default_entry(ParameterHandler  &prm,
+                          types::boundary_id default_boundary_id);
     void
-    declare_parameters(ParameterHandler  &prm,
-                       const unsigned int number_of_boundary_conditions);
+    declare_parameters(ParameterHandler &prm,
+                       unsigned int      number_of_boundary_conditions);
     void
     parse_boundary(ParameterHandler &prm);
     void
@@ -775,9 +769,9 @@ namespace BoundaryConditions
    * @brief Declares the default parameters for a boundary condition id i_bc
    * i.e. Dirichlet condition (ConstantFunction) with value 0
    *
-   * @param prm A parameter handler which is currently used to parse the simulation information
+   * @param prm A parameter handler which is currently used to parse the simulation information.
    *
-   * @param i_bc The boundary condition id.
+   * @param default_boundary_id Default value given to the boundary id.
    */
   template <int dim>
   void
@@ -808,6 +802,8 @@ namespace BoundaryConditions
    * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param number_of_boundary_conditions Number of tracer boundary conditions
    */
   template <int dim>
   void
@@ -915,12 +911,10 @@ namespace BoundaryConditions
    * @brief This class manages the boundary conditions for the Cahn-Hilliard solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
-   *  - if bc type is "dirichlet" (Dirichlet condition), "value" is the
-   * double passed to the deal.ii ConstantFunction
    */
 
   template <int dim>
-  class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
+  class CahnHilliardBoundaryConditions : public BoundaryConditions
   {
   public:
     std::map<types::boundary_id, double> angle_of_contact;
@@ -930,11 +924,11 @@ namespace BoundaryConditions
       bcFunctions;
 
     void
-    declare_default_entry(ParameterHandler        &prm,
-                          const types::boundary_id default_boundary_id);
+    declare_default_entry(ParameterHandler  &prm,
+                          types::boundary_id default_boundary_id);
     void
-    declare_parameters(ParameterHandler  &prm,
-                       const unsigned int number_of_boundary_conditions);
+    declare_parameters(ParameterHandler &prm,
+                       unsigned int      number_of_boundary_conditions);
     void
     parse_boundary(ParameterHandler &prm);
     void
@@ -942,12 +936,11 @@ namespace BoundaryConditions
   };
 
   /**
-   * @brief Declares the default parameters for a boundary condition id i_bc
-   * i.e. Dirichlet condition (ConstantFunction) with value 0
+   * @brief Declares the default parameters for the Cahn-Hilliard boundary conditions
    *
-   * @param prm A parameter handler which is currently used to parse the simulation information
+   * @param prm A parameter handler which is currently used to parse the simulation information.
    *
-   * @param i_bc The boundary condition id.
+   * @param default_boundary_id Default value given to the boundary id.
    */
   template <int dim>
   void
@@ -977,8 +970,6 @@ namespace BoundaryConditions
     prm.enter_subsection("phi");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
-
-    return;
   }
 
   /**
@@ -986,6 +977,8 @@ namespace BoundaryConditions
    * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param number_of_boundary_conditions Number of boundary conditions
    */
   template <int dim>
   void
@@ -1022,7 +1015,6 @@ namespace BoundaryConditions
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
-   * @param i_bc The boundary condition number (and not necessarily its id).
    */
 
   template <int dim>
@@ -1101,15 +1093,10 @@ namespace BoundaryConditions
    * @brief This class manages the boundary conditions for VOF solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
-   *
-   * - if bc type is "dirichlet", the function is applied on the selected
-   * boundary
-   *
-   * - if bc type is "none", nothing happens
    */
 
   template <int dim>
-  class VOFBoundaryConditions : public BoundaryConditions<dim>
+  class VOFBoundaryConditions : public BoundaryConditions
   {
   public:
     std::map<types::boundary_id,
@@ -1117,11 +1104,11 @@ namespace BoundaryConditions
       phase_fraction;
 
     void
-    declare_default_entry(ParameterHandler        &prm,
-                          const types::boundary_id default_boundary_id);
+    declare_default_entry(ParameterHandler  &prm,
+                          types::boundary_id default_boundary_id);
     void
-    declare_parameters(ParameterHandler  &prm,
-                       const unsigned int number_of_boundary_conditions);
+    declare_parameters(ParameterHandler &prm,
+                       unsigned int      number_of_boundary_conditions);
     void
     parse_boundary(ParameterHandler &prm);
     void
@@ -1133,7 +1120,7 @@ namespace BoundaryConditions
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
-   * @param i_bc The boundary condition id.
+   * @param default_boundary_id Default value given to the boundary id.
    */
   template <int dim>
   void
@@ -1163,6 +1150,8 @@ namespace BoundaryConditions
    * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param number_of_boundary_conditions Number of boundary conditions
    */
   template <int dim>
   void
@@ -1198,8 +1187,6 @@ namespace BoundaryConditions
    * @brief Parse the information for a boundary condition
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
-   *
-   * @param i_bc The boundary condition number (and not necessarily it's id).
    */
 
   template <int dim>
@@ -1216,12 +1203,12 @@ namespace BoundaryConditions
     AssertThrow(this->type.find(boundary_id) == this->type.end(),
                 VOFBoundaryDuplicated(boundary_id));
 
-    const std::string op = prm.get("type");
-    if (op == "none")
+    if (auto const option = prm.get("type"); option == "none")
       {
         this->type[boundary_id] = BoundaryType::none;
       }
-    else if (op == "dirichlet")
+
+    if (auto const option = prm.get("type"); option == "dirichlet")
       {
         this->type[boundary_id] = BoundaryType::vof_dirichlet;
         prm.enter_subsection("dirichlet");
@@ -1271,7 +1258,6 @@ namespace BoundaryConditions
 template <int dim>
 class NavierStokesFunctionDefined : public Function<dim>
 {
-private:
   Functions::ParsedFunction<dim> *u;
   Functions::ParsedFunction<dim> *v;
   Functions::ParsedFunction<dim> *w;
@@ -1286,21 +1272,21 @@ public:
     , w(p_w)
   {}
 
-  virtual double
-  value(const Point<dim> &p, const unsigned int component) const override;
+  double
+  value(const Point<dim> &point, const unsigned int component) const override;
 };
 
 
 /**
  * @brief Calculates the value of a Function-type Navier-Stokes equations
  *
- * @param p A point (generally a gauss point)
+ * @param point A point at which the function will be evaluated
  *
  * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
  */
 template <int dim>
 double
-NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
+NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,
@@ -1308,15 +1294,15 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
 
   if (component == 0)
     {
-      return u->value(p);
+      return u->value(point);
     }
-  else if (component == 1)
+  if (component == 1)
     {
-      return v->value(p);
+      return v->value(point);
     }
-  else if (component == 2)
+  if (component == 2)
     {
-      return w->value(p);
+      return w->value(point);
     }
   return 0.;
 }
@@ -1327,7 +1313,6 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
 template <int dim>
 class NavierStokesPressureFunctionDefined : public Function<dim>
 {
-private:
   Functions::ParsedFunction<dim> *p;
 
 public:
@@ -1336,15 +1321,15 @@ public:
     , p(p_p)
   {}
 
-  virtual double
-  value(const Point<dim> &p, const unsigned int component) const override;
+  double
+  value(const Point<dim> &point, unsigned int component) const override;
 };
 
 
 /**
  * @brief Calculates the value of a Function-type Navier-Stokes equations
  *
- * @param p A point (generally a gauss point)
+ * @param point A point (generally a gauss point)
  *
  * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
  */
@@ -1378,7 +1363,7 @@ public:
   {}
 
   virtual double
-  value(const Point<dim> &p, const unsigned int component) const override;
+  value(const Point<dim> &p, unsigned int component) const override;
 };
 
 
@@ -1401,7 +1386,7 @@ CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
     {
       return phi->value(p);
     }
-  else if (component == 1)
+  if (component == 1)
     {
       return 0.;
     }

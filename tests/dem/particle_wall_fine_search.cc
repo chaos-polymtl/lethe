@@ -48,7 +48,7 @@ test()
   double particle_diameter = 0.005;
 
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
+    tr, mapping, PropertiesIndex::n_properties);
 
   // Inserting one particle in contact with a wall
   Point<dim>               position1 = {-0.998, 0, 0};

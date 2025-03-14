@@ -45,42 +45,40 @@ calculate_bdf_coefficients(
 {
   switch (method)
     {
-      case (Parameters::SimulationControl::TimeSteppingMethod::bdf1):
+      case Parameters::SimulationControl::TimeSteppingMethod::bdf1:
         return bdf_coefficients(1, time_steps);
-      case (Parameters::SimulationControl::TimeSteppingMethod::steady_bdf):
+      case Parameters::SimulationControl::TimeSteppingMethod::steady_bdf:
         return bdf_coefficients(1, time_steps);
-      case (Parameters::SimulationControl::TimeSteppingMethod::bdf2):
+      case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
         return bdf_coefficients(2, time_steps);
-      case (Parameters::SimulationControl::TimeSteppingMethod::bdf3):
+      case Parameters::SimulationControl::TimeSteppingMethod::bdf3:
         return bdf_coefficients(3, time_steps);
       default:
         throw(std::runtime_error(
           "BDF coefficients were requested without a BDF method"));
-        break;
     }
 }
 
 Vector<double>
-delta(const unsigned int    p,
+delta(const unsigned int    order,
       const unsigned int    n,
       const unsigned int    j,
       const Vector<double> &times)
 {
   if (j == 0)
     {
-      Vector<double> arr(p + 1);
+      Vector<double> arr(order + 1);
       arr    = 0.;
       arr[n] = 1;
       return arr;
     }
-  else
-    {
-      Vector<double> delta_1 = delta(p, n, j - 1, times);
-      Vector<double> delta_2 = delta(p, n + 1, j - 1, times);
-      Vector<double> delta_sol(p + 1);
-      for (unsigned int i_del = 0; i_del < p + 1; ++i_del)
-        delta_sol[i_del] =
-          (delta_1[i_del] - delta_2[i_del]) / (times[n] - times[n + j]);
-      return delta_sol;
-    }
+
+  // else
+  Vector<double> delta_1 = delta(order, n, j - 1, times);
+  Vector<double> delta_2 = delta(order, n + 1, j - 1, times);
+  Vector<double> delta_sol(order + 1);
+  for (unsigned int i_del = 0; i_del < order + 1; ++i_del)
+    delta_sol[i_del] =
+      (delta_1[i_del] - delta_2[i_del]) / (times[n] - times[n + j]);
+  return delta_sol;
 }

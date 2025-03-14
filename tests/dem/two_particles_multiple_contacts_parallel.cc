@@ -90,7 +90,7 @@ test()
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties<PropertiesIndex>());
+    triangulation, mapping, PropertiesIndex::n_properties);
 
   typename dem_data_structures<2>::particle_index_iterator_map
     local_particle_container;

@@ -77,15 +77,6 @@ namespace DEM
   } // namespace CFDDEMProperties
 
   /**
-   * @brief Return the number of properties stored on each particle.
-   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
-   * @return Number of DEM properties.
-   */
-  template <typename PropertiesIndex>
-  unsigned int
-  get_number_properties();
-
-  /**
    * @brief Controls the name of output variables for the vtu.
    * @tparam dim An integer that denotes the number of spatial dimensions.
    * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.

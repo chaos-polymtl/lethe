@@ -53,7 +53,7 @@ test()
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties<PropertiesIndex>());
+    triangulation, mapping, PropertiesIndex::n_properties);
 
   // Creating containers manager for finding cell neighbor and also broad and
   // fine particle-particle search objects

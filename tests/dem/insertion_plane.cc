@@ -68,7 +68,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<PropertiesIndex>());
+    tr, mapping, PropertiesIndex::n_properties);
 
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
