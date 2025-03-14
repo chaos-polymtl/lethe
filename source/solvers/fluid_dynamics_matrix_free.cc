@@ -1819,7 +1819,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           this->temperature_dof_handlers[l].reinit(
-            temperature_dof_handler.get_triangulation());
+            dof_handlers[l].get_triangulation());
           this->temperature_dof_handlers[l].distribute_dofs(
             temperature_dof_handler.get_fe());
         }
