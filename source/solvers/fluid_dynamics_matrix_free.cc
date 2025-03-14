@@ -1835,8 +1835,11 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
             {});
         }
 
-      this->mg_transfer_gc_temperature = std::make_shared<GCTransferType>(
-        this->transfers_temperature, [&](const auto l, auto &vec) {
+      this->mg_transfer_gc_temperature =
+        std::make_shared<GCTransferType>(this->transfers_temperature);
+
+      this->mg_transfer_gc_temperature->build(
+        temperature_dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
                      DoFTools::extract_locally_active_dofs(
                        this->temperature_dof_handlers[l]),
