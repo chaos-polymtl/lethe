@@ -494,7 +494,9 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::insert_particles()
 {
-  if ((simulation_control->get_step_number() % parameters.insertion_info.insertion_frequency) == 1 || simulation_control->get_step_number() == 1)
+  if ((simulation_control->get_step_number() %
+       parameters.insertion_info.insertion_frequency) == 1 ||
+      simulation_control->get_step_number() == 1)
     {
       insertion_object->insert(particle_handler, triangulation, parameters);
 
