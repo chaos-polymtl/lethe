@@ -33,8 +33,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = gmsh
-  set file name          = ../two-dimensional-jet.msh
+  set type      = gmsh
+  set file name = ../two-dimensional-jet.msh
 end
 
 #---------------------------------------------------
@@ -106,13 +106,13 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
-    set method                                = gmres
-    set max iters                             = 500
-    set max krylov vectors                    = 500
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-7
-    set preconditioner                        = amg
-    set amg preconditioner ilu fill           = 1
+    set verbosity                   = verbose
+    set method                      = gmres
+    set max iters                   = 500
+    set max krylov vectors          = 500
+    set relative residual           = 1e-3
+    set minimum residual            = 1e-7
+    set preconditioner              = amg
+    set amg preconditioner ilu fill = 0
   end
 end
