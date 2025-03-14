@@ -51,18 +51,18 @@ test()
     triangulation, mapping, PropertiesIndex::n_properties);
 
   // Inserting one particle and defining its properties
-  Point<3>     position  = {0, 0, 0};
-  const int    id        = 0;
-  const double T_initial = 300;
+  Point<3>           position  = {0, 0, 0};
+  const unsigned int id        = 0;
+  const double       T_initial = 300;
 
   Particles::ParticleIterator<dim> pit1 = construct_particle_iterator<dim>(
     particle_handler, triangulation, position, id);
 
-  Tensor<1, dim> v{{0.01, 0, 0}};
-  Tensor<1, dim> omega{{0, 0, 0}};
-  const double   mass     = 1;
-  const int      type     = 0;
-  const double   diameter = 0.005;
+  Tensor<1, dim>     v{{0.01, 0, 0}};
+  Tensor<1, dim>     omega{{0, 0, 0}};
+  const double       mass     = 1;
+  const unsigned int type     = 0;
+  const double       diameter = 0.005;
   set_particle_properties<dim, PropertiesIndex>(
     pit1, type, diameter, mass, v, omega);
 
