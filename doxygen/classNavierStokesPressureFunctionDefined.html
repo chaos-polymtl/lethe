@@ -103,8 +103,8 @@ Inheritance diagram for NavierStokesPressureFunctionDefined&lt; dim &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a73b6f0ec2f780841a608ef53ea428936" id="r_a73b6f0ec2f780841a608ef53ea428936"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesPressureFunctionDefined.html#a73b6f0ec2f780841a608ef53ea428936">NavierStokesPressureFunctionDefined</a> (Functions::ParsedFunction&lt; dim &gt; *p_p)</td></tr>
 <tr class="separator:a73b6f0ec2f780841a608ef53ea428936"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09c28a35ac86bba72fc0875deb36d13e" id="r_a09c28a35ac86bba72fc0875deb36d13e"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesPressureFunctionDefined.html#a09c28a35ac86bba72fc0875deb36d13e">value</a> (const Point&lt; dim &gt; &amp;<a class="el" href="classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0">p</a>, const unsigned int component) const override</td></tr>
-<tr class="separator:a09c28a35ac86bba72fc0875deb36d13e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeef7b12a7e18d8c81db72a1291a89ea2" id="r_aeef7b12a7e18d8c81db72a1291a89ea2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesPressureFunctionDefined.html#aeef7b12a7e18d8c81db72a1291a89ea2">value</a> (const Point&lt; dim &gt; &amp;point, unsigned int component) const override</td></tr>
+<tr class="separator:aeef7b12a7e18d8c81db72a1291a89ea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -115,7 +115,7 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 class NavierStokesPressureFunctionDefined&lt; dim &gt;</div><p>This class implements a pressure boundary condition for the Navier-Stokes equations. </p>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01328">1328</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01314">1314</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a73b6f0ec2f780841a608ef53ea428936" name="a73b6f0ec2f780841a608ef53ea428936"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a73b6f0ec2f780841a608ef53ea428936">&#9670;&#160;</a></span>NavierStokesPressureFunctionDefined()</h2>
@@ -143,13 +143,13 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01334">1334</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01319">1319</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a09c28a35ac86bba72fc0875deb36d13e" name="a09c28a35ac86bba72fc0875deb36d13e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09c28a35ac86bba72fc0875deb36d13e">&#9670;&#160;</a></span>value()</h2>
+<a id="aeef7b12a7e18d8c81db72a1291a89ea2" name="aeef7b12a7e18d8c81db72a1291a89ea2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeef7b12a7e18d8c81db72a1291a89ea2">&#9670;&#160;</a></span>value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,7 +168,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>component</em>&#160;</td>
         </tr>
         <tr>
@@ -179,7 +179,7 @@ template&lt;int dim&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -187,13 +187,13 @@ template&lt;int dim&gt; </div>
 <p>Calculates the value of a Function-type Navier-Stokes equations. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>A point (generally a gauss point)</td></tr>
+    <tr><td class="paramname">point</td><td>A point (generally a gauss point)</td></tr>
     <tr><td class="paramname">component</td><td>The vector component of the boundary condition (0-x, 1-y and 2-z) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01353">1353</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01338">1338</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -220,7 +220,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01331">1331</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01316">1316</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>

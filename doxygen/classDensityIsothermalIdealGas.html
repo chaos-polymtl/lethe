@@ -109,8 +109,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8dd7ef24db0bbfc2deb3d9a30da36330"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68f7d68348933a6e68312e84ec5bd677" id="r_a68f7d68348933a6e68312e84ec5bd677"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDensityIsothermalIdealGas.html#a68f7d68348933a6e68312e84ec5bd677">vector_value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</td></tr>
 <tr class="separator:a68f7d68348933a6e68312e84ec5bd677"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab713f8a359f46f63f082b7dfbb895a4f" id="r_ab713f8a359f46f63f082b7dfbb895a4f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDensityIsothermalIdealGas.html#ab713f8a359f46f63f082b7dfbb895a4f">jacobian</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> id) override</td></tr>
-<tr class="separator:ab713f8a359f46f63f082b7dfbb895a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4ceaf4543ba4e667d5a0976da717041" id="r_ae4ceaf4543ba4e667d5a0976da717041"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDensityIsothermalIdealGas.html#ae4ceaf4543ba4e667d5a0976da717041">jacobian</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values, const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> id) override</td></tr>
+<tr class="separator:ae4ceaf4543ba4e667d5a0976da717041"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae02c8a4a9760f403b139c8728ce0eba3" id="r_ae02c8a4a9760f403b139c8728ce0eba3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDensityIsothermalIdealGas.html#ae02c8a4a9760f403b139c8728ce0eba3">vector_jacobian</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> id, std::vector&lt; double &gt; &amp;jacobian_vector) override</td></tr>
 <tr class="separator:ae02c8a4a9760f403b139c8728ce0eba3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dbea2076d516c3eda32249ba44da956" id="r_a9dbea2076d516c3eda32249ba44da956"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDensityIsothermalIdealGas.html#a9dbea2076d516c3eda32249ba44da956">get_psi</a> () const override</td></tr>
@@ -160,7 +160,7 @@ Additional Inherited Members</h2></td></tr>
 <p>\(\rho = \rho_\text{ref} + \psi p = \rho_\text{ref} + \frac{1}{R T} \ p\)</p>
 <p>where \(\rho_\text{ref}\) is the density of the fluid at the reference state, \(\psi = \frac{1}{R T}\) is the compressibility factor derived from the ideal gas law with \(R= \frac{R_u}{M}\) the specific gas constant (universal gas constant ( \(R_u\)) divided by the molar mass of the gas ( \(M\))) and \(T\) the temperature of the gas, finally, \(p\) is the differential pressure between the reference state and the current state. The model is used for weakly compressible flows when temperature fluctuations' influence on density can be neglected. </p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00219">219</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00220">220</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a799d7300804196a16fd2f7527627d198" name="a799d7300804196a16fd2f7527627d198"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a799d7300804196a16fd2f7527627d198">&#9670;&#160;</a></span>DensityIsothermalIdealGas()</h2>
@@ -213,7 +213,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00234">234</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00235">235</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00230">PhysicalPropertyModel::model_depends_on</a>, and <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>.</p>
 
@@ -248,9 +248,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDensityModel.html#a845641eca7b01b68c5973e61d558eeba">DensityModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00350">350</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00352">352</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="density__model_8h_source.html#l00357">density_ref</a>.</p>
+<p class="reference">References <a class="el" href="density__model_8h_source.html#l00359">density_ref</a>.</p>
 
 </div>
 </div>
@@ -282,14 +282,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDensityModel.html#a8c2d5a30784dfbd1f8f0e0166510e2d3">DensityModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00338">338</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00340">340</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="density__model_8h_source.html#l00359">psi</a>.</p>
+<p class="reference">References <a class="el" href="density__model_8h_source.html#l00361">psi</a>.</p>
 
 </div>
 </div>
-<a id="ab713f8a359f46f63f082b7dfbb895a4f" name="ab713f8a359f46f63f082b7dfbb895a4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab713f8a359f46f63f082b7dfbb895a4f">&#9670;&#160;</a></span>jacobian()</h2>
+<a id="ae4ceaf4543ba4e667d5a0976da717041" name="ae4ceaf4543ba4e667d5a0976da717041"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4ceaf4543ba4e667d5a0976da717041">&#9670;&#160;</a></span>jacobian()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -306,7 +306,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>&#160;</td>
           <td class="paramname"><em>id</em>&#160;</td>
         </tr>
         <tr>
@@ -334,9 +334,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a3fc51243a48832ed3c6e3b4ee797c6b2">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00297">297</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00298">298</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00359">psi</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00361">psi</a>.</p>
 
 </div>
 </div>
@@ -375,9 +375,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00253">253</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00254">254</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="density__model_8h_source.html#l00357">density_ref</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00359">psi</a>.</p>
+<p class="reference">References <a class="el" href="density__model_8h_source.html#l00359">density_ref</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00361">psi</a>.</p>
 
 </div>
 </div>
@@ -426,16 +426,16 @@ Additional Inherited Members</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Vector of values of the fields used to evaluate the density. The map stores a vector of values per field.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier of the field with respect to which a derivative should be computed.</td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">jacobian</td><td>Vector of computed derivative values of the density with respect to the field of the specified <code>id</code>. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">jacobian_vector</td><td>Vector of computed derivative values of the density with respect to the field of the specified <code>id</code>. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a522b52d0f3353ebb4eecb353f5130adc">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00320">320</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00322">322</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00359">psi</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00361">psi</a>.</p>
 
 </div>
 </div>
@@ -484,9 +484,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00272">272</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00273">273</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="density__model_8h_source.html#l00357">density_ref</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00359">psi</a>.</p>
+<p class="reference">References <a class="el" href="density__model_8h_source.html#l00359">density_ref</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="density__model_8h_source.html#l00361">psi</a>.</p>
 
 </div>
 </div>
@@ -513,7 +513,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Density of the isothermal ideal gas at reference state. </p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00357">357</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00359">359</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
 </div>
 </div>
@@ -539,7 +539,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Compressibility factor of the isothermal ideal gas at reference state. </p>
 
-<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00359">359</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="density__model_8h_source.html#l00361">361</a> of file <a class="el" href="density__model_8h_source.html">density_model.h</a>.</p>
 
 </div>
 </div>

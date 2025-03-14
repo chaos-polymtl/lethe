@@ -1,5 +1,5 @@
 <map id="BoundaryConditions::CahnHilliardBoundaryConditions&lt; dim &gt;" name="BoundaryConditions::CahnHilliardBoundaryConditions&lt; dim &gt;">
-<area shape="rect" id="Node000001" title="This class manages the boundary conditions for the Cahn&#45;Hilliard solver It introduces the boundary fu..." alt="" coords="5,108,247,163"/>
-<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="45,5,207,60"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,74,129,108,123,108,123,74"/>
+<area shape="rect" id="Node000001" title="This class manages the boundary conditions for the Cahn&#45;Hilliard solver It introduces the boundary fu..." alt="" coords="5,93,247,148"/>
+<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="45,5,207,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,59,129,93,123,93,123,59"/>
 </map>

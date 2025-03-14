@@ -50,7 +50,7 @@ var searchData=
   ['number_47',['number',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a5f5414f468157e733de83b82ca84e15f',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
   ['number_5fmesh_5fadapt_48',['number_mesh_adapt',['../classSimulationControl.html#a5969a5ad321536ea68ab238330510648',1,'SimulationControl']]],
   ['number_5fmesh_5fadaptation_49',['number_mesh_adaptation',['../structParameters_1_1SimulationControl.html#a753941224d95d2053cb5ee88584233e6',1,'Parameters::SimulationControl']]],
-  ['number_5fof_5fboundary_5fconditions_50',['number_of_boundary_conditions',['../classBoundaryConditions_1_1BoundaryConditions.html#af547a9b1043715849267d45e53fb5c16',1,'BoundaryConditions::BoundaryConditions']]],
+  ['number_5fof_5fboundary_5fconditions_50',['number_of_boundary_conditions',['../classBoundaryConditions_1_1BoundaryConditions.html#a3dc2030213390d590137d2c8f1ede3b6',1,'BoundaryConditions::BoundaryConditions']]],
   ['number_5fof_5fconstraints_51',['number_of_constraints',['../structParameters_1_1ConstrainSolidDomain.html#accae1529e50f67aee1e1fe03f9d5879f',1,'Parameters::ConstrainSolidDomain']]],
   ['number_5fof_5ffiles_52',['number_of_files',['../classInsertionFile.html#ae0cc33a93ce0c84d9923400577671329',1,'InsertionFile']]],
   ['number_5fof_5ffluids_53',['number_of_fluids',['../classParameters_1_1PhysicalProperties.html#ac8ba36a1937908496a09b8ef751b5037',1,'Parameters::PhysicalProperties::number_of_fluids'],['../classPhysicalPropertiesManager.html#ac25697de2034ed3fa78cdec8059b5579',1,'PhysicalPropertiesManager::number_of_fluids']]],

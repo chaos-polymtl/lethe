@@ -1,5 +1,5 @@
 <map id="BoundaryConditions::HTBoundaryConditions&lt; dim &gt;" name="BoundaryConditions::HTBoundaryConditions&lt; dim &gt;">
-<area shape="rect" id="Node000001" title="This class manages the boundary conditions for Heat&#45;Transfer solver It introduces the boundary functi..." alt="" coords="5,108,184,163"/>
-<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="14,5,175,60"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,74,97,108,92,108,92,74"/>
+<area shape="rect" id="Node000001" title="This class manages the boundary conditions for Heat&#45;Transfer solver It introduces the boundary functi..." alt="" coords="5,93,184,148"/>
+<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="14,5,175,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,59,97,93,92,93,92,59"/>
 </map>

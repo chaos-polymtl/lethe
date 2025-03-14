@@ -173,8 +173,8 @@ Functions</h2></td></tr>
 <tr class="separator:acd923ad3aaf046877dff8cc2740679f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e586f20456048b9bba97d750bf6051b" id="r_a3e586f20456048b9bba97d750bf6051b"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8cc.html#a3e586f20456048b9bba97d750bf6051b">calculate_bdf_coefficients</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a> method, const std::vector&lt; double &gt; &amp;time_steps)</td></tr>
 <tr class="separator:a3e586f20456048b9bba97d750bf6051b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b940a92ef88f34696ad9d9c1d0e9baa" id="r_a5b940a92ef88f34696ad9d9c1d0e9baa"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8cc.html#a5b940a92ef88f34696ad9d9c1d0e9baa">delta</a> (const unsigned int p, const unsigned int n, const unsigned int j, const Vector&lt; double &gt; &amp;times)</td></tr>
-<tr class="separator:a5b940a92ef88f34696ad9d9c1d0e9baa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1de5e3b8a7cc26c9873d22d691216a08" id="r_a1de5e3b8a7cc26c9873d22d691216a08"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8cc.html#a1de5e3b8a7cc26c9873d22d691216a08">delta</a> (const unsigned int order, const unsigned int n, const unsigned int j, const Vector&lt; double &gt; &amp;times)</td></tr>
+<tr class="separator:a1de5e3b8a7cc26c9873d22d691216a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="acd923ad3aaf046877dff8cc2740679f7" name="acd923ad3aaf046877dff8cc2740679f7"></a>
@@ -205,7 +205,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="bdf_8cc_source.html#l00010">10</a> of file <a class="el" href="bdf_8cc_source.html">bdf.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="bdf_8cc_source.html#l00064">delta()</a>.</p>
+<p class="reference">References <a class="el" href="bdf_8cc_source.html#l00063">delta()</a>.</p>
 
 </div>
 </div>
@@ -218,7 +218,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">Vector&lt; double &gt; calculate_bdf_coefficients </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td>
           <td class="paramname"><em>method</em>, </td>
         </tr>
         <tr>
@@ -245,7 +245,7 @@ integration based on the BDF for viscous flows." Journal of Computational Physic
   </table>
   </dd>
 </dl>
-<p>For example, if the method is a BDF2 ( \(n=2\)), it uses three values for the time: \(t\), \(t-\Delta t_1\) and \(t-\Delta t_2\). Thus the <code>time_steps</code> vector should contain \(\Delta t_1\) and \(\Delta t_2\).</p>
+<p>For example, if the method is a BDF2 ( \(n=2\)), it uses three values for the time: \(t\), \(t-\Delta t_1\) and \(t-\Delta t_2\). Thus, the <code>time_steps</code> vector should contain \(\Delta t_1\) and \(\Delta t_2\).</p>
 <dl class="section return"><dt>Returns</dt><dd>Vector containing BDF integration coefficient values.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>At the moment, the highest implemented scheme is <code>bdf3</code> (<code>order=3</code>). </dd></dl>
 
@@ -255,8 +255,8 @@ integration based on the BDF for viscous flows." Journal of Computational Physic
 
 </div>
 </div>
-<a id="a5b940a92ef88f34696ad9d9c1d0e9baa" name="a5b940a92ef88f34696ad9d9c1d0e9baa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b940a92ef88f34696ad9d9c1d0e9baa">&#9670;&#160;</a></span>delta()</h2>
+<a id="a1de5e3b8a7cc26c9873d22d691216a08" name="a1de5e3b8a7cc26c9873d22d691216a08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1de5e3b8a7cc26c9873d22d691216a08">&#9670;&#160;</a></span>delta()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -264,19 +264,19 @@ integration based on the BDF for viscous flows." Journal of Computational Physic
         <tr>
           <td class="memname">Vector&lt; double &gt; delta </td>
           <td>(</td>
-          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>order</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>n</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>j</em>, </td>
         </tr>
         <tr>
@@ -308,9 +308,9 @@ integration based on the BDF for viscous flows." Journal of Computational Physic
 <p>For example, if the method is a BDF2 ( \(n=2\)), three values of the time must be in the array: \(t\), \(t-\Delta t_1\) and \(t-\Delta t_2\).</p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of \(n\) divided differences ( \(\delta^j\)) used in the calculation of BDF coefficients. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bdf_8cc_source.html#l00064">64</a> of file <a class="el" href="bdf_8cc_source.html">bdf.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bdf_8cc_source.html#l00063">63</a> of file <a class="el" href="bdf_8cc_source.html">bdf.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="bdf_8cc_source.html#l00064">delta()</a>.</p>
+<p class="reference">References <a class="el" href="bdf_8cc_source.html#l00063">delta()</a>.</p>
 
 </div>
 </div>
