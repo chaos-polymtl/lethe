@@ -360,10 +360,15 @@ NavierStokesOperatorBase<dim, number>::compute_forcing_term_from_vector(
           thermal_expansion_model->vector_value({}, thermal_expansion);
 
           for (const auto q : fe_values.quadrature_point_indices())
-            forcing_terms[cell][q][lane] =
-              gravity_term[cell][q][lane] *
-              (1 - thermal_expansion[q] *
-                     (cell_temperature_solution[q] - reference_temperature));
+            {
+              const auto scaling =
+                1 - thermal_expansion[q] *
+                      (cell_temperature_solution[q] - reference_temperature);
+
+              for (unsigned int c = 0; c < dim; ++c)
+                forcing_terms[cell][q][c][lane] =
+                  gravity_term[cell][q][c][lane] * scaling;
+            }
         }
     }
 }
