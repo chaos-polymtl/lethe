@@ -1369,6 +1369,17 @@ HeatTransfer<dim>::setup_dofs()
                  .dirichlet_value.at(id),
               nonzero_constraints);
           }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_ht
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_ht
+                .periodic_direction.at(id),
+              nonzero_constraints);
+          }
       }
 
     // Initialize the vectors used in the time average temperature calculation
@@ -1399,6 +1410,17 @@ HeatTransfer<dim>::setup_dofs()
               this->dof_handler,
               id,
               Functions::ZeroFunction<dim>(),
+              zero_constraints);
+          }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_ht
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_ht
+                .periodic_direction.at(id),
               zero_constraints);
           }
       }
@@ -1474,6 +1496,17 @@ HeatTransfer<dim>::update_boundary_conditions()
             id,
             *this->simulation_parameters.boundary_conditions_ht.dirichlet_value
                .at(id),
+            nonzero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_ht
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_ht
+              .periodic_direction.at(id),
             nonzero_constraints);
         }
     }

@@ -1243,6 +1243,17 @@ Tracer<dim>::setup_dofs()
                 id),
               nonzero_constraints);
           }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_tracer
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_tracer
+                .periodic_direction.at(id),
+              nonzero_constraints);
+          }
       }
   }
   nonzero_constraints.close();
@@ -1263,6 +1274,17 @@ Tracer<dim>::setup_dofs()
               this->dof_handler,
               id,
               Functions::ZeroFunction<dim>(),
+              zero_constraints);
+          }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_tracer
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_tracer
+                .periodic_direction.at(id),
               zero_constraints);
           }
       }
@@ -1336,6 +1358,17 @@ Tracer<dim>::update_boundary_conditions()
             id,
             *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
               id),
+            nonzero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_tracer
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_tracer
+              .periodic_direction.at(id),
             nonzero_constraints);
         }
     }
