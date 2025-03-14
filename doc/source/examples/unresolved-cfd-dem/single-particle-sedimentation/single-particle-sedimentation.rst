@@ -54,7 +54,7 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
     subsection mesh
       set type           = dealii
       set grid type      = subdivided_hyper_rectangle
-      set grid arguments = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:true
+      set grid arguments = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:false
     end
 
 
@@ -172,14 +172,14 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :math:`0.0000008379` m\ :sup:`2`/s as to simulate the particle sedimentation in water at :math:`25^\circ\text{C}` (same conditions as in Ferreira et al. [#ferreira2023]_).
+We set a density of :math:`996.8` kg/m\ :sup:`3` and a kinematic viscosity of :math:`8.379e-7` m\ :sup:`2`/s as to simulate the particle sedimentation in water at :math:`25^\circ\text{C}` (same conditions as in Ferreira et al. [#ferreira2023]_).
 
 
 .. code-block:: text
 
     subsection physical properties
       subsection fluid 0
-        set kinematic viscosity = 0.0000008379
+        set kinematic viscosity = 8.379e-7
         set density             = 996.7775
       end
     end
@@ -193,29 +193,9 @@ For the boundary conditions, we choose a slip boundary condition on all the wall
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 6
+      set number = 1
       subsection bc 0
         set id   = 0
-        set type = slip
-      end
-      subsection bc 1
-        set id   = 1
-        set type = slip
-      end
-      subsection bc 2
-        set id   = 2
-        set type = slip
-      end
-      subsection bc 3
-        set id   = 3
-        set type = slip
-      end
-      subsection bc 4
-        set id   = 4
-        set type = slip
-      end
-      subsection bc 5
-        set id   = 5
         set type = slip
       end
     end
