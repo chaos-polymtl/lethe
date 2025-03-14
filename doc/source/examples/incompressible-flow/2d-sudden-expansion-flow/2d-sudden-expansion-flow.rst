@@ -17,7 +17,6 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-sudden-expansion-flow``).
 
 - Geometry file: ``two-dimensional-jet.geo``
-- Mesh file: ``two-dimensional-jet.msh``
 - Parameter file for steady-state case: ``Reynolds70-jet.prm``
 - Parameter file for transient case: ``Reynolds610-jet.prm``
 - Postprocessing Python script for computing velocity distribution: ``velocity_profiles.py``
@@ -68,7 +67,7 @@ For :math:`\textrm{Re} = 610`, a transient second-order backward differentiation
       set time end         = 15
     end
 
-in which ``adapt``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15` s.
+in which ``adapt``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15` s so that results can be compared to the reference case in [#durst1993]_.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -100,7 +99,7 @@ The mesh is composed of bilinear quadrilateral elements, and the problem geometr
 
     subsection mesh
       set type      = gmsh
-      set file name = ./sudden-expansion-flow.msh
+      set file name = ../two-dimensional-jet.msh
     end
 
 Mesh Adaptation
@@ -190,7 +189,7 @@ The inlet velocity is prescribed on boundary 0 as :math:`u = [1, 0, 0]`, and bou
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The default ``newton`` non-linear solver is herein adopted. 
+The default ``newton`` non-linear solver is herein adopted: 
 
 .. code-block:: text
 
@@ -219,7 +218,7 @@ A GMRES iterative solver with AMG preconditioner is used:
         set relative residual                     = 1e-3
         set minimum residual                      = 1e-7
         set preconditioner                        = amg
-        set amg preconditioner ilu fill           = 1
+        set amg preconditioner ilu fill           = 0
       end
     end
 
@@ -237,7 +236,7 @@ Assuming that the ``lethe-fluid`` executable is within your path, the simulation
   mpirun -np j lethe-fluid Reynolds70-jet.prm
 
 where ``j`` is the number of processes for parallel computation. For the case where :math:`\textrm{Re} = 610`, the parameter file should be named ``Reynolds610-jet.prm`` instead. 
-Using 8 cores, the steady-state simulation takes on average :math:`16` seconds, and the transient solution takes approximately :math:`50` minutes.
+Using 8 cores, the steady-state simulation takes on average 16 seconds, and the transient solution takes approximately 50 minutes.
 
 ----------------------
 Results and Discussion
@@ -271,7 +270,7 @@ in which the flag ``-Re`` indicates the Reynolds number. The figures we obtain a
 .. image:: image/Reynolds70-3.png
     :width: 400
 
-The first plot at :math:`x = 70` mm shows the Poiseuille-like flow before the channel expansion. A visible difference is noticed in the velocity profile at :math:`x = 130` mm. Nonetheless, numerical results presented by Kanna et. al. [#kanna2005]_ for this same example coincide with the Lethe curve.
+The first plot at :math:`x = 70` mm shows the Poiseuille-like flow before the channel expansion. A visible difference in the curves is noticed at :math:`x = 130` mm. Nonetheless, numerical results presented by Kanna et. al. [#kanna2005]_ for this same example coincide with the Lethe curve.
 
 At :math:`x = L_{outlet}` the velocity distribution is compared with analytical data, and a great agreement is found:
 

@@ -36,8 +36,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = gmsh
-  set file name          = ../two-dimensional-jet.msh
+  set type      = gmsh
+  set file name = ../two-dimensional-jet.msh
 end
 
 #---------------------------------------------------
