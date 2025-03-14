@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Addition of the periodic boundary conditions for the Cahn-Hilliard physics solver. [#1456](https://github.com/chaos-polymtl/lethe/pull/1456)
+- MINOR Addition of the periodic boundary conditions for the Cahn-Hilliard, heat transfer and tracer physics solvers. [#1456](https://github.com/chaos-polymtl/lethe/pull/1456)
 
 ## [Master] - 2025-03-19
 
