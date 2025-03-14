@@ -1055,22 +1055,6 @@ CahnHilliard<dim>::setup_dofs()
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions.type)
-      {
-        if (type == BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              this->dof_handler,
-              id,
-              this->simulation_parameters.boundary_conditions
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions.periodic_direction
-                .at(id),
-              nonzero_constraints);
-          }
-      }
-
-    for (auto const &[id, type] :
          this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
       {
         ComponentMask mask(2, true);
@@ -1092,6 +1076,17 @@ CahnHilliard<dim>::setup_dofs()
               nonzero_constraints,
               mask);
           }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_direction.at(id),
+              nonzero_constraints);
+          }
       }
   }
   nonzero_constraints.close();
@@ -1103,21 +1098,6 @@ CahnHilliard<dim>::setup_dofs()
                                             zero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions.type)
-      {
-        if (type == BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              this->dof_handler,
-              id,
-              this->simulation_parameters.boundary_conditions
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions.periodic_direction
-                .at(id),
-              this->zero_constraints);
-          }
-      }
-    for (auto const &[id, type] :
          this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
       {
         if (type == BoundaryConditions::BoundaryType::
@@ -1127,6 +1107,17 @@ CahnHilliard<dim>::setup_dofs()
               this->dof_handler,
               id,
               Functions::ZeroFunction<dim>(2),
+              zero_constraints);
+          }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_direction.at(id),
               zero_constraints);
           }
       }
@@ -1177,22 +1168,6 @@ CahnHilliard<dim>::update_boundary_conditions()
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions.type)
-    {
-      if (type == BoundaryConditions::BoundaryType::periodic)
-        {
-          DoFTools::make_periodicity_constraints(
-            this->dof_handler,
-            id,
-            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
-              .at(id),
-            this->simulation_parameters.boundary_conditions.periodic_direction
-              .at(id),
-            nonzero_constraints);
-        }
-    }
-
-  for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
     {
       ComponentMask mask(2, true);
@@ -1217,6 +1192,17 @@ CahnHilliard<dim>::update_boundary_conditions()
                  ->phi),
             nonzero_constraints,
             mask);
+        }
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_cahn_hilliard
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_cahn_hilliard
+              .periodic_direction.at(id),
+            nonzero_constraints);
         }
     }
 

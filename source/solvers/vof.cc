@@ -1907,21 +1907,6 @@ VolumeOfFluid<dim>::define_zero_constraints()
                                           this->zero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions.type)
-    {
-      if (type == BoundaryConditions::BoundaryType::periodic)
-        {
-          DoFTools::make_periodicity_constraints(
-            this->dof_handler,
-            id,
-            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
-              .at(id),
-            this->simulation_parameters.boundary_conditions.periodic_direction
-              .at(id),
-            this->zero_constraints);
-        }
-    }
-  for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions_vof.type)
     {
       if (type == BoundaryConditions::BoundaryType::vof_dirichlet)
@@ -1930,6 +1915,17 @@ VolumeOfFluid<dim>::define_zero_constraints()
             this->dof_handler,
             id,
             Functions::ZeroFunction<dim>(),
+            this->zero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_vof
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_vof
+              .periodic_direction.at(id),
             this->zero_constraints);
         }
     }
@@ -1949,21 +1945,6 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions.type)
-      {
-        if (type == BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              this->dof_handler,
-              id,
-              this->simulation_parameters.boundary_conditions
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions.periodic_direction
-                .at(id),
-              nonzero_constraints);
-          }
-      }
-    for (auto const &[id, type] :
          this->simulation_parameters.boundary_conditions_vof.type)
       {
         if (type == BoundaryConditions::BoundaryType::vof_dirichlet)
@@ -1973,6 +1954,17 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
               id,
               *this->simulation_parameters.boundary_conditions_vof
                  .phase_fraction.at(id),
+              nonzero_constraints);
+          }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_vof
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_vof
+                .periodic_direction.at(id),
               nonzero_constraints);
           }
       }
