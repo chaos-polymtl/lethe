@@ -76,6 +76,31 @@ namespace DEM
     };
   } // namespace CFDDEMProperties
 
+
+  namespace DEMMPProperties
+  {
+    /* @brief Manage the specific particle indices of the particle properties
+     * within the PropertyPool of the ParticleHandler for DEMMP simulations.
+     * A regular enum must be used here since an int is required to the particle
+     * properties.
+     */
+    enum PropertiesIndex : int
+    {
+      type         = 0,
+      dp           = 1,
+      mass         = 2,
+      v_x          = 3,
+      v_y          = 4,
+      v_z          = 5,
+      omega_x      = 6,
+      omega_y      = 7,
+      omega_z      = 8,
+      T            = 9,
+      n_properties = 10,
+    };
+  } // namespace DEMMPProperties
+
+
   /**
    * @brief Controls the name of output variables for the vtu.
    * @tparam dim An integer that denotes the number of spatial dimensions.
