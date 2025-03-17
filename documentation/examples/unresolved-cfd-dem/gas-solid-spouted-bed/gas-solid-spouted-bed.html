@@ -304,6 +304,7 @@
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../single-particle-sedimentation/single-particle-sedimentation.html">Single Particle Sedimentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../gas-solid-fluidized-bed/gas-solid-fluidized-bed.html">Gas-Solid Fluidized Bed</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Gas-Solid Spouted Bed</a></li>
@@ -435,7 +436,6 @@
         <article role="main">
           <section id="gas-solid-spouted-bed">
 <h1>Gas-Solid Spouted Bed<a class="headerlink" href="#gas-solid-spouted-bed" title="Link to this heading">#</a></h1>
-<p>It is strongly recommended to visit <a class="reference external" href="../../../parameters/dem/dem.html">DEM parameters</a>  and <a class="reference external" href="../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">CFD-DEM parameters</a> for more detailed information on the concepts and physical meaning of the parameters ind DEM and CFD-DEM.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -601,8 +601,8 @@ end
 <section id="cfd-dem-parameter-file">
 <h2>CFD-DEM Parameter File<a class="headerlink" href="#cfd-dem-parameter-file" title="Link to this heading">#</a></h2>
 <p>The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown here.</p>
-<section id="id3">
-<h3>Simulation Control<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id1">
+<h3>Simulation Control<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <p>The simulation is run for 5 s with a time step of 0.0001 s. The time scheme chosen for the simulation is first order backward difference method (BDF1). The simulation control section is shown:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method               = bdf1
@@ -844,7 +844,7 @@ The bubble formation as well as the spouting strength are highly dependent on th
 </li>
 <li><a class="reference internal" href="#running-the-dem-simulation">Running the DEM Simulation</a></li>
 <li><a class="reference internal" href="#cfd-dem-parameter-file">CFD-DEM Parameter File</a><ul>
-<li><a class="reference internal" href="#id3">Simulation Control</a></li>
+<li><a class="reference internal" href="#id1">Simulation Control</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
 <li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>

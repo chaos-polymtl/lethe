@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Cylindrical Packed Bed" href="cylindrical-packed-bed/cylindrical-packed-bed.html" /><link rel="prev" title="Granuheap" href="../dem/granuheap/granuheap.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Single Particle Sedimentation" href="single-particle-sedimentation/single-particle-sedimentation.html" /><link rel="prev" title="Granuheap" href="../dem/granuheap/granuheap.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
         <title>Unresolved CFD-DEM - Lethe documentation</title>
@@ -304,6 +304,7 @@
 </ul>
 </li>
 <li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">Unresolved CFD-DEM</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="single-particle-sedimentation/single-particle-sedimentation.html">Single Particle Sedimentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
 <li class="toctree-l3"><a class="reference internal" href="gas-solid-fluidized-bed/gas-solid-fluidized-bed.html">Gas-Solid Fluidized Bed</a></li>
 <li class="toctree-l3"><a class="reference internal" href="gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a></li>
@@ -438,7 +439,7 @@
 <p>This section includes examples related to multiphase fluid-solid flows. We organize the examples from the single phase flow in porous media (packed bed example) to multiphase flows (solid-gas, solid-liquid fluidized beds, and pneumatic conveying). The packed bed example uses the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code> solver which solves the Volume Average Navier Stokes (VANS) equations. The fluidized bed, the spouted bed, the Boycott effect, and the pneumatic conveying examples use the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> solver which solves the VANS equations for the fluid phase coupled with the DEM equations for the solid phase.</p>
 <div class="toctree-wrapper compound">
 </div>
-<div class="graphviz"><img src="../../_images/graphviz-51f57af5120dbeed6e325bad94a078d2ab513e02.png" alt="digraph unresolved_cfd_dem_diagram {
+<div class="graphviz"><img src="../../_images/graphviz-ff6e93ffe9ae4d4c46362f6aab39d6b1c36c138f.png" alt="digraph unresolved_cfd_dem_diagram {
   graph [bgcolor=&quot;transparent&quot;, align=true, ranksep=1.5];
   node [fontname=Arial, fontsize=20, shape=box, fontcolor=royalblue, color=royalblue, height=1];
   edge [color=royalblue];
@@ -447,19 +448,21 @@
 
   unresolved_cfd_dem [label=&quot;Unresolved \nCFD-DEM&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/unresolved-cfd-dem.html&quot;];
 
-  cfd_dem_1 [label=&quot;Cylindrical Packed Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html&quot;];
+  cfd_dem_1 [label=&quot;Single Particle Sedimentation&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/single-particle-sedimentation/single-particle-sedimentation.html&quot;];
 
-  cfd_dem_2 [label=&quot;Gas-Solid Fluidized Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html&quot;];
+  cfd_dem_2 [label=&quot;Cylindrical Packed Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html&quot;];
 
-  cfd_dem_3 [label=&quot;Gas-Solid Spouted Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html&quot;];
+  cfd_dem_3 [label=&quot;Gas-Solid Fluidized Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html&quot;];
 
-  cfd_dem_4 [label=&quot;Liquid-Solid Fluidized Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html&quot;];
+  cfd_dem_4 [label=&quot;Gas-Solid Spouted Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html&quot;];
 
-  cfd_dem_5 [label=&quot;Boycott Effect&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html&quot;];
+  cfd_dem_5 [label=&quot;Liquid-Solid Fluidized Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html&quot;];
 
-  cfd_dem_6 [label=&quot;Gas-Solid Spouted Cylinder Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html&quot;];
+  cfd_dem_6 [label=&quot;Boycott Effect&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html&quot;];
 
-  cfd_dem_7 [label=&quot;Dense Pneumatic Conveying&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html&quot;];
+  cfd_dem_7 [label=&quot;Gas-Solid Spouted Cylinder Bed&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html&quot;];
+
+  cfd_dem_8 [label=&quot;Dense Pneumatic Conveying&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html&quot;];
 
   unresolved_cfd_dem -&gt; cfd_dem_1:w;
   unresolved_cfd_dem -&gt; cfd_dem_2:w;
@@ -468,16 +471,18 @@
   unresolved_cfd_dem -&gt; cfd_dem_5:w;
   unresolved_cfd_dem -&gt; cfd_dem_6:w;
   unresolved_cfd_dem -&gt; cfd_dem_7:w;
+  unresolved_cfd_dem -&gt; cfd_dem_8:w;
 }" usemap="#unresolved_cfd_dem_diagram" class="graphviz" /></div>
 <map id="unresolved_cfd_dem_diagram" name="unresolved_cfd_dem_diagram">
-<area shape="rect" id="node1" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/unresolved-cfd-dem.html" title="Unresolved \nCFD&#45;DEM" alt="" coords="5,365,169,461"/>
-<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html" title="Cylindrical Packed Bed" alt="" coords="369,5,665,101"/>
-<area shape="rect" id="node3" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html" title="Gas&#45;Solid Fluidized Bed" alt="" coords="362,125,671,221"/>
-<area shape="rect" id="node4" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html" title="Gas&#45;Solid Spouted Bed" alt="" coords="365,245,668,341"/>
-<area shape="rect" id="node5" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html" title="Liquid&#45;Solid Fluidized Bed" alt="" coords="351,365,683,461"/>
-<area shape="rect" id="node6" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html" title="Boycott Effect" alt="" coords="425,485,609,581"/>
-<area shape="rect" id="node7" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html" title="Gas&#45;Solid Spouted Cylinder Bed" alt="" coords="313,605,720,701"/>
-<area shape="rect" id="node8" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html" title="Dense Pneumatic Conveying" alt="" coords="334,725,699,821"/>
+<area shape="rect" id="node1" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/unresolved-cfd-dem.html" title="Unresolved \nCFD&#45;DEM" alt="" coords="5,388,155,476"/>
+<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/single-particle-sedimentation/single-particle-sedimentation.html" title="Single Particle Sedimentation" alt="" coords="302,5,641,92"/>
+<area shape="rect" id="node3" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html" title="Cylindrical Packed Bed" alt="" coords="336,114,607,202"/>
+<area shape="rect" id="node4" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html" title="Gas&#45;Solid Fluidized Bed" alt="" coords="330,224,613,312"/>
+<area shape="rect" id="node5" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html" title="Gas&#45;Solid Spouted Bed" alt="" coords="333,333,610,421"/>
+<area shape="rect" id="node6" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html" title="Liquid&#45;Solid Fluidized Bed" alt="" coords="320,443,623,531"/>
+<area shape="rect" id="node7" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html" title="Boycott Effect" alt="" coords="388,552,556,640"/>
+<area shape="rect" id="node8" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html" title="Gas&#45;Solid Spouted Cylinder Bed" alt="" coords="286,662,657,750"/>
+<area shape="rect" id="node9" href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html" title="Dense Pneumatic Conveying" alt="" coords="305,772,638,859"/>
 </map></section>
 
         </article>
@@ -485,12 +490,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="cylindrical-packed-bed/cylindrical-packed-bed.html">
+          <a class="next-page" href="single-particle-sedimentation/single-particle-sedimentation.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Cylindrical Packed Bed</div>
+                <div class="title">Single Particle Sedimentation</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
