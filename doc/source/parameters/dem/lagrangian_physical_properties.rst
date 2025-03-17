@@ -42,6 +42,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set rolling viscous damping particles = 0.1
       set surface energy particles          = 0.0
       set Hamaker constant particles        = 4.e-19
+      set thermal conductivity particles    = 1
+      set specific heat particles           = 1000
 
     end
 
@@ -101,6 +103,10 @@ In this subsection, gravitational acceleration, and the physical properties of t
 * The ``surface energy particles`` defines the surface energy of particles for each type. This parameter is used with the JKR and DMT force model.
 
 * The ``Hamaker constant particles`` defines the Hamaker constant of particles for each type. This parameter is used with the DMT force model.
+
+* The ``thermal conductivity particles`` defines the thermal conductivity of particles for each type. This parameter is used in multiphysic DEM.
+
+* The ``specific heat particles`` defines the specific heat of particles for each type. This parameter is used in multiphysic DEM.
 
 * The ``young modulus wall`` defines the Young's modulus of the walls.
 

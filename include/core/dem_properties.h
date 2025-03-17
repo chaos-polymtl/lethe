@@ -86,17 +86,18 @@ namespace DEM
      */
     enum PropertiesIndex : int
     {
-      type         = 0,
-      dp           = 1,
-      mass         = 2,
-      v_x          = 3,
-      v_y          = 4,
-      v_z          = 5,
-      omega_x      = 6,
-      omega_y      = 7,
-      omega_z      = 8,
-      T            = 9,
-      n_properties = 10,
+      type          = 0,
+      dp            = 1,
+      mass          = 2,
+      v_x           = 3,
+      v_y           = 4,
+      v_z           = 5,
+      omega_x       = 6,
+      omega_y       = 7,
+      omega_z       = 8,
+      T             = 9,
+      specific_heat = 10,
+      n_properties  = 11,
     };
   } // namespace DEMMPProperties
 

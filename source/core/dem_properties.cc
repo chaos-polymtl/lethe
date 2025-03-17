@@ -48,6 +48,8 @@ namespace DEM
                                  DEM::DEMMPProperties::PropertiesIndex>)
       {
         properties[PropertiesIndex::T] = std::make_pair("temperature", 1);
+        properties[PropertiesIndex::specific_heat] =
+          std::make_pair("specific_heat", 1);
       }
     return properties;
   }

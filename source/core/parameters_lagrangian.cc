@@ -80,13 +80,13 @@ namespace Parameters
                         Patterns::Double(),
                         "Material Hamaker constant");
       prm.declare_entry("thermal conductivity particles",
-                        "0.5",
+                        "1",
                         Patterns::Double(),
                         "Particle thermal conductivity");
-      prm.declare_entry("heat capacity particles",
-                        "5",
+      prm.declare_entry("specific heat particles",
+                        "1000",
                         Patterns::Double(),
-                        "Particle heat capacity");
+                        "Particle specific heat");
     }
 
     void
@@ -153,8 +153,8 @@ namespace Parameters
         prm.get_double("hamaker constant particles");
       thermal_conductivity_particle.at(particle_type) =
         prm.get_double("thermal conductivity particles");
-      heat_capacity_particle.at(particle_type) =
-        prm.get_double("heat capacity particles");
+      specific_heat_particle.at(particle_type) =
+        prm.get_double("specific heat particles");
     }
 
     void
@@ -253,7 +253,7 @@ namespace Parameters
                             surface_energy_particle,
                             hamaker_constant_particle,
                             thermal_conductivity_particle,
-                            heat_capacity_particle);
+                            specific_heat_particle);
 
       // Deprecated parameter handling
       // <g> used to be 3 parameters: <gx>, <gy> and <gz>
@@ -312,7 +312,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &surface_energy_particle,
       std::unordered_map<unsigned int, double> &hamaker_constant_particle,
       std::unordered_map<unsigned int, double> &thermal_conductivity_particle,
-      std::unordered_map<unsigned int, double> &heat_capacity_particle)
+      std::unordered_map<unsigned int, double> &specific_heat_particle)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -333,7 +333,7 @@ namespace Parameters
           surface_energy_particle.insert({counter, 0.});
           hamaker_constant_particle.insert({counter, 0.});
           thermal_conductivity_particle.insert({counter, 0.});
-          heat_capacity_particle.insert({counter, 0.});
+          specific_heat_particle.insert({counter, 0.});
         }
       seed_for_distributions.reserve(particle_type_maximum_number);
     }

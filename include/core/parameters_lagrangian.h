@@ -105,8 +105,8 @@ namespace Parameters
       // Thermal conductivity of each particle type
       std::unordered_map<unsigned int, double> thermal_conductivity_particle;
 
-      // Heat capacity of each particle type
-      std::unordered_map<unsigned int, double> heat_capacity_particle;
+      // Specific heat of each particle type
+      std::unordered_map<unsigned int, double> specific_heat_particle;
 
       // Young's modulus of wall
       double youngs_modulus_wall;
@@ -169,7 +169,7 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &surface_energy_particle,
         std::unordered_map<unsigned int, double> &hamaker_constant_particle,
         std::unordered_map<unsigned int, double> &thermal_conductivity_particle,
-        std::unordered_map<unsigned int, double> &heat_capacity_particle);
+        std::unordered_map<unsigned int, double> &specific_heat_particle);
     };
 
     struct InsertionInfo
