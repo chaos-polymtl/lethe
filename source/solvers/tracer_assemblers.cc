@@ -686,6 +686,16 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
             }
         }
     }
+  else if (boundary_conditions_tracer.type[boundary_index] ==
+             BoundaryConditions::BoundaryType::periodic ||
+           boundary_conditions_tracer.type[boundary_index] ==
+             BoundaryConditions::BoundaryType::periodic_neighbor)
+    {
+      AssertThrow(
+        false,
+        ExcMessage(
+          "Periodic boundary conditions cannot be used with the tracer physics when discontinous Galerkin elements are used."));
+    }
   // If it is an unknown boundary condition, throw an exception. This case
   // should never occur.
   else
