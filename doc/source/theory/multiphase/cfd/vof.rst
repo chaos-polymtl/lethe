@@ -147,7 +147,7 @@ a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` correspon
 Algebraic Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The algebraic interface reinitialization method consists of compressing and diffusing the interface in the normal direction of the interface. It is done by solving the following transient partial differential equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme:
+The algebraic interface reinitialization method consists of compressing and diffusing the interface in the normal direction of the interface. It is done by solving the following transient partial differential equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
 
 .. math::
 
@@ -160,7 +160,7 @@ where:
 
 - :math:`\phi_\text{reinit}` is the reinitialized phase fraction;
 
-- :math:`\tau` is the time variable. It is different from the time variable :math:`t` of the actual simulation.
+- :math:`\tau` is the pseudo-time variable. It is different from the time variable :math:`t` of the actual simulation.
 
 - :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert_2}` is the normal vector of the interface with :math:`\nabla \psi` the projected VOF phase gradient, and;
 
@@ -187,23 +187,24 @@ Find :math:`\phi_\text{reinit} \in \Phi(\Omega) \times [0, \mathrm{\tau}_\text{e
 
     \int_\Omega \upsilon \left(\partial_\tau \phi_\text{reinit} + \nabla \cdot \left[ \phi_\text{reinit} (1-\phi_\text{reinit})\mathbf{n}\right] - \varepsilon \nabla \cdot \left[  (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n}\right]\right)\, \mathrm{d}\Omega = 0 \quad \forall \, \upsilon \in V
 
-As the equation is non-linear, we use the `Newton-Raphson method <https://en.wikipedia.org/wiki/Newton%27s_method>`_ and solve the linear system :math:`\mathcal{J} \, \delta\phi_\text{reinit} = -\mathcal{R}`. We obtain the Residual (:math:`\mathcal{R}`) and Jacobian (:math:`\mathcal{J}`) below.
+As the equation is non-linear, we use the `Newton-Raphson method <https://en.wikipedia.org/wiki/Newton%27s_method>`_ and solve the linear system :math:`\mathcal{J} \, \delta\phi_\text{reinit} = -\mathcal{R}`. We obtain the Residual (:math:`\mathcal{R}`) and Jacobian (:math:`\mathcal{J}`) below:
 
 .. math::
     \begin{split}
-    \mathcal{R} = & \int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit} \, \mathrm{d}\Omega \\
+    \mathcal{R} = & \int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit}^{n} \, \mathrm{d}\Omega \\
                    & + \int_\Omega\upsilon
-                  \left[ \mathbf{n} \cdot \nabla \phi_\text{reinit} - \mathbf{n} \cdot \left(  2 \phi_\text{reinit} \nabla \phi_\text{reinit}\right) +(\phi_\text{reinit} -\phi_\text{reinit}^2) (\nabla \cdot \mathbf{n}) \right] \mathrm{d}\Omega \\
-                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega 
+                  \left[ \mathbf{n} \cdot \nabla \phi_\text{reinit}^{n} - \mathbf{n} \cdot \left(  2 \phi_\text{reinit}^{n} \nabla \phi_\text{reinit}^{n}\right) +(\phi_\text{reinit}^{n} -{\left(\phi_\text{reinit}^{n}\right)}^2) (\nabla \cdot \mathbf{n}) \right] \mathrm{d}\Omega \\
+                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit}^{n} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega
 
     \end{split}
 
+where, :math:`\phi_\text{reinit}^{n} = \phi_\text{reinit}^{n-1} + \delta \phi_\text{reinit}` is the reinitialized phase fraction value of the previous Newton iteration updated following .
 
-With
+Considering,
 
 .. math::
 
-    \phi_\text{reinit} = \sum_{j=1}^N \phi_{\text{reinit},j} \, \xi_j
+    \delta \phi_\text{reinit} = \sum_{j=1}^N \delta \phi_{\text{reinit},j} \, \xi_j
 
 where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the reinitialized phase fraction field, the Jacobian reads:
 
@@ -211,7 +212,7 @@ where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the rein
     \begin{split}
     \mathcal{J} = & \int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega \\
                    & + \int_\Omega\upsilon
-                  \left[ \mathbf{n} \cdot \left( \nabla \xi_j - 2 \phi_\text{reinit} \nabla \xi_j -2 \xi_j \nabla\phi_\text{reinit} \right) + \left( \xi_j -2\phi_\text{reinit}\xi_j \right) \right] \mathrm{d}\Omega \\
+                  \left[ \mathbf{n} \cdot \left( \nabla \xi_j - 2 \phi_\text{reinit}^{n} \nabla \xi_j -2 \xi_j \nabla\phi_\text{reinit}^{n} \right) + \left( \xi_j -2\phi_\text{reinit}^{n}\xi_j \right) \right] \mathrm{d}\Omega \\
                    & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega
 
     \end{split}
@@ -307,6 +308,8 @@ References
 .. [#tezduyar2003] \T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” *Int. J. Numer. Methods Fluids*, vol. 43, no. 5, pp. 555–575, 2003, doi: `10.1002/fld.505 <https://doi.org/10.1002/fld.505>`_\.
 
 .. [#aliabadi2000] \S. Aliabadi and T. E. Tezduyar, “Stabilized-finite-element/interface-capturing technique for parallel computation of unsteady flows with interfaces,” *Comput. Methods Appl. Mech. Eng.*, vol. 190, no. 3, pp. 243–261, Oct. 2000, doi: `10.1016/S0045-7825(00)00200-0 <https://doi.org/10.1016/S0045-7825(00)00200-0>`_\.
+
+.. [#olsson2007] \E.Olsson, G. Kreiss, and S. Zahedi, "A conservative level set method for two phase flow II," *J. Comput. Phys.*, vol. 225, no. 1, pp. 785–807, Jul. 2007, doi: `10.1016/j.jcp.2006.12.027 <https://doi.org/10.1016/j.jcp.2006.12.027>`_\.
 
 .. [#brackbill1992] \J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: `10.1016/0021-9991(92)90240-Y <https://doi.org/10.1016/0021-9991(92)90240-Y>`_\.
 
