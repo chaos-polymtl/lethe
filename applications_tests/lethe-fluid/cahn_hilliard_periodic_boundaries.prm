@@ -82,18 +82,18 @@ end
 subsection physical properties
   set number of fluids                = 2
   set number of material interactions = 1
-  subsection fluid 0 # Water (phase = 1)
+  subsection fluid 0 # (phase = 1)
     set kinematic viscosity = 1e-2
     set density             = 1.23
   end
-  subsection fluid 1 # Air (phase = -1)
+  subsection fluid 1 # (phase = -1)
     set kinematic viscosity = 1e-2
     set density             = 1.23
   end
   subsection material interaction 0
     subsection fluid-fluid interaction
       set surface tension coefficient     = 0
-      set cahn hilliard mobility constant = 1e-6 #1e-2
+      set cahn hilliard mobility constant = 1e-6
     end
   end
 end
