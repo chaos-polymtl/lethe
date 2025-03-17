@@ -3,7 +3,7 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2025-03-14
+## [Master] - 2025-03-17
 
 ### Added
 
