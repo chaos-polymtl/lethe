@@ -1331,7 +1331,7 @@ namespace BoundaryConditions
         phase_fraction[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
       }
-    else if (op == "periodic")
+    if (auto const option = prm.get("type"); option == "periodic")
       {
         types::boundary_id periodic_boundary_id =
           prm.get_integer("periodic_id");
@@ -1346,11 +1346,6 @@ namespace BoundaryConditions
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
           prm.get_integer("periodic_direction");
-      }
-    else
-      {
-        AssertThrow(false,
-                    ExcMessage("Unknown boundary condition type for VOF."));
       }
   }
 
