@@ -17,7 +17,7 @@ set dimension = 2
 subsection simulation control
   set method           = bdf1
   set output name      = periodic
-  set output frequency = 1
+  set output frequency = 0
   set time end         = 2
   set time step        = 0.1
 end
