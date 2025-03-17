@@ -15,6 +15,7 @@ Incompressible Flow
     2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder
     2d-naca0012-low-reynolds/2d-naca0012-low-reynolds
     2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche
+    2d-sudden-expansion-flow/2d-sudden-expansion-flow
     3d-flow-around-sphere/flow-around-sphere
     3d-taylor-green-vortex/3d-taylor-green-vortex
     3d-turbulent-taylor-couette/3d-turbulent-taylor-couette
@@ -61,6 +62,8 @@ Incompressible Flow
 
       incompressible_1_8 [label="Taylor-Couette Flow Using \nNitsche Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html", tooltip="Taylor-Couette flow using Nitsche immersed boundary"];
 
+      incompressible_1_9 [label="Sudden-Expansion Flow", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html"];
+
       incompressible_2 [label="3D",shape=polygon,sides=4]; 
 
       incompressible_2_1 [label="Flow around a Sphere", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html"];
@@ -86,6 +89,7 @@ Incompressible Flow
       incompressible_1 -> incompressible_1_6:w;
       incompressible_1 -> incompressible_1_7:w;
       incompressible_1 -> incompressible_1_8:w;
+      incompressible_1 -> incompressible_1_9:w;
       incompressible_2 -> incompressible_2_1:w;
       incompressible_2 -> incompressible_2_2:w;
       incompressible_2 -> incompressible_2_3:w;
