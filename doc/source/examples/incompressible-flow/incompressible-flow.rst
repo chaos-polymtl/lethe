@@ -16,6 +16,7 @@ Incompressible Flow
     2d-naca0012-low-reynolds/2d-naca0012-low-reynolds
     2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche
     2d-sudden-expansion-flow/2d-sudden-expansion-flow
+    2d-mms/2d-mms
     3d-flow-around-sphere/flow-around-sphere
     3d-taylor-green-vortex/3d-taylor-green-vortex
     3d-turbulent-taylor-couette/3d-turbulent-taylor-couette
@@ -61,6 +62,8 @@ Incompressible Flow
       incompressible_1_7 [label="Flow around NACA0012 \nat low Reynolds Number", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html", tooltip="Flow around NACA0012 at low Reynolds number"];
 
       incompressible_1_8 [label="Taylor-Couette Flow Using \nNitsche Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html", tooltip="Taylor-Couette flow using Nitsche immersed boundary"];
+      
+      incompressible_1_9 [label="Method of Manufactured Solutions \n for Steady Incompressible Flow", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mms/2d-mms.html", tooltip="Incompressible Solver Verification Using the Method of Manufactured Solutions"];
 
       incompressible_1_9 [label="Sudden-Expansion Flow", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html"];
 
