@@ -41,9 +41,9 @@ test()
   const double dt2                                 = 0.005;
   const double time_step_ratio                     = dt1 / dt2;
   const double time_final                          = 1;
-  const double heat_capacity                       = 4;
+  const double heat_capacity                       = 840; //glass
   lagrangian_prop.particle_type_number             = 1;
-  lagrangian_prop.thermal_conductivity_particle[0] = 0.6;
+  lagrangian_prop.thermal_conductivity_particle[0] = 1; //glass
   lagrangian_prop.heat_capacity_particle[0]        = heat_capacity;
 
   // Defining particle handler
