@@ -1,0 +1,80 @@
+Running on 6 MPI rank(s)...
+   Number of active cells:       32768
+   Number of degrees of freedom: 49923
+   Volume of triangulation:      4
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start    |       1.9s |            |
+|                                             |            |            |
+| Section                         | no. calls |  wall time | % of total |
++---------------------------------+-----------+------------+------------+
+| Read mesh and manifolds         |         1 |      1.08s |        57% |
+| Setup DOFs                      |         1 |     0.622s |        33% |
++---------------------------------+-----------+------------+------------+
+
+
+*****************************
+Steady iteration:        1/1
+*****************************
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  1.12768
+  -Tolerance of iterative solver is : 0.00112768
+  -Iterative solver took : 289 steps to reach a residual norm of 0.00112075
+	alpha =      1 res = 0.07053
+	||du||_L2 =  78.35	||du||_Linfty = 0.9998
+	||dp||_L2 =  87.16	||dp||_Linfty = 2.344
+Newton iteration: 1  - Residual:  0.07053
+  -Tolerance of iterative solver is : 7.053e-05
+  -Iterative solver took : 182 steps to reach a residual norm of 6.99e-05
+	alpha =      1 res = 6.99e-05
+	||du||_L2 = 0.1805	||du||_Linfty = 0.003754
+	||dp||_L2 =  37.28	||dp||_Linfty = 0.9801
+Newton iteration: 2  - Residual:  6.99e-05
+  -Tolerance of iterative solver is : 6.99e-08
+  -Iterative solver took : 399 steps to reach a residual norm of 6.912e-08
+	alpha =      1 res = 6.915e-08
+	||du||_L2 = 0.007705	||du||_Linfty = 0.0001195
+	||dp||_L2 = 0.03917	||dp||_Linfty = 0.0008415
+Newton iteration: 3  - Residual:  6.915e-08
+  -Tolerance of iterative solver is : 6.915e-11
+  -Iterative solver took : 402 steps to reach a residual norm of 6.883e-11
+	alpha =      1 res = 6.883e-11
+	||du||_L2 = 8.427e-06	||du||_Linfty = 1.206e-07
+	||dp||_L2 = 2.467e-05	||dp||_Linfty = 5.996e-07
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start                |      7.24s |            |
+|                                                         |            |            |
+| Section                                     | no. calls |  wall time | % of total |
++---------------------------------------------+-----------+------------+------------+
+| Assemble RHS                                |         5 |      2.48s |        34% |
+| Assemble matrix                             |         4 |      2.94s |        41% |
+| Calculate and output norms after Newton its |         4 |     0.117s |       1.6% |
+| Calculate error w.r.t. analytical solution  |         1 |     0.256s |       3.5% |
+| Distribute constraints after linear solve   |         4 |   0.00468s |         0% |
+| Output VTU                                  |         2 |     0.506s |         7% |
+| Setup ILU                                   |         4 |    0.0305s |      0.42% |
+| Solve linear system                         |         4 |       0.9s |        12% |
++---------------------------------------------+-----------+------------+------------+
+
+cells error_velocity error_pressure 
+32768 1.809204e-03 - 1.679530e-02 - 
+
+
++---------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start    |  0.000962s |            |
+|                                             |            |            |
+| Section                         | no. calls |  wall time | % of total |
++---------------------------------+-----------+------------+------------+
++---------------------------------+-----------+------------+------------+
+
