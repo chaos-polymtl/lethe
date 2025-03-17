@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This test verifies the periodic boundary conditions of the transfer solver by monitoring the average temperature in the domain.
+# This test verifies the periodic boundary conditions of the heat transfer solver by monitoring the average temperature in the domain.
 # Although there is a flow in the x direction, the average temperature remains the same since all heat exiting the domain comes
 # back inside through the periodic boundary condition.
 
