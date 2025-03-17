@@ -20,7 +20,7 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
                       const DEMSolverParameters<dim>  &dem_parameters,
                       const double                     dt,
                       std::vector<double>             &heat_transfer,
-                      const double                     heat_source)
+                      std::vector<double>             &heat_source)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -29,6 +29,7 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
       const types::particle_index particle_id = particle->get_local_index();
       auto         particle_properties        = particle->get_properties();
       double      &particle_heat_transfer     = heat_transfer[particle_id];
+      double      &particle_heat_source       = heat_source[particle_id];
       const double mass_inverse =
         1 / particle_properties[PropertiesIndex::mass];
       const unsigned int type = particle_properties[PropertiesIndex::type];
@@ -38,7 +39,7 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
 
       // Integration
       particle_properties[PropertiesIndex::T] +=
-        dt * (particle_heat_transfer + heat_source) * mass_inverse * 1 /
+        dt * (particle_heat_transfer + particle_heat_source) * mass_inverse * 1 /
         heat_capacity;
 
       // Reinitialize heat_transfer

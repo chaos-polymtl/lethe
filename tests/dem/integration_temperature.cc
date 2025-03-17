@@ -70,8 +70,9 @@ test()
 
   // Initialize variables
   std::vector<double> heat_transfer;
-  double              heat_source = 0;
+  std::vector<double> heat_source;
   heat_transfer.push_back(0);
+  heat_source.push_back(0);
   double T_analytical;
   double particle_temperature_error_dt1;
   double particle_temperature_error_dt2;
