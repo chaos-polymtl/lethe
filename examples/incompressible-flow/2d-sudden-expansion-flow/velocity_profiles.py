@@ -35,7 +35,6 @@ folder = "./Reynolds" + str(Re) +'/'
 # Variables
 L_out = 1.0                     # Outlet length
 L_in = 0.08                     # Inlet length
-L_out = L_in + L_out            # Total length
 h = 0.01                        # constriction diameter
 
 # Plotting text size
@@ -146,9 +145,9 @@ for row in range(a.shape[0]):
 
         plt.xticks(rotation=90)
         plt.xlabel("y [m]")
-        plt.ylabel(r'$u/u_{max}$')
+        plt.ylabel(r'$u/u_{max}$ [-]')
         plt.legend()
-        plt.title(f'Re = 70, x = {int(a[int(row),0]*1e3)}mm')
+        plt.title(f'Re = 70, x = {a[int(row),0]:.3f} m')
         plt.axis([0,2*h,0,1])
         plt.savefig(f'Reynolds70-{row}.png', bbox_inches='tight')
     elif(Re == 610):
@@ -161,9 +160,9 @@ for row in range(a.shape[0]):
                  marker='o', markerfacecolor='none', linestyle='', linewidth=2.0, color='r')
         plt.xticks(rotation=90)
         plt.xlabel("y [m]")
-        plt.ylabel(r'$u/u_{max}$')
+        plt.ylabel(r'$u/u_{max}$ [-]')
         plt.legend()
-        plt.title(f'Re = 610, x = {int(a[int(row),0]*1e3)}mm')
+        plt.title(f'Re = 610, x = {a[int(row),0]:.3f} m')
         plt.axis([0,2*h,-0.25,1])
         plt.savefig(f'Reynolds610-{row}.png', bbox_inches='tight')
 
@@ -185,7 +184,7 @@ plt.plot(y_out_an+h, u_out_an, label="Analytical Poiseuille Flow", linestyle='--
 # Graph setup
 plt.xticks(rotation=90)
 plt.xlabel("y [m]")
-plt.ylabel(r'$u$')
+plt.ylabel(r'$u$ [m/s]')
 plt.legend()
 plt.axis([0,2*h,0,1])
 
