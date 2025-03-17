@@ -55,6 +55,9 @@ namespace BoundaryConditions
     none,
     outlet, // outlet is used for fluid dynamics, tracer and eventually other
             // physics
+    periodic,
+    periodic_neighbor, // The periodic neighbour is used to indicate a boundary
+                       // which matches with a main periodic boundary
 
     // for fluid
     noslip,
@@ -62,9 +65,6 @@ namespace BoundaryConditions
     function,
     function_weak,
     partial_slip,
-    periodic,
-    periodic_neighbor, // The periodic neighbour is used to indicate a boundary
-                       // which matches with a main periodic boundary
     pressure,
     //  for heat transfer
     noflux,
@@ -598,6 +598,18 @@ namespace BoundaryConditions
     prm.enter_subsection("heat_flux");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
+
+    // Periodic boundary condition parameters for HT physics
+    prm.declare_entry(
+      "periodic_id",
+      "-1",
+      Patterns::Integer(),
+      "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
+
+    prm.declare_entry("periodic_direction",
+                      "0",
+                      Patterns::Integer(),
+                      "Direction for periodic boundary condition");
   }
 
   /**
@@ -668,7 +680,7 @@ namespace BoundaryConditions
       {
         this->type[boundary_id] = BoundaryType::noflux;
       }
-    if (op == "temperature")
+    else if (op == "temperature")
       {
         this->type[boundary_id] = BoundaryType::temperature;
       }
@@ -679,6 +691,28 @@ namespace BoundaryConditions
 
         // Emissivity validity (0 <= emissivity <= 1) will be checked at
         // evaluation.
+      }
+    else if (op == "periodic")
+      {
+        types::boundary_id periodic_boundary_id =
+          prm.get_integer("periodic_id");
+
+        this->type[boundary_id] = BoundaryType::periodic;
+
+        // We attribute a periodic neighbor boundary type to the neighbor
+        // boundary to ensure that all boundaries have a defined type
+        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+        // We store the periodic id and direction
+        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+        this->periodic_direction[boundary_id] =
+          prm.get_integer("periodic_direction");
+      }
+    else
+      {
+        AssertThrow(false,
+                    ExcMessage(
+                      "Unknown boundary condition type for heat transfer."));
       }
 
     // All the functions are parsed since they might be used for post-processing
@@ -795,6 +829,18 @@ namespace BoundaryConditions
     prm.enter_subsection("dirichlet");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
+
+    // Periodic boundary condition parameters for Tracer physics
+    prm.declare_entry(
+      "periodic_id",
+      "-1",
+      Patterns::Integer(),
+      "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
+
+    prm.declare_entry("periodic_direction",
+                      "0",
+                      Patterns::Integer(),
+                      "Direction for periodic boundary condition");
   }
 
   /**
@@ -871,6 +917,22 @@ namespace BoundaryConditions
     else if (op == "outlet")
       {
         this->type[boundary_id] = BoundaryType::outlet;
+      }
+    else if (op == "periodic")
+      {
+        types::boundary_id periodic_boundary_id =
+          prm.get_integer("periodic_id");
+
+        this->type[boundary_id] = BoundaryType::periodic;
+
+        // We attribute a periodic neighbor boundary type to the neighbor
+        // boundary to ensure that all boundaries have a defined type
+        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+        // We store the periodic id and direction
+        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+        this->periodic_direction[boundary_id] =
+          prm.get_integer("periodic_direction");
       }
     else
       {
@@ -970,6 +1032,18 @@ namespace BoundaryConditions
     prm.enter_subsection("phi");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
+
+    // Periodic boundary condition parameters for Cahn-Hilliards physics
+    prm.declare_entry(
+      "periodic_id",
+      "-1",
+      Patterns::Integer(),
+      "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
+
+    prm.declare_entry("periodic_direction",
+                      "0",
+                      Patterns::Integer(),
+                      "Direction for periodic boundary condition");
   }
 
   /**
@@ -1046,22 +1120,44 @@ namespace BoundaryConditions
       {
         this->type[boundary_id] = BoundaryType::none;
       }
-    if (op == "noflux")
+    else if (op == "noflux")
       {
         this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
       }
-    if (op == "dirichlet")
+    else if (op == "dirichlet")
       {
         this->type[boundary_id] =
           BoundaryType::cahn_hilliard_dirichlet_phase_order;
       }
-    if (op == "angle_of_contact")
+    else if (op == "angle_of_contact")
       {
         this->type[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;
       }
-    if (op == "free_angle")
+    else if (op == "free_angle")
       {
         this->type[boundary_id] = BoundaryType::cahn_hilliard_free_angle;
+      }
+    else if (op == "periodic")
+      {
+        types::boundary_id periodic_boundary_id =
+          prm.get_integer("periodic_id");
+
+        this->type[boundary_id] = BoundaryType::periodic;
+
+        // We attribute a periodic neighbor boundary type to the neighbor
+        // boundary to ensure that all boundaries have a defined type
+        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+        // We store the periodic id and direction
+        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+        this->periodic_direction[boundary_id] =
+          prm.get_integer("periodic_direction");
+      }
+    else
+      {
+        AssertThrow(false,
+                    ExcMessage(
+                      "Unknown boundary condition type for Cahn-Hilliard."));
       }
   }
 
@@ -1147,6 +1243,18 @@ namespace BoundaryConditions
     prm.enter_subsection("dirichlet");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
+
+    // Periodic boundary condition parameters for VOF physics
+    prm.declare_entry(
+      "periodic_id",
+      "-1",
+      Patterns::Integer(),
+      "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
+
+    prm.declare_entry("periodic_direction",
+                      "0",
+                      Patterns::Integer(),
+                      "Direction for periodic boundary condition");
   }
 
   /**
@@ -1220,6 +1328,27 @@ namespace BoundaryConditions
           std::make_shared<Functions::ParsedFunction<dim>>();
         phase_fraction[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
+      }
+    else if (op == "periodic")
+      {
+        types::boundary_id periodic_boundary_id =
+          prm.get_integer("periodic_id");
+
+        this->type[boundary_id] = BoundaryType::periodic;
+
+        // We attribute a periodic neighbor boundary type to the neighbor
+        // boundary to ensure that all boundaries have a defined type
+        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+        // We store the periodic id and direction
+        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+        this->periodic_direction[boundary_id] =
+          prm.get_integer("periodic_direction");
+      }
+    else
+      {
+        AssertThrow(false,
+                    ExcMessage("Unknown boundary condition type for VOF."));
       }
   }
 
