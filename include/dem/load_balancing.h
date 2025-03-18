@@ -192,7 +192,6 @@ public:
   inline void
   connect_weight_signals()
   {
-
 #if DEAL_II_VERSION_GTE(9, 7, 0)
 
     triangulation->signals.weight.connect(
