@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Test description:
-# This test is inspired from the granular damp-break example. And those twp things. 
+# This test is inspired from the granular damp-break example and does two things:
 # First, it uses the cell weight function feature, with a particle weight equal to zero, to give more weight to the cells we know the particle are heading.
 # Second, it is a restart (starting at iteration 500) and uses the "once" load balancing method at step 1.
 # Despite these conditions a load balance should still occur right after the restart, which is what we want.
