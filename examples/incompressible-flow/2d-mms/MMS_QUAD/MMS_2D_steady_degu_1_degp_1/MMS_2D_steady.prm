@@ -11,8 +11,8 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method = steady
-  set output name = output_MMS_2D_steady_
+  set method            = steady
+  set output name       = output_MMS_2D_steady_
   set number mesh adapt = 5
 end
 
@@ -50,7 +50,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
- set number = 4
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = function
@@ -96,24 +96,25 @@ end
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
-subsection source term
-    subsection fluid dynamics
-      set enable                  = true
-      set Function constants  =  nu=1
-      set Function expression = pi*sin(pi*y)*(-16*pi*nu*sin(pi*x)*sin(pi*x)*cos(pi*y)+ 4*pi*nu*cos(pi*y)+4*sin(pi*x)*sin(pi*x)*sin(pi*x)*sin(pi*y)*cos(pi*x)+cos(pi*x)); pi*sin(pi*x)*(16*pi*nu*sin(pi*y)*sin(pi*y)*cos(pi*x)- 4*pi*nu*cos(pi*x)+4*sin(pi*x)*sin(pi*y)*sin(pi*y)*sin(pi*y)*cos(pi*y)+cos(pi*y)); 0
-    end
-end
 
+subsection source term
+  subsection fluid dynamics
+    set enable              = true
+    set Function constants  = nu=1
+    set Function expression = pi*sin(pi*y)*(-16*pi*nu*sin(pi*x)*sin(pi*x)*cos(pi*y)+ 4*pi*nu*cos(pi*y)+4*sin(pi*x)*sin(pi*x)*sin(pi*x)*sin(pi*y)*cos(pi*x)+cos(pi*x)); pi*sin(pi*x)*(16*pi*nu*sin(pi*y)*sin(pi*y)*cos(pi*x)- 4*pi*nu*cos(pi*x)+4*sin(pi*x)*sin(pi*y)*sin(pi*y)*sin(pi*y)*cos(pi*y)+cos(pi*y)); 0
+  end
+end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
+  set enable = true
   # set filename               = L2Error_2D_incompressibleNS_steady
-    subsection uvwp
-        set Function expression = -2*sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; 2*cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)*sin(pi*y)
-    end
+  subsection uvwp
+    set Function expression = -2*sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; 2*cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)*sin(pi*y)
+  end
 end
 
 #---------------------------------------------------
@@ -128,8 +129,9 @@ end
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = uniform
+  set type = uniform
   #set max number elements     = 20000
   #set max refinement level    = 6
   #set min refinement level    = 6
@@ -137,7 +139,6 @@ subsection mesh adaptation
   #set fraction refinement     = 0.1
   #set fraction coarsening     = 0.1
 end
-
 
 #---------------------------------------------------
 # Non-Linear Solver Control
