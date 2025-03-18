@@ -25,7 +25,6 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_wall_broad_search.h>
-#include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
 #include <dem/particle_wall_linear_force.h>
 

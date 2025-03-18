@@ -12,8 +12,6 @@
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/particles/particle_handler.h>
-
 using namespace dealii;
 
 /**
@@ -97,7 +95,7 @@ public:
    * @return bool indicating if this is a load balance iteration.
    */
   inline void
-  check_load_balance_iteration()
+  check_load_balance_iteration() const
   {
     return iteration_check_function();
   }
@@ -140,7 +138,7 @@ public:
    * iteration according to the load balancing `step`.
    */
   void
-  check_load_balance_once();
+  check_load_balance_once() const;
 
   /**
    * @brief Determines whether the present iteration is the load balance step
@@ -150,7 +148,7 @@ public:
    * iteration according to the load balancing `frequency`.
    */
   void
-  check_load_balance_frequent();
+  check_load_balance_frequent() const;
 
   /**
    * @brief Determines whether the present iteration is the load balance step
@@ -303,7 +301,7 @@ private:
  * the return value of this function is calculated based on the number of
  * particles in the current cell. The function is connected to the
  * cell_weight() signal inside the triangulation, and will be called once per
- * cell, whenever the triangulation repartitions the domain between ranks.
+ * cell, whenever the triangulation repartition the domain between ranks.
  *
  * @param[in] cell The cell for which the load is calculated.
  *
