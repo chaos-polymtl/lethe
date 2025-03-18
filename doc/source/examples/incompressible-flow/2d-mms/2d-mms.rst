@@ -170,7 +170,7 @@ The nonlinear solver's tolerance is set to :math:`10^{-10}` since the errors on 
 Linear Solver
 ~~~~~~~~~~~~~
 
-The only modification made in the linear solver section is the use of AMG preconditioning to accelerate the simulations.
+The only modification made in the linear solver section is the use of AMG preconditioning to accelerate the simulations. The default linear solver ``minimum residual`` is 100 times smaller than the non-linear solver ``tolerance``, and consequently, the former is not changed.
 
 .. code-block:: text
 
