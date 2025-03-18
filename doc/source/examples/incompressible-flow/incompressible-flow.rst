@@ -62,10 +62,10 @@ Incompressible Flow
       incompressible_1_7 [label="Flow around NACA0012 \nat low Reynolds Number", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html", tooltip="Flow around NACA0012 at low Reynolds number"];
 
       incompressible_1_8 [label="Taylor-Couette Flow Using \nNitsche Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html", tooltip="Taylor-Couette flow using Nitsche immersed boundary"];
-      
-      incompressible_1_9 [label="Method of Manufactured Solutions \n for Steady Incompressible Flow", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mms/2d-mms.html", tooltip="Incompressible Solver Verification Using the Method of Manufactured Solutions"];
 
       incompressible_1_9 [label="Sudden-Expansion Flow", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html"];
+      
+      incompressible_1_10 [label="Method of Manufactured Solutions", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mms/2d-mms.html", tooltip="Method of Manufactured Solutions"];
 
       incompressible_2 [label="3D",shape=polygon,sides=4]; 
 
@@ -93,6 +93,7 @@ Incompressible Flow
       incompressible_1 -> incompressible_1_7:w;
       incompressible_1 -> incompressible_1_8:w;
       incompressible_1 -> incompressible_1_9:w;
+      incompressible_1 -> incompressible_1_10:w;
       incompressible_2 -> incompressible_2_1:w;
       incompressible_2 -> incompressible_2_2:w;
       incompressible_2 -> incompressible_2_3:w;

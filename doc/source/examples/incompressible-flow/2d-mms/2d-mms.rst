@@ -1,8 +1,8 @@
 ===============================================================================
-Incompressible Solver Verification Using the Method of Manufactured Solutions
+Method of Manufactured Solutions
 ===============================================================================
 
-This example illustrates the use of the Method of Manufactured Solutions (MMS) for the verification of a solver's accuracy. The equations solved are the steady incompressible Navier-Stokes equations in 2D.
+This example illustrates the use of the Method of Manufactured Solutions (MMS) for the verification of a solver's accuracy. The equations solved are the steady incompressible Navier-Stokes (NS) equations in 2D.
 
 ----------------------------------
 Features
@@ -10,9 +10,9 @@ Features
 
 - Solvers: ``lethe-fluid`` with the velocity and pressure shape functions :math:`\in \{Q_1, Q_2, Q3\}` 
 - Steady-state problem
-- Displays the introduction of a source term in the Navier-Stokes
-- Displays the calculation of the :math:`L²` norm of the `error relative to the analytical solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
-- Displays the use of a parameter file template allowing the `automatic launching of multiple cases <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ with different refinement levels and degrees for the velocity and pressure shape functions
+- Displays the introduction of a source term in the NS equations
+- Displays the output of the :math:`L²` norm of the `error relative to the analytical solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
+- Displays the use of a parameter file template allowing the `automatic launching of multiple cases <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ with different mesh refinement levels and degrees for the velocity and pressure shape functions
 
 
 ----------------------------
@@ -24,10 +24,9 @@ grouped in the ``MMS_SIMPLEX`` folder.
 
 - Base case parameter file in each folder: ``MMS_QUAD/MMS_2D_steady.prm`` and ``MMS_SIMPLEX/MMS_2D_steady.prm``
 - Python script to compute the source terms for the analytical solution used in this example: ``MMS_incompressible_steady_2D_source_term.py``
-- Files to generate the simulation parameter files for different conditions: ``MMS_QUAD/Generate_cases_locally.py`` and ``MMS_SIMPLEX/Generate_cases_locally.py``
-- Files to generate the different simulations: ``MMS_QUAD/Launch_cases_locally.py`` and ``MMS_SIMPLEX/Launch_cases_locally.py``
-- File to reorganize the output of the triangular mesh in a manner that is similar to the quadrilateral case: ``MMS_SIMPLEX/CreateL2files_similar_to_mesh_adaptation_output.pu``. The initial simulations output is stored in the 
-directory ``MMS_SIMPLEX/Initial_output``
+- Files to generate the parameter files at the different conditions: ``MMS_QUAD/Generate_cases_locally.py`` and ``MMS_SIMPLEX/Generate_cases_locally.py``
+- Files to run the different simulations: ``MMS_QUAD/Launch_cases_locally.py`` and ``MMS_SIMPLEX/Launch_cases_locally.py``
+- File to reorganize the output of the triangular mesh in a manner that is similar to the quadrilateral case: ``MMS_SIMPLEX/CreateL2files_similar_to_mesh_adaptation_output.pu``. The initial simulations output is stored in the directory ``MMS_SIMPLEX/Initial_output``
 - Plotting the error for both mesh types is done through the file: ``Plot_error.py``
 
 
@@ -38,10 +37,10 @@ Description of the Case
 Each numerical model requires both verification and validation. While code verification ensures that the mathematical derivation of the numerical scheme is consistent and that the code implementation is free from programming errors, code validation is concerned with verifying the agreement of the mathematical model with the underlying physics. The MMS (see Roache (2002) [#Roache2002]_) is employed for code verification and involves evaluating the error defined as the difference between the exact analytical solution of the equations solved and the computed solution. 
 Obviously, the exact analytical solution of the incompressible Navier-Stokes (NS) equations is unknown. Therefore, the following procedure is adopted:
 
-- The analytical solution is chosen such as all terms of the NS equations are non-trivial and non-singular. In other terms, the analytical function must be at least twice differentiable, with both its first and second derivatives being non-trivial. The analytical solution can vary in complexity.
+- The analytical solution is chosen such that all terms of the NS equations are non-trivial and non-singular. In other terms, the analytical function must be at least twice differentiable, with both its first and second derivatives being non-trivial. The analytical solution can vary in complexity.
 - Once the analytical solution is defined, it is substituted into the steady incompressible NS equations, leading to the appearance of source terms. Hence, the defined solution is the exact solution of the original equations, with the source terms added. The modified equations, which now include the source terms, form a new set of equations to be solved numerically.
 - The numerical code is then modified to incorporate the new set of equations with the source terms, and simulations are run at different mesh resolutions and for different degrees of the shape functions of variables. In this case, these correspond to the velocity and pressure shape functions.
-- The computed solution is compared to the analytical one and the observed order of convergence is assessed against its estimated counterpart.
+- The computed solution is compared to the analytical one and the order of convergence is assessed.
 
 In the current example, we choose the following analytical solution:
 
@@ -60,7 +59,7 @@ where :math:`\rho` is the fluid density. The analytical solution is shown in the
     :name: analytical_solution
     :width: 800
 
-Since the velocity function is divergence free, no source term arises in the cotinuity equation. Introducting the previous expressions for the velocity and the pressure in the momentum equation leads to the following source term vector:
+Since the velocity function is divergence free, no source term arises in the continuity equation. Introducting the previous expressions for the velocity and the pressure in the momentum equation leads to the following source term vector:
 
 .. math::
   \mathbf{G} = \pi \begin{bmatrix} \sin(\pi y)(-16\pi\nu (\sin(\pi x))^2\cos(\pi y) + 4\pi \nu \cos(\pi y) + 4 (\sin(\pi x))^3\sin(\pi y)\cos(\pi x) + \cos(\pi x))\\ 
@@ -115,7 +114,7 @@ Mesh
 
 The mesh used in this example is generated using the deal.II grid generator. For a mesh with quadrilateral cells, the initial level of refinement is set to 4, which corresponds to 256 cells.
 For a simplex mesh, as mentioned in section :ref:`Simulation_control_section`, each refinement level is defined in a separate parameter file and  is repesented by the parameter variable {{LEVEL}}
-in Jinja2 format. The simplex mesh is selected by setting the `set simplex` parameter to `true`. In this case, a quadrilateral mesh is first generated at the specified resolution and then converted to a 
+in Jinja2 format. The simplex mesh is selected by setting the ``set simplex`` parameter to `true`. In this case, a quadrilateral mesh is first generated at the specified resolution and then converted to a 
 simplex mesh using the `dealii::GridGenerator::convert_hypercube_to_simplex_mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#ac7515d2b17c025dddc0e37286fb8d216>`_ function, which divides each square cell into 8 triangles.
 
 Boundary Conditions
@@ -174,7 +173,7 @@ The velocity components are set to zero on all of the boundary to match the anal
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-For this analysis, the Reynolds number is taken to be 1, which results in the terms of the NS equation being of the same order. Hence, the kinematic viscosity is set to 1 in the ``physical properties`` subsection:
+For this analysis, the Reynolds number (based on the maximum velocity in the domain) is taken to be 1, which results in the terms of the NS equation being of the same order. Hence, the kinematic viscosity is set to 1 in the ``physical properties`` subsection:
 
 .. code-block:: text
 
@@ -200,7 +199,7 @@ Similarly to the ``initial refinement`` parameter in the case of a simplex mesh,
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The nonlinear solver's tolerance is set to :math:`10^{-10}` since the errors on the velocity and pressure fields reach values that are near or lower than the default tolerance of :math:`10^{-8}`, on the meshes with a finer resolution.
+The nonlinear solver's tolerance is set to :math:`10^{-10}` since the errors on the velocity and pressure fields reach values that are near or lower than the default tolerance of :math:`10^{-8}`, on the quadrilateral meshes with a finer resolution.
 Hence, if the default tolerance is used, the error will be constrained by this value and cannot drop below it.
 
 .. code-block:: text
@@ -231,13 +230,16 @@ Running the Simulations
 -----------------------
 
 
-The simulations are launched running the ``generate_cases_locally.py`` and ``Launch_cases_locally.py`` scripts. The first script generates the folders and parameter files for the different configurations simulated,
-while the second one launches the simulations. As mentioned in section :ref:`Mesh_section`, for the quadrilateral mesh, for each combination of velocity and pressure shape functions, the mesh is refined automatically
-in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions is created, and within each folder, the results corresponding to the different mesh resolutions are stored in a single
+The simulations are launched by first running the ``generate_cases_locally.py``, then ``Launch_cases_locally.py`` scripts. The first script generates the folders and parameter files for the different configurations simulated,
+while the second one launches the simulations.
+
+As mentioned in section :ref:`Mesh_section`, for the quadrilateral mesh, for each combination of velocity and pressure shape functions, the mesh is refined automatically
+in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions containing the corresponding parameter file is created. Within each folder, the results corresponding to the different mesh resolutions are stored in a single
 ``L2Error.dat``. This is not the case for the simplex mesh, where a parameter file and an output file are created within a separate folder for each combination of velocity and pressure shape functions and mesh resolution.
-Once the simulations are launched, the results can be post-processed using the python script ``Plot_error.py`` which plots the error relative to the analytical solution at the different mesh resolutiona and shapr function degrees.
+
+Once the simulations are launched, the results can be post-processed using the python script ``Plot_error.py``, which plots the error relative to the analytical solution at the different mesh resolutions and shape function degrees.
 However, before using this code, the script ``CreateL2files similar to mesh adaptation.py`` must be run to rearrange the results for a triangular mesh in a folder structure similar to that obtained for the mesh with quadrilateral
-cells. Hence, for the simplex mesh, folders are created for each combination of velocity and pressure shape functions, and within each folder, the error is rearranged in a single ``L2Error.dat`` file with the same structure as that
+cells. Hence, after running this script for the simplex mesh, folders are created for each combination of velocity and pressure shape functions, and within each folder, the error is rearranged in a single ``L2Error.dat`` file with the same structure as that
 for the quadrilateral mesh, thus containing the errors for the different mesh resolutions.
 
 -----------------------
@@ -261,7 +263,7 @@ Finally, the mesh size :math:`h` is defined as follows:
 
 where the number of cells :math:`n_{cells}` is the number of cells over the domain and is retrieved from the ``L2Error.dat`` files. For the simplex mesh case, :math:`n_{cells}` is divided by 8 to calculate the number of quadrilaterals
 used to generate the triangles (see section :ref:`Mesh_section`). Taking the square root of this number gives the number of quad sides on a given boundary segment and dividing the length of the boundary segment by the latter number leads to the lengt of the side
-of each quad. The size of each triangle is then half of the quad side. 
+of each quad. The size of each triangle is then half the length of the quad side. 
 
 The following figure shows the variation of  :math:`|e_{\mathbf u}|_2` with :math:`h`
 
@@ -280,15 +282,15 @@ The following figure shows the variation of  :math:`|e_p|_2` with :math:`h`
     :width: 600
 
 It can be seen that the velocity converges to the order :math:`(p+1)` for a velocity shape function of degree p, except for the case :math:`\{Q_3-Q_1\}`. As for the pressure, it converges at the second-order for the shape functions 
-combinations in :math:`\{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2, Q_3-Q_1\}`, and to the third-order for combinations in :math:`\{Q_3-Q_2, Q_3-Q_3\}`.   
+pairs :math:`\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2, Q_3-Q_1\}`, and to the third-order for combinations :math:`\in \{Q_3-Q_2, Q_3-Q_3\}`.   
 
 ----------------------------
 Possibilities for Extension
 ----------------------------
 
-- **Use more complex analytical functions:**  Using a non-divergence free velocity field leads to the apperance of a source term in the mass conservation equation, as well as the contribution of all the components of the stress tensor in the momentum conservation equations. Other analytical solutions may be found in Blais and Bertrand (2015) [#Blais2015]_.
+- **Use more complex analytical functions:**  Using a non-divergence free velocity field leads to the apperance of a source term in the mass conservation equation, as well as the contribution of all the components of the stress tensor in the momentum conservation equations. More complicated analytical solutions may be found in Blais and Bertrand (2015) [#Blais2015]_.
 
-- **Unsteady equations:** Using the unsteady forms of the equations with an analytical solution that depends on time provides insight into the convergence in time.
+- **Unsteady equations:** Using the transient form of the equations with an analytical solution that also depends on time provides insight into the convergence in time.
 
 
 -----------
