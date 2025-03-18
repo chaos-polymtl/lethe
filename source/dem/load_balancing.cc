@@ -16,7 +16,7 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::LagrangianLoadBalancing()
 
 template <int dim, typename PropertiesIndex>
 inline void
-LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_once()
+LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_once() const
 {
   if (simulation_control->get_step_number() == load_balance_step)
     DEMActionManager::get_action_manager()->load_balance_step();
@@ -25,6 +25,7 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_once()
 template <int dim, typename PropertiesIndex>
 inline void
 LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_frequent()
+  const
 {
   if ((simulation_control->get_step_number() % load_balance_frequency) == 0)
     DEMActionManager::get_action_manager()->load_balance_step();

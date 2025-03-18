@@ -29,7 +29,7 @@ test()
   DEMSolverParameters<dim>                              dem_parameters;
   Parameters::Lagrangian::LagrangianPhysicalProperties &lagrangian_prop =
     dem_parameters.lagrangian_physical_properties;
-  Parameters::Lagrangian::ModelParameters &model_param =
+  Parameters::Lagrangian::ModelParameters<dim> &model_param =
     dem_parameters.model_parameters;
 
   Tensor<1, dim> g{{0, 0, -9.81}};
