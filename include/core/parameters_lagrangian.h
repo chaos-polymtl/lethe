@@ -289,9 +289,11 @@ namespace Parameters
       // Particle-particle, particle-wall broad and fine search frequency
       unsigned int contact_detection_frequency;
 
+      // Function that returns the weight of a cell base on its barycenter
+      // position.
       std::shared_ptr<Function<dim>> cell_weight_function;
 
-      // The particle weight based on a default cell weight of 1000
+      // The particle weight for load balancing
       unsigned int load_balance_particle_weight;
 
       // Factors applied on the particle weight in load balancing for active and

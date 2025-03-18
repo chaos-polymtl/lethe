@@ -950,7 +950,7 @@ namespace Parameters
           {
             cell_weight_function_parsed->parse_parameters(prm);
 
-            cell_weight_function         = cell_weight_function_parsed;
+            cell_weight_function = cell_weight_function_parsed;
           }
           prm.leave_subsection();
           load_balance_particle_weight = prm.get_integer("particle weight");
