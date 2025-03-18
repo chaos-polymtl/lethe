@@ -28,6 +28,24 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
   this->constraints.clear();
   this->constraints.reinit(this->locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(this->dof_handler, this->constraints);
+
+  // Add periodic boundary conditions for the linear subequation
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_vof.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_vof
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_vof
+              .periodic_direction.at(id),
+            this->constraints);
+        }
+    }
+
   this->constraints.close();
 
   // Sparsity pattern
