@@ -140,7 +140,13 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
 
   // If this is a start simulation
   if (parameters.restart.restart)
-    action_manager->restart_simulation();
+    {
+      action_manager->restart_simulation();
+
+      if (parameters.model_parameters.load_balance_method !=
+          Parameters::Lagrangian::ModelParameters<dim>::LoadBalanceMethod::none)
+        action_manager->load_balance_step();
+    }
 }
 
 template <int dim, typename PropertiesIndex>
