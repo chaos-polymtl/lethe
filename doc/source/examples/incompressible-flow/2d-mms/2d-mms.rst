@@ -200,17 +200,17 @@ Results and Discussion
 The following figures show the :math:`L²` norm of the error relative to the analytical solution for the velocity and pressure fields as a function of the mesh size :math:`h`. The error is defined as follows:
 
 .. math::
-  |e_{\mathbf u}|_2 &= \sqrt{\int_\Omega [\Sigma_{i=1}^2(u_{i,sim}-u_{i,exact})^2]} = \sqrt{\Sigma_{j=1}^N \Sigma_{i=1}^2[(u_{i,sim,j}-u_{i,exact,j})^2]}\\
-  |e_p|_2 &= \sqrt{\int_\Omega [(p_{sim}-p_{sim, av})-(p_{exact}-p_{exact, av})]^2} = \sqrt{\Sigma_{j=1}^N [(p_{sim,j}-p_{sim, av})-(p_{exact,j}-p_{exact, av})]^2}
+  |e_{\mathbf u}|_2 &= \sqrt{\int_\Omega [\Sigma_{i=1}^2(u_{i,sim}-u_{i,exact})^2]} = \sqrt{\Sigma_{k=1}^{n_{cells}}\Sigma_{j=1}^{n_q}\Sigma_{i=1}^2[(u_{i,sim,j}-u_{i,exact,j})^2]*w_j}\\
+  |e_p|_2 &= \sqrt{\int_\Omega [(p_{sim}-p_{sim, av})-(p_{exact}-p_{exact, av})]^2} = \sqrt{\Sigma_{k=1}^{n_{cells}}\Sigma_{j=1}^{n_q} [(p_{sim,j}-p_{sim, av})-(p_{exact,j}-p_{exact, av})]^2*w_j}
 
-where :math:`N` is the number of quadrature points in the domain, :math:`u_{i,sim}` and :math:`u_{i,exact}` are the simulated and exact velocity components, respectively, and :math:`p_{sim}` and :math:`p_{exact}` are the simulated and exact pressure fields, respectively. The average values of the simulated and exact pressure fields are denoted by :math:`p_{sim, av}` and :math:`p_{exact, av}`, respectively, and are subtracted from the pressure fields to account for the fact that the pressure is recovered to within a constant. In fact, for incompressible flows, the pressure field constitutes a Lagrange multiplier that enforces the continuity condition through its gradient value. More details on the error calculation can be found by consulting the implementation of the function ``calculate_L2_error``, which can be found in ``lethe/source/solvers/postprocessing_cfd.cc``.
+where :math:`n_q` is the number of quadrature points in each cell, :math:`w_j` are the quadrature weights, :math:`n_{cells}` is the number of cells in the domain, :math:`u_{i,sim}` and :math:`u_{i,exact}` are the simulated and exact velocity components, respectively, and :math:`p_{sim}` and :math:`p_{exact}` are the simulated and exact pressure fields, respectively. The average values of the simulated and exact pressure fields are denoted by :math:`p_{sim, av}` and :math:`p_{exact, av}`, respectively, and are subtracted from the pressure fields to account for the fact that the pressure is recovered to within a constant. In fact, for incompressible flows, the pressure field constitutes a Lagrange multiplier that enforces the continuity condition through its gradient value. More details on the error calculation can be found by consulting the implementation of the function ``calculate_L2_error``, which can be found in ``lethe/source/solvers/postprocessing_cfd.cc``.
 
 Finally, the mesh size :math:`h` is defined as follows:
   .. math::
     h_{quad} &= \frac{l_\Omega}{\sqrt{n_{cells}}}\\
     h_{simplex} &= \frac{l_\Omega}{\sqrt{(n_{cells}/8)}}*0.5
 
-where the number of cells :math:`n_{cells}` is the number of cells over the domain and is retrieved from the ``L2Error.dat`` files. For the simplex mesh case, :math:`n_{cells}` is divided by 8 to calculate the number of quadrilaterals used to generate the triangles (see section :ref:`Mesh_section`). Taking the square root of this number gives the number of quad sides on a given boundary segment and dividing the length of the boundary segment by the latter number leads to the lengt of the side of each quad. The size of each triangle is then half the length of the quad side. 
+where the number of cells :math:`n_{cells}` is retrieved from the ``L2Error.dat`` files. For the simplex mesh case, :math:`n_{cells}` is divided by 8 to calculate the number of quadrilaterals used to generate the triangles (see section :ref:`Mesh_section`). Taking the square root of this number gives the number of quad sides on a given boundary segment and dividing the length of the boundary segment by the latter number leads to the lengt of the side of each quad. The size of each triangle is then half the length of the quad side. 
 
 The following figure shows the variation of  :math:`|e_{\mathbf u}|_2` with :math:`h`
 
