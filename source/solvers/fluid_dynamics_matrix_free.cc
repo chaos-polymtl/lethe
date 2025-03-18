@@ -2022,6 +2022,9 @@ FluidDynamicsMatrixFree<dim>::solve()
     this->simulation_parameters.boundary_conditions);
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
+  
+  AssertThrow(!this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    ExcMessage("Non-Newtonian fluids are not supported by the matrix free application."));
 
   this->setup_dofs();
   this->set_initial_condition(
