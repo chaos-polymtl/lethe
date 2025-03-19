@@ -481,11 +481,11 @@
 <p>To ensure that those integrals are well defined in <span class="math notranslate nohighlight">\(\Omega\)</span>, we chose the appropriate solution spaces:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\phi \in \Phi(\Omega) = H^1(\Omega)\]</div>
+\[\phi \in \Phi(\Omega) = \mathcal{H}^1(\Omega)\]</div>
 </div>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[v \in V(\Omega) = L^2(\Omega)\]</div>
+\[v \in V(\Omega) = \mathcal{L}^2(\Omega)\]</div>
 </div>
 <p>Thus, the weak problem is:</p>
 <p>Find <span class="math notranslate nohighlight">\(\phi \in \Phi(\Omega) \times [0,T]\)</span> such that</p>
@@ -529,8 +529,8 @@
 </section>
 <section id="interface-diffusion-and-sharpening">
 <h2>Interface Diffusion and Sharpening<a class="headerlink" href="#interface-diffusion-and-sharpening" title="Link to this heading">#</a></h2>
-<p>The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from <span class="math notranslate nohighlight">\(\phi = 0\)</span> to <span class="math notranslate nohighlight">\(1\)</span> happens on a larger distance.</p>
-<p>Thus, we use sharpening methods to keep the change in <span class="math notranslate nohighlight">\(\phi\)</span> sharp at the interface. Two methods are currently available: interface sharpening and interface filtration.</p>
+<p>The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from <span class="math notranslate nohighlight">\(\phi = 0\)</span> to <span class="math notranslate nohighlight">\(1\)</span> occurs on a larger distance.</p>
+<p>Thus, we use sharpening methods to keep the change in <span class="math notranslate nohighlight">\(\phi\)</span> sharp at the interface. Three methods are currently available: interface sharpening, algebraic interface reinitialization and interface filtration.</p>
 <section id="interface-sharpening">
 <h3>Interface Sharpening<a class="headerlink" href="#interface-sharpening" title="Link to this heading">#</a></h3>
 <p>The current interface sharpening method consists of two steps:</p>
@@ -556,6 +556,71 @@ c^{1-\alpha} \phi^{\alpha} &amp;  (0 \leq \phi &lt; c  ) \\
 <p>where <span class="math notranslate nohighlight">\(c\)</span> denotes the sharpening threshold, which defines
 a phase fraction threshold (generally <span class="math notranslate nohighlight">\(0.5\)</span>), and <span class="math notranslate nohighlight">\(\alpha\)</span> corresponds to the interface sharpness, which is a model parameter generally in the range of <span class="math notranslate nohighlight">\((1,2]\)</span>. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) <a class="footnote-reference brackets" href="#aliabadi2000" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 </section>
+<section id="algebraic-interface-reinitialization">
+<h3>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h3>
+<p>The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme as proposed by Olsson and coworkers (2007) <a class="footnote-reference brackets" href="#olsson2007" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\underbrace{\frac{\partial\phi_\text{reinit}}{\partial \tau}}_\text{transient}
+ + \underbrace{\nabla \cdot \left[ \phi_\text{reinit} (1-\phi_\text{reinit})\mathbf{n}\right]}_\text{compression}
+= \underbrace{\varepsilon \nabla \cdot \left[  (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n}\right]}_\text{diffusion}\]</div>
+</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\phi_\text{reinit}\)</span> is the reinitialized phase fraction;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span> is the pseudo-time independent variable. It is different from the time independent variable <span class="math notranslate nohighlight">\(t\)</span> of the actual simulation.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}\)</span> is the normal vector of the interface with <span class="math notranslate nohighlight">\(\nabla \psi\)</span> the <a class="reference internal" href="#normal-and-curvature-computations"><span class="std std-ref">projected VOF phase gradient</span></a>, and;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon = C \, h_\text{min}^d\)</span> is the diffusion coefficient with  <span class="math notranslate nohighlight">\(h_\text{min}\)</span> the smallest cell-size, <span class="math notranslate nohighlight">\(C\)</span> a constant factor multiplying <span class="math notranslate nohighlight">\(h_\text{min}\)</span>, and <span class="math notranslate nohighlight">\(d\)</span> a constant power to which <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is elevated. As default, <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(d\)</span> are set to <span class="math notranslate nohighlight">\(1\)</span>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><span class="math notranslate nohighlight">\(\nabla \psi\)</span> is computed with the VOF phase fraction gradient field and remains constant through the interface reinitialization process of a same global time iteration.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here, we define the cell-size as being the diameter of:</p>
+<ul class="simple">
+<li><p>a disk of equivalent area in 2D, and;</p></li>
+<li><p>a sphere of equivalent volume in 3D.</p></li>
+</ul>
+</div>
+<p>The equation is solved using the finite element method:</p>
+<p>Considering <span class="math notranslate nohighlight">\(\upsilon \in V(\Omega)\)</span> an arbitrary scalar function on <span class="math notranslate nohighlight">\(\Omega\)</span> as the test function and <span class="math notranslate nohighlight">\(\phi_\text{reinit} \in \Phi(\Omega)\)</span>, the weak problem goes as follows:</p>
+<p>Find <span class="math notranslate nohighlight">\(\phi_\text{reinit} \in \Phi(\Omega) \times [0, \mathrm{\tau}_\text{end}]\)</span></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\int_\Omega \upsilon \left(\partial_\tau \phi_\text{reinit} + \nabla \cdot \left[ \phi_\text{reinit} (1-\phi_\text{reinit})\mathbf{n}\right] - \varepsilon \nabla \cdot \left[  (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n}\right]\right)\, \mathrm{d}\Omega = 0 \quad \forall \, \upsilon \in V\]</div>
+</div>
+<p>As the equation is non-linear, we use the <a class="reference external" href="https://en.wikipedia.org/wiki/Newton%27s_method">Newton-Raphson method</a> and solve the linear system <span class="math notranslate nohighlight">\(\mathcal{J} \, \delta\phi_\text{reinit} = -\mathcal{R}\)</span>. We obtain the Residual (<span class="math notranslate nohighlight">\(\mathcal{R}\)</span>) and Jacobian (<span class="math notranslate nohighlight">\(\mathcal{J}\)</span>) below:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}\begin{split}
+\mathcal{R} = &amp; \int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit}^{n} \, \mathrm{d}\Omega \\
+               &amp; + \int_\Omega\upsilon
+              \left[ \mathbf{n} \cdot \nabla \phi_\text{reinit}^{n} - \mathbf{n} \cdot \left(  2 \phi_\text{reinit}^{n} \nabla \phi_\text{reinit}^{n}\right) +(\phi_\text{reinit}^{n} -{\left(\phi_\text{reinit}^{n}\right)}^2) (\nabla \cdot \mathbf{n}) \right] \mathrm{d}\Omega \\
+               &amp; + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit}^{n} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega\end{split}\\\end{split}\end{aligned}\end{align} \]</div>
+</div>
+<p>where, <span class="math notranslate nohighlight">\(\phi_\text{reinit}^{n}\)</span> is the reinitialized phase fraction value of the previous Newton iteration.</p>
+<p>Considering,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\delta \phi_\text{reinit} = \sum_{j=1}^N \delta \phi_{\text{reinit},j} \, \xi_j\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\xi_j\)</span> is the <span class="math notranslate nohighlight">\(j\text{th}\)</span> interpolation function of the reinitialized phase fraction field, the Jacobian reads:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}\begin{split}
+\mathcal{J} = &amp; \int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega \\
+               &amp; + \int_\Omega\upsilon
+              \left[ \mathbf{n} \cdot \left( \nabla \xi_j - 2 \phi_\text{reinit}^{n} \nabla \xi_j -2 \xi_j \nabla\phi_\text{reinit}^{n} \right) + \left( \xi_j -2\phi_\text{reinit}^{n}\xi_j \right) \right] \mathrm{d}\Omega \\
+               &amp; + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega\end{split}\\\end{split}\end{aligned}\end{align} \]</div>
+</div>
+<p>and the reinitialized phase fraction is given by:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\phi_\text{reinit}^{n+1} = \phi_\text{reinit}^{n} + \delta \phi_\text{reinit}\]</div>
+</div>
+</section>
 <section id="interface-filtration">
 <h3>Interface Filtration<a class="headerlink" href="#interface-filtration" title="Link to this heading">#</a></h3>
 <p>In the interface filtration method, the following filter function is applied to the phase fraction <span class="math notranslate nohighlight">\(\phi\)</span> in order to get a better definition of the interface between the fluids:</p>
@@ -568,14 +633,14 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 </section>
 <section id="surface-tension">
 <h2>Surface Tension<a class="headerlink" href="#surface-tension" title="Link to this heading">#</a></h2>
-<p>When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape <a class="footnote-reference brackets" href="#brackbill1992" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.</p>
+<p>When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape <a class="footnote-reference brackets" href="#brackbill1992" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>.</p>
 <p>Resolution of the interface motion via the advection equation allows to compute the surface tension term and add its effect to the Navier-Stokes momentum equations.</p>
 <p>As its name suggests, the surface tension <span class="math notranslate nohighlight">\(\bf{f_{\sigma}}\)</span> is a surface force. It is applied at the interface between two immiscible fluids and is given by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[{\bf{f_{\sigma}}} = \sigma \kappa {\bf{n}}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient, <span class="math notranslate nohighlight">\(\kappa\)</span> is the curvature and <span class="math notranslate nohighlight">\(\bf{n}\)</span> is the unit normal vector of the free surface. Here, <span class="math notranslate nohighlight">\({\bf{f_{\sigma}}}\)</span> is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force <span class="math notranslate nohighlight">\(\bf{F_{\sigma}}\)</span> using the continuous surface force (CSF) model <a class="footnote-reference brackets" href="#brackbill1992" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>, that is:</p>
+<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient, <span class="math notranslate nohighlight">\(\kappa\)</span> is the curvature and <span class="math notranslate nohighlight">\(\bf{n}\)</span> is the unit normal vector of the free surface. Here, <span class="math notranslate nohighlight">\({\bf{f_{\sigma}}}\)</span> is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force <span class="math notranslate nohighlight">\(\bf{F_{\sigma}}\)</span> using the continuous surface force (CSF) model <a class="footnote-reference brackets" href="#brackbill1992" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>, that is:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[{\bf{F_{\sigma}}} = \bf{f_{\sigma}} \delta = \sigma \kappa {\bf{n}}\delta\]</div>
@@ -595,9 +660,9 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <div class="math notranslate nohighlight">
 \[\bf{n} = \frac{\nabla \phi}{|\nabla \phi|}\]</div>
 </div>
-<p>When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps <a class="footnote-reference brackets" href="#zahedi2012" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>, as presented in section <a class="reference internal" href="#normal-and-curvature-computations"><span class="std std-ref">Normal and Curvature Computations</span></a>.</p>
+<p>When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps <a class="footnote-reference brackets" href="#zahedi2012" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>, as presented in section <a class="reference internal" href="#normal-and-curvature-computations"><span class="std std-ref">Normal and Curvature Computations</span></a>.</p>
 <section id="normal-and-curvature-computations">
-<span id="id7"></span><h3>Normal and Curvature Computations<a class="headerlink" href="#normal-and-curvature-computations" title="Link to this heading">#</a></h3>
+<span id="id8"></span><h3>Normal and Curvature Computations<a class="headerlink" href="#normal-and-curvature-computations" title="Link to this heading">#</a></h3>
 <p>The following equations are used to compute the filtered phase fraction gradient and filtered curvature. They correspond to the projection steps previously mentioned.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -632,13 +697,17 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
 <p>S. Aliabadi and T. E. Tezduyar, “Stabilized-finite-element/interface-capturing technique for parallel computation of unsteady flows with interfaces,” <em>Comput. Methods Appl. Mech. Eng.</em>, vol. 190, no. 3, pp. 243–261, Oct. 2000, doi: <a class="reference external" href="https://doi.org/10.1016/S0045-7825(00)00200-0">10.1016/S0045-7825(00)00200-0</a>.</p>
 </aside>
+<aside class="footnote brackets" id="olsson2007" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>E.Olsson, G. Kreiss, and S. Zahedi, “A conservative level set method for two phase flow II,” <em>J. Comput. Phys.</em>, vol. 225, no. 1, pp. 785–807, Jul. 2007, doi: <a class="reference external" href="https://doi.org/10.1016/j.jcp.2006.12.027">10.1016/j.jcp.2006.12.027</a>.</p>
+</aside>
 <aside class="footnote brackets" id="brackbill1992" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id6">2</a>)</span>
 <p>J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” <em>J. Comput. Phys.</em>, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: <a class="reference external" href="https://doi.org/10.1016/0021-9991(92)90240-Y">10.1016/0021-9991(92)90240-Y</a>.</p>
 </aside>
 <aside class="footnote brackets" id="zahedi2012" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">5</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">6</a><span class="fn-bracket">]</span></span>
 <p>S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” <em>Int. J. Numer. Methods Fluids</em>, vol. 69, no. 9, pp. 1433–1456, 2012, doi: <a class="reference external" href="https://doi.org/10.1002/fld.2643">10.1002/fld.2643</a>.</p>
 </aside>
 </aside>
@@ -705,6 +774,7 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <li><a class="reference internal" href="#stabilization">Stabilization</a></li>
 <li><a class="reference internal" href="#interface-diffusion-and-sharpening">Interface Diffusion and Sharpening</a><ul>
 <li><a class="reference internal" href="#interface-sharpening">Interface Sharpening</a></li>
+<li><a class="reference internal" href="#algebraic-interface-reinitialization">Algebraic Interface Reinitialization</a></li>
 <li><a class="reference internal" href="#interface-filtration">Interface Filtration</a></li>
 </ul>
 </li>

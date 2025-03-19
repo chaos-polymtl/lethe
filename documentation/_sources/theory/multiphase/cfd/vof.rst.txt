@@ -55,10 +55,10 @@ To obtain the finite element formulation, we first need the weak formulation. Th
 To ensure that those integrals are well defined in :math:`\Omega`, we chose the appropriate solution spaces:
 
 .. math::
-  \phi \in \Phi(\Omega) = H^1(\Omega)
+  \phi \in \Phi(\Omega) = \mathcal{H}^1(\Omega)
 
 .. math::
-  v \in V(\Omega) = L^2(\Omega)
+  v \in V(\Omega) = \mathcal{L}^2(\Omega)
 
 Thus, the weak problem is:
 
@@ -109,9 +109,9 @@ To avoid a non-linear finite element formulation, the phase gradient of the prev
 Interface Diffusion and Sharpening
 -----------------------------------
 
-The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` happens on a larger distance.
+The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
-Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Two methods are currently available: interface sharpening and interface filtration.
+Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: interface sharpening, algebraic interface reinitialization and interface filtration.
 
 """"""""""""""""""""""""""""""""
 Interface Sharpening
@@ -141,6 +141,86 @@ The phase fraction limiter above will update the phase fraction if it failed to 
 
 where :math:`c` denotes the sharpening threshold, which defines
 a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) [#aliabadi2000]_.
+
+
+""""""""""""""""""""""""""""""""""""""""
+Algebraic Interface Reinitialization
+""""""""""""""""""""""""""""""""""""""""
+
+The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
+
+.. math::
+
+    \underbrace{\frac{\partial\phi_\text{reinit}}{\partial \tau}}_\text{transient}
+     + \underbrace{\nabla \cdot \left[ \phi_\text{reinit} (1-\phi_\text{reinit})\mathbf{n}\right]}_\text{compression}
+    = \underbrace{\varepsilon \nabla \cdot \left[  (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n}\right]}_\text{diffusion}
+
+
+where:
+
+- :math:`\phi_\text{reinit}` is the reinitialized phase fraction;
+
+- :math:`\tau` is the pseudo-time independent variable. It is different from the time independent variable :math:`t` of the actual simulation.
+
+- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}` is the normal vector of the interface with :math:`\nabla \psi` the :ref:`projected VOF phase gradient<Normal and curvature computations>`, and;
+
+- :math:`\varepsilon = C \, h_\text{min}^d` is the diffusion coefficient with  :math:`h_\text{min}` the smallest cell-size, :math:`C` a constant factor multiplying :math:`h_\text{min}`, and :math:`d` a constant power to which :math:`h_\text{min}` is elevated. As default, :math:`C` and :math:`d` are set to :math:`1`.
+
+.. note::
+
+    :math:`\nabla \psi` is computed with the VOF phase fraction gradient field and remains constant through the interface reinitialization process of a same global time iteration.
+
+.. note::
+
+    Here, we define the cell-size as being the diameter of:
+
+    - a disk of equivalent area in 2D, and;
+    - a sphere of equivalent volume in 3D.
+
+The equation is solved using the finite element method:
+
+Considering :math:`\upsilon \in V(\Omega)` an arbitrary scalar function on :math:`\Omega` as the test function and :math:`\phi_\text{reinit} \in \Phi(\Omega)`, the weak problem goes as follows:
+
+Find :math:`\phi_\text{reinit} \in \Phi(\Omega) \times [0, \mathrm{\tau}_\text{end}]`
+
+.. math::
+
+    \int_\Omega \upsilon \left(\partial_\tau \phi_\text{reinit} + \nabla \cdot \left[ \phi_\text{reinit} (1-\phi_\text{reinit})\mathbf{n}\right] - \varepsilon \nabla \cdot \left[  (\nabla \phi_\text{reinit} \cdot \mathbf{n}) \mathbf{n}\right]\right)\, \mathrm{d}\Omega = 0 \quad \forall \, \upsilon \in V
+
+As the equation is non-linear, we use the `Newton-Raphson method <https://en.wikipedia.org/wiki/Newton%27s_method>`_ and solve the linear system :math:`\mathcal{J} \, \delta\phi_\text{reinit} = -\mathcal{R}`. We obtain the Residual (:math:`\mathcal{R}`) and Jacobian (:math:`\mathcal{J}`) below:
+
+.. math::
+    \begin{split}
+    \mathcal{R} = & \int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit}^{n} \, \mathrm{d}\Omega \\
+                   & + \int_\Omega\upsilon
+                  \left[ \mathbf{n} \cdot \nabla \phi_\text{reinit}^{n} - \mathbf{n} \cdot \left(  2 \phi_\text{reinit}^{n} \nabla \phi_\text{reinit}^{n}\right) +(\phi_\text{reinit}^{n} -{\left(\phi_\text{reinit}^{n}\right)}^2) (\nabla \cdot \mathbf{n}) \right] \mathrm{d}\Omega \\
+                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit}^{n} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega
+
+    \end{split}
+
+where, :math:`\phi_\text{reinit}^{n}` is the reinitialized phase fraction value of the previous Newton iteration.
+
+Considering,
+
+.. math::
+
+    \delta \phi_\text{reinit} = \sum_{j=1}^N \delta \phi_{\text{reinit},j} \, \xi_j
+
+where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the reinitialized phase fraction field, the Jacobian reads:
+
+.. math::
+    \begin{split}
+    \mathcal{J} = & \int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega \\
+                   & + \int_\Omega\upsilon
+                  \left[ \mathbf{n} \cdot \left( \nabla \xi_j - 2 \phi_\text{reinit}^{n} \nabla \xi_j -2 \xi_j \nabla\phi_\text{reinit}^{n} \right) + \left( \xi_j -2\phi_\text{reinit}^{n}\xi_j \right) \right] \mathrm{d}\Omega \\
+                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega
+
+    \end{split}
+
+and the reinitialized phase fraction is given by:
+
+.. math::
+    \phi_\text{reinit}^{n+1} = \phi_\text{reinit}^{n} + \delta \phi_\text{reinit}
 
 
 """"""""""""""""""""""""""""""""
@@ -232,6 +312,8 @@ References
 .. [#tezduyar2003] \T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” *Int. J. Numer. Methods Fluids*, vol. 43, no. 5, pp. 555–575, 2003, doi: `10.1002/fld.505 <https://doi.org/10.1002/fld.505>`_\.
 
 .. [#aliabadi2000] \S. Aliabadi and T. E. Tezduyar, “Stabilized-finite-element/interface-capturing technique for parallel computation of unsteady flows with interfaces,” *Comput. Methods Appl. Mech. Eng.*, vol. 190, no. 3, pp. 243–261, Oct. 2000, doi: `10.1016/S0045-7825(00)00200-0 <https://doi.org/10.1016/S0045-7825(00)00200-0>`_\.
+
+.. [#olsson2007] \E.Olsson, G. Kreiss, and S. Zahedi, "A conservative level set method for two phase flow II," *J. Comput. Phys.*, vol. 225, no. 1, pp. 785–807, Jul. 2007, doi: `10.1016/j.jcp.2006.12.027 <https://doi.org/10.1016/j.jcp.2006.12.027>`_\.
 
 .. [#brackbill1992] \J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: `10.1016/0021-9991(92)90240-Y <https://doi.org/10.1016/0021-9991(92)90240-Y>`_\.
 
