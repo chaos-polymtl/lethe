@@ -1990,6 +1990,9 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
 
+  AssertThrow(!this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    ExcMessage("Non-Newtonian fluids are not supported by the matrix free application."));
+
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
 
@@ -2022,9 +2025,6 @@ FluidDynamicsMatrixFree<dim>::solve()
     this->simulation_parameters.boundary_conditions);
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
-  
-  AssertThrow(!this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
-    ExcMessage("Non-Newtonian fluids are not supported by the matrix free application."));
 
   this->setup_dofs();
   this->set_initial_condition(
