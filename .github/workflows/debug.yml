@@ -59,6 +59,7 @@ jobs:
       #
       - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
         run: |
+          export  | grep DIR
           mkdir build-debug
           cd build-debug
           cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
