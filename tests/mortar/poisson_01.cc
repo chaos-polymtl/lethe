@@ -90,7 +90,7 @@ main(int argc, char **argv)
   ReductionControl        reduction_control(10000, 1e-20, 1e-6);
   SolverGMRES<VectorType> solver(reduction_control);
 
-  if (true)
+  if (false)
     {
       // 0) no preconditioner
       PreconditionIdentity preconditioner;
