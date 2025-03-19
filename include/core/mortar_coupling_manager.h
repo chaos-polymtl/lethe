@@ -480,7 +480,8 @@ private:
   compute_pentaly_factor(const unsigned int degree, const Number factor) const;
 
   Number
-  compute_penalty_parameter(const auto &cell) const;
+  compute_penalty_parameter(
+    const typename Triangulation<dim>::cell_iterator &cell) const;
 
   double
   get_rad(const typename Triangulation<dim>::cell_iterator &cell,
@@ -751,7 +752,7 @@ CouplingOperator<dim, n_components, Number>::compute_pentaly_factor(
 template <int dim, int n_components, typename Number>
 Number
 CouplingOperator<dim, n_components, Number>::compute_penalty_parameter(
-  const auto &cell) const
+  const typename Triangulation<dim>::cell_iterator &cell) const
 {
   const auto        &fe     = dof_handler.get_fe();
   const unsigned int degree = fe.degree;
