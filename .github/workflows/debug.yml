@@ -48,7 +48,7 @@ jobs:
           ls $HOME
           echo "Trying to identify p4est version"
           echo "$P4EST_DIR"
-          printenv -0
+          echo "$DEAL_II_DIR"
 
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
