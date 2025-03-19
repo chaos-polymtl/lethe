@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-19
+
+### Added
+
+- MINOR Verify if non-Newtonian fluid parameters are used in the matrix-free solver. Since the MF solver does not support non-Newtonian fluids at the moment, an exception is now shown if this happens. [#1463](https://github.com/chaos-polymtl/lethe/pull/1463)
+
 ## [Master] - 2025-03-13
 
 ### Added
