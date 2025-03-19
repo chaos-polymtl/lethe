@@ -26,7 +26,8 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
 
   // Constraints
   this->constraints.clear();
-  this->constraints.reinit(this->locally_relevant_dofs);
+  this->constraints.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(this->dof_handler, this->constraints);
 
   // Add periodic boundary conditions for the linear subequation
