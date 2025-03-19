@@ -47,12 +47,8 @@ jobs:
           # Check all of the libraries installed
           ls $HOME
           echo "Trying to identify p4est version"
-
-          echo $HOME
-          echo $(ls $HOME)
-          echo $(ls $HOME/p4est)
-          
-
+          echo "$P4EST_DIR"
+          printenv -0
 
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
