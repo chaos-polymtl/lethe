@@ -44,7 +44,8 @@ jobs:
           # Since dealii image doesn't include Node.js, we'll install it
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
-
+          # Check all of the libraries installed
+          ls $HOME
 
 
           echo "Github actions is sane!"
@@ -59,8 +60,7 @@ jobs:
       #
       - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
         run: |
-          # Check all of the libraries installed
-          ls $HOME
+
           mkdir build-debug
           cd build-debug
           cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
