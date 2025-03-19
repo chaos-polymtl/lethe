@@ -98,9 +98,8 @@ main(int argc, char *argv[])
               fe.n_dofs_per_cell());
             cell->get_dof_indices(local_dofs);
 
-            for (unsigned int ii = 0; ii < indices.size(); ++ii)
+            for (const auto i : indices)
               {
-                unsigned int i = indices[ii];
                 unsigned int id_local, id_ghost;
 
                 if (face->boundary_id() == 0)
