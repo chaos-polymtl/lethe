@@ -45,11 +45,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
           # Check all of the libraries installed
-          ls $HOME
-          echo "Trying to identify p4est version"
-          echo "$P4EST_DIR"
-          echo "$DEAL_II_DIR"
-
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
 
