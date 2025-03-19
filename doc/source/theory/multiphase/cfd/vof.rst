@@ -109,7 +109,7 @@ To avoid a non-linear finite element formulation, the phase gradient of the prev
 Interface Diffusion and Sharpening
 -----------------------------------
 
-The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` happens on a larger distance.
+The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
 Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: interface sharpening, algebraic interface reinitialization and interface filtration.
 
@@ -147,7 +147,7 @@ a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` correspon
 Algebraic Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The algebraic interface reinitialization method consists of compressing and diffusing the interface in the normal direction of the interface. It is done by solving the following transient partial differential equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
+The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
 
 .. math::
 
@@ -160,11 +160,11 @@ where:
 
 - :math:`\phi_\text{reinit}` is the reinitialized phase fraction;
 
-- :math:`\tau` is the pseudo-time variable. It is different from the time variable :math:`t` of the actual simulation.
+- :math:`\tau` is the pseudo-time independent variable. It is different from the time independent variable :math:`t` of the actual simulation.
 
-- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert_2}` is the normal vector of the interface with :math:`\nabla \psi` the projected VOF phase gradient, and;
+- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}` is the normal vector of the interface with :math:`\nabla \psi` the :ref:`projected VOF phase gradient<Normal and curvature computations>`, and;
 
-- :math:`\varepsilon = C \, h_\text{min}^d` is the diffusion coefficient with  :math:`h_\text{min}` the smallest cell-size, :math:`C` a constant factor multiplying :math:`h_\text{min}`, and :math:`d` a constant power to which :math:`h_\text{min}` is elevated.
+- :math:`\varepsilon = C \, h_\text{min}^d` is the diffusion coefficient with  :math:`h_\text{min}` the smallest cell-size, :math:`C` a constant factor multiplying :math:`h_\text{min}`, and :math:`d` a constant power to which :math:`h_\text{min}` is elevated. As default, :math:`C` and :math:`d` are set to :math:`1`.
 
 .. note::
 
@@ -198,7 +198,7 @@ As the equation is non-linear, we use the `Newton-Raphson method <https://en.wik
 
     \end{split}
 
-where, :math:`\phi_\text{reinit}^{n} = \phi_\text{reinit}^{n-1} + \delta \phi_\text{reinit}` is the reinitialized phase fraction value of the previous Newton iteration updated following .
+where, :math:`\phi_\text{reinit}^{n}` is the reinitialized phase fraction value of the previous Newton iteration.
 
 Considering,
 
@@ -217,6 +217,10 @@ where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the rein
 
     \end{split}
 
+and the reinitialized phase fraction is given by:
+
+.. math::
+    \phi_\text{reinit}^{n+1} = \phi_\text{reinit}^{n} + \delta \phi_\text{reinit}
 
 
 """"""""""""""""""""""""""""""""
