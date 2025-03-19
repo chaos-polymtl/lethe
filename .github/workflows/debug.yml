@@ -60,7 +60,7 @@ jobs:
       - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
         run: |
           # Check all of the libraries installed
-          ls /home/dealii/libs/
+          ls $HOME
           mkdir build-debug
           cd build-debug
           cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
