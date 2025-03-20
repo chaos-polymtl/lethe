@@ -3,11 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2025-03-17
+## [Master] - 2025-03-20
 
 ### Added
 
-- MINOR Addition of the periodic boundary conditions for the Cahn-Hilliard, heat transfer and tracer physics solvers. [#1456](https://github.com/chaos-polymtl/lethe/pull/1456)
+- MINOR Addition of the periodic boundary conditions for the Cahn-Hilliard, heat transfer and tracer physics solvers. Parameters for periodic boundary conditions for all auxiliary physics (including VOF) now follow the same syntax as for the fluid dynamics solvers. [#1456](https://github.com/chaos-polymtl/lethe/pull/1456)
 
 ## [Master] - 2025-03-19
 
