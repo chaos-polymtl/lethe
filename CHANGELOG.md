@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-14
+
+### Added
+
+- MINOR Addition of the periodic boundary conditions for the Cahn-Hilliard physics solver. [#1456](https://github.com/chaos-polymtl/lethe/pull/1456)
+
 ## [Master] - 2025-03-19
 
 ### Added
@@ -20,12 +26,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR This PR adds the (almost) empty architecture of the SignedDistanceSolver and its coupling in the VOF solver (geometric reinitialization method), following the structure of the already existing vof_advection prototype. The parameters associated to the geometric reinitialization method for the VOF solver are also added. [#1451](https://github.com/chaos-polymtl/lethe/pull/1451)
-- 
+
 ## [Master] - 2025-03-11
 
 ### Added
 
 - MINOR Remove muParser and custom parsed function class (reversal of [#1143](https://github.com/chaos-polymtl/lethe/pull/1143), [#1153](https://github.com/chaos-polymtl/lethe/pull/1153), [#1160](https://github.com/chaos-polymtl/lethe/pull/1160)). [#1452](https://github.com/chaos-polymtl/lethe/pull/1452)
+
 ## [Master] - 2025-03-06
 
 ### Added
