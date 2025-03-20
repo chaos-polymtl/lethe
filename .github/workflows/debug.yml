@@ -44,7 +44,6 @@ jobs:
           # Since dealii image doesn't include Node.js, we'll install it
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
-          # Check all of the libraries installed
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
 
@@ -70,7 +69,6 @@ jobs:
           export OMPI_ALLOW_RUN_AS_ROOT=1
           export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
           cd build-debug
-          ctest -N
 
           # Run in parallel
           ctest --output-on-failure -j${{ env.TEST_JOBS }} 
