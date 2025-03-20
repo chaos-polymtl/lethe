@@ -109,16 +109,16 @@ namespace Parameters
       std::unordered_map<unsigned int, double> specific_heat_particle;
 
       // Microhardness of each particle type
-      std::unordered_map<unsigned int, double> &microhardness_particle;
+      std::unordered_map<unsigned int, double> microhardness_particle;
 
       // Surface slope of each particle type
-      std::unordered_map<unsigned int, double> &surface_slope_particle;
+      std::unordered_map<unsigned int, double> surface_slope_particle;
 
       // Surface roughness of each particle type
-      std::unordered_map<unsigned int, double> &surface_roughness_particle;
+      std::unordered_map<unsigned int, double> surface_roughness_particle;
 
       // Thermal accommodation coefficient of each particle type
-      std::unordered_map<unsigned int, double> &thermal_accommodation_particle;
+      std::unordered_map<unsigned int, double> thermal_accommodation_particle;
 
       // Young's modulus of wall
       double youngs_modulus_wall;
