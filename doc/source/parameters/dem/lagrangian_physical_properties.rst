@@ -44,6 +44,10 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set Hamaker constant particles        = 4.e-19
       set thermal conductivity particles    = 1
       set specific heat particles           = 1000
+      set microhardness particles           = 1.e9
+      set surface slope particles           = 0.1
+      set surface roughness particles       = 1.e-9
+      set thermal accommodation particles   = 0.7
 
     end
 
@@ -56,6 +60,13 @@ In this subsection, gravitational acceleration, and the physical properties of t
     set rolling viscous damping wall = 0.1
     set surface energy wall          = 0.0
     set Hamaker constant wall        = 4.e-19
+
+    # Interstitial gas properties
+    set thermal conductivity gas     = 0.01
+    set specific heat gas            = 1000
+    set dynamic viscosity gas        = 1.e-5
+    set specific heats ratio gas     = 1
+    set molecular mean free path gas = 68.e-9
   end
 
 * The ``g`` parameter defines the gravitational acceleration in `x`, `y`, and `z` directions. The deprecated version of this parameter is the 3 parameters ``gx``, ``gy``, and ``gz``.
@@ -104,9 +115,17 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``Hamaker constant particles`` defines the Hamaker constant of particles for each type. This parameter is used with the DMT force model.
 
-* The ``thermal conductivity particles`` defines the thermal conductivity of particles for each type. This parameter is used in multiphysic DEM.
+* The ``thermal conductivity particles`` defines the thermal conductivity of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
 
-* The ``specific heat particles`` defines the specific heat of particles for each type. This parameter is used in multiphysic DEM.
+* The ``specific heat particles`` defines the specific heat of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``microhardness particles`` defines the microhardness of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``surface slope particles`` defines the surface slope of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``surface roughness particles`` defines the surface roughness of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``thermal accommodation particles`` defines the thermal accommodation coefficient of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
 
 * The ``young modulus wall`` defines the Young's modulus of the walls.
 
@@ -124,3 +143,12 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``Hamaker constant wall`` defines the Hamaker constant of the walls. This parameter is used with the DMT force model.
 
+* The ``thermal conductivity gas`` defines the thermal conductivity of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``specific heat gas`` defines the specific heat capacity of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``dynamic viscosity gas`` defines the dynamic viscosity of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``specific heats ratio gas`` defines the specific heats ratio of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+
+* The ``molecular mean free path gas`` defines the molecular mean free path of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.

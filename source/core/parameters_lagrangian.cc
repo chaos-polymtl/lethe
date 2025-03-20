@@ -87,6 +87,22 @@ namespace Parameters
                         "1000",
                         Patterns::Double(),
                         "Particle specific heat");
+      prm.declare_entry("microhardness particles",
+                        "1.e9",
+                        Patterns::Double(),
+                        "Particle microhardness");
+      prm.declare_entry("surface slope particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle surface slope");
+      prm.declare_entry("surface roughness particles",
+                        "1.e-9",
+                        Patterns::Double(),
+                        "Particle surface roughness");
+      prm.declare_entry("thermal accommodation particles",
+                        "0.7",
+                        Patterns::Double(),
+                        "Particle thermal accommodation");
     }
 
     void
@@ -155,6 +171,14 @@ namespace Parameters
         prm.get_double("thermal conductivity particles");
       specific_heat_particle.at(particle_type) =
         prm.get_double("specific heat particles");
+      microhardness_particle.at(particle_type) =
+        prm.get_double("microhardness particles");
+      surface_slope_particle.at(particle_type) =
+        prm.get_double("surface slope particles");
+      surface_roughness_particle.at(particle_type) =
+        prm.get_double("surface roughness particles");
+      thermal_accommodation_particle.at(particle_type) =
+        prm.get_double("thermal accommodation particles");
     }
 
     void
@@ -228,6 +252,27 @@ namespace Parameters
                           "4.e-19",
                           Patterns::Double(),
                           "Hamaker constant of wall");
+
+        prm.declare_entry("thermal conductivity gas",
+                          "0.01",
+                          Patterns::Double(),
+                          "Thermal conductivity of interstitial gas");
+        prm.declare_entry("specific heat gas",
+                          "1000",
+                          Patterns::Double(),
+                          "Specific heat of interstitial gas");
+        prm.declare_entry("dynamic viscosity gas",
+                          "1.e-5",
+                          Patterns::Double(),
+                          "Dynamic viscosity of interstitial gas");
+        prm.declare_entry("specific heats ratio gas",
+                          "1",
+                          Patterns::Double(),
+                          "Specific heats ratio of interstitial gas");
+        prm.declare_entry("molecular mean free path gas",
+                          "68.e-9",
+                          Patterns::Double(),
+                          "Molecular mean free path of interstitial gas");
       }
       prm.leave_subsection();
     }
@@ -253,7 +298,11 @@ namespace Parameters
                             surface_energy_particle,
                             hamaker_constant_particle,
                             thermal_conductivity_particle,
-                            specific_heat_particle);
+                            specific_heat_particle,
+                            microhardness_particle,
+                            surface_slope_particle,
+                            surface_roughness_particle,
+                            thermal_accommodation_particle);
 
       // Deprecated parameter handling
       // <g> used to be 3 parameters: <gx>, <gy> and <gz>
@@ -285,6 +334,13 @@ namespace Parameters
       surface_energy_wall   = prm.get_double("surface energy wall");
       hamaker_constant_wall = prm.get_double("hamaker constant wall");
 
+      thermal_conductivity_gas = prm.get_double("thermal conductivity gas");
+      specific_heat_gas        = prm.get_double("specific heat gas");
+      dynamic_viscosity_gas    = prm.get_double("dynamic viscosity gas");
+      specific_heats_ratio_gas = prm.get_double("specific heats ratio gas");
+      molecular_mean_free_path_gas =
+        prm.get_double("molecular mean free path gas");
+
       prm.leave_subsection();
     }
 
@@ -312,7 +368,11 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &surface_energy_particle,
       std::unordered_map<unsigned int, double> &hamaker_constant_particle,
       std::unordered_map<unsigned int, double> &thermal_conductivity_particle,
-      std::unordered_map<unsigned int, double> &specific_heat_particle)
+      std::unordered_map<unsigned int, double> &specific_heat_particle,
+      std::unordered_map<unsigned int, double> &microhardness_particle,
+      std::unordered_map<unsigned int, double> &surface_slope_particle,
+      std::unordered_map<unsigned int, double> &surface_roughness_particle,
+      std::unordered_map<unsigned int, double> &thermal_accommodation_particle)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -334,6 +394,10 @@ namespace Parameters
           hamaker_constant_particle.insert({counter, 0.});
           thermal_conductivity_particle.insert({counter, 0.});
           specific_heat_particle.insert({counter, 0.});
+          microhardness_particle.insert({counter, 0.});
+          surface_slope_particle.insert({counter, 0.});
+          surface_roughness_particle.insert({counter, 0.});
+          thermal_accommodation_particle.insert({counter, 0.});
         }
       seed_for_distributions.reserve(particle_type_maximum_number);
     }
