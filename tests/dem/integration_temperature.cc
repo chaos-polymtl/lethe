@@ -31,20 +31,14 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining simulation general parameters
-  DEMSolverParameters<dim>                              dem_parameters;
-  Parameters::Lagrangian::LagrangianPhysicalProperties &lagrangian_prop =
-    dem_parameters.lagrangian_physical_properties;
-  Parameters::Lagrangian::ModelParameters &model_param =
-    dem_parameters.model_parameters;
+  DEMSolverParameters<dim> dem_parameters;
 
-  const double dt1                                 = 0.01;
-  const double dt2                                 = 0.005;
-  const double time_step_ratio                     = dt1 / dt2;
-  const double time_final                          = 1;
-  const double heat_capacity                       = 840; //glass
-  lagrangian_prop.particle_type_number             = 1;
-  lagrangian_prop.thermal_conductivity_particle[0] = 1; //glass
-  lagrangian_prop.heat_capacity_particle[0]        = heat_capacity;
+  const double dt_1            = 0.01;
+  const double dt_2            = 0.005;
+  const double time_step_ratio = dt_1 / dt_2;
+  const double time_final      = 1;
+  const double specific_heat   = 840; // glass
+  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
@@ -55,7 +49,7 @@ test()
   const unsigned int id        = 0;
   const double       T_initial = 300;
 
-  Particles::ParticleIterator<dim> pit1 = construct_particle_iterator<dim>(
+  Particles::ParticleIterator<dim> pit_1 = construct_particle_iterator<dim>(
     particle_handler, triangulation, position, id);
 
   Tensor<1, dim>     v{{0.01, 0, 0}};
@@ -64,9 +58,10 @@ test()
   const unsigned int type     = 0;
   const double       diameter = 0.005;
   set_particle_properties<dim, PropertiesIndex>(
-    pit1, type, diameter, mass, v, omega);
+    pit_1, type, diameter, mass, v, omega);
 
-  pit1->get_properties()[PropertiesIndex::T] = T_initial;
+  pit_1->get_properties()[PropertiesIndex::T]             = T_initial;
+  pit_1->get_properties()[PropertiesIndex::specific_heat] = specific_heat;
 
   // Initialize variables
   std::vector<double> heat_transfer;
@@ -74,54 +69,59 @@ test()
   heat_transfer.push_back(0);
   heat_source.push_back(0);
   double T_analytical;
-  double particle_temperature_error_dt1;
-  double particle_temperature_error_dt2;
+  double particle_temperature_error_dt_1;
+  double particle_temperature_error_dt_2;
   auto   particle_properties = particle_handler.begin()->get_properties();
 
-  // Calling temperature integrator until time_final with dt1 time step
+  // Calling temperature integrator until time_final with dt_1 time step
   double time = 0;
   while (time < time_final)
     {
       heat_transfer[0] = -particle_properties[PropertiesIndex::T];
-      integrate_temperature<dim, PropertiesIndex>(
-        particle_handler, dem_parameters, dt1, heat_transfer, heat_source);
-      time += dt1;
+      integrate_temperature<dim, PropertiesIndex>(particle_handler,
+                                                  dt_1,
+                                                  heat_transfer,
+                                                  heat_source);
+      time += dt_1;
     }
 
   // Calculating error with analytical solution
-  T_analytical = exp(-1 / mass * 1 / heat_capacity * time) * T_initial;
-  particle_temperature_error_dt1 =
+  T_analytical = exp(-1 / mass * 1 / specific_heat * time) * T_initial;
+  particle_temperature_error_dt_1 =
     particle_properties[PropertiesIndex::T] - T_analytical;
 
   // Clear the particle handler and insert a new particle
   particle_handler.clear_particles();
 
-  Particles::ParticleIterator<dim> pit2 = construct_particle_iterator<dim>(
+  Particles::ParticleIterator<dim> pit_2 = construct_particle_iterator<dim>(
     particle_handler, triangulation, position, id);
 
   set_particle_properties<dim, PropertiesIndex>(
-    pit2, type, diameter, mass, v, omega);
-  pit2->get_properties()[PropertiesIndex::T] = T_initial;
+    pit_2, type, diameter, mass, v, omega);
+  pit_2->get_properties()[PropertiesIndex::T]             = T_initial;
+  pit_2->get_properties()[PropertiesIndex::specific_heat] = specific_heat;
 
-  // Calling temperature integrator until time_final with dt2 time step
+  // Calling temperature integrator until time_final with dt_2 time step
   time = 0;
   while (time < time_final)
     {
       heat_transfer[0] = -particle_properties[PropertiesIndex::T];
-      integrate_temperature<dim, PropertiesIndex>(
-        particle_handler, dem_parameters, dt2, heat_transfer, heat_source);
-      time += dt2;
+      integrate_temperature<dim, PropertiesIndex>(particle_handler,
+                                                  dt_2,
+                                                  heat_transfer,
+                                                  heat_source);
+      time += dt_2;
     }
 
   // Calculating error with analytical solution
-  T_analytical = exp(-1 / mass * 1 / heat_capacity * time) * T_initial;
-  particle_temperature_error_dt2 =
+  T_analytical = exp(-1 / mass * 1 / specific_heat * time) * T_initial;
+  particle_temperature_error_dt_2 =
     particle_properties[PropertiesIndex::T] - T_analytical;
 
   // Output
   deallog << "Temperature integration is a "
-          << log(std::abs(particle_temperature_error_dt1 /
-                          particle_temperature_error_dt2)) /
+          << log(std::abs(particle_temperature_error_dt_1 /
+                          particle_temperature_error_dt_2)) /
                log(time_step_ratio)
           << " order integration scheme." << std::endl;
 }
