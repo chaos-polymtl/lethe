@@ -41,18 +41,6 @@ subsection VOF
     set verbosity = quiet
     set beta      = 20
   end
-  subsection interface sharpening
-    set enable                  = false
-    set threshold               = 0.5
-    set interface sharpness     = 1.5
-    set frequency               = 500
-    set type                    = adaptive
-    set threshold max deviation = 0.2
-    set max iterations          = 50
-    set monitored fluid         = fluid 1
-    set tolerance               = 1e-7
-    set verbosity               = verbose
-  end
   subsection surface tension force
     set enable                                   = true
     set phase fraction gradient diffusion factor = 4

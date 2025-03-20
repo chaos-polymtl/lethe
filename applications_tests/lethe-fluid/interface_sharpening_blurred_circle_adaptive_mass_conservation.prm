@@ -26,7 +26,7 @@ subsection multiphysics
 end
 
 subsection VOF
-  subsection regularization method
+  subsection interface regularization method
     set type = sharpening
     subsection interface sharpening
       set threshold           = 0.5

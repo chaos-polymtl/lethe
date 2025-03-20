@@ -20,7 +20,7 @@ using namespace dealii;
 namespace Parameters
 {
   /**
-   * @brief Different regularization method types:
+   * @brief Different interface regularization method types:
    *  - none
    *  - sharpening: projection-based sharpening
    *  - algebraic: PDE-based reinitialization

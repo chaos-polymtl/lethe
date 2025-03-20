@@ -219,7 +219,7 @@ subsection VOF
   subsection phase filtration
     set type = tanh
   end
-  subsection regularization method
+  subsection interface regularization method
     set type = sharpening
     subsection interface sharpening
       set interface sharpness     = 1.5

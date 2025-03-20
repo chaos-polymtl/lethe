@@ -33,7 +33,7 @@ end
 #---------------------------------------------------
 
 subsection VOF
-  subsection regularization method
+  subsection interface regularization method
   set type = sharpening
     subsection interface sharpening
       set frequency           = 1
