@@ -219,13 +219,15 @@ subsection VOF
   subsection phase filtration
     set type = tanh
   end
-  subsection interface sharpening
-    set enable                  = true
-    set interface sharpness     = 1.5
-    set type                    = adaptive
-    set threshold max deviation = 0.4
-    set max iterations          = 50
-    set tolerance               = 1e-7
+  subsection regularization method
+    set type = sharpening
+    subsection interface sharpening
+      set interface sharpness     = 1.5
+      set type                    = adaptive
+      set threshold max deviation = 0.4
+      set max iterations          = 50
+      set tolerance               = 1e-7
+    end
   end
   subsection surface tension force
     set enable                  = true
