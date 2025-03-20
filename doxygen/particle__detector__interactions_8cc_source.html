@@ -288,7 +288,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  Tensor&lt;1, dim&gt; particle_position_rotation)</div>
 <div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>{</div>
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>  <span class="comment">// Function value when evaluate with t (circle equation)</span></div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>  <span class="keyword">auto</span> F = [=](<span class="keywordtype">double</span> t) {</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>  <span class="keyword">auto</span> F = [=, *<span class="keyword">this</span>](<span class="keyword">const</span> <span class="keywordtype">double</span> t) {</div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    <span class="keywordtype">double</span> R = parameters.reactor_radius;</div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    Tensor&lt;1, dim&gt; line_equations(</div>
@@ -306,7 +306,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>  };</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>  <span class="comment">// Numerical derivative of the function value when evaluate with t</span></div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  <span class="keyword">auto</span> dF = [=](<span class="keywordtype">double</span> t) {</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  <span class="keyword">auto</span> dF = [=, *<span class="keyword">this</span>](<span class="keyword">const</span> <span class="keywordtype">double</span> t) {</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    <span class="keywordtype">double</span> dt = 0.0001;</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keywordflow">return</span> (F(t + dt) - F(t - dt)) / (2 * dt);</div>

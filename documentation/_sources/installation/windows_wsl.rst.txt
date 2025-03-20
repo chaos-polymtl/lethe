@@ -349,7 +349,7 @@ This will take from a few minutes to an hour, depending on your hardware. At the
     apt install numdiff
 
 .. warning:: 
-  The lethe test suites requires that deal.II be configured with p4est 2.2.1, otherwise the test which include restart files will fail.
+  The lethe test suites requires that deal.II be configured with p4est 2.2, otherwise the test which include restart files will fail.  Even if the tests fail, the application should work as expected (including the restart capabilities).
 
 Congratulations, you are now ready to use lethe! For instance, proceed to :doc:`../first_simulation`.
 

@@ -442,9 +442,9 @@
 </figure>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>Distributions on which compatibility was tested are: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro.</p>
+<p>Distributions on which compatibility was tested are: Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, Centos 7 and Manjaro.</p>
 </div>
-<p>Lethe requires a modern version of the <a class="reference external" href="https://www.dealii.org/">deal.II library</a> and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.5</span></code> and <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.6pre</span></code> (the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch version) are supported. A <a class="reference external" href="https://github.com/chaos-polymtl/dealii">dealii fork</a> is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested.</p>
+<p>Lethe requires a modern version of the <a class="reference external" href="https://www.dealii.org/">deal.II library</a> and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.6</span></code> and <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.7pre</span></code> (the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch version) are supported. A <a class="reference external" href="https://github.com/chaos-polymtl/dealii">dealii fork</a> is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested.</p>
 <p><strong>Lethe installation steps:</strong></p>
 <ol class="arabic simple">
 <li><p>Installing deal.II</p></li>
@@ -495,7 +495,7 @@ PACKAGES=&quot;${PACKAGES} dealii&quot;
 </div>
 </div></blockquote>
 <p>Other packages can be disabled by simply commenting out the lines (adding a <code class="docutils literal notranslate"><span class="pre">#</span></code> at the beginning of the lines)</p>
-<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.</p>
+<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.2. Otherwise, application tests that include restart files will fail.</p>
 <p>From the candi folder, the installation of candi can be launched using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./candi.sh -j$numproc --prefix=$path
 </pre></div>
@@ -509,6 +509,34 @@ PACKAGES=&quot;${PACKAGES} dealii&quot;
 <p>After installation, add the following lines variable to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> :</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>  source cand/install/prefix/configuration/enable.sh
   export DEAL_II_DIR=cand/install/prefix/deal.II-v.&lt;version&gt;
+</pre></div>
+</div>
+</section>
+<section id="installing-deal-ii-manually">
+<span id="install-deal-ii-manually"></span><h2>Installing deal.II manually<a class="headerlink" href="#installing-deal-ii-manually" title="Link to this heading">#</a></h2>
+<p>Clone deal.II from the <a class="reference external" href="https://github.com/dealii/dealii">deal.ii official repository</a></p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/dealii/dealii
+</pre></div>
+</div>
+<p>Configure deal.II in a build folder at the same level as the source code</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir build
+cd build
+</pre></div>
+</div>
+<p>Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
+</pre></div>
+</div>
+<p>Compile deal.II</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs install
+</pre></div>
+</div>
+<p>Create an environment variable for the deal.II directory</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>export DEAL_II_DIR=/path/to/dealii/installation
+</pre></div>
+</div>
+<p>It is generally recommended to add the variable to your bashrc so it is always loaded:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo &quot;export DEAL_II_DIR=/path/to/dealii/installation&quot; &gt;&gt; ~/.bashrc
 </pre></div>
 </div>
 </section>
@@ -558,38 +586,10 @@ cd build
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>ctest -j$numprocs
 </pre></div>
 </div>
-<p>where $numprocs can be the number of physical cores on your machine.</p>
+<p>where $numprocs can be the number of physical cores on your machine. Do not be afraid if some tests fail on your machine, they are not always as portable as we would like them to be.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The lethe test suites requires that deal.II be configured with p4est 2.3.6, otherwise the test that include restart files will fail.</p>
-</div>
-</section>
-<section id="installing-deal-ii-manually">
-<span id="install-deal-ii-manually"></span><h2>Installing deal.II manually<a class="headerlink" href="#installing-deal-ii-manually" title="Link to this heading">#</a></h2>
-<p>Clone deal.II from the <a class="reference external" href="https://github.com/dealii/dealii">deal.ii official repository</a></p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/dealii/dealii
-</pre></div>
-</div>
-<p>Configure deal.II in a build folder at the same level as the source code</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir build
-cd build
-</pre></div>
-</div>
-<p>Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
-</pre></div>
-</div>
-<p>Compile deal.II</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs install
-</pre></div>
-</div>
-<p>Create an environment variable for the deal.II directory</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>export DEAL_II_DIR=/path/to/dealii/installation
-</pre></div>
-</div>
-<p>It is generally recommended to add the variable to your bashrc so it is always loaded:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo &quot;export DEAL_II_DIR=/path/to/dealii/installation&quot; &gt;&gt; ~/.bashrc
-</pre></div>
+<p>The lethe test suites requires that deal.II be configured with p4est 2.2, otherwise the test that include restart files will fail. Even if the tests fail, the application should work as expected (including the restart capabilities).</p>
 </div>
 </section>
 <section id="updating-deal-ii">
@@ -678,9 +678,9 @@ DEAL_II_VERSION=master
 <li><a class="reference internal" href="#">Regular Installation on Linux</a><ul>
 <li><a class="reference internal" href="#installing-deal-ii-using-apt">Installing deal.II using apt</a></li>
 <li><a class="reference internal" href="#installing-deal-ii-using-candi">Installing deal.II using Candi</a></li>
+<li><a class="reference internal" href="#installing-deal-ii-manually">Installing deal.II manually</a></li>
 <li><a class="reference internal" href="#installing-lethe">Installing Lethe</a></li>
 <li><a class="reference internal" href="#testing-your-installation">Testing Your Installation</a></li>
-<li><a class="reference internal" href="#installing-deal-ii-manually">Installing deal.II manually</a></li>
 <li><a class="reference internal" href="#updating-deal-ii">Updating deal.II</a><ul>
 <li><a class="reference internal" href="#through-apt">Through apt</a></li>
 <li><a class="reference internal" href="#through-the-git-repository">Through the Git Repository</a></li>
