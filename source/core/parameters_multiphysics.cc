@@ -180,42 +180,49 @@ Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
                       Patterns::Selection(
                         "none|sharpening|algebraic|geometric"),
                       "VOF interface regularization method");
+
+
     sharpening.declare_parameters(prm);
     algebraic_interface_reinitialization.declare_parameters(prm);
     geometric_interface_reinitialization.declare_parameters(prm);
   }
+  prm.leave_subsection();
 }
 
 void
 Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 {
-  const std::string t = prm.get("type");
-  if (t == "none")
-    regularization_method_type = Parameters::RegularizationMethodType::none;
-  else if (t == "sharpening")
-    {
-      regularization_method_type =
-        Parameters::RegularizationMethodType::sharpening;
-      sharpening.enable = true;
-    }
-  else if (t == "algebraic")
-    {
-      regularization_method_type =
-        Parameters::RegularizationMethodType::algebraic;
-      algebraic_interface_reinitialization.enable = true;
-    }
-  else if (t == "geometric")
-    {
-      regularization_method_type =
-        Parameters::RegularizationMethodType::geometric;
-      geometric_interface_reinitialization.enable = true;
-    }
-  else
-    throw(std::runtime_error("Invalid regularization method type!"));
+  prm.enter_subsection("regularization method");
+  {
+    const std::string t = prm.get("type");
+    if (t == "none")
+      regularization_method_type = Parameters::RegularizationMethodType::none;
+    else if (t == "sharpening")
+      {
+        regularization_method_type =
+          Parameters::RegularizationMethodType::sharpening;
+        sharpening.enable = true;
+      }
+    else if (t == "algebraic")
+      {
+        regularization_method_type =
+          Parameters::RegularizationMethodType::algebraic;
+        algebraic_interface_reinitialization.enable = true;
+      }
+    else if (t == "geometric")
+      {
+        regularization_method_type =
+          Parameters::RegularizationMethodType::geometric;
+        geometric_interface_reinitialization.enable = true;
+      }
+    else
+      throw(std::runtime_error("Invalid regularization method type!"));
 
-  sharpening.parse_parameters(prm);
-  algebraic_interface_reinitialization.parse_parameters(prm);
-  geometric_interface_reinitialization.parse_parameters(prm);
+    sharpening.parse_parameters(prm);
+    algebraic_interface_reinitialization.parse_parameters(prm);
+    geometric_interface_reinitialization.parse_parameters(prm);
+  }
+  prm.leave_subsection();
 }
 
 void

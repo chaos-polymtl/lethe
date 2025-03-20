@@ -109,7 +109,7 @@ namespace Parameters
     // explained in the dam break VOF example:
     // https://chaos-polymtl.github.io/lethe/examples/multiphysics/dam-break-VOF/dam-break-VOF.html
 
-    bool enable;
+    bool enable = false;
 
     Parameters::SharpeningType type;
 
@@ -193,7 +193,7 @@ namespace Parameters
   struct VOF_AlgebraicInterfaceReinitialization
   {
     /// Enables/Disables the algebraic interface reinitialization.
-    bool enable;
+    bool enable = false;
     /**
      * Enables/Disables @p pvtu format outputs of the algebraic interface
      * reinitialization steps of the last simulated time-step.
@@ -245,7 +245,7 @@ namespace Parameters
   struct VOF_GeometricInterfaceReinitialization
   {
     /// Enables/Disables the geometric interface reinitialization.
-    bool enable;
+    bool enable = false;
     /// Enables/Disables the output of the signed distance field
     bool output_signed_distance;
     /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
