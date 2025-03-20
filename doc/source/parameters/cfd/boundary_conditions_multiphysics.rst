@@ -172,7 +172,7 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 Cahn-Hilliard
 ^^^^^^^^^^^^^^
 
-For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (default), ``noflux``, ``dirichlet``, ``angle_of_contact``, and ``free_angle``. The parameters for each type of Cahn-Hilliard boundary conditions are:
+For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (default), ``noflux``, ``dirichlet``, ``angle_of_contact``, ``free_angle`` and ``periodic``. The parameters for each type of Cahn-Hilliard boundary conditions are:
 
 .. code-block:: text
 
