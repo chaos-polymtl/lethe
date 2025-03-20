@@ -6,9 +6,9 @@ Regular Installation on Linux
    :height: 100px
 
 .. important::
-  Distributions on which compatibility was tested are: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro.
+  Distributions on which compatibility was tested are: Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, Centos 7 and Manjaro.
 
-Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
+Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.6`` and ``deal.II 9.7pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
 
 **Lethe installation steps:**
   
@@ -81,7 +81,7 @@ The following packages (which are specified after line 57) should be installed:
 
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.2. Otherwise, application tests that include restart files will fail.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -107,6 +107,54 @@ After installation, add the following lines variable to your ``.bashrc`` :
     source cand/install/prefix/configuration/enable.sh
     export DEAL_II_DIR=cand/install/prefix/deal.II-v.<version>
 
+
+.. _install-deal.II-manually:
+
+Installing deal.II manually 
+-----------------------------------------
+
+Clone deal.II from the `deal.ii official repository <https://github.com/dealii/dealii>`_
+
+.. code-block:: text
+  :class: copy-button
+
+  git clone https://github.com/dealii/dealii 
+
+Configure deal.II in a build folder at the same level as the source code
+
+.. code-block:: text
+  :class: copy-button
+
+  mkdir build
+  cd build
+
+Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.
+
+.. code-block:: text
+  :class: copy-button
+
+  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
+
+Compile deal.II
+
+.. code-block:: text
+  :class: copy-button
+
+  make -j$numprocs install
+
+Create an environment variable for the deal.II directory
+
+.. code-block:: text
+  :class: copy-button
+
+  export DEAL_II_DIR=/path/to/dealii/installation
+
+It is generally recommended to add the variable to your bashrc so it is always loaded:
+
+.. code-block:: text
+  :class: copy-button
+
+  echo "export DEAL_II_DIR=/path/to/dealii/installation" >> ~/.bashrc
 
 .. _install-lethe:
 
@@ -183,60 +231,10 @@ Lethe comes pre-packaged with an extensive test suit for all of its modules. It 
 
   ctest -j$numprocs
 
-where $numprocs can be the number of physical cores on your machine.
+where $numprocs can be the number of physical cores on your machine. Do not be afraid if some tests fail on your machine, they are not always as portable as we would like them to be.
 
 .. warning:: 
-  The lethe test suites requires that deal.II be configured with p4est 2.3.6, otherwise the test that include restart files will fail.
-
-
-.. _install-deal.II-manually:
-
-Installing deal.II manually 
------------------------------------------
-
-Clone deal.II from the `deal.ii official repository <https://github.com/dealii/dealii>`_
-
-.. code-block:: text
-  :class: copy-button
-
-  git clone https://github.com/dealii/dealii 
-
-Configure deal.II in a build folder at the same level as the source code
-
-.. code-block:: text
-  :class: copy-button
-
-  mkdir build
-  cd build
-
-Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.
-
-.. code-block:: text
-  :class: copy-button
-
-  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
-
-Compile deal.II
-
-.. code-block:: text
-  :class: copy-button
-
-  make -j$numprocs install
-
-Create an environment variable for the deal.II directory
-
-.. code-block:: text
-  :class: copy-button
-
-  export DEAL_II_DIR=/path/to/dealii/installation
-
-It is generally recommended to add the variable to your bashrc so it is always loaded:
-
-.. code-block:: text
-  :class: copy-button
-
-  echo "export DEAL_II_DIR=/path/to/dealii/installation" >> ~/.bashrc
-
+  The lethe test suites requires that deal.II be configured with p4est 2.2, otherwise the test that include restart files will fail. Even if the tests fail, the application should work as expected (including the restart capabilities).
 
 .. _update-dealii:
 
