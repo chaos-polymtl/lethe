@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2025-03-13
 
+### Fixed
+
+- MAJOR This PR switches the CI from the deal.ii-focal to the deal.ii-jammy image. This image uses Mold, which meant that some small refactor was necessary to prevent some compilation issues. Furthermore, this image uses P4est 2.2, which means that the restart files for the tests that require restart files had to be regenerated. [#1464](https://github.com/chaos-polymtl/lethe/pull/1464)
+
+## [Master] - 2025-03-13
+
 ### Added
 
 - MINOR This PR adds the (almost) empty architecture of the SignedDistanceSolver and its coupling in the VOF solver (geometric reinitialization method), following the structure of the already existing vof_advection prototype. The parameters associated to the geometric reinitialization method for the VOF solver are also added. [#1451](https://github.com/chaos-polymtl/lethe/pull/1451)
