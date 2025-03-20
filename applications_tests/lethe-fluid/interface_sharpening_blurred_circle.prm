@@ -26,11 +26,13 @@ subsection multiphysics
 end
 
 subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 3
-    set frequency           = 2
+  subsection regularization method
+    set type = sharpening
+    subsection interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 3
+      set frequency           = 2
+    end
   end
 end
 

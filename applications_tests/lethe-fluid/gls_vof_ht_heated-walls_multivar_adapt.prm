@@ -33,10 +33,12 @@ end
 #---------------------------------------------------
 
 subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set frequency           = 1
-    set interface sharpness = 1.5
+  subsection regularization method
+  set type = sharpening
+    subsection interface sharpening
+      set frequency           = 1
+      set interface sharpness = 1.5
+    end
   end
 end
 
