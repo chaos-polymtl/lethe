@@ -75,8 +75,8 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , sharpening_threshold(
-        simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
+    , sharpening_threshold(simulation_parameters.multiphysics.vof_parameters
+                             .regularization_method.sharpening.threshold)
   {
     AssertThrow(simulation_parameters.physical_properties_manager
                     .get_number_of_fluids() == 2,
@@ -123,8 +123,8 @@ public:
       }
 
     // Check the value of interface sharpness
-    if (simulation_parameters.multiphysics.vof_parameters.sharpening
-          .interface_sharpness < 1.0)
+    if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+          .sharpening.interface_sharpness < 1.0)
       this->pcout
         << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
         << std::endl
@@ -145,7 +145,7 @@ public:
       this->simulation_control,
       this->multiphysics);
 
-    if (simulation_parameters.multiphysics.vof_parameters
+    if (simulation_parameters.multiphysics.vof_parameters.regularization_method
           .geometric_interface_reinitialization.enable)
       {
         this->signed_distance_solver = std::make_shared<
@@ -153,7 +153,8 @@ public:
           triangulation,
           fe,
           simulation_parameters.multiphysics.vof_parameters
-            .geometric_interface_reinitialization.max_reinitialization_distance,
+            .regularization_method.geometric_interface_reinitialization
+            .max_reinitialization_distance,
           0.0);
       }
   }

@@ -120,7 +120,7 @@ test()
   }
 
   // Enable algebraic interface reinitialization
-  solver_parameters.multiphysics.vof_parameters
+  solver_parameters.multiphysics.vof_parameters.regularization_method
     .algebraic_interface_reinitialization.enable = true;
   {
     VOFSubequationsInterface<dim> subequations_interface(
