@@ -188,7 +188,7 @@ ParticleDetectorInteractions<dim>::solve_t(
   Tensor<1, dim> particle_position_rotation)
 {
   // Function value when evaluate with t (circle equation)
-  auto F = [=](double t) {
+  auto F = [=, *this](const double t) {
     double R = parameters.reactor_radius;
 
     Tensor<1, dim> line_equations(
@@ -206,7 +206,7 @@ ParticleDetectorInteractions<dim>::solve_t(
   };
 
   // Numerical derivative of the function value when evaluate with t
-  auto dF = [=](double t) {
+  auto dF = [=, *this](const double t) {
     double dt = 0.0001;
 
     return (F(t + dt) - F(t - dt)) / (2 * dt);

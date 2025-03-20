@@ -15,8 +15,6 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
 
-#include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
-
 template <int dim>
 FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)

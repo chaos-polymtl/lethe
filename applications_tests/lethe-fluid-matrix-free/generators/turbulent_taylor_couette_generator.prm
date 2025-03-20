@@ -13,7 +13,7 @@ set dimension = 3
 subsection simulation control
   set method           = bdf2
   set output name      = taylor-couette
-  set output path      = ./output/
+  set output path      = ../turbulent_taylor_couette_restart/
   set time end         = 10.5
   set time step        = 0.01
   set output frequency = 0

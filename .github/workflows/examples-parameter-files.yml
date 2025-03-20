@@ -32,7 +32,7 @@ jobs:
     
     # Run steps in container of dealii's master branch
     container:
-      image: dealii/dealii:${{ matrix.dealii_version }}-focal
+      image: dealii/dealii:${{ matrix.dealii_version }}-jammy
       options: --user root
 
     steps:
