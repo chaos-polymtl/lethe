@@ -20,6 +20,21 @@ using namespace dealii;
 namespace Parameters
 {
   /**
+   * @brief Different regularization method types:
+   *  - none
+   *  - sharpening: projection-based sharpening
+   *  - algebraic: PDE-based reinitialization
+   *  - geometric: geometric redistanciation
+   */
+  enum class RegularizationMethodType
+  {
+    none,
+    sharpening,
+    algebraic,
+    geometric
+  };
+
+  /**
    * @brief Different sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
@@ -260,6 +275,33 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  struct VOF_RegularizationMethod
+  {
+    Parameters::RegularizationMethodType regularization_method_type;
+
+    Parameters::VOF_InterfaceSharpening sharpening;
+    Parameters::VOF_AlgebraicInterfaceReinitialization
+      algebraic_interface_reinitialization;
+    Parameters::VOF_GeometricInterfaceReinitialization
+      geometric_interface_reinitialization;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   /**
    * @brief VOF - Defines the parameters for free surface simulations
    * using the VOF method.
@@ -267,13 +309,9 @@ namespace Parameters
    */
   struct VOF
   {
-    Parameters::VOF_InterfaceSharpening sharpening;
-    Parameters::VOF_SurfaceTensionForce surface_tension_force;
-    Parameters::VOF_PhaseFilter         phase_filter;
-    Parameters::VOF_AlgebraicInterfaceReinitialization
-      algebraic_interface_reinitialization;
-    Parameters::VOF_GeometricInterfaceReinitialization
-      geometric_interface_reinitialization;
+    Parameters::VOF_SurfaceTensionForce  surface_tension_force;
+    Parameters::VOF_PhaseFilter          phase_filter;
+    Parameters::VOF_RegularizationMethod regularization_method;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 

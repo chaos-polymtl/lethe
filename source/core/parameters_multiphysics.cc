@@ -107,20 +107,6 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
-
-  // Check if multiple interface resetting methods are used
-  AssertThrow(
-    !((this->vof_parameters.sharpening.enable &&
-       this->vof_parameters.algebraic_interface_reinitialization.enable) ||
-      (this->vof_parameters.sharpening.enable &&
-       this->vof_parameters.geometric_interface_reinitialization.enable) ||
-      (this->vof_parameters.algebraic_interface_reinitialization.enable &&
-       this->vof_parameters.geometric_interface_reinitialization.enable)),
-    MultipleInterfaceResettingMethods(
-      this->vof_parameters.sharpening.enable,
-      this->vof_parameters.algebraic_interface_reinitialization.enable,
-      this->vof_parameters.geometric_interface_reinitialization.enable));
-
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
 }
 
@@ -129,11 +115,9 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
-    sharpening.declare_parameters(prm);
+    regularization_method.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
-    algebraic_interface_reinitialization.declare_parameters(prm);
-    geometric_interface_reinitialization.declare_parameters(prm);
 
     prm.declare_entry("viscous dissipative fluid",
                       "fluid 1",
@@ -163,11 +147,9 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
-    sharpening.parse_parameters(prm);
+    regularization_method.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
     phase_filter.parse_parameters(prm);
-    algebraic_interface_reinitialization.parse_parameters(prm);
-    geometric_interface_reinitialization.parse_parameters(prm);
 
     // Viscous dissipative fluid
     const std::string op = prm.get("viscous dissipative fluid");
@@ -189,15 +171,58 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 }
 
 void
+Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("regularization method");
+  {
+    prm.declare_entry("type",
+                      "none",
+                      Patterns::Selection(
+                        "none|sharpening|algebraic|geometric"),
+                      "VOF interface regularization method");
+    sharpening.declare_parameters(prm);
+    algebraic_interface_reinitialization.declare_parameters(prm);
+    geometric_interface_reinitialization.declare_parameters(prm);
+  }
+}
+
+void
+Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
+{
+  const std::string t = prm.get("type");
+  if (t == "none")
+    regularization_method_type = Parameters::RegularizationMethodType::none;
+  else if (t == "sharpening")
+    {
+      regularization_method_type =
+        Parameters::RegularizationMethodType::sharpening;
+      sharpening.enable = true;
+    }
+  else if (t == "algebraic")
+    {
+      regularization_method_type =
+        Parameters::RegularizationMethodType::algebraic;
+      algebraic_interface_reinitialization.enable = true;
+    }
+  else if (t == "geometric")
+    {
+      regularization_method_type =
+        Parameters::RegularizationMethodType::geometric;
+      geometric_interface_reinitialization.enable = true;
+    }
+  else
+    throw(std::runtime_error("Invalid regularization method type!"));
+
+  sharpening.parse_parameters(prm);
+  algebraic_interface_reinitialization.parse_parameters(prm);
+  geometric_interface_reinitialization.parse_parameters(prm);
+}
+
+void
 Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface sharpening");
   {
-    prm.declare_entry("enable",
-                      "false",
-                      Patterns::Bool(),
-                      "Enable interface sharpening <true|false>");
-
     prm.declare_entry(
       "type",
       "constant",
@@ -276,7 +301,6 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface sharpening");
   {
-    enable              = prm.get_bool("enable");
     interface_sharpness = prm.get_double("interface sharpness");
     frequency           = prm.get_integer("frequency");
 
@@ -465,12 +489,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
   prm.enter_subsection("algebraic interface reinitialization");
   {
     prm.declare_entry(
-      "enable",
-      "false",
-      Patterns::Bool(),
-      "Enables the interface reinitialization with the algebraic method "
-      "<true|false>");
-    prm.declare_entry(
       "output reinitialization steps",
       "false",
       Patterns::Bool(),
@@ -526,7 +544,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
 {
   prm.enter_subsection("algebraic interface reinitialization");
   {
-    this->enable = prm.get_bool("enable");
     this->output_reinitialization_steps =
       prm.get_bool("output reinitialization steps");
     this->reinitialization_frequency = prm.get_integer("frequency");
@@ -557,12 +574,6 @@ Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
 {
   prm.enter_subsection("geometric interface reinitialization");
   {
-    prm.declare_entry(
-      "enable",
-      "false",
-      Patterns::Bool(),
-      "Enables the interface reinitialization with the geometric method "
-      "<true|false>");
     prm.declare_entry(
       "output signed distance",
       "false",
@@ -601,7 +612,6 @@ Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters(
 {
   prm.enter_subsection("geometric interface reinitialization");
   {
-    this->enable                     = prm.get_bool("enable");
     this->output_signed_distance     = prm.get_bool("output signed distance");
     this->reinitialization_frequency = prm.get_integer("frequency");
     this->max_reinitialization_distance =

@@ -186,7 +186,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
 
   // Initial condition
   if (this->simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.output_reinitialization_steps)
+        .regularization_method.algebraic_interface_reinitialization
+        .output_reinitialization_steps)
     {
       this->pvdhandler.times_and_names.clear();
       write_output_results(0);
@@ -718,7 +719,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
 
   // For debugging purposes
   if (this->simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.output_reinitialization_steps)
+        .regularization_method.algebraic_interface_reinitialization
+        .output_reinitialization_steps)
     write_output_results(step);
 
   // Iterate until a stop criterion is met
@@ -749,7 +751,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
 
           // For debugging purposes
           if (this->simulation_parameters.multiphysics.vof_parameters
-                .algebraic_interface_reinitialization
+                .regularization_method.algebraic_interface_reinitialization
                 .output_reinitialization_steps)
             write_output_results(step);
         }
