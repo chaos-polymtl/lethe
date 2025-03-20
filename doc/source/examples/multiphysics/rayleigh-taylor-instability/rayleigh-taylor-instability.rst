@@ -223,18 +223,20 @@ The boundary conditions applied on the left and right boundaries are ``slip``, w
 VOF
 ~~~
 
-In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here, we use the ``constant`` and ``adaptive`` methods for interface sharpening. Mass conservation results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` sharpening we use:
+In the ``VOF`` subsection, we select the ``sharpening`` method in the ``interface regularization method`` subsection to reconstruct the interface and keep it sharp during the simulation. Note that in the ``interface sharpening`` subsection, we use the ``constant`` and ``adaptive`` types for interface sharpening methods. Mass conservation results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` sharpening we use:
 
 .. code-block:: text
 
    subsection VOF
-     subsection interface sharpening
-       set enable              = true
-       set threshold           = 0.5
-       set interface sharpness = 1.5
-       set frequency           = 25
-       set type                = constant
-     end
+     subsection interface regularization method
+       set type = sharpening
+       subsection interface sharpening
+         set threshold           = 0.5
+         set interface sharpness = 1.5
+         set frequency           = 25
+         set type                = constant
+       end
+    end
      subsection phase filtration
        set type      = tanh
        set verbosity = quiet

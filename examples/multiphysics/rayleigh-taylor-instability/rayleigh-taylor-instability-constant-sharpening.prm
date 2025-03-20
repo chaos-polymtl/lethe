@@ -105,12 +105,14 @@ end
 #---------------------------------------------------
 
 subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 1.5
-    set frequency           = 25
-    set type                = constant
+  subsection interface regularization method
+    set type = sharpening
+    subsection interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 1.5
+      set frequency           = 25
+      set type                = constant
+    end
   end
   subsection phase filtration
     set type      = tanh

@@ -82,25 +82,27 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 VOF
 ~~~
 
-In the ``VOF`` subsection, the ``compressible``, the ``interface sharpening``, and the ``phase filtration`` features are enabled.
+In the ``VOF`` subsection, the ``compressible`` and the ``phase filtration`` features are enabled.
 The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
-The ``interface sharpening`` method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
 The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
+The ``sharpening`` method is selected as the ``interface regularization method`` and its parameters, defined in the ``subsection interface sharpening``, are explained in the :doc:`../dam-break/dam-break` example.
 We refer the reader to :doc:`../../../../theory/multiphase/cfd/vof` theory guide for further explanation on the ``phase filtration``.
 
 .. code-block:: text
 
     subsection VOF
       set compressible = true
-      subsection interface sharpening
-        set enable              = true
-        set threshold           = 0.5
-        set interface sharpness = 1.8
-        set frequency           = 25
-      end
       subsection phase filtration
         set type      = tanh
         set beta      = 10
+      end
+      subsection interface regularization method
+        set type = sharpening
+        subsection interface sharpening
+          set threshold           = 0.5
+          set interface sharpness = 1.8
+          set frequency           = 25
+        end
       end
     end
 

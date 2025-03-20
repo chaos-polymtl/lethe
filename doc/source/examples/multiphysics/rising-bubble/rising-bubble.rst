@@ -75,8 +75,7 @@ Multiphysics
 ~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on (``true``)
-and off (``false``) the physics of interest. Here ``VOF`` is chosen. The ``phase filtration``, ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection.
-
+and off (``false``) the physics of interest. Here ``VOF`` is chosen.
 
 .. code-block:: text
 
@@ -100,7 +99,7 @@ The ``source term`` subsection defines the gravitational acceleration:
 VOF
 ~~~
 
-In the ``VOF`` subsection, three features are enabled : the ``interface sharpening``, the ``phase filtration`` and the ``surface tension force``.
+In the ``VOF`` subsection, three features are enabled : the ``phase filtration`` and the ``surface tension force``. The ``sharpening`` method is selected as the ``interface regularization method`` and its parameters aredefined in the ``subsection interface sharpening``
 
 The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example. The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction. We refer the reader to :doc:`../../../theory/multiphase/cfd/vof` theory guide for more explanation on the phase filtration. Finally, the surface tension force computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
@@ -108,11 +107,13 @@ The interface sharpening method and its parameters are explained in the :doc:`..
 .. code-block:: text
 
   subsection VOF
-    subsection interface sharpening
-      set enable              = true
-      set threshold           = 0.5
-      set interface sharpness = 1.5
-      set frequency           = 50
+    subsection interface regularization method
+      set type = sharpening
+      subsection interface sharpening
+        set threshold           = 0.5
+        set interface sharpness = 1.5
+        set frequency           = 50
+      end
     end
 
     subsection phase filtration

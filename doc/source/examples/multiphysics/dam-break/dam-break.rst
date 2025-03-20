@@ -97,16 +97,19 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 VOF
 ~~~
 
-If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
+
+To prevent that the interface between phases becomes blurry due to diffusion, the interface sharpening method is selected in the ``interface regularization method`` subsection. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
 
 .. code-block:: text
 
     subsection VOF
-      subsection interface sharpening
-        set enable              = true
-        set threshold           = 0.5
-        set interface sharpness = 1.5
-        set frequency           = 20
+      subsection interface regularization method
+        set type = sharpening
+        subsection interface sharpening
+          set threshold           = 0.5
+          set interface sharpness = 1.5
+          set frequency           = 20
+        end
       end
       subsection phase filtration
         set type            = tanh

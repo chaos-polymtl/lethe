@@ -35,15 +35,17 @@ end
 
 subsection VOF
   set compressible = true
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 2.2
-    set frequency           = 8
-  end
   subsection phase filtration
     set type = tanh
     set beta = 10
+  end
+  subsection interface regularization method
+    set type = sharpening
+    subsection interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 2.2
+      set frequency           = 8
+    end
   end
 end
 

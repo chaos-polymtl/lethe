@@ -173,13 +173,13 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 void
 Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("regularization method");
+  prm.enter_subsection("interface regularization method");
   {
     prm.declare_entry("type",
                       "none",
                       Patterns::Selection(
                         "none|sharpening|algebraic|geometric"),
-                      "VOF interface regularization method");
+                      "VOF interface interface regularization method");
 
 
     sharpening.declare_parameters(prm);
@@ -192,7 +192,7 @@ Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
 void
 Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("regularization method");
+  prm.enter_subsection("interface regularization method");
   {
     const std::string t = prm.get("type");
     if (t == "none")
@@ -216,7 +216,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
         geometric_interface_reinitialization.enable = true;
       }
     else
-      throw(std::runtime_error("Invalid regularization method type!"));
+      throw(std::runtime_error("Invalid interface regularization method type!"));
 
     sharpening.parse_parameters(prm);
     algebraic_interface_reinitialization.parse_parameters(prm);

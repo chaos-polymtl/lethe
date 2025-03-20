@@ -226,7 +226,7 @@ subsection VOF
     set verbosity = quiet
     set beta      = 20
   end
-  subsection regularization method
+  subsection interface regularization method
     set type = sharpening
     subsection interface sharpening
       set threshold               = 0.5
