@@ -19,7 +19,7 @@ Features
 Files Used in This Example
 ----------------------------
 
-All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-mms``). The files used for the quadrilateral mesh can be found in the ``mms_quad`` folder, while those for the triangular mesh are
+All files are located in the example's folder (``examples/incompressible-flow/2d-mms``). The files used for the quadrilateral mesh can be found in the ``mms_quad`` folder, while those for the triangular mesh are
 grouped in the ``mms_simplex`` folder.
 
 - Base case parameter file in each folder: ``mms_quad/mms_2d_steady.prm`` and ``mms_simplex/mms_2d_steady.prm``
