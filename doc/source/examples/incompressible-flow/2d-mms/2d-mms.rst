@@ -27,7 +27,7 @@ grouped in the ``mms_simplex`` folder.
 - Files to generate the parameter files at the different conditions: ``mms_quad/generate_cases.py`` and ``mms_simplex/generate_cases.py``
 - Files to run the different simulations: ``mms_quad/launch_cases.py`` and ``mms_simplex/launch_cases.py``
 - File to reorganize the output of the triangular mesh in a manner that is similar to the quadrilateral case: ``mms_simplex/organize_output.py``. After running the code, a directory ``mms_simplex/initial_output`` is created where the initial simulations output is stored
-- Plotting the error for both mesh types is done through the file: ``plot_error.py``
+- Python script to plot the error: ``plot_error.py``
 
 
 -----------------------
