@@ -249,16 +249,19 @@ and for the ``adaptive`` sharpening:
 .. code-block:: text
 
    subsection VOF
-     subsection interface sharpening
-       set enable                  = true
-       set threshold               = 0.5
-       set interface sharpness     = 1.5
-       set frequency               = 25
-       set type                    = adaptive
-       set threshold max deviation = 0.2
-       set max iterations          = 50
-       set monitored fluid         = fluid 1
-       set tolerance               = 1e-2
+     subsection interface regularization method
+       set type      = sharpening
+       set frequency = 25
+       subsection interface sharpening
+         set enable                  = true
+         set threshold               = 0.5
+         set interface sharpness     = 1.5
+         set type                    = adaptive
+         set threshold max deviation = 0.2
+         set max iterations          = 50
+         set monitored fluid         = fluid 1
+         set tolerance               = 1e-2
+       end
      end
      subsection phase filtration
        set type  = tanh
