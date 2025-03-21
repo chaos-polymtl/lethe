@@ -18,32 +18,32 @@ set_particle_wall_contact_force_model(
   std::vector<types::boundary_id> boundary_index =
     triangulation.get_boundary_ids();
   if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
-        linear)
+      Parameters::Lagrangian::ModelParameters<
+        dim>::ParticleWallContactForceModel::linear)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallLinearForce<dim, PropertiesIndex>>(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleWallContactForceModel::nonlinear)
+           Parameters::Lagrangian::ModelParameters<
+             dim>::ParticleWallContactForceModel::nonlinear)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallNonLinearForce<dim, PropertiesIndex>>(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleWallContactForceModel::JKR)
+           Parameters::Lagrangian::ModelParameters<
+             dim>::ParticleWallContactForceModel::JKR)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallJKRForce<dim, PropertiesIndex>>(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleWallContactForceModel::DMT)
+           Parameters::Lagrangian::ModelParameters<
+             dim>::ParticleWallContactForceModel::DMT)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallDMTForce<dim, PropertiesIndex>>(
