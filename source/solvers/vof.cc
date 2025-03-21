@@ -1162,7 +1162,8 @@ VolumeOfFluid<dim>::modify_solution()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.vof_parameters.regularization_method.frequency ==
+         simulation_parameters.multiphysics.vof_parameters.regularization_method
+           .frequency ==
        0))
     reinitialize_interface_with_geometric_method();
 
@@ -1185,8 +1186,7 @@ void
 VolumeOfFluid<dim>::handle_interface_sharpening()
 {
   if (this->simulation_parameters.multiphysics.vof_parameters
-        .regularization_method.sharpening.verbosity !=
-      Parameters::Verbosity::quiet)
+        .regularization_method.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
                   << this->simulation_control->get_step_number() << std::endl;
@@ -1196,8 +1196,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
       Parameters::SharpeningType::adaptive)
     {
       if (this->simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.sharpening.verbosity !=
-          Parameters::Verbosity::quiet)
+            .regularization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
@@ -1205,8 +1204,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
       this->sharpening_threshold = find_sharpening_threshold();
 
       if (this->simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.sharpening.verbosity !=
-          Parameters::Verbosity::quiet)
+            .regularization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   ... final sharpening is : "
                       << this->sharpening_threshold << std::endl;
@@ -1271,8 +1269,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
       mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
 
       if (this->simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.sharpening.verbosity !=
-          Parameters::Verbosity::quiet)
+            .regularization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout
             << "   ... step " << nb_search_ite
@@ -1338,8 +1335,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
   // Output message that mass conservation condition is reached
   if (this->simulation_parameters.multiphysics.vof_parameters
-        .regularization_method.sharpening.verbosity !=
-      Parameters::Verbosity::quiet)
+        .regularization_method.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "   ... search algorithm took : " << nb_search_ite
                   << " step(s) " << std::endl
@@ -2295,7 +2291,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
   const double linear_solver_tolerance = 1e-15;
 
   if (this->simulation_parameters.multiphysics.vof_parameters
-        .regularization_method.sharpening.verbosity ==
+        .regularization_method.verbosity ==
       Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
@@ -2342,7 +2338,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
                *ilu_preconditioner);
 
   if (this->simulation_parameters.multiphysics.vof_parameters
-        .regularization_method.sharpening.verbosity ==
+        .regularization_method.verbosity ==
       Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()

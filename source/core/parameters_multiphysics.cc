@@ -24,8 +24,8 @@ DeclException1(
 DeclException1(
   RegularizationMethodFrequencyError,
   int,
-  << "Regularization method frequency : " << arg1 << " is equal or smaller than 0."
-  << std::endl
+  << "Regularization method frequency : " << arg1
+  << " is equal or smaller than 0." << std::endl
   << "Interface regularization method requires an frequency larger than 0.");
 
 void
@@ -167,13 +167,21 @@ Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
                         "none|sharpening|algebraic|geometric"),
                       "VOF interface regularization method");
 
-    prm.declare_entry("frequency",
-                    "10",
-                    Patterns::Integer(),
-                    "Reinitialization frequency (number of time-steps) at which the "
-                    "interfaceregularization process will be applied to the VOF "
-                    "phase fraction field.");
-                    
+    prm.declare_entry(
+      "frequency",
+      "10",
+      Patterns::Integer(),
+      "Reinitialization frequency (number of time-steps) at which the "
+      "interfaceregularization process will be applied to the VOF "
+      "phase fraction field.");
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose|extra verbose"),
+      "States whether the output from the algebraic interface reinitialization "
+      "should be printed."
+      "Choices are <quiet|verbose|extra verbose>.");
+
     sharpening.declare_parameters(prm);
     algebraic_interface_reinitialization.declare_parameters(prm);
     geometric_interface_reinitialization.declare_parameters(prm);
@@ -188,7 +196,8 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
   {
     const std::string t = prm.get("type");
     if (t == "none")
-      this->regularization_method_type = Parameters::RegularizationMethodType::none;
+      this->regularization_method_type =
+        Parameters::RegularizationMethodType::none;
     else if (t == "sharpening")
       {
         regularization_method_type =
@@ -208,11 +217,25 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
         geometric_interface_reinitialization.enable = true;
       }
     else
-      throw(std::runtime_error("Invalid interface regularization method type!"));
+      throw(
+        std::runtime_error("Invalid interface regularization method type!"));
 
     this->frequency = prm.get_integer("frequency");
-    Assert(this->frequency > 0, RegularizationMethodFrequencyError(this->frequency));
-    
+    Assert(this->frequency > 0,
+           RegularizationMethodFrequencyError(this->frequency));
+
+    const std::string op2 = prm.get("verbosity");
+    if (op2 == "quiet")
+      this->verbosity = Parameters::Verbosity::quiet;
+    else if (op2 == "verbose")
+      this->verbosity = Parameters::Verbosity::verbose;
+    else if (op2 == "extra verbose")
+      this->verbosity = Parameters::Verbosity::extra_verbose;
+    else
+      throw(std::invalid_argument("Invalid verbosity level\n "
+                                  "Options are: \n"
+                                  " <quiet|verbose|extra verbose>"));
+
     this->sharpening.parse_parameters(prm);
     this->algebraic_interface_reinitialization.parse_parameters(prm);
     this->geometric_interface_reinitialization.parse_parameters(prm);
@@ -282,13 +305,6 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "2",
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
-
-    prm.declare_entry(
-      "verbosity",
-      "quiet",
-      Patterns::Selection("quiet|verbose|extra verbose"),
-      "States whether the interface sharpening calculations should be printed "
-      "Choices are <quiet|verbose>.");
   }
   prm.leave_subsection();
 }
@@ -332,17 +348,6 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 
     Assert(threshold_max_deviation > 0.0 && threshold_max_deviation < 0.5,
            SharpeningThresholdErrorMaxDeviation(threshold_max_deviation));
-
-    // Verbosity
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (op == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
-    else if (op == "extra verbose")
-      verbosity = Parameters::Verbosity::extra_verbose;
-    else
-      throw(std::runtime_error("Invalid verbosity level"));
   }
   prm.leave_subsection();
 }
@@ -509,13 +514,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
                       Patterns::Integer(),
                       "Maximum number of reinitialization steps.");
     prm.declare_entry(
-      "verbosity",
-      "quiet",
-      Patterns::Selection("quiet|verbose|extra verbose"),
-      "States whether the output from the algebraic interface reinitialization "
-      "should be printed."
-      "Choices are <quiet|verbose|extra verbose>.");
-    prm.declare_entry(
       "reinitialization CFL",
       "1.",
       Patterns::Double(),
@@ -533,23 +531,11 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
   {
     this->output_reinitialization_steps =
       prm.get_bool("output reinitialization steps");
-    this->diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
-    this->diffusivity_power          = prm.get_double("diffusivity power");
-    this->reinitialization_cfl       = prm.get_double("reinitialization CFL");
-    this->steady_state_criterion     = prm.get_double("steady-state criterion");
-    this->max_steps_number           = prm.get_integer("max steps number");
-
-    const std::string op2 = prm.get("verbosity");
-    if (op2 == "quiet")
-      this->verbosity = Parameters::Verbosity::quiet;
-    else if (op2 == "verbose")
-      this->verbosity = Parameters::Verbosity::verbose;
-    else if (op2 == "extra verbose")
-      this->verbosity = Parameters::Verbosity::extra_verbose;
-    else
-      throw(std::invalid_argument("Invalid verbosity level\n "
-                                  "Options are: \n"
-                                  " <quiet|verbose|extra verbose>"));
+    this->diffusivity_multiplier = prm.get_double("diffusivity multiplier");
+    this->diffusivity_power      = prm.get_double("diffusivity power");
+    this->reinitialization_cfl   = prm.get_double("reinitialization CFL");
+    this->steady_state_criterion = prm.get_double("steady-state criterion");
+    this->max_steps_number       = prm.get_integer("max steps number");
   }
   prm.leave_subsection();
 }
@@ -574,13 +560,6 @@ Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
                       "1.",
                       Patterns::Double(),
                       "Interface thickness for the tanh transformation");
-    prm.declare_entry(
-      "verbosity",
-      "quiet",
-      Patterns::Selection("quiet|verbose"),
-      "States whether the output from the geometric interface reinitialization "
-      "should be printed."
-      "Choices are <quiet|verbose>.");
   }
   prm.leave_subsection();
 }
@@ -591,20 +570,10 @@ Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters(
 {
   prm.enter_subsection("geometric interface reinitialization");
   {
-    this->output_signed_distance     = prm.get_bool("output signed distance");
+    this->output_signed_distance = prm.get_bool("output signed distance");
     this->max_reinitialization_distance =
       prm.get_double("max reinitialization distance");
     this->tanh_thickness = prm.get_double("tanh thickness");
-
-    const std::string op2 = prm.get("verbosity");
-    if (op2 == "quiet")
-      this->verbosity = Parameters::Verbosity::quiet;
-    else if (op2 == "verbose")
-      this->verbosity = Parameters::Verbosity::verbose;
-    else
-      throw(std::invalid_argument("Invalid verbosity level\n "
-                                  "Options are: \n"
-                                  " <quiet|verbose>"));
   }
   prm.leave_subsection();
 }

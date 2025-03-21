@@ -24,6 +24,7 @@ The default values of the VOF parameters are given in the text box below.
     subsection interface regularization method
       set type       = none
       set frequency  = 10
+      set verbosity  = quiet
       
       subsection interface sharpening
         set interface sharpness     = 2
@@ -46,7 +47,6 @@ The default values of the VOF parameters are given in the text box below.
         set diffusivity multiplier        = 1.0
         set diffusivity power             = 1.0
         set reinitialization CFL          = 1.0
-        set verbosity                     = quiet
       end
     end
 
@@ -87,12 +87,22 @@ The ``subsection interface regularization method`` defines parameters to counter
 * ``type``: sets the method of regularization. There are three methods available:``none``, ``sharpening`` and ``algebraic``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
 
+* ``verbosity``: displays the solution process of the regularization method. The different level of verbosity are:
+
+  * ``quiet``: default verbosity level; no information on the process is displayed.
+
+    .. warning::
+      The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends on the verbosity of the non-linear and linear solvers. Some console outputs may remain if they are set to ``verbose``.
+
+  * ``verbose``: displays regularization steps progression. For the algebraic interface reinitialization (``type = algebraic``), only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
+
+  * ``extra verbose``: for the interface sharpening (``type = sharpening``), indicates the details of the linear iterations. For the algebraic interface reinitialization (``type = algebraic``), in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
+  
 Interface Sharpening
 ++++++++++++++++++++
 
 The ``type = sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this sharpening method. The ``subsection interface sharpening`` defines parameters relevant to this regularization method.
 
-* ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).
 * ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
 * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
@@ -169,18 +179,6 @@ The algebraic interface reinitialization PDE contains a diffusion term. This ter
     \Delta \tau = C_\text{CFL} \, h_\text{min}
 
   where :math:`C_\text{CFL}` is the imposed CFL condition and :math:`h_\text{min}` is the size of the smallest cell.
-
-* ``verbosity``: displays the solution process of the algebraic interface reinitialization. The different level of verbosity are:
-
-  * ``quiet``: default verbosity level; no information on the algebraic interface reinitialization process is displayed.
-
-    .. warning::
-      As the verbosity of the algebraic interface reinitialization depends on the verbosity of the non-linear and linear solvers, some console outputs may remain if they are set to ``verbose``.
-
-  * ``verbose``: displays reinitialization steps progression. Only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
-
-  * ``extra verbose``: in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
-
 
 Phase Filtration
 ~~~~~~~~~~~~~~~~~~
