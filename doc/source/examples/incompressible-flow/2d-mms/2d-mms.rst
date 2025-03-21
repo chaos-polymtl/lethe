@@ -10,9 +10,9 @@ Features
 
 - Solvers: ``lethe-fluid`` with the velocity and pressure shape functions :math:`\in \{Q_1, Q_2, Q3\}` and  :math:`\in \{P_1, P_2\}`
 - Steady-state problem
-- Displays the introduction of a source term in the NS equations
-- Displays the output of the :math:`L^2` norm of the `error relative to the analytical solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
-- Displays the use of a parameter file template allowing the `automatic launching of multiple cases <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ with different mesh refinement levels and polynomial approximation degrees
+- Introduction of a source term in the NS equations
+- Output of the :math:`L^2` norm of the `error relative to the chosen manufactured solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
+- Use of a parameter file template allowing the `automatic launching of multiple cases <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ with different mesh refinement levels and polynomial approximation degrees
 
 
 ----------------------------
@@ -39,7 +39,7 @@ Obviously, few exact analytical solution of the incompressible Navier-Stokes (NS
 
 - The manufactured solution is chosen such that all terms of the NS equations are non-trivial and non-singular. In other terms, the manufactured solution must be at least twice differentiable, with both its first and second derivatives being non-trivial. The manufactured solution can vary in complexity.
 - Once the manufactured solution is defined, it is substituted into the steady incompressible NS equations, leading to the appearance of source terms. Hence, the manufactuerd solution is the exact solution of the original equations if the source term is added. 
-- The simulations are run at different mesh resolutions and for different degrees for the shape functions of variables. In this case, these correspond to the velocity and pressure shape functions.
+- The simulations are run at different mesh resolutions and for different degrees of the polynomial approximations of the velocity and pressure.
 - The order of convergence is calculated by measuring the error between the numerical solution and the manufactured solution.
 
 In the current example, we choose the following analytical solution:
@@ -49,9 +49,9 @@ In the current example, we choose the following analytical solution:
     (\sin(\pi x))^2 \sin(\pi y) \cos(\pi y)\\
     \sin(\pi x) \cos(\pi x) (\sin(\pi y))^2 
    \end{bmatrix}\\
-  p^* &= \frac{p}{\rho}= \sin(\pi x)\sin(\pi y)
+  p &= \sin(\pi x)\sin(\pi y)
  
-where :math:`\rho` is the fluid density. The analytical solution is shown in the following figure:
+The analytical solution is shown in the following figure:
 
 .. image:: Images/analytical_solution.png
     :alt: The analytical solution: x-component of the velocity (upper-left), y-component of the velocity (upper-right), and pressure (bottom)
@@ -191,7 +191,7 @@ while the second one launches the simulations.
 
 As mentioned in section :ref:`Mesh_section`, for the quadrilateral mesh, for each combination of velocity and pressure shape functions, the mesh is refined automatically in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions containing the corresponding parameter file is created. Within each folder, the results corresponding to the different mesh resolutions are stored in a single ``L2Error.dat``. This is not the case for the simplex mesh, where a parameter file and an output file are created within a separate folder for each combination of velocity and pressure shape functions and mesh resolution.
 
-Once the simulations are launched, the results can be post-processed using the python script ``plot_error.py``, which plots the error relative to the analytical solution at the different mesh resolutions and shape function degrees. However, before using this code, the script ``organize_output.py`` must be run to rearrange the results for a triangular mesh in a folder structure similar to that obtained for the mesh with quadrilateral cells. Hence, after running this script for the simplex mesh, folders are created for each combination of velocity and pressure shape functions, and within each folder, the error is rearranged in a single ``L2Error.dat`` file with the same structure as that for the quadrilateral mesh, thus containing the errors for the different mesh resolutions.
+Once the simulations are completed, the results can be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution at the different mesh resolutions and polynomial approximation degrees. However, before using this code, the script ``organize_output.py`` must be run to rearrange the results for a triangular mesh in a folder structure similar to that obtained for the mesh with quadrilateral cells. Hence, after running this script for the simplex mesh, folders are created for each combination of velocity and pressure shape functions, and within each folder, the error is rearranged in a single ``L2Error.dat`` file with the same structure as that for the quadrilateral mesh, thus containing the errors for the different mesh resolutions.
 
 -----------------------
 Results and Discussion
