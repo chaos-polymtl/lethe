@@ -2306,7 +2306,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02145" name="l02145"></a><span class="lineno"> 2145</span>      x_system[i + 1] = &amp;distributed_previous_solutions[i];</div>
 <div class="line"><a id="l02146" name="l02146"></a><span class="lineno"> 2146</span>    }</div>
 <div class="line"><a id="l02147" name="l02147"></a><span class="lineno"> 2147</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; system_trans_vectors(</div>
-<div class="line"><a id="l02148" name="l02148"></a><span class="lineno"> 2148</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l02148" name="l02148"></a><span class="lineno"> 2148</span>    this-&gt;dof_handler);</div>
 <div class="line"><a id="l02149" name="l02149"></a><span class="lineno"> 2149</span> </div>
 <div class="line"><a id="l02150" name="l02150"></a><span class="lineno"> 2150</span>  <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_average_velocities ||</div>
 <div class="line"><a id="l02151" name="l02151"></a><span class="lineno"> 2151</span>      this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
@@ -2990,7 +2990,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02811" name="l02811"></a><span class="lineno"> 2811</span>    }</div>
 <div class="line"><a id="l02812" name="l02812"></a><span class="lineno"> 2812</span> </div>
 <div class="line"><a id="l02813" name="l02813"></a><span class="lineno"> 2813</span>  parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; system_trans_vectors(</div>
-<div class="line"><a id="l02814" name="l02814"></a><span class="lineno"> 2814</span>    this-&gt;dof_handler, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l02814" name="l02814"></a><span class="lineno"> 2814</span>    this-&gt;dof_handler);</div>
 <div class="line"><a id="l02815" name="l02815"></a><span class="lineno"> 2815</span>  system_trans_vectors.prepare_for_serialization(sol_set_transfer);</div>
 <div class="line"><a id="l02816" name="l02816"></a><span class="lineno"> 2816</span> </div>
 <div class="line"><a id="l02817" name="l02817"></a><span class="lineno"> 2817</span>  multiphysics-&gt;write_checkpoint();</div>
