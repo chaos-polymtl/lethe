@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-21
+
+### Added
+
+- MINOR Fix the simulation restart. When instantiating a SolutionTransfer object, the average_values flag can be set to true to average the contributions to the same DoF coming from different cells. This boolean must be set to true during a mesh adaptation, but not during a simulation restart. The average_values flag was therefore removed from the simulation restart. [#1466](https://github.com/chaos-polymtl/lethe/pull/1466)
+
 ## [Master] - 2025-03-20
 
 ### Added
