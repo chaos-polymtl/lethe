@@ -159,7 +159,7 @@ for i in range(highlight_x.shape[1]):  # Iterate over the columns (over the plot
    
 
 # Define 6 distinct colors for the lines
-colors = ["#d73027","#fdae61", "#fee08b", "#d9ef8b", "#66bd63", "#1a9850"]
+colors = ["#d73027","#fdae61", "#fee08b", "#d9ef8b", "#1591EA", "#1a9850"]
 markers = ['o', 's', '^', 'D', 'x', '*'] # Define markers for each line
 
 # We do this because the files are not read in increasing order of degu and then degp
@@ -185,7 +185,7 @@ quad_labels = legend_labels_sorted
 
 lines = [lines[i] for i in sorted_indices]
 
-for line, color, marker, label in zip(lines, colors, markers, legend_labels_sorted):
+for i, (line, color, marker, label) in enumerate(zip(lines, colors, markers, legend_labels_sorted)):
     line.set_color(color)
     line.set_marker(marker)
     line.set_label(label)

@@ -21,11 +21,11 @@ n_poly_deg = 2
 # Generation of data points
 coarse_mesh_ref = 4
 fine_mesh_ref = 7
-poly_deg_1=1
-poly_deg_2=2
+poly_deg_min=1
+poly_deg_max=2
 
 # ref = np.linspace(coarse_mesh_ref, fine_mesh_ref, number_of_refinements)
-poly_deg = np.linspace(poly_deg_1, poly_deg_2, n_poly_deg)
+poly_deg = np.linspace(poly_deg_min, poly_deg_max, n_poly_deg)
 mesh_ref = np.linspace(coarse_mesh_ref, fine_mesh_ref, fine_mesh_ref-coarse_mesh_ref+1)
 
 # Create Jinja template

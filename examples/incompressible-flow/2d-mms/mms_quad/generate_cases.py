@@ -18,10 +18,10 @@ CASE_PREFIX = 'mms_2d_steady_'
 PRM_FILE = 'mms_2d_steady.prm'
 n_poly_deg = 3
 
-poly_deg_1=1
-poly_deg_2=3
+poly_deg_min=1
+poly_deg_max=3
 
-poly_deg = np.linspace(poly_deg_1, poly_deg_2, n_poly_deg)
+poly_deg = np.linspace(poly_deg_min, poly_deg_max, n_poly_deg)
 
 # Create Jinja template
 templateLoader = jinja2.FileSystemLoader(searchpath=PATH)

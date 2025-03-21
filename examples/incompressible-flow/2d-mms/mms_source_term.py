@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
-This code computer the source term in the continuity and momentum conservation equations for a given analytical function of the velocity and pressure
+This code computes the source term in the continuity and momentum conservation equations for a given analytical function of the velocity and pressure
 The 2D incompressible steady-state NS equations are used
 """
 
