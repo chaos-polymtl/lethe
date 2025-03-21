@@ -123,9 +123,6 @@ namespace Parameters
     // Other sharpening parameters
     double interface_sharpness;
 
-    // Type of verbosity for the interface sharpening calculation
-    Parameters::Verbosity verbosity;
-
     bool monitoring;
 
     /// Conservation tolerance on the fluid monitored,
@@ -214,8 +211,6 @@ namespace Parameters
     double steady_state_criterion;
     /// Maximum number of reinitialization steps.
     double max_steps_number;
-    /// Type of verbosity of the algebraic interface reinitialization solver.
-    Parameters::Verbosity verbosity;
 
     /**
      * @brief Declare the parameters.
@@ -248,8 +243,6 @@ namespace Parameters
     double max_reinitialization_distance;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
-    /// Type of verbosity of the algebraic interface reinitialization solver.
-    Parameters::Verbosity verbosity;
 
     /**
      * @brief Declare the parameters.
@@ -270,19 +263,23 @@ namespace Parameters
 
   struct VOF_RegularizationMethod
   {
+    /// Regularization method type
     Parameters::RegularizationMethodType regularization_method_type;
-    
+
     /// Regularization frequency at every \f$x\f$ time-steps the VOF phase
     /// fraction field will be regularized
     int frequency;
-    
+
+    /// Type of verbosity of the algebraic interface reinitialization solver.
+    Parameters::Verbosity verbosity;
+
     /// Interface sharpening parameters
     Parameters::VOF_InterfaceSharpening sharpening;
-    
+
     /// Algebraic interface reinitialization parameters
     Parameters::VOF_AlgebraicInterfaceReinitialization
       algebraic_interface_reinitialization;
-      
+
     /// Geometric interface reinitialization parameters
     Parameters::VOF_GeometricInterfaceReinitialization
       geometric_interface_reinitialization;

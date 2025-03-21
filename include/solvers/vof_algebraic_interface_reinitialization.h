@@ -72,9 +72,8 @@ public:
     , simulation_control(p_simulation_control)
     , triangulation(p_triangulation)
     , dof_handler(*this->triangulation)
-    , subequation_verbosity(
-        p_simulation_parameters.multiphysics.vof_parameters
-          .regularization_method.algebraic_interface_reinitialization.verbosity)
+    , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
+                              .regularization_method.verbosity)
   {
     if (this->simulation_parameters.mesh.simplex)
       {

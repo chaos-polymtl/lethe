@@ -229,6 +229,7 @@ subsection VOF
   subsection interface regularization method
     set type      = sharpening
     set frequency = 10
+    set verbosity = quiet
     subsection interface sharpening
       set threshold               = 0.5
       set interface sharpness     = 1.5
@@ -237,7 +238,6 @@ subsection VOF
       set max iterations          = 50
       set monitored fluid         = fluid 1
       set tolerance               = 1e-7
-      set verbosity               = quiet
     end
   end
   subsection surface tension force
