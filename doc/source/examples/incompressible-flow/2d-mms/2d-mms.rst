@@ -35,7 +35,7 @@ Description of the Case
 -----------------------
 
 Numerical models requires both verification and validation. While code verification ensures that the mathematical and numerical scheme are consistent and that the code implementation is free from programming errors, code validation is concerned with verifying the agreement of the mathematical model with the underlying physics. The Method of Manufactured Solution  (MMS, see Roache (2002) [#Roache2002]_) is employed for code verification and involves evaluating the error defined as the difference between the manufactured solution  and the computed solution. 
-Obviously, the exact analytical solution of the incompressible Navier-Stokes (NS) equations is unknown. Therefore, the following procedure is adopted:
+Obviously, few exact analytical solution of the incompressible Navier-Stokes (NS) equations are known. Therefore, the following procedure is adopted:
 
 - The analytical solution is chosen such that all terms of the NS equations are non-trivial and non-singular. In other terms, the analytical function must be at least twice differentiable, with both its first and second derivatives being non-trivial. The analytical solution can vary in complexity.
 - Once the analytical solution is defined, it is substituted into the steady incompressible NS equations, leading to the appearance of source terms. Hence, the defined solution is the exact solution of the original equations, with the source terms added. The modified equations, which now include the source terms, form a new set of equations to be solved numerically.
