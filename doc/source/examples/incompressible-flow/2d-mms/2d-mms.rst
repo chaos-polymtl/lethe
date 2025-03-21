@@ -11,7 +11,7 @@ Features
 - Solvers: ``lethe-fluid`` with the velocity and pressure shape functions :math:`\in \{Q_1, Q_2, Q3\}` and  :math:`\in \{P_1, P_2\}`
 - Steady-state problem
 - Displays the introduction of a source term in the NS equations
-- Displays the output of the :math:`L²` norm of the `error relative to the analytical solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
+- Displays the output of the :math:`L^2` norm of the `error relative to the analytical solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
 - Displays the use of a parameter file template allowing the `automatic launching of multiple cases <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ with different mesh refinement levels and polynomial approximation degrees
 
 
