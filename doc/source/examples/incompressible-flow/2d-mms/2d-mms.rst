@@ -8,7 +8,7 @@ This example illustrates the use of the Method of Manufactured Solutions (MMS) f
 Features
 ----------------------------------
 
-- Solvers: ``lethe-fluid`` with the velocity and pressure shape functions :math:`\in \{Q_1, Q_2, Q3\}` and  :math:`\in \{P_1, P_2\}`
+- Solvers: ``lethe-fluid`` with the velocity and pressure polynomial approximations :math:`\in \{Q_1, Q_2, Q3\}` and  :math:`\in \{P_1, P_2\}`
 - Steady-state problem
 - Introduction of a source term in the NS equations
 - Output of the :math:`L^2` norm of the `error relative to the chosen manufactured solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
@@ -71,7 +71,7 @@ where :math:`\nu` is the kinematic viscosity.
 Parameter File
 --------------
 
-The simulations are conducted on the domain :math:`\Omega = [-1,1] \times [-1,1]` using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh). The polynomial degree :math:`k` of the velocity interpolation was varied from :math:`k=1` to :math:`k=3` for the quadrilateral mesh, and from math:`k=1` to math:`k=2` for the triangular mesh, as deal.II does not yet support higher-order polynomials for simplex mesh elements. Additionally, for each velocity approximation degree :math:`k_v`, the pressure field polynomial degree :math:`k_p` ranged from :math:`k_p=1`  up to  :math:`k_p = k_v` . Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.
+The simulations are conducted on the domain :math:`\Omega = [-1,1] \times [-1,1]` using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh). The polynomial degree :math:`k` of the velocity interpolation was varied from :math:`k=1` to :math:`k=3` for the quadrilateral mesh, and from :math:`k=1` to :math:`k=2` for the triangular mesh, as deal.II does not yet support higher-order polynomials for simplex mesh elements. Additionally, for each velocity approximation degree :math:`k_v`, the pressure field polynomial degree :math:`k_p` ranged from :math:`k_p=1`  up to  :math:`k_p = k_v` . Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.
 
 Since several parameter files are needed with a common syntax, except for the three parameters varied, a `parameter file template <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ is employed for automated file launch.
 

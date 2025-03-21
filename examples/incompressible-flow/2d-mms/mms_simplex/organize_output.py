@@ -20,12 +20,11 @@ base_dir = os.getcwd()
 # Define the base filename and possible suffixes
 path=Path(base_dir)
 
-poly_deg_1=1
-poly_deg_2=3
+poly_deg_min=1
+poly_deg_max=3
 n_poly_deg = 3
 
-# ref = np.linspace(coarse_mesh_ref, fine_mesh_ref, number_of_refinements)
-poly_deg = (np.linspace(poly_deg_1, poly_deg_2, n_poly_deg)).astype(int)
+poly_deg = (np.linspace(poly_deg_min, poly_deg_max, n_poly_deg)).astype(int)
 
 col_widths = [6, 12, 5, 11, 5, 8, 7]  # Adjust output files structure
 
