@@ -629,13 +629,23 @@ end
 <h3>Boundary Conditions VOF<a class="headerlink" href="#boundary-conditions-vof" title="Link to this heading">#</a></h3>
 <p>Lasty, in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">VOF</span></code> subsection we ensure that <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> is at the inlet. The other boundary conditions are default outlets.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions VOF
-  set number = 4
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = dirichlet
     subsection dirichlet
       set Function expression = if(y^2 &lt;= 1.3110e-6, 1, 0)
     end
+  end
+  subsection bc 1
+    set id                 = 2
+    set type               = periodic
+    set periodic_id        = 3
+    set periodic_direction = 1
+  end
+  subsection bc 2
+    set id   = 1
+    set type = none
   end
 end
 </pre></div>

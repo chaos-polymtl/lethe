@@ -1385,231 +1385,264 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>                <span class="keywordtype">id</span>),</div>
 <div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>              nonzero_constraints);</div>
 <div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span>          }</div>
-<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>      }</div>
-<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>  }</div>
-<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>  nonzero_constraints.close();</div>
-<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span> </div>
-<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>  <span class="comment">// Boundary conditions for Newton correction</span></div>
-<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>  {</div>
-<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>    zero_constraints.clear();</div>
-<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>    zero_constraints.reinit(this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span>    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
-<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>                                            zero_constraints);</div>
-<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span> </div>
-<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
-<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>         this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
-<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>      {</div>
-<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
-<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>          {</div>
-<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span>            VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>              this-&gt;dof_handler,</div>
-<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>              <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span>              Functions::ZeroFunction&lt;dim&gt;(),</div>
-<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>              zero_constraints);</div>
-<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>          }</div>
-<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span>      }</div>
-<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span>  }</div>
-<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>  zero_constraints.close();</div>
-<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span> </div>
-<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>  <span class="comment">// Sparse matrices initialization</span></div>
-<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>  DynamicSparsityPattern dsp(locally_relevant_dofs);</div>
-<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span> </div>
-<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span> </div>
-<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>  <span class="keywordflow">if</span> (simulation_parameters.fem_parameters.tracer_uses_dg)</div>
-<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span>    {</div>
-<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>      DoFTools::make_flux_sparsity_pattern(this-&gt;dof_handler,</div>
-<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span>                                           dsp,</div>
-<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>                                           nonzero_constraints,</div>
-<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>                                           <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>    }</div>
-<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>    {</div>
-<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>      DoFTools::make_sparsity_pattern(this-&gt;dof_handler,</div>
-<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>                                      dsp,</div>
-<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span>                                      nonzero_constraints,</div>
-<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span>                                      <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span>    }</div>
-<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"> 1290</span> </div>
-<div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span> </div>
-<div class="line"><a id="l01292" name="l01292"></a><span class="lineno"> 1292</span> </div>
-<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"> 1293</span>  SparsityTools::distribute_sparsity_pattern(dsp,</div>
-<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span>                                             locally_owned_dofs,</div>
-<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>                                             mpi_communicator,</div>
-<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>                                             locally_relevant_dofs);</div>
-<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>  system_matrix.reinit(locally_owned_dofs,</div>
-<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>                       locally_owned_dofs,</div>
-<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>                       dsp,</div>
-<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>                       mpi_communicator);</div>
-<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span> </div>
-<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;   Number of tracer degrees of freedom: &quot;</span></div>
-<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>              &lt;&lt; dof_handler.n_dofs() &lt;&lt; std::endl;</div>
-<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span> </div>
-<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>  <span class="comment">// Provide the tracer dof_handler and present solution pointers to the</span></div>
-<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>  <span class="comment">// multiphysics interface</span></div>
-<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>  multiphysics-&gt;set_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, &amp;this-&gt;dof_handler);</div>
-<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>  multiphysics-&gt;set_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, &amp;this-&gt;present_solution);</div>
-<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>  multiphysics-&gt;set_previous_solutions(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>,</div>
-<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>                                       &amp;this-&gt;previous_solutions);</div>
-<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>}</div>
-</div>
+<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
+<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>          {</div>
+<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>            DoFTools::make_periodicity_constraints(</div>
+<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>              this-&gt;dof_handler,</div>
+<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>              <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>              this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>                .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>              this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span>                .periodic_direction.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>              nonzero_constraints);</div>
+<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span>          }</div>
+<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span>      }</div>
+<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>  }</div>
+<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>  nonzero_constraints.close();</div>
+<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span> </div>
+<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>  <span class="comment">// Boundary conditions for Newton correction</span></div>
+<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span>  {</div>
+<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>    zero_constraints.clear();</div>
+<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>    zero_constraints.reinit(this-&gt;locally_relevant_dofs);</div>
+<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span>    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>                                            zero_constraints);</div>
+<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span> </div>
+<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
+<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span>         this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
+<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>      {</div>
+<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
+<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>          {</div>
+<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>            VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span>              this-&gt;dof_handler,</div>
+<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>              <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>              Functions::ZeroFunction&lt;dim&gt;(),</div>
+<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span>              zero_constraints);</div>
+<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>          }</div>
+<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
+<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>          {</div>
+<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>            DoFTools::make_periodicity_constraints(</div>
+<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>              this-&gt;dof_handler,</div>
+<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>              <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>              this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>                .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>              this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span>                .periodic_direction.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span>              zero_constraints);</div>
+<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span>          }</div>
+<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"> 1290</span>      }</div>
+<div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span>  }</div>
+<div class="line"><a id="l01292" name="l01292"></a><span class="lineno"> 1292</span>  zero_constraints.close();</div>
+<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"> 1293</span> </div>
+<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span>  <span class="comment">// Sparse matrices initialization</span></div>
+<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>  DynamicSparsityPattern dsp(locally_relevant_dofs);</div>
+<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span> </div>
+<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span> </div>
+<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>  <span class="keywordflow">if</span> (simulation_parameters.fem_parameters.tracer_uses_dg)</div>
+<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>    {</div>
+<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>      DoFTools::make_flux_sparsity_pattern(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>                                           dsp,</div>
+<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>                                           nonzero_constraints,</div>
+<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>                                           <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>    }</div>
+<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>    {</div>
+<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>      DoFTools::make_sparsity_pattern(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>                                      dsp,</div>
+<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>                                      nonzero_constraints,</div>
+<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>                                      <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>    }</div>
 <div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span> </div>
-<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01315" data-start="{" data-end="}">
-<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"><a class="line" href="classTracer.html#aa403435dbd466e2e896452662bb16ade"> 1315</a></span><a class="code hl_function" href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer&lt;dim&gt;::update_boundary_conditions</a>()</div>
-<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span>{</div>
-<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.boundary_conditions_tracer.time_dependent)</div>
-<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span> </div>
-<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span>  <span class="keywordtype">double</span> time = this-&gt;simulation_control-&gt;get_current_time();</div>
-<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"> 1321</span>  nonzero_constraints.clear();</div>
-<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span>  nonzero_constraints.reinit(this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span>  DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
-<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span>                                          nonzero_constraints);</div>
-<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span> </div>
-<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
-<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
-<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span>    {</div>
-<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span>      <span class="comment">// Dirichlet condition : imposed temperature at i_bc</span></div>
-<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
-<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>        {</div>
-<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>          this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(<span class="keywordtype">id</span>)</div>
-<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>            -&gt;set_time(time);</div>
-<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>          VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>            this-&gt;dof_handler,</div>
-<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>            *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
-<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span>              <span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>            nonzero_constraints);</div>
-<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>        }</div>
-<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span>    }</div>
-<div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span>  nonzero_constraints.close();</div>
-<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"> 1343</span>  nonzero_constraints.distribute(this-&gt;local_evaluation_point);</div>
-<div class="line"><a id="l01344" name="l01344"></a><span class="lineno"> 1344</span>  this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
-<div class="line"><a id="l01345" name="l01345"></a><span class="lineno"> 1345</span>}</div>
+<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span> </div>
+<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span> </div>
+<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span>  SparsityTools::distribute_sparsity_pattern(dsp,</div>
+<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span>                                             locally_owned_dofs,</div>
+<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span>                                             mpi_communicator,</div>
+<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>                                             locally_relevant_dofs);</div>
+<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span>  system_matrix.reinit(locally_owned_dofs,</div>
+<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span>                       locally_owned_dofs,</div>
+<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"> 1321</span>                       dsp,</div>
+<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span>                       mpi_communicator);</div>
+<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span> </div>
+<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;   Number of tracer degrees of freedom: &quot;</span></div>
+<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span>              &lt;&lt; dof_handler.n_dofs() &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span> </div>
+<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span>  <span class="comment">// Provide the tracer dof_handler and present solution pointers to the</span></div>
+<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span>  <span class="comment">// multiphysics interface</span></div>
+<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span>  multiphysics-&gt;set_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, &amp;this-&gt;dof_handler);</div>
+<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span>  multiphysics-&gt;set_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, &amp;this-&gt;present_solution);</div>
+<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>  multiphysics-&gt;set_previous_solutions(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>,</div>
+<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>                                       &amp;this-&gt;previous_solutions);</div>
+<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>}</div>
 </div>
-<div class="line"><a id="l01346" name="l01346"></a><span class="lineno"> 1346</span> </div>
-<div class="line"><a id="l01347" name="l01347"></a><span class="lineno"> 1347</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01348" name="l01348"></a><span class="lineno"> 1348</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01349" data-start="{" data-end="}">
-<div class="line"><a id="l01349" name="l01349"></a><span class="lineno"><a class="line" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0"> 1349</a></span><a class="code hl_function" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer&lt;dim&gt;::set_initial_conditions</a>()</div>
-<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span>{</div>
-<div class="line"><a id="l01351" name="l01351"></a><span class="lineno"> 1351</span>  VectorTools::interpolate(*mapping,</div>
-<div class="line"><a id="l01352" name="l01352"></a><span class="lineno"> 1352</span>                           dof_handler,</div>
-<div class="line"><a id="l01353" name="l01353"></a><span class="lineno"> 1353</span>                           simulation_parameters.initial_condition-&gt;tracer,</div>
-<div class="line"><a id="l01354" name="l01354"></a><span class="lineno"> 1354</span>                           newton_update);</div>
-<div class="line"><a id="l01355" name="l01355"></a><span class="lineno"> 1355</span>  nonzero_constraints.distribute(newton_update);</div>
-<div class="line"><a id="l01356" name="l01356"></a><span class="lineno"> 1356</span>  present_solution = newton_update;</div>
-<div class="line"><a id="l01357" name="l01357"></a><span class="lineno"> 1357</span>  percolate_time_vectors();</div>
-<div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span>}</div>
+<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span> </div>
+<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01337" data-start="{" data-end="}">
+<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"><a class="line" href="classTracer.html#aa403435dbd466e2e896452662bb16ade"> 1337</a></span><a class="code hl_function" href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer&lt;dim&gt;::update_boundary_conditions</a>()</div>
+<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span>{</div>
+<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.boundary_conditions_tracer.time_dependent)</div>
+<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span> </div>
+<div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span>  <span class="keywordtype">double</span> time = this-&gt;simulation_control-&gt;get_current_time();</div>
+<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"> 1343</span>  nonzero_constraints.clear();</div>
+<div class="line"><a id="l01344" name="l01344"></a><span class="lineno"> 1344</span>  nonzero_constraints.reinit(this-&gt;locally_relevant_dofs);</div>
+<div class="line"><a id="l01345" name="l01345"></a><span class="lineno"> 1345</span>  DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01346" name="l01346"></a><span class="lineno"> 1346</span>                                          nonzero_constraints);</div>
+<div class="line"><a id="l01347" name="l01347"></a><span class="lineno"> 1347</span> </div>
+<div class="line"><a id="l01348" name="l01348"></a><span class="lineno"> 1348</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
+<div class="line"><a id="l01349" name="l01349"></a><span class="lineno"> 1349</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
+<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span>    {</div>
+<div class="line"><a id="l01351" name="l01351"></a><span class="lineno"> 1351</span>      <span class="comment">// Dirichlet condition : imposed temperature at i_bc</span></div>
+<div class="line"><a id="l01352" name="l01352"></a><span class="lineno"> 1352</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
+<div class="line"><a id="l01353" name="l01353"></a><span class="lineno"> 1353</span>        {</div>
+<div class="line"><a id="l01354" name="l01354"></a><span class="lineno"> 1354</span>          this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(<span class="keywordtype">id</span>)</div>
+<div class="line"><a id="l01355" name="l01355"></a><span class="lineno"> 1355</span>            -&gt;set_time(time);</div>
+<div class="line"><a id="l01356" name="l01356"></a><span class="lineno"> 1356</span>          VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a id="l01357" name="l01357"></a><span class="lineno"> 1357</span>            this-&gt;dof_handler,</div>
+<div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span>            *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
+<div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span>              <span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span>        }</div>
+<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
+<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span>        {</div>
+<div class="line"><a id="l01365" name="l01365"></a><span class="lineno"> 1365</span>          DoFTools::make_periodicity_constraints(</div>
+<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span>            this-&gt;dof_handler,</div>
+<div class="line"><a id="l01367" name="l01367"></a><span class="lineno"> 1367</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01368" name="l01368"></a><span class="lineno"> 1368</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01369" name="l01369"></a><span class="lineno"> 1369</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01370" name="l01370"></a><span class="lineno"> 1370</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01371" name="l01371"></a><span class="lineno"> 1371</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01372" name="l01372"></a><span class="lineno"> 1372</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01373" name="l01373"></a><span class="lineno"> 1373</span>        }</div>
+<div class="line"><a id="l01374" name="l01374"></a><span class="lineno"> 1374</span>    }</div>
+<div class="line"><a id="l01375" name="l01375"></a><span class="lineno"> 1375</span>  nonzero_constraints.close();</div>
+<div class="line"><a id="l01376" name="l01376"></a><span class="lineno"> 1376</span>  nonzero_constraints.distribute(this-&gt;local_evaluation_point);</div>
+<div class="line"><a id="l01377" name="l01377"></a><span class="lineno"> 1377</span>  this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
+<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>}</div>
 </div>
-<div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span> </div>
-<div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span> </div>
-<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01363" data-start="{" data-end="}">
-<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"><a class="line" href="classTracer.html#ae37db3727824079215f6379e56fd7f60"> 1363</a></span><a class="code hl_function" href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer&lt;dim&gt;::compute_kelly</a>(</div>
-<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span>  <span class="keyword">const</span> std::pair&lt;const Variable, Parameters::MultipleAdaptationParameters&gt;</div>
-<div class="line"><a id="l01365" name="l01365"></a><span class="lineno"> 1365</span>                        &amp;ivar,</div>
-<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span>  dealii::Vector&lt;float&gt; &amp;estimated_error_per_cell)</div>
-<div class="line"><a id="l01367" name="l01367"></a><span class="lineno"> 1367</span>{</div>
-<div class="line"><a id="l01368" name="l01368"></a><span class="lineno"> 1368</span>  <span class="keywordflow">if</span> (ivar.first == <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">Variable::tracer</a>)</div>
-<div class="line"><a id="l01369" name="l01369"></a><span class="lineno"> 1369</span>    {</div>
-<div class="line"><a id="l01370" name="l01370"></a><span class="lineno"> 1370</span>      <span class="keyword">const</span> FEValuesExtractors::Scalar <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a>(0);</div>
-<div class="line"><a id="l01371" name="l01371"></a><span class="lineno"> 1371</span> </div>
-<div class="line"><a id="l01372" name="l01372"></a><span class="lineno"> 1372</span>      KellyErrorEstimator&lt;dim&gt;::estimate(</div>
-<div class="line"><a id="l01373" name="l01373"></a><span class="lineno"> 1373</span>        *this-&gt;mapping,</div>
-<div class="line"><a id="l01374" name="l01374"></a><span class="lineno"> 1374</span>        this-&gt;dof_handler,</div>
-<div class="line"><a id="l01375" name="l01375"></a><span class="lineno"> 1375</span>        *this-&gt;face_quadrature,</div>
-<div class="line"><a id="l01376" name="l01376"></a><span class="lineno"> 1376</span>        <span class="keyword">typename</span> std::map&lt;types::boundary_id, <span class="keyword">const</span> Function&lt;dim, double&gt; *&gt;(),</div>
-<div class="line"><a id="l01377" name="l01377"></a><span class="lineno"> 1377</span>        this-&gt;present_solution,</div>
-<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>        estimated_error_per_cell,</div>
-<div class="line"><a id="l01379" name="l01379"></a><span class="lineno"> 1379</span>        this-&gt;fe-&gt;component_mask(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a>));</div>
-<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span>    }</div>
-<div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span>}</div>
+<div class="line"><a id="l01379" name="l01379"></a><span class="lineno"> 1379</span> </div>
+<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01382" data-start="{" data-end="}">
+<div class="line"><a id="l01382" name="l01382"></a><span class="lineno"><a class="line" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0"> 1382</a></span><a class="code hl_function" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer&lt;dim&gt;::set_initial_conditions</a>()</div>
+<div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span>{</div>
+<div class="line"><a id="l01384" name="l01384"></a><span class="lineno"> 1384</span>  VectorTools::interpolate(*mapping,</div>
+<div class="line"><a id="l01385" name="l01385"></a><span class="lineno"> 1385</span>                           dof_handler,</div>
+<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span>                           simulation_parameters.initial_condition-&gt;tracer,</div>
+<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"> 1387</span>                           newton_update);</div>
+<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span>  nonzero_constraints.distribute(newton_update);</div>
+<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span>  present_solution = newton_update;</div>
+<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span>  percolate_time_vectors();</div>
+<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span>}</div>
 </div>
-<div class="line"><a id="l01382" name="l01382"></a><span class="lineno"> 1382</span> </div>
-<div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01384" name="l01384"></a><span class="lineno"> 1384</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01385" data-start="{" data-end="}">
-<div class="line"><a id="l01385" name="l01385"></a><span class="lineno"><a class="line" href="classTracer.html#afc61c177c601ede39a7466c526c43ae0"> 1385</a></span><a class="code hl_function" href="classTracer.html#afc61c177c601ede39a7466c526c43ae0">Tracer&lt;dim&gt;::solve_linear_system</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> initial_step,</div>
-<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span>                                 <span class="keyword">const</span> <span class="keywordtype">bool</span> <span class="comment">/*renewed_matrix*/</span>)</div>
-<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"> 1387</span>{</div>
-<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Solve linear system&quot;</span>);</div>
-<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span> </div>
-<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
-<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span> </div>
-<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span>  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used =</div>
-<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span>    initial_step ? nonzero_constraints : this-&gt;zero_constraints;</div>
-<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span> </div>
-<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
-<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).minimum_residual;</div>
-<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
-<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).relative_residual;</div>
-<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span> </div>
-<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
-<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);</div>
-<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span> </div>
-<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>        .verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span>    {</div>
-<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
-<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
-<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>    }</div>
-<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span> </div>
-<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_fill =</div>
-<div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_fill;</div>
-<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
-<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_atol;</div>
-<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
-<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_rtol;</div>
-<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span>  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
-<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span>    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
-<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span> </div>
-<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>  TrilinosWrappers::PreconditionILU ilu_preconditioner;</div>
-<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span> </div>
-<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>  ilu_preconditioner.initialize(system_matrix, preconditionerOptions);</div>
+<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span> </div>
+<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span> </div>
+<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01396" data-start="{" data-end="}">
+<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"><a class="line" href="classTracer.html#ae37db3727824079215f6379e56fd7f60"> 1396</a></span><a class="code hl_function" href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer&lt;dim&gt;::compute_kelly</a>(</div>
+<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>  <span class="keyword">const</span> std::pair&lt;const Variable, Parameters::MultipleAdaptationParameters&gt;</div>
+<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>                        &amp;ivar,</div>
+<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>  dealii::Vector&lt;float&gt; &amp;estimated_error_per_cell)</div>
+<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>{</div>
+<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>  <span class="keywordflow">if</span> (ivar.first == <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">Variable::tracer</a>)</div>
+<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>    {</div>
+<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>      <span class="keyword">const</span> FEValuesExtractors::Scalar <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a>(0);</div>
+<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span> </div>
+<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span>      KellyErrorEstimator&lt;dim&gt;::estimate(</div>
+<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>        *this-&gt;mapping,</div>
+<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>        this-&gt;dof_handler,</div>
+<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>        *this-&gt;face_quadrature,</div>
+<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span>        <span class="keyword">typename</span> std::map&lt;types::boundary_id, <span class="keyword">const</span> Function&lt;dim, double&gt; *&gt;(),</div>
+<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>        this-&gt;present_solution,</div>
+<div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>        estimated_error_per_cell,</div>
+<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>        this-&gt;fe-&gt;component_mask(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a>));</div>
+<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>    }</div>
+<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>}</div>
+</div>
+<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span> </div>
+<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01418" data-start="{" data-end="}">
+<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"><a class="line" href="classTracer.html#afc61c177c601ede39a7466c526c43ae0"> 1418</a></span><a class="code hl_function" href="classTracer.html#afc61c177c601ede39a7466c526c43ae0">Tracer&lt;dim&gt;::solve_linear_system</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> initial_step,</div>
+<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>                                 <span class="keyword">const</span> <span class="keywordtype">bool</span> <span class="comment">/*renewed_matrix*/</span>)</div>
+<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>{</div>
+<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Solve linear system&quot;</span>);</div>
 <div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span> </div>
-<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
-<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span>                                                   mpi_communicator);</div>
-<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span> </div>
-<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span>  SolverControl solver_control(</div>
-<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).max_iterations,</div>
-<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span>    linear_solver_tolerance,</div>
-<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span>    <span class="keyword">true</span>,</div>
-<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"> 1430</span>    <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span> </div>
-<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"> 1432</span>  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
-<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"> 1433</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"> 1435</span>      .max_krylov_vectors);</div>
-<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span> </div>
-<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span> </div>
-<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
-<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span> </div>
-<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span> </div>
-<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>  solver.solve(system_matrix,</div>
-<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>               completely_distributed_solution,</div>
-<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>               system_rhs,</div>
-<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>               ilu_preconditioner);</div>
-<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span> </div>
-<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).verbosity !=</div>
-<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>      <a class="code hl_enumvalue" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>    {</div>
-<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
-<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
-<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span>                  &lt;&lt; solver_control.last_value() &lt;&lt; std::endl;</div>
-<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>    }</div>
+<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
+<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span> </div>
+<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span>  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used =</div>
+<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span>    initial_step ? nonzero_constraints : this-&gt;zero_constraints;</div>
+<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span> </div>
+<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
+<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).minimum_residual;</div>
+<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"> 1430</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
+<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).relative_residual;</div>
+<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"> 1432</span> </div>
+<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"> 1433</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
+<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);</div>
+<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"> 1435</span> </div>
+<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span>        .verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>    {</div>
+<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
+<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>    }</div>
+<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span> </div>
+<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_fill =</div>
+<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_fill;</div>
+<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
+<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_atol;</div>
+<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
+<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_rtol;</div>
+<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
+<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
+<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span> </div>
+<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>  TrilinosWrappers::PreconditionILU ilu_preconditioner;</div>
 <div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span> </div>
-<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>  constraints_used.distribute(completely_distributed_solution);</div>
-<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span>  newton_update = completely_distributed_solution;</div>
-<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>}</div>
-</div>
-<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span> </div>
+<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>  ilu_preconditioner.initialize(system_matrix, preconditionerOptions);</div>
+<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span> </div>
+<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
+<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span>                                                   mpi_communicator);</div>
 <div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span> </div>
-<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span> </div>
-<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;2&gt;</a>;</div>
-<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;3&gt;</a>;</div>
+<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span>  SolverControl solver_control(</div>
+<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).max_iterations,</div>
+<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>    linear_solver_tolerance,</div>
+<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>    <span class="keyword">true</span>,</div>
+<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>    <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span> </div>
+<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span>  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
+<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>    <span class="keyword">false</span>,</div>
+<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>      .max_krylov_vectors);</div>
+<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span> </div>
+<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span> </div>
+<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
+<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span> </div>
+<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span> </div>
+<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>  solver.solve(system_matrix,</div>
+<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>               completely_distributed_solution,</div>
+<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>               system_rhs,</div>
+<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span>               ilu_preconditioner);</div>
+<div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span> </div>
+<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).verbosity !=</div>
+<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>      <a class="code hl_enumvalue" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>    {</div>
+<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
+<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
+<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>                  &lt;&lt; solver_control.last_value() &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>    }</div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span> </div>
+<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>  constraints_used.distribute(completely_distributed_solution);</div>
+<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>  newton_update = completely_distributed_solution;</div>
+<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>}</div>
+</div>
+<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span> </div>
+<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span> </div>
+<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span> </div>
+<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;2&gt;</a>;</div>
+<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="aclassStabilizedDGMethodsCopyData_html"><div class="ttname"><a href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a></div><div class="ttdoc">Responsible for storing the information calculated using the discontinuous galerkin (DG) assembly of ...</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00127">copy_data.h:128</a></div></div>
 <div class="ttc" id="aclassStabilizedDGMethodsCopyData_html_a640d8d13ddb024540d51a17c8677ac8c"><div class="ttname"><a href="classStabilizedDGMethodsCopyData.html#a640d8d13ddb024540d51a17c8677ac8c">StabilizedDGMethodsCopyData::face_data</a></div><div class="ttdeci">std::vector&lt; CopyDataFace &gt; face_data</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00150">copy_data.h:150</a></div></div>
@@ -1645,23 +1678,24 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassTracer_html_a96d3194cc9e920c50b639a13be7ceb65"><div class="ttname"><a href="classTracer.html#a96d3194cc9e920c50b639a13be7ceb65">Tracer::assemble_local_system_rhs</a></div><div class="ttdeci">virtual void assemble_local_system_rhs(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, TracerScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Assemble the local rhs for a given cell.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00541">tracer.cc:541</a></div></div>
 <div class="ttc" id="aclassTracer_html_a9965b466837ae2879ee0763ec928ec8e"><div class="ttname"><a href="classTracer.html#a9965b466837ae2879ee0763ec928ec8e">Tracer::write_tracer_statistics</a></div><div class="ttdeci">void write_tracer_statistics()</div><div class="ttdoc">Writes the tracer statistics to an output file.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01057">tracer.cc:1057</a></div></div>
 <div class="ttc" id="aclassTracer_html_aa2505b526801876bb0e18dd02d6e7c73"><div class="ttname"><a href="classTracer.html#aa2505b526801876bb0e18dd02d6e7c73">Tracer::setup_assemblers</a></div><div class="ttdeci">virtual void setup_assemblers()</div><div class="ttdoc">sets up the vector of assembler functions</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00038">tracer.cc:38</a></div></div>
-<div class="ttc" id="aclassTracer_html_aa403435dbd466e2e896452662bb16ade"><div class="ttname"><a href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01315">tracer.cc:1315</a></div></div>
-<div class="ttc" id="aclassTracer_html_ab09781c62a32bbf7bfcc87e501deb8a0"><div class="ttname"><a href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Sets-up the initial conditions associated with the physics. Generally, physics only support imposing ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01349">tracer.cc:1349</a></div></div>
+<div class="ttc" id="aclassTracer_html_aa403435dbd466e2e896452662bb16ade"><div class="ttname"><a href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01337">tracer.cc:1337</a></div></div>
+<div class="ttc" id="aclassTracer_html_ab09781c62a32bbf7bfcc87e501deb8a0"><div class="ttname"><a href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Sets-up the initial conditions associated with the physics. Generally, physics only support imposing ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01382">tracer.cc:1382</a></div></div>
 <div class="ttc" id="aclassTracer_html_ac03b008aba02e9b4a43562d3b2857039"><div class="ttname"><a href="classTracer.html#ac03b008aba02e9b4a43562d3b2857039">Tracer::percolate_time_vectors</a></div><div class="ttdeci">void percolate_time_vectors() override</div><div class="ttdoc">Rearrange vector solution correctly for transient simulations.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00727">tracer.cc:727</a></div></div>
 <div class="ttc" id="aclassTracer_html_ac4b7c30629b580945490919c0427db12"><div class="ttname"><a href="classTracer.html#ac4b7c30629b580945490919c0427db12">Tracer::postprocess</a></div><div class="ttdeci">void postprocess(bool first_iteration) override</div><div class="ttdoc">Postprocess the auxiliary physics results. Post-processing this case implies the calculation of all d...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00738">tracer.cc:738</a></div></div>
 <div class="ttc" id="aclassTracer_html_acde0311373b63944d1201d3ebce09aa2"><div class="ttname"><a href="classTracer.html#acde0311373b63944d1201d3ebce09aa2">Tracer::copy_local_matrix_to_global_matrix</a></div><div class="ttdeci">virtual void copy_local_matrix_to_global_matrix(const StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Copy local cell information to global matrix.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00348">tracer.cc:348</a></div></div>
 <div class="ttc" id="aclassTracer_html_ad8ca9f8d848ec5159227bd766471f5c6"><div class="ttname"><a href="classTracer.html#ad8ca9f8d848ec5159227bd766471f5c6">Tracer::assemble_system_rhs</a></div><div class="ttdeci">void assemble_system_rhs() override</div><div class="ttdoc">Assemble the rhs associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00362">tracer.cc:362</a></div></div>
 <div class="ttc" id="aclassTracer_html_adcc81d835a1e2e9b71ea0c897d16dcf9"><div class="ttname"><a href="classTracer.html#adcc81d835a1e2e9b71ea0c897d16dcf9">Tracer::calculate_tracer_statistics</a></div><div class="ttdeci">void calculate_tracer_statistics()</div><div class="ttdoc">Calculate tracer statistics : Max, min, average and standard-deviation.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00801">tracer.cc:801</a></div></div>
-<div class="ttc" id="aclassTracer_html_ae37db3727824079215f6379e56fd7f60"><div class="ttname"><a href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer::compute_kelly</a></div><div class="ttdeci">void compute_kelly(const std::pair&lt; const Variable, Parameters::MultipleAdaptationParameters &gt; &amp;, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</div><div class="ttdoc">Compute the Kelly error estimator for mesh refinement. NB : not implemented for the tracer parameter ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01363">tracer.cc:1363</a></div></div>
+<div class="ttc" id="aclassTracer_html_ae37db3727824079215f6379e56fd7f60"><div class="ttname"><a href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer::compute_kelly</a></div><div class="ttdeci">void compute_kelly(const std::pair&lt; const Variable, Parameters::MultipleAdaptationParameters &gt; &amp;, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</div><div class="ttdoc">Compute the Kelly error estimator for mesh refinement. NB : not implemented for the tracer parameter ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01396">tracer.cc:1396</a></div></div>
 <div class="ttc" id="aclassTracer_html_ae9356d51b14f4d8db3505e21e179d82c"><div class="ttname"><a href="classTracer.html#ae9356d51b14f4d8db3505e21e179d82c">Tracer::finish_simulation</a></div><div class="ttdeci">void finish_simulation() override</div><div class="ttdoc">Carry out the operations required to finish a simulation correctly.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00700">tracer.cc:700</a></div></div>
 <div class="ttc" id="aclassTracer_html_aeb8ac98be79872fb1ea9d30414e8cc5a"><div class="ttname"><a href="classTracer.html#aeb8ac98be79872fb1ea9d30414e8cc5a">Tracer::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint() override</div><div class="ttdoc">Allows tracer physics to set-up solution vector from checkpoint file;.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01150">tracer.cc:1150</a></div></div>
 <div class="ttc" id="aclassTracer_html_af8dfb40376adc77b7bc9236fa7de3689"><div class="ttname"><a href="classTracer.html#af8dfb40376adc77b7bc9236fa7de3689">Tracer::setup_dofs</a></div><div class="ttdeci">void setup_dofs() override</div><div class="ttdoc">Sets-up the DofHandler and the degree of freedom associated with the physics.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01196">tracer.cc:1196</a></div></div>
 <div class="ttc" id="aclassTracer_html_af90f22587fcaa2edc164be3b7af9b6df"><div class="ttname"><a href="classTracer.html#af90f22587fcaa2edc164be3b7af9b6df">Tracer::postprocess_tracer_flow_rate</a></div><div class="ttdeci">std::map&lt; types::boundary_id, double &gt; postprocess_tracer_flow_rate(const GlobalVectorType &amp;current_solution_fd)</div></div>
-<div class="ttc" id="aclassTracer_html_afc61c177c601ede39a7466c526c43ae0"><div class="ttname"><a href="classTracer.html#afc61c177c601ede39a7466c526c43ae0">Tracer::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system(const bool initial_step, const bool renewed_matrix=true) override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01385">tracer.cc:1385</a></div></div>
+<div class="ttc" id="aclassTracer_html_afc61c177c601ede39a7466c526c43ae0"><div class="ttname"><a href="classTracer.html#afc61c177c601ede39a7466c526c43ae0">Tracer::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system(const bool initial_step, const bool renewed_matrix=true) override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01418">tracer.cc:1418</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">Variable::tracer</a></div><div class="ttdeci">@ tracer</div><div class="ttdoc">Tracer scalar field.</div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">fluid_dynamics</a></div><div class="ttdeci">@ fluid_dynamics</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00009">multiphysics.h:9</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a></div><div class="ttdeci">@ tracer</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00011">multiphysics.h:11</a></div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a></div><div class="ttdeci">@ tracer_dirichlet</div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div></div>
 <div class="ttc" id="anamespaceParameters_html_a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427"><div class="ttname"><a href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427">Parameters::InitialConditionType::average_velocity_profile</a></div><div class="ttdeci">@ average_velocity_profile</div></div>
 <div class="ttc" id="anamespaceParameters_html_ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0"><div class="ttname"><a href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a></div><div class="ttdeci">@ verbose</div></div>
 <div class="ttc" id="anamespaceParameters_html_ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d"><div class="ttname"><a href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a></div><div class="ttdeci">@ quiet</div></div>
