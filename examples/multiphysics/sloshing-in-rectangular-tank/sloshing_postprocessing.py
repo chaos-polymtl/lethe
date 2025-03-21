@@ -59,8 +59,8 @@ for i in tqdm(range(len(fluids.list_vtu))):
 
     # Extract phase values and points over the center line
     sampled_data = df.sample_over_line(H_a, H_b, resolution=5000)
-    phase_over_line = pd.DataFrame(sampled_data["phase"])
-    points_over_line = pd.DataFrame(sampled_data.points)
+    phase_over_line = pd.DataFrame(sampled_data["phase"].copy())
+    points_over_line = pd.DataFrame(sampled_data.points.copy())
 
     # Find highest point of fluid 1
     fluid1_points = points_over_line[phase_over_line[0] > phase_limit].values

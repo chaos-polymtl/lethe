@@ -1,0 +1,173 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This test verifies the periodic boundary conditions of the heat transfer solver by monitoring the average temperature in the domain.
+# Although there is a flow in the x direction, the average temperature remains the same since all heat exiting the domain comes
+# back inside through the periodic boundary condition.
+
+# Listing of Parameters
+# ---------------------
+
+set dimension = 2
+
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set output name      = periodic
+  set output frequency = 0
+  set time end         = 2
+  set time step        = 0.1
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics = true
+  set heat transfer  = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -1, -1 : 1, 1 : true
+  set initial refinement = 4
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                        = verbose
+  set output frequency                 = 1
+  set calculate temperature statistics = true
+end
+
+#---------------------------------------------------
+# Boundary conditions Heat transfer
+#---------------------------------------------------
+
+subsection boundary conditions heat transfer
+  set number = 2
+  subsection bc 0
+    set id                 = 0
+    set type               = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set id                 = 2
+    set type               = periodic
+    set periodic_id        = 3
+    set periodic_direction = 1
+  end
+end
+
+#---------------------------------------------------
+# Boundary conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1 * (1-y*y)
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+#---------------------------------------------------
+# Physical properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids      = 1
+  set reference temperature = 0
+  subsection fluid 0
+    set thermal conductivity model = constant
+    set thermal conductivity       = 1e-4
+  end
+end
+
+#---------------------------------------------------
+# Initial conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection uvwp
+    set Function expression = 0;0;0
+  end
+  subsection temperature
+    set Function expression = if(x*x + y*y < 0.25,1,0)
+  end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-6
+    set max iterations = 20
+  end
+  subsection heat transfer
+    set verbosity      = quiet
+    set tolerance      = 1e-6
+    set max iterations = 20
+  end
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity               = quiet
+    set max iters               = 500
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-7
+    set ilu preconditioner fill = 1
+    set max krylov vectors      = 300
+  end
+  subsection heat transfer
+    set verbosity               = quiet
+    set max iters               = 500
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-7
+    set ilu preconditioner fill = 1
+    set max krylov vectors      = 300
+  end
+end

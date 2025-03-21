@@ -79,12 +79,12 @@ for vtu_file in list_vtu:
     sim = pv.read(f"{output_path}/{vtu_file}")
 
     sampled_data_spike = sim.sample_over_line(a_spike, b_spike, resolution=1000)
-    phase_spike = pd.DataFrame(sampled_data_spike["filtered_phase"])
-    points_spike = pd.DataFrame(sampled_data_spike.points)
+    phase_spike = pd.DataFrame((sampled_data_spike["filtered_phase"].copy()))
+    points_spike = pd.DataFrame(sampled_data_spike.points.copy())
 
     sampled_data_bubble = sim.sample_over_line(a_bubble, b_bubble, resolution=1000)
-    phase_bubble = pd.DataFrame(sampled_data_bubble["filtered_phase"])
-    points_bubble = pd.DataFrame(sampled_data_bubble.points)
+    phase_bubble = pd.DataFrame(sampled_data_bubble["filtered_phase"].copy())
+    points_bubble = pd.DataFrame(sampled_data_bubble.points.copy())
 
     #Find min 'y' in phase > phase_limit (SPIKE)
     fluid1_points = points_spike[phase_spike[0] > phase_limit].values

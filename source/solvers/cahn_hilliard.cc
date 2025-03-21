@@ -1076,6 +1076,17 @@ CahnHilliard<dim>::setup_dofs()
               nonzero_constraints,
               mask);
           }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_direction.at(id),
+              nonzero_constraints);
+          }
       }
   }
   nonzero_constraints.close();
@@ -1096,6 +1107,17 @@ CahnHilliard<dim>::setup_dofs()
               this->dof_handler,
               id,
               Functions::ZeroFunction<dim>(2),
+              zero_constraints);
+          }
+        if (type == BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              id,
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions_cahn_hilliard
+                .periodic_direction.at(id),
               zero_constraints);
           }
       }
@@ -1170,6 +1192,17 @@ CahnHilliard<dim>::update_boundary_conditions()
                  ->phi),
             nonzero_constraints,
             mask);
+        }
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_cahn_hilliard
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_cahn_hilliard
+              .periodic_direction.at(id),
+            nonzero_constraints);
         }
     }
 
