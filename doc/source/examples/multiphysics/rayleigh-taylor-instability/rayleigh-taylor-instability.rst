@@ -229,11 +229,11 @@ In the ``VOF`` subsection, we select the ``sharpening`` method in the ``interfac
 
    subsection VOF
      subsection interface regularization method
-       set type = sharpening
+       set type      = sharpening
+       set frequency = 25
        subsection interface sharpening
          set threshold           = 0.5
          set interface sharpness = 1.5
-         set frequency           = 25
          set type                = constant
        end
     end

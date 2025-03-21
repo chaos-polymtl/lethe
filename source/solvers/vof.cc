@@ -1142,7 +1142,7 @@ VolumeOfFluid<dim>::modify_solution()
       // Interface sharpening is done at a constant frequency
       if (this->simulation_control->get_step_number() %
             this->simulation_parameters.multiphysics.vof_parameters
-              .regularization_method.sharpening.frequency ==
+              .regularization_method.frequency ==
           0)
         {
           handle_interface_sharpening();
@@ -1154,7 +1154,7 @@ VolumeOfFluid<dim>::modify_solution()
         .algebraic_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
          simulation_parameters.multiphysics.vof_parameters.regularization_method
-           .algebraic_interface_reinitialization.reinitialization_frequency ==
+           .frequency ==
        0))
     reinitialize_interface_with_algebraic_method();
 
@@ -1162,8 +1162,7 @@ VolumeOfFluid<dim>::modify_solution()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.vof_parameters.regularization_method
-           .geometric_interface_reinitialization.reinitialization_frequency ==
+         simulation_parameters.multiphysics.vof_parameters.regularization_method.frequency ==
        0))
     reinitialize_interface_with_geometric_method();
 

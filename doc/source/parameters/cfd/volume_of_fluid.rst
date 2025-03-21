@@ -22,10 +22,10 @@ The default values of the VOF parameters are given in the text box below.
     set compressible              = false
     
     subsection interface regularization method
-      set type = none
+      set type       = none
+      set frequency  = 10
       
       subsection interface sharpening
-        set frequency               = 10
         set interface sharpness     = 2
         set type                    = constant
 
@@ -41,7 +41,6 @@ The default values of the VOF parameters are given in the text box below.
 
       subsection algebraic interface reinitialization
         set output reinitialization steps = false
-        set frequency                     = 1
         set steady-state criterion        = 1e-2
         set max steps number              = 5
         set diffusivity multiplier        = 1.0
@@ -83,16 +82,17 @@ The default values of the VOF parameters are given in the text box below.
 Interface Regularization Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The method of regularization is set using the parameter ``type``. There are three methods available:``none``, ``sharpening`` and ``algebraic``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
+The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. 
+
+* ``type``: sets the method of regularization. There are three methods available:``none``, ``sharpening`` and ``algebraic``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
+* ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
 
 Interface Sharpening
 ++++++++++++++++++++
 
 The ``type = sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this sharpening method. The ``subsection interface sharpening`` defines parameters relevant to this regularization method.
 
-* ``enable``: controls if interface sharpening is enabled.
-* ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).  
-* ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
+* ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).
 * ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
 * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
@@ -131,8 +131,6 @@ Algebraic Interface Reinitialization
 
 The ``type = algebraic`` corresponds to a PDE-based reinitialization method. Alike the interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in VOF simulations. 
 
-* ``enable``: enable the algebraic interface reinitialization.
-
 * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
   Outputted quantities of interest are:
@@ -143,8 +141,6 @@ The ``type = algebraic`` corresponds to a PDE-based reinitialization method. Ali
 
   .. tip::
     This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.
-
-* ``frequency``: indicates the frequency at which the algebraic interface reinitialization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be reinitialization once every :math:`2` time-steps.
 
 The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
 

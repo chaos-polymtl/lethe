@@ -22,25 +22,11 @@ DeclException1(
   << " sharpening threshold between 0.0 and 0.5. See documentation for further details");
 
 DeclException1(
-  SharpeningFrequencyError,
+  RegularizationMethodFrequencyError,
   int,
-  << "Sharpening frequency : " << arg1 << " is equal or smaller than 0."
+  << "Regularization method frequency : " << arg1 << " is equal or smaller than 0."
   << std::endl
-  << "Interface sharpening model requires an integer sharpening frequency larger than 0.");
-
-DeclException3(
-  MultipleInterfaceResettingMethods,
-  bool,
-  bool,
-  bool,
-  << "Only one type of interface resetting mechanism can be used in a simulation.\n"
-  << "Currently,\n"
-  << std::boolalpha << " - VOF interface sharpening is set to " << arg1
-  << std::endl
-  << " - VOF algebraic interface reinitialization is set to " << arg2
-  << std::endl
-  << " - VOF geometric interface reinitialization is set to " << arg3
-  << std::endl);
+  << "Interface regularization method requires an frequency larger than 0.");
 
 void
 Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
@@ -179,9 +165,15 @@ Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
                       "none",
                       Patterns::Selection(
                         "none|sharpening|algebraic|geometric"),
-                      "VOF interface interface regularization method");
+                      "VOF interface regularization method");
 
-
+    prm.declare_entry("frequency",
+                    "10",
+                    Patterns::Integer(),
+                    "Reinitialization frequency (number of time-steps) at which the "
+                    "interfaceregularization process will be applied to the VOF "
+                    "phase fraction field.");
+                    
     sharpening.declare_parameters(prm);
     algebraic_interface_reinitialization.declare_parameters(prm);
     geometric_interface_reinitialization.declare_parameters(prm);
@@ -196,7 +188,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
   {
     const std::string t = prm.get("type");
     if (t == "none")
-      regularization_method_type = Parameters::RegularizationMethodType::none;
+      this->regularization_method_type = Parameters::RegularizationMethodType::none;
     else if (t == "sharpening")
       {
         regularization_method_type =
@@ -205,22 +197,25 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
       }
     else if (t == "algebraic")
       {
-        regularization_method_type =
+        this->regularization_method_type =
           Parameters::RegularizationMethodType::algebraic;
         algebraic_interface_reinitialization.enable = true;
       }
     else if (t == "geometric")
       {
-        regularization_method_type =
+        this->regularization_method_type =
           Parameters::RegularizationMethodType::geometric;
         geometric_interface_reinitialization.enable = true;
       }
     else
       throw(std::runtime_error("Invalid interface regularization method type!"));
 
-    sharpening.parse_parameters(prm);
-    algebraic_interface_reinitialization.parse_parameters(prm);
-    geometric_interface_reinitialization.parse_parameters(prm);
+    this->frequency = prm.get_integer("frequency");
+    Assert(this->frequency > 0, RegularizationMethodFrequencyError(this->frequency));
+    
+    this->sharpening.parse_parameters(prm);
+    this->algebraic_interface_reinitialization.parse_parameters(prm);
+    this->geometric_interface_reinitialization.parse_parameters(prm);
   }
   prm.leave_subsection();
 }
@@ -288,11 +283,6 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
 
-    prm.declare_entry("frequency",
-                      "10",
-                      Patterns::Integer(),
-                      "VOF interface sharpening frequency");
-
     prm.declare_entry(
       "verbosity",
       "quiet",
@@ -309,7 +299,6 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("interface sharpening");
   {
     interface_sharpness = prm.get_double("interface sharpness");
-    frequency           = prm.get_integer("frequency");
 
     // Sharpening type
     const std::string t = prm.get("type");
@@ -343,8 +332,6 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 
     Assert(threshold_max_deviation > 0.0 && threshold_max_deviation < 0.5,
            SharpeningThresholdErrorMaxDeviation(threshold_max_deviation));
-
-    Assert(frequency > 0, SharpeningFrequencyError(frequency));
 
     // Verbosity
     const std::string op = prm.get("verbosity");
@@ -502,13 +489,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "Enables pvtu format outputs of the algebraic interface reinitialization "
       "steps <true|false>");
     prm.declare_entry(
-      "frequency",
-      "1",
-      Patterns::Integer(),
-      "Reinitialization frequency (number of time-steps) at which the "
-      "interface algebraic reinitialization process will be applied to the VOF "
-      "phase fraction field.");
-    prm.declare_entry(
       "diffusivity multiplier",
       "1.",
       Patterns::Double(),
@@ -553,7 +533,6 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
   {
     this->output_reinitialization_steps =
       prm.get_bool("output reinitialization steps");
-    this->reinitialization_frequency = prm.get_integer("frequency");
     this->diffusivity_multiplier     = prm.get_double("diffusivity multiplier");
     this->diffusivity_power          = prm.get_double("diffusivity power");
     this->reinitialization_cfl       = prm.get_double("reinitialization CFL");
@@ -587,13 +566,6 @@ Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
       Patterns::Bool(),
       "Enables pvtu format outputs of the geometric interface reinitialization "
       "steps <true|false>");
-    prm.declare_entry(
-      "frequency",
-      "1",
-      Patterns::Integer(),
-      "Reinitialization frequency (number of time-steps) at which the "
-      "interface geometric reinitialization process will be applied to the VOF "
-      "phase fraction field.");
     prm.declare_entry("max reinitialization distance",
                       "1.",
                       Patterns::Double(),
@@ -620,7 +592,6 @@ Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters(
   prm.enter_subsection("geometric interface reinitialization");
   {
     this->output_signed_distance     = prm.get_bool("output signed distance");
-    this->reinitialization_frequency = prm.get_integer("frequency");
     this->max_reinitialization_distance =
       prm.get_double("max reinitialization distance");
     this->tanh_thickness = prm.get_double("tanh thickness");

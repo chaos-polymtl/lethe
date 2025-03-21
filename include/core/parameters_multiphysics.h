@@ -122,7 +122,6 @@ namespace Parameters
 
     // Other sharpening parameters
     double interface_sharpness;
-    int    frequency;
 
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
@@ -203,9 +202,6 @@ namespace Parameters
      * subsection.
      * */
     bool output_reinitialization_steps;
-    /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
-    /// fraction field will be reinitialized
-    int reinitialization_frequency;
     /// Constant multiplying the mesh-size in the evaluation of the diffusion
     /// coefficient.
     double diffusivity_multiplier;
@@ -248,9 +244,6 @@ namespace Parameters
     bool enable = false;
     /// Enables/Disables the output of the signed distance field
     bool output_signed_distance;
-    /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
-    /// fraction field will be reinitialized
-    int reinitialization_frequency;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
     /// Interface thickness for the tanh transformation
@@ -278,10 +271,19 @@ namespace Parameters
   struct VOF_RegularizationMethod
   {
     Parameters::RegularizationMethodType regularization_method_type;
-
+    
+    /// Regularization frequency at every \f$x\f$ time-steps the VOF phase
+    /// fraction field will be regularized
+    int frequency;
+    
+    /// Interface sharpening parameters
     Parameters::VOF_InterfaceSharpening sharpening;
+    
+    /// Algebraic interface reinitialization parameters
     Parameters::VOF_AlgebraicInterfaceReinitialization
       algebraic_interface_reinitialization;
+      
+    /// Geometric interface reinitialization parameters
     Parameters::VOF_GeometricInterfaceReinitialization
       geometric_interface_reinitialization;
 

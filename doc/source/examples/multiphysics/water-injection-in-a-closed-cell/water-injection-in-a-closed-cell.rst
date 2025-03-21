@@ -97,11 +97,11 @@ We refer the reader to :doc:`../../../../theory/multiphase/cfd/vof` theory guide
         set beta      = 10
       end
       subsection interface regularization method
-        set type = sharpening
+        set type      = sharpening
+        set frequency = 25
         subsection interface sharpening
           set threshold           = 0.5
           set interface sharpness = 1.8
-          set frequency           = 25
         end
       end
     end

@@ -108,11 +108,11 @@ The interface sharpening method and its parameters are explained in the :doc:`..
 
   subsection VOF
     subsection interface regularization method
-      set type = sharpening
+      set type      = sharpening
+      set frequency = 50
       subsection interface sharpening
         set threshold           = 0.5
         set interface sharpness = 1.5
-        set frequency           = 50
       end
     end
 
