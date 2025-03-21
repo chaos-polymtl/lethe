@@ -59,7 +59,7 @@ where :math:`\rho` is the fluid density. The analytical solution is shown in the
     :name: analytical_solution
     :width: 800
 
-Since the velocity function is divergence free, no source term arises in the continuity equation. Introducting the previous expressions for the velocity and the pressure in the momentum equation leads to the following source term vector:
+Since the velocity function is divergence-free, no source term arises in the continuity equation. Substituting the previous expressions for the velocity and the pressure into the momentum equation leads to the following source term vector:
 
 .. math::
   \mathbf{G} = \pi \begin{bmatrix} \sin(\pi y)(-16\pi\nu (\sin(\pi x))^2\cos(\pi y) + 4\pi \nu \cos(\pi y) + 4 (\sin(\pi x))^3\sin(\pi y)\cos(\pi x) + \cos(\pi x))\\ 
