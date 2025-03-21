@@ -71,7 +71,7 @@ where :math:`\nu` is the kinematic viscosity.
 Parameter File
 --------------
 
-The simulations are conducted on the domain :math:`\Omega = [-1,1] \times [-1,1]` using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh). The degree of the velocity shape functions was varied from 1 to 3 for the quadrilateral mesh and from 1 to 2 for the triangular mesh, as deal.II does not yet support higher-order polynomials for simplex mesh elements. Additionally, for each velocity shape funtion, the degree of the pressure shape function ranged from 1 up to the degree of the velocity shape function. Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.
+The simulations are conducted on the domain :math:`\Omega = [-1,1] \times [-1,1]` using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh). The polynomial degree :math:`k` of the velocity interpolation was varied from :math:`k=1` to :math:`k=3` for the quadrilateral mesh, and from math:`k=1` to math:`k=2` for the triangular mesh, as deal.II does not yet support higher-order polynomials for simplex mesh elements. Additionally, for each velocity approximation degree :math:`k_v`, the pressure field polynomial degree :math:`k_p` ranged from :math:`k_p=1`  up to  :math:`k_p = k_v` . Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.
 
 Since several parameter files are needed with a common syntax, except for the three parameters varied, a `parameter file template <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ is employed for automated file launch.
 
@@ -108,7 +108,7 @@ The mesh used in this example is generated using the deal.II grid generator.
     set initial refinement = {{LEVEL}} # if using simplex mesh 
   end
 
-For a mesh with quadrilateral cells, the initial level of refinement is set to 4, which corresponds to 256 cells. For a simplex mesh, as mentioned in section :ref:`Simulation_control_section`, each refinement level is defined in a separate parameter file and  is repesented by the parameter variable {{LEVEL}} in Jinja2 format. The simplex mesh is selected by setting the ``set simplex`` parameter to `true`. In this case, a quadrilateral mesh is first generated at the specified resolution and then converted to a  simplex mesh using the `dealii::GridGenerator::convert_hypercube_to_simplex_mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#ac7515d2b17c025dddc0e37286fb8d216>`_ function, which divides each square cell into 8 triangles.
+For a mesh with quadrilateral cells, the initial level of refinement is set to 4, which corresponds to 256 cells. For a simplex mesh, as mentioned in section :ref:`Simulation_control_section`, each refinement level is defined in a separate parameter file and is represented by the parameter variable {{LEVEL}} in Jinja2 format. The simplex mesh is selected by setting the ``set simplex`` parameter to `true`. In this case, a quadrilateral mesh is first generated at the specified resolution and then converted to a simplex mesh using the `dealii::GridGenerator::convert_hypercube_to_simplex_mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#ac7515d2b17c025dddc0e37286fb8d216>`_ function, which divides each square cell into 8 triangles.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -154,7 +154,7 @@ Similarly to the ``initial refinement`` parameter in the case of a simplex mesh,
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The nonlinear solver's tolerance is set to :math:`10^{-10}` since the errors on the velocity and pressure fields reach values that are near or lower than the default tolerance of :math:`10^{-8}`, on the quadrilateral meshes with a finer resolution. Hence, if the default tolerance is used, the error will be constrained by this value and cannot drop below it.
+The nonlinear solver's tolerance is set to :math:`10^{-10}` since the errors on the velocity and pressure fields reach values that are near or lower than the default tolerance of :math:`10^{-8}` on the quadrilateral meshes with a finer resolution. Hence, if the default tolerance were used, the error would be constrained by this value.
 
 .. code-block:: text
 
@@ -169,7 +169,7 @@ The nonlinear solver's tolerance is set to :math:`10^{-10}` since the errors on 
 Linear Solver
 ~~~~~~~~~~~~~
 
-The only modification made in the linear solver section is the use of AMG preconditioning to accelerate the simulations. The default linear solver ``minimum residual`` is 100 times smaller than the non-linear solver ``tolerance``, and consequently, the former is not changed.
+The only modification made in the linear solver section is the use of AMG preconditioner to accelerate the simulations. 
 
 .. code-block:: text
 
@@ -189,27 +189,27 @@ Running the Simulations
 The simulations are launched by first running the ``generate_cases.py``, then ``launch_cases.py`` scripts. The first script generates the folders and parameter files for the different configurations simulated,
 while the second one launches the simulations.
 
-As mentioned in section :ref:`Mesh_section`, for the quadrilateral mesh, for each combination of velocity and pressure shape functions, the mesh is refined automatically in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions containing the corresponding parameter file is created. Within each folder, the results corresponding to the different mesh resolutions are stored in a single ``L2Error.dat``. This is not the case for the simplex mesh, where a parameter file and an output file are created within a separate folder for each combination of velocity and pressure shape functions and mesh resolution.
+As mentioned in section :ref:`Mesh_section`, for the quadrilateral mesh, for each combination of velocity and pressure polynomial approximations, the mesh is refined automatically in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions containing the corresponding parameter file is created. Within each folder, the results corresponding to the different mesh resolutions are stored in a single ``L2Error.dat``. This is not the case for the simplex mesh, where a parameter file and an output file are created within a separate folder for each combination of velocity and pressure approximations and mesh resolution.
 
 Once the simulations are completed, the results can be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution at the different mesh resolutions and polynomial approximation degrees. However, before using this code, the script ``organize_output.py`` must be run to rearrange the results for a triangular mesh in a folder structure similar to that obtained for the mesh with quadrilateral cells. Hence, after running this script for the simplex mesh, folders are created for each combination of velocity and pressure shape functions, and within each folder, the error is rearranged in a single ``L2Error.dat`` file with the same structure as that for the quadrilateral mesh, thus containing the errors for the different mesh resolutions.
 
 -----------------------
 Results and Discussion
 -----------------------
-The following figures show the :math:`L²` norm of the error relative to the analytical solution for the velocity and pressure fields as a function of the mesh size :math:`h`. The error is defined as follows:
+The following figures show the :math:`L^2` norm of the error relative to the analytical solution for the velocity and pressure fields as a function of the mesh size :math:`h`. The error is defined as follows:
 
 .. math::
   |e_{\mathbf u}|_2 &= \sqrt{\int_\Omega [\Sigma_{i=1}^2(u_{i,sim}-u_{i,exact})^2]} = \sqrt{\Sigma_{k=1}^{n_{cells}}\Sigma_{j=1}^{n_q}\Sigma_{i=1}^2[(u_{i,sim,j}-u_{i,exact,j})^2]*w_j}\\
   |e_p|_2 &= \sqrt{\int_\Omega [(p_{sim}-p_{sim, av})-(p_{exact}-p_{exact, av})]^2} = \sqrt{\Sigma_{k=1}^{n_{cells}}\Sigma_{j=1}^{n_q} [(p_{sim,j}-p_{sim, av})-(p_{exact,j}-p_{exact, av})]^2*w_j}
 
-where :math:`n_q` is the number of quadrature points in each cell, :math:`w_j` are the quadrature weights, :math:`n_{cells}` is the number of cells in the domain, :math:`u_{i,sim}` and :math:`u_{i,exact}` are the simulated and exact velocity components, respectively, and :math:`p_{sim}` and :math:`p_{exact}` are the simulated and exact pressure fields, respectively. The average values of the simulated and exact pressure fields are denoted by :math:`p_{sim, av}` and :math:`p_{exact, av}`, respectively, and are subtracted from the pressure fields to account for the fact that the pressure is recovered to within a constant. In fact, for incompressible flows, the pressure field constitutes a Lagrange multiplier that enforces the continuity condition through its gradient value. More details on the error calculation can be found by consulting the implementation of the function ``calculate_L2_error``, which can be found in ``lethe/source/solvers/postprocessing_cfd.cc``.
+where :math:`n_q` is the number of quadrature points in each cell, :math:`w_j` are the quadrature weights, :math:`n_{cells}` is the number of cells in the domain, :math:`u_{i,sim}` and :math:`u_{i,exact}` are the simulated and exact velocity components, respectively, and :math:`p_{sim}` and :math:`p_{exact}` are the simulated and exact pressure fields, respectively. The average values of the simulated and exact pressure fields are denoted by :math:`p_{sim, av}` and :math:`p_{exact, av}`, respectively, and are subtracted from the pressure fields to account for the fact that the pressure is recovered to within a constant. In fact, for incompressible flows, the pressure field constitutes a Lagrange multiplier that enforces the continuity condition through its gradient value. More details on the error calculation can be found by consulting the implementation of the function ``calculate_L2_error`` in ``lethe/source/solvers/postprocessing_cfd.cc``.
 
 Finally, the mesh size :math:`h` is defined as follows:
   .. math::
     h_{quad} &= \frac{l_\Omega}{\sqrt{n_{cells}}}\\
     h_{simplex} &= \frac{l_\Omega}{\sqrt{(n_{cells}/8)}}*0.5
 
-where the number of cells :math:`n_{cells}` is retrieved from the ``L2Error.dat`` files. For the simplex mesh case, :math:`n_{cells}` is divided by 8 to calculate the number of quadrilaterals used to generate the triangles (see section :ref:`Mesh_section`). Taking the square root of this number gives the number of quad sides on a given boundary segment and dividing the length of the boundary segment by the latter number leads to the lengt of the side of each quad. The size of each triangle is then half the length of the quad side. 
+where the number of cells :math:`n_{cells}` is retrieved from the ``L2Error.dat`` files. For the simplex mesh case, :math:`n_{cells}` is divided by 8 to calculate the number of quadrilaterals used to generate the triangles (see section :ref:`Mesh_section`). Taking the square root of this number gives the number of quad sides on a given boundary segment. Dividing the length of the boundary segment by the latter number leads to the length of the side of each quad. The size of each triangle is then half the length of the quad side. 
 
 The following figure shows the variation of  :math:`|e_{\mathbf u}|_2` with :math:`h`
 
@@ -229,9 +229,9 @@ The following figure shows the variation of  :math:`|e_p|_2` with :math:`h`
 
 In both plots, the continuous lines correspond to the quadrilateral mesh, while the dashed lines represent the SIMPLEX mesh. It can be seen that the velocity converges to the order :math:`(p+1)` for a velocity shape function of degree p, except for the case :math:`\{Q_3-Q_1\}`.
 
-As for the pressure, it converges at the second-order for the shape functions pairs :math:`\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2, Q_3-Q_1\}` and :math:`\in \{P_1-P_1, P_2-Q_1, P_2-P_2\}`, and to the third-order for combinations :math:`\in \{Q_3-Q_2, Q_3-Q_3\}`. It can also be seen that the error for the pressure increases with an increasing pressure shape function degree, except for :math:`\{Q_3-Q_1\}` and :math:`\{Q_3-Q_2\}` for the quad mesh.
+As for the pressure, it converges at the second-order for the shape functions pairs :math:`\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2, Q_3-Q_1\}` and :math:`\in \{P_1-P_1, P_2-Q_1, P_2-P_2\}`, and to the third-order for combinations :math:`\in \{Q_3-Q_2, Q_3-Q_3\}`. It can also be seen that the error for the pressure increases with an increasing pressure approximation degree, except for :math:`\{Q_3-Q_1\}` and :math:`\{Q_3-Q_2\}` for the quad mesh.
 
-Finally, for the same degree of the velocity and pressure shape functions and the same mesh resolution, the error is smaller for a quadrilateral mesh, for both the pressure and velocity fields.  
+Finally, for the same degree of the velocity and pressure approximations and the same mesh resolution, the error is smaller for a quadrilateral mesh, for both the pressure and velocity fields.  
 
 ----------------------------
 Possibilities for Extension
