@@ -52,25 +52,25 @@ calculate_macrocontact_spreading_resistance(
 
 double
 calculate_microcontact_spreading_resistance(
-  const double effective_surface_slope,
-  const double effective_surface_roughness,
+  const double equivalent_surface_slope,
+  const double equivalent_surface_roughness,
   const double effective_microhardness,
   const double contact_radius,
   const double effective_particle_conductivity,
   const double maximum_pressure)
 {
   return 1.184 / M_PI *
-         (effective_surface_roughness / effective_surface_slope) *
+         (equivalent_surface_roughness / equivalent_surface_slope) *
          pow(effective_microhardness / maximum_pressure, 0.96) /
          effective_particle_conductivity / (contact_radius * contact_radius);
 }
 
 double
-calculate_macrogap_solid_layers_resistance(radius_one,
-                                           radius_two,
-                                           thermal_conductivity_one,
-                                           thermal_conductivity_two,
-                                           contact_radius)
+calculate_macrogap_solid_layers_resistance(const double radius_one,
+                                           const double radius_two,
+                                           const double thermal_conductivity_one,
+                                           const double thermal_conductivity_two,
+                                           const double contact_radius)
 {
   // R_c_i = characteristic length parallel to heat flux / (thermal_conductivity
   // * characteristic area perpendicular to heat flux)
@@ -87,7 +87,7 @@ calculate_macrogap_solid_layers_resistance(radius_one,
 }
 
 double
-erfc_inverse_approximation(x)
+erfc_inverse_approximation(const double x)
 {
   if (x < 1e-9 || x > 1.9)
     {
@@ -107,12 +107,14 @@ erfc_inverse_approximation(x)
     {
       return (1 - x) / (0.707 + 0.862 * x - 0.431 * x * x);
     }
+  
+  return NAN;
 }
 
 
 double
 calculate_microgap_interstitial_gas_resistance(
-  const double effective_surface_roughness,
+  const double equivalent_surface_roughness,
   const double contact_radius,
   const double gas_parameter_m,
   const double thermal_conductivity_gas,
@@ -125,10 +127,10 @@ calculate_microgap_interstitial_gas_resistance(
                                                effective_microhardness) -
                     a1;
 
-  return (2 * sqrt(2) * effective_surface_roughness * a2) /
+  return (2 * sqrt(2) * equivalent_surface_roughness * a2) /
          (M_PI * thermal_conductivity_gas * contact_radius * contact_radius *
           log(1 + a2 / (a1 + gas_parameter_m /
-                               (2 * sqrt(2) * effective_surface_roughness))))
+                               (2 * sqrt(2) * equivalent_surface_roughness))));
 }
 
 double
@@ -163,8 +165,8 @@ calculate_contact_thermal_conductance(
   const double effective_radius,
   const double effective_youngs_modulus,
   const double effective_real_youngs_modulus,
-  const double effective_surface_roughness,
-  const double effective_surface_slope,
+  const double equivalent_surface_roughness,
+  const double equivalent_surface_slope,
   const double effective_microhardness,
   const double thermal_conductivity_one,
   const double thermal_conductivity_two,
@@ -194,8 +196,8 @@ calculate_contact_thermal_conductance(
                                                 contact_radius);
 
   const double R_s =
-    calculate_microcontact_spreading_resistance(effective_surface_slope,
-                                                effective_surface_roughness,
+    calculate_microcontact_spreading_resistance(equivalent_surface_slope,
+                                                equivalent_surface_roughness,
                                                 effective_microhardness,
                                                 contact_radius,
                                                 effective_particle_conductivity,
@@ -209,7 +211,7 @@ calculate_contact_thermal_conductance(
                                                contact_radius);
 
   const double R_g =
-    calculate_microgap_interstitial_gas_resistance(effective_surface_roughness,
+    calculate_microgap_interstitial_gas_resistance(equivalent_surface_roughness,
                                                    contact_radius,
                                                    gas_parameter_m,
                                                    thermal_conductivity_gas,

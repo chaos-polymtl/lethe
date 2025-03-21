@@ -3,7 +3,7 @@
 
 
 /**
- * @brief This test checks the order of the temperature integrator by solving mcdT/dt = -T for two time steps.
+ * @brief This test checks the calculation of thermal resistances used to model conduction between two particles.
  *
  */
 
@@ -36,12 +36,10 @@ test()
   Parameters::Lagrangian::ModelParameters &model_param =
     dem_parameters.model_parameters;
 
-  const double dt           = 0.001;
-  const double time_final      = 1;
   const double specific_heat   = 840; // glass
   const Tensor<1, dim> g{{0, 0, 0}};
-  double         dt                                               = 0.00001;
-  double         particle_diameter                                = 0.005;
+  const double         dt                                               = 0.001;
+  const double         particle_diameter                                = 0.005;
   lagrangian_prop.particle_type_number                            = 1;
   lagrangian_prop.youngs_modulus_particle[0]                      = 5000000;
   lagrangian_prop.poisson_ratio_particle[0]                       = 0.22;
@@ -149,8 +147,8 @@ test()
   auto particle_two = std::next(particle_one);
   auto particle_one_properties = particle_one->get_properties();
   auto particle_two_properties = particle_two->get_properties();
-  Point<3> particle_one_location = get_location(particle_one);
-  Point<3> particle_two_location = get_location(particle_two);
+  Point<3> particle_one_location = particle_one->get_location();
+  Point<3> particle_two_location = particle_two->get_location();
 
   const double radius_one = particle_diameter / 2 ;
   const double radius_two = particle_diameter / 2 ;
