@@ -2145,7 +2145,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
-    this->dof_handler, true);
+    this->dof_handler);
 
   if (simulation_parameters.post_processing.calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
@@ -2811,7 +2811,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     }
 
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
-    this->dof_handler, true);
+    this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
   multiphysics->write_checkpoint();
