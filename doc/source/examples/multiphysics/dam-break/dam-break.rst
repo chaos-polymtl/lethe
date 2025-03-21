@@ -104,11 +104,11 @@ To prevent that the interface between phases becomes blurry due to diffusion, th
 
     subsection VOF
       subsection interface regularization method
-        set type = sharpening
+        set type      = sharpening
+        set frequency = 20
         subsection interface sharpening
           set threshold           = 0.5
           set interface sharpness = 1.5
-          set frequency           = 20
         end
       end
       subsection phase filtration

@@ -249,11 +249,11 @@ subsection VOF
     set beta      = 20
   end
   subsection interface regularization method
-    set type = sharpening
+    set type      = sharpening
+    set frequency = 10
     subsection interface sharpening
       set threshold               = 0.5
       set interface sharpness     = 1.5
-      set frequency               = 10
       set type                    = adaptive
       set threshold max deviation = 0.4
       set max iterations          = 50

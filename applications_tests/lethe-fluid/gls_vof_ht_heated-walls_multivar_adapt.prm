@@ -34,9 +34,9 @@ end
 
 subsection VOF
   subsection interface regularization method
-  set type = sharpening
+    set type      = sharpening
+    set frequency = 1
     subsection interface sharpening
-      set frequency           = 1
       set interface sharpness = 1.5
     end
   end
