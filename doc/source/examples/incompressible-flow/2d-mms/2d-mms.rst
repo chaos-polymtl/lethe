@@ -2,7 +2,7 @@
 Method of Manufactured Solutions
 ===============================================================================
 
-This example illustrates the use of the Method of Manufactured Solutions (MMS) for the verification of a solver's accuracy. The equations solved are the steady incompressible Navier-Stokes (NS) equations in 2D.
+This example illustrates the use of the Method of Manufactured Solutions (MMS) for the verification of a solver's accuracy. The equations solved are the two-dimensional steady incompressible Navier-Stokes (NS) equations.
 
 ----------------------------------
 Features
