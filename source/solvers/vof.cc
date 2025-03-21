@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/vof.h>
@@ -335,7 +335,8 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
   if ((vof_parameters.surface_tension_force.enable &&
        vof_parameters.surface_tension_force.output_vof_auxiliary_fields) ||
-      vof_parameters.algebraic_interface_reinitialization.enable)
+      vof_parameters.regularization_method.algebraic_interface_reinitialization
+        .enable)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         projected_phase_fraction_gradient_component_interpretation(
@@ -1136,12 +1137,12 @@ VolumeOfFluid<dim>::modify_solution()
 
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
   // Interface sharpening
-  if (vof_parameters.sharpening.enable)
+  if (vof_parameters.regularization_method.sharpening.enable)
     {
       // Interface sharpening is done at a constant frequency
       if (this->simulation_control->get_step_number() %
-            this->simulation_parameters.multiphysics.vof_parameters.sharpening
-              .frequency ==
+            this->simulation_parameters.multiphysics.vof_parameters
+              .regularization_method.frequency ==
           0)
         {
           handle_interface_sharpening();
@@ -1149,20 +1150,20 @@ VolumeOfFluid<dim>::modify_solution()
     }
 
   // Apply algebraic interface reinitialization
-  if (simulation_parameters.multiphysics.vof_parameters
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .algebraic_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.vof_parameters
-           .algebraic_interface_reinitialization.reinitialization_frequency ==
+         simulation_parameters.multiphysics.vof_parameters.regularization_method
+           .frequency ==
        0))
     reinitialize_interface_with_algebraic_method();
 
   // Apply geometric interface reinitialization
-  if (simulation_parameters.multiphysics.vof_parameters
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.vof_parameters
-           .geometric_interface_reinitialization.reinitialization_frequency ==
+         simulation_parameters.multiphysics.vof_parameters.regularization_method
+           .frequency ==
        0))
     reinitialize_interface_with_geometric_method();
 
@@ -1184,25 +1185,26 @@ template <int dim>
 void
 VolumeOfFluid<dim>::handle_interface_sharpening()
 {
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .verbosity != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
                   << this->simulation_control->get_step_number() << std::endl;
     }
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .verbosity != Parameters::Verbosity::quiet)
+      if (this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
 
       this->sharpening_threshold = find_sharpening_threshold();
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .verbosity != Parameters::Verbosity::quiet)
+      if (this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   ... final sharpening is : "
                       << this->sharpening_threshold << std::endl;
@@ -1211,8 +1213,9 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
   else
     {
       // Constant sharpening
-      this->sharpening_threshold = this->simulation_parameters.multiphysics
-                                     .vof_parameters.sharpening.threshold;
+      this->sharpening_threshold =
+        this->simulation_parameters.multiphysics.vof_parameters
+          .regularization_method.sharpening.threshold;
     }
 
   // Sharpen the interface of all solutions (present and previous)
@@ -1225,22 +1228,25 @@ double
 VolumeOfFluid<dim>::find_sharpening_threshold()
 {
   // Sharpening threshold (st) search range extrema
-  double st_min = 0.5 - this->simulation_parameters.multiphysics.vof_parameters
-                          .sharpening.threshold_max_deviation;
-  double st_max = 0.5 + this->simulation_parameters.multiphysics.vof_parameters
-                          .sharpening.threshold_max_deviation;
+  double st_min =
+    0.5 - this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.sharpening.threshold_max_deviation;
+  double st_max =
+    0.5 + this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.sharpening.threshold_max_deviation;
 
   // Useful definitions for readability
-  const double mass_deviation_tol = this->simulation_parameters.multiphysics
-                                      .vof_parameters.sharpening.tolerance *
-                                    this->mass_first_iteration;
+  const double mass_deviation_tol =
+    this->simulation_parameters.multiphysics.vof_parameters
+      .regularization_method.sharpening.tolerance *
+    this->mass_first_iteration;
   const unsigned int max_iterations =
-    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-      .max_iterations;
+    this->simulation_parameters.multiphysics.vof_parameters
+      .regularization_method.sharpening.max_iterations;
 
   const Parameters::FluidIndicator monitored_fluid =
-    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-      .monitored_fluid;
+    this->simulation_parameters.multiphysics.vof_parameters
+      .regularization_method.sharpening.monitored_fluid;
 
   unsigned int nb_search_ite = 0;
   // Local variable for the tested sharpening_threshold values
@@ -1262,8 +1268,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
       mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .verbosity != Parameters::Verbosity::quiet)
+      if (this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout
             << "   ... step " << nb_search_ite
@@ -1328,8 +1334,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
     }
 
   // Output message that mass conservation condition is reached
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .verbosity != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "   ... search algorithm took : " << nb_search_ite
                   << " step(s) " << std::endl
@@ -1743,15 +1749,16 @@ VolumeOfFluid<dim>::read_checkpoint()
         this->simulation_parameters.post_processing.barycenter_output_name +
         suffix);
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
       // Calculate volume and mass
-      calculate_volume_and_mass(this->present_solution,
-                                *multiphysics->get_solution(
-                                  PhysicsID::fluid_dynamics),
-                                this->simulation_parameters.multiphysics
-                                  .vof_parameters.sharpening.monitored_fluid);
+      calculate_volume_and_mass(
+        this->present_solution,
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        this->simulation_parameters.multiphysics.vof_parameters
+          .regularization_method.sharpening.monitored_fluid);
 
       this->mass_first_iteration = this->mass_monitored;
     }
@@ -1989,24 +1996,25 @@ VolumeOfFluid<dim>::set_initial_conditions()
 
   apply_phase_filter();
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
       // Calculate volume and mass
-      calculate_volume_and_mass(this->present_solution,
-                                *multiphysics->get_solution(
-                                  PhysicsID::fluid_dynamics),
-                                this->simulation_parameters.multiphysics
-                                  .vof_parameters.sharpening.monitored_fluid);
+      calculate_volume_and_mass(
+        this->present_solution,
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        this->simulation_parameters.multiphysics.vof_parameters
+          .regularization_method.sharpening.monitored_fluid);
 
       this->mass_first_iteration = this->mass_monitored;
     }
 
   // Reset algebraic interface reinitialization output directory;
   // if it does not exist, create it.
-  if (simulation_parameters.multiphysics.vof_parameters
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .algebraic_interface_reinitialization.enable &&
-      simulation_parameters.multiphysics.vof_parameters
+      simulation_parameters.multiphysics.vof_parameters.regularization_method
         .algebraic_interface_reinitialization.output_reinitialization_steps)
     {
       auto mpi_communicator = this->triangulation->get_communicator();
@@ -2189,8 +2197,8 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   const double      sharpening_threshold)
 {
   const double interface_sharpness =
-    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-      .interface_sharpness;
+    this->simulation_parameters.multiphysics.vof_parameters
+      .regularization_method.sharpening.interface_sharpness;
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
@@ -2282,8 +2290,9 @@ VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .verbosity == Parameters::Verbosity::extra_verbose)
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.verbosity ==
+      Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -2328,8 +2337,9 @@ VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
                system_rhs_phase_fraction,
                *ilu_preconditioner);
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .verbosity == Parameters::Verbosity::extra_verbose)
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.verbosity ==
+      Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;

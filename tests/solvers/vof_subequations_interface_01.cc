@@ -59,6 +59,8 @@ test()
   solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
     true;
 
+  std::cout << solver_parameters.multiphysics.VOF << std::endl;
+
   std::shared_ptr<SimulationControl> simulation_control =
     std::make_shared<SimulationControlTransient>(
       solver_parameters.simulation_control);
@@ -120,7 +122,7 @@ test()
   }
 
   // Enable algebraic interface reinitialization
-  solver_parameters.multiphysics.vof_parameters
+  solver_parameters.multiphysics.vof_parameters.regularization_method
     .algebraic_interface_reinitialization.enable = true;
   {
     VOFSubequationsInterface<dim> subequations_interface(

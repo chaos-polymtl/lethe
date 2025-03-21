@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/cahn_hilliard.h>
@@ -249,7 +249,7 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
     nsparam.multiphysics.vof_parameters.surface_tension_force.enable;
   bool fluid_dynamics_enabled = nsparam.multiphysics.fluid_dynamics;
   bool interface_sharpening_enabled =
-    nsparam.multiphysics.vof_parameters.sharpening.enable;
+    nsparam.multiphysics.vof_parameters.regularization_method.sharpening.enable;
   bool VOF_enabled = nsparam.multiphysics.VOF;
 
   // To avoid getting unused parameter warning
