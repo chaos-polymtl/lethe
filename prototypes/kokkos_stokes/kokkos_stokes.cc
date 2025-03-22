@@ -415,18 +415,16 @@ public:
   {}
 
   DEAL_II_HOST_DEVICE void
-  operator()(const unsigned int                                      cell,
-             const typename Portable::MatrixFree<dim, Number>::Data *gpu_data,
-             Portable::SharedData<dim, Number> *shared_data,
-             const Number                      *src,
-             Number                            *dst) const
+  operator()(const typename Portable::MatrixFree<dim, Number>::Data *data,
+             const Number                                           *src,
+             Number                                                 *dst) const
   {
     Portable::FEEvaluation<dim, fe_degree, fe_degree + 1, dim + 1, Number> phi(
-      /*cell,*/ gpu_data, shared_data);
+      data);
     phi.read_dof_values(src);
     phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
-    phi.apply_for_each_quad_point(
-      StokesOperatorQuad<dim, fe_degree, Number>(gpu_data, cell, delta_1));
+    phi.apply_for_each_quad_point(StokesOperatorQuad<dim, fe_degree, Number>(
+      data, data->cell_index, delta_1));
     phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi.distribute_local_to_global(dst);
   }
