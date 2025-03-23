@@ -341,17 +341,16 @@ public:
   DEAL_II_HOST_DEVICE
   StokesOperatorQuad(
     const typename Portable::MatrixFree<dim, Number>::Data *data,
-    int                                                     cell,
     const Number                                           *delta_1)
     : data(data)
-    , cell(cell)
     , delta_1(delta_1)
   {}
 
   DEAL_II_HOST_DEVICE void
   operator()(FECellIntegrator *phi, const int q_point) const
   {
-    const auto delta_1 = this->delta_1[data->local_q_point_id(cell, 1, 0)];
+    const int  cell_index = phi->get_current_cell_index();
+    const auto delta_1    = this->delta_1[cell_index];
 
     typename FECellIntegrator::value_type    value_result    = {};
     typename FECellIntegrator::gradient_type gradient_result = {};
@@ -386,13 +385,6 @@ public:
     phi->submit_gradient(gradient_result, q_point);
   }
 
-  DEAL_II_HOST_DEVICE
-  void
-  set_cell(int cell)
-  {
-    this->cell = cell;
-  }
-
   DEAL_II_HOST_DEVICE void
   set_matrix_free_data(
     const typename Portable::MatrixFree<dim, Number>::Data &data)
@@ -402,8 +394,9 @@ public:
 
 private:
   const typename Portable::MatrixFree<dim, Number>::Data *data;
-  int                                                     cell;
   const Number                                           *delta_1;
+  static const unsigned int                               n_q_points =
+    dealii::Utilities::pow(fe_degree + 1, dim);
 };
 
 template <int dim, int fe_degree, typename Number>
@@ -423,8 +416,8 @@ public:
       data);
     phi.read_dof_values(src);
     phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
-    phi.apply_for_each_quad_point(StokesOperatorQuad<dim, fe_degree, Number>(
-      data, data->cell_index, delta_1));
+    phi.apply_for_each_quad_point(
+      StokesOperatorQuad<dim, fe_degree, Number>(data, delta_1));
     phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi.distribute_local_to_global(dst);
   }
