@@ -243,8 +243,48 @@ template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 {
-  // Incomplete method! It only initializes the distance for now.
+  // Gain the writing right.
+  zero_out_ghost_values();
+
+  // Clear maps and sets
+  interface_reconstruction_vertices.clear();
+  interface_reconstruction_cells.clear();
+  intersected_dofs.clear();
+
+  // Initialize local distance vetors.
   initialize_distance();
+  
+  // Identify intersected cells and compute the interface reconstruction.
+    InterfaceTools::reconstruct_interface(*mapping,
+                          dof_handler,
+                          *fe,
+                          level_set,
+                          iso_level,
+                          interface_reconstruction_vertices,
+                          interface_reconstruction_cells,
+                          intersected_dofs);
+
+    /* Compute the distance for the dofs of the intersected cells (the ones in
+    the intersected_dofs set). They correspond to the first neighbor dofs.*/
+    compute_first_neighbors_distance();
+
+    /* Compute signed distance from distance (only first neighbors have an
+    updated value)*/
+    compute_signed_distance_from_distance();
+
+    // Conserve local and global volume
+    compute_cell_wise_volume_correction();
+    conserve_global_volume();
+
+    /* Compute the distance for the dofs of the rest of the mesh. They
+    correspond to the second neighbors dofs. */
+    compute_second_neighbors_distance();
+
+    // Compute signed distance from distance (all DOFs have updated value)
+    compute_signed_distance_from_distance();
+
+    // Update ghost values to regain reading ability.
+    update_ghost_values();
 }
 
 template <int dim, typename VectorType>
@@ -284,6 +324,61 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance()
   level_set = tmp_local_level_set;
 
   return level_set;
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::zero_out_ghost_values()
+{
+    /* To have the right to write in a LinearAlgebra::distributed::Vector, we
+    have to zero out the ghost values.*/
+    signed_distance.zero_out_ghost_values();
+    signed_distance_with_ghost.zero_out_ghost_values();
+    distance.zero_out_ghost_values();
+    distance_with_ghost.zero_out_ghost_values();
+    volume_correction.zero_out_ghost_values();  
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::update_ghost_values()
+{
+    /* To have the right to read a LinearAlgebra::distributed::Vector, we have
+    to update the ghost values.*/
+    signed_distance.update_ghost_values();
+    signed_distance_with_ghost.update_ghost_values();
+    distance.update_ghost_values();
+    distance_with_ghost.update_ghost_values();
+    volume_correction.update_ghost_values();  
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::exchange_distance()
+{
+    // Exchange and "select" min value between the processes
+    distance.compress(VectorOperation::min);
+
+    // Update local ghost (distance becomes read only)
+    distance.update_ghost_values();
+
+    /* Copy distance to distance_with_ghost to keep the knowledge of local ghost
+    values and to have a read only version of the vector*/
+    distance_with_ghost = distance;
+
+    /* Zero out ghost DOFs to regain write functionalities in distance (it
+    becomes write only, that is why we need distance_with_ghost - to read the
+    ghost values in it).*/
+    distance.zero_out_ghost_values();
+
+    /* Copy the ghost values back in distance (zero_out_ghost_values() puts
+    zeros in ghost DOFs)*/
+    for (auto p : this->locally_active_dofs)
+      {
+        /* We need to have the ghost values in distance for future
+        compress(VectorOperation::min) operation*/
+        distance(p) = distance_with_ghost(p);
+      }  
 }
 
 template class InterfaceTools::SignedDistanceSolver<2, GlobalVectorType>;
