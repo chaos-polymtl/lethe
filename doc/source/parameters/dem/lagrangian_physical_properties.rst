@@ -115,18 +115,6 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``Hamaker constant particles`` defines the Hamaker constant of particles for each type. This parameter is used with the DMT force model.
 
-* The ``thermal conductivity particles`` defines the thermal conductivity of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
-
-* The ``specific heat particles`` defines the specific heat of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
-
-* The ``microhardness particles`` defines the microhardness of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
-
-* The ``surface slope particles`` defines the surface slope of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
-
-* The ``surface roughness particles`` defines the surface roughness of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
-
-* The ``thermal accommodation particles`` defines the thermal accommodation coefficient of particles for each type. This parameter is used in multiphysic DEM, which is not yet supported.
-
 * The ``young modulus wall`` defines the Young's modulus of the walls.
 
 * The ``poisson ratio wall`` defines the Poisson's ratio of the walls.
@@ -143,12 +131,27 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``Hamaker constant wall`` defines the Hamaker constant of the walls. This parameter is used with the DMT force model.
 
-* The ``thermal conductivity gas`` defines the thermal conductivity of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+.. warning::
+    The following DEM parameters are used for multiphysic DEM simulations, which are currently not supported.
 
-* The ``specific heat gas`` defines the specific heat capacity of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+* The ``thermal conductivity particles`` defines the thermal conductivity of particles for each type.
 
-* The ``dynamic viscosity gas`` defines the dynamic viscosity of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+* The ``specific heat particles`` defines the specific heat of particles for each type.
 
-* The ``specific heats ratio gas`` defines the specific heats ratio of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+* The ``microhardness particles`` defines the microhardness of particles for each type.
 
-* The ``molecular mean free path gas`` defines the molecular mean free path of the interstitial gas. This parameter is used in multiphysic DEM, which is not yet supported.
+* The ``surface slope particles`` defines the surface slope of particles for each type.
+
+* The ``surface roughness particles`` defines the surface roughness of particles for each type.
+
+* The ``thermal accommodation particles`` defines the thermal accommodation coefficient of particles for each type.
+
+* The ``thermal conductivity gas`` defines the thermal conductivity of the interstitial gas.
+
+* The ``specific heat gas`` defines the specific heat capacity of the interstitial gas.
+
+* The ``dynamic viscosity gas`` defines the dynamic viscosity of the interstitial gas.
+
+* The ``specific heats ratio gas`` defines the specific heats ratio of the interstitial gas.
+
+* The ``molecular mean free path gas`` defines the molecular mean free path of the interstitial gas.
