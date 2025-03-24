@@ -467,7 +467,7 @@ find_particle_wall_contact_pairs<3>(
     &particle_wall_contact_candidates);
 
 template void
-find_particle_wall_contact_pairs<2>(
+find_particle_wall_contact_pairs<2, DEM::DEMProperties::PropertiesIndex>(
   const std::map<int, boundary_cells_info_struct<2>>
                                       &boundary_cells_information,
   const Particles::ParticleHandler<2> &particle_handler,
@@ -477,7 +477,7 @@ find_particle_wall_contact_pairs<2>(
     &sparse_contacts_object);
 
 template void
-find_particle_wall_contact_pairs<3>(
+find_particle_wall_contact_pairs<3, DEM::DEMProperties::PropertiesIndex>(
   const std::map<int, boundary_cells_info_struct<3>>
                                       &boundary_cells_information,
   const Particles::ParticleHandler<3> &particle_handler,
@@ -505,6 +505,26 @@ find_particle_wall_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
     &particle_wall_contact_candidates,
   const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
     &sparse_contacts_object);
+
+template void
+find_particle_wall_contact_pairs<2, DEM::DEMMPProperties::PropertiesIndex>(
+  const std::map<int, boundary_cells_info_struct<2>>
+                                      &boundary_cells_information,
+  const Particles::ParticleHandler<2> &particle_handler,
+  DEM::dem_data_structures<2>::particle_wall_candidates
+    &particle_wall_contact_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_wall_contact_pairs<3, DEM::DEMMPProperties::PropertiesIndex>(
+  const std::map<int, boundary_cells_info_struct<3>>
+                                      &boundary_cells_information,
+  const Particles::ParticleHandler<3> &particle_handler,
+  DEM::dem_data_structures<3>::particle_wall_candidates
+    &particle_wall_contact_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);  
 
 template void
 find_particle_floating_wall_contact_pairs<2>(
@@ -593,6 +613,36 @@ find_particle_floating_wall_contact_pairs<
     &sparse_contacts_object);
 
 template void
+find_particle_floating_wall_contact_pairs<2,
+                                          DEM::DEMMPProperties::PropertiesIndex>(
+  const std::unordered_map<
+    types::global_dof_index,
+    std::set<typename Triangulation<2>::active_cell_iterator>>
+                                      &boundary_cells_for_floating_walls,
+  const Particles::ParticleHandler<2> &particle_handler,
+  const Parameters::Lagrangian::FloatingWalls<2> &floating_wall_properties,
+  const double                                    simulation_time,
+  DEM::dem_data_structures<2>::particle_floating_wall_candidates
+    &particle_floating_wall_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_floating_wall_contact_pairs<3,
+                                          DEM::DEMMPProperties::PropertiesIndex>(
+  const std::unordered_map<
+    types::global_dof_index,
+    std::set<typename Triangulation<3>::active_cell_iterator>>
+                                      &boundary_cells_for_floating_walls,
+  const Particles::ParticleHandler<3> &particle_handler,
+  const Parameters::Lagrangian::FloatingWalls<3> &floating_wall_properties,
+  const double                                    simulation_time,
+  DEM::dem_data_structures<3>::particle_floating_wall_candidates
+    &particle_floating_wall_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
 particle_solid_surfaces_contact_search<2>(
   const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
@@ -661,3 +711,27 @@ particle_solid_surfaces_contact_search<3,
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
     &sparse_contacts_object);
+
+template void
+particle_solid_surfaces_contact_search<2, DEM::DEMMPProperties::PropertiesIndex>(
+  const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
+                                      &solid_surfaces_mesh_information,
+  const Particles::ParticleHandler<2> &particle_handler,
+  DEM::dem_data_structures<2>::particle_floating_mesh_candidates
+    &particle_floating_mesh_contact_candidates,
+  DEM::dem_data_structures<2>::cells_total_neighbor_list
+    &cells_total_neighbor_list,
+  const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+particle_solid_surfaces_contact_search<3, DEM::DEMMPProperties::PropertiesIndex>(
+  const DEM::dem_data_structures<3>::solid_surfaces_mesh_information
+                                      &solid_surfaces_mesh_information,
+  const Particles::ParticleHandler<3> &particle_handler,
+  DEM::dem_data_structures<3>::particle_floating_mesh_candidates
+    &particle_floating_mesh_contact_candidates,
+  DEM::dem_data_structures<3>::cells_total_neighbor_list
+    &cells_total_neighbor_list,
+  const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);    

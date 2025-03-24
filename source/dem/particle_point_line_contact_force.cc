@@ -278,6 +278,8 @@ ParticlePointLineForce<dim, PropertiesIndex>::find_projection_point(
 template class ParticlePointLineForce<2, DEM::DEMProperties::PropertiesIndex>;
 template class ParticlePointLineForce<2,
                                       DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticlePointLineForce<2, DEM::DEMMPProperties::PropertiesIndex>;
 template class ParticlePointLineForce<3, DEM::DEMProperties::PropertiesIndex>;
 template class ParticlePointLineForce<3,
                                       DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticlePointLineForce<3, DEM::DEMMPProperties::PropertiesIndex>;

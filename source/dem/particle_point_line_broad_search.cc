@@ -285,6 +285,26 @@ find_particle_line_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
     &sparse_contacts_object);
 
 template void
+find_particle_line_contact_pairs<2, DEM::DEMMPProperties::PropertiesIndex>(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<std::string, cell_line_info<2>>
+    &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<2>::particle_line_candidates
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_line_contact_pairs<3, DEM::DEMMPProperties::PropertiesIndex>(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<std::string, cell_line_info<3>>
+    &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<3>::particle_line_candidates
+    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
 find_particle_point_contact_pairs<2>(
   const Particles::ParticleHandler<2> &particle_handler,
   const std::unordered_map<std::string, cell_point_info<2>>
@@ -338,4 +358,24 @@ find_particle_point_contact_pairs<3>(
   typename DEM::dem_data_structures<3>::particle_point_candidates
     &particle_point_contact_candidates,
   const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_point_contact_pairs<2>(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<std::string, cell_point_info<2>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<2>::particle_point_candidates
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_point_contact_pairs<3>(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<std::string, cell_point_info<3>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<3>::particle_point_candidates
+    &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
     &sparse_contacts_object);

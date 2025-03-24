@@ -119,6 +119,10 @@ ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate(
 template class ExplicitEulerIntegrator<2, DEM::DEMProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<2,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
+template class ExplicitEulerIntegrator<2,
+                                       DEM::DEMMPProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<3, DEM::DEMProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<3,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
+template class ExplicitEulerIntegrator<3,
+                                       DEM::DEMMPProperties::PropertiesIndex>;

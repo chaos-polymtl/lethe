@@ -196,7 +196,6 @@ particle_point_fine_search<3, DEM::CFDDEMProperties::PropertiesIndex>(
   typename DEM::dem_data_structures<3>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
-
 template void
 particle_line_fine_search<2, DEM::CFDDEMProperties::PropertiesIndex>(
   const typename DEM::dem_data_structures<2>::particle_line_candidates
@@ -207,6 +206,38 @@ particle_line_fine_search<2, DEM::CFDDEMProperties::PropertiesIndex>(
 
 template void
 particle_line_fine_search<3, DEM::CFDDEMProperties::PropertiesIndex>(
+  const typename DEM::dem_data_structures<3>::particle_line_candidates
+              &particle_line_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_line_in_contact
+    &particle_line_pairs_in_contact);
+
+template void
+particle_point_fine_search<2, DEM::DEMMPProperties::PropertiesIndex>(
+  const typename DEM::dem_data_structures<2>::particle_point_candidates
+              &particle_point_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_point_in_contact
+    &particle_point_pairs_in_contact);
+
+template void
+particle_point_fine_search<3, DEM::DEMMPProperties::PropertiesIndex>(
+  const typename DEM::dem_data_structures<3>::particle_point_candidates
+              &particle_point_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_point_in_contact
+    &particle_point_pairs_in_contact);
+
+template void
+particle_line_fine_search<2, DEM::DEMMPProperties::PropertiesIndex>(
+  const typename DEM::dem_data_structures<2>::particle_line_candidates
+              &particle_line_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_line_in_contact
+    &particle_line_pairs_in_contact);
+
+template void
+particle_line_fine_search<3, DEM::DEMMPProperties::PropertiesIndex>(
   const typename DEM::dem_data_structures<3>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,

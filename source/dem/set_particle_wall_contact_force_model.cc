@@ -79,3 +79,15 @@ template std::shared_ptr<
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<3>                  &dem_parameters,
   const parallel::distributed::Triangulation<3> &triangulation);
+
+template std::shared_ptr<
+  ParticleWallContactForce<2, DEM::DEMMPProperties::PropertiesIndex>>
+set_particle_wall_contact_force_model(
+  const DEMSolverParameters<2>                  &dem_parameters,
+  const parallel::distributed::Triangulation<2> &triangulation);
+
+template std::shared_ptr<
+  ParticleWallContactForce<3, DEM::DEMMPProperties::PropertiesIndex>>
+set_particle_wall_contact_force_model(
+  const DEMSolverParameters<3>                  &dem_parameters,
+  const parallel::distributed::Triangulation<3> &triangulation);
