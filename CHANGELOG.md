@@ -10,10 +10,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - MINOR Addition of the explicit template instantiations for the PropertiesIndex of multiphysic DEM simulations. They are added to all files where there were already DEMProperties template instantiations. [#1469](https://github.com/chaos-polymtl/lethe/pull/1469)
 
 ## [Master] - 2025-03-21
+## [Master] - 2025-03-24
 
 ### Changed
 
-- MINOR Refactor the VOF interface sharpening and reinitialization parameters to merge them in one subsection called interface regularization method. [#1467](https://github.com/chaos-polymtl/lethe/pull/1467)
+- MAJOR Refactor the VOF interface sharpening and reinitialization parameters to merge them in one subsection called interface regularization method. [#1467](https://github.com/chaos-polymtl/lethe/pull/1467)
 
 ### Added
 

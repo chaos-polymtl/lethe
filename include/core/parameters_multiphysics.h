@@ -261,6 +261,12 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Parameters for interface regularization methods
+   * used within the VOF solver. It stores the parameters for the three
+   * available methods (projection-, algebraic-, and geometric based
+   * regilarization).
+   */
   struct VOF_RegularizationMethod
   {
     /// Regularization method type

@@ -82,7 +82,7 @@ The default values of the VOF parameters are given in the text box below.
 Interface Regularization Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. 
+The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step. 
 
 * ``type``: sets the method of regularization. There are three methods available:``none``, ``sharpening`` and ``algebraic``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
@@ -92,9 +92,9 @@ The ``subsection interface regularization method`` defines parameters to counter
   * ``quiet``: default verbosity level; no information on the process is displayed.
 
     .. warning::
-      The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends on the verbosity of the non-linear and linear solvers. Some console outputs may remain if they are set to ``verbose``.
+      The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends also on the verbosity level of the non-linear and linear solvers. Some console outputs may remain if they are set to ``verbose``.
 
-  * ``verbose``: displays regularization steps progression. For the algebraic interface reinitialization (``type = algebraic``), only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
+  * ``verbose``: displays regularization steps progression. For the algebraic interface reinitialization (``type = algebraic``), it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
   * ``extra verbose``: for the interface sharpening (``type = sharpening``), indicates the details of the linear iterations. For the algebraic interface reinitialization (``type = algebraic``), in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
   

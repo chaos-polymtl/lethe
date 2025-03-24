@@ -172,13 +172,13 @@ Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
       "10",
       Patterns::Integer(),
       "Reinitialization frequency (number of time-steps) at which the "
-      "interfaceregularization process will be applied to the VOF "
+      "interface regularization process will be applied to the VOF "
       "phase fraction field.");
     prm.declare_entry(
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose|extra verbose"),
-      "States whether the output from the algebraic interface reinitialization "
+      "States whether the output from the interface regularization method "
       "should be printed."
       "Choices are <quiet|verbose|extra verbose>.");
 
