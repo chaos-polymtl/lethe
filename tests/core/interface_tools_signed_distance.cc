@@ -9,6 +9,7 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_tools.h>
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -29,13 +30,11 @@ template <int dim>
 void
 test()
 {
-  /* This test checks the instanciation of the
+  /* This test checks the accuracy of the
   InterfaceTools::SignedDistanceSolver class from within an abitrary structure
   that replicates the usual physical solver structure, denoted by the background
-  prefix. This is a dummy test intended to check the architecture, and not the
-  SignedDistanceSolver performances yet! When the implementation of the
-  SignedDistanceSolver will be completed, this test will be extended to a
-  verification of the signed distance computation for a sphere.
+  prefix. This test perfoms a verification of the signed distance computations
+  for a sphere.
   */
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
@@ -93,7 +92,7 @@ test()
 
   // Instanciate the SignedDistanceSolver as it would as a member of the
   // background solver class
-  double max_reinitialization_distance = 0.2;
+  double max_reinitialization_distance = 1.0;
   std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
     signed_distance_solver = std::make_shared<
       InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
@@ -106,19 +105,47 @@ test()
   signed_distance_solver->set_level_set_from_background_mesh(
     background_dof_handler, background_level_set);
 
-  // Solve the signed_distance field. The solve() method only initialize the
-  // signed_distance to the max_reinitialization_distance for now.
+  // Solve the signed_distance field.
   signed_distance_solver->solve();
 
   // Get the signed_distance field from the SignedDistanceSolver
   auto &signed_distance = signed_distance_solver->get_signed_distance();
 
-  // The extrema of signed_distance should be the +/-
-  // max_reinitialization_distance. This is a dummy test intended to check the
-  // architecture, and not the SignedDistanceSolver performances yet!
-  deallog << "The signed distance interval in " << dim << "D is: ["
-          << signed_distance.min() << "," << signed_distance.max() << "]"
-          << std::endl;
+  // Interpolate the signed_distance solution from the SignedDistanceSolver
+  // DoFHandler to the main solver DoFHandler.
+  GlobalVectorType background_signed_distance(background_locally_owned_dofs,
+                                              background_locally_relevant_dofs,
+                                              mpi_communicator);
+
+  TrilinosWrappers::MPI::Vector tmp_background_signed_distance(
+    background_locally_owned_dofs, mpi_communicator);
+
+  FETools::interpolate(signed_distance_solver->dof_handler,
+                       signed_distance,
+                       background_dof_handler,
+                       tmp_background_signed_distance);
+
+  background_signed_distance = tmp_background_signed_distance;
+
+  // Compute the L2 norm of the error.
+  Vector<float> error_per_cell(background_triangulation->n_active_cells());
+
+  VectorTools::integrate_difference(
+    *background_mapping,
+    background_dof_handler,
+    background_signed_distance,
+    Functions::SignedDistance::Sphere<dim>(sphere_center, sphere_radius),
+    error_per_cell,
+    QGauss<dim>(background_fe->degree + 1),
+    VectorTools::L2_norm);
+
+  const double error_L2 =
+    VectorTools::compute_global_error(*background_triangulation,
+                                      error_per_cell,
+                                      VectorTools::L2_norm);
+
+  deallog << "The norm L2 of the signed distance error in " << dim
+          << "D is: " << error_L2 << std::endl;
 }
 
 int
