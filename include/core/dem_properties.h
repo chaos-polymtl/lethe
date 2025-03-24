@@ -21,6 +21,7 @@ namespace DEM
   {
     dem,
     cfd_dem,
+    dem_mp,
   };
 
 
