@@ -474,6 +474,12 @@
     set rolling viscous damping particles = 0.1
     set surface energy particles          = 0.0
     set Hamaker constant particles        = 4.e-19
+    set thermal conductivity particles    = 1
+    set specific heat particles           = 1000
+    set microhardness particles           = 1.e9
+    set surface slope particles           = 0.1
+    set surface roughness particles       = 1.e-9
+    set thermal accommodation particles   = 0.7
 
   end
 
@@ -486,6 +492,13 @@
   set rolling viscous damping wall = 0.1
   set surface energy wall          = 0.0
   set Hamaker constant wall        = 4.e-19
+
+  # Interstitial gas properties
+  set thermal conductivity gas     = 0.01
+  set specific heat gas            = 1000
+  set dynamic viscosity gas        = 1.e-5
+  set specific heats ratio gas     = 1
+  set molecular mean free path gas = 68.e-9
 end
 </pre></div>
 </div>
@@ -534,6 +547,23 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">rolling</span> <span class="pre">viscous</span> <span class="pre">damping</span> <span class="pre">wall</span></code> defines the rolling viscous damping coefficient of the walls for the elasto-plastic spring-dashpot rolling friction model.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">energy</span> <span class="pre">wall</span></code> defines the surface energy of the walls. This parameter is used with the JKR and DMT force model.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">Hamaker</span> <span class="pre">constant</span> <span class="pre">wall</span></code> defines the Hamaker constant of the walls. This parameter is used with the DMT force model.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The following DEM parameters are used for multiphysic DEM simulations, which are currently not supported.</p>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">particles</span></code> defines the thermal conductivity of particles for each type.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">particles</span></code> defines the specific heat of particles for each type.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">microhardness</span> <span class="pre">particles</span></code> defines the microhardness of particles for each type.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">slope</span> <span class="pre">particles</span></code> defines the surface slope of particles for each type.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">roughness</span> <span class="pre">particles</span></code> defines the surface roughness of particles for each type.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">accommodation</span> <span class="pre">particles</span></code> defines the thermal accommodation coefficient of particles for each type.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">gas</span></code> defines the thermal conductivity of the interstitial gas.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">gas</span></code> defines the specific heat capacity of the interstitial gas.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">dynamic</span> <span class="pre">viscosity</span> <span class="pre">gas</span></code> defines the dynamic viscosity of the interstitial gas.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heats</span> <span class="pre">ratio</span> <span class="pre">gas</span></code> defines the specific heats ratio of the interstitial gas.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">molecular</span> <span class="pre">mean</span> <span class="pre">free</span> <span class="pre">path</span> <span class="pre">gas</span></code> defines the molecular mean free path of the interstitial gas.</p></li>
 </ul>
 </section>
 

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['n_5fproperties_0',['n_properties',['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa2296dc6bec81373975e7bc90a1462174',1,'DEM::CFDDEMProperties::n_properties'],['../namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adb1ffe9c5adb4eb261baf3fefae9e3b8',1,'DEM::DEMProperties::n_properties']]],
+  ['n_5fproperties_0',['n_properties',['../namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a8a4efe9b49d642c1b0a4d7f9e8873592',1,'DEM::DEMMPProperties::n_properties'],['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa2296dc6bec81373975e7bc90a1462174',1,'DEM::CFDDEMProperties::n_properties'],['../namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987adb1ffe9c5adb4eb261baf3fefae9e3b8',1,'DEM::DEMProperties::n_properties']]],
   ['newton_1',['newton',['../structParameters_1_1NonLinearSolver.html#a6b197a386b6e99895ef3f26218c7f66bada6fa909f1c0188c539feb08d4496eb7',1,'Parameters::NonLinearSolver']]],
   ['newtonian_2',['newtonian',['../classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1aae02ec5bee6f2a01b6d635cc0e0b09fb',1,'Parameters::Material']]],
   ['no_5fresistance_3',['no_resistance',['../namespaceParameters_1_1Lagrangian.html#af8ea30562f3b72ee8bf6e623478d3555ab23a315dd51fe4c6e0eb39cfcf65f3f4',1,'Parameters::Lagrangian']]],

@@ -267,11 +267,14 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceDEM_1_1CFDDEMProperties" id="r_namespaceDEM_1_1CFDDEMProperties"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1CFDDEMProperties.html">DEM::CFDDEMProperties</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceDEM_1_1DEMMPProperties" id="r_namespaceDEM_1_1DEMMPProperties"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1DEMMPProperties.html">DEM::DEMMPProperties</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:ace9d7c6b123aa13027ca7915f1fa4d16" id="r_ace9d7c6b123aa13027ca7915f1fa4d16"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16">DEM::SolverType</a> { <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d">DEM::dem</a>
 , <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a78ae406074be6be7fab62b1c41b968dd">DEM::cfd_dem</a>
+, <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12">DEM::dem_mp</a>
  }</td></tr>
 <tr class="separator:ace9d7c6b123aa13027ca7915f1fa4d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4c9c6eeafe6423a5619617d6c8a5987" id="r_ad4c9c6eeafe6423a5619617d6c8a5987"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> : int { <br />
@@ -315,6 +318,24 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:ae9734b9d29480269e4764c5092d87b2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca0676848b97f3864735e524aac253f8" id="r_aca0676848b97f3864735e524aac253f8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> : int { <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a0aec2d7eb09eb670d3d9affc8767ba56">DEM::DEMMPProperties::type</a> = 0
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a348a2340df4ec7ffcd610b03e80b0703">DEM::DEMMPProperties::dp</a> = 1
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a350708db287c03473fa23b181abd447b">DEM::DEMMPProperties::mass</a> = 2
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a3961047b5a49d25d166d02c023d6e0f6">DEM::DEMMPProperties::v_x</a> = 3
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8ac2f285f3fcefd2be647f1a1db8cac997">DEM::DEMMPProperties::v_y</a> = 4
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a2f5b5915344cccdb2d60ae72440fd657">DEM::DEMMPProperties::v_z</a> = 5
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8aa4f810e1a2af0663b9d4c9d36247b664">DEM::DEMMPProperties::omega_x</a> = 6
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a3e9155363f4c867bb2f72dff67be08ce">DEM::DEMMPProperties::omega_y</a> = 7
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8ada27e9b4cd32b4a0ea8ce0cd8b0d274a">DEM::DEMMPProperties::omega_z</a> = 8
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9">DEM::DEMMPProperties::T</a> = 9
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8aa71ab952dba2769feb0df52178f69331">DEM::DEMMPProperties::specific_heat</a> = 10
+, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a8a4efe9b49d642c1b0a4d7f9e8873592">DEM::DEMMPProperties::n_properties</a> = 11
+<br />
+ }</td></tr>
+<tr class="separator:aca0676848b97f3864735e524aac253f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
