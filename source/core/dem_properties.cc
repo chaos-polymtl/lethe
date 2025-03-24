@@ -43,12 +43,22 @@ namespace DEM
         properties[PropertiesIndex::volumetric_contribution] =
           std::make_pair("volumetric_contribution", 1);
       }
+
+    if constexpr (std::is_same_v<PropertiesIndex,
+                                 DEM::DEMMPProperties::PropertiesIndex>)
+      {
+        properties[PropertiesIndex::T] = std::make_pair("temperature", 1);
+        properties[PropertiesIndex::specific_heat] =
+          std::make_pair("specific_heat", 1);
+      }
     return properties;
   }
 
-  template class ParticleProperties<2, DEMProperties::PropertiesIndex>;
-  template class ParticleProperties<2, CFDDEMProperties::PropertiesIndex>;
-  template class ParticleProperties<3, DEMProperties::PropertiesIndex>;
-  template class ParticleProperties<3, CFDDEMProperties::PropertiesIndex>;
+  template class ParticleProperties<2, DEM::DEMProperties::PropertiesIndex>;
+  template class ParticleProperties<2, DEM::CFDDEMProperties::PropertiesIndex>;
+  template class ParticleProperties<2, DEM::DEMMPProperties::PropertiesIndex>;
+  template class ParticleProperties<3, DEM::DEMProperties::PropertiesIndex>;
+  template class ParticleProperties<3, DEM::CFDDEMProperties::PropertiesIndex>;
+  template class ParticleProperties<3, DEM::DEMMPProperties::PropertiesIndex>;
 
 } // namespace DEM
