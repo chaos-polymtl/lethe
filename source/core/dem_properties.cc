@@ -54,8 +54,10 @@ namespace DEM
     return properties;
   }
 
+  template class ParticleProperties<2, DEM::DEMProperties::PropertiesIndex>;
   template class ParticleProperties<2, DEM::CFDDEMProperties::PropertiesIndex>;
   template class ParticleProperties<2, DEM::DEMMPProperties::PropertiesIndex>;
+  template class ParticleProperties<3, DEM::DEMProperties::PropertiesIndex>;
   template class ParticleProperties<3, DEM::CFDDEMProperties::PropertiesIndex>;
   template class ParticleProperties<3, DEM::DEMMPProperties::PropertiesIndex>;
 
