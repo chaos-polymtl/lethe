@@ -4,6 +4,7 @@
 #ifndef lethe_interface_tools_h
 #define lethe_interface_tools_h
 
+#include <core/lethe_grid_tools.h>
 #include <core/utilities.h>
 #include <core/vector.h>
 
@@ -22,6 +23,8 @@
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/lac/lapack_full_matrix.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
@@ -494,7 +497,16 @@ namespace InterfaceTools
      */
     inline void
     get_dof_opposite_faces(unsigned int               local_dof_id,
-                           std::vector<unsigned int> &local_opposite_faces);
+                           std::vector<unsigned int> &local_opposite_faces)
+    {
+      unsigned int local_dof_id_2d = local_dof_id % 4;
+
+      local_opposite_faces[0] = (local_dof_id_2d + 1) % 2;
+      local_opposite_faces[1] = 3 - local_dof_id_2d / 2;
+
+      if constexpr (dim == 3)
+        local_opposite_faces[2] = 5 - local_dof_id / 4;
+    };
 
     /**
      * @brief Return the face transformation jacobian (dim-1 x dim-1). This is
@@ -513,7 +525,20 @@ namespace InterfaceTools
     get_face_transformation_jacobian(
       const DerivativeForm<1, dim, dim> &cell_transformation_jac,
       const unsigned int                 local_face_id,
-      DerivativeForm<1, dim - 1, dim>   &face_transformation_jac);
+      DerivativeForm<1, dim - 1, dim>   &face_transformation_jac)
+    {
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          unsigned int k = 0;
+          for (unsigned int j = 0; j < dim; ++j)
+            {
+              if (local_face_id / 2 == j)
+                continue;
+              face_transformation_jac[i][k] = cell_transformation_jac[i][j];
+              k += 1;
+            }
+        }
+    };
 
     /**
      * @brief
@@ -529,7 +554,24 @@ namespace InterfaceTools
      */
     inline Point<dim>
     transform_ref_face_point_to_ref_cell(const Point<dim - 1> &x_ref_face,
-                                         const unsigned int    local_face_id);
+                                         const unsigned int    local_face_id)
+    {
+      Point<dim> x_ref_cell;
+
+      unsigned int j = 0;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          if (local_face_id / 2 == i)
+            {
+              x_ref_cell[i] = double(local_face_id % 2);
+              continue;
+            }
+          x_ref_cell[i] = x_ref_face[j];
+          j += 1;
+        }
+
+      return x_ref_cell;
+    };
 
     /**
      * @brief Compute the residual at the point x_n of the distance minimization
@@ -550,7 +592,19 @@ namespace InterfaceTools
     compute_residual(const Tensor<1, dim>                  &x_n_to_x_I_real,
                      const Tensor<1, dim>                  &distance_gradient,
                      const DerivativeForm<1, dim - 1, dim> &transformation_jac,
-                     Tensor<1, dim - 1>                    &residual_ref);
+                     Tensor<1, dim - 1>                    &residual_ref)
+    {
+      Tensor<1, dim> residual_real =
+        distance_gradient - (1.0 / x_n_to_x_I_real.norm()) * x_n_to_x_I_real;
+
+      DerivativeForm<1, dim, dim - 1> transformation_jac_transpose =
+        transformation_jac.transpose();
+
+      for (unsigned int i = 0; i < dim - 1; ++i)
+        for (unsigned int j = 0; j < dim; ++j)
+          residual_ref[i] +=
+            transformation_jac_transpose[i][j] * residual_real[j];
+    };
 
     /**
      * @brief Compute the stencil for the numerical jacobian of the distance
@@ -577,7 +631,37 @@ namespace InterfaceTools
     inline std::vector<Point<dim>>
     compute_numerical_jacobian_stencil(const Point<dim>   x_ref,
                                        const unsigned int local_face_id,
-                                       const double       perturbation);
+                                       const double       perturbation)
+    {
+      std::vector<Point<dim>> stencil(2 * dim - 1);
+      for (unsigned int i = 0; i < 2 * dim - 1; ++i)
+        {
+          stencil[i] = x_ref;
+        }
+
+      unsigned int              skip_index = local_face_id / 2;
+      std::vector<unsigned int> j_index(dim - 1);
+
+      // Set the coordinates (x,y,z) to be skipped (the coordinates not
+      // perturbed)
+      unsigned int j = 0;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          if (i == skip_index)
+            continue;
+          j_index[j] = i;
+          j += 1;
+        }
+
+      for (unsigned int i = 1; i < dim; ++i)
+        {
+          j = j_index[i - 1];
+          stencil[2 * i - 1][j] -= perturbation;
+          stencil[2 * i][j] += perturbation;
+        }
+
+      return stencil;
+    };
 
     /**
      * @brief
@@ -594,7 +678,24 @@ namespace InterfaceTools
     inline Tensor<1, dim>
     transform_ref_face_correction_to_ref_cell(
       const Vector<double> &correction_ref_face,
-      const unsigned int    local_face_id);
+      const unsigned int    local_face_id)
+    {
+      Tensor<1, dim> correction_ref_cell;
+
+      unsigned int j = 0;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          if (local_face_id / 2 == i)
+            {
+              correction_ref_cell[i] = 0.0;
+              continue;
+            }
+          correction_ref_cell[i] = correction_ref_face[j];
+          j += 1;
+        }
+
+      return correction_ref_cell;
+    };
 
     /**
      * @brief
@@ -626,7 +727,37 @@ namespace InterfaceTools
       const std::vector<DerivativeForm<1, dim - 1, dim>>
                                &transformation_jacobians,
       const double              perturbation,
-      LAPACKFullMatrix<double> &jacobian_matrix);
+      LAPACKFullMatrix<double> &jacobian_matrix)
+    {
+      for (unsigned int i = 0; i < dim - 1; ++i)
+        {
+          const Tensor<1, dim> x_n_to_x_I_real_m1 =
+            x_I_real - stencil_real[2 * i + 1];
+
+          Tensor<1, dim - 1> residual_ref_m1;
+          compute_residual(x_n_to_x_I_real_m1,
+                           distance_gradients[2 * i + 1],
+                           transformation_jacobians[2 * i + 1],
+                           residual_ref_m1);
+
+          const Tensor<1, dim> x_n_to_x_I_real_p1 =
+            x_I_real - stencil_real[2 * i + 2];
+
+          Tensor<1, dim - 1> residual_ref_p1;
+          compute_residual(x_n_to_x_I_real_p1,
+                           distance_gradients[2 * i + 2],
+                           transformation_jacobians[2 * i + 2],
+                           residual_ref_p1);
+
+          for (unsigned int j = 0; j < dim - 1; ++j)
+            {
+              jacobian_matrix.set(j,
+                                  i,
+                                  (residual_ref_p1[j] - residual_ref_m1[j]) /
+                                    (2.0 * perturbation));
+            }
+        }
+    };
 
     /**
      * @brief
@@ -640,7 +771,10 @@ namespace InterfaceTools
      */
     inline double
     compute_distance(const Tensor<1, dim> &x_n_to_x_I_real,
-                     const double          distance);
+                     const double          distance)
+    {
+      return distance + x_n_to_x_I_real.norm();
+    };
 
     /// Finite element discretizing the problem
     std::shared_ptr<FiniteElement<dim>> fe;
