@@ -273,8 +273,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   compute_signed_distance_from_distance();
 
   // Conserve local and global volume
-  // compute_cell_wise_volume_correction();
-  // conserve_global_volume();
+  compute_cell_wise_volume_correction();
+  conserve_global_volume();
 
   /* Compute the distance for the dofs of the rest of the mesh. They
   correspond to the second neighbors dofs. */
@@ -813,6 +813,302 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
     {
       signed_distance(p) = signed_distance_with_ghost(p);
     }
+  }
+
+  template <int dim, typename VectorType>
+  void
+  InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+    compute_cell_wise_volume_correction()
+  {
+    FEPointEvaluation<1, dim> fe_point_evaluation(
+      *mapping, *fe, update_jacobians | update_JxW_values);
+
+    const unsigned int dofs_per_cell = fe->n_dofs_per_cell();
+
+    /* For the L2 projection of the cell-wise correction (the projection for a
+    given DOF corresponds to the average of the neighbor cell values)*/
+    double n_cells_per_dofs_inv = 1.0 / 4.0;
+    if constexpr (dim == 3)
+      {
+        n_cells_per_dofs_inv = 1.0 / 8.0;
+      }
+
+    // Re-initialize volume_correction vector.
+    volume_correction = 0.0;
+
+    for (const auto &cell : dof_handler.active_cell_iterators())
+      {
+        if (cell->is_locally_owned())
+          {
+            const unsigned int cell_index = cell->global_active_cell_index();
+
+            // The cell is not intersected, no need to correct the volume
+            if (interface_reconstruction_vertices.find(cell_index) ==
+                interface_reconstruction_vertices.end())
+              {
+                continue;
+              }
+
+            /* We want to find a cell wise correction to apply to the cell's dof
+            values of the signed_distance so that the geometric cell wise volume
+            encompassed by the level 0 of the signed_distance V_K and by the
+            iso-contour 0.5 of the phase fraction V_K,VOF match. This is
+            required because the computed distance doesn't belong to the Q1
+            approximation space.
+
+            We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,VOF -
+            V_K(phi* + eta_K) = 0, where phi* is the redistanciated
+            signed distance, eta_K is the correction on the signed_distance that
+            we are looking for. We use the secant method to do so. See Ausas et
+            al. (2010) for more details.*/
+
+            // Get the level set values
+            Vector<double> cell_level_set_dof_values(dofs_per_cell);
+
+            cell->get_dof_values(level_set,
+                                 cell_level_set_dof_values.begin(),
+                                 cell_level_set_dof_values.end());
+
+            // Compute the targeted volume to correct for
+            double targeted_cell_volume =
+              InterfaceTools::compute_cell_wise_volume(
+                fe_point_evaluation,
+                cell,
+                cell_level_set_dof_values,
+                0.0,
+                fe->degree + 1);
+
+            // Get the signed distance values to be corrected
+            Vector<double> cell_dof_values(dofs_per_cell);
+            cell->get_dof_values(signed_distance_with_ghost,
+                                 cell_dof_values.begin(),
+                                 cell_dof_values.end());
+
+            /* Get cell size to initialize secant method. We use it to compute
+            the first derivative value in the secant method */
+            double cell_size;
+            if (dim == 2)
+              {
+                cell_size = std::sqrt(4. * cell->measure() / M_PI);
+              }
+            else if (dim == 3)
+              {
+                cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
+              }
+
+            /* Secant method. The subscript nm1 (or n minus 1) stands for the
+            previous secant iteration (it = n-1), the subscript n stands for
+            the current iteration and the subscript np1 stands for the next
+            iteration (it = n+1).*/
+            double inside_cell_volume_nm1 = 0.0;
+            double inside_cell_volume_n   = 0.0;
+
+            double delta_volume_nm1 = 0.0;
+            double delta_volume_n   = 0.0;
+
+            double delta_volume_prime = 0.0;
+
+            double eta_nm1 = 0.0;
+            double eta_n   = 1e-6 * cell_size;
+            double eta_np1 = 0.0;
+
+            // Compute the volume for the first initial value (eta_nm1)
+            inside_cell_volume_nm1 =
+              InterfaceTools::compute_cell_wise_volume(fe_point_evaluation,
+                                                       cell,
+                                                       cell_dof_values,
+                                                       eta_nm1,
+                                                       fe->degree + 1);
+            delta_volume_nm1 = targeted_cell_volume - inside_cell_volume_nm1;
+
+            /* Store the initial volume in the cell to limit the secant method
+            in some case.*/
+            const double initial_inside_cell_volume = inside_cell_volume_nm1;
+
+            /* Check if there is enough volume to correct. If not, we don't
+            correct.*/
+            if (inside_cell_volume_nm1 < 1e-10 * cell_size ||
+                inside_cell_volume_nm1 > (cell_size - 1e-10 * cell_size))
+              {
+                eta_n = 0.0;
+                continue;
+              }
+
+            unsigned int secant_it     = 0;
+            double       secant_update = 1.0;
+            while (abs(secant_update) > 1e-10 &&
+                   abs(delta_volume_nm1) > 1e-10 * initial_inside_cell_volume &&
+                   secant_it < 20)
+              {
+                // If the cell is almost full or empty, we stop correcting the
+                // volume.
+                if (inside_cell_volume_nm1 < 1e-10 * cell_size ||
+                    inside_cell_volume_nm1 > (cell_size - 1e-10 * cell_size))
+                  {
+                    eta_n = 0.0;
+                    break;
+                  }
+                secant_it += 1;
+
+                inside_cell_volume_n =
+                  InterfaceTools::compute_cell_wise_volume(fe_point_evaluation,
+                                                           cell,
+                                                           cell_dof_values,
+                                                           eta_n,
+                                                           fe->degree + 1);
+
+                delta_volume_n = targeted_cell_volume - inside_cell_volume_n;
+
+                delta_volume_prime = (delta_volume_n - delta_volume_nm1) /
+                                     (eta_n - eta_nm1 + 1e-16);
+
+                secant_update = -delta_volume_n / (delta_volume_prime + 1e-16);
+                eta_np1       = eta_n + secant_update;
+
+                eta_nm1                = eta_n;
+                eta_n                  = eta_np1;
+                inside_cell_volume_nm1 = inside_cell_volume_n;
+                delta_volume_nm1       = delta_volume_n;
+              } // End secant method loop.
+
+            if (secant_it >= 20)
+              {
+                eta_n = 0.0;
+              }
+
+            std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+            cell->get_dof_indices(dof_indices);
+
+            // L2 projection of the cell-wise (discontinuous) correction to have
+            // a continuous correction at the dofs.
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              {
+                volume_correction(dof_indices[i]) +=
+                  eta_n * n_cells_per_dofs_inv;
+              }
+          }
+      } // End loop on cells.
+
+    volume_correction.compress(VectorOperation::add);
+    volume_correction.update_ghost_values();
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  conserve_global_volume()
+{ 
+  /* We want to find a global correction function to apply to the dof value of
+      the signed_distance so that the geometric global volume encompassed by the
+      level 0 of the signed_distance V and by the iso-contour 0.5 of the phase
+      fraction V_VOF match. This is required because the computed distance doesn't
+      belong to the Q1 approximation space. We solve the non-linear problem:
+      DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the
+      redistanciated signed distance, xi = C*eta is the correction function on the
+      signed_distance that we are looking for, with eta being the cell wise
+      correction compute with compute_cell_wise_volume_correction() and C being a
+      constant. We use the secant method to do so. See Ausas et al.
+      (2010) for more details.*/
+
+      const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+
+      /* Compute targeted global volume. It corresponds to the one enclosed by
+      the level 0 of the level_set vector (same volume as the one enclosed
+      by iso-contour 0.5 of the phase fraction).*/
+      const double global_volume =
+        compute_volume(*mapping, dof_handler, *fe, level_set, 0.0, mpi_communicator);
+
+      /* Initialization of values for the secant method. The subscript nm1 (or n
+      minus 1) stands for the previous secant iteration (it = n-1), the
+      subscript n stands for the current iteration and the subscript np1 stands
+      for the next iteration (it = n+1).*/
+      double global_volume_nm1 = 0.0;
+      double global_volume_n   = 0.0;
+
+      double global_delta_volume_nm1 = 0.0;
+      double global_delta_volume_n   = 0.0;
+
+      double global_delta_volume_prime = 0.0;
+
+      /* Global constant C that we are solving for to obtain
+          DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0
+      where eta is the cell wise correction computed with
+      compute_cell_wise_volume_correction()*/
+      double C_nm1 = 0.0;
+      double C_n   = 0.0;
+      double C_np1 = 0.0;
+
+      /* Compute the volume and the difference with the targeted volume for 1st
+      initial guess of the correction funtion (xi_nm1 = C_nm1*eta)*/
+      C_nm1 = 1.0;
+      LinearAlgebra::distributed::Vector<double> signed_distance_0(
+        signed_distance_with_ghost);
+      signed_distance_0.add(C_nm1, volume_correction);
+
+      // Update_ghost_values is required for cell-wise volume computations
+      signed_distance_0.update_ghost_values();
+
+      global_volume_nm1 = compute_volume(
+        *mapping, dof_handler, *fe, signed_distance_0,  0.0, mpi_communicator);
+
+      global_delta_volume_nm1 = global_volume - global_volume_nm1;
+
+      // Initialize the 2nd initial guest
+      C_n = 1e-6 * global_volume;
+
+      // Store the initial volume for the stop criterion
+      const double global_volume_0 = global_volume_nm1;
+
+      // Initialize secant method it and update
+      unsigned int secant_it     = 0;
+      double       secant_update = 1.0;
+
+      // Secant method
+      while (abs(secant_update) > 1e-10 &&
+             abs(global_delta_volume_nm1) > 1e-10 * global_volume_0 &&
+             secant_it < 20)
+        {
+          secant_it += 1;
+
+          LinearAlgebra::distributed::Vector<double> signed_distance_n(
+            signed_distance_with_ghost);
+          signed_distance_n.add(C_n, volume_correction);
+          signed_distance_n.update_ghost_values();
+
+          global_volume_n = compute_volume(
+            *mapping, dof_handler, *fe, signed_distance_n, 0.0, mpi_communicator);
+
+          global_delta_volume_n = global_volume - global_volume_n;
+
+          global_delta_volume_prime =
+            (global_delta_volume_n - global_delta_volume_nm1) /
+            (C_n - C_nm1 + 1e-16);
+
+          secant_update =
+            -global_delta_volume_n / (global_delta_volume_prime + 1e-16);
+
+          C_np1 = C_n + secant_update;
+          C_nm1 = C_n;
+          C_n   = C_np1;
+
+          global_volume_nm1       = global_volume_n;
+          global_delta_volume_nm1 = global_delta_volume_n;
+        }
+
+      // If the secant method does not converge, do not correct.
+      if (secant_it >= 20)
+        C_n = 0.0;
+
+      // Update signed_distance with the correction
+      signed_distance.add(C_n, volume_correction);
+      signed_distance.update_ghost_values();
+
+      for (auto p : this->locally_active_dofs)
+        {
+          distance(p) = abs(signed_distance(p));
+        }
+
+      exchange_distance();
 }
 
 template class InterfaceTools::SignedDistanceSolver<2, GlobalVectorType>;
