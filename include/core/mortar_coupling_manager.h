@@ -477,7 +477,7 @@ public:
 
 private:
   Number
-  compute_pentaly_factor(const unsigned int degree, const Number factor) const;
+  compute_penalty_factor(const unsigned int degree, const Number factor) const;
 
   Number
   compute_penalty_parameter(
@@ -501,7 +501,7 @@ private:
                          Number>>
     all_intersections;
 
-  Number panalty_factor;
+  Number penalty_factor;
 
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
   std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
@@ -543,8 +543,8 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   this->bid_0 = bid_0;
   this->bid_1 = bid_1;
 
-  panalty_factor =
-    compute_pentaly_factor(dof_handler.get_fe().degree, sip_factor);
+  penalty_factor =
+    compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
 
   mortar_manager_q = std::make_shared<MortarManager<dim>>(
     n_subdivisions, quadrature.get_tensor_basis()[0].size(), radius, rotate_pi);
@@ -742,7 +742,7 @@ CouplingOperator<dim, n_components, Number>::get_affine_constraints() const
 
 template <int dim, int n_components, typename Number>
 Number
-CouplingOperator<dim, n_components, Number>::compute_pentaly_factor(
+CouplingOperator<dim, n_components, Number>::compute_penalty_factor(
   const unsigned int degree,
   const Number       factor) const
 {
@@ -896,7 +896,7 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
                 const auto avg_gradient =
                   (normal_gradient_m + normal_gradient_p) * 0.5 * JxW;
 
-                const double sigma = penalty_parameter * panalty_factor;
+                const double sigma = penalty_parameter * penalty_factor;
 
                 phi_m.submit_gradient(-outer(jump_value, normal), q);
                 phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient, q);
@@ -993,7 +993,7 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
                     const auto avg_gradient =
                       (normal_gradient_m + normal_gradient_p) * 0.5 * JxW;
 
-                    const double sigma = penalty_parameter * panalty_factor;
+                    const double sigma = penalty_parameter * penalty_factor;
 
                     phi_m.submit_gradient(-outer(jump_value, normal), q);
                     phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient,
@@ -1188,7 +1188,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                               JxW;
 
                             const double sigma =
-                              penalty_parameter * panalty_factor;
+                              penalty_parameter * penalty_factor;
 
                             phi_m.submit_gradient(-outer(jump_value, normal),
                                                   q);
