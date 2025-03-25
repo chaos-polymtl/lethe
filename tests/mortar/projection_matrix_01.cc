@@ -15,11 +15,11 @@ using namespace dealii;
 
 template <int dim>
 Quadrature<dim>
-scale(const Quadrature<dim> &quadrature_2, const double alpha)
+scale(const Quadrature<dim> &quadrature_2, const double factor)
 {
   std::vector<Point<dim>> points;
   for (const auto p : quadrature_2.get_points())
-    points.emplace_back(p * alpha);
+    points.emplace_back(p * factor);
   return Quadrature<dim>(points);
 }
 
