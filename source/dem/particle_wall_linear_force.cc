@@ -490,8 +490,10 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
 template class ParticleWallLinearForce<2, DEM::DEMProperties::PropertiesIndex>;
 template class ParticleWallLinearForce<2,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
-template class ParticleWallLinearForce<2, DEM::DEMMPProperties::PropertiesIndex>;                                      
+template class ParticleWallLinearForce<2,
+                                       DEM::DEMMPProperties::PropertiesIndex>;
 template class ParticleWallLinearForce<3, DEM::DEMProperties::PropertiesIndex>;
 template class ParticleWallLinearForce<3,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
-template class ParticleWallLinearForce<3, DEM::DEMMPProperties::PropertiesIndex>;
+template class ParticleWallLinearForce<3,
+                                       DEM::DEMMPProperties::PropertiesIndex>;

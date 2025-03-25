@@ -515,12 +515,14 @@ template class ParticleWallNonLinearForce<2,
 template class ParticleWallNonLinearForce<
   2,
   DEM::CFDDEMProperties::PropertiesIndex>;
-template class ParticleWallNonLinearForce<2,
-                                          DEM::DEMMPProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<
+  2,
+  DEM::DEMMPProperties::PropertiesIndex>;
 template class ParticleWallNonLinearForce<3,
                                           DEM::DEMProperties::PropertiesIndex>;
 template class ParticleWallNonLinearForce<
   3,
   DEM::CFDDEMProperties::PropertiesIndex>;
-template class ParticleWallNonLinearForce<3,
-                                          DEM::DEMMPProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<
+  3,
+  DEM::DEMMPProperties::PropertiesIndex>;
