@@ -9,7 +9,7 @@
 
 
 // Tests (with common definitions)
-#include <../tests/dem/multiphysics_integrator.h>
+#include <dem/multiphysics_integrator.h>
 #include <../tests/dem/test_particles_functions.h>
 
 #include <cmath>
