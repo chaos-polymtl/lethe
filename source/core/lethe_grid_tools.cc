@@ -1469,11 +1469,11 @@ template std::
 template std::tuple<std::vector<bool>,
                     std::vector<Point<3>>,
                     std::vector<Tensor<1, 3>>>
-  LetheGridTools::
-    find_particle_triangle_projection<2, DEM::CFDDEMProperties::PropertiesIndex>(
-      const std::vector<Point<2>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<2>> &particles,
-      const unsigned int &n_particles_in_base_cell);
+LetheGridTools::
+  find_particle_triangle_projection<2, DEM::CFDDEMProperties::PropertiesIndex>(
+    const std::vector<Point<2>>                       &triangle,
+    const std::vector<Particles::ParticleIterator<2>> &particles,
+    const unsigned int &n_particles_in_base_cell);
 template std::
   tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
   LetheGridTools::
@@ -1498,15 +1498,8 @@ template std::
 template std::tuple<std::vector<bool>,
                     std::vector<Point<3>>,
                     std::vector<Tensor<1, 3>>>
-  LetheGridTools::
-    find_particle_triangle_projection<3, DEM::CFDDEMProperties::PropertiesIndex>(
-      const std::vector<Point<3>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<3>> &particles,
-      const unsigned int &n_particles_in_base_cell);
-template std::
-tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
 LetheGridTools::
-  find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
+  find_particle_triangle_projection<3, DEM::CFDDEMProperties::PropertiesIndex>(
     const std::vector<Point<3>>                       &triangle,
     const std::vector<Particles::ParticleIterator<3>> &particles,
     const unsigned int &n_particles_in_base_cell);
