@@ -87,12 +87,12 @@ The ``subsection interface regularization method`` defines parameters to counter
 * ``type``: sets the method of regularization. There are three methods available:``none``, ``sharpening`` and ``algebraic``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
 
-* ``verbosity``: displays the solution process of the regularization method. The different level of verbosity are:
+* ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
 
   * ``quiet``: default verbosity level; no information on the process is displayed.
 
     .. warning::
-      The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends also on the verbosity level of the non-linear and linear solvers. Some console outputs may remain if they are set to ``verbose``.
+      The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends also on the verbosity level of the non-linear and linear solvers. If they are set to ``verbose``, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.
 
   * ``verbose``: displays regularization steps progression. For the algebraic interface reinitialization (``type = algebraic``), it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
@@ -103,7 +103,7 @@ Interface Sharpening
 
 The ``type = sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this sharpening method. The ``subsection interface sharpening`` defines parameters relevant to this regularization method.
 
-* ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
+* ``interface sharpness``: sharpness of the moving interface, denoted :math:`\alpha` in the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` and :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_ paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
 * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
 
@@ -154,7 +154,7 @@ The ``type = algebraic`` corresponds to a PDE-based reinitialization method. Ali
 
 The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
 
-* ``steady-state criterion``: one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance to the reaching of steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
+* ``steady-state criterion``: one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance for reaching steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
 
   .. math::
    \alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau} \rVert_2}{\Delta \tau}

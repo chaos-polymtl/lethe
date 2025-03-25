@@ -253,7 +253,6 @@ and for the ``adaptive`` sharpening:
        set type      = sharpening
        set frequency = 25
        subsection interface sharpening
-         set enable                  = true
          set threshold               = 0.5
          set interface sharpness     = 1.5
          set type                    = adaptive
