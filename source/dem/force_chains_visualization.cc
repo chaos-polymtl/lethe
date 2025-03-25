@@ -643,7 +643,7 @@ template class ParticlesForceChains<3,
                                     ParticleParticleContactForceModel::DMT,
                                     RollingResistanceMethod::no_resistance>;
 template class ParticlesForceChains<2,
-                                    DEM::DEMProperties::PropertiesIndex,
+                                    DEM::DEMMPProperties::PropertiesIndex,
                                     ParticleParticleContactForceModel::hertz,
                                     RollingResistanceMethod::no_resistance>;
 template class ParticlesForceChains<3,
