@@ -27,9 +27,9 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_simplex_p.h>
+#include <deal.II/fe/fe_tools.h>
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
-#include <deal.II/fe/fe_tools.h>
 
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
@@ -686,17 +686,19 @@ private:
    */
   void
   reinitialize_interface_with_algebraic_method();
-  
+
   /**
    * @brief Compute level-set field from the phase fraction field using a inverse tanh-based transformation.
    */
-  void compute_level_set_from_phase_fraction();
-  
+  void
+  compute_level_set_from_phase_fraction();
+
   /**
    * @brief Compute the phase fraction field from level-set field using a tanh-based transformation.
    */
-  void compute_phase_fraction_from_level_set();
-  
+  void
+  compute_phase_fraction_from_level_set();
+
   /**
    * @brief Reinitialize the interface between fluids using the geometric
    * approach.
@@ -738,10 +740,11 @@ private:
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
   GlobalVectorType               filtered_solution;
-  
-  // Level-set field obtained from the phase fraction field using a tanh-based transformation
+
+  // Level-set field obtained from the phase fraction field using a tanh-based
+  // transformation
   GlobalVectorType level_set;
-  
+
 
   // Previous solutions vectors
   std::vector<GlobalVectorType> previous_solutions;

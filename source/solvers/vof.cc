@@ -1792,9 +1792,9 @@ VolumeOfFluid<dim>::setup_dofs()
                                  mpi_communicator);
 
   this->level_set.reinit(this->locally_owned_dofs,
-                                 this->locally_relevant_dofs,
-                                 mpi_communicator);
-                                 
+                         this->locally_relevant_dofs,
+                         mpi_communicator);
+
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
     {
@@ -2452,33 +2452,41 @@ template <int dim>
 void
 VolumeOfFluid<dim>::compute_level_set_from_phase_fraction()
 {
-  VectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
+  auto             mpi_communicator = this->triangulation->get_communicator();
   
-  const double tanh_thickness = this->simulation_parameters.multiphysics.vof_parameters
-        .geometric_interface_reinitialization.tanh_thickness;
-        
+  GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
+
+  const double tanh_thickness =
+    this->simulation_parameters.multiphysics.vof_parameters
+      .geometric_interface_reinitialization.tanh_thickness;
+
   for (auto p : this->locally_owned_dofs)
     {
-      const double phase      = solution[p];
+      const double phase      = this->present_solution[p];
       double       phase_sign = sgn(0.5 - phase);
       level_set_owned[p] =
         tanh_thickness *
         std::atanh(phase_sign * std::min(abs(0.5 - phase) / 0.5, 1.0 - 1e-12));
     }
-    
+
   this->nonzero_constraints.distribute(level_set_owned);
 
-  level_set = level_set_owned;  
+  level_set = level_set_owned;
 }
 
 template <int dim>
 void
 VolumeOfFluid<dim>::compute_phase_fraction_from_level_set()
 {
+  const double tanh_thickness =
+    this->simulation_parameters.multiphysics.vof_parameters
+      .geometric_interface_reinitialization.tanh_thickness;
+      
   for (auto p : this->locally_owned_dofs)
     {
       const double signed_dist = level_set[p];
-      this->local_evaluation_point[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
+      this->local_evaluation_point[p] =
+        0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
     }
   this->nonzero_constraints.distribute(this->local_evaluation_point);
 
@@ -2489,25 +2497,27 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 {
-  pcout << "In redistanciation..." << std::endl;
+  this->pcout << "In redistanciation..." << std::endl;
 
   compute_level_set_from_phase_fraction();
 
   signed_distance_solver->setup_dofs();
-  signed_distance_solver->set_level_set_from_background_mesh(
-    dof_handler, level_set);
-  
+  signed_distance_solver->set_level_set_from_background_mesh(dof_handler,
+                                                             level_set);
+
   signed_distance_solver->solve();
-  
-  VectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
-  
+
+  auto             mpi_communicator = this->triangulation->get_communicator();
+
+  GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
+
   FETools::interpolate(signed_distance_solver->dof_handler,
                        signed_distance_solver->get_signed_distance(),
                        this->dof_handler,
-                       tmp_local_level_set);
+                       level_set_owned);
 
- level_set = tmp_local_level_set;
- 
+  level_set = level_set_owned;
+
   compute_phase_fraction_from_level_set();
 }
 
