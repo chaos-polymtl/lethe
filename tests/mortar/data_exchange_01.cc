@@ -46,14 +46,18 @@ main(int argc, char *argv[])
   const double       rotate               = 3.0;
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
 
-  // create meshes
+  // initialize triangulation
   parallel::distributed::Triangulation<dim> tria(comm);
   Triangulation<dim>                        tria_0, tria_1;
 
+  // generate inner grid
   GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
   GridTools::rotate(rotate, tria_0);
 
+  // generate outer grid
   GridGenerator::hyper_cube_with_cylindrical_hole(tria_1, radius, 2.0, true);
+  
+  // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
       {
@@ -61,8 +65,9 @@ main(int argc, char *argv[])
         face->set_manifold_id(face->manifold_id() + 2);
       }
 
+  // create unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
-
+  // store manifolds in merged triangulation
   tria.set_manifold(0, tria_0.get_manifold(0));
   tria.set_manifold(1, tria_0.get_manifold(1));
   tria.set_manifold(2, tria_1.get_manifold(0));

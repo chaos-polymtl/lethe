@@ -10,6 +10,10 @@
 
 using namespace dealii;
 
+/**
+ * @brief Create grid with hyper_shell and hyper_shell geometries
+ * Only the merged triangulation (and resulting grid) are stored
+ */
 template <int dim>
 void
 hyper_shell_with_hyper_shell(const double radius, Triangulation<dim> &tria)
@@ -19,6 +23,7 @@ hyper_shell_with_hyper_shell(const double radius, Triangulation<dim> &tria)
   const double r2_i = radius * 0.5;
   const double r2_o = radius * 1.0;
 
+  // inner domain triangulation
   Triangulation<dim> circle_one;
   GridGenerator::hyper_shell(circle_one,
                              (dim == 2) ? Point<dim>(0, 0) :
@@ -27,6 +32,7 @@ hyper_shell_with_hyper_shell(const double radius, Triangulation<dim> &tria)
                              r1_o,
                              6,
                              true);
+  // outer domain triangulation
   Triangulation<dim> circle_two;
   GridGenerator::hyper_shell(circle_two,
                              (dim == 2) ? Point<dim>(0, 0) :
@@ -41,14 +47,19 @@ hyper_shell_with_hyper_shell(const double radius, Triangulation<dim> &tria)
     if (face->at_boundary())
       face->set_boundary_id(face->boundary_id() + 2);
 
+  // create unique triangulation
   GridGenerator::merge_triangulations(
     circle_one, circle_two, tria, 0, true, true);
+  // store manifolds in merged triangulation
   tria.set_manifold(0,
                     SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) :
                                                         Point<dim>(0, 0, 0)));
 }
 
-
+/**
+ * @brief Create grid with hyper_ball_balanced and hyper_cube_with_cylindrical_hole geometries
+ * Only the merged triangulation (and resulting grid) are stored
+ */
 template <int dim>
 void
 hyper_cube_with_cylindrical_hole(const double        radius,
@@ -58,11 +69,14 @@ hyper_cube_with_cylindrical_hole(const double        radius,
 {
   Triangulation<dim> tria_0, tria_1;
 
+  // inner domain triangulation
   GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
   GridTools::rotate(rotate, tria_0);
 
+  // outer domain triangulation
   GridGenerator::hyper_cube_with_cylindrical_hole(
     tria_1, radius, outer_radius, 5.0, 1.0, true);
+  // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
       {
@@ -70,14 +84,19 @@ hyper_cube_with_cylindrical_hole(const double        radius,
         face->set_manifold_id(face->manifold_id() + 2);
       }
 
+  // create unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
-
+  // store manifolds in merged triangulation
   tria.set_manifold(0, tria_0.get_manifold(0));
   tria.set_manifold(1, tria_0.get_manifold(1));
   tria.set_manifold(2, tria_1.get_manifold(0));
 }
 
-
+/**
+ * @brief Create grid with hyper_ball_balanced and hyper_cube_with_cylindrical_hole geometries
+ * Only the merged triangulation (and resulting grid) are stored
+ * Consider a tolerance of 1e-9 when merging boundary points
+ */
 template <int dim>
 void
 hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
@@ -87,11 +106,14 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
 {
   Triangulation<dim> tria_0, tria_1;
 
+  // inner domain triangulation
   GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
   GridTools::rotate(rotate, tria_0);
 
+  // outer domain triangulation
   GridGenerator::hyper_cube_with_cylindrical_hole(
     tria_1, radius, outer_radius, 5.0, 1.0, true);
+  // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
       {
@@ -99,13 +121,17 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
         face->set_manifold_id(face->manifold_id() + 2);
       }
 
+  // crete unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 1e-9, true, false);
-
+  // store manifolds in merged triangulaiton
   tria.set_manifold(0, tria_0.get_manifold(0));
   tria.set_manifold(1, tria_0.get_manifold(1));
   tria.set_manifold(2, tria_1.get_manifold(0));
 }
 
+/**
+ * @brief Base class for the operator base
+ */
 template <int dim,
           int n_components,
           typename Number,
@@ -143,6 +169,9 @@ public:
     valid_system = false;
   }
 
+  /**
+   * @brief Create coupling operator
+   */
   void
   add_coupling(const unsigned int n_subdivisions,
                const double       radius,

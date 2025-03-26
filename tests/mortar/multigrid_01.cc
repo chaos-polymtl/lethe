@@ -52,7 +52,9 @@
 using namespace dealii;
 
 
-
+/**
+ * @brief Parameters for the geometric multigrid 
+ */
 struct GMGParameters
 {
   struct CoarseSolverParameters
@@ -109,10 +111,10 @@ mg_solve(SolverControl                        &solver_control,
                                              SmootherPreconditionerType>;
   using PreconditionerType = PreconditionMG<dim, VectorType, MGTransferType>;
 
-  // Initialize level operators.
+  // Initialize level operators
   mg::Matrix<VectorType> mg_matrix(mg_matrices);
 
-  // Initialize smoothers.
+  // Initialize smoothers
   MGLevelObject<typename SmootherType::AdditionalData> smoother_data(min_level,
                                                                      max_level);
 
@@ -131,7 +133,7 @@ mg_solve(SolverControl                        &solver_control,
   MGSmootherPrecondition<LevelMatrixType, SmootherType, VectorType> mg_smoother;
   mg_smoother.initialize(mg_matrices, smoother_data);
 
-  // Initialize coarse-grid solver.
+  // Initialize coarse-grid solver
   ReductionControl coarse_grid_solver_control(mg_data.coarse_solver.maxiter,
                                               mg_data.coarse_solver.abstol,
                                               mg_data.coarse_solver.reltol,
@@ -178,7 +180,7 @@ mg_solve(SolverControl                        &solver_control,
       AssertThrow(false, ExcNotImplemented());
     }
 
-  // Create multigrid object.
+  // Create multigrid object
   Multigrid<VectorType> mg(mg_matrix,
                            *mg_coarse,
                            mg_transfer,
@@ -187,10 +189,10 @@ mg_solve(SolverControl                        &solver_control,
                            min_level,
                            max_level);
 
-  // Convert it to a preconditioner.
+  // Convert it to a preconditioner
   PreconditionerType preconditioner(dof, mg, mg_transfer);
 
-  // Finally, solve.
+  // Finally, solve
   SolverGMRES<VectorType>(solver_control)
     .solve(fine_matrix, dst, src, preconditioner);
 }

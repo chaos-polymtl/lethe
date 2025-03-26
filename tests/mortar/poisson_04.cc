@@ -61,6 +61,7 @@ main(int argc, char **argv)
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
+  // generate merged grid
   parallel::distributed::Triangulation<dim> tria(comm);
   hyper_cube_with_cylindrical_hole(radius,
                                    2.0,
