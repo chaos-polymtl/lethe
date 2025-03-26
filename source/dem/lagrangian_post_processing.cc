@@ -287,6 +287,19 @@ write_post_processing_results<2, DEM::CFDDEMProperties::PropertiesIndex>(
     &sparse_contacts_object);
 
 template void
+write_post_processing_results<2, DEM::DEMMPProperties::PropertiesIndex>(
+  const parallel::distributed::Triangulation<2> &triangulation,
+  PVDHandler                                    &grid_pvdhandler,
+  const DoFHandler<2>                           &background_dh,
+  const Particles::ParticleHandler<2>           &particle_handler,
+  const DEMSolverParameters<2>                  &dem_parameters,
+  const double                                   current_time,
+  const unsigned int                             step_number,
+  const MPI_Comm                                &mpi_communicator,
+  AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
 write_post_processing_results<3, DEM::DEMProperties::PropertiesIndex>(
   const parallel::distributed::Triangulation<3> &triangulation,
   PVDHandler                                    &grid_pvdhandler,
@@ -312,6 +325,19 @@ write_post_processing_results<3, DEM::CFDDEMProperties::PropertiesIndex>(
   AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
     &sparse_contacts_object);
 
+template void
+write_post_processing_results<3, DEM::DEMMPProperties::PropertiesIndex>(
+  const parallel::distributed::Triangulation<3> &triangulation,
+  PVDHandler                                    &grid_pvdhandler,
+  const DoFHandler<3>                           &background_dh,
+  const Particles::ParticleHandler<3>           &particle_handler,
+  const DEMSolverParameters<3>                  &dem_parameters,
+  const double                                   current_time,
+  const unsigned int                             step_number,
+  const MPI_Comm                                &mpi_communicator,
+  AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
 template Tensor<1, 2>
 calculate_cell_average_particles_velocity<2,
                                           DEM::DEMProperties::PropertiesIndex>(
@@ -325,6 +351,13 @@ calculate_cell_average_particles_velocity<
   const typename parallel::distributed::Triangulation<2>::cell_iterator &cell,
   const Particles::ParticleHandler<2> &particle_handler);
 
+template Tensor<1, 2>
+calculate_cell_average_particles_velocity<
+  2,
+  DEM::DEMMPProperties::PropertiesIndex>(
+  const typename parallel::distributed::Triangulation<2>::cell_iterator &cell,
+  const Particles::ParticleHandler<2> &particle_handler);
+
 template Tensor<1, 3>
 calculate_cell_average_particles_velocity<3,
                                           DEM::DEMProperties::PropertiesIndex>(
@@ -335,5 +368,12 @@ template Tensor<1, 3>
 calculate_cell_average_particles_velocity<
   3,
   DEM::CFDDEMProperties::PropertiesIndex>(
+  const typename parallel::distributed::Triangulation<3>::cell_iterator &cell,
+  const Particles::ParticleHandler<3> &particle_handler);
+
+template Tensor<1, 3>
+calculate_cell_average_particles_velocity<
+  3,
+  DEM::DEMMPProperties::PropertiesIndex>(
   const typename parallel::distributed::Triangulation<3>::cell_iterator &cell,
   const Particles::ParticleHandler<3> &particle_handler);

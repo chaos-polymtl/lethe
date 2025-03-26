@@ -561,5 +561,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
 
 template class ParticleWallJKRForce<2, DEM::DEMProperties::PropertiesIndex>;
 template class ParticleWallJKRForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallJKRForce<2, DEM::DEMMPProperties::PropertiesIndex>;
 template class ParticleWallJKRForce<3, DEM::DEMProperties::PropertiesIndex>;
 template class ParticleWallJKRForce<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallJKRForce<3, DEM::DEMMPProperties::PropertiesIndex>;

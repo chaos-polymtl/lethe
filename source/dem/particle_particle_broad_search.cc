@@ -952,3 +952,67 @@ find_particle_particle_periodic_contact_pairs<3>(
     &ghost_local_contact_pair_periodic_candidates,
   const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
     &sparse_contacts_object);
+
+template void
+find_particle_particle_contact_pairs<2, DEM::DEMMPProperties::PropertiesIndex>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_particle_contact_pairs<3, DEM::DEMMPProperties::PropertiesIndex>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_particle_periodic_contact_pairs<2>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);
+
+template void
+find_particle_particle_periodic_contact_pairs<3>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+    &sparse_contacts_object);

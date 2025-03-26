@@ -1101,3 +1101,5 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
 template class DEMSolver<2, DEM::DEMProperties::PropertiesIndex>;
 template class DEMSolver<3, DEM::DEMProperties::PropertiesIndex>;
+template class DEMSolver<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class DEMSolver<3, DEM::DEMMPProperties::PropertiesIndex>;

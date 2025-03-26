@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-26
+
+### Added
+
+- MINOR Addition of the explicit template instantiations for the PropertiesIndex of multiphysic DEM simulations. They are added to all files where there were already DEMProperties template instantiations. [#1469](https://github.com/chaos-polymtl/lethe/pull/1469)
+
 ## [Master] - 2025-03-21
 
 ### Added

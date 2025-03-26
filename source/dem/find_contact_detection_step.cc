@@ -95,6 +95,24 @@ find_particle_contact_detection_step<3, DEM::CFDDEMProperties::PropertiesIndex>(
   std::vector<double>           &displacement,
   const bool                     parallel_update);
 
+template void
+find_particle_contact_detection_step<2, DEM::DEMMPProperties::PropertiesIndex>(
+  Particles::ParticleHandler<2> &particle_handler,
+  const double                   dt,
+  const double                   smallest_contact_search_criterion,
+  MPI_Comm                      &mpi_communicator,
+  std::vector<double>           &displacement,
+  const bool                     parallel_update);
+
+template void
+find_particle_contact_detection_step<3, DEM::DEMMPProperties::PropertiesIndex>(
+  Particles::ParticleHandler<3> &particle_handler,
+  const double                   dt,
+  const double                   smallest_contact_search_criterion,
+  MPI_Comm                      &mpi_communicator,
+  std::vector<double>           &displacement,
+  const bool                     parallel_update);
+
 
 template <int dim>
 void

@@ -472,5 +472,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_fine_search(
 
 template class DEMContactManager<2, DEM::DEMProperties::PropertiesIndex>;
 template class DEMContactManager<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class DEMContactManager<2, DEM::DEMMPProperties::PropertiesIndex>;
 template class DEMContactManager<3, DEM::DEMProperties::PropertiesIndex>;
 template class DEMContactManager<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class DEMContactManager<3, DEM::DEMMPProperties::PropertiesIndex>;
