@@ -1597,221 +1597,235 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>    <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;                       &amp;triangle,</div>
 <div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>    <span class="keyword">const</span> std::vector&lt;Particles::ParticleIterator&lt;2&gt;&gt; &amp;particles,</div>
 <div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;n_particles_in_base_cell);</div>
-<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"><a class="line" href="lethe__grid__tools_8cc.html#ac69dadbbb3ed94ba667a72db984e113e"> 1477</a></span><span class="keyword">template</span> std::</div>
+<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"><a class="line" href="lethe__grid__tools_8cc.html#a7fdafb3c6b806d145f2e38593d6688f7"> 1477</a></span><span class="keyword">template</span> std::</div>
 <div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span>  tuple&lt;std::vector&lt;bool&gt;, std::vector&lt;Point&lt;3&gt;&gt;, std::vector&lt;Tensor&lt;1, 3&gt;&gt;&gt;</div>
 <div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>  LetheGridTools::</div>
-<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>    find_particle_triangle_projection&lt;3, DEM::DEMProperties::PropertiesIndex&gt;(</div>
-<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>      <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                       &amp;triangle,</div>
-<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>      <span class="keyword">const</span> std::vector&lt;Particles::ParticleIterator&lt;3&gt;&gt; &amp;particles,</div>
+<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>    find_particle_triangle_projection&lt;2, DEM::DEMMPProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>      <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;                       &amp;triangle,</div>
+<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>      <span class="keyword">const</span> std::vector&lt;Particles::ParticleIterator&lt;2&gt;&gt; &amp;particles,</div>
 <div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;n_particles_in_base_cell);</div>
-<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"><a class="line" href="lethe__grid__tools_8cc.html#a688e7013fe621d0f3bd688308e681048"> 1484</a></span><span class="keyword">template</span> std::tuple&lt;std::vector&lt;bool&gt;,</div>
-<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>                    std::vector&lt;Point&lt;3&gt;&gt;,</div>
-<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>                    std::vector&lt;Tensor&lt;1, 3&gt;&gt;&gt;</div>
-<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>LetheGridTools::</div>
-<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>  find_particle_triangle_projection&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;(</div>
-<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>    <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                       &amp;triangle,</div>
-<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>    <span class="keyword">const</span> std::vector&lt;Particles::ParticleIterator&lt;3&gt;&gt; &amp;particles,</div>
-<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span>    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;n_particles_in_base_cell);</div>
-<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span> </div>
-<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span> </div>
-<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span><span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen01496" data-start="{" data-end="}">
-<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"><a class="line" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1"> 1496</a></span><a class="code hl_function" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a>(</div>
-<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt; &amp;triangle,</div>
-<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span>  <span class="keyword">const</span> Point&lt;dim&gt;              &amp;point)</div>
-<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span>{</div>
-<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span>  <span class="keyword">const</span> Point&lt;dim&gt; &amp;point_0 = triangle[0];</div>
-<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span>  <span class="keyword">const</span> Point&lt;dim&gt; &amp;point_1 = triangle[1];</div>
-<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span>  <span class="keyword">const</span> Point&lt;dim&gt; &amp;point_2 = triangle[2];</div>
-<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span> </div>
-<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>  <span class="keyword">const</span> Tensor&lt;1, dim&gt; e_0 = point_1 - point_0;</div>
-<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span>  <span class="keyword">const</span> Tensor&lt;1, dim&gt; e_1 = point_2 - point_0;</div>
+<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"><a class="line" href="lethe__grid__tools_8cc.html#ac69dadbbb3ed94ba667a72db984e113e"> 1484</a></span><span class="keyword">template</span> std::</div>
+<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>  tuple&lt;std::vector&lt;bool&gt;, std::vector&lt;Point&lt;3&gt;&gt;, std::vector&lt;Tensor&lt;1, 3&gt;&gt;&gt;</div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>  LetheGridTools::</div>
+<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>    find_particle_triangle_projection&lt;3, DEM::DEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>      <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                       &amp;triangle,</div>
+<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>      <span class="keyword">const</span> std::vector&lt;Particles::ParticleIterator&lt;3&gt;&gt; &amp;particles,</div>
+<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;n_particles_in_base_cell);</div>
+<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"><a class="line" href="lethe__grid__tools_8cc.html#a688e7013fe621d0f3bd688308e681048"> 1491</a></span><span class="keyword">template</span> std::tuple&lt;std::vector&lt;bool&gt;,</div>
+<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>                    std::vector&lt;Point&lt;3&gt;&gt;,</div>
+<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span>                    std::vector&lt;Tensor&lt;1, 3&gt;&gt;&gt;</div>
+<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span>LetheGridTools::</div>
+<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span>  find_particle_triangle_projection&lt;3, DEM::CFDDEMProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span>    <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                       &amp;triangle,</div>
+<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span>    <span class="keyword">const</span> std::vector&lt;Particles::ParticleIterator&lt;3&gt;&gt; &amp;particles,</div>
+<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span>    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;n_particles_in_base_cell);</div>
+<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"><a class="line" href="lethe__grid__tools_8cc.html#a6d6ca2b8a488358b0e52ac1034dcc709"> 1499</a></span><span class="keyword">template</span> std::</div>
+<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span>  tuple&lt;std::vector&lt;bool&gt;, std::vector&lt;Point&lt;3&gt;&gt;, std::vector&lt;Tensor&lt;1, 3&gt;&gt;&gt;</div>
+<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span>  LetheGridTools::</div>
+<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span>    find_particle_triangle_projection&lt;3, DEM::DEMMPProperties::PropertiesIndex&gt;(</div>
+<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span>      <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                       &amp;triangle,</div>
+<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>      <span class="keyword">const</span> std::vector&lt;Particles::ParticleIterator&lt;3&gt;&gt; &amp;particles,</div>
+<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;n_particles_in_base_cell);</div>
 <div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span> </div>
-<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>  <span class="keyword">const</span> Tensor&lt;1, dim&gt; normal      = cross_product_3d(e_0, e_1);</div>
-<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>         normal_norm = normal.norm();</div>
-<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>  Tensor&lt;1, dim&gt;       normal_unit = normal / normal_norm;</div>
-<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span>  Tensor&lt;1, 3&gt;         normal_unit_3d;</div>
-<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>  Point&lt;3&gt;             pt_in_triangle_3d;</div>
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span> </div>
-<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> a   = e_0.norm_square();</div>
-<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> b   = scalar_product(e_0, e_1);</div>
-<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c   = e_1.norm_square();</div>
-<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> det = a * c - b * b;</div>
+<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span> </div>
+<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span><span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen01510" data-start="{" data-end="}">
+<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"><a class="line" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1"> 1510</a></span><a class="code hl_function" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a>(</div>
+<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt; &amp;triangle,</div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>  <span class="keyword">const</span> Point&lt;dim&gt;              &amp;point)</div>
+<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span>{</div>
+<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>  <span class="keyword">const</span> Point&lt;dim&gt; &amp;point_0 = triangle[0];</div>
+<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>  <span class="keyword">const</span> Point&lt;dim&gt; &amp;point_1 = triangle[1];</div>
+<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>  <span class="keyword">const</span> Point&lt;dim&gt; &amp;point_2 = triangle[2];</div>
 <div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span> </div>
-<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span> </div>
-<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>  Tensor&lt;1, dim&gt; vector_to_plane;</div>
-<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>  Point&lt;dim&gt;     pt_in_triangle;</div>
-<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span> </div>
-<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>  vector_to_plane = point_0 - point;</div>
-<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span> </div>
-<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span>  <span class="comment">// From this point onward, the variable name follow the notation of  Geometric</span></div>
-<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span>  <span class="comment">// Tools for Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to</span></div>
-<div class="line"><a id="l01526" name="l01526"></a><span class="lineno"> 1526</span>  <span class="comment">// triangle.</span></div>
-<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span> </div>
-<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> d = scalar_product(e_0, vector_to_plane);</div>
-<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> e = scalar_product(e_1, vector_to_plane);</div>
-<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span> </div>
-<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>  <span class="comment">// Calculate necessary values;</span></div>
-<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span>  <span class="keywordtype">double</span> s = b * e - c * d;</div>
-<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span>  <span class="keywordtype">double</span> t = b * d - a * e;</div>
-<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span> </div>
-<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span>  <span class="keywordflow">if</span> (s + t &lt;= det)</div>
-<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span>    {</div>
-<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>      <span class="keywordflow">if</span> (s &lt; 0)</div>
-<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>        {</div>
-<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span>          <span class="keywordflow">if</span> (t &lt; 0)</div>
-<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span>            {</div>
-<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span>              <span class="comment">// Region 4</span></div>
-<div class="line"><a id="l01542" name="l01542"></a><span class="lineno"> 1542</span>              <span class="keywordflow">if</span> (d &lt; 0)</div>
-<div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span>                {</div>
-<div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span>                  t = 0;</div>
-<div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span>                  <span class="keywordflow">if</span> (-d &gt;= a)</div>
-<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span>                    s = 1;</div>
-<div class="line"><a id="l01547" name="l01547"></a><span class="lineno"> 1547</span>                  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span>                    s = -d / a;</div>
-<div class="line"><a id="l01549" name="l01549"></a><span class="lineno"> 1549</span>                }</div>
-<div class="line"><a id="l01550" name="l01550"></a><span class="lineno"> 1550</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01551" name="l01551"></a><span class="lineno"> 1551</span>                {</div>
-<div class="line"><a id="l01552" name="l01552"></a><span class="lineno"> 1552</span>                  s = 0;</div>
-<div class="line"><a id="l01553" name="l01553"></a><span class="lineno"> 1553</span>                  <span class="keywordflow">if</span> (e &gt;= 0)</div>
-<div class="line"><a id="l01554" name="l01554"></a><span class="lineno"> 1554</span>                    t = 0;</div>
-<div class="line"><a id="l01555" name="l01555"></a><span class="lineno"> 1555</span>                  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (-e &gt;= c)</div>
-<div class="line"><a id="l01556" name="l01556"></a><span class="lineno"> 1556</span>                    t = 1;</div>
-<div class="line"><a id="l01557" name="l01557"></a><span class="lineno"> 1557</span>                  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01558" name="l01558"></a><span class="lineno"> 1558</span>                    t = e / c;</div>
-<div class="line"><a id="l01559" name="l01559"></a><span class="lineno"> 1559</span>                }</div>
-<div class="line"><a id="l01560" name="l01560"></a><span class="lineno"> 1560</span>            }</div>
-<div class="line"><a id="l01561" name="l01561"></a><span class="lineno"> 1561</span>          <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01562" name="l01562"></a><span class="lineno"> 1562</span>            {</div>
-<div class="line"><a id="l01563" name="l01563"></a><span class="lineno"> 1563</span>              <span class="comment">// Region 3</span></div>
-<div class="line"><a id="l01564" name="l01564"></a><span class="lineno"> 1564</span>              s = 0;</div>
-<div class="line"><a id="l01565" name="l01565"></a><span class="lineno"> 1565</span>              <span class="keywordflow">if</span> (e &gt;= 0)</div>
-<div class="line"><a id="l01566" name="l01566"></a><span class="lineno"> 1566</span>                t = 0;</div>
-<div class="line"><a id="l01567" name="l01567"></a><span class="lineno"> 1567</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (-e &gt;= c)</div>
-<div class="line"><a id="l01568" name="l01568"></a><span class="lineno"> 1568</span>                t = 1;</div>
-<div class="line"><a id="l01569" name="l01569"></a><span class="lineno"> 1569</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01570" name="l01570"></a><span class="lineno"> 1570</span>                t = -e / c;</div>
-<div class="line"><a id="l01571" name="l01571"></a><span class="lineno"> 1571</span>            }</div>
-<div class="line"><a id="l01572" name="l01572"></a><span class="lineno"> 1572</span>        }</div>
-<div class="line"><a id="l01573" name="l01573"></a><span class="lineno"> 1573</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t &lt; 0)</div>
-<div class="line"><a id="l01574" name="l01574"></a><span class="lineno"> 1574</span>        {</div>
-<div class="line"><a id="l01575" name="l01575"></a><span class="lineno"> 1575</span>          <span class="comment">// Region 5</span></div>
-<div class="line"><a id="l01576" name="l01576"></a><span class="lineno"> 1576</span>          t = 0;</div>
-<div class="line"><a id="l01577" name="l01577"></a><span class="lineno"> 1577</span>          <span class="keywordflow">if</span> (d &gt;= 0)</div>
-<div class="line"><a id="l01578" name="l01578"></a><span class="lineno"> 1578</span>            s = 0;</div>
-<div class="line"><a id="l01579" name="l01579"></a><span class="lineno"> 1579</span>          <span class="keywordflow">else</span> <span class="keywordflow">if</span> (-d &gt;= a)</div>
-<div class="line"><a id="l01580" name="l01580"></a><span class="lineno"> 1580</span>            s = 1;</div>
-<div class="line"><a id="l01581" name="l01581"></a><span class="lineno"> 1581</span>          <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01582" name="l01582"></a><span class="lineno"> 1582</span>            s = -d / a;</div>
-<div class="line"><a id="l01583" name="l01583"></a><span class="lineno"> 1583</span>        }</div>
-<div class="line"><a id="l01584" name="l01584"></a><span class="lineno"> 1584</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span>        {</div>
-<div class="line"><a id="l01586" name="l01586"></a><span class="lineno"> 1586</span>          <span class="comment">// Region 0</span></div>
-<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> inv_det = 1. / det;</div>
-<div class="line"><a id="l01588" name="l01588"></a><span class="lineno"> 1588</span>          s *= inv_det;</div>
-<div class="line"><a id="l01589" name="l01589"></a><span class="lineno"> 1589</span>          t *= inv_det;</div>
-<div class="line"><a id="l01590" name="l01590"></a><span class="lineno"> 1590</span> </div>
-<div class="line"><a id="l01591" name="l01591"></a><span class="lineno"> 1591</span>          <span class="comment">// In region 0, normal vector is the face normal vector</span></div>
-<div class="line"><a id="l01592" name="l01592"></a><span class="lineno"> 1592</span>          <span class="comment">// Cast unit_normal to a tensor&lt;1, 3&gt;</span></div>
-<div class="line"><a id="l01593" name="l01593"></a><span class="lineno"> 1593</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>            normal_unit_3d = normal_unit;</div>
-<div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span> </div>
-<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 2)</div>
-<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>            normal_unit_3d = <a class="code hl_function" href="tensors__and__points__dimension__manipulation_8h.html#a767266a32d67b045ca2b297ca7d73210">tensor_nd_to_3d</a>(normal_unit);</div>
-<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>        }</div>
-<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>    }</div>
-<div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span>    {</div>
-<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>      <span class="keywordflow">if</span> (s &lt; 0)</div>
-<div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span>        {</div>
-<div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span>          <span class="comment">// Region 2</span></div>
-<div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp0 = b + d;</div>
-<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp1 = c + e;</div>
-<div class="line"><a id="l01607" name="l01607"></a><span class="lineno"> 1607</span>          <span class="keywordflow">if</span> (tmp1 &gt; tmp0)</div>
-<div class="line"><a id="l01608" name="l01608"></a><span class="lineno"> 1608</span>            {</div>
-<div class="line"><a id="l01609" name="l01609"></a><span class="lineno"> 1609</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> numer = tmp1 - tmp0;</div>
-<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> denom = a - 2 * b + c;</div>
-<div class="line"><a id="l01611" name="l01611"></a><span class="lineno"> 1611</span>              <span class="keywordflow">if</span> (numer &gt;= denom)</div>
-<div class="line"><a id="l01612" name="l01612"></a><span class="lineno"> 1612</span>                s = 1;</div>
-<div class="line"><a id="l01613" name="l01613"></a><span class="lineno"> 1613</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>                s = numer / denom;</div>
-<div class="line"><a id="l01615" name="l01615"></a><span class="lineno"> 1615</span> </div>
-<div class="line"><a id="l01616" name="l01616"></a><span class="lineno"> 1616</span>              t = 1 - s;</div>
-<div class="line"><a id="l01617" name="l01617"></a><span class="lineno"> 1617</span>            }</div>
-<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>          <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01619" name="l01619"></a><span class="lineno"> 1619</span>            {</div>
-<div class="line"><a id="l01620" name="l01620"></a><span class="lineno"> 1620</span>              s = 0;</div>
-<div class="line"><a id="l01621" name="l01621"></a><span class="lineno"> 1621</span>              <span class="keywordflow">if</span> (tmp1 &lt;= 0)</div>
-<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span>                t = 1;</div>
-<div class="line"><a id="l01623" name="l01623"></a><span class="lineno"> 1623</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (e &gt;= 0)</div>
-<div class="line"><a id="l01624" name="l01624"></a><span class="lineno"> 1624</span>                t = 0;</div>
-<div class="line"><a id="l01625" name="l01625"></a><span class="lineno"> 1625</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01626" name="l01626"></a><span class="lineno"> 1626</span>                t = -e / c;</div>
-<div class="line"><a id="l01627" name="l01627"></a><span class="lineno"> 1627</span>            }</div>
-<div class="line"><a id="l01628" name="l01628"></a><span class="lineno"> 1628</span>        }</div>
-<div class="line"><a id="l01629" name="l01629"></a><span class="lineno"> 1629</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t &lt; 0)</div>
-<div class="line"><a id="l01630" name="l01630"></a><span class="lineno"> 1630</span>        {</div>
-<div class="line"><a id="l01631" name="l01631"></a><span class="lineno"> 1631</span>          <span class="comment">// Region 6</span></div>
-<div class="line"><a id="l01632" name="l01632"></a><span class="lineno"> 1632</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp0 = b + e;</div>
-<div class="line"><a id="l01633" name="l01633"></a><span class="lineno"> 1633</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp1 = a + d;</div>
-<div class="line"><a id="l01634" name="l01634"></a><span class="lineno"> 1634</span>          <span class="keywordflow">if</span> (tmp1 &gt; tmp0)</div>
-<div class="line"><a id="l01635" name="l01635"></a><span class="lineno"> 1635</span>            {</div>
-<div class="line"><a id="l01636" name="l01636"></a><span class="lineno"> 1636</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> numer = tmp1 - tmp0;</div>
-<div class="line"><a id="l01637" name="l01637"></a><span class="lineno"> 1637</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> denom = a - 2 * b + c;</div>
-<div class="line"><a id="l01638" name="l01638"></a><span class="lineno"> 1638</span>              <span class="keywordflow">if</span> (numer &gt;= denom)</div>
-<div class="line"><a id="l01639" name="l01639"></a><span class="lineno"> 1639</span>                t = 1;</div>
-<div class="line"><a id="l01640" name="l01640"></a><span class="lineno"> 1640</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01641" name="l01641"></a><span class="lineno"> 1641</span>                t = numer / denom;</div>
-<div class="line"><a id="l01642" name="l01642"></a><span class="lineno"> 1642</span>              s = 1 - t;</div>
-<div class="line"><a id="l01643" name="l01643"></a><span class="lineno"> 1643</span>            }</div>
-<div class="line"><a id="l01644" name="l01644"></a><span class="lineno"> 1644</span>          <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01645" name="l01645"></a><span class="lineno"> 1645</span>            {</div>
-<div class="line"><a id="l01646" name="l01646"></a><span class="lineno"> 1646</span>              t = 0;</div>
-<div class="line"><a id="l01647" name="l01647"></a><span class="lineno"> 1647</span>              <span class="keywordflow">if</span> (tmp1 &lt;= 0)</div>
-<div class="line"><a id="l01648" name="l01648"></a><span class="lineno"> 1648</span>                s = 1;</div>
-<div class="line"><a id="l01649" name="l01649"></a><span class="lineno"> 1649</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (d &gt;= 0)</div>
-<div class="line"><a id="l01650" name="l01650"></a><span class="lineno"> 1650</span>                s = 0;</div>
-<div class="line"><a id="l01651" name="l01651"></a><span class="lineno"> 1651</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01652" name="l01652"></a><span class="lineno"> 1652</span>                s = -d / a;</div>
-<div class="line"><a id="l01653" name="l01653"></a><span class="lineno"> 1653</span>            }</div>
-<div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>        }</div>
-<div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>        {</div>
-<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>          <span class="comment">// Region 1</span></div>
-<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> numer = (c + e) - (b + d);</div>
-<div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>          <span class="keywordflow">if</span> (numer &lt;= 0)</div>
-<div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>            s = 0;</div>
-<div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span>          <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>            {</div>
-<div class="line"><a id="l01663" name="l01663"></a><span class="lineno"> 1663</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> denom = a - 2 * b + c;</div>
-<div class="line"><a id="l01664" name="l01664"></a><span class="lineno"> 1664</span>              <span class="keywordflow">if</span> (numer &gt;= denom)</div>
-<div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span>                s = 1;</div>
-<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>                s = numer / denom;</div>
-<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>            }</div>
-<div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span>          t = 1 - s;</div>
-<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>        }</div>
-<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>    }</div>
-<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span> </div>
-<div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>  pt_in_triangle = point_0 + s * e_0 + t * e_1;</div>
-<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span> </div>
-<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>  <span class="keywordflow">return</span> pt_in_triangle.distance(point);</div>
-<div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>}</div>
+<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>  <span class="keyword">const</span> Tensor&lt;1, dim&gt; e_0 = point_1 - point_0;</div>
+<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>  <span class="keyword">const</span> Tensor&lt;1, dim&gt; e_1 = point_2 - point_0;</div>
+<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span> </div>
+<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span>  <span class="keyword">const</span> Tensor&lt;1, dim&gt; normal      = cross_product_3d(e_0, e_1);</div>
+<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>         normal_norm = normal.norm();</div>
+<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>  Tensor&lt;1, dim&gt;       normal_unit = normal / normal_norm;</div>
+<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span>  Tensor&lt;1, 3&gt;         normal_unit_3d;</div>
+<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span>  Point&lt;3&gt;             pt_in_triangle_3d;</div>
+<div class="line"><a id="l01526" name="l01526"></a><span class="lineno"> 1526</span> </div>
+<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> a   = e_0.norm_square();</div>
+<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> b   = scalar_product(e_0, e_1);</div>
+<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> c   = e_1.norm_square();</div>
+<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> det = a * c - b * b;</div>
+<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span> </div>
+<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span> </div>
+<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span>  Tensor&lt;1, dim&gt; vector_to_plane;</div>
+<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span>  Point&lt;dim&gt;     pt_in_triangle;</div>
+<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span> </div>
+<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span>  vector_to_plane = point_0 - point;</div>
+<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span> </div>
+<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>  <span class="comment">// From this point onward, the variable name follow the notation of  Geometric</span></div>
+<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span>  <span class="comment">// Tools for Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to</span></div>
+<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span>  <span class="comment">// triangle.</span></div>
+<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span> </div>
+<div class="line"><a id="l01542" name="l01542"></a><span class="lineno"> 1542</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> d = scalar_product(e_0, vector_to_plane);</div>
+<div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> e = scalar_product(e_1, vector_to_plane);</div>
+<div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span> </div>
+<div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span>  <span class="comment">// Calculate necessary values;</span></div>
+<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span>  <span class="keywordtype">double</span> s = b * e - c * d;</div>
+<div class="line"><a id="l01547" name="l01547"></a><span class="lineno"> 1547</span>  <span class="keywordtype">double</span> t = b * d - a * e;</div>
+<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span> </div>
+<div class="line"><a id="l01549" name="l01549"></a><span class="lineno"> 1549</span>  <span class="keywordflow">if</span> (s + t &lt;= det)</div>
+<div class="line"><a id="l01550" name="l01550"></a><span class="lineno"> 1550</span>    {</div>
+<div class="line"><a id="l01551" name="l01551"></a><span class="lineno"> 1551</span>      <span class="keywordflow">if</span> (s &lt; 0)</div>
+<div class="line"><a id="l01552" name="l01552"></a><span class="lineno"> 1552</span>        {</div>
+<div class="line"><a id="l01553" name="l01553"></a><span class="lineno"> 1553</span>          <span class="keywordflow">if</span> (t &lt; 0)</div>
+<div class="line"><a id="l01554" name="l01554"></a><span class="lineno"> 1554</span>            {</div>
+<div class="line"><a id="l01555" name="l01555"></a><span class="lineno"> 1555</span>              <span class="comment">// Region 4</span></div>
+<div class="line"><a id="l01556" name="l01556"></a><span class="lineno"> 1556</span>              <span class="keywordflow">if</span> (d &lt; 0)</div>
+<div class="line"><a id="l01557" name="l01557"></a><span class="lineno"> 1557</span>                {</div>
+<div class="line"><a id="l01558" name="l01558"></a><span class="lineno"> 1558</span>                  t = 0;</div>
+<div class="line"><a id="l01559" name="l01559"></a><span class="lineno"> 1559</span>                  <span class="keywordflow">if</span> (-d &gt;= a)</div>
+<div class="line"><a id="l01560" name="l01560"></a><span class="lineno"> 1560</span>                    s = 1;</div>
+<div class="line"><a id="l01561" name="l01561"></a><span class="lineno"> 1561</span>                  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01562" name="l01562"></a><span class="lineno"> 1562</span>                    s = -d / a;</div>
+<div class="line"><a id="l01563" name="l01563"></a><span class="lineno"> 1563</span>                }</div>
+<div class="line"><a id="l01564" name="l01564"></a><span class="lineno"> 1564</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01565" name="l01565"></a><span class="lineno"> 1565</span>                {</div>
+<div class="line"><a id="l01566" name="l01566"></a><span class="lineno"> 1566</span>                  s = 0;</div>
+<div class="line"><a id="l01567" name="l01567"></a><span class="lineno"> 1567</span>                  <span class="keywordflow">if</span> (e &gt;= 0)</div>
+<div class="line"><a id="l01568" name="l01568"></a><span class="lineno"> 1568</span>                    t = 0;</div>
+<div class="line"><a id="l01569" name="l01569"></a><span class="lineno"> 1569</span>                  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (-e &gt;= c)</div>
+<div class="line"><a id="l01570" name="l01570"></a><span class="lineno"> 1570</span>                    t = 1;</div>
+<div class="line"><a id="l01571" name="l01571"></a><span class="lineno"> 1571</span>                  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01572" name="l01572"></a><span class="lineno"> 1572</span>                    t = e / c;</div>
+<div class="line"><a id="l01573" name="l01573"></a><span class="lineno"> 1573</span>                }</div>
+<div class="line"><a id="l01574" name="l01574"></a><span class="lineno"> 1574</span>            }</div>
+<div class="line"><a id="l01575" name="l01575"></a><span class="lineno"> 1575</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01576" name="l01576"></a><span class="lineno"> 1576</span>            {</div>
+<div class="line"><a id="l01577" name="l01577"></a><span class="lineno"> 1577</span>              <span class="comment">// Region 3</span></div>
+<div class="line"><a id="l01578" name="l01578"></a><span class="lineno"> 1578</span>              s = 0;</div>
+<div class="line"><a id="l01579" name="l01579"></a><span class="lineno"> 1579</span>              <span class="keywordflow">if</span> (e &gt;= 0)</div>
+<div class="line"><a id="l01580" name="l01580"></a><span class="lineno"> 1580</span>                t = 0;</div>
+<div class="line"><a id="l01581" name="l01581"></a><span class="lineno"> 1581</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (-e &gt;= c)</div>
+<div class="line"><a id="l01582" name="l01582"></a><span class="lineno"> 1582</span>                t = 1;</div>
+<div class="line"><a id="l01583" name="l01583"></a><span class="lineno"> 1583</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01584" name="l01584"></a><span class="lineno"> 1584</span>                t = -e / c;</div>
+<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span>            }</div>
+<div class="line"><a id="l01586" name="l01586"></a><span class="lineno"> 1586</span>        }</div>
+<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t &lt; 0)</div>
+<div class="line"><a id="l01588" name="l01588"></a><span class="lineno"> 1588</span>        {</div>
+<div class="line"><a id="l01589" name="l01589"></a><span class="lineno"> 1589</span>          <span class="comment">// Region 5</span></div>
+<div class="line"><a id="l01590" name="l01590"></a><span class="lineno"> 1590</span>          t = 0;</div>
+<div class="line"><a id="l01591" name="l01591"></a><span class="lineno"> 1591</span>          <span class="keywordflow">if</span> (d &gt;= 0)</div>
+<div class="line"><a id="l01592" name="l01592"></a><span class="lineno"> 1592</span>            s = 0;</div>
+<div class="line"><a id="l01593" name="l01593"></a><span class="lineno"> 1593</span>          <span class="keywordflow">else</span> <span class="keywordflow">if</span> (-d &gt;= a)</div>
+<div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>            s = 1;</div>
+<div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>            s = -d / a;</div>
+<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>        }</div>
+<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>        {</div>
+<div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span>          <span class="comment">// Region 0</span></div>
+<div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> inv_det = 1. / det;</div>
+<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>          s *= inv_det;</div>
+<div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span>          t *= inv_det;</div>
+<div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span> </div>
+<div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span>          <span class="comment">// In region 0, normal vector is the face normal vector</span></div>
+<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>          <span class="comment">// Cast unit_normal to a tensor&lt;1, 3&gt;</span></div>
+<div class="line"><a id="l01607" name="l01607"></a><span class="lineno"> 1607</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l01608" name="l01608"></a><span class="lineno"> 1608</span>            normal_unit_3d = normal_unit;</div>
+<div class="line"><a id="l01609" name="l01609"></a><span class="lineno"> 1609</span> </div>
+<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 2)</div>
+<div class="line"><a id="l01611" name="l01611"></a><span class="lineno"> 1611</span>            normal_unit_3d = <a class="code hl_function" href="tensors__and__points__dimension__manipulation_8h.html#a767266a32d67b045ca2b297ca7d73210">tensor_nd_to_3d</a>(normal_unit);</div>
+<div class="line"><a id="l01612" name="l01612"></a><span class="lineno"> 1612</span>        }</div>
+<div class="line"><a id="l01613" name="l01613"></a><span class="lineno"> 1613</span>    }</div>
+<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01615" name="l01615"></a><span class="lineno"> 1615</span>    {</div>
+<div class="line"><a id="l01616" name="l01616"></a><span class="lineno"> 1616</span>      <span class="keywordflow">if</span> (s &lt; 0)</div>
+<div class="line"><a id="l01617" name="l01617"></a><span class="lineno"> 1617</span>        {</div>
+<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>          <span class="comment">// Region 2</span></div>
+<div class="line"><a id="l01619" name="l01619"></a><span class="lineno"> 1619</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp0 = b + d;</div>
+<div class="line"><a id="l01620" name="l01620"></a><span class="lineno"> 1620</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp1 = c + e;</div>
+<div class="line"><a id="l01621" name="l01621"></a><span class="lineno"> 1621</span>          <span class="keywordflow">if</span> (tmp1 &gt; tmp0)</div>
+<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span>            {</div>
+<div class="line"><a id="l01623" name="l01623"></a><span class="lineno"> 1623</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> numer = tmp1 - tmp0;</div>
+<div class="line"><a id="l01624" name="l01624"></a><span class="lineno"> 1624</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> denom = a - 2 * b + c;</div>
+<div class="line"><a id="l01625" name="l01625"></a><span class="lineno"> 1625</span>              <span class="keywordflow">if</span> (numer &gt;= denom)</div>
+<div class="line"><a id="l01626" name="l01626"></a><span class="lineno"> 1626</span>                s = 1;</div>
+<div class="line"><a id="l01627" name="l01627"></a><span class="lineno"> 1627</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01628" name="l01628"></a><span class="lineno"> 1628</span>                s = numer / denom;</div>
+<div class="line"><a id="l01629" name="l01629"></a><span class="lineno"> 1629</span> </div>
+<div class="line"><a id="l01630" name="l01630"></a><span class="lineno"> 1630</span>              t = 1 - s;</div>
+<div class="line"><a id="l01631" name="l01631"></a><span class="lineno"> 1631</span>            }</div>
+<div class="line"><a id="l01632" name="l01632"></a><span class="lineno"> 1632</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01633" name="l01633"></a><span class="lineno"> 1633</span>            {</div>
+<div class="line"><a id="l01634" name="l01634"></a><span class="lineno"> 1634</span>              s = 0;</div>
+<div class="line"><a id="l01635" name="l01635"></a><span class="lineno"> 1635</span>              <span class="keywordflow">if</span> (tmp1 &lt;= 0)</div>
+<div class="line"><a id="l01636" name="l01636"></a><span class="lineno"> 1636</span>                t = 1;</div>
+<div class="line"><a id="l01637" name="l01637"></a><span class="lineno"> 1637</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (e &gt;= 0)</div>
+<div class="line"><a id="l01638" name="l01638"></a><span class="lineno"> 1638</span>                t = 0;</div>
+<div class="line"><a id="l01639" name="l01639"></a><span class="lineno"> 1639</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01640" name="l01640"></a><span class="lineno"> 1640</span>                t = -e / c;</div>
+<div class="line"><a id="l01641" name="l01641"></a><span class="lineno"> 1641</span>            }</div>
+<div class="line"><a id="l01642" name="l01642"></a><span class="lineno"> 1642</span>        }</div>
+<div class="line"><a id="l01643" name="l01643"></a><span class="lineno"> 1643</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t &lt; 0)</div>
+<div class="line"><a id="l01644" name="l01644"></a><span class="lineno"> 1644</span>        {</div>
+<div class="line"><a id="l01645" name="l01645"></a><span class="lineno"> 1645</span>          <span class="comment">// Region 6</span></div>
+<div class="line"><a id="l01646" name="l01646"></a><span class="lineno"> 1646</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp0 = b + e;</div>
+<div class="line"><a id="l01647" name="l01647"></a><span class="lineno"> 1647</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> tmp1 = a + d;</div>
+<div class="line"><a id="l01648" name="l01648"></a><span class="lineno"> 1648</span>          <span class="keywordflow">if</span> (tmp1 &gt; tmp0)</div>
+<div class="line"><a id="l01649" name="l01649"></a><span class="lineno"> 1649</span>            {</div>
+<div class="line"><a id="l01650" name="l01650"></a><span class="lineno"> 1650</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> numer = tmp1 - tmp0;</div>
+<div class="line"><a id="l01651" name="l01651"></a><span class="lineno"> 1651</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> denom = a - 2 * b + c;</div>
+<div class="line"><a id="l01652" name="l01652"></a><span class="lineno"> 1652</span>              <span class="keywordflow">if</span> (numer &gt;= denom)</div>
+<div class="line"><a id="l01653" name="l01653"></a><span class="lineno"> 1653</span>                t = 1;</div>
+<div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>                t = numer / denom;</div>
+<div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>              s = 1 - t;</div>
+<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>            }</div>
+<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>            {</div>
+<div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>              t = 0;</div>
+<div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span>              <span class="keywordflow">if</span> (tmp1 &lt;= 0)</div>
+<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>                s = 1;</div>
+<div class="line"><a id="l01663" name="l01663"></a><span class="lineno"> 1663</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (d &gt;= 0)</div>
+<div class="line"><a id="l01664" name="l01664"></a><span class="lineno"> 1664</span>                s = 0;</div>
+<div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>                s = -d / a;</div>
+<div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>            }</div>
+<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>        }</div>
+<div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>        {</div>
+<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>          <span class="comment">// Region 1</span></div>
+<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> numer = (c + e) - (b + d);</div>
+<div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>          <span class="keywordflow">if</span> (numer &lt;= 0)</div>
+<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>            s = 0;</div>
+<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>            {</div>
+<div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> denom = a - 2 * b + c;</div>
+<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span>              <span class="keywordflow">if</span> (numer &gt;= denom)</div>
+<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span>                s = 1;</div>
+<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>                s = numer / denom;</div>
+<div class="line"><a id="l01682" name="l01682"></a><span class="lineno"> 1682</span>            }</div>
+<div class="line"><a id="l01683" name="l01683"></a><span class="lineno"> 1683</span>          t = 1 - s;</div>
+<div class="line"><a id="l01684" name="l01684"></a><span class="lineno"> 1684</span>        }</div>
+<div class="line"><a id="l01685" name="l01685"></a><span class="lineno"> 1685</span>    }</div>
+<div class="line"><a id="l01686" name="l01686"></a><span class="lineno"> 1686</span> </div>
+<div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span>  pt_in_triangle = point_0 + s * e_0 + t * e_1;</div>
+<div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span> </div>
+<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>  <span class="keywordflow">return</span> pt_in_triangle.distance(point);</div>
+<div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span>}</div>
 </div>
-<div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span> </div>
-<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span><span class="keyword">template</span> <span class="keywordtype">double</span></div>
-<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span><a class="code hl_function" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a>(</div>
-<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt; &amp;triangle,</div>
-<div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>  <span class="keyword">const</span> Point&lt;2&gt;              &amp;point);</div>
-<div class="line"><a id="l01682" name="l01682"></a><span class="lineno"> 1682</span><span class="keyword">template</span> <span class="keywordtype">double</span></div>
-<div class="line"><a id="l01683" name="l01683"></a><span class="lineno"> 1683</span><a class="code hl_function" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a>(</div>
-<div class="line"><a id="l01684" name="l01684"></a><span class="lineno"> 1684</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; &amp;triangle,</div>
-<div class="line"><a id="l01685" name="l01685"></a><span class="lineno"> 1685</span>  <span class="keyword">const</span> Point&lt;3&gt;              &amp;point);</div>
+<div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span> </div>
+<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span><span class="keyword">template</span> <span class="keywordtype">double</span></div>
+<div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span><a class="code hl_function" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a>(</div>
+<div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt; &amp;triangle,</div>
+<div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>  <span class="keyword">const</span> Point&lt;2&gt;              &amp;point);</div>
+<div class="line"><a id="l01696" name="l01696"></a><span class="lineno"> 1696</span><span class="keyword">template</span> <span class="keywordtype">double</span></div>
+<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span><a class="code hl_function" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a>(</div>
+<div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; &amp;triangle,</div>
+<div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span>  <span class="keyword">const</span> Point&lt;3&gt;              &amp;point);</div>
 <div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition</b> <a href="serial__solid_8h_source.html#l00048">serial_solid.h:49</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="alethe__grid__tools_8h_html"><div class="ttname"><a href="lethe__grid__tools_8h.html">lethe_grid_tools.h</a></div></div>
-<div class="ttc" id="anamespaceLetheGridTools_html_a0441112a1d2ecc434246a30f9ef098a1"><div class="ttname"><a href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a></div><div class="ttdeci">double find_point_triangle_distance(const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</div><div class="ttdoc">Calculates the distance between points and a triangle (defined using three vertices)....</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l01496">lethe_grid_tools.cc:1496</a></div></div>
+<div class="ttc" id="anamespaceLetheGridTools_html_a0441112a1d2ecc434246a30f9ef098a1"><div class="ttname"><a href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a></div><div class="ttdeci">double find_point_triangle_distance(const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</div><div class="ttdoc">Calculates the distance between points and a triangle (defined using three vertices)....</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l01510">lethe_grid_tools.cc:1510</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_a07eadfbf819afcb0b7650fba353dadfe"><div class="ttname"><a href="namespaceLetheGridTools.html#a07eadfbf819afcb0b7650fba353dadfe">LetheGridTools::find_cells_in_cells</a></div><div class="ttdeci">std::vector&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; find_cells_in_cells(const DoFHandler&lt; dim &gt; &amp;dof_handler, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)</div><div class="ttdoc">Return a vector of cells from the dof_handler that are inside a cell from another mesh.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00392">lethe_grid_tools.cc:392</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_a0fbba5f34121cc30bc7a4432f49b8ff4"><div class="ttname"><a href="namespaceLetheGridTools.html#a0fbba5f34121cc30bc7a4432f49b8ff4">LetheGridTools::vertices_cell_mapping</a></div><div class="ttdeci">void vertices_cell_mapping(const DoFHandler&lt; dim &gt; &amp;dof_handler, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map)</div><div class="ttdoc">Map the vertex index to the cells that includes that vertex.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00019">lethe_grid_tools.cc:19</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_a26a533531dd66421eb060cb4602a6d0b"><div class="ttname"><a href="namespaceLetheGridTools.html#a26a533531dd66421eb060cb4602a6d0b">LetheGridTools::find_cells_around_edge</a></div><div class="ttdeci">std::vector&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; find_cells_around_edge(const DoFHandler&lt; dim &gt; &amp;dof_handler, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Point&lt; dim &gt; &amp;point_1, Point&lt; dim &gt; &amp;point_2)</div><div class="ttdoc">Return a vector of cells around an edge cell in spacedim. An edge cell as a dim of 1.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00681">lethe_grid_tools.cc:681</a></div></div>

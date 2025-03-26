@@ -205,6 +205,10 @@ Functions</h2></td></tr>
 <tr class="separator:a19959d7eb5897c3dfcf18b552e52a8ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a242a895a57e491fb68aeccf5613ddfab" id="r_a242a895a57e491fb68aeccf5613ddfab"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8cc.html#a242a895a57e491fb68aeccf5613ddfab">find_particle_contact_detection_step&lt; 3, DEM::CFDDEMProperties::PropertiesIndex &gt;</a> (Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update)</td></tr>
 <tr class="separator:a242a895a57e491fb68aeccf5613ddfab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56a575663fdb17819d6ed45e370e4b40" id="r_a56a575663fdb17819d6ed45e370e4b40"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8cc.html#a56a575663fdb17819d6ed45e370e4b40">find_particle_contact_detection_step&lt; 2, DEM::DEMMPProperties::PropertiesIndex &gt;</a> (Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update)</td></tr>
+<tr class="separator:a56a575663fdb17819d6ed45e370e4b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bd663958522dc633bac6e5a3778c150" id="r_a4bd663958522dc633bac6e5a3778c150"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8cc.html#a4bd663958522dc633bac6e5a3778c150">find_particle_contact_detection_step&lt; 3, DEM::DEMMPProperties::PropertiesIndex &gt;</a> (Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update)</td></tr>
+<tr class="separator:a4bd663958522dc633bac6e5a3778c150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5a6ada519890e83a465dd832f2d4c96" id="r_af5a6ada519890e83a465dd832f2d4c96"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:af5a6ada519890e83a465dd832f2d4c96"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8cc.html#af5a6ada519890e83a465dd832f2d4c96">find_floating_mesh_mapping_step</a> (const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt; &gt; &gt; solids)</td></tr>
 <tr class="separator:af5a6ada519890e83a465dd832f2d4c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -252,7 +256,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the maximum cumulative displacement of particles exceeds the threshold and false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00101">101</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00119">119</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>.</p>
 
@@ -445,6 +449,58 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
+<a id="a56a575663fdb17819d6ed45e370e4b40" name="a56a575663fdb17819d6ed45e370e4b40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56a575663fdb17819d6ed45e370e4b40">&#9670;&#160;</a></span>find_particle_contact_detection_step&lt; 2, DEM::DEMMPProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="find__contact__detection__step_8h.html#a0d6d367c590091ae3722d8ae4c64b8f9">find_particle_contact_detection_step</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>smallest_contact_search_criterion</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>displacement</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>parallel_update</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aecf134176cdadb141d1795aa4f2f2fe3" name="aecf134176cdadb141d1795aa4f2f2fe3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aecf134176cdadb141d1795aa4f2f2fe3">&#9670;&#160;</a></span>find_particle_contact_detection_step&lt; 2, DEM::DEMProperties::PropertiesIndex &gt;()</h2>
 
@@ -505,6 +561,58 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">template void <a class="el" href="find__contact__detection__step_8h.html#a0d6d367c590091ae3722d8ae4c64b8f9">find_particle_contact_detection_step</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>smallest_contact_search_criterion</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>displacement</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>parallel_update</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4bd663958522dc633bac6e5a3778c150" name="a4bd663958522dc633bac6e5a3778c150"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bd663958522dc633bac6e5a3778c150">&#9670;&#160;</a></span>find_particle_contact_detection_step&lt; 3, DEM::DEMMPProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="find__contact__detection__step_8h.html#a0d6d367c590091ae3722d8ae4c64b8f9">find_particle_contact_detection_step</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> &gt; </td>
           <td>(</td>
           <td class="paramtype">Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
