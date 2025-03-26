@@ -4129,6 +4129,47 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  void
+  Mortar::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("mortar");
+    {
+      prm.declare_entry("enable",
+                        "true",
+                        Patterns::Bool(),
+                        "Enable mortar interface <true|false>");
+
+      rotor_mesh = std::make_shared<Mesh>();
+      rotor_mesh->declare_parameters(prm);
+
+      prm.declare_entry("rotor boundary id",
+                        "1",
+                        Patterns::Integer(),
+                        "Rotor boundary ID # of the mortar matching interface");
+      prm.declare_entry("stator boundary id",
+                        "2",
+                        Patterns::Integer(),
+                        "Stator boundary ID # of the mortar matching interface");
+    }
+    prm.leave_subsection();
+  };
+
+  void
+  Mortar::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("mortar");
+    {
+      enable = prm.get_bool("enable");
+      
+      rotor_mesh->parse_parameters(prm);
+
+      rotor_boundary_id = prm.get_integer("rotor boundary id");
+
+      stator_boundary_id = prm.get_integer("stator boundary id");
+    }
+    prm.leave_subsection();
+  }
+
   // Explicitly instantiate template classes and structs
   template class Laser<2>;
   template class Laser<3>;
