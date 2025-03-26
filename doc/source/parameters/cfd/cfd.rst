@@ -23,6 +23,7 @@ General, CFD and Multiphysics
    manifolds
    mesh
    mesh_adaptation_control
+   mortar_control
    multiphysics
    nitsche
    non-linear_solver_control
