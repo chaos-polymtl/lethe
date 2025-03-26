@@ -11,6 +11,7 @@ DEAL::Iteration : 3    Time : 0.300000
 DEAL::Iteration : 4    Time : 0.400000
 DEAL::This is an output iteration
 DEAL::Iteration : 5    Time : 0.500000
+DEAL::This is an output iteration
 DEAL::*************************************************
 DEAL::Constant time stepping - specific time output
 DEAL::*************************************************
@@ -67,6 +68,7 @@ DEAL::Iteration : 9    Time : 15.3680    Time step : 2.00000
 DEAL::Iteration : 10    Time : 17.3680    Time step : 2.00000
 DEAL::Iteration : 11    Time : 19.3680    Time step : 2.00000
 DEAL::Iteration : 12    Time : 21.3680    Time step : 2.00000
+DEAL::This is an output iteration
 DEAL::*************************************************
 DEAL::Adaptative time stepping - specific time output
 DEAL::*************************************************
