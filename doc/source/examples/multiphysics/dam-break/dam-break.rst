@@ -106,7 +106,7 @@ To prevent the interface between phases from becoming blurry due to diffusion, t
       subsection interface regularization method
         set type      = projection-based interface sharpening
         set frequency = 20
-        subsection interface projection-based interface sharpening
+        subsection projection-based interface sharpening
           set threshold           = 0.5
           set interface sharpness = 1.5
         end
