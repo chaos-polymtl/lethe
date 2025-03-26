@@ -15,8 +15,10 @@ main()
   const unsigned int n_quadrature_points = 3;
   const double       radius              = 1.2;
 
+  // cell angle variation
   const double delta = 2 * numbers::PI / n_subdivisions;
 
+  // rotate inner mesh using random scaling factors
   for (const double scale :
        {0.0, 0.1, 0.5, 0.9, 1.1, 2.1, n_subdivisions - 0.9})
     {

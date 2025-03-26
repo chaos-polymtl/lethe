@@ -53,6 +53,7 @@ main(int argc, char **argv)
   MappingQ<dim> mapping(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
+  // generate merged grid
   parallel::distributed::Triangulation<dim> tria(comm);
   hyper_shell_with_hyper_shell(radius, tria);
   tria.refine_global(n_global_refinements);

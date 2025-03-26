@@ -103,7 +103,7 @@ main(int argc, char *argv[])
   const double       rotate               = 3.0;
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
 
-  // create meshes
+  // generated merged grid
   parallel::distributed::Triangulation<dim> tria(comm);
   hyper_cube_with_cylindrical_hole(radius, 2.0, rotate, tria);
 

@@ -21,12 +21,16 @@
 
 using namespace dealii;
 
+/**
+ * @brief Converts point to radius (angle with the x axis in the x-y plane)
+ */
 template <int dim>
 double
 point_to_rad(const Point<dim> &point)
 {
   const double temp = std::atan(std::abs(point[1]) / std::abs(point[0]));
 
+  // verify quadrant
   if (point[1] >= 0.0)
     {
       if (point[0] >= 0.0)
@@ -43,6 +47,9 @@ point_to_rad(const Point<dim> &point)
     }
 }
 
+/**
+ * @brief Converts radius to point (in the x-y plane)
+ */
 template <int dim>
 Point<dim>
 rad_to_point(const double radius, const double rad)
@@ -55,7 +62,13 @@ rad_to_point(const double radius, const double rad)
   return point;
 }
 
-
+/**
+ * @brief Base class for the mortar manager
+ * @param n_subdivisions Number of cells at the interface between inner and outer domains
+ * @param n_quadrature_points Number of quadrature points per cell
+ * @param radius Radius at the interface between inner and outer domains
+ * @param rotate_pi Rotation angle for the inner domain
+ */
 template <int dim>
 class MortarManager
 {
@@ -71,6 +84,9 @@ public:
     , quadrature(n_quadrature_points)
   {}
 
+  /**
+   * @brief Verify if cells of the inner and outer domains are aligned
+   */
   bool
   is_mesh_aligned() const
   {
@@ -81,6 +97,9 @@ public:
            tolerance;
   }
 
+  /**
+   * @brief Returns the number of coupling points at the interface
+   */
   unsigned int
   get_n_points() const
   {
@@ -94,6 +113,9 @@ public:
       }
   }
 
+  /**
+   * @brief Returns the number of coupling points at the interface
+   */
   unsigned int
   get_n_points(const double &rad) const
   {
@@ -109,6 +131,9 @@ public:
       }
   }
 
+  /**
+   * @brief Returns the indices of all quadrature points at both sides of the interface
+   */
   std::vector<unsigned int>
   get_indices(const double &rad) const
   {
@@ -163,11 +188,14 @@ public:
       }
   }
 
+  /**
+   * @brief Returns the coordinates of the quadrature points at both sides of the inerface
+   */
   std::vector<Point<dim>>
   get_points(const double rad) const
   {
     const auto [type, id] = get_config(rad);
-
+    // angle variation within each cell
     const double delta = 2 * numbers::PI / n_subdivisions;
 
     if (type == 0) // aligned
@@ -263,6 +291,9 @@ public:
       }
   }
 
+  /**
+   * @brief Returns the weights of the quadrature points at both sides of the interface
+   */
   std::vector<double>
   get_weights(const double &rad) const
   {
@@ -279,7 +310,7 @@ public:
 
         return points;
       }
-    else
+    else // inside/outside
       {
         double rad_0, rad_1, rad_2;
 
@@ -310,6 +341,9 @@ public:
       }
   }
 
+  /**
+   * @brief Returns the normal vector for the quadrature points
+   */
   std::vector<Tensor<1, dim, double>>
   get_normals(const double &rad) const
   {
@@ -324,15 +358,26 @@ public:
   }
 
 private:
+  /**
+   * @brief Verifies whether the mesh is aligned
+   * @param[out] type Cell configuration type at the interface
+   *                  type = 0: mesh aligned
+   *                  type = 1: mesh not aligned, points are closer than a tolerance
+   *                  type = 2: mesh not aligned, points are in rotated configuration
+   * @param[out] id Point index
+   */
   std::pair<unsigned int, unsigned int>
   get_config(const double &rad) const
   {
+    // alignment tolerance
     const double tolerance = 1e-8;
+    // angular variation in each cell
     const double delta     = 2 * numbers::PI / n_subdivisions;
-
+    // minimum rotation angle 
     double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
-
+    // point position in the cell
     const double segment     = (rad - delta / 2) / delta;
+    // point position after rotation
     const double segment_rot = (rad - delta / 2 - rot_min) / delta;
 
     if (this->is_mesh_aligned())
@@ -343,9 +388,11 @@ private:
     else
       {
         // case 2: mesh is not aligned
-        if (std::abs(segment - std::round(segment)) < tolerance)
+        if (std::abs(segment - std::round(segment)) < tolerance) 
+          // inner-outer points very close to match
           return {2, std::round(segment)};
         else
+          // points do not match
           return {1,
                   static_cast<unsigned int>(std::round(segment_rot)) %
                     (2 * n_subdivisions)};
