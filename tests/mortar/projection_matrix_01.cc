@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Compare interpolation and projection operations.
+ * @brief Compare interpolation and projection operations onto a subcell
+ * of size factor.
  */
 
 #include <deal.II/fe/fe_dgq.h>
@@ -26,7 +27,7 @@ scale(const Quadrature<dim> &quadrature_2, const double factor)
 template <int dim, typename number, int spacedim>
 void
 get_projection_matrix(const FiniteElement<dim, spacedim> &fe1,
-                      const double                        alpha,
+                      const double                        factor,
                       FullMatrix<number>                 &matrix)
 {
   matrix = 0;
@@ -42,7 +43,7 @@ get_projection_matrix(const FiniteElement<dim, spacedim> &fe1,
   GridGenerator::reference_cell(tr_1, reference_cell);
   Triangulation<dim, spacedim> tr_2;
   GridGenerator::reference_cell(tr_2, reference_cell);
-  GridTools::scale(alpha, tr_2);
+  GridTools::scale(factor, tr_2);
 
   const auto &mapping =
     reference_cell.template get_default_linear_mapping<dim, spacedim>();
@@ -55,7 +56,7 @@ get_projection_matrix(const FiniteElement<dim, spacedim> &fe1,
 
   std::vector<Point<dim>> points;
   for (const auto p : quadrature_2.get_points())
-    points.emplace_back(p * alpha);
+    points.emplace_back(p * factor);
   Quadrature<dim> quadrature_1(points);
 
   const unsigned int nq = quadrature_2.size();
@@ -143,14 +144,14 @@ int
 main()
 {
   const unsigned int fe_degree = 3;
-  const double       alpha     = 0.3;
+  const double       factor    = 0.3;
 
   FE_DGQ<1> fe(fe_degree);
   QGauss<1> quad(fe_degree + 1);
 
   // compute projection matrix
   FullMatrix<double> P(fe.n_dofs_per_cell(), fe.n_dofs_per_cell());
-  get_projection_matrix(fe, alpha, P);
+  get_projection_matrix(fe, factor, P);
   P.print_formatted(std::cout);
   std::cout << std::endl;
 
@@ -166,7 +167,7 @@ main()
   std::cout << std::endl;
 
   // compute direct interpolation matrix
-  get_interpolation_matrix(fe, scale(quad, alpha), I);
+  get_interpolation_matrix(fe, scale(quad, factor), I);
   I.print_formatted(std::cout);
   std::cout << std::endl;
 
