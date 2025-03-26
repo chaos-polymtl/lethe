@@ -53,7 +53,7 @@ using namespace dealii;
 
 
 /**
- * @brief Parameters for the geometric multigrid 
+ * @brief Parameters for the geometric multigrid
  */
 struct GMGParameters
 {

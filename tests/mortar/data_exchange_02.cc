@@ -57,7 +57,7 @@ main(int argc, char *argv[])
 
   // generate outer grid
   GridGenerator::hyper_cube_with_cylindrical_hole(tria_1, radius, 2.0, true);
-  
+
   // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
