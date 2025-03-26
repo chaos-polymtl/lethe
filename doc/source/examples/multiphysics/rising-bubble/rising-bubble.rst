@@ -61,7 +61,7 @@ Time integration is handled by a 1st order backward differentiation scheme (``bd
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
+      set method           = bdf2
       set time end         = 3
       set time step        = 0.001
       set adapt            = true

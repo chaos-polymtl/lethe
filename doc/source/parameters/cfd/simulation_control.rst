@@ -89,7 +89,7 @@ This subsection is the most important in a simulation and therefore, the most co
     set output times = -1
   
     # Output time interval
-    set output time interval = 1, 1.7e308
+    set output time interval = 0, 1.7e308
   
     # Maximum number of vtu output files
     set group files = 1

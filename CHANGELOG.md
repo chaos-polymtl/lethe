@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Addition of the explicit template instantiations for the PropertiesIndex of multiphysic DEM simulations. They are added to all files where there were already DEMProperties template instantiations. [#1469](https://github.com/chaos-polymtl/lethe/pull/1469)
+## [Master] - 2025-03-25
+
+### Added
+
+- MINOR Changed the simulation control to ensure that for transient simulation the last time-step is always written to a vtu file. Used this opportunity to improve the results for the rising bubble since the contour we were using to compare to the reference solution was not always the last output. Finally, changed the rising bubble example to use the BDF2 time integration instead of BDF1 [#1471](https://github.com/chaos-polymtl/lethe/pull/1471).
 
 ## [Master] - 2025-03-21
 
