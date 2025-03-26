@@ -161,11 +161,12 @@ Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface regularization method");
   {
-    prm.declare_entry("type",
-                      "none",
-                      Patterns::Selection(
-                        "none|projection-based interface sharpening|algebraic interface reinitialization|geometric interface reinitialization"),
-                      "VOF interface regularization method");
+    prm.declare_entry(
+      "type",
+      "none",
+      Patterns::Selection(
+        "none|projection-based interface sharpening|algebraic interface reinitialization|geometric interface reinitialization"),
+      "VOF interface regularization method");
 
     prm.declare_entry(
       "frequency",
