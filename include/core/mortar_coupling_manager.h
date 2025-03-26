@@ -362,8 +362,8 @@ private:
    * @brief Verifies whether the mesh is aligned
    * @param[out] type Cell configuration type at the interface
    *                  type = 0: mesh aligned
-   *                  type = 1: mesh not aligned, points are closer than a tolerance
-   *                  type = 2: mesh not aligned, points are in rotated configuration
+   *                  type = 1: mesh not aligned, points are closer than a
+   * tolerance type = 2: mesh not aligned, points are in rotated configuration
    * @param[out] id Point index
    */
   std::pair<unsigned int, unsigned int>
@@ -372,11 +372,11 @@ private:
     // alignment tolerance
     const double tolerance = 1e-8;
     // angular variation in each cell
-    const double delta     = 2 * numbers::PI / n_subdivisions;
-    // minimum rotation angle 
+    const double delta = 2 * numbers::PI / n_subdivisions;
+    // minimum rotation angle
     double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
     // point position in the cell
-    const double segment     = (rad - delta / 2) / delta;
+    const double segment = (rad - delta / 2) / delta;
     // point position after rotation
     const double segment_rot = (rad - delta / 2 - rot_min) / delta;
 
@@ -388,7 +388,7 @@ private:
     else
       {
         // case 2: mesh is not aligned
-        if (std::abs(segment - std::round(segment)) < tolerance) 
+        if (std::abs(segment - std::round(segment)) < tolerance)
           // inner-outer points very close to match
           return {2, std::round(segment)};
         else
