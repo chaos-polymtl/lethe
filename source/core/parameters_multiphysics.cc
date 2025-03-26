@@ -11,14 +11,14 @@ DeclException1(
   double,
   << "Sharpening threshold : " << arg1 << " is smaller than 0 or larger than 1."
   << std::endl
-  << "Interface sharpening model requires a sharpening threshold between 0 and 1.");
+  << "Projection-based interface sharpening model requires a sharpening threshold between 0 and 1.");
 
 DeclException1(
   SharpeningThresholdErrorMaxDeviation,
   double,
   << "Sharpening threshold max deviation : " << arg1
   << " is smaller than 0 or larger than 0.5." << std::endl
-  << "Adaptive interface sharpening requires a maximum deviation of the"
+  << "Adaptive projection-based interface sharpening requires a maximum deviation of the"
   << " sharpening threshold between 0.0 and 0.5. See documentation for further details");
 
 DeclException1(
@@ -164,7 +164,7 @@ Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("type",
                       "none",
                       Patterns::Selection(
-                        "none|sharpening|algebraic|geometric"),
+                        "none|projection-based interface sharpening|algebraic interface reinitialization|geometric interface reinitialization"),
                       "VOF interface regularization method");
 
     prm.declare_entry(
@@ -198,19 +198,19 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
     if (t == "none")
       this->regularization_method_type =
         Parameters::RegularizationMethodType::none;
-    else if (t == "sharpening")
+    else if (t == "projection-based interface sharpening")
       {
         regularization_method_type =
           Parameters::RegularizationMethodType::sharpening;
         sharpening.enable = true;
       }
-    else if (t == "algebraic")
+    else if (t == "algebraic interface reinitialization")
       {
         this->regularization_method_type =
           Parameters::RegularizationMethodType::algebraic;
         algebraic_interface_reinitialization.enable = true;
       }
-    else if (t == "geometric")
+    else if (t == "geometric interface reinitialization")
       {
         this->regularization_method_type =
           Parameters::RegularizationMethodType::geometric;
@@ -246,7 +246,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 void
 Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("interface sharpening");
+  prm.enter_subsection("projection-based interface sharpening");
   {
     prm.declare_entry(
       "type",
@@ -312,7 +312,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 void
 Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("interface sharpening");
+  prm.enter_subsection("projection-based interface sharpening");
   {
     interface_sharpness = prm.get_double("interface sharpness");
 

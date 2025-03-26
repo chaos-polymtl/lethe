@@ -15,7 +15,7 @@ Features
 - Periodic boundary condition
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Monitoring mass conservation
-- Interface sharpening
+- Projection-based interface sharpening
 
 ****
 
@@ -24,8 +24,8 @@ Files Used in This Example
 --------------------------
 All files mentioned below are located in the example's folder (``examples/multiphysics/rayleigh-taylor-instability``).
 
-- Parameter file for adaptive sharpening: ``rayleigh-taylor-instability-adaptive-sharpening.prm``
-- Parameter file for constant sharpening: ``rayleigh-taylor-instability-constant-sharpening.prm``
+- Parameter file for adaptive projection-based interface sharpening: ``rayleigh-taylor-instability-adaptive-sharpening.prm``
+- Parameter file for constant projection-based interface sharpening: ``rayleigh-taylor-instability-constant-sharpening.prm``
 - Postprocessing Python script: ``rayleigh-taylor_postprocess.py``
 
 ****
@@ -223,15 +223,15 @@ The boundary conditions applied on the left and right boundaries are ``slip``, w
 VOF
 ~~~
 
-In the ``VOF`` subsection, we select the ``sharpening`` method in the ``interface regularization method`` subsection to reconstruct the interface and keep it sharp during the simulation. Note that in the ``interface sharpening`` subsection, we use the ``constant`` and ``adaptive`` types for interface sharpening methods. Mass conservation results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` sharpening, we use:
+In the ``VOF`` subsection, we select the ``projection-based interface sharpening`` method in the ``interface regularization method`` subsection to reconstruct the interface and keep it sharp during the simulation. Note that in the ``projection-based interface sharpening`` subsection, we use the ``constant`` and ``adaptive`` types for interface sharpening methods. Mass conservation results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` sharpening, we use:
 
 .. code-block:: text
 
    subsection VOF
      subsection interface regularization method
-       set type      = sharpening
+       set type      = projection-based interface sharpening
        set frequency = 25
-       subsection interface sharpening
+       subsection projection-based interface sharpening
          set threshold           = 0.5
          set interface sharpness = 1.5
          set type                = constant
@@ -244,15 +244,15 @@ In the ``VOF`` subsection, we select the ``sharpening`` method in the ``interfac
      end
    end
 
-and for the ``adaptive`` sharpening:
+and for the ``adaptive`` projection-based interface sharpening:
 
 .. code-block:: text
 
    subsection VOF
      subsection interface regularization method
-       set type      = sharpening
+       set type      = projection-based interface sharpening
        set frequency = 25
-       subsection interface sharpening
+       subsection projection-based interface sharpening
          set threshold               = 0.5
          set interface sharpness     = 1.5
          set type                    = adaptive
@@ -368,7 +368,7 @@ With higher levels of refinement, we can see better correspondence between the v
 |                                                                                       |
 +---------------------------------------------------------------------------------------+
 
-The following figures show the mass of ``fluid 1`` throughout the simulation with a constant (left) and adaptive (right) interface sharpening.
+The following figures show the mass of ``fluid 1`` throughout the simulation with a constant (left) and adaptive (right) projection-based interface sharpenings.
 
 +---------------------------------------------+---------------------------------------------+
 |  .. image:: images/constant_mass.png        |  .. image:: images/adaptive_mass.png        |

@@ -22,7 +22,7 @@ namespace Parameters
   /**
    * @brief Different interface regularization method types:
    *  - none
-   *  - sharpening: projection-based sharpening
+   *  - sharpening: projection-based interface sharpening
    *  - algebraic: PDE-based reinitialization
    *  - geometric: geometric redistanciation
    */
@@ -35,7 +35,7 @@ namespace Parameters
   };
 
   /**
-   * @brief Different sharpening types:
+   * @brief Different projection-based interface sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
    *  - adaptive: the sharpening threshold is determined by binary search, to

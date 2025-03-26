@@ -40,9 +40,9 @@ subsection VOF
     set output auxiliary fields = true
   end
   subsection interface regularization method
-    set type      = sharpening
+    set type      = projection-based interface sharpening
     set frequency = 20
-    subsection interface sharpening
+    subsection projection-based interface sharpening
       set interface sharpness = 1.5
     end
   end

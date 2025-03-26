@@ -220,8 +220,8 @@ subsection VOF
     set type = tanh
   end
   subsection interface regularization method
-    set type = sharpening
-    subsection interface sharpening
+    set type = projection-based interface sharpening
+    subsection projection-based interface sharpening
       set interface sharpness     = 1.5
       set type                    = adaptive
       set threshold max deviation = 0.4

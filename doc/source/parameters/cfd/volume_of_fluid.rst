@@ -26,14 +26,14 @@ The default values of the VOF parameters are given in the text box below.
       set frequency  = 10
       set verbosity  = quiet
       
-      subsection interface sharpening
+      subsection projection-based interface sharpening
         set interface sharpness     = 2
         set type                    = constant
 
-        # parameter for constant sharpening
+        # parameter for constant projection-based interface sharpening
         set threshold               = 0.5
 
-        # parameters for adaptive sharpening
+        # parameters for adaptive projection-based interface sharpening
         set threshold max deviation = 0.20
         set max iterations          = 20
         set tolerance               = 1e-6
@@ -84,7 +84,7 @@ Interface Regularization Method
 
 The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step. 
 
-* ``type``: sets the method of regularization. There are three methods available:``none``, ``sharpening`` and ``algebraic``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
+* ``type``: sets the method of regularization. There are three methods available:``none``, ``projection-based interface sharpening`` and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
 
 * ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
@@ -94,23 +94,23 @@ The ``subsection interface regularization method`` defines parameters to counter
     .. warning::
       The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends also on the verbosity level of the non-linear and linear solvers. If they are set to ``verbose``, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.
 
-  * ``verbose``: displays regularization steps progression. For the algebraic interface reinitialization (``type = algebraic``), it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
+  * ``verbose``: displays regularization steps progression. For the ``algebraic interface reinitialization``, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
-  * ``extra verbose``: for the interface sharpening (``type = sharpening``), indicates the details of the linear iterations. For the algebraic interface reinitialization (``type = algebraic``), in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
+  * ``extra verbose``: for the ``projection-based interface sharpening``, indicates the details of the linear iterations. For the ``algebraic interface reinitialization``, in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
   
-Interface Sharpening
-++++++++++++++++++++
+Projection-Based Interface Sharpening
++++++++++++++++++++++++++++++++++++++
 
-The ``type = sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this sharpening method. The ``subsection interface sharpening`` defines parameters relevant to this regularization method.
+The ``type = projection-based interface sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this regularization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
 
 * ``interface sharpness``: sharpness of the moving interface, denoted :math:`\alpha` in the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` and :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_ paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
-* ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
+* ``type``: defines the projection-based interface sharpening type, either ``constant`` or ``adaptive``
 
   * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interface is located.
   * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached, or if the number of search steps reaches the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
 
-  .. admonition:: Example of a warning message if sharpening is adaptive but the mass conservation tolerance is not reached:
+  .. admonition:: Example of a warning message if the sharpening is adaptive but the mass conservation tolerance is not reached:
 
     .. code-block:: text
 
@@ -139,7 +139,7 @@ The ``type = sharpening`` corresponds to a projection-based regularization metho
 Algebraic Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = algebraic`` corresponds to a PDE-based reinitialization method. Alike the interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in VOF simulations. 
+The ``type = algebraic`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in VOF simulations. 
 
 * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 

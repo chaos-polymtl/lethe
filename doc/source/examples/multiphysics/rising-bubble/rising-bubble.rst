@@ -10,7 +10,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force
+- Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, projection-based interface sharpening, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - Post-processing of a fluid barycentric coordinate and velocity
@@ -99,18 +99,18 @@ The ``source term`` subsection defines the gravitational acceleration:
 VOF
 ~~~
 
-In the ``VOF`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. The ``sharpening`` method is selected as the ``interface regularization method`` and its parameters are defined in the ``subsection interface sharpening``
+In the ``VOF`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. The ``projection-based interface sharpening`` method is selected as the ``interface regularization method`` and its parameters are defined in the ``subsection projection-based interface sharpening``
 
-The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example. The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction. We refer the reader to :doc:`../../../theory/multiphase/cfd/vof` theory guide for more explanation on the phase filtration. Finally, the surface tension force computation is explained in the :doc:`../static-bubble/static-bubble` example.
+The projection-based interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example. The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction. We refer the reader to :doc:`../../../theory/multiphase/cfd/vof` theory guide for more explanation on the phase filtration. Finally, the surface tension force computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
 
 .. code-block:: text
 
   subsection VOF
     subsection interface regularization method
-      set type      = sharpening
+      set type      = projection-based interface sharpening
       set frequency = 50
-      subsection interface sharpening
+      subsection projection-based interface sharpening
         set threshold           = 0.5
         set interface sharpness = 1.5
       end
