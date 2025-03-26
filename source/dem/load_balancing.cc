@@ -16,7 +16,7 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::LagrangianLoadBalancing()
 
 template <int dim, typename PropertiesIndex>
 inline void
-LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_once()
+LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_once() const
 {
   if (simulation_control->get_step_number() == load_balance_step)
     DEMActionManager::get_action_manager()->load_balance_step();
@@ -25,6 +25,7 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_once()
 template <int dim, typename PropertiesIndex>
 inline void
 LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_frequent()
+  const
 {
   if ((simulation_control->get_step_number() % load_balance_frequency) == 0)
     DEMActionManager::get_action_manager()->load_balance_step();
@@ -70,7 +71,14 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
           if (cell->is_locally_owned())
             {
               // Apply the cell weight
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+              Point<dim> cell_barycenter = cell->center();
+              load_weight +=
+                static_cast<int>(cell_weight_function->value(cell_barycenter));
+#else
               load_weight += cell_weight;
+#endif
+
 
               // Get the mobility status of the cell and the number of particles
               const unsigned int cell_mobility_status =
