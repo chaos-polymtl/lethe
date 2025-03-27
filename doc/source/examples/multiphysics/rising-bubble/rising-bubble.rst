@@ -12,7 +12,7 @@ Features
 - Solver: ``lethe-fluid`` 
 - Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
-- Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
+- Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Post-processing of a fluid barycentric coordinate and velocity
 
 
@@ -61,7 +61,7 @@ Time integration is handled by a 1st order backward differentiation scheme (``bd
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
+      set method           = bdf2
       set time end         = 3
       set time step        = 0.001
       set adapt            = true

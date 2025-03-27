@@ -304,16 +304,19 @@ bool
 SimulationControlTransient::is_output_iteration()
 {
   // If iteration control the only options are to not print or at certain
-  // frequency of iterations for the time interval given
+  // frequency of iterations for the time interval given. In this mode, we also
+  // always output the last iteration in the simulation.
   if (output_control == Parameters::SimulationControl::OutputControl::iteration)
     {
       if (output_iteration_frequency == 0)
         return false;
       else
         {
-          // Check if the current step number matches the output frequency and
-          // the time interval
-          return (get_step_number() % output_iteration_frequency == 0 &&
+          // Check if the current step number matches the following condition:
+          // (The step number matches the output frequency OR is the last
+          // tiem-step) AND the current time is within the output time interval
+          return ((get_step_number() % output_iteration_frequency == 0 ||
+                   is_at_end()) &&
                   get_current_time() >= output_time_interval[0] &&
                   get_current_time() <= output_time_interval[1]);
         }

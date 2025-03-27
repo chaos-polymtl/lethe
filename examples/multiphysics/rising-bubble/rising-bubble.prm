@@ -11,11 +11,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
+  set method           = bdf2
   set time end         = 3
   set time step        = 0.001
   set adapt            = true
-  set max cfl          = 0.8
+  set max cfl          = 0.80
   set output name      = rising-bubble
   set output frequency = 20
   set output path      = ./output/
