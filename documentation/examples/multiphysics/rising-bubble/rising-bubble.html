@@ -442,7 +442,7 @@
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
-<li><p>Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force</p></li>
+<li><p>Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, projection-based interface sharpening, and surface tension force</p></li>
 <li><p>Calculation of filtered phase fraction gradient and curvature fields</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
 <li><p>Post-processing of a fluid barycentric coordinate and velocity</p></li>
@@ -494,7 +494,7 @@ end
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enables to turn on (<code class="docutils literal notranslate"><span class="pre">true</span></code>)
-and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">VOF</span></code> is chosen. The <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code>, <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code>, and <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">force</span></code> are enabled in the VOF subsection.</p>
+and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">VOF</span></code> is chosen.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
   set VOF = true
 end
@@ -514,14 +514,16 @@ end
 </section>
 <section id="vof">
 <h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, three features are enabled : the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code>, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> and the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">force</span></code>.</p>
-<p>The interface sharpening method and its parameters are explained in the <a class="reference internal" href="../dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example. The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction. We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for more explanation on the phase filtration. Finally, the surface tension force computation is explained in the <a class="reference internal" href="../static-bubble/static-bubble.html"><span class="doc">Static Bubble</span></a> example.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, two features are enabled : the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> and the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">force</span></code>. The <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> method is selected as the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> and its parameters are defined in the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>.</p>
+<p>The projection-based interface sharpening method and its parameters are explained in the <a class="reference internal" href="../dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example. The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction. We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for more explanation on the phase filtration. Finally, the surface tension force computation is explained in the <a class="reference internal" href="../static-bubble/static-bubble.html"><span class="doc">Static Bubble</span></a> example.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 1.5
-    set frequency           = 50
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 50
+    subsection projection-based interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 1.5
+    end
   end
 
   subsection phase filtration

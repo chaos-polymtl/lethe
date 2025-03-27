@@ -447,7 +447,7 @@
 <li><p>Periodic boundary condition</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
 <li><p>Monitoring mass conservation</p></li>
-<li><p>Interface sharpening</p></li>
+<li><p>Projection-based interface sharpening</p></li>
 </ul>
 </section>
 <hr class="docutils" />
@@ -455,8 +455,8 @@
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/rayleigh-taylor-instability</span></code>).</p>
 <ul class="simple">
-<li><p>Parameter file for adaptive sharpening: <code class="docutils literal notranslate"><span class="pre">rayleigh-taylor-instability-adaptive-sharpening.prm</span></code></p></li>
-<li><p>Parameter file for constant sharpening: <code class="docutils literal notranslate"><span class="pre">rayleigh-taylor-instability-constant-sharpening.prm</span></code></p></li>
+<li><p>Parameter file for adaptive projection-based interface sharpening: <code class="docutils literal notranslate"><span class="pre">rayleigh-taylor-instability-adaptive-sharpening.prm</span></code></p></li>
+<li><p>Parameter file for constant projection-based interface sharpening: <code class="docutils literal notranslate"><span class="pre">rayleigh-taylor-instability-constant-sharpening.prm</span></code></p></li>
 <li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">rayleigh-taylor_postprocess.py</span></code></p></li>
 </ul>
 </section>
@@ -637,15 +637,17 @@ end
 </section>
 <section id="vof">
 <h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, we enable <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code> to reconstruct the interface and keep it sharp during the simulation. Note that here, we use the <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">adaptive</span></code> methods for interface sharpening. Mass conservation results show that choosing a <code class="docutils literal notranslate"><span class="pre">constant</span></code> method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the <code class="docutils literal notranslate"><span class="pre">constant</span></code> sharpening we use:</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, we select the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> method in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> subsection to reconstruct the interface and keep it sharp during the simulation. Note that in the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> subsection, we use the <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">adaptive</span></code> types for interface sharpening methods. Mass conservation results show that choosing a <code class="docutils literal notranslate"><span class="pre">constant</span></code> method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the <code class="docutils literal notranslate"><span class="pre">constant</span></code> sharpening, we use:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 1.5
-    set frequency           = 25
-    set type                = constant
-  end
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 25
+    subsection projection-based interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 1.5
+      set type                = constant
+    end
+ end
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
@@ -654,18 +656,20 @@ end
 end
 </pre></div>
 </div>
-<p>and for the <code class="docutils literal notranslate"><span class="pre">adaptive</span></code> sharpening:</p>
+<p>and for the <code class="docutils literal notranslate"><span class="pre">adaptive</span></code> projection-based interface sharpening:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
-  subsection interface sharpening
-    set enable                  = true
-    set threshold               = 0.5
-    set interface sharpness     = 1.5
-    set frequency               = 25
-    set type                    = adaptive
-    set threshold max deviation = 0.2
-    set max iterations          = 50
-    set monitored fluid         = fluid 1
-    set tolerance               = 1e-2
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 25
+    subsection projection-based interface sharpening
+      set threshold               = 0.5
+      set interface sharpness     = 1.5
+      set type                    = adaptive
+      set threshold max deviation = 0.2
+      set max iterations          = 50
+      set monitored fluid         = fluid 1
+      set tolerance               = 1e-2
+    end
   end
   subsection phase filtration
     set type  = tanh
@@ -745,7 +749,7 @@ run in parallel using mpirun. On <span class="math notranslate nohighlight">\(8\
 </tbody>
 </table>
 </div>
-<p>The following figures show the mass of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> throughout the simulation with a constant (left) and adaptive (right) interface sharpening.</p>
+<p>The following figures show the mass of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> throughout the simulation with a constant (left) and adaptive (right) projection-based interface sharpenings.</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>

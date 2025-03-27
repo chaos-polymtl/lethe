@@ -140,55 +140,54 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        ((p_simulation_parameters.multiphysics.vof_parameters</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            .surface_tension_force.verbosity != <a class="code hl_namespace" href="namespaceParameters.html">Parameters</a>::Verbosity::quiet) ||</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>         (p_simulation_parameters.multiphysics.vof_parameters</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            .<a class="code hl_enumvalue" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">algebraic_interface_reinitialization</a>.verbosity !=</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>          <a class="code hl_namespace" href="namespaceParameters.html">Parameters</a>::Verbosity::quiet)) ?</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>          <a class="code hl_namespace" href="namespaceParameters.html">Parameters</a>::Verbosity::verbose :</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>          <a class="code hl_namespace" href="namespaceParameters.html">Parameters</a>::Verbosity::quiet,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        p_pcout,</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        p_triangulation,</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        p_multiphysics_interface,</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        p_subequations_interface)</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">if</span> (this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#ad7f4363eb60e91f2d194d9cf4925a20c">simulation_parameters</a>.mesh.simplex)</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>      {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="comment">// For simplex meshes</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keyword">const</span> FE_SimplexP&lt;dim&gt; subequation_fe(</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>          this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#ad7f4363eb60e91f2d194d9cf4925a20c">simulation_parameters</a>.fem_parameters.VOF_order);</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>      = std::make_shared&lt;FESystem&lt;dim&gt;&gt;(subequation_fe, dim);</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#abe02ee2c03dec1e548848683c03b23d9">mapping</a> = std::make_shared&lt;MappingFE&lt;dim&gt;&gt;(*this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>);</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a88398180194bca84ae48191701345022">cell_quadrature</a> =</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>          std::make_shared&lt;QGaussSimplex&lt;dim&gt;&gt;(this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>-&gt;degree + 1);</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>      }</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>      {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="comment">// Usual case, for quad/hex meshes</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="keyword">const</span> FE_Q&lt;dim&gt; subequation_fe(</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>          this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#ad7f4363eb60e91f2d194d9cf4925a20c">simulation_parameters</a>.fem_parameters.VOF_order);</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>      = std::make_shared&lt;FESystem&lt;dim&gt;&gt;(subequation_fe, dim);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#abe02ee2c03dec1e548848683c03b23d9">mapping</a> = std::make_shared&lt;MappingQ&lt;dim&gt;&gt;(this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>-&gt;degree);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a88398180194bca84ae48191701345022">cell_quadrature</a> =</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>          std::make_shared&lt;QGauss&lt;dim&gt;&gt;(this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>-&gt;degree + 1);</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>      }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            .regularization_method.verbosity != <a class="code hl_namespace" href="namespaceParameters.html">Parameters</a>::Verbosity::quiet)) ?</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>          <a class="code hl_namespace" href="namespaceParameters.html">Parameters</a>::Verbosity::verbose :</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>          <a class="code hl_namespace" href="namespaceParameters.html">Parameters</a>::Verbosity::quiet,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        p_pcout,</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        p_triangulation,</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        p_multiphysics_interface,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        p_subequations_interface)</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  {</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordflow">if</span> (this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#ad7f4363eb60e91f2d194d9cf4925a20c">simulation_parameters</a>.mesh.simplex)</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>      {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="comment">// For simplex meshes</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keyword">const</span> FE_SimplexP&lt;dim&gt; subequation_fe(</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>          this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#ad7f4363eb60e91f2d194d9cf4925a20c">simulation_parameters</a>.fem_parameters.VOF_order);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>      = std::make_shared&lt;FESystem&lt;dim&gt;&gt;(subequation_fe, dim);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#abe02ee2c03dec1e548848683c03b23d9">mapping</a> = std::make_shared&lt;MappingFE&lt;dim&gt;&gt;(*this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a88398180194bca84ae48191701345022">cell_quadrature</a> =</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>          std::make_shared&lt;QGaussSimplex&lt;dim&gt;&gt;(this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>-&gt;degree + 1);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>      }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>      {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="comment">// Usual case, for quad/hex meshes</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keyword">const</span> FE_Q&lt;dim&gt; subequation_fe(</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>          this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#ad7f4363eb60e91f2d194d9cf4925a20c">simulation_parameters</a>.fem_parameters.VOF_order);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>      = std::make_shared&lt;FESystem&lt;dim&gt;&gt;(subequation_fe, dim);</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#abe02ee2c03dec1e548848683c03b23d9">mapping</a> = std::make_shared&lt;MappingQ&lt;dim&gt;&gt;(this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>-&gt;degree);</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a88398180194bca84ae48191701345022">cell_quadrature</a> =</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>          std::make_shared&lt;QGauss&lt;dim&gt;&gt;(this-&gt;<a class="code hl_variable" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a>-&gt;degree + 1);</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>      }</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  }</div>
 </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment"></span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="comment">   * @brief Default destructor.</span></div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="classVOFPhaseGradientProjection.html#ae6e208b8a35a5facf3737926dc37309c">   84</a></span>  <a class="code hl_function" href="classVOFPhaseGradientProjection.html#ae6e208b8a35a5facf3737926dc37309c">~VOFPhaseGradientProjection</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="comment">   * @brief Assemble system matrix and right-hand side (rhs).</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  <a class="code hl_function" href="classVOFPhaseGradientProjection.html#aeca66d04d63a22cdd12eaca8ef26429d">assemble_system_matrix_and_rhs</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>};</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment"></span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment">   * @brief Default destructor.</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="classVOFPhaseGradientProjection.html#ae6e208b8a35a5facf3737926dc37309c">   83</a></span>  <a class="code hl_function" href="classVOFPhaseGradientProjection.html#ae6e208b8a35a5facf3737926dc37309c">~VOFPhaseGradientProjection</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="comment">   * @brief Assemble system matrix and right-hand side (rhs).</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  <a class="code hl_function" href="classVOFPhaseGradientProjection.html#aeca66d04d63a22cdd12eaca8ef26429d">assemble_system_matrix_and_rhs</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>};</div>
 </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html"><div class="ttname"><a href="classMultiphysicsInterface.html">MultiphysicsInterface</a></div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00036">multiphysics_interface.h:37</a></div></div>
 <div class="ttc" id="aclassSimulationParameters_html"><div class="ttname"><a href="classSimulationParameters.html">SimulationParameters</a></div><div class="ttdef"><b>Definition</b> <a href="simulation__parameters_8h_source.html#l00023">simulation_parameters.h:24</a></div></div>
 <div class="ttc" id="aclassVOFLinearSubequationsSolver_html"><div class="ttname"><a href="classVOFLinearSubequationsSolver.html">VOFLinearSubequationsSolver</a></div><div class="ttdoc">Generalized solver for VOF linear subequations.</div><div class="ttdef"><b>Definition</b> <a href="vof__linear__subequations__solver_8h_source.html#l00034">vof_linear_subequations_solver.h:35</a></div></div>
@@ -204,7 +203,6 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceParameters_html"><div class="ttname"><a href="namespaceParameters.html">Parameters</a></div><div class="ttdef"><b>Definition</b> <a href="ale_8h_source.html#l00015">ale.h:16</a></div></div>
 <div class="ttc" id="avof__linear__subequations__solver_8h_html"><div class="ttname"><a href="vof__linear__subequations__solver_8h.html">vof_linear_subequations_solver.h</a></div></div>
 <div class="ttc" id="avof__subequations_8h_html_a24bad343f5052b85d1cc3dbd877b3a12"><div class="ttname"><a href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a></div><div class="ttdeci">VOFSubequationsID</div><div class="ttdoc">IDs associated to the different subequations solved in Lethe.</div><div class="ttdef"><b>Definition</b> <a href="vof__subequations_8h_source.html#l00010">vof_subequations.h:11</a></div></div>
-<div class="ttc" id="avof__subequations_8h_html_a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd"><div class="ttname"><a href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">VOFSubequationsID::algebraic_interface_reinitialization</a></div><div class="ttdeci">@ algebraic_interface_reinitialization</div><div class="ttdoc">VOF algebraic interface reinitialization.</div></div>
 <div class="ttc" id="avof__subequations_8h_html_a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b"><div class="ttname"><a href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">VOFSubequationsID::phase_gradient_projection</a></div><div class="ttdeci">@ phase_gradient_projection</div><div class="ttdoc">VOF phase fraction gradient L2 projection.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

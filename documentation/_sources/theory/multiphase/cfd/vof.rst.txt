@@ -106,18 +106,18 @@ The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where th
 
 To avoid a non-linear finite element formulation, the phase gradient of the previous time step :math:`(\phi^h_\mathrm{old})` is used.
 
-Interface Diffusion and Sharpening
------------------------------------
+Interface Diffusion and Regularization
+--------------------------------------
 
 The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
-Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: interface sharpening, algebraic interface reinitialization and interface filtration.
+Thus, we use regularization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, algebraic interface reinitialization and interface filtration.
 
-""""""""""""""""""""""""""""""""
-Interface Sharpening
-""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""
+Projection-Based Interface Sharpening
+""""""""""""""""""""""""""""""""""""""
 
-The current interface sharpening method consists of two steps:
+The current projection-based interface sharpening method consists of two steps:
 
 
 1. Phase fraction limiter
@@ -129,7 +129,7 @@ The current interface sharpening method consists of two steps:
 The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
 
 
-2. Interface sharpening
+2. Interface sharpening using a projection
 
 .. math::
 
@@ -140,7 +140,7 @@ The phase fraction limiter above will update the phase fraction if it failed to 
     \end{cases}
 
 where :math:`c` denotes the sharpening threshold, which defines
-a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) [#aliabadi2000]_.
+a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This projection-based interface sharpening method was proposed by Aliabadi and Tezduyar (2000) [#aliabadi2000]_.
 
 
 """"""""""""""""""""""""""""""""""""""""

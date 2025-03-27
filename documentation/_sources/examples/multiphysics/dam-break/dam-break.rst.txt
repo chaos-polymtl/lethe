@@ -11,7 +11,7 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid``  (with Q1-Q1)
-- Two phase flow handled by the Volume of fluids (VOF) approach with interface sharpening
+- Two phase flow handled by the Volume of fluids (VOF) approach with projection-based interface sharpening
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
 
@@ -97,16 +97,19 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 VOF
 ~~~
 
-If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
+
+To prevent the interface between phases from becoming blurry due to diffusion, the interface ``projection-based interface sharpening`` method is selected in the ``interface regularization method`` subsection. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
 
 .. code-block:: text
 
     subsection VOF
-      subsection interface sharpening
-        set enable              = true
-        set threshold           = 0.5
-        set interface sharpness = 1.5
-        set frequency           = 20
+      subsection interface regularization method
+        set type      = projection-based interface sharpening
+        set frequency = 20
+        subsection projection-based interface sharpening
+          set threshold           = 0.5
+          set interface sharpness = 1.5
+        end
       end
       subsection phase filtration
         set type            = tanh

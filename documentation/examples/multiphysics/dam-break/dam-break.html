@@ -443,7 +443,7 @@
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code>  (with Q1-Q1)</p></li>
-<li><p>Two phase flow handled by the Volume of fluids (VOF) approach with interface sharpening</p></li>
+<li><p>Two phase flow handled by the Volume of fluids (VOF) approach with projection-based interface sharpening</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF1 time-stepping scheme</p></li>
 <li><p>The use of a python script for post-processing data</p></li>
 </ul>
@@ -519,13 +519,15 @@ end
 </section>
 <section id="vof">
 <h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>If the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code> is not enabled in <a class="reference internal" href="../../../parameters/cfd/volume_of_fluid.html"><span class="doc">VOF</span></a> subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> is enabled in this example. We refer the reader to the <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> documentation for more explanation on both methods.</p>
+<p>To prevent the interface between phases from becoming blurry due to diffusion, the interface <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> method is selected in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> subsection. Furthermore, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> is enabled in this example. We refer the reader to the <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> documentation for more explanation on both methods.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 1.5
-    set frequency           = 20
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 20
+    subsection projection-based interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 1.5
+    end
   end
   subsection phase filtration
     set type            = tanh

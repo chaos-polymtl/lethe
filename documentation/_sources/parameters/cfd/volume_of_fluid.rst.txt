@@ -20,34 +20,34 @@ The default values of the VOF parameters are given in the text box below.
     set viscous dissipative fluid = fluid 1
     set diffusivity               = 0
     set compressible              = false
+    
+    subsection interface regularization method
+      set type       = none
+      set frequency  = 10
+      set verbosity  = quiet
+      
+      subsection projection-based interface sharpening
+        set interface sharpness     = 2
+        set type                    = constant
 
-    subsection interface sharpening
-      set enable                  = false
-      set verbosity               = quiet
-      set frequency               = 10
-      set interface sharpness     = 2
-      set type                    = constant
+        # parameter for constant projection-based interface sharpening
+        set threshold               = 0.5
 
-      # parameter for constant sharpening
-      set threshold               = 0.5
+        # parameters for adaptive projection-based interface sharpening
+        set threshold max deviation = 0.20
+        set max iterations          = 20
+        set tolerance               = 1e-6
+        set monitored fluid         = fluid 1
+      end
 
-      # parameters for adaptive sharpening
-      set threshold max deviation = 0.20
-      set max iterations          = 20
-      set tolerance               = 1e-6
-      set monitored fluid         = fluid 1
-    end
-
-    subsection algebraic interface reinitialization
-      set enable                        = false
-      set output reinitialization steps = false
-      set frequency                     = 1
-      set steady-state criterion        = 1e-2
-      set max steps number              = 5
-      set diffusivity multiplier        = 1.0
-      set diffusivity power             = 1.0
-      set reinitialization CFL          = 1.0
-      set verbosity                     = quiet
+      subsection algebraic interface reinitialization
+        set output reinitialization steps = false
+        set steady-state criterion        = 1e-2
+        set max steps number              = 5
+        set diffusivity multiplier        = 1.0
+        set diffusivity power             = 1.0
+        set reinitialization CFL          = 1.0
+      end
     end
 
     subsection phase filtration
@@ -79,110 +79,106 @@ The default values of the VOF parameters are given in the text box below.
 * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. 
 * ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the VOF equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
 
+Interface Regularization Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Interface Sharpening
-~~~~~~~~~~~~~~~~~~~~~
+The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step. 
 
-* ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is referred to the Interface sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this sharpening method.
+* ``type``: sets the method of regularization. There are three methods available:``none``, ``projection-based interface sharpening`` and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
+* ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
 
-  * ``enable``: controls if interface sharpening is enabled.
-  * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).  
-  * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
-  * ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
+* ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
 
-  * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
+  * ``quiet``: default verbosity level; no information on the process is displayed.
 
-    * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interface is located.
-    * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached, or if the number of search steps reaches the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
+    .. warning::
+      The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends also on the verbosity level of the non-linear and linear solvers. If they are set to ``verbose``, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.
 
-    .. admonition:: Example of a warning message if sharpening is adaptive but the mass conservation tolerance is not reached:
+  * ``verbose``: displays regularization steps progression. For the ``algebraic interface reinitialization``, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
-      .. code-block:: text
-
-        WARNING: Maximum number of iterations (5) reached in the
-        adaptive sharpening threshold algorithm, remaining error
-        on mass conservation is: 0.02
-        Consider increasing the sharpening threshold range or the
-        number of iterations to reach the mass conservation tolerance.
-
-    .. tip::
-
-      Usually the first iterations with sharpening are the most at risk to reach the ``max iterations`` without the ``tolerance`` being met, particularly if the mesh is quite coarse.
-
-      As most of the other iterations converge in only one step (corresponding to a final threshold of :math:`0.5`), increasing the sharpening search range through a higher ``threshold max deviation`` will relax the condition on the first iterations with a limited impact on the computational cost.
-      
-  * ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid 1`` (default) or ``fluid 0``.
+  * ``extra verbose``: for the ``projection-based interface sharpening``, indicates the details of the linear iterations. For the ``algebraic interface reinitialization``, in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
   
-  * ``tolerance``: Value of the tolerance on the mass conservation of the monitored fluid.
-  
-    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
+Projection-Based Interface Sharpening
++++++++++++++++++++++++++++++++++++++
 
-  .. seealso::
+The ``type = projection-based interface sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this regularization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
 
-    The :doc:`../../examples/multiphysics/dam-break/dam-break` example discussed the interface sharperning mechanism.
+* ``interface sharpness``: sharpness of the moving interface, denoted :math:`\alpha` in the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` and :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_ paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
+* ``type``: defines the projection-based interface sharpening type, either ``constant`` or ``adaptive``
 
+  * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interface is located.
+  * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached, or if the number of search steps reaches the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
 
+  .. admonition:: Example of a warning message if the sharpening is adaptive but the mass conservation tolerance is not reached:
+
+    .. code-block:: text
+
+      WARNING: Maximum number of iterations (5) reached in the
+      adaptive sharpening threshold algorithm, remaining error
+      on mass conservation is: 0.02
+      Consider increasing the sharpening threshold range or the
+      number of iterations to reach the mass conservation tolerance.
+
+  .. tip::
+
+    Usually the first iterations with sharpening are the most at risk to reach the ``max iterations`` without the ``tolerance`` being met, particularly if the mesh is quite coarse.
+
+    As most of the other iterations converge in only one step (corresponding to a final threshold of :math:`0.5`), increasing the sharpening search range through a higher ``threshold max deviation`` will relax the condition on the first iterations with a limited impact on the computational cost.
+    
+* ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid 1`` (default) or ``fluid 0``.
+
+* ``tolerance``: Value of the tolerance on the mass conservation of the monitored fluid.
+
+  For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
+
+.. seealso::
+
+  The :doc:`../../examples/multiphysics/dam-break/dam-break` example discussed the interface sharperning mechanism.
 
 Algebraic Interface Reinitialization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+++++++++++++++++++++++++++++++++++++
 
-* ``subsection algebraic interface reinitialization``: defines parameters used to reinitialize the interface in VOF simulations. Alike the interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method.
+The ``type = algebraic`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in VOF simulations. 
 
-  * ``enable``: enable the algebraic interface reinitialization.
+* ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
-  * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
+  Outputted quantities of interest are:
+    * Reinitialized phase fraction scalar-field (``reinit_phase_fraction``);
+    * VOF phase fraction scalar-field (``vof_phase_fraction``);
+    * VOF projected phase gradient vector-field (``vof_phase_gradient``) and;
+    * VOF projected curvature scalar-field (``vof_curvature``).
 
-    Outputted quantities of interest are:
-      * Reinitialized phase fraction scalar-field (``reinit_phase_fraction``);
-      * VOF phase fraction scalar-field (``vof_phase_fraction``);
-      * VOF projected phase gradient vector-field (``vof_phase_gradient``) and;
-      * VOF projected curvature scalar-field (``vof_curvature``).
+  .. tip::
+    This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.
 
-    .. tip::
-      This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.
+The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
 
-  * ``frequency``: indicates the frequency at which the algebraic interface reinitialization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be reinitialization once every :math:`2` time-steps.
-
-  The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
-
-  * ``steady-state criterion``: one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance to the reaching of steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
-
-    .. math::
-     \alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau} \rVert_2}{\Delta \tau}
-
-
-    where :math:`\tau` is the pseudo-time used to solve the reinitialization PDE and :math:`\Delta \tau` is the associated pseudo-time-step.
-
-  * ``max steps number``: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.
-
-  The algebraic interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient :math:`(\varepsilon)` given by:
+* ``steady-state criterion``: one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance for reaching steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
 
   .. math::
-    \varepsilon = C h_\text{min}^d
+   \alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau} \rVert_2}{\Delta \tau}
 
-  * ``diffusivity multiplier``: factor :math:`(C)` multiplying the smallest cell-size value :math:`(h_\text{min})` in the evaluation of the diffusion coefficient of the PDE.
 
-  * ``diffusivity power``: power :math:`(d)` to which the smallest cell-size value :math:`(h_\text{min})` is elevated in the evaluation of the diffusion coefficient of the PDE.
+  where :math:`\tau` is the pseudo-time used to solve the reinitialization PDE and :math:`\Delta \tau` is the associated pseudo-time-step.
 
-  * ``reinitialization CFL``: CFL condition of the interface reinitialization process. This is used to evaluate the pseudo-time-step :math:`(\Delta\tau)`.
+* ``max steps number``: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.
 
-    .. math::
-      \Delta \tau = C_\text{CFL} \, h_\text{min}
+The algebraic interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient :math:`(\varepsilon)` given by:
 
-    where :math:`C_\text{CFL}` is the imposed CFL condition and :math:`h_\text{min}` is the size of the smallest cell.
+.. math::
+  \varepsilon = C h_\text{min}^d
 
-  * ``verbosity``: displays the solution process of the algebraic interface reinitialization. The different level of verbosity are:
+* ``diffusivity multiplier``: factor :math:`(C)` multiplying the smallest cell-size value :math:`(h_\text{min})` in the evaluation of the diffusion coefficient of the PDE.
 
-    * ``quiet``: default verbosity level; no information on the algebraic interface reinitialization process is displayed.
+* ``diffusivity power``: power :math:`(d)` to which the smallest cell-size value :math:`(h_\text{min})` is elevated in the evaluation of the diffusion coefficient of the PDE.
 
-      .. warning::
-        As the verbosity of the algebraic interface reinitialization depends on the verbosity of the non-linear and linear solvers, some console outputs may remain if they are set to ``verbose``.
+* ``reinitialization CFL``: CFL condition of the interface reinitialization process. This is used to evaluate the pseudo-time-step :math:`(\Delta\tau)`.
 
-    * ``verbose``: displays reinitialization steps progression. Only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
+  .. math::
+    \Delta \tau = C_\text{CFL} \, h_\text{min}
 
-    * ``extra verbose``: in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
-
+  where :math:`C_\text{CFL}` is the imposed CFL condition and :math:`h_\text{min}` is the size of the smallest cell.
 
 Phase Filtration
 ~~~~~~~~~~~~~~~~~~

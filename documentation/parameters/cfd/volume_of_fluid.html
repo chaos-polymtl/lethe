@@ -450,33 +450,33 @@
   set diffusivity               = 0
   set compressible              = false
 
-  subsection interface sharpening
-    set enable                  = false
-    set verbosity               = quiet
-    set frequency               = 10
-    set interface sharpness     = 2
-    set type                    = constant
+  subsection interface regularization method
+    set type       = none
+    set frequency  = 10
+    set verbosity  = quiet
 
-    # parameter for constant sharpening
-    set threshold               = 0.5
+    subsection projection-based interface sharpening
+      set interface sharpness     = 2
+      set type                    = constant
 
-    # parameters for adaptive sharpening
-    set threshold max deviation = 0.20
-    set max iterations          = 20
-    set tolerance               = 1e-6
-    set monitored fluid         = fluid 1
-  end
+      # parameter for constant projection-based interface sharpening
+      set threshold               = 0.5
 
-  subsection algebraic interface reinitialization
-    set enable                        = false
-    set output reinitialization steps = false
-    set frequency                     = 1
-    set steady-state criterion        = 1e-2
-    set max steps number              = 5
-    set diffusivity multiplier        = 1.0
-    set diffusivity power             = 1.0
-    set reinitialization CFL          = 1.0
-    set verbosity                     = quiet
+      # parameters for adaptive projection-based interface sharpening
+      set threshold max deviation = 0.20
+      set max iterations          = 20
+      set tolerance               = 1e-6
+      set monitored fluid         = fluid 1
+    end
+
+    subsection algebraic interface reinitialization
+      set output reinitialization steps = false
+      set steady-state criterion        = 1e-2
+      set max steps number              = 5
+      set diffusivity multiplier        = 1.0
+      set diffusivity power             = 1.0
+      set reinitialization CFL          = 1.0
+    end
   end
 
   subsection phase filtration
@@ -510,22 +510,37 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">diffusivity</span></code>: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is <code class="docutils literal notranslate"><span class="pre">0</span></code> to have pure advection.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">compressible</span></code>: enables interface compression (<span class="math notranslate nohighlight">\(\phi \nabla \cdot \mathbf{u}\)</span>) in the VOF equation.  This term should be kept to its default value of <code class="docutils literal notranslate"><span class="pre">false</span></code> except when compressible equations of state are used.</p></li>
 </ul>
-<section id="interface-sharpening">
-<h2>Interface Sharpening<a class="headerlink" href="#interface-sharpening" title="Link to this heading">#</a></h2>
+<section id="interface-regularization-method">
+<h2>Interface Regularization Method<a class="headerlink" href="#interface-regularization-method" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is referred to the Interface sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for additional details on this sharpening method.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: sets the method of regularization. There are three methods available:<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> and <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. If <code class="docutils literal notranslate"><span class="pre">none</span></code> is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be regularized once every <span class="math notranslate nohighlight">\(2\)</span> time-steps.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: displays the solution process of the regularization method. The different levels of verbosity are:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">enable</span></code>: controls if interface sharpening is enabled.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> option in <a class="reference internal" href="linear_solver_control.html"><span class="doc">Linear Solver</span></a>. Choices are: <code class="docutils literal notranslate"><span class="pre">quiet</span></code> (default, no output), <code class="docutils literal notranslate"><span class="pre">verbose</span></code> (indicates sharpening steps) and <code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code> (details of the linear iterations).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: sets the frequency (in number of iterations) for the interface sharpening computation.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpness</span></code>: sharpness of the moving interface (parameter <span class="math notranslate nohighlight">\(a\)</span> in the <a class="reference external" href="https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows">interface sharpening model</a>). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: defines the interface sharpening type, either <code class="docutils literal notranslate"><span class="pre">constant</span></code> or <code class="docutils literal notranslate"><span class="pre">adaptive</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">quiet</span></code>: default verbosity level; no information on the process is displayed.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The verbosity of the algebraic interface reinitialization (<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">algebraic</span></code>) depends also on the verbosity level of the non-linear and linear solvers. If they are set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>: displays regularization steps progression. For the <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code>: for the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, indicates the details of the linear iterations. For the <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, in addition to what is displayed at the <code class="docutils literal notranslate"><span class="pre">verbose</span></code> level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.</p></li>
+</ul>
+</li>
+</ul>
+<section id="projection-based-interface-sharpening">
+<h3>Projection-Based Interface Sharpening<a class="headerlink" href="#projection-based-interface-sharpening" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for additional details on this regularization method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> defines the relevant parameters.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpness</span></code>: sharpness of the moving interface, denoted <span class="math notranslate nohighlight">\(\alpha\)</span> in the Interface Sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> and <span class="math notranslate nohighlight">\(a\)</span> in the <a class="reference external" href="https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows">interface sharpening model</a> paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: defines the projection-based interface sharpening type, either <code class="docutils literal notranslate"><span class="pre">constant</span></code> or <code class="docutils literal notranslate"><span class="pre">adaptive</span></code></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">constant</span></code>: the sharpening <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is the same throughout the simulation. This <code class="docutils literal notranslate"><span class="pre">threshold</span></code>, between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">0.5</span></code> by default), corresponds to the phase fraction at which the interface is located.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">adaptive</span></code>: the sharpening threshold is searched in the range <span class="math notranslate nohighlight">\(\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]\)</span>, with <span class="math notranslate nohighlight">\(c_\text{dev}\)</span> the <code class="docutils literal notranslate"><span class="pre">threshold</span> <span class="pre">max</span> <span class="pre">deviation</span></code> (<code class="docutils literal notranslate"><span class="pre">0.2</span></code> by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> is reached, or if the number of search steps reaches the number of <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iterations</span></code>. If the <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> is not reached, a warning message will be printed.</p></li>
 </ul>
-<div class="admonition-example-of-a-warning-message-if-sharpening-is-adaptive-but-the-mass-conservation-tolerance-is-not-reached admonition">
-<p class="admonition-title">Example of a warning message if sharpening is adaptive but the mass conservation tolerance is not reached:</p>
+<div class="admonition-example-of-a-warning-message-if-the-sharpening-is-adaptive-but-the-mass-conservation-tolerance-is-not-reached admonition">
+<p class="admonition-title">Example of a warning message if the sharpening is adaptive but the mass conservation tolerance is not reached:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>WARNING: Maximum number of iterations (5) reached in the
 adaptive sharpening threshold algorithm, remaining error
 on mass conservation is: 0.02
@@ -549,15 +564,11 @@ number of iterations to reach the mass conservation tolerance.
 <p class="admonition-title">See also</p>
 <p>The <a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example discussed the interface sharperning mechanism.</p>
 </div>
-</li>
-</ul>
 </section>
 <section id="algebraic-interface-reinitialization">
-<h2>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h2>
+<h3>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">algebraic</span></code> corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the <em>Algebraic Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> defines parameters used to reinitialize the interface in VOF simulations.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>: defines parameters used to reinitialize the interface in VOF simulations. Alike the interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply.  The reader is referred to the <em>Algebraic Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method.</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">enable</span></code>: enable the algebraic interface reinitialization.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">reinitialization</span> <span class="pre">steps</span></code>: when set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named <code class="docutils literal notranslate"><span class="pre">algebraic-reinitialization-steps-output</span></code> located inside the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">path</span></code> directory specified in the <a class="reference internal" href="simulation_control.html"><span class="doc">simulation control</span></a> subsection.</p>
 <dl class="simple">
 <dt>Outputted quantities of interest are:</dt><dd><ul class="simple">
@@ -573,11 +584,10 @@ number of iterations to reach the mass conservation tolerance.
 <p>This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.</p>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the algebraic interface reinitialization process is applied to the VOF phase fraction field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be reinitialization once every <span class="math notranslate nohighlight">\(2\)</span> time-steps.</p></li>
 </ul>
 <p>The interface reinitialization process ends either when steady-state (<code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>) is reached or when an imposed maximum number of steps (<code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">steps</span> <span class="pre">number</span></code>) is reached.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>: one of the two stop criteria of the interface reinitialization process. This parameter <span class="math notranslate nohighlight">\((\alpha_\text{ss})\)</span> acts as a tolerance to the reaching of steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>: one of the two stop criteria of the interface reinitialization process. This parameter <span class="math notranslate nohighlight">\((\alpha_\text{ss})\)</span> acts as a tolerance for reaching steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau} \rVert_2}{\Delta \tau}\]</div>
@@ -601,21 +611,8 @@ number of iterations to reach the mass conservation tolerance.
 </div>
 <p>where <span class="math notranslate nohighlight">\(C_\text{CFL}\)</span> is the imposed CFL condition and <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is the size of the smallest cell.</p>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: displays the solution process of the algebraic interface reinitialization. The different level of verbosity are:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">quiet</span></code>: default verbosity level; no information on the algebraic interface reinitialization process is displayed.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>As the verbosity of the algebraic interface reinitialization depends on the verbosity of the non-linear and linear solvers, some console outputs may remain if they are set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>: displays reinitialization steps progression. Only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code>: in addition to what is displayed at the <code class="docutils literal notranslate"><span class="pre">verbose</span></code> level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.</p></li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
+</section>
 </section>
 <section id="phase-filtration">
 <h2>Phase Filtration<a class="headerlink" href="#phase-filtration" title="Link to this heading">#</a></h2>
@@ -741,8 +738,11 @@ number of iterations to reach the mass conservation tolerance.
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Volume of Fluid (Multiphase Flow)</a><ul>
-<li><a class="reference internal" href="#interface-sharpening">Interface Sharpening</a></li>
+<li><a class="reference internal" href="#interface-regularization-method">Interface Regularization Method</a><ul>
+<li><a class="reference internal" href="#projection-based-interface-sharpening">Projection-Based Interface Sharpening</a></li>
 <li><a class="reference internal" href="#algebraic-interface-reinitialization">Algebraic Interface Reinitialization</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#phase-filtration">Phase Filtration</a></li>
 <li><a class="reference internal" href="#surface-tension-force">Surface Tension Force</a><ul>
 <li><a class="reference internal" href="#choosing-values-for-the-surface-tension-force-filters">Choosing Values for the Surface Tension Force Filters</a></li>

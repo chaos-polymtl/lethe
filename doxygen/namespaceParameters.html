@@ -213,6 +213,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VOF__PhaseFilter.html">VOF_PhaseFilter</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VOF__RegularizationMethod.html">VOF_RegularizationMethod</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VOF__SurfaceTensionForce.html">VOF_SurfaceTensionForce</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1VoidFractionParameters.html">VoidFractionParameters</a></td></tr>
@@ -230,6 +232,12 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1af6cb3e816496528d4187db53bc66567f">both</a>
  }</td></tr>
 <tr class="separator:a978815f8cf26f3c77304639e1786aec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3676562bd2a976771578fd7497ea338a" id="r_a3676562bd2a976771578fd7497ea338a"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a3676562bd2a976771578fd7497ea338a">RegularizationMethodType</a> { <a class="el" href="namespaceParameters.html#a3676562bd2a976771578fd7497ea338aa334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="namespaceParameters.html#a3676562bd2a976771578fd7497ea338aa4fbfd3d5262f90798bc383f9920a9ac7">sharpening</a>
+, <a class="el" href="namespaceParameters.html#a3676562bd2a976771578fd7497ea338aac7f6ad568392380a8f4b4cecbaccb64c">algebraic</a>
+, <a class="el" href="namespaceParameters.html#a3676562bd2a976771578fd7497ea338aa65a383f3960a0cb2b8b0ace54817d575">geometric</a>
+ }</td></tr>
+<tr class="separator:a3676562bd2a976771578fd7497ea338a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afaf982762668ab166df8919c45a58ee1" id="r_afaf982762668ab166df8919c45a58ee1"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#afaf982762668ab166df8919c45a58ee1">SharpeningType</a> { <a class="el" href="namespaceParameters.html#afaf982762668ab166df8919c45a58ee1a617ac08757d38a5a7ed91c224f0e90a0">constant</a>
 , <a class="el" href="namespaceParameters.html#afaf982762668ab166df8919c45a58ee1a8cb043b2dace9afc0680e6bae5cd316f">adaptive</a>
  }</td></tr>
@@ -352,7 +360,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ae03f477a858859a4711ef40159b5912aa3c78b35502b2693fefdfc51cba3a53a5" name="ae03f477a858859a4711ef40159b5912aa3c78b35502b2693fefdfc51cba3a53a5"></a>manual&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00049">49</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00064">64</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -384,7 +392,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00058">58</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00073">73</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -419,7 +427,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a35f23be89bc6cc4d28f9c1b10519e9b8a5c0dbba3a6ee4ac0eb26cfee75ccb8b4" name="a35f23be89bc6cc4d28f9c1b10519e9b8a5c0dbba3a6ee4ac0eb26cfee75ccb8b4"></a>tanh&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00042">42</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00057">57</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -491,6 +499,44 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a3676562bd2a976771578fd7497ea338a" name="a3676562bd2a976771578fd7497ea338a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3676562bd2a976771578fd7497ea338a">&#9670;&#160;</a></span>RegularizationMethodType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="namespaceParameters.html#a3676562bd2a976771578fd7497ea338a">Parameters::RegularizationMethodType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Different interface regularization method types: </p>
+<ul>
+<li>none</li>
+<li>sharpening: projection-based interface sharpening</li>
+<li>algebraic: PDE-based reinitialization</li>
+<li>geometric: geometric redistanciation </li>
+</ul>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3676562bd2a976771578fd7497ea338aa334c4a4c42fdb79d7ebc3e73b517e6f8" name="a3676562bd2a976771578fd7497ea338aa334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a3676562bd2a976771578fd7497ea338aa4fbfd3d5262f90798bc383f9920a9ac7" name="a3676562bd2a976771578fd7497ea338aa4fbfd3d5262f90798bc383f9920a9ac7"></a>sharpening&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a3676562bd2a976771578fd7497ea338aac7f6ad568392380a8f4b4cecbaccb64c" name="a3676562bd2a976771578fd7497ea338aac7f6ad568392380a8f4b4cecbaccb64c"></a>algebraic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a3676562bd2a976771578fd7497ea338aa65a383f3960a0cb2b8b0ace54817d575" name="a3676562bd2a976771578fd7497ea338aa65a383f3960a0cb2b8b0ace54817d575"></a>geometric&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00029">29</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+
+</div>
+</div>
 <a id="afaf982762668ab166df8919c45a58ee1" name="afaf982762668ab166df8919c45a58ee1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afaf982762668ab166df8919c45a58ee1">&#9670;&#160;</a></span>SharpeningType</h2>
 
@@ -511,7 +557,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Different sharpening types: </p>
+<p>Different projection-based interface sharpening types: </p>
 <ul>
 <li>constant: the sharpening threshold is the same throughout the simulation,</li>
 <li>adaptive: the sharpening threshold is determined by binary search, to ensure mass conservation of the monitored phase </li>
@@ -521,7 +567,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="afaf982762668ab166df8919c45a58ee1a8cb043b2dace9afc0680e6bae5cd316f" name="afaf982762668ab166df8919c45a58ee1a8cb043b2dace9afc0680e6bae5cd316f"></a>adaptive&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00029">29</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00044">44</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>

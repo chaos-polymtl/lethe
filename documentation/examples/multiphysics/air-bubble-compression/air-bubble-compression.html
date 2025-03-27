@@ -512,22 +512,24 @@ end
 </section>
 <section id="vof">
 <h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, the <code class="docutils literal notranslate"><span class="pre">compressible</span></code>, the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code>, and the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> features are enabled.
+<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, the <code class="docutils literal notranslate"><span class="pre">compressible</span></code> and the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> features are enabled.
 The enabled <code class="docutils literal notranslate"><span class="pre">compressible</span></code> parameter allows interface compression by adding the term <span class="math notranslate nohighlight">\(\phi (\nabla \cdot \mathbf{u})\)</span> to the VOF equation.
-The <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code> method and its parameters are explained in the <a class="reference internal" href="../dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example.
 The <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for further explanation on <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code>.</p>
+We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for further explanation on <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> method is selected as the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> and its parameters, defined in the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, are explained in the <a class="reference internal" href="../dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
   set compressible = true
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 2.2
-    set frequency           = 8
-  end
   subsection phase filtration
-    set type      = tanh
-    set beta      = 10
+    set type = tanh
+    set beta = 10
+  end
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 8
+    subsection projection-based interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 2.2
+    end
   end
 end
 </pre></div>

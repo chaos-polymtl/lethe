@@ -14,7 +14,7 @@ var searchData=
   ['gc_5fmultigrid_5fpreconditioner_11',['gc_multigrid_preconditioner',['../classMFNavierStokesPreconditionGMG.html#a1c4b86fdb23e12bcf0581eeefed1addf',1,'MFNavierStokesPreconditionGMG']]],
   ['gc_5fmultigrid_5fpreconditioner_5fintermediate_12',['gc_multigrid_preconditioner_intermediate',['../classMFNavierStokesPreconditionGMG.html#a20bf9c1895c16e3fe66184aabfa1e59a',1,'MFNavierStokesPreconditionGMG']]],
   ['gen_13',['gen',['../classNormalDistribution.html#aa5dce1f2f07dcc009cd5942b50ecd474',1,'NormalDistribution::gen'],['../classCustomDistribution.html#a5d849699f8136a27020a24abe129b883',1,'CustomDistribution::gen']]],
-  ['geometric_5finterface_5freinitialization_14',['geometric_interface_reinitialization',['../structParameters_1_1VOF.html#ac0aa9e87d9034b35d8b3976c426c83d8',1,'Parameters::VOF']]],
+  ['geometric_5finterface_5freinitialization_14',['geometric_interface_reinitialization',['../structParameters_1_1VOF__RegularizationMethod.html#a0f5be5a8bf29b0aa32e4b78fda167aa4',1,'Parameters::VOF_RegularizationMethod']]],
   ['get_5fav_15',['get_av',['../classAverageVelocities.html#adb2efe0c26d5fd0cdb707b87bbf4c73c',1,'AverageVelocities']]],
   ['get_5frns_16',['get_rns',['../classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66',1,'AverageVelocities']]],
   ['get_5frss_17',['get_rss',['../classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e',1,'AverageVelocities']]],

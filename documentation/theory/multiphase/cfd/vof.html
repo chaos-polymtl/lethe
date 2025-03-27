@@ -527,13 +527,13 @@
 <p>The term <span class="math notranslate nohighlight">\(v_\mathrm{DCDD}\)</span> ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface <span class="math notranslate nohighlight">\(\Gamma\)</span> is in motion. The term <span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{DCDD}\)</span> adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.</p>
 <p>To avoid a non-linear finite element formulation, the phase gradient of the previous time step <span class="math notranslate nohighlight">\((\phi^h_\mathrm{old})\)</span> is used.</p>
 </section>
-<section id="interface-diffusion-and-sharpening">
-<h2>Interface Diffusion and Sharpening<a class="headerlink" href="#interface-diffusion-and-sharpening" title="Link to this heading">#</a></h2>
+<section id="interface-diffusion-and-regularization">
+<h2>Interface Diffusion and Regularization<a class="headerlink" href="#interface-diffusion-and-regularization" title="Link to this heading">#</a></h2>
 <p>The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from <span class="math notranslate nohighlight">\(\phi = 0\)</span> to <span class="math notranslate nohighlight">\(1\)</span> occurs on a larger distance.</p>
-<p>Thus, we use sharpening methods to keep the change in <span class="math notranslate nohighlight">\(\phi\)</span> sharp at the interface. Three methods are currently available: interface sharpening, algebraic interface reinitialization and interface filtration.</p>
-<section id="interface-sharpening">
-<h3>Interface Sharpening<a class="headerlink" href="#interface-sharpening" title="Link to this heading">#</a></h3>
-<p>The current interface sharpening method consists of two steps:</p>
+<p>Thus, we use regularization methods to keep the change in <span class="math notranslate nohighlight">\(\phi\)</span> sharp at the interface. Three methods are currently available: projection-based interface sharpening, algebraic interface reinitialization and interface filtration.</p>
+<section id="projection-based-interface-sharpening">
+<h3>Projection-Based Interface Sharpening<a class="headerlink" href="#projection-based-interface-sharpening" title="Link to this heading">#</a></h3>
+<p>The current projection-based interface sharpening method consists of two steps:</p>
 <ol class="arabic simple">
 <li><p>Phase fraction limiter</p></li>
 </ol>
@@ -543,7 +543,7 @@
 </div>
 <p>The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.</p>
 <ol class="arabic simple" start="2">
-<li><p>Interface sharpening</p></li>
+<li><p>Interface sharpening using a projection</p></li>
 </ol>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -554,7 +554,7 @@ c^{1-\alpha} \phi^{\alpha} &amp;  (0 \leq \phi &lt; c  ) \\
 \end{cases}\end{split}\]</div>
 </div>
 <p>where <span class="math notranslate nohighlight">\(c\)</span> denotes the sharpening threshold, which defines
-a phase fraction threshold (generally <span class="math notranslate nohighlight">\(0.5\)</span>), and <span class="math notranslate nohighlight">\(\alpha\)</span> corresponds to the interface sharpness, which is a model parameter generally in the range of <span class="math notranslate nohighlight">\((1,2]\)</span>. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) <a class="footnote-reference brackets" href="#aliabadi2000" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
+a phase fraction threshold (generally <span class="math notranslate nohighlight">\(0.5\)</span>), and <span class="math notranslate nohighlight">\(\alpha\)</span> corresponds to the interface sharpness, which is a model parameter generally in the range of <span class="math notranslate nohighlight">\((1,2]\)</span>. This projection-based interface sharpening method was proposed by Aliabadi and Tezduyar (2000) <a class="footnote-reference brackets" href="#aliabadi2000" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="algebraic-interface-reinitialization">
 <h3>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h3>
@@ -772,8 +772,8 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <li><a class="reference internal" href="#">The Volume of Fluid (VOF) Method</a><ul>
 <li><a class="reference internal" href="#finite-element-formulation">Finite Element Formulation</a></li>
 <li><a class="reference internal" href="#stabilization">Stabilization</a></li>
-<li><a class="reference internal" href="#interface-diffusion-and-sharpening">Interface Diffusion and Sharpening</a><ul>
-<li><a class="reference internal" href="#interface-sharpening">Interface Sharpening</a></li>
+<li><a class="reference internal" href="#interface-diffusion-and-regularization">Interface Diffusion and Regularization</a><ul>
+<li><a class="reference internal" href="#projection-based-interface-sharpening">Projection-Based Interface Sharpening</a></li>
 <li><a class="reference internal" href="#algebraic-interface-reinitialization">Algebraic Interface Reinitialization</a></li>
 <li><a class="reference internal" href="#interface-filtration">Interface Filtration</a></li>
 </ul>
