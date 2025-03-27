@@ -103,7 +103,7 @@ test()
 
   // Calling temperature integrator until time_final with dt_2 time step
   time = 0;
-  while (time < time_final)
+  while (time <= time_final)
     {
       heat_transfer[0] = -particle_properties[PropertiesIndex::T];
       integrate_temperature<dim, PropertiesIndex>(particle_handler,
