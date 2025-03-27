@@ -19,7 +19,7 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
 {
   if ((p_simulation_parameters.multiphysics.vof_parameters.surface_tension_force
          .enable) ||
-      (p_simulation_parameters.multiphysics.vof_parameters
+      (p_simulation_parameters.multiphysics.vof_parameters.regularization_method
          .algebraic_interface_reinitialization.enable))
     {
       // Phase gradient projection
@@ -44,7 +44,7 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
           this);
 
       if (p_simulation_parameters.multiphysics.vof_parameters
-            .algebraic_interface_reinitialization.enable)
+            .regularization_method.algebraic_interface_reinitialization.enable)
         {
           // Algebraic interface reinitialization
           this->active_subequations.push_back(

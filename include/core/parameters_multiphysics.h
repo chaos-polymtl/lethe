@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -20,7 +20,22 @@ using namespace dealii;
 namespace Parameters
 {
   /**
-   * @brief Different sharpening types:
+   * @brief Different interface regularization method types:
+   *  - none
+   *  - sharpening: projection-based interface sharpening
+   *  - algebraic: PDE-based reinitialization
+   *  - geometric: geometric redistanciation
+   */
+  enum class RegularizationMethodType
+  {
+    none,
+    sharpening,
+    algebraic,
+    geometric
+  };
+
+  /**
+   * @brief Different projection-based interface sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
    *  - adaptive: the sharpening threshold is determined by binary search, to
@@ -94,7 +109,7 @@ namespace Parameters
     // explained in the dam break VOF example:
     // https://chaos-polymtl.github.io/lethe/examples/multiphysics/dam-break-VOF/dam-break-VOF.html
 
-    bool enable;
+    bool enable = false;
 
     Parameters::SharpeningType type;
 
@@ -107,10 +122,6 @@ namespace Parameters
 
     // Other sharpening parameters
     double interface_sharpness;
-    int    frequency;
-
-    // Type of verbosity for the interface sharpening calculation
-    Parameters::Verbosity verbosity;
 
     bool monitoring;
 
@@ -178,7 +189,7 @@ namespace Parameters
   struct VOF_AlgebraicInterfaceReinitialization
   {
     /// Enables/Disables the algebraic interface reinitialization.
-    bool enable;
+    bool enable = false;
     /**
      * Enables/Disables @p pvtu format outputs of the algebraic interface
      * reinitialization steps of the last simulated time-step.
@@ -188,9 +199,6 @@ namespace Parameters
      * subsection.
      * */
     bool output_reinitialization_steps;
-    /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
-    /// fraction field will be reinitialized
-    int reinitialization_frequency;
     /// Constant multiplying the mesh-size in the evaluation of the diffusion
     /// coefficient.
     double diffusivity_multiplier;
@@ -203,8 +211,6 @@ namespace Parameters
     double steady_state_criterion;
     /// Maximum number of reinitialization steps.
     double max_steps_number;
-    /// Type of verbosity of the algebraic interface reinitialization solver.
-    Parameters::Verbosity verbosity;
 
     /**
      * @brief Declare the parameters.
@@ -230,18 +236,59 @@ namespace Parameters
   struct VOF_GeometricInterfaceReinitialization
   {
     /// Enables/Disables the geometric interface reinitialization.
-    bool enable;
+    bool enable = false;
     /// Enables/Disables the output of the signed distance field
     bool output_signed_distance;
-    /// Reinitialization frequency at every \f$x\f$ time-steps the VOF phase
-    /// fraction field will be reinitialized
-    int reinitialization_frequency;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Parameters for interface regularization methods
+   * used within the VOF solver. It stores the parameters for the three
+   * available methods (projection-, algebraic-, and geometric based
+   * regularization).
+   */
+  struct VOF_RegularizationMethod
+  {
+    /// Regularization method type
+    Parameters::RegularizationMethodType regularization_method_type;
+
+    /// Regularization frequency at every \f$x\f$ time-steps the VOF phase
+    /// fraction field will be regularized
+    int frequency;
+
     /// Type of verbosity of the algebraic interface reinitialization solver.
     Parameters::Verbosity verbosity;
+
+    /// Interface sharpening parameters
+    Parameters::VOF_InterfaceSharpening sharpening;
+
+    /// Algebraic interface reinitialization parameters
+    Parameters::VOF_AlgebraicInterfaceReinitialization
+      algebraic_interface_reinitialization;
+
+    /// Geometric interface reinitialization parameters
+    Parameters::VOF_GeometricInterfaceReinitialization
+      geometric_interface_reinitialization;
 
     /**
      * @brief Declare the parameters.
@@ -267,13 +314,9 @@ namespace Parameters
    */
   struct VOF
   {
-    Parameters::VOF_InterfaceSharpening sharpening;
-    Parameters::VOF_SurfaceTensionForce surface_tension_force;
-    Parameters::VOF_PhaseFilter         phase_filter;
-    Parameters::VOF_AlgebraicInterfaceReinitialization
-      algebraic_interface_reinitialization;
-    Parameters::VOF_GeometricInterfaceReinitialization
-      geometric_interface_reinitialization;
+    Parameters::VOF_SurfaceTensionForce  surface_tension_force;
+    Parameters::VOF_PhaseFilter          phase_filter;
+    Parameters::VOF_RegularizationMethod regularization_method;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 

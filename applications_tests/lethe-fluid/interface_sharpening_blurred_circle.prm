@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -26,11 +26,13 @@ subsection multiphysics
 end
 
 subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 3
-    set frequency           = 2
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 2
+    subsection projection-based interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 3
+    end
   end
 end
 

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -35,11 +35,13 @@ end
 
 subsection VOF
   set compressible = true
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 1.8
-    set frequency           = 25
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 25
+    subsection projection-based interface sharpening
+      set threshold           = 0.5
+      set interface sharpness = 1.8
+    end
   end
   subsection phase filtration
     set type = tanh

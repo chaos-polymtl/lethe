@@ -73,7 +73,7 @@ public:
     , triangulation(p_triangulation)
     , dof_handler(*this->triangulation)
     , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
-                              .algebraic_interface_reinitialization.verbosity)
+                              .regularization_method.verbosity)
   {
     if (this->simulation_parameters.mesh.simplex)
       {
@@ -233,10 +233,12 @@ private:
   {
     const double multiplier =
       this->simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.diffusivity_multiplier;
+        .regularization_method.algebraic_interface_reinitialization
+        .diffusivity_multiplier;
     const double power =
       this->simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.diffusivity_power;
+        .regularization_method.algebraic_interface_reinitialization
+        .diffusivity_power;
     return multiplier * std::pow(min_cell_size, power);
   }
 
@@ -252,7 +254,8 @@ private:
     // Get CFL value
     const double cfl =
       this->simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization.reinitialization_cfl;
+        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_cfl;
 
     // Get the minimum cell size
     const double h_min =
@@ -326,7 +329,8 @@ private:
       {
         return (step_number <
                 this->simulation_parameters.multiphysics.vof_parameters
-                    .algebraic_interface_reinitialization.max_steps_number +
+                    .regularization_method.algebraic_interface_reinitialization
+                    .max_steps_number +
                   1);
       }
     else
@@ -334,7 +338,8 @@ private:
         // Get the stop criterion of the pseudo-time-stepping scheme
         double steady_state_criterion =
           this->simulation_parameters.multiphysics.vof_parameters
-            .algebraic_interface_reinitialization.steady_state_criterion;
+            .regularization_method.algebraic_interface_reinitialization
+            .steady_state_criterion;
 
         // Evaluate the solution difference between the 2 last solutions
         auto solution_diff = local_evaluation_point;
@@ -359,7 +364,8 @@ private:
         return ((stop_criterion > steady_state_criterion) &&
                 (step_number <
                  this->simulation_parameters.multiphysics.vof_parameters
-                     .algebraic_interface_reinitialization.max_steps_number +
+                     .regularization_method.algebraic_interface_reinitialization
+                     .max_steps_number +
                    1));
       }
   }

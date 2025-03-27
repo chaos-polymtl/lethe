@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -216,17 +216,19 @@ subsection VOF
     set verbosity = quiet
     set beta      = 20
   end
-  subsection interface sharpening
-    set enable                  = true
-    set threshold               = 0.5
-    set interface sharpness     = 1.5
-    set frequency               = 10
-    set type                    = adaptive
-    set threshold max deviation = 0.4
-    set max iterations          = 50
-    set monitored fluid         = fluid 1
-    set tolerance               = 1e-7
-    set verbosity               = quiet
+  subsection interface regularization method
+    set type      = projection-based interface sharpening
+    set frequency = 10
+    set verbosity = quiet
+    subsection projection-based interface sharpening
+      set threshold               = 0.5
+      set interface sharpness     = 1.5
+      set type                    = adaptive
+      set threshold max deviation = 0.4
+      set max iterations          = 50
+      set monitored fluid         = fluid 1
+      set tolerance               = 1e-7
+    end
   end
   subsection surface tension force
     set enable                                   = true
