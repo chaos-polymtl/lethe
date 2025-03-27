@@ -36,13 +36,13 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
 template void
 integrate_temperature<2, DEM::DEMMPProperties::PropertiesIndex>(
   Particles::ParticleHandler<2> &particle_handler,
-  const double                     dt,
-  std::vector<double>             &heat_transfer,
-  std::vector<double>             &heat_source);
+  const double                   dt,
+  std::vector<double>           &heat_transfer,
+  std::vector<double>           &heat_source);
 
 template void
 integrate_temperature<3, DEM::DEMMPProperties::PropertiesIndex>(
   Particles::ParticleHandler<3> &particle_handler,
-  const double                     dt,
-  std::vector<double>             &heat_transfer,
-  std::vector<double>             &heat_source);
+  const double                   dt,
+  std::vector<double>           &heat_transfer,
+  std::vector<double>           &heat_source);
