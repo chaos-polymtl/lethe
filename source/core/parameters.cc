@@ -4129,8 +4129,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  Mortar::declare_parameters(ParameterHandler &prm)
+  Mortar<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("mortar");
     {
@@ -4150,22 +4151,30 @@ namespace Parameters
                         "2",
                         Patterns::Integer(),
                         "Stator boundary ID # of the mortar matching interface");
+      std::string default_entry_point = (dim == 2) ? "0., 0." : "0., 0., 0."; 
+      prm.declare_entry("center of rotation",
+                        default_entry_point,
+                        Patterns::List(Patterns::Double()),
+                        "Center of rotation coordinates of rotor domain");
     }
     prm.leave_subsection();
   };
 
+  template <int dim>
   void
-  Mortar::parse_parameters(ParameterHandler &prm)
+  Mortar<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("mortar");
     {
-      enable = prm.get_bool("enable");
+      this->enable = prm.get_bool("enable");
       
-      rotor_mesh->parse_parameters(prm);
+      this->rotor_mesh->parse_parameters(prm);
 
-      rotor_boundary_id = prm.get_integer("rotor boundary id");
+      this->rotor_boundary_id = prm.get_integer("rotor boundary id");
 
-      stator_boundary_id = prm.get_integer("stator boundary id");
+      this->stator_boundary_id = prm.get_integer("stator boundary id");
+      
+      this->center_of_rotation = value_string_to_tensor<dim>(prm.get("center of rotation"));
     }
     prm.leave_subsection();
   }
@@ -4177,5 +4186,7 @@ namespace Parameters
   template class IBParticles<3>;
   template struct ConstrainSolidDomain<2>;
   template struct ConstrainSolidDomain<3>;
+  template struct Mortar<2>;
+  template struct Mortar<3>;
 
 } // namespace Parameters
