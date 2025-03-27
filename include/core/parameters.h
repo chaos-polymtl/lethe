@@ -1788,13 +1788,16 @@ namespace Parameters
    * @param rotor_mesh Mesh parameters for the rotor part
    * @param rotor_boundary_id Boundary ID # of the rotor at the rotor-stator interface
    * @param stator_boundary_id Boundary ID # of the stator at the rotor-stator interface
+   * @param center_of_rotation Center of rotation of the rotor domain
    */
+  template <int dim>
   struct Mortar
   {
     bool enable;
     std::shared_ptr<Mesh> rotor_mesh;
     unsigned int rotor_boundary_id;
     unsigned int stator_boundary_id;
+    Point<dim> center_of_rotation;
     
     void
     declare_parameters(ParameterHandler &prm);

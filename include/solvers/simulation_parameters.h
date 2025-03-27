@@ -61,7 +61,7 @@ public:
   Parameters::ALE<dim>                          ale;
   Parameters::Evaporation                       evaporation;
   Parameters::TracerDriftVelocity<dim>          tracer_drift_velocity;
-  Parameters::Mortar                            mortar;
+  Parameters::Mortar<dim>                       mortar;
 
 
   PhysicalPropertiesManager physical_properties_manager;
