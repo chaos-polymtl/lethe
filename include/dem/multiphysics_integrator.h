@@ -14,21 +14,21 @@
 #include <dem/dem_solver_parameters.h>
 
 /**
- * @brief Implementation of an explicit euler scheme for the integration
+ * @brief Implementation of an explicit euler time-stepping scheme for the integration
  * of the particles' temperature.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  * @param particle_handler Storage of particles and their accessor functions.
- * @param dt DEM time step.
- * @param torque Torque acting on particles.
- * @param force Force acting on particles.
+ * @param[in] dt DEM time step.
+ * @param heat_transfer Particle-particle heat transfer.
+ * @param heat_source Additional heat source term.
  */
 template <int dim, typename PropertiesIndex>
 void
 integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
                       const double                     dt,
                       std::vector<double>             &heat_transfer,
-                      std::vector<double>             &heat_source);
+                      const std::vector<double>       &heat_source);
 
 #endif
