@@ -15,6 +15,7 @@ The mortar control section is used when simulating rotor-stator geometries, in w
     end
     set rotor boundary id    = 1
     set stator boundary id   = 2
+    set center of rotation   = 0, 0
   end
 
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
@@ -23,4 +24,6 @@ The mortar control section is used when simulating rotor-stator geometries, in w
   The initial number of cells at the rotor-stator interface has to be the same; the simulation will be aborted if that is not imposed. This restriction will be automatically constrained throughout the simulation if the mesh is refined.
  
 * The ``rotor boundary id`` and ``stator boundary id`` refer to the boundary index at the rotor-stator interface.
+
+* The ``center of rotation`` defines the coordinates for the prescribed rotation at the rotor domain.
 
