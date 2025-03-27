@@ -21,8 +21,8 @@
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  * @param particle_handler Storage of particles and their accessor functions.
  * @param[in] dt DEM time step.
- * @param heat_transfer Particle-particle heat transfer.
- * @param heat_source Additional heat source term.
+ * @param[in,out] heat_transfer Particle-particle heat transfer.
+ * @param[in] heat_source Additional heat source term.
  */
 template <int dim, typename PropertiesIndex>
 void
