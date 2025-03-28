@@ -85,7 +85,6 @@ main(int argc, char *argv[])
           prm.parse_input(file_name);
           dem_parameters.parse(prm);
 
-
           // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
