@@ -3,7 +3,6 @@
 
 #include "fem-dem/fluid_dynamics_vans_matrix_free.h"
 
-#include <core/revision.h>
 #include <core/utilities.h>
 
 #include <deal.II/base/revision.h>
@@ -15,58 +14,47 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-      if (argc == 1)
+      ConditionalOStream pcout(
+        std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
+
+      auto [options, args] = parse_args(argc, argv);
+
+      // Print version information
+      if (options["-V"])
         {
-          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-          std::exit(1);
+          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_version_info(pcout);
+
+          return EXIT_SUCCESS;
         }
 
+      if (args.empty())
+        {
+          pcout << "Usage: " << argv[0] << " input_file" << std::endl;
+          return EXIT_FAILURE;
+        }
 
-      const std::string file_name(argv[argc - 1]);
-      const bool        print_parameters =
-        (argc == 2) ? false : (std::string(argv[1]) == "--print-parameters");
+      const std::string file_name(args[0]);
 
       const unsigned int                  dim = get_dimension(file_name);
       const Parameters::SizeOfSubsections size_of_subsections =
         Parameters::get_size_of_subsections(file_name);
-
-      ConditionalOStream pcout(std::cout,
-                               (Utilities::MPI::this_mpi_process(
-                                  MPI_COMM_WORLD) == 0) &&
-                                 print_parameters);
-
-      if (print_parameters)
-        {
-          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
-          pcout << "  - deal.II (branch: " << DEAL_II_GIT_BRANCH
-                << "; revision: " << DEAL_II_GIT_REVISION
-                << "; short: " << DEAL_II_GIT_SHORTREV << ")" << std::endl;
-          pcout << "  - Lethe (branch: " << LETHE_GIT_BRANCH
-                << "; revision: " << LETHE_GIT_REVISION
-                << "; short: " << LETHE_GIT_SHORTREV << ")" << std::endl;
-          pcout << std::endl;
-          pcout << std::endl;
-        }
 
       if (dim == 2)
         {
           ParameterHandler              prm;
           CFDDEMSimulationParameters<2> NSparam;
           NSparam.declare(prm, size_of_subsections);
+
           // Parsing of the file
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
-          if (pcout.is_active())
-            prm.print_parameters(pcout.get_stream(),
-                                 ParameterHandler::OutputStyle::PRM |
-                                   ParameterHandler::OutputStyle::Short |
-                                   ParameterHandler::KeepDeclarationOrder
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-                                   | ParameterHandler::KeepOnlyChanged
-#endif
-            );
-          pcout << std::endl << std::endl;
+          // Print parameters if needed
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_parameters_to_output_file(pcout, prm, file_name);
 
           FluidDynamicsVANSMatrixFree<2> problem(NSparam);
           problem.solve();
@@ -77,20 +65,14 @@ main(int argc, char *argv[])
           ParameterHandler              prm;
           CFDDEMSimulationParameters<3> NSparam;
           NSparam.declare(prm, size_of_subsections);
+
           // Parsing of the file
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
-          if (pcout.is_active())
-            prm.print_parameters(pcout.get_stream(),
-                                 ParameterHandler::OutputStyle::PRM |
-                                   ParameterHandler::OutputStyle::Short |
-                                   ParameterHandler::KeepDeclarationOrder
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-                                   | ParameterHandler::KeepOnlyChanged
-#endif
-            );
-          pcout << std::endl << std::endl;
+          // Print parameters if needed
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_parameters_to_output_file(pcout, prm, file_name);
 
           FluidDynamicsVANSMatrixFree<3> problem(NSparam);
           problem.solve();
