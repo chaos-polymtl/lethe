@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR Phase fraction gradient projection is computed with the filtered phase fraction gradient. However, before the starting the VOF algebraic interface reinitialization process, the filter was not applied leading to wrong values of filtered phase fraction gradient and therefore curvature. This is now fixed. [#1474](https://github.com/chaos-polymtl/lethe/pull/1474)
+- MINOR Phase fraction gradient projection is computed with the filtered phase fraction gradient. However, before the starting the VOF algebraic interface reinitialization process, the filter was not applied leading to wrong values of filtered phase fraction gradient and therefore curvature. This is now fixed. Also, in the calculate_momentum function of VOF postprocessing quantities, the FEValues of the fluid dynamics was initialized with the FE degree of the fluid dynamics physics instead of the VOF one leading to a vector size error when getting the function values. The quadrature formula has now been changed to the VOF one. [#1474](https://github.com/chaos-polymtl/lethe/pull/1474)
 
 ## [Master] - 2025-03-26
 
