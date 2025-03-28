@@ -5,8 +5,6 @@
 
 #include <core/utilities.h>
 
-#include <deal.II/base/revision.h>
-
 int
 main(int argc, char *argv[])
 {
