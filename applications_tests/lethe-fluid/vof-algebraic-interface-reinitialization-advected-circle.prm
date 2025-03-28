@@ -1,0 +1,176 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 15
+  set time step        = 1
+  set output name      = vof-algebraic-interface-reinitialization-advected-circle
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF            = true
+  set fluid dynamics = false
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -2, -2 : 2, 2 : false
+  set initial refinement = 6
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0.025; 0; 0
+  end
+  subsection VOF
+    set Function expression = if(((x*x+y*y)<=0.75^2), 1, 0)
+    subsection projection step
+      set enable           = true
+      set diffusion factor = 2
+    end
+  end
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection interface regularization method
+    set type      = algebraic interface reinitialization
+    set frequency = 1
+    subsection algebraic interface reinitialization
+      set diffusivity multiplier = 0.6
+      set diffusivity power      = 1
+      set max steps number       = 5
+      set reinitialization CFL   = 1
+    end
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 1
+    set density             = 10
+    set kinematic viscosity = 0.1
+  end
+  subsection fluid 0
+    set density             = 10
+    set kinematic viscosity = 0.1
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+end
+
+subsection boundary conditions VOF
+  set number = 1
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity            = verbose
+  set postprocessed fluid  = fluid 1
+  set calculate barycenter = true
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 1
+  set VOF order      = 1
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection VOF
+    set tolerance      = 1e-9
+    set max iterations = 30
+    set verbosity      = quiet
+  end
+  subsection VOF algebraic interface reinitialization
+    set tolerance      = 1e-9
+    set max iterations = 30
+    set verbosity      = quiet
+  end
+  subsection fluid dynamics
+    set tolerance      = 1e-9
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-10
+    set preconditioner    = ilu
+  end
+  subsection VOF
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-10
+    set preconditioner    = ilu
+  end
+  subsection VOF algebraic interface reinitialization
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-10
+    set preconditioner    = ilu
+  end
+end
