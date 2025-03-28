@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-28
+
+### Added
+
+- MINOR Added a functionality that allows to print the deal.II and Lethe versions when running an application via a '-V' flag. Also, a parameter that allows to print content of the input file to output is added. [#1475](https://github.com/chaos-polymtl/lethe/pull/1475)
+
 ## [Master] - 2025-03-26
 
 ### Changed
