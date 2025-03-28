@@ -691,13 +691,13 @@ private:
    * @brief Compute level-set field from the phase fraction field using a inverse tanh-based transformation.
    */
   void
-  compute_level_set_from_phase_fraction();
+  compute_level_set_from_phase_fraction(const GlobalVectorType &solution, GlobalVectorType &level_set_solution);
 
   /**
    * @brief Compute the phase fraction field from level-set field using a tanh-based transformation.
    */
   void
-  compute_phase_fraction_from_level_set();
+  compute_phase_fraction_from_level_set(const GlobalVectorType &level_set_solution, GlobalVectorType &phase_fraction_solution);
 
   /**
    * @brief Reinitialize the interface between fluids using the geometric
