@@ -2423,6 +2423,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
+  apply_phase_filter();
   this->subequations->solve_specific_subequation(
     VOFSubequationsID::phase_gradient_projection);
   this->subequations->solve_specific_subequation(
