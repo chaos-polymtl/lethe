@@ -14,14 +14,31 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
+      ConditionalOStream pcout(
+        std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
-      if (argc != 2)
+      auto [options, args] = parse_args(argc, argv);
+
+      // Print version information
+      if (options["-V"])
         {
-          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-          std::exit(1);
+          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_version_info(pcout);
+
+          return EXIT_SUCCESS;
         }
 
-      const unsigned int dim = get_dimension(argv[1]);
+      if (args.empty())
+        {
+          pcout << "Usage: " << argv[0] << " input_file" << std::endl;
+          return EXIT_FAILURE;
+        }
+
+      const std::string file_name(args[0]);
+
+      const unsigned int dim = get_dimension(file_name);
 
       if (dim == 2)
         {
@@ -30,8 +47,13 @@ main(int argc, char *argv[])
           dem_parameters.declare(prm);
 
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           dem_parameters.parse(prm);
+
+          // Print parameters if needed
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_parameters_to_output_file(pcout, prm, file_name);
+
           const DEM::SolverType solver_type =
             dem_parameters.model_parameters.solver_type;
 
@@ -60,8 +82,14 @@ main(int argc, char *argv[])
           dem_parameters.declare(prm);
 
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           dem_parameters.parse(prm);
+
+
+          // Print parameters if needed
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_parameters_to_output_file(pcout, prm, file_name);
+
           // const DEM::SolverType solver_type =
           // dem_parameters.model_parameters.solver_type;
           const DEM::SolverType solver_type = DEM::SolverType::dem;

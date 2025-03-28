@@ -3,6 +3,8 @@
 
 #include "solvers/fluid_dynamics_nitsche.h"
 
+#include <core/utilities.h>
+
 int
 main(int argc, char *argv[])
 {
@@ -10,25 +12,47 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-      if (argc != 2)
+      ConditionalOStream pcout(
+        std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
+
+      auto [options, args] = parse_args(argc, argv);
+
+      // Print version information
+      if (options["-V"])
         {
-          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-          std::exit(1);
+          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_version_info(pcout);
+
+          return EXIT_SUCCESS;
         }
 
-      const unsigned int                  dim = get_dimension(argv[1]);
-      const Parameters::SizeOfSubsections size_of_subsections =
-        Parameters::get_size_of_subsections(argv[1]);
+      if (args.empty())
+        {
+          pcout << "Usage: " << argv[0] << " input_file" << std::endl;
+          return EXIT_FAILURE;
+        }
 
+      const std::string file_name(args[0]);
+
+      const unsigned int                  dim = get_dimension(file_name);
+      const Parameters::SizeOfSubsections size_of_subsections =
+        Parameters::get_size_of_subsections(file_name);
 
       if (dim == 2)
         {
           ParameterHandler        prm;
           SimulationParameters<2> NSparam;
           NSparam.declare(prm, size_of_subsections);
+
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           NSparam.parse(prm);
+
+          // Print parameters if needed
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_parameters_to_output_file(pcout, prm, file_name);
 
           FluidDynamicsNitsche<2> problem_22(NSparam);
           problem_22.solve();
@@ -39,9 +63,14 @@ main(int argc, char *argv[])
           ParameterHandler        prm;
           SimulationParameters<3> NSparam;
           NSparam.declare(prm, size_of_subsections);
+
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           NSparam.parse(prm);
+
+          // Print parameters if needed
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_parameters_to_output_file(pcout, prm, file_name);
 
           FluidDynamicsNitsche<3> problem_33(NSparam);
           problem_33.solve();

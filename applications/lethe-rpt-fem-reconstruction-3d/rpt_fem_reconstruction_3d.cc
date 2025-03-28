@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2022, 2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/utilities.h>
+
 #include <rpt/rpt_calculating_parameters.h>
 #include <rpt/rpt_fem_reconstruction.h>
 
@@ -14,12 +16,6 @@ main(int argc, char *argv[])
 {
   try
     {
-      if (argc != 2)
-        {
-          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-          std::exit(1);
-        }
-
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       // Check the number of MPI processes
@@ -30,13 +26,41 @@ main(int argc, char *argv[])
         ExcMessage(
           "The rpt_fem_reconstruction_3d application can only run with 1 MPI process."));
 
+      ConditionalOStream pcout(
+        std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
+
+      auto [options, args] = parse_args(argc, argv);
+
+      // Print version information
+      if (options["-V"])
+        {
+          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            print_version_info(pcout);
+
+          return EXIT_SUCCESS;
+        }
+
+      if (args.empty())
+        {
+          pcout << "Usage: " << argv[0] << " input_file" << std::endl;
+          return EXIT_FAILURE;
+        }
+
+      const std::string file_name(args[0]);
+
       ParameterHandler         prm;
       RPTCalculatingParameters rpt_parameters;
       rpt_parameters.declare(prm);
 
       // Parsing of the file
-      prm.parse_input(argv[1]);
+      prm.parse_input(file_name);
       rpt_parameters.parse(prm);
+
+      // Print parameters if needed
+      if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+        print_parameters_to_output_file(pcout, prm, file_name);
 
       RPTFEMReconstruction<3> rpt_reconstruct(
         rpt_parameters.rpt_param,
