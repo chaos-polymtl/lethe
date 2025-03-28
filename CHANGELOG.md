@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-28
+
+### Fixed
+
+- MINOR Phase fraction gradient projection is computed with the filtered phase fraction gradient. However, before the starting the VOF algebraic interface reinitialization process, the filter was not applied leading wrong values of filtered phase fraction gradient and therefore curvature. This is now fixed. [#1474](https://github.com/chaos-polymtl/lethe/pull/1474)
+
 ## [Master] - 2025-03-26
 
 ### Changed
