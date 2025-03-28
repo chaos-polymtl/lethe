@@ -75,6 +75,12 @@ public:
                       Patterns::Integer(),
                       "Dimension of the problem");
 
+    prm.declare_entry("print parameters",
+                      "none",
+                      Patterns::Selection("none|only changed|all"),
+                      "Print all the parameters, or only"
+                      "the changed parameters or none");
+
     dimensionality.declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
     physical_properties.declare_parameters(prm);

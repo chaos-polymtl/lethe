@@ -144,7 +144,7 @@ endif()
 
 
 add_subdirectory(source)
-target_include_directories(lethe-solvers PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+target_include_directories(lethe-core PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_subdirectory(applications)
 
