@@ -638,10 +638,9 @@ VolumeOfFluid<dim>::calculate_momentum(
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  QGauss<dim>   quadrature_formula(dof_handler_fd->get_fe().degree + 1);
   FEValues<dim> fe_values_fd(*this->mapping,
                              dof_handler_fd->get_fe(),
-                             quadrature_formula,
+                             *this->cell_quadrature,
                              update_values);
 
   const FEValuesExtractors::Vector velocity(0);
@@ -2423,6 +2422,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
+  apply_phase_filter();
   this->subequations->solve_specific_subequation(
     VOFSubequationsID::phase_gradient_projection);
   this->subequations->solve_specific_subequation(
