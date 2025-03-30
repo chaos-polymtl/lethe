@@ -39,7 +39,7 @@ The incompressible Navier-Stokes equations with a Boussinesq approximation for t
 
 .. math::
   \nabla \cdot {\bf{u}} &= 0 \\
-  \rho \frac{\partial {\bf{u}}}{\partial t} + \rho ({\bf{u}} \cdot \nabla) {\bf{u}} &= -\nabla p + \nabla \cdot {\bf{\tau}} - \rho \beta {\bf{g}} (T - T_0)
+  \rho \frac{\partial {\bf{u}}}{\partial t} + \rho ({\bf{u}} \cdot \nabla) {\bf{u}} &= -\nabla p + \nabla \cdot {\bf{\tau}} + (1 - \beta (T - T_0))\rho {\bf{g}}
 
 where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a reference temperature, respectively.
 
