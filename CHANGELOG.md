@@ -3,6 +3,14 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-03-31
+
+### Added
+
+- MAJOR Added a new feature in the DEM solver. The base weight of a cell is now defined by a parsing function in the parameter file. This allows for cells to have a personalized weight depending on the position of their barycenter in space and time. This feature will be useful when dealing with problems requiring few load balancing steps, like the granuheap example, where the tangential overlap is important and needs to be fully tracked. [#1446](https://github.com/chaos-polymtl/lethe/pull/1446)
+
+- MINOR After a restart, the first time step is now automatically a load-balancing step, except if the load-balancing method used in "none".
+
 ## [Master] - 2025-03-28
 
 ### Fixed
