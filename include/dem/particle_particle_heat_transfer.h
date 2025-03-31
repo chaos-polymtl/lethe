@@ -24,7 +24,7 @@
  * particles.
  * @return Contact radius of the two particles.
  */
-inline double
+double
 calculate_corrected_contact_radius(const double effective_radius,
                                    const double effective_youngs_modulus,
                                    const double effective_real_youngs_modulus,
@@ -38,7 +38,7 @@ calculate_corrected_contact_radius(const double effective_radius,
  * @param[in] contact_radius Contact radius of the two particles.
  * @return Macrocontact thermal resistance between the two particles.
  */
-inline double
+double
 calculate_macrocontact_resistance(const double harmonic_particle_conductivity,
                                   const double contact_radius);
 
@@ -57,7 +57,7 @@ calculate_macrocontact_resistance(const double harmonic_particle_conductivity,
  * @param[in] maximum_pressure Maximum pressure for hertzian contacts.
  * @return Microcontact thermal resistance between the two particles.
  */
-inline double
+double
 calculate_microcontact_resistance(const double equivalent_surface_slope,
                                   const double equivalent_surface_roughness,
                                   const double effective_microhardness,
@@ -75,7 +75,7 @@ calculate_microcontact_resistance(const double equivalent_surface_slope,
  * @param[in] contact_radius Contact radius of the two particles.
  * @return Solid macrogap thermal resistance between the two particles.
  */
-inline double
+double
 calculate_solid_macrogap_resistance(const double radius_one,
                                     const double radius_two,
                                     const double thermal_conductivity_one,
@@ -88,7 +88,7 @@ calculate_solid_macrogap_resistance(const double radius_one,
  * @param[in] x Value to which apply the function.
  * @return erfc^-1(x)
  */
-inline double
+double
 erfc_inverse_approximation(const double x);
 
 /**
@@ -106,7 +106,7 @@ erfc_inverse_approximation(const double x);
  *
  * @return Interstitial gas microgap thermal resistance between the two particles.
  */
-inline double
+double
 calculate_interstitial_gas_microgap_resistance(
   const double equivalent_surface_roughness,
   const double contact_radius,
@@ -126,7 +126,7 @@ calculate_interstitial_gas_microgap_resistance(
  *
  * @return Interstitial gas microgap thermal resistance between the two particles.
  */
-inline double
+double
 calculate_interstitial_gas_macrogap_resistance(
   const double harmonic_radius,
   const double thermal_conductivity_gas,
@@ -159,7 +159,7 @@ calculate_interstitial_gas_macrogap_resistance(
  * @param[out] thermal_conductance Total thermal conductance between the two
  * particles.
  */
-inline void
+void
 calculate_contact_thermal_conductance(
   const double radius_one,
   const double radius_two,
@@ -189,7 +189,7 @@ calculate_contact_thermal_conductance(
  * applied to particle two.
  *
  */
-inline void
+void
 apply_heat_transfer_on_local_particles(const double temperature_one,
                                        const double temperature_two,
                                        const double thermal_conductance,
@@ -209,7 +209,7 @@ apply_heat_transfer_on_local_particles(const double temperature_one,
  * applied to particle one.
  *
  */
-inline void
+void
 apply_heat_transfer_on_single_local_particle(
   const double temperature_one,
   const double temperature_two,

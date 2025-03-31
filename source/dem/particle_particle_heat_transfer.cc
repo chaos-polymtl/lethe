@@ -3,7 +3,7 @@
 
 #include <dem/particle_particle_heat_transfer.h>
 
-inline double
+double
 calculate_corrected_contact_radius(const double effective_radius,
                                    const double effective_youngs_modulus,
                                    const double effective_real_youngs_modulus,
@@ -19,14 +19,14 @@ calculate_corrected_contact_radius(const double effective_radius,
              1.0 / 5.0);
 }
 
-inline double
+double
 calculate_macrocontact_resistance(const double harmonic_particle_conductivity,
                                   const double contact_radius)
 {
   return 1 / (2.0 * contact_radius * harmonic_particle_conductivity + DBL_MIN);
 }
 
-inline double
+double
 calculate_microcontact_resistance(const double equivalent_surface_slope,
                                   const double equivalent_surface_roughness,
                                   const double effective_microhardness,
@@ -41,7 +41,7 @@ calculate_microcontact_resistance(const double equivalent_surface_slope,
          pow(effective_microhardness / (maximum_pressure + DBL_MIN), 0.96);
 }
 
-inline double
+double
 calculate_solid_macrogap_resistance(const double radius_one,
                                     const double radius_two,
                                     const double thermal_conductivity_one,
@@ -63,7 +63,7 @@ calculate_solid_macrogap_resistance(const double radius_one,
   return resistance_one + resistance_two;
 }
 
-inline double
+double
 erfc_inverse_approximation(const double x)
 {
   if (x < 1e-9 || x > 1.9)
@@ -90,7 +90,7 @@ erfc_inverse_approximation(const double x)
   return NAN;
 }
 
-inline double
+double
 calculate_interstitial_gas_microgap_resistance(
   const double equivalent_surface_roughness,
   const double contact_radius,
@@ -120,7 +120,7 @@ calculate_interstitial_gas_microgap_resistance(
     }
 }
 
-inline double
+double
 calculate_interstitial_gas_macrogap_resistance(
   const double harmonic_radius,
   const double thermal_conductivity_gas,
@@ -135,7 +135,7 @@ calculate_interstitial_gas_macrogap_resistance(
   return 2.0 / (M_PI * thermal_conductivity_gas * (S * log(S / (S - A)) - A));
 }
 
-inline void
+void
 calculate_contact_thermal_conductance(
   const double radius_one,
   const double radius_two,
@@ -212,7 +212,7 @@ calculate_contact_thermal_conductance(
     1.0 / (resistance_solid_macrogap + resistance_gas_macrogap);
 }
 
-inline void
+void
 apply_heat_transfer_on_local_particles(const double temperature_one,
                                        const double temperature_two,
                                        const double thermal_conductance,
@@ -225,7 +225,7 @@ apply_heat_transfer_on_local_particles(const double temperature_one,
   particle_two_heat_transfer -= heat_transfer;
 }
 
-inline void
+void
 apply_heat_transfer_on_single_local_particle(const double temperature_one,
                                              const double temperature_two,
                                              const double thermal_conductance,
