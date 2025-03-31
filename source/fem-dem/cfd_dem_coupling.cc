@@ -195,16 +195,16 @@ std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
 CFDDEMSolver<dim>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
-  ModelParameters::IntegrationMethod integration_method =
+  typename ModelParameters<dim>::IntegrationMethod integration_method =
     dem_parameters.model_parameters.integration_method;
 
   switch (integration_method)
     {
-      case ModelParameters::IntegrationMethod::velocity_verlet:
+      case ModelParameters<dim>::IntegrationMethod::velocity_verlet:
         return std::make_shared<
           VelocityVerletIntegrator<dim,
                                    DEM::CFDDEMProperties::PropertiesIndex>>();
-      case ModelParameters::IntegrationMethod::explicit_euler:
+      case ModelParameters<dim>::IntegrationMethod::explicit_euler:
         return std::make_shared<
           ExplicitEulerIntegrator<dim,
                                   DEM::CFDDEMProperties::PropertiesIndex>>();
@@ -624,18 +624,18 @@ CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
 {
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
-  Parameters::Lagrangian::ModelParameters &model_parameters =
+  Parameters::Lagrangian::ModelParameters<dim> &model_parameters =
     dem_parameters.model_parameters;
 
   switch (model_parameters.contact_detection_method)
     {
-      case ModelParameters::ContactDetectionMethod::constant:
+      case ModelParameters<dim>::ContactDetectionMethod::constant:
         {
           if ((counter % model_parameters.contact_detection_frequency) == 0)
             dem_action_manager->contact_detection_step();
           break;
         }
-      case ModelParameters::ContactDetectionMethod::dynamic:
+      case ModelParameters<dim>::ContactDetectionMethod::dynamic:
         {
           double dt =
             this->simulation_control->get_time_step() /

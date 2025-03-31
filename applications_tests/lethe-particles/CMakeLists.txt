@@ -2,6 +2,16 @@ set(TEST_TARGET lethe-particles)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+file(COPY restart_cell_weight_function_files/restart_cell_weight_function_1.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_cell_weight_function.${_build_type}/mpirun=2/")
+
 file(COPY restart_circle_files/restart_circle.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_circle.${_build_type}/mpirun=1/")
 file(COPY restart_circle_files/restart_circle_0.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_circle.${_build_type}/mpirun=1/")
 file(COPY restart_circle_files/restart_circle_0.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_circle.${_build_type}/mpirun=1/")
