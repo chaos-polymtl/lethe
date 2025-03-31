@@ -85,8 +85,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = {{Poly_deg_u}}
-  set pressure order = {{Poly_deg_p}}
+  set velocity order = 1
+  set pressure order = 1
 end
 
 # --------------------------------------------------

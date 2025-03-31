@@ -2,7 +2,7 @@
 Method of Manufactured Solutions
 ===============================================================================
 
-This example illustrates the use of the Method of Manufactured Solutions (MMS) for the verification of a solver's accuracy. The equations solved are the two-dimensional steady incompressible Navier-Stokes (NS) equations.
+This example illustrates the use of the Method of Manufactured Solutions (MMS) to verify the order of accuracy of a solver. The equations solved are the two-dimensional steady incompressible Navier-Stokes (NS) equations.
 
 ----------------------------------
 Features
@@ -38,7 +38,7 @@ Numerical models requires both verification and validation. While code verificat
 Obviously, few exact analytical solution of the incompressible Navier-Stokes (NS) equations are known. Therefore, the following procedure is adopted:
 
 - The manufactured solution is chosen such that all terms of the NS equations are non-trivial and non-singular. In other terms, the manufactured solution must be at least twice differentiable, with both its first and second derivatives being non-trivial. The manufactured solution can vary in complexity.
-- Once the manufactured solution is defined, it is substituted into the steady incompressible NS equations, leading to the appearance of source terms. Hence, the manufactuerd solution is the exact solution of the original equations if the source term is added. 
+- Once the manufactured solution is defined, it is substituted into the steady incompressible NS equations, leading to the appearance of source terms. Hence, the manufactured solution is the exact solution of the original equations if the source term is added. 
 - The simulations are run at different mesh resolutions and for different degrees of the polynomial approximations of the velocity and pressure.
 - The order of convergence is calculated by measuring the error between the numerical solution and the manufactured solution.
 
@@ -59,7 +59,7 @@ The analytical solution is shown in the following figure:
     :name: analytical_solution
     :width: 800
 
-Since the velocity function is divergence-free, no source term arises in the continuity equation. Substituting the previous expressions for the velocity and the pressure into the momentum equation leads to the following source term vector:
+Since the velocity function is divergence-free, no source term arises in the continuity equation. Substituting the previous expressions for the velocity and the pressure into the momentum equation leads to the following source term:
 
 .. math::
   \mathbf{G} = \pi \begin{bmatrix} \sin(\pi y)(-16\pi\nu (\sin(\pi x))^2\cos(\pi y) + 4\pi \nu \cos(\pi y) + 4 (\sin(\pi x))^3\sin(\pi y)\cos(\pi x) + \cos(\pi x))\\ 
@@ -86,7 +86,7 @@ In this example the steady-state incompressible solver is used.
   subsection simulation control
     set method = steady
     set output name = output_mms_2d_steady_
-    set number mesh adapt = 5 # Comment this line if using simplex
+    set number mesh adapt = 4 # Comment this line if using simplex
   end
 
 The ``number mesh adapt`` is set to the number of refinements to be tested and is only compatible with quadrilateral meshes. In this case, the simulations will be run starting from the initial mesh until convergence is reached. The mesh is then refined once and the obtained solution is then used as an initial condition. This process is repeated 5 times. In this case, the output file will include the results corresponding to the different mesh resolutions. However, automatic mesh adaptation is not yet supported for simplex meshes, and separate parameter files must be generated for each mesh resolution.
@@ -113,7 +113,7 @@ For a mesh with quadrilateral cells, the initial level of refinement is set to 4
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The velocity components are set to zero on all of the boundary to match the analytical solution. However, the condition on each boundary can be changed depending on the analytical function used.
+The velocity components are set to zero on the entire boundary to match the manufactured solution. However, different values or analytical functions can be prescribed for the velocity on various boundary sections, depending on the chosen manufactured solution. Additionally, the order of convergence of the numerical scheme can be analyzed for different types of boundary conditions (see `Boundary Conditions - CFD <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_).
 
 .. code-block:: text
 
