@@ -6,6 +6,12 @@
 void
 RPTCalculatingParameters::declare(ParameterHandler &prm)
 {
+  prm.declare_entry("print parameters",
+                    "none",
+                    Patterns::Selection("none|only changed|all"),
+                    "Print all the parameters, or only"
+                    "the changed parameters or none");
+
   Parameters::RPTParameters::declare_parameters(prm);
   Parameters::RPTTuningParameters::declare_parameters(prm);
   Parameters::DetectorParameters::declare_parameters(prm);
