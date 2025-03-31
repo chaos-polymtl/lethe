@@ -21,6 +21,85 @@ ParticleParticleContactForce<dim,
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
 {
   set_effective_properties(dem_parameters);
+  if constexpr (std::is_same_v<PropertiesIndex,
+                               DEM::DEMMPProperties::PropertiesIndex>)
+    {
+      set_multiphysic_properties(dem_parameters);
+    }
+}
+
+template <int dim,
+          typename PropertiesIndex,
+          ParticleParticleContactForceModel contact_model,
+          RollingResistanceMethod           rolling_friction_model>
+void
+ParticleParticleContactForce<dim,
+                             PropertiesIndex,
+                             contact_model,
+                             rolling_friction_model>::
+  calculate_particle_particle_contact_force_and_heat_transfer(
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_local_periodic_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_ghost_periodic_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force,
+    std::vector<double>       &heat_transfer)
+{
+  // Calculating the contact forces and heat transfer for local-local adjacent
+  // particles.
+  for (auto &&adjacent_particles_list :
+       local_adjacent_particles | boost::adaptors::map_values)
+    {
+      execute_contact_calculation<ContactType::local_particle_particle>(
+        adjacent_particles_list, torque, force, heat_transfer, dt);
+    }
+
+  // Calculating the contact forces and heat transfer for local-ghost adjacent
+  // particles.
+  for (auto &&adjacent_particles_list :
+       ghost_adjacent_particles | boost::adaptors::map_values)
+    {
+      execute_contact_calculation<ContactType::ghost_particle_particle>(
+        adjacent_particles_list, torque, force, heat_transfer, dt);
+    }
+
+  // Calculating the contact forces and heat transfer for local-local periodic
+  // adjacent particles.
+  for (auto &&periodic_adjacent_particles_list :
+       local_local_periodic_adjacent_particles | boost::adaptors::map_values)
+    {
+      execute_contact_calculation<
+        ContactType::local_periodic_particle_particle>(
+        periodic_adjacent_particles_list, torque, force, heat_transfer, dt);
+    }
+
+  // Calculating the contact forces and heat transfer for local-ghost periodic
+  // adjacent particles.
+  for (auto &&periodic_adjacent_particles_list :
+       local_ghost_periodic_adjacent_particles | boost::adaptors::map_values)
+    {
+      execute_contact_calculation<
+        ContactType::ghost_periodic_particle_particle>(
+        periodic_adjacent_particles_list, torque, force, heat_transfer, dt);
+    }
+
+  // Calculating the contact forces and heat transfer for ghost-local periodic
+  // adjacent particles.
+  for (auto &&periodic_adjacent_particles_list :
+       ghost_local_periodic_adjacent_particles | boost::adaptors::map_values)
+    {
+      execute_contact_calculation<
+        ContactType::ghost_local_periodic_particle_particle>(
+        periodic_adjacent_particles_list, torque, force, heat_transfer, dt);
+    }
 }
 
 template <int dim,
@@ -47,48 +126,20 @@ ParticleParticleContactForce<dim,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
-  // Calculating the contact forces the local-local adjacent particles.
-  for (auto &&adjacent_particles_list :
-       local_adjacent_particles | boost::adaptors::map_values)
-    {
-      execute_contact_calculation<ContactType::local_particle_particle>(
-        adjacent_particles_list, torque, force, dt);
-    }
+  std::vector<double> heat_transfer;
 
-  // Calculating the contact forces the local-ghost adjacent particles.
-  for (auto &&adjacent_particles_list :
-       ghost_adjacent_particles | boost::adaptors::map_values)
-    {
-      execute_contact_calculation<ContactType::ghost_particle_particle>(
-        adjacent_particles_list, torque, force, dt);
-    }
-
-  // Calculating the contact forces the local-local periodic adjacent particles.
-  for (auto &&periodic_adjacent_particles_list :
-       local_local_periodic_adjacent_particles | boost::adaptors::map_values)
-    {
-      execute_contact_calculation<
-        ContactType::local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, dt);
-    }
-
-  // Calculating the contact forces the local-ghost periodic adjacent particles.
-  for (auto &&periodic_adjacent_particles_list :
-       local_ghost_periodic_adjacent_particles | boost::adaptors::map_values)
-    {
-      execute_contact_calculation<
-        ContactType::ghost_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, dt);
-    }
-
-  // Calculating the contact forces the ghost-local periodic adjacent particles.
-  for (auto &&periodic_adjacent_particles_list :
-       ghost_local_periodic_adjacent_particles | boost::adaptors::map_values)
-    {
-      execute_contact_calculation<
-        ContactType::ghost_local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, dt);
-    }
+  // Calling calculate_particle_particle_contact_force_and_heat_transfer with
+  // empty heat_transfer
+  calculate_particle_particle_contact_force_and_heat_transfer(
+    local_adjacent_particles,
+    ghost_adjacent_particles,
+    local_local_periodic_adjacent_particles,
+    local_ghost_periodic_adjacent_particles,
+    ghost_local_periodic_adjacent_particles,
+    dt,
+    torque,
+    force,
+    heat_transfer);
 }
 
 // dem

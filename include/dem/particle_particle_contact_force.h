@@ -11,6 +11,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/particle_particle_heat_transfer.h>
 #include <dem/rolling_resistance_torque_models.h>
 
 #include <boost/range/adaptor/map.hpp>
@@ -33,6 +34,46 @@ template <int dim, typename PropertiesIndex>
 class ParticleParticleContactForceBase
 {
 public:
+  /**
+   * @brief Calculate the contact forces and heat transfer using the contact pair information
+   * obtained in the fine search and physical properties of particles.
+   *
+   * @param local_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local particle-particle contact forces.
+   * @param ghost_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local-ghost particle-particle contact
+   * forces.
+   * @param local_local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local periodic
+   * particle-particle contact forces.
+   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost periodic
+   * particle-particle contact forces.
+   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the ghost-local periodic
+   * particle-particle contact forces.
+   * @param dt DEM time step.
+   * @param torque Torque acting on particles.
+   * @param force Force acting on particles.
+   * @param heat_transfer Heat transfer applied to particles.
+   */
+  virtual void
+  calculate_particle_particle_contact_force_and_heat_transfer(
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_local_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_ghost_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force,
+    std::vector<double>       &heat_transfer) = 0;
+
   /**
    * @brief Calculate the contact forces using the contact pair information
    * obtained in the fine search and physical properties of particles.
@@ -107,6 +148,46 @@ public:
 
   virtual ~ParticleParticleContactForce()
   {}
+
+  /**
+   * @brief Calculate the contact forces and heat transfer using the contact pair information
+   * obtained in the fine search and physical properties of particles.
+   *
+   * @param local_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local particle-particle contact forces.
+   * @param ghost_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local-ghost particle-particle contact
+   * forces.
+   * @param local_local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local periodic
+   * particle-particle contact forces.
+   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost periodic
+   * particle-particle contact forces.
+   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the ghost-local periodic
+   * particle-particle contact forces.
+   * @param dt DEM time step.
+   * @param torque Torque acting on particles.
+   * @param force Force acting on particles.
+   * @param heat_transfer Heat transfer applied to particles.
+   */
+  virtual void
+  calculate_particle_particle_contact_force_and_heat_transfer(
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_local_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_ghost_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force,
+    std::vector<double>       &heat_transfer) override;
 
   /**
    * @brief Calculate the contact forces using the contact pair information
@@ -1592,6 +1673,71 @@ private:
   }
 
   /**
+   * @brief Set every containers needed to carry the heat transfer
+   * calculation.
+   *
+   * @param[in] dem_parameters DEM parameters declared in the .prm
+   * file.
+   */
+  void
+  set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters)
+  {
+    auto properties = dem_parameters.lagrangian_physical_properties;
+
+    n_particle_types = properties.particle_type_number;
+    equivalent_surface_roughness.resize(n_particle_types * n_particle_types);
+    equivalent_surface_slope.resize(n_particle_types * n_particle_types);
+    effective_microhardness.resize(n_particle_types * n_particle_types);
+    thermal_conductivity_particle.resize(n_particle_types);
+    gas_parameter_m.resize(n_particle_types * n_particle_types);
+    this->thermal_conductivity_gas = properties.thermal_conductivity_gas;
+
+    for (unsigned int i = 0; i < n_particle_types; ++i)
+      {
+        const double surface_roughness_i =
+          properties.surface_roughness_particle.at(i);
+        const double surface_slope_i = properties.surface_slope_particle.at(i);
+        const double microhardness_i = properties.microhardness_particle.at(i);
+        const double thermal_accommodation_i =
+          properties.thermal_accommodation_particle.at(i);
+
+        this->thermal_conductivity_particle[i] =
+          properties.thermal_conductivity_particle.at(i);
+
+        for (unsigned int j = 0; j < n_particle_types; ++j)
+          {
+            const unsigned int k = i * n_particle_types + j;
+
+            const double surface_roughness_j =
+              properties.surface_roughness_particle.at(j);
+            const double surface_slope_j =
+              properties.surface_slope_particle.at(j);
+            const double microhardness_j =
+              properties.microhardness_particle.at(j);
+            const double thermal_accommodation_j =
+              properties.thermal_accommodation_particle.at(j);
+
+            this->equivalent_surface_roughness[k] =
+              sqrt(surface_roughness_i * surface_roughness_i +
+                   surface_roughness_j * surface_roughness_j);
+            this->equivalent_surface_slope[k] =
+              sqrt(surface_slope_i * surface_slope_i +
+                   surface_slope_j * surface_slope_j);
+            this->effective_microhardness[k] =
+              harmonic_mean(microhardness_i, microhardness_j);
+            this->gas_parameter_m[k] =
+              ((2. - thermal_accommodation_i) / thermal_accommodation_i +
+               (2. - thermal_accommodation_j) / thermal_accommodation_j) *
+              (2. * properties.specific_heats_ratio_gas) /
+              (1. + properties.specific_heats_ratio_gas) *
+              properties.molecular_mean_free_path_gas /
+              (properties.dynamic_viscosity_gas * properties.specific_heat_gas /
+               properties.thermal_conductivity_gas);
+          }
+      }
+  }
+
+  /**
    * @brief Execute the contact calculation step for the particle-particle
    * contact according to the contact type
    *
@@ -1599,6 +1745,7 @@ private:
    * particles
    * @param[out] torque Torque acting on particles.
    * @param[out] force Force acting on particles.
+   * @param[out] heat_transfer Heat transfer applied to particles.
    * @param[in] dt DEM time step.
    */
   template <ContactType contact_type>
@@ -1608,6 +1755,7 @@ private:
                               &adjacent_particles_list,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
+    std::vector<double>       &heat_transfer,
     const double               dt)
   {
     // No contact calculation if no adjacent particles
@@ -1821,6 +1969,94 @@ private:
             contact_info.tangential_overlap.clear();
             contact_info.rolling_resistance_spring_torque.clear();
           }
+
+        if constexpr (std::is_same_v<PropertiesIndex,
+                                     DEM::DEMMPProperties::PropertiesIndex>)
+          {
+            AssertThrow(
+              heat_transfer.size() == force.size(),
+              ExcMessage(
+                "Invalid size of heat_transfer in particle particle heat transfer calculation."));
+
+            if (normal_overlap > 0)
+              {
+                const unsigned int particle_one_type =
+                  particle_one_properties[PropertiesIndex::type];
+                const unsigned int particle_two_type =
+                  particle_two_properties[PropertiesIndex::type];
+                const unsigned int pair_index =
+                  vec_particle_type_index(particle_one_type, particle_two_type);
+                const double temperature_one =
+                  particle_one_properties[PropertiesIndex::T];
+                const double temperature_two =
+                  particle_two_properties[PropertiesIndex::T];
+                types::particle_index particle_two_id =
+                  particle_two->get_local_index();
+                double &particle_one_heat_transfer =
+                  heat_transfer[particle_one_id];
+                double &particle_two_heat_transfer =
+                  heat_transfer[particle_two_id];
+
+                double thermal_conductance;
+                calculate_contact_thermal_conductance(
+                  0.5 * particle_one_properties[PropertiesIndex::dp],
+                  0.5 * particle_two_properties[PropertiesIndex::dp],
+                  this->effective_youngs_modulus[pair_index],
+                  this->effective_youngs_modulus[pair_index],
+                  this->equivalent_surface_roughness[pair_index],
+                  this->equivalent_surface_slope[pair_index],
+                  this->effective_microhardness[pair_index],
+                  this->thermal_conductivity_particle[particle_one_type],
+                  this->thermal_conductivity_particle[particle_two_type],
+                  this->thermal_conductivity_gas,
+                  this->gas_parameter_m[pair_index],
+                  normal_overlap,
+                  normal_force.norm(),
+                  thermal_conductance);
+
+                // Apply the heat transfer to both particles
+                // of the pair for local-local contacts
+                if constexpr (contact_type ==
+                                ContactType::local_particle_particle ||
+                              contact_type ==
+                                ContactType::local_periodic_particle_particle)
+                  {
+                    apply_heat_transfer_on_local_particles(
+                      temperature_one,
+                      temperature_two,
+                      thermal_conductance,
+                      particle_one_heat_transfer,
+                      particle_two_heat_transfer);
+                  }
+
+                // Apply the heat transfer only to the local
+                // particle of the pair for local-ghost contacts
+                if constexpr (contact_type ==
+                                ContactType::ghost_periodic_particle_particle ||
+                              contact_type ==
+                                ContactType::ghost_particle_particle)
+                  {
+                    apply_heat_transfer_on_single_local_particle(
+                      temperature_one,
+                      temperature_two,
+                      thermal_conductance,
+                      particle_one_heat_transfer);
+                  }
+
+                // Apply the heat transfer only to the local
+                // particle of the pair for ghost-local contacts
+                if constexpr (contact_type ==
+                              ContactType::
+                                ghost_local_periodic_particle_particle)
+                  {
+                    apply_heat_transfer_on_single_local_particle(
+                      temperature_two,
+                      temperature_one,
+                      thermal_conductance,
+                      particle_two_heat_transfer);
+                  }
+              }
+          }
       }
   }
 
@@ -1840,6 +2076,12 @@ private:
   std::vector<double> model_parameter_beta;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
+  std::vector<double> equivalent_surface_roughness;
+  std::vector<double> equivalent_surface_slope;
+  std::vector<double> effective_microhardness;
+  std::vector<double> thermal_conductivity_particle;
+  std::vector<double> gas_parameter_m;
+  double              thermal_conductivity_gas;
 };
 
 #endif
