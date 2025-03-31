@@ -7,6 +7,7 @@
 #include <core/auxiliary_math_functions.h>
 
 #include <float.h>
+
 #include <cmath>
 #include <iostream>
 
