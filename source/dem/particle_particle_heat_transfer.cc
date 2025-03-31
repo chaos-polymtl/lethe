@@ -9,9 +9,9 @@ calculate_corrected_contact_radius(const double effective_radius,
                                    const double effective_real_youngs_modulus,
                                    const double normal_force_norm)
 {
-  double contact_radius = pow((3 * normal_force_norm * effective_radius) /
-                                (4 * effective_youngs_modulus),
-                              (1.0 / 3.0));
+  const double contact_radius = pow((3 * normal_force_norm * effective_radius) /
+                                      (4 * effective_youngs_modulus),
+                                    (1.0 / 3.0));
 
   // apply correction
   return contact_radius *
