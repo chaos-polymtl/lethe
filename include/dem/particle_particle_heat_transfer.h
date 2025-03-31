@@ -6,6 +6,7 @@
 
 #include <core/auxiliary_math_functions.h>
 
+#include <float.h>
 #include <cmath>
 #include <iostream>
 
@@ -50,7 +51,7 @@ inline double
 calculate_macrocontact_resistance(const double harmonic_particle_conductivity,
                                   const double contact_radius)
 {
-  return 1 / (2.0 * contact_radius * harmonic_particle_conductivity);
+  return 1 / (2.0 * contact_radius * harmonic_particle_conductivity + DBL_MIN);
 }
 
 /**
@@ -80,7 +81,7 @@ calculate_microcontact_resistance(const double equivalent_surface_slope,
          (M_PI * harmonic_particle_conductivity * contact_radius *
           contact_radius) *
          (equivalent_surface_roughness / equivalent_surface_slope) *
-         pow(effective_microhardness / maximum_pressure, 0.96);
+         pow(effective_microhardness / (maximum_pressure + DBL_MIN), 0.96);
 }
 
 /**
@@ -284,7 +285,7 @@ calculate_contact_thermal_conductance(
     pow(effective_youngs_modulus / effective_real_youngs_modulus, 2.0 / 3.0);
   const double maximum_pressure =
     (2.0 * effective_real_youngs_modulus * corrected_normal_overlap) /
-    (M_PI * contact_radius);
+    (M_PI * contact_radius + DBL_MIN);
 
   // Calculation of each thermal resistance
   const double resistance_macrocontact =

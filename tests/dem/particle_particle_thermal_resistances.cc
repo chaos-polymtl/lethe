@@ -8,9 +8,7 @@
  */
 
 
-// Tests (with common definitions)
-
-#include <../tests/dem/particle_particle_heat_transfer.h>
+#include <dem/particle_particle_heat_transfer.h>
 #include <../tests/dem/test_particles_functions.h>
 #include <dem/particle_particle_contact_force.h>
 
@@ -123,8 +121,6 @@ test()
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       MOI;
-  std::vector<double>       heat_transfer;
-  std::vector<double>       heat_source;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
   force.resize(particle_handler.get_max_local_particle_index());
@@ -132,8 +128,6 @@ test()
   MOI.resize(force.size());
   for (auto &moi_val : MOI)
     moi_val = 1;
-  heat_transfer.resize(force.size());
-  heat_source.resize(force.size());
 
   contact_manager.update_local_particles_in_cells(particle_handler);
 
