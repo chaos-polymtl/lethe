@@ -11,9 +11,8 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set output name       = output_MMS_2D_steady_
-  set number mesh adapt = 4
+  set method      = steady
+  set output name = output_MMS_2D_steady_
 end
 
 #---------------------------------------------------
@@ -34,7 +33,8 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : false
-  set initial refinement = 4
+  set initial refinement = 5
+  set simplex            = true
 end
 
 #---------------------------------------------------
@@ -85,22 +85,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = {{Poly_deg_u}}
-  set pressure order = {{Poly_deg_p}}
-end
-
-# --------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = uniform
-  #set max number elements     = 20000
-  #set max refinement level    = 6
-  #set min refinement level    = 6
-  #set frequency               = 1
-  #set fraction refinement     = 0.1
-  #set fraction coarsening     = 0.1
+  set velocity order = 2
+  set pressure order = 2
 end
 
 #---------------------------------------------------
@@ -109,7 +95,7 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance = 1e-10
+    set tolerance = 1e-8
     set verbosity = verbose
   end
 end
