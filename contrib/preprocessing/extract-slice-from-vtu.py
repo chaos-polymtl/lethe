@@ -60,11 +60,11 @@ def extract_slice(vtu_file_path: list, origin: np.array, normal: np.array) -> No
 
     # slice the file
     sliced_solution = pv.read(vtu_file_path).slice(normal=normal, origin=origin)
-    
+    sliced_solution = sliced_solution.cast_to_unstructured_grid()
+
     # Modify the file name and save the file
     file_name = os.path.basename(vtu_file_path)
-    file_name_no_ext = os.path.splitext(file_name)[0]
-    sliced_solution.save("sliced-" + file_name_no_ext + ".vtk")
+    sliced_solution.save("sliced-" + file_name)
     
     return
 
