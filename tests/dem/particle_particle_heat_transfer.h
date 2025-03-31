@@ -177,12 +177,19 @@ calculate_interstitial_gas_microgap_resistance(
   const double a_2 = erfc_inverse_approximation(0.03 * maximum_pressure /
                                                 effective_microhardness) -
                      a_1;
-
-  return (2 * sqrt(2) * equivalent_surface_roughness * a_2) /
-         (M_PI * thermal_conductivity_gas * contact_radius * contact_radius *
-          log(1 +
-              a_2 / (a_1 + gas_parameter_m /
-                             (2 * sqrt(2) * equivalent_surface_roughness))));
+  if (a_1 == NAN || a_2 == NAN)
+    {
+      return INFINITY;
+    }
+  else
+    {
+      return (2 * sqrt(2) * equivalent_surface_roughness * a_2) /
+             (M_PI * thermal_conductivity_gas * contact_radius *
+              contact_radius *
+              log(1 + a_2 / (a_1 +
+                             gas_parameter_m /
+                               (2 * sqrt(2) * equivalent_surface_roughness))));
+    }
 }
 
 /**
@@ -317,9 +324,9 @@ calculate_contact_thermal_conductance(
   // conductance = 1 / resistance contact area pathway + 1 / resistance magrogap
   // pathway)
   thermal_conductance =
-    1 / (resistance_macrocontact +
-         1 / (1 / resistance_microcontact + 1 / resistance_gas_microgap)) +
-    1 / (resistance_solid_macrogap + resistance_gas_macrogap);
+    1.0 / (resistance_macrocontact + 1.0 / (1.0 / resistance_microcontact +
+                                            1.0 / resistance_gas_microgap)) +
+    1.0 / (resistance_solid_macrogap + resistance_gas_macrogap);
 }
 
 
