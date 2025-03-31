@@ -28,9 +28,14 @@ In this subsection, contact detection, force models, time integration, load bala
       set dynamic check frequency = 10000  # if method = dynamic
       set threshold               = 0.5    # if method = dynamic
 
-    # Particle-particle contact force model
-    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
-    set particle particle contact force method = hertz_mindlin_limit_overlap
+      subsection cell weight function
+        set Function expression = 1000
+      end
+    end
+
+      # Particle-particle contact force model
+      # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
+      set particle particle contact force method = hertz_mindlin_limit_overlap
 
     # Particle-wall contact force model
     # Choices are linear|nonlinear|JKR|DMT
@@ -123,9 +128,9 @@ Load-balancing updates the distribution of the subdomains between the processes 
 The total weight of each cell with particles in load-balancing is defined as:
 
 .. math::
-    W=1000+W_pn_p
+    W=W_pn_p + W_c
 
-where :math:`{W_p}` is the ``particle weight`` and :math:`{n_p}` is the number of particles in the cell. 1000 is the default weight assigned to one cell.
+where :math:`{W_p}` is the ``particle weight``, :math:`{n_p}` is the number of particles in the cell and :math:`{W_c}` the cell of a the cell. The subsection ``cell weight function`` defines the weight every cell according to the position of their barycenter. By default, 1000 is the default weight assigned to one cell.
 
 * ``particle weight`` must be defined for every ``load balance method``.
 

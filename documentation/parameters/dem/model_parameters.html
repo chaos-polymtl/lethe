@@ -460,9 +460,14 @@
     set dynamic check frequency = 10000  # if method = dynamic
     set threshold               = 0.5    # if method = dynamic
 
-  # Particle-particle contact force model
-  # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
-  set particle particle contact force method = hertz_mindlin_limit_overlap
+    subsection cell weight function
+      set Function expression = 1000
+    end
+  end
+
+    # Particle-particle contact force model
+    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
+    set particle particle contact force method = hertz_mindlin_limit_overlap
 
   # Particle-wall contact force model
   # Choices are linear|nonlinear|JKR|DMT
@@ -545,9 +550,9 @@ end
 <p>The total weight of each cell with particles in load-balancing is defined as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[W=1000+W_pn_p\]</div>
+\[W=W_pn_p + W_c\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\({W_p}\)</span> is the <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">weight</span></code> and <span class="math notranslate nohighlight">\({n_p}\)</span> is the number of particles in the cell. 1000 is the default weight assigned to one cell.</p>
+<p>where <span class="math notranslate nohighlight">\({W_p}\)</span> is the <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">weight</span></code>, <span class="math notranslate nohighlight">\({n_p}\)</span> is the number of particles in the cell and <span class="math notranslate nohighlight">\({W_c}\)</span> the cell of a the cell. The subsection <code class="docutils literal notranslate"><span class="pre">cell</span> <span class="pre">weight</span> <span class="pre">function</span></code> defines the weight every cell according to the position of their barycenter. By default, 1000 is the default weight assigned to one cell.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">weight</span></code> must be defined for every <code class="docutils literal notranslate"><span class="pre">load</span> <span class="pre">balance</span> <span class="pre">method</span></code>.</p></li>
 </ul>
