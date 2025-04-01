@@ -27,6 +27,19 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
 
 
 /**
+ * @brief Attaches a grid to a triangulation using mesh parameters
+ *
+ * @param triangulation The triangulation to which a grid is attached
+ *
+ * @param mesh_parameters The mesh parameters used to decide what type of mesh or primitive is  used
+ */
+template <int dim, int spacedim = dim>
+void
+attach_grid_to_triangulation(
+  Triangulation<dim, spacedim> &triangulation,
+  const Parameters::Mesh                                &mesh_parameters);
+
+/**
  * @brief Modifies the triangulation to setup periodic boundary conditions in the case of CFD simulations
  *
  * @param triangulation The triangulation to which a grid is attached
@@ -59,6 +72,28 @@ read_mesh_and_manifolds(
   const bool                                            &restart,
   const BoundaryConditions::BoundaryConditions          &boundary_conditions);
 
+/**
+ * @brief Completely set-up a mesh and its manifold for rotor-stator domains
+ *
+ * @param triangulation [stator] The triangulation to which a grid is attached. It will be substituted by the merged rotor-stator triangulation
+ *
+ * @param mesh_parameters [stator] The mesh parameters used to decide what type of mesh or primitive is  used
+ *
+ * @param manifolds_parameters [stator] The information about the type of manifolds attached to the boundary conditions
+ *
+ * @param boundary_conditions [stator] The information about the boundary conditions id. This is used to set-up the periodicity of the domain
+ * 
+ * @param mortar [rotor] The information about the mortar method control, including the rotor mesh parameters
+ */
+template <int dim, int spacedim = dim>
+void
+read_mesh_and_manifolds(
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Manifolds                           &manifolds_parameters,
+  const bool                                            &restart,
+  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
+  const Parameters::Mortar<dim>                         &mortar);
 
 /**
  * @brief Refine a mesh around specific boundary ids
