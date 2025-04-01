@@ -1,3 +1,17 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classInterfaceTools_1_1SignedDistanceSolver.html" title="Solver to compute the signed distance from a given level of a level&#45;set field. It is based on the met..." alt="" coords="5,5,228,45"/>
+<area shape="rect" id="Node000000" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="5,106,180,131"/>
+<area shape="rect" id="Node000001" href="$classMobilityCahnHilliardModel.html" title="Implementation of the computation of the mobility for Cahn&#45;Hilliard equations." alt="" coords="228,77,423,102"/>
+<area shape="poly" id="edge58_Node000000_Node000001" title=" " alt="" coords="193,103,228,99,228,104,194,109"/>
+<area shape="rect" id="Node000004" href="$classSurfaceTensionModel.html" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="245,134,405,159"/>
+<area shape="poly" id="edge61_Node000000_Node000004" title=" " alt="" coords="194,128,246,134,245,140,194,133"/>
+<area shape="rect" id="Node000002" href="$classMobilityCahnHilliardModelConstant.html" title="Constant mobility model." alt="" coords="471,5,665,45"/>
+<area shape="poly" id="edge59_Node000001_Node000002" title=" " alt="" coords="387,70,491,43,492,48,388,76"/>
+<area shape="rect" id="Node000003" href="$classMobilityCahnHilliardModelQuartic.html" title="Quartic mobility model." alt="" coords="471,69,665,109"/>
+<area shape="poly" id="edge60_Node000001_Node000003" title=" " alt="" coords="437,87,470,87,470,92,437,92"/>
+<area shape="rect" id="Node000005" href="$classSurfaceTensionConstant.html" title="Constant surface tension." alt="" coords="479,134,657,159"/>
+<area shape="poly" id="edge62_Node000004_Node000005" title=" " alt="" coords="420,144,478,144,478,149,420,149"/>
+<area shape="rect" id="Node000006" href="$classSurfaceTensionLinear.html" title="Linear surface tension. The surface tension is given by: sigma_0 + dsimga/dT * (T&#45;T_0)." alt="" coords="488,183,648,209"/>
+<area shape="poly" id="edge63_Node000004_Node000006" title=" " alt="" coords="402,159,505,181,504,186,401,165"/>
+<area shape="rect" id="Node000007" href="$classSurfaceTensionPhaseChange.html" title="Linear surface tension with phase change. The surface tension is given by: alpha_l*(sigma_0 + dsigma/..." alt="" coords="713,183,921,209"/>
+<area shape="poly" id="edge64_Node000006_Node000007" title=" " alt="" coords="661,193,713,193,713,199,661,199"/>
 </map>

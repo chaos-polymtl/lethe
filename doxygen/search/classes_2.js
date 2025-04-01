@@ -36,10 +36,11 @@ var searchData=
   ['continuitypostprocessorsmoothing_33',['ContinuityPostProcessorSmoothing',['../classContinuityPostProcessorSmoothing.html',1,'']]],
   ['copydata_34',['CopyData',['../classCopyData.html',1,'']]],
   ['copydataface_35',['CopyDataFace',['../structStabilizedDGMethodsCopyData_1_1CopyDataFace.html',1,'StabilizedDGMethodsCopyData']]],
-  ['customdistribution_36',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
-  ['cut_5fcell_5fcomparison_37',['cut_cell_comparison',['../structDEM_1_1cut__cell__comparison.html',1,'DEM']]],
-  ['cuthollowsphere_38',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
-  ['cylinder_39',['Cylinder',['../classCylinder.html',1,'']]],
-  ['cylindricalhelix_40',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
-  ['cylindricaltube_41',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
+  ['couplingoperator_36',['CouplingOperator',['../classCouplingOperator.html',1,'']]],
+  ['customdistribution_37',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
+  ['cut_5fcell_5fcomparison_38',['cut_cell_comparison',['../structDEM_1_1cut__cell__comparison.html',1,'DEM']]],
+  ['cuthollowsphere_39',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
+  ['cylinder_40',['Cylinder',['../classCylinder.html',1,'']]],
+  ['cylindricalhelix_41',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
+  ['cylindricaltube_42',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
 ];

@@ -1,21 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,269,189,294"/>
-<area shape="rect" id="Node000001" href="$classBoundaryPostprocessor.html" title="BoundaryPostprocessor Post&#45;processor class used to attach the boundary id to the faces when outputtin..." alt="" coords="269,5,444,45"/>
-<area shape="poly" id="edge27_Node000000_Node000001" title=" " alt="" coords="105,255,123,211,150,157,188,102,210,77,236,55,268,38,271,43,239,60,214,81,192,105,155,160,127,213,110,257"/>
-<area shape="rect" id="Node000002" href="$classDensityPostprocessor.html" title="Compute the density scalar field of a material within a domain." alt="" coords="275,69,438,109"/>
-<area shape="poly" id="edge28_Node000000_Node000002" title=" " alt="" coords="111,255,161,187,196,150,236,119,274,102,276,107,239,124,199,154,165,191,115,258"/>
-<area shape="rect" id="Node000003" href="$classDivergencePostprocessor.html" title="Compute the velocity divergence scalar field within a domain." alt="" coords="263,133,450,173"/>
-<area shape="poly" id="edge29_Node000000_Node000003" title=" " alt="" coords="122,258,173,220,236,183,267,171,269,176,238,188,176,224,125,262"/>
-<area shape="rect" id="Node000004" href="$classDynamicViscosityPostprocessor.html" title="Compute the dynamic viscosity scalar field of a fluid within a domain." alt="" coords="241,197,472,237"/>
-<area shape="poly" id="edge30_Node000000_Node000004" title=" " alt="" coords="162,263,274,235,275,240,164,268"/>
-<area shape="rect" id="Node000005" href="$classKinematicViscosityPostprocessor.html" title="Compute the kinematic viscosity scalar field of a fluid within a domain." alt="" coords="237,261,476,301"/>
-<area shape="poly" id="edge31_Node000000_Node000005" title=" " alt="" coords="203,279,237,279,237,284,203,284"/>
-<area shape="rect" id="Node000006" href="$classLevelsetPostprocessor.html" title="Compute level set field for a given shape within a domain." alt="" coords="273,325,441,365"/>
-<area shape="poly" id="edge32_Node000000_Node000006" title=" " alt="" coords="164,295,275,323,274,328,162,300"/>
-<area shape="rect" id="Node000007" href="$classQCriterionPostprocessor.html" title="Compute the Q&#45;criterion scalar field within a domain." alt="" coords="267,389,446,429"/>
-<area shape="poly" id="edge33_Node000000_Node000007" title=" " alt="" coords="125,300,176,338,238,375,269,387,267,392,236,380,173,343,122,305"/>
-<area shape="rect" id="Node000008" href="$classScalarFunctionPostprocessor.html" title="Compute a scalar field for a given function within a domain." alt="" coords="253,453,461,493"/>
-<area shape="poly" id="edge34_Node000000_Node000008" title=" " alt="" coords="115,304,165,372,199,408,239,439,262,451,260,456,236,444,196,412,161,375,111,308"/>
-<area shape="rect" id="Node000009" href="$classShearRatePostprocessor.html" title="Compute the shear rate scalar field within a domain." alt="" coords="267,517,447,557"/>
-<area shape="poly" id="edge35_Node000000_Node000009" title=" " alt="" coords="110,306,127,349,155,403,192,457,214,482,239,503,267,519,265,523,236,508,210,486,188,461,150,406,123,352,105,308"/>
+<area shape="rect" id="Node000000" href="$classCouplingOperator.html" title=" " alt="" coords="5,5,201,45"/>
 </map>

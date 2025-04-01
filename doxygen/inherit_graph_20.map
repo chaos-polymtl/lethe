@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structDEM_1_1cell__comparison.html" title=" " alt="" coords="5,5,172,45"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,92,184,117"/>
+<area shape="rect" id="Node000001" href="$classVisualization.html" title=" " alt="" coords="233,5,420,60"/>
+<area shape="poly" id="edge40_Node000000_Node000001" title=" " alt="" coords="148,85,237,57,239,63,150,90"/>
+<area shape="rect" id="Node000002" href="$structFluidDynamicsSharp_1_1Visualization__IB.html" title="Defines a struct with methods that allow the generation of a visualisation of the IB_particles...." alt="" coords="232,85,421,125"/>
+<area shape="poly" id="edge41_Node000000_Node000002" title=" " alt="" coords="197,102,232,102,232,107,197,107"/>
+<area shape="rect" id="Node000003" href="$classVisualization.html" title="Building patches of particle properties for visualization. This function is taken from Aspect and dea..." alt="" coords="251,149,402,189"/>
+<area shape="poly" id="edge42_Node000000_Node000003" title=" " alt="" coords="155,118,254,146,253,151,154,124"/>
 </map>

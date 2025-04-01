@@ -1,0 +1,27 @@
+<map id="/home/runner/work/lethe/lethe/include/core/mortar_coupling_manager.h" name="/home/runner/work/lethe/lethe/include/core/mortar_coupling_manager.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1087,5,1277,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,233,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1087,42,722,67,488,86,247,110,247,105,487,81,722,61,1086,37"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="257,108,485,148"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1086,46,826,73,500,111,499,105,826,67,1086,41"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="510,115,657,141"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1087,48,894,75,669,111,646,115,645,110,668,105,893,69,1086,43"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="681,108,853,148"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1087,58,865,108,863,102,1086,53"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="877,108,1012,148"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1116,63,1006,106,1004,101,1114,58"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="1036,108,1171,148"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1162,62,1130,99,1126,96,1158,59"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="1195,108,1329,148"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1207,59,1239,96,1235,99,1203,62"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="1354,108,1501,148"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1252,58,1366,101,1364,106,1250,63"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="1525,108,1668,148"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1278,53,1512,105,1511,110,1277,58"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="1692,108,1859,148"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1278,44,1460,70,1679,105,1678,110,1459,75,1277,49"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="1883,108,2025,148"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="1278,38,1541,62,1703,81,1869,105,1868,110,1702,86,1540,67,1278,43"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="2049,108,2192,148"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="1278,35,1610,57,1821,77,2036,105,2035,110,1820,82,1609,62,1277,41"/>
+</map>

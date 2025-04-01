@@ -1,9 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,92,184,117"/>
-<area shape="rect" id="Node000001" href="$classVisualization.html" title=" " alt="" coords="233,5,420,60"/>
-<area shape="poly" id="edge40_Node000000_Node000001" title=" " alt="" coords="148,85,237,57,239,63,150,90"/>
-<area shape="rect" id="Node000002" href="$structFluidDynamicsSharp_1_1Visualization__IB.html" title="Defines a struct with methods that allow the generation of a visualisation of the IB_particles...." alt="" coords="232,85,421,125"/>
-<area shape="poly" id="edge41_Node000000_Node000002" title=" " alt="" coords="197,102,232,102,232,107,197,107"/>
-<area shape="rect" id="Node000003" href="$classVisualization.html" title="Building patches of particle properties for visualization. This function is taken from Aspect and dea..." alt="" coords="251,149,402,189"/>
-<area shape="poly" id="edge42_Node000000_Node000003" title=" " alt="" coords="155,118,254,146,253,151,154,124"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,106,191,131"/>
+<area shape="rect" id="Node000001" href="$classHeatFluxPostprocessor.html" title="Compute the local heat flux vector field within a domain." alt="" coords="265,5,437,45"/>
+<area shape="poly" id="edge36_Node000000_Node000001" title=" " alt="" coords="137,98,238,55,274,43,275,48,240,60,139,102"/>
+<area shape="rect" id="Node000002" href="$classLevelsetGradientPostprocessor.html" title="Compute a level set gradient vector field for a given shape within a domain." alt="" coords="239,69,463,109"/>
+<area shape="poly" id="edge37_Node000000_Node000002" title=" " alt="" coords="204,104,238,100,239,105,205,109"/>
+<area shape="rect" id="Node000003" href="$classSRFPostprocessor.html" title="Compute the velocity field in the Eulerian frame of reference for simulations carried out in a single..." alt="" coords="254,134,447,159"/>
+<area shape="poly" id="edge38_Node000000_Node000003" title=" " alt="" coords="205,128,254,133,254,139,204,133"/>
+<area shape="rect" id="Node000004" href="$classVorticityPostprocessor.html" title="Compute the vorticity vector field within a domain." alt="" coords="267,184,434,224"/>
+<area shape="poly" id="edge39_Node000000_Node000004" title=" " alt="" coords="145,134,240,168,281,181,279,186,238,173,143,139"/>
 </map>
