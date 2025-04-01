@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-01
+
+### Added
+
+- MAJOR Added library for mortar feature, including tests using the Poisson operator and the Stokes operator. [#1462](https://github.com/chaos-polymtl/lethe/pull/1462)
+
 ## [Master] - 2025-03-31
 
 ### Added
