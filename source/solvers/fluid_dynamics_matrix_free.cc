@@ -852,7 +852,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             level_constraints[level],
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager,
+            this->simulation_parameters.physical_properties_manager
+              .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
             level,
             simulation_control,
@@ -1251,7 +1252,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             level_constraint,
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager,
+            this->simulation_parameters.physical_properties_manager
+              .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
@@ -1857,6 +1859,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           mg_temperature_solution[l].update_ghost_values();
+
           this->mg_operators[l]->compute_forcing_term_from_vector(
             mg_temperature_solution[l],
             this->temperature_dof_handlers[l],
@@ -2259,7 +2262,8 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->zero_constraints,
     *this->cell_quadrature,
     this->forcing_function,
-    this->simulation_parameters.physical_properties_manager,
+    this->simulation_parameters.physical_properties_manager
+      .get_kinematic_viscosity_scale(),
     this->simulation_parameters.stabilization.stabilization,
     mg_level,
     this->simulation_control,
@@ -2819,6 +2823,7 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
   TimerOutput::Scope t(this->computing_timer,
                        "Update solutions for fluid dynamics");
 
+  // Get present solution of the heat transfer
   const auto &heat_solution =
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
 
