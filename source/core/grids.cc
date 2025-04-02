@@ -417,7 +417,8 @@ read_mesh_and_manifolds(
   // Rotor triangulation
   Triangulation<dim> rotor_temp_tria;
   attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
-  
+  GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle, rotor_temp_tria);
+
   // Shift rotor boundary IDs #
   for (const auto &face : rotor_temp_tria.active_face_iterators())
     if (face->at_boundary())
