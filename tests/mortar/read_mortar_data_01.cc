@@ -49,8 +49,6 @@ test()
 
   Parameters::Mesh                       stator_mesh;
   Parameters::Mortar<dim>                mortar;
-  Parameters::Manifolds                  manifolds_parameters;
-  BoundaryConditions::BoundaryConditions boundary_conditions;
 
   // Stator mesh parameters
   stator_mesh.type                     = Parameters::Mesh::Type::dealii;
@@ -76,9 +74,7 @@ test()
   // Merge stator and rotor triangulations
   read_mesh_and_manifolds(merged_tria,
                           stator_mesh,
-                          manifolds_parameters,
                           false,
-                          boundary_conditions,
                           mortar);
 
   // Print information

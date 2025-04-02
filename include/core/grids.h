@@ -77,9 +77,7 @@ void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
-  const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                            &restart,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar);
 
 /**

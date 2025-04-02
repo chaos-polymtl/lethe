@@ -399,9 +399,7 @@ void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
-  const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                            &restart,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
   AssertThrow(
@@ -518,15 +516,11 @@ template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2>    &triangulation,
   const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
   const bool                                   &restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<2>                  &mortar_parameters);
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<3>    &triangulation,
   const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
   const bool                                   &restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<3>                  &mortar_parameters);
