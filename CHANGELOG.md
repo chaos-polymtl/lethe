@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-02
+
+### Fixed
+
+- MINOR In the sharp immersed boundaries solver, added a condition that checks if immersed solids have moved since the last time step before executing mesh refinement. [#1479](https://github.com/chaos-polymtl/lethe/pull/1479)
+
 ## [Master] - 2025-04-01
 
 ### Added
