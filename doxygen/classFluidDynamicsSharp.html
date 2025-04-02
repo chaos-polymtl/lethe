@@ -175,8 +175,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:ae9b51761f62a86bbcb29e876913f5eca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af37100000664a971529a1ff687fe508b" id="r_af37100000664a971529a1ff687fe508b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsSharp.html#af37100000664a971529a1ff687fe508b">output_field_hook</a> (DataOut&lt; dim &gt; &amp;data_out) override</td></tr>
 <tr class="separator:af37100000664a971529a1ff687fe508b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2fa59fec17cbf9f0fee2e922c550010" id="r_af2fa59fec17cbf9f0fee2e922c550010"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsSharp.html#af2fa59fec17cbf9f0fee2e922c550010">refine_ib</a> ()</td></tr>
-<tr class="separator:af2fa59fec17cbf9f0fee2e922c550010"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7dac9eeecfc4ea454d12e0a6ce3813a9" id="r_a7dac9eeecfc4ea454d12e0a6ce3813a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsSharp.html#a7dac9eeecfc4ea454d12e0a6ce3813a9">refine_ib</a> (const bool initial_refinement)</td></tr>
+<tr class="separator:a7dac9eeecfc4ea454d12e0a6ce3813a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acca081957f6ae24400509e009ed06c7c" id="r_acca081957f6ae24400509e009ed06c7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsSharp.html#acca081957f6ae24400509e009ed06c7c">check_whether_all_particles_are_sphere</a> ()</td></tr>
 <tr class="separator:acca081957f6ae24400509e009ed06c7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08b8b4b643f67595ca86888f962cc9cf" id="r_a08b8b4b643f67595ca86888f962cc9cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsSharp.html#a08b8b4b643f67595ca86888f962cc9cf">generate_cut_cells_map</a> ()</td></tr>
@@ -592,9 +592,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#af16a439b2d5157717df92d004d1b41c8">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03948">3948</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03977">3977</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00902">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::assemblers</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00615">FluidDynamicsSharp&lt; dim &gt;::assemblers_inside_ib</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00378">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00216">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_cut</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00604">FluidDynamicsSharp&lt; dim &gt;::cells_inside_map</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00580">FluidDynamicsSharp&lt; dim &gt;::cut_cells_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00882">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00875">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::flow_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00872">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::forcing_function</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00905">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00591">FluidDynamicsSharp&lt; dim &gt;::overconstrained_fluid_cell_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::previous_solutions</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00224">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00528">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="copy__data_8h_source.html#l00191">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00902">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::assemblers</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00616">FluidDynamicsSharp&lt; dim &gt;::assemblers_inside_ib</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00378">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00216">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_cut</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00605">FluidDynamicsSharp&lt; dim &gt;::cells_inside_map</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00581">FluidDynamicsSharp&lt; dim &gt;::cut_cells_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00882">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00875">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::flow_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00872">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::forcing_function</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00905">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00592">FluidDynamicsSharp&lt; dim &gt;::overconstrained_fluid_cell_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::previous_solutions</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00224">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00528">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="copy__data_8h_source.html#l00191">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>
@@ -652,9 +652,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#a7241a134f0e9ec373c83b5f68469926a">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04042">4042</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04071">4071</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00902">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::assemblers</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00615">FluidDynamicsSharp&lt; dim &gt;::assemblers_inside_ib</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00378">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00216">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_cut</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00604">FluidDynamicsSharp&lt; dim &gt;::cells_inside_map</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00580">FluidDynamicsSharp&lt; dim &gt;::cut_cells_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00882">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00875">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::flow_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00872">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::forcing_function</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00905">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00591">FluidDynamicsSharp&lt; dim &gt;::overconstrained_fluid_cell_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::previous_solutions</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00224">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00528">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="copy__data_8h_source.html#l00191">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00902">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::assemblers</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00616">FluidDynamicsSharp&lt; dim &gt;::assemblers_inside_ib</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00378">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00216">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_cut</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00605">FluidDynamicsSharp&lt; dim &gt;::cells_inside_map</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00581">FluidDynamicsSharp&lt; dim &gt;::cut_cells_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00882">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00875">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::flow_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00872">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::forcing_function</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00905">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00592">FluidDynamicsSharp&lt; dim &gt;::overconstrained_fluid_cell_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::previous_solutions</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00224">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00528">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="copy__data_8h_source.html#l00191">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>
@@ -688,7 +688,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00150">150</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00563">FluidDynamicsSharp&lt; dim &gt;::all_spheres</a>, <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00474">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_matrix()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00962">FluidDynamicsSharp&lt; dim &gt;::force_on_ib()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00077">FluidDynamicsSharp&lt; dim &gt;::generate_cut_cells_map()</a>, <a class="el" href="physics__solver_8h_source.html#l00130">PhysicsSolver&lt; VectorType &gt;::get_current_newton_iteration()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02053">FluidDynamicsSharp&lt; dim &gt;::integrate_particles()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00501">FluidDynamicsSharp&lt; dim &gt;::optimized_generate_cut_cells_map()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03069">FluidDynamicsSharp&lt; dim &gt;::sharp_edge()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00566">FluidDynamicsSharp&lt; dim &gt;::some_particles_are_coupled</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04800">FluidDynamicsSharp&lt; dim &gt;::update_precalculations_for_ib()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00564">FluidDynamicsSharp&lt; dim &gt;::all_spheres</a>, <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00474">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_matrix()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00991">FluidDynamicsSharp&lt; dim &gt;::force_on_ib()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00077">FluidDynamicsSharp&lt; dim &gt;::generate_cut_cells_map()</a>, <a class="el" href="physics__solver_8h_source.html#l00130">PhysicsSolver&lt; VectorType &gt;::get_current_newton_iteration()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02082">FluidDynamicsSharp&lt; dim &gt;::integrate_particles()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00501">FluidDynamicsSharp&lt; dim &gt;::optimized_generate_cut_cells_map()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03098">FluidDynamicsSharp&lt; dim &gt;::sharp_edge()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00567">FluidDynamicsSharp&lt; dim &gt;::some_particles_are_coupled</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04829">FluidDynamicsSharp&lt; dim &gt;::update_precalculations_for_ib()</a>.</p>
 
 </div>
 </div>
@@ -793,7 +793,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00055">55</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00189">FluidDynamicsSharp&lt; dim &gt;::assemble_rhs()</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03069">FluidDynamicsSharp&lt; dim &gt;::sharp_edge()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00189">FluidDynamicsSharp&lt; dim &gt;::assemble_rhs()</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03098">FluidDynamicsSharp&lt; dim &gt;::sharp_edge()</a>.</p>
 
 </div>
 </div>
@@ -824,7 +824,7 @@ template&lt;int dim&gt; </div>
 
 <p>Evaluate the L2 error on the computational domain if an analytical solution is given. This function is slightly different from its standard GLS counterpart as the cells that are cut by an immersed boundary should not be taken into account in the error evaluation. See "computation domain" definition in: L. Barbeau, S. Étienne, C. Béguin &amp; B. Blais, «Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,» Computers &amp; Fluids, 2020, in press, ref. CAF-D-20-0077. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01785">1785</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01814">1814</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="boundary__conditions_8h_source.html#l01419">NavierStokesFunctionDefined&lt; dim &gt;::value()</a>.</p>
 
@@ -1055,7 +1055,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#ac762ec75cd1d1c47ec5deebd82d54d2c">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04026">4026</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04055">4055</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00216">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_cut</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00878">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::zero_constraints</a>.</p>
 
@@ -1091,7 +1091,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#a368346e9777ffb09492541270ed43198">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04120">4120</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04149">4149</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00216">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_cut</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00878">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::zero_constraints</a>.</p>
 
@@ -1155,9 +1155,9 @@ template&lt;int dim&gt; </div>
 
 <p>Store the solution of the particles dynamics parameters for integration. Defines the table to store the history of each of the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02721">2721</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02750">2750</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02633">FluidDynamicsSharp&lt; dim &gt;::Visualization_IB::build_patches()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00617">FluidDynamicsSharp&lt; dim &gt;::ib_particles_pvdhandler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00857">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00566">FluidDynamicsSharp&lt; dim &gt;::some_particles_are_coupled</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00623">FluidDynamicsSharp&lt; dim &gt;::table_all_p</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00622">FluidDynamicsSharp&lt; dim &gt;::table_p</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">tensor_nd_to_2d()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00859">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::this_mpi_process</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02662">FluidDynamicsSharp&lt; dim &gt;::Visualization_IB::build_patches()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00618">FluidDynamicsSharp&lt; dim &gt;::ib_particles_pvdhandler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00857">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00567">FluidDynamicsSharp&lt; dim &gt;::some_particles_are_coupled</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00624">FluidDynamicsSharp&lt; dim &gt;::table_all_p</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00623">FluidDynamicsSharp&lt; dim &gt;::table_p</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">tensor_nd_to_2d()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00859">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::this_mpi_process</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1188,7 +1188,7 @@ template&lt;int dim&gt; </div>
 
 <p>Evaluate the forces applied on each of the IB particle. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00962">962</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00991">991</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00682">calculate_shear_rate_magnitude()</a>, <a class="el" href="ib__stencil_8cc_source.html#l00042">IBStencil&lt; dim &gt;::coefficients()</a>, <a class="el" href="ib__stencil_8cc_source.html#l00190">IBStencil&lt; dim &gt;::point_for_cell_detection()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, <a class="el" href="ib__stencil_8cc_source.html#l00098">IBStencil&lt; dim &gt;::support_points_for_interpolation()</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
 
@@ -1296,9 +1296,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classPhysicsSolver.html#a890a9818cde0d3b89e38ece859b7733e">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00467">467</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00468">468</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particle_residual</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00886">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00621">FluidDynamicsSharp&lt; dim &gt;::particle_residual</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00886">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::system_rhs</a>.</p>
 
 </div>
 </div>
@@ -1329,7 +1329,7 @@ template&lt;int dim&gt; </div>
 
 <p>Integrate the particle velocity and position based on the forces and torques and applies the next value to the particle. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02053">2053</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02082">2082</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="lethe__grid__tools_8cc_source.html#l00143">LetheGridTools::find_cell_around_point_with_tree()</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="bdf_8h_source.html#l00097">number_of_previous_solutions()</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="ib__particle_8h_source.html#l00164">IBParticle&lt; dim &gt;::set_position()</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="ib__particle_8h_source.html#l00394">IBParticle&lt; dim &gt;::velocity_iter</a>.</p>
 
@@ -1360,9 +1360,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04513">4513</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04542">4542</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="utilities_8cc_source.html#l00306">fill_string_vectors_from_file()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="utilities_8cc_source.html#l00306">fill_string_vectors_from_file()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -1427,7 +1427,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a964e80e99870334447ac9859c4f1980d">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01659">1659</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01688">1688</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 </div>
 </div>
@@ -1508,7 +1508,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#aa5e0b2804ae3afe6bb89e0a25fc26ed2">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01720">1720</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01749">1749</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l01245">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::postprocess_fd()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1543,14 +1543,14 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a582b5a5fd99b3e8e1c2b21c17bb1b21a">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04278">4278</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04307">4307</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00561">FluidDynamicsSharp&lt; dim &gt;::cfd_dem_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00053">FluidDynamicsSharp&lt; dim &gt;::check_whether_all_particles_are_sphere()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="utilities_8cc_source.html#l00207">fill_table_from_file()</a>, <a class="el" href="utilities_8cc_source.html#l00253">fill_vectors_from_file()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00627">FluidDynamicsSharp&lt; dim &gt;::ib_dem</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00617">FluidDynamicsSharp&lt; dim &gt;::ib_particles_pvdhandler</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="pvd__handler_8cc_source.html#l00024">PVDHandler::read()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l01994">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00622">FluidDynamicsSharp&lt; dim &gt;::table_p</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04800">FluidDynamicsSharp&lt; dim &gt;::update_precalculations_for_ib()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00562">FluidDynamicsSharp&lt; dim &gt;::cfd_dem_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00053">FluidDynamicsSharp&lt; dim &gt;::check_whether_all_particles_are_sphere()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="utilities_8cc_source.html#l00207">fill_table_from_file()</a>, <a class="el" href="utilities_8cc_source.html#l00253">fill_vectors_from_file()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00628">FluidDynamicsSharp&lt; dim &gt;::ib_dem</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00618">FluidDynamicsSharp&lt; dim &gt;::ib_particles_pvdhandler</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="pvd__handler_8cc_source.html#l00024">PVDHandler::read()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l01994">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00623">FluidDynamicsSharp&lt; dim &gt;::table_p</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04829">FluidDynamicsSharp&lt; dim &gt;::update_precalculations_for_ib()</a>.</p>
 
 </div>
 </div>
-<a id="af2fa59fec17cbf9f0fee2e922c550010" name="af2fa59fec17cbf9f0fee2e922c550010"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2fa59fec17cbf9f0fee2e922c550010">&#9670;&#160;</a></span>refine_ib()</h2>
+<a id="a7dac9eeecfc4ea454d12e0a6ce3813a9" name="a7dac9eeecfc4ea454d12e0a6ce3813a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7dac9eeecfc4ea454d12e0a6ce3813a9">&#9670;&#160;</a></span>refine_ib()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1563,7 +1563,8 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classFluidDynamicsSharp.html">FluidDynamicsSharp</a>&lt; dim &gt;::refine_ib </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>initial_refinement</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1576,6 +1577,12 @@ template&lt;int dim&gt; </div>
 
 <p>Allow a refinement around each of the particles. The zone where the cells will be refined is defined by a ring in 2D and a shell in 3D. The outside and inside radius of the ring\shell is defined in relation to the diameter of the particle by the immersed boundaries parameter: "refine mesh inside radius factor" and "refine mesh outside
 radius factor". These factors multiply the radius of the particle to define the outside and inside radius of the ring\shell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">initial_refinement,A</td><td>bool that indicate if this is the initial refinement. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00818">818</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
@@ -1650,9 +1657,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#a53dc7e7aba58ac071e69f49b445d6169">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03825">3825</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03854">3854</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00902">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::assemblers</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00615">FluidDynamicsSharp&lt; dim &gt;::assemblers_inside_ib</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00220">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::check_existance_of_bc()</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00040">is_bdf()</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::partial_slip</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="structParameters_1_1VelocitySource.html#a3d594539cc118d4406cc7bcb298d2ca2a9fa1e546d34dd62a768567052aaa9f92">Parameters::VelocitySource::srf</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00902">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::assemblers</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00616">FluidDynamicsSharp&lt; dim &gt;::assemblers_inside_ib</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00220">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::check_existance_of_bc()</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00040">is_bdf()</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::partial_slip</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="structParameters_1_1VelocitySource.html#a3d594539cc118d4406cc7bcb298d2ca2a9fa1e546d34dd62a768567052aaa9f92">Parameters::VelocitySource::srf</a>.</p>
 
 </div>
 </div>
@@ -1683,9 +1690,9 @@ template&lt;int dim&gt; </div>
 
 <p>Modify the system matrix to impose IB condition using the sharp_edge approach. The detail of this approach are presented in : L. Barbeau, S. Étienne, C. Béguin &amp; B. Blais, «Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,» Computers &amp; Fluids, 2020, in press, ref. CAF-D-20-00773. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03069">3069</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l03098">3098</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="classFluidDynamicsSharp.html#ac4a1ac86521f5f20f32e9acb7b883839">FluidDynamicsSharp&lt; dim &gt;::cell_cut()</a>, <a class="el" href="ib__stencil_8cc_source.html#l00042">IBStencil&lt; dim &gt;::coefficients()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00580">FluidDynamicsSharp&lt; dim &gt;::cut_cells_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00882">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00863">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::fe</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l00143">LetheGridTools::find_cell_around_point_with_tree()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00611">FluidDynamicsSharp&lt; dim &gt;::ib_done</a>, <a class="el" href="ib__stencil_8cc_source.html#l00225">IBStencil&lt; dim &gt;::ib_velocity()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00854">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::locally_owned_dofs</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mapping</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00879">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::nonzero_constraints</a>, <a class="el" href="ib__stencil_8cc_source.html#l00013">IBStencil&lt; dim &gt;::number_of_interpolation_support_points()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00894">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::number_quadrature_points</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00591">FluidDynamicsSharp&lt; dim &gt;::overconstrained_fluid_cell_map</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="ib__stencil_8cc_source.html#l00190">IBStencil&lt; dim &gt;::point_for_cell_detection()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="ib__stencil_8cc_source.html#l00098">IBStencil&lt; dim &gt;::support_points_for_interpolation()</a>, <a class="el" href="fluid__dynamics__matrix__based_8h_source.html#l00244">FluidDynamicsMatrixBased&lt; dim &gt;::system_matrix</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00886">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::system_rhs</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00570">FluidDynamicsSharp&lt; dim &gt;::vertices_to_cell</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00878">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::zero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="classFluidDynamicsSharp.html#ac4a1ac86521f5f20f32e9acb7b883839">FluidDynamicsSharp&lt; dim &gt;::cell_cut()</a>, <a class="el" href="ib__stencil_8cc_source.html#l00042">IBStencil&lt; dim &gt;::coefficients()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00581">FluidDynamicsSharp&lt; dim &gt;::cut_cells_map</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00882">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00863">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::fe</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l00143">LetheGridTools::find_cell_around_point_with_tree()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00612">FluidDynamicsSharp&lt; dim &gt;::ib_done</a>, <a class="el" href="ib__stencil_8cc_source.html#l00225">IBStencil&lt; dim &gt;::ib_velocity()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00854">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::locally_owned_dofs</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mapping</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00879">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::nonzero_constraints</a>, <a class="el" href="ib__stencil_8cc_source.html#l00013">IBStencil&lt; dim &gt;::number_of_interpolation_support_points()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00894">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::number_quadrature_points</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00592">FluidDynamicsSharp&lt; dim &gt;::overconstrained_fluid_cell_map</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="ib__stencil_8cc_source.html#l00190">IBStencil&lt; dim &gt;::point_for_cell_detection()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="ib__stencil_8cc_source.html#l00098">IBStencil&lt; dim &gt;::support_points_for_interpolation()</a>, <a class="el" href="fluid__dynamics__matrix__based_8h_source.html#l00244">FluidDynamicsMatrixBased&lt; dim &gt;::system_matrix</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00886">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::system_rhs</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00571">FluidDynamicsSharp&lt; dim &gt;::vertices_to_cell</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00878">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::zero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1719,9 +1726,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#a0851f8761d15071cf776a0467b339eaa">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04814">4814</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04843">4843</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00563">FluidDynamicsSharp&lt; dim &gt;::all_spheres</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00760">FluidDynamicsSharp&lt; dim &gt;::define_particles()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::face_quadrature</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00183">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_simulation()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00513">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_time_step()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02721">FluidDynamicsSharp&lt; dim &gt;::finish_time_step_particles()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00962">FluidDynamicsSharp&lt; dim &gt;::force_on_ib()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00872">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::forcing_function</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00077">FluidDynamicsSharp&lt; dim &gt;::generate_cut_cells_map()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00627">FluidDynamicsSharp&lt; dim &gt;::ib_dem</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00611">FluidDynamicsSharp&lt; dim &gt;::ib_done</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02053">FluidDynamicsSharp&lt; dim &gt;::integrate_particles()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00553">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::iterate()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mapping</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00905">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00501">FluidDynamicsSharp&lt; dim &gt;::optimized_generate_cut_cells_map()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00196">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess()</a>, <a class="el" href="grids_8cc_source.html#l00321">read_mesh_and_manifolds()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00358">FluidDynamicsSharp&lt; dim &gt;::refinement_control()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00231">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::set_initial_condition()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00214">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::setup_dofs()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00566">FluidDynamicsSharp&lt; dim &gt;::some_particles_are_coupled</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l01949">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::update_boundary_conditions()</a>, <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00159">FluidDynamicsMatrixBased&lt; dim &gt;::update_multiphysics_time_average_solution()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04800">FluidDynamicsSharp&lt; dim &gt;::update_precalculations_for_ib()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00043">FluidDynamicsSharp&lt; dim &gt;::vertices_cell_mapping()</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01630">FluidDynamicsSharp&lt; dim &gt;::write_force_ib()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00564">FluidDynamicsSharp&lt; dim &gt;::all_spheres</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00760">FluidDynamicsSharp&lt; dim &gt;::define_particles()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::face_quadrature</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00183">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_simulation()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00513">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_time_step()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02750">FluidDynamicsSharp&lt; dim &gt;::finish_time_step_particles()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00991">FluidDynamicsSharp&lt; dim &gt;::force_on_ib()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00872">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::forcing_function</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00077">FluidDynamicsSharp&lt; dim &gt;::generate_cut_cells_map()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00628">FluidDynamicsSharp&lt; dim &gt;::ib_dem</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00612">FluidDynamicsSharp&lt; dim &gt;::ib_done</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l02082">FluidDynamicsSharp&lt; dim &gt;::integrate_particles()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00553">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::iterate()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mapping</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00905">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00501">FluidDynamicsSharp&lt; dim &gt;::optimized_generate_cut_cells_map()</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00196">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess()</a>, <a class="el" href="grids_8cc_source.html#l00321">read_mesh_and_manifolds()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00358">FluidDynamicsSharp&lt; dim &gt;::refinement_control()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00231">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::set_initial_condition()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00214">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::setup_dofs()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00567">FluidDynamicsSharp&lt; dim &gt;::some_particles_are_coupled</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00861">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l01949">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::update_boundary_conditions()</a>, <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00159">FluidDynamicsMatrixBased&lt; dim &gt;::update_multiphysics_time_average_solution()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04829">FluidDynamicsSharp&lt; dim &gt;::update_precalculations_for_ib()</a>, <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l00043">FluidDynamicsSharp&lt; dim &gt;::vertices_cell_mapping()</a>, and <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01659">FluidDynamicsSharp&lt; dim &gt;::write_force_ib()</a>.</p>
 
 </div>
 </div>
@@ -1752,9 +1759,9 @@ template&lt;int dim&gt; </div>
 
 <p>This function updates the precalculations for every immersed particle. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04800">4800</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04829">4829</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, and <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">FluidDynamicsSharp&lt; dim &gt;::particles</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00865">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00862">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, and <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particles</a>.</p>
 
 </div>
 </div>
@@ -1827,9 +1834,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04135">4135</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l04164">4164</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00617">FluidDynamicsSharp&lt; dim &gt;::ib_particles_pvdhandler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00857">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00868">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::pvdhandler</a>, <a class="el" href="pvd__handler_8cc_source.html#l00011">PVDHandler::save()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02778">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00618">FluidDynamicsSharp&lt; dim &gt;::ib_particles_pvdhandler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00857">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">FluidDynamicsSharp&lt; dim &gt;::particles</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00868">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::pvdhandler</a>, <a class="el" href="pvd__handler_8cc_source.html#l00011">PVDHandler::save()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00908">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00867">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02778">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>.</p>
 
 </div>
 </div>
@@ -1860,7 +1867,7 @@ template&lt;int dim&gt; </div>
 
 <p>Write in a specifique file for each of the paticles its forces, velocity, position at each time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01630">1630</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8cc_source.html#l01659">1659</a> of file <a class="el" href="fluid__dynamics__sharp_8cc_source.html">fluid_dynamics_sharp.cc</a>.</p>
 
 </div>
 </div>
@@ -1887,7 +1894,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00563">563</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00564">564</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -1913,7 +1920,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00615">615</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00616">616</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -1939,7 +1946,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00604">604</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00605">605</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -1966,7 +1973,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Members </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00561">561</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00562">562</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -1992,7 +1999,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00630">630</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00631">631</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2018,7 +2025,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00580">580</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00581">581</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2044,7 +2051,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00598">598</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00599">599</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2070,7 +2077,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00599">599</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00600">600</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2096,7 +2103,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00627">627</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00628">628</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2122,7 +2129,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00611">611</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00612">612</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2148,7 +2155,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00617">617</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00618">618</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2174,7 +2181,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00636">636</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00637">637</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2200,7 +2207,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00634">634</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00635">635</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2226,7 +2233,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00597">597</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00598">598</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2252,7 +2259,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00591">591</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00592">592</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2278,7 +2285,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">620</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00621">621</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2304,7 +2311,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00619">619</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00620">620</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2330,7 +2337,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00566">566</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00567">567</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2356,7 +2363,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00623">623</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00624">624</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2382,7 +2389,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00622">622</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00623">623</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>
@@ -2408,7 +2415,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00570">570</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__sharp_8h_source.html#l00571">571</a> of file <a class="el" href="fluid__dynamics__sharp_8h_source.html">fluid_dynamics_sharp.h</a>.</p>
 
 </div>
 </div>

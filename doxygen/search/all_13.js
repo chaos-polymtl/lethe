@@ -46,7 +46,7 @@ var searchData=
   ['rectangular_5fbase_43',['rectangular_base',['../classCylindricalTube.html#a69a13a83408dc2161bc14af03783e711',1,'CylindricalTube']]],
   ['reference_5fpoints_44',['reference_points',['../classIBStencil.html#afdc9fd11681c2f6a720b0b5e1ca37272',1,'IBStencil']]],
   ['reference_5ftemperature_45',['reference_temperature',['../classParameters_1_1PhysicalProperties.html#a0f42fb91f8a7e229684d5bb11e3d240a',1,'Parameters::PhysicalProperties::reference_temperature'],['../classPhysicalPropertiesManager.html#aa871ae374af570d8f8fd34b69ad87546',1,'PhysicalPropertiesManager::reference_temperature']]],
-  ['refine_5fib_46',['refine_ib',['../classFluidDynamicsSharp.html#af2fa59fec17cbf9f0fee2e922c550010',1,'FluidDynamicsSharp']]],
+  ['refine_5fib_46',['refine_ib',['../classFluidDynamicsSharp.html#a7dac9eeecfc4ea454d12e0a6ce3813a9',1,'FluidDynamicsSharp']]],
   ['refine_5fmesh_47',['refine_mesh',['../classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18',1,'NavierStokesBase::refine_mesh()'],['../classFluidDynamicsNitsche.html#abe7213b302258dcf1f654597d971a745',1,'FluidDynamicsNitsche::refine_mesh()']]],
   ['refine_5fmesh_5fkelly_48',['refine_mesh_kelly',['../classNavierStokesBase.html#a050bce04127b14f96659bfa4627892e0',1,'NavierStokesBase']]],
   ['refine_5fmesh_5funiform_49',['refine_mesh_uniform',['../classNavierStokesBase.html#ac8a90a05bdef648307a900513585bd86',1,'NavierStokesBase']]],
