@@ -514,13 +514,13 @@ read_mesh_and_manifolds(
 
 template void
 read_mesh_and_manifolds(
-  parallel::DistributedTriangulationBase<2>    &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const bool                                   &restart,
-  const Parameters::Mortar<2>                  &mortar_parameters);
+  parallel::DistributedTriangulationBase<2> &triangulation,
+  const Parameters::Mesh                    &mesh_parameters,
+  const bool                                &restart,
+  const Parameters::Mortar<2>               &mortar_parameters);
 template void
 read_mesh_and_manifolds(
-  parallel::DistributedTriangulationBase<3>    &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const bool                                   &restart,
-  const Parameters::Mortar<3>                  &mortar_parameters);
+  parallel::DistributedTriangulationBase<3> &triangulation,
+  const Parameters::Mesh                    &mesh_parameters,
+  const bool                                &restart,
+  const Parameters::Mortar<3>               &mortar_parameters);

@@ -47,8 +47,8 @@ test()
   const double       r2_o                 = radius * 1.0;
   const unsigned int mapping_degree       = 3;
 
-  Parameters::Mesh                       stator_mesh;
-  Parameters::Mortar<dim>                mortar;
+  Parameters::Mesh        stator_mesh;
+  Parameters::Mortar<dim> mortar;
 
   // Stator mesh parameters
   stator_mesh.type                     = Parameters::Mesh::Type::dealii;
@@ -72,10 +72,7 @@ test()
   parallel::distributed::Triangulation<dim> merged_tria(comm);
 
   // Merge stator and rotor triangulations
-  read_mesh_and_manifolds(merged_tria,
-                          stator_mesh,
-                          false,
-                          mortar);
+  read_mesh_and_manifolds(merged_tria, stator_mesh, false, mortar);
 
   // Print information
   deallog << "Merged triangulation" << std::endl;
