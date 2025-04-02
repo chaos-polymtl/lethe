@@ -45,6 +45,8 @@ test()
 
   Parameters::Mesh stator_mesh;
   Parameters::Mortar<dim> mortar;
+  Parameters::Manifolds manifolds_parameters;
+  BoundaryConditions::BoundaryConditions boundary_conditions;
   
   // Stator mesh parameters
   stator_mesh.type = Parameters::Mesh::Type::dealii;
@@ -52,14 +54,15 @@ test()
   stator_mesh.grid_arguments = "0, 0 : 0.5 : 1.0 : 6 : true";
   stator_mesh.scale = 1;
   stator_mesh.simplex = false;
+  stator_mesh.initial_refinement = n_global_refinements;
+  stator_mesh.refine_until_target_size = false;
 
   // Rotor mesh parameters
-  mortar.enable = "false";
+  mortar.enable = "true";
   mortar.rotor_mesh = std::make_shared<Parameters::Mesh>();
   mortar.rotor_mesh->type = Parameters::Mesh::Type::dealii;
   mortar.rotor_mesh->grid_type = "hyper_shell";
   mortar.rotor_mesh->grid_arguments = "0, 0 : 0.25 : 0.5 : 6 : true";
-  mortar.rotor_mesh->rotation_angle = 3.0;
   mortar.rotor_mesh->scale = 1;
   mortar.rotor_mesh->simplex = false;
 
