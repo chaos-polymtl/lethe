@@ -4136,7 +4136,7 @@ namespace Parameters
     prm.enter_subsection("mortar");
     {
       prm.declare_entry("enable",
-                        "true",
+                        "false",
                         Patterns::Bool(),
                         "Enable mortar interface <true|false>");
 
