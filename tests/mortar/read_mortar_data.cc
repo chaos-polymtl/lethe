@@ -66,43 +66,11 @@ test()
   mortar.rotor_mesh->scale = 1;
   mortar.rotor_mesh->simplex = false;
 
+  // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> merged_tria(comm);
   
-  // Stator triangulation
-  Triangulation<dim> stator_temp_tria;
-  attach_grid_to_triangulation(stator_temp_tria, stator_mesh);
-  deallog << "Stator boundary IDs :" << stator_temp_tria.get_boundary_ids() << std::endl;
-  
-  // Rotor triangulation
-  Triangulation<dim> rotor_temp_tria;
-  attach_grid_to_triangulation(rotor_temp_tria, *mortar.rotor_mesh);
-  deallog << "Rotor boundary IDs :" << rotor_temp_tria.get_boundary_ids() << std::endl;
-
-  // Shift rotor boundary IDs #
-  for (const auto &face : rotor_temp_tria.active_face_iterators())
-    if (face->at_boundary())
-    {
-      face->set_boundary_id(face->boundary_id() + stator_temp_tria.get_boundary_ids().size());
-    }
-  deallog << "After Shifting IDs #" << std::endl;
-  deallog << "Stator boundary IDs :" << stator_temp_tria.get_boundary_ids() << std::endl;
-  deallog << "Rotor boundary IDs :" << rotor_temp_tria.get_boundary_ids() << std::endl;
-  
-  // Merge triangulations
-  GridGenerator::merge_triangulations(stator_temp_tria, 
-                                      rotor_temp_tria, 
-                                      merged_tria, 
-                                      1.0e-12, 
-                                      true, 
-                                      true);
-
-  // Set manifold                                    
-  merged_tria.set_manifold(0,
-    SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) :
-                                        Point<dim>(0, 0, 0)));
-
-  // Initial refinement                                  
-  merged_tria.refine_global(n_global_refinements);
+  // Merge stator and rotor triangulations
+  read_mesh_and_manifolds(merged_tria, stator_mesh, manifolds_parameters, false, boundary_conditions, mortar);
 
   // Print information
   deallog << "Merged triangulation" << std::endl;
