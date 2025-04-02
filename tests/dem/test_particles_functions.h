@@ -97,8 +97,8 @@ set_particle_properties(Particles::ParticleIterator<dim> &pit,
  * @brief Set default values for all lagrangian properties.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
- * @param particle_type_number Number of particle types
- * @param dem_parameters Simulation parameters
+ * @param[in] particle_type_number Number of particle types.
+ * @param[out] dem_parameters Simulation parameters
  */
 template <int dim>
 void
@@ -108,7 +108,13 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
   Parameters::Lagrangian::LagrangianPhysicalProperties &properties =
     dem_parameters.lagrangian_physical_properties;
 
-  // particle parameters
+  properties.particle_type_number = particle_type_number;
+
+  // Rolling resistance method
+  dem_parameters.model_parameters.rolling_resistance_method =
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+
+  // Particle parameters
   for (unsigned int i = 0; i < particle_type_number; ++i)
     {
       properties.density_particle[i]                             = 1000;
@@ -128,7 +134,7 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
       properties.thermal_accommodation_particle[i]               = 0.7;
     }
 
-  // wall parameters
+  // Wall parameters
   properties.youngs_modulus_wall          = 1000000;
   properties.poisson_ratio_wall           = 0.3;
   properties.restitution_coefficient_wall = 0.1;
@@ -138,14 +144,12 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
   properties.surface_energy_wall          = 0.0;
   properties.hamaker_constant_wall        = 4.e-19;
 
-  // gas parameters
+  // Interstitial gas parameters
   properties.thermal_conductivity_gas     = 0.01;
   properties.specific_heat_gas            = 1000;
   properties.dynamic_viscosity_gas        = 1.e-5;
   properties.specific_heats_ratio_gas     = 1;
   properties.molecular_mean_free_path_gas = 68.e-9;
 }
-
-
 
 #endif // test_particles_functions_h
