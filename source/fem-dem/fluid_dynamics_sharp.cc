@@ -817,6 +817,20 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::refine_ib()
 {
+  bool extrapolate_particle_position =
+    this->simulation_parameters.particlesParameters
+      ->time_extrapolation_of_refinement_zone;
+
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+  if (!refinement_step || !extrapolate_particle_position)
+    return;
+
   TimerOutput::Scope                            t(this->computing_timer,
                        "Refine around immersed boundary");
   Point<dim>                                    center_immersed;
@@ -828,10 +842,6 @@ FluidDynamicsSharp<dim>::refine_ib()
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  bool extrapolate_particle_position =
-    this->simulation_parameters.particlesParameters
-      ->time_extrapolation_of_refinement_zone;
 
   double smallest_cut_cell = std::numeric_limits<double>::max();
   bool   minimal_crown_refinement_enabled =
