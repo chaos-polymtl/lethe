@@ -402,7 +402,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
                       << this->simulation_parameters.particlesParameters
                            ->initial_refinement
                       << std::endl;
-          refine_ib();
+          refine_ib(initial_refinement);
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           if (update_precalculations_flag)
             {
@@ -418,7 +418,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
   if (initial_refinement == false)
     {
       update_precalculations_flag = false;
-      refine_ib();
+      refine_ib(initial_refinement);
       NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
       if (update_precalculations_flag)
         {
@@ -815,12 +815,8 @@ FluidDynamicsSharp<dim>::define_particles()
 
 template <int dim>
 void
-FluidDynamicsSharp<dim>::refine_ib()
+FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
 {
-  bool extrapolate_particle_position =
-    this->simulation_parameters.particlesParameters
-      ->time_extrapolation_of_refinement_zone;
-
   bool refinement_step;
   if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
     refinement_step = this->simulation_control->get_step_number() %
@@ -828,8 +824,27 @@ FluidDynamicsSharp<dim>::refine_ib()
                       0;
   else
     refinement_step = this->simulation_control->get_step_number() == 0;
-  if (!refinement_step || !extrapolate_particle_position)
-    return;
+
+  // If this is not the initial refinement cycle nor a usual refinement step,
+  // we refine the cells around immersed solids only if they have moved since
+  // the last time step.
+  if (!initial_refinement && !refinement_step)
+    {
+      bool stationary_particles = true;
+      for (unsigned int p = 0; p < particles.size(); ++p)
+        {
+          if ((particles[p].position - particles[p].previous_positions[0])
+                  .norm() > 1e-16 ||
+              (particles[p].orientation - particles[p].previous_orientation[0])
+                  .norm() > 1e-16)
+            {
+              stationary_particles = false;
+              break;
+            }
+        }
+      if (stationary_particles)
+        return;
+    }
 
   TimerOutput::Scope                            t(this->computing_timer,
                        "Refine around immersed boundary");
@@ -842,6 +857,10 @@ FluidDynamicsSharp<dim>::refine_ib()
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  bool extrapolate_particle_position =
+    this->simulation_parameters.particlesParameters
+      ->time_extrapolation_of_refinement_zone;
 
   double smallest_cut_cell = std::numeric_limits<double>::max();
   bool   minimal_crown_refinement_enabled =

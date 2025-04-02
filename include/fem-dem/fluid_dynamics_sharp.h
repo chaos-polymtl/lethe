@@ -294,9 +294,10 @@ private:
    *parameter: "refine mesh inside radius factor" and "refine mesh outside
    *radius factor". These factors multiply the radius of the particle to define
    *the outside and inside radius of the ring\shell.
+   * @param initial_refinement, A bool that indicate if this is the initial refinement.
    */
   void
-  refine_ib();
+  refine_ib(const bool initial_refinement);
 
 
   /**
