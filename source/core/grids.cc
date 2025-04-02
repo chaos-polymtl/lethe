@@ -434,8 +434,9 @@ read_mesh_and_manifolds(
                                       true, 
                                       true);
 
-  // Setup boundary conditions
-  setup_periodic_boundary_conditions(triangulation, boundary_conditions);
+  // TODO
+  // Setup boundary conditions 
+  // setup_periodic_boundary_conditions(triangulation, boundary_conditions);
 
   // Attach manifolds to merged triangulation
   triangulation.set_manifold(0,
