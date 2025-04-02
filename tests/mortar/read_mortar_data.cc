@@ -3,8 +3,10 @@
 
 /**
  * @brief This test reads two mesh input parameters and merges 
- * them in a unique triangulation.
- * It is based on the test mortar/plot_01.cc
+ * them in a unique triangulation. The goal is to test the steps on the
+ * function read_mesh_and_manifolds only related to reading and merging two
+ * distinct triangulations.
+ * Based on the test mortar/plot_01.cc
  */
 
  #include <deal.II/distributed/tria.h>
