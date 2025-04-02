@@ -405,66 +405,20 @@ read_mesh_and_manifolds(
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
 
-  // Stator configuration
-  Triangulation<dim, spacedim> stator_temp_tria;
+  // Stator triangulation
+  Triangulation<dim> stator_temp_tria;
   attach_grid_to_triangulation(stator_temp_tria, mesh_parameters);
-  setup_periodic_boundary_conditions(stator_temp_tria, *mortar_parameters.rotor_boundary_conditions);
-
-  if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
-    {
-      // Gather all the manifold ids within a set
-      std::set<int> manifold_ids;
-      for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
-        manifold_ids.insert(manifolds_parameters.id[i]);
-
-      // Reset all the manifolds manually and force them to zero
-      stator_temp_tria.reset_all_manifolds();
-
-      if (manifolds_parameters.size > 0)
-        {
-          for (const auto &face : stator_temp_tria.active_face_iterators())
-            {
-              if (face->at_boundary() &&
-                  manifold_ids.find(face->boundary_id()) != manifold_ids.end())
-                face->set_all_manifold_ids(face->boundary_id());
-            }
-        }
-    }
-
-  attach_manifolds_to_triangulation(stator_temp_tria, manifolds_parameters);
-
-  // Rotor configuration
-  Triangulation<dim, spacedim> rotor_temp_tria;
+  
+  // Rotor triangulation
+  Triangulation<dim> rotor_temp_tria;
   attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
   
-  if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
-    {
-      // Gather all the manifold ids within a set
-      std::set<int> manifold_ids;
-      for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
-        manifold_ids.insert(manifolds_parameters.id[i]);
-
-      // Reset all the manifolds manually and force them to zero
-      rotor_temp_tria.reset_all_manifolds();
-
-      if (manifolds_parameters.size > 0)
-        {
-          for (const auto &face : rotor_temp_tria.active_face_iterators())
-            {
-              if (face->at_boundary() &&
-                  manifold_ids.find(face->boundary_id()) != manifold_ids.end())
-                face->set_all_manifold_ids(face->boundary_id());
-            }
-        }
-    }
-
-  attach_manifolds_to_triangulation(rotor_temp_tria, manifolds_parameters);
-
-
-  // Shift boundary IDs #
+  // Shift rotor boundary IDs #
   for (const auto &face : rotor_temp_tria.active_face_iterators())
     if (face->at_boundary())
-      face->set_boundary_id(face->boundary_id() + rotor_temp_tria.get_boundary_ids().size());
+    {
+      face->set_boundary_id(face->boundary_id() + stator_temp_tria.get_boundary_ids().size());
+    }
 
   // Merge triangulations
   GridGenerator::merge_triangulations(stator_temp_tria, 
@@ -474,10 +428,13 @@ read_mesh_and_manifolds(
                                       true, 
                                       true);
 
-  // Store manifolds
-  
-  // TODO
+  // Setup boundary conditions
+  setup_periodic_boundary_conditions(triangulation, boundary_conditions);
 
+  // Attach manifolds to merged triangulation
+  triangulation.set_manifold(0,
+    SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) :
+                                        Point<dim>(0, 0, 0)));
   // Initial mesh refinement
   if (mesh_parameters.simplex)
     {
@@ -602,7 +559,6 @@ attach_grid_to_triangulation(
             mesh_parameters.grid_arguments);
 
           GridTools::scale(mesh_parameters.scale, triangulation);
-          std::cout << "entered here" << std::endl;
         }
     }
   // Customizable cylinder mesh
