@@ -27,8 +27,6 @@
 #include <deal.II/base/conditional_ostream.h>
 #include <fstream>
 
-using namespace dealii;
-
 void
 test()
 {
@@ -43,11 +41,8 @@ test()
   const double r2_o                       = radius * 1.0;
   const unsigned int mapping_degree       = 3;
 
-  
   Parameters::Mesh stator_mesh;
   Parameters::Mortar<dim> mortar;
-  Parameters::Manifolds manifold_parameters;
-  BoundaryConditions::BoundaryConditions boundary_conditions;
   
   // Stator mesh parameters
   stator_mesh.type = Parameters::Mesh::Type::dealii;
@@ -66,52 +61,42 @@ test()
   mortar.rotor_mesh->scale = 1;
   mortar.rotor_mesh->simplex = false;
 
-  // Initialize merged triangulation
   parallel::distributed::Triangulation<dim> merged_tria(comm);
-
-  // Stator temporary triangulation
-  parallel::distributed::Triangulation<dim> stator_tria(comm);
-  // Attach grid to stator 
-  attach_grid_to_triangulation(stator_tria, stator_mesh);
-
-  // Rotor temporary triangulation
-  parallel::distributed::Triangulation<dim> rotor_tria(comm);
-  // Attach grid to rotor
-  attach_grid_to_triangulation(rotor_tria, *mortar.rotor_mesh);
-
-  deallog << "Stator boundary IDs :" << stator_tria.get_boundary_ids() << std::endl;
-  deallog << "Rotor boundary IDs :" << rotor_tria.get_boundary_ids() << std::endl;
   
-  // Rename boundary rotor geometry boundary IDs
-  for (const auto &face : rotor_tria.active_face_iterators())
+  // Stator triangulation
+  Triangulation<dim> stator_temp_tria;
+  attach_grid_to_triangulation(stator_temp_tria, stator_mesh);
+  deallog << "Stator boundary IDs :" << stator_temp_tria.get_boundary_ids() << std::endl;
+  
+  // Rotor triangulation
+  Triangulation<dim> rotor_temp_tria;
+  attach_grid_to_triangulation(rotor_temp_tria, *mortar.rotor_mesh);
+  deallog << "Rotor boundary IDs :" << rotor_temp_tria.get_boundary_ids() << std::endl;
+
+  // Shift rotor boundary IDs #
+  for (const auto &face : rotor_temp_tria.active_face_iterators())
     if (face->at_boundary())
     {
-      face->set_boundary_id(face->boundary_id() + stator_tria.get_boundary_ids().size());
-      // face->set_manifold_id(face->manifold_id() + stator_tria.get_manifold_ids().size());
+      face->set_boundary_id(face->boundary_id() + stator_temp_tria.get_boundary_ids().size());
     }
-      
   deallog << "After Shifting IDs #" << std::endl;
-  deallog << "Stator boundary IDs :" << stator_tria.get_boundary_ids() << std::endl;
-  deallog << "Rotor boundary IDs :" << rotor_tria.get_boundary_ids() << std::endl;
+  deallog << "Stator boundary IDs :" << stator_temp_tria.get_boundary_ids() << std::endl;
+  deallog << "Rotor boundary IDs :" << rotor_temp_tria.get_boundary_ids() << std::endl;
   
   // Merge triangulations
-  GridGenerator::merge_triangulations(stator_tria, 
-                                      rotor_tria, 
+  GridGenerator::merge_triangulations(stator_temp_tria, 
+                                      rotor_temp_tria, 
                                       merged_tria, 
                                       1.0e-12, 
                                       true, 
                                       true);
 
-  // merged_tria.set_manifold(0, rotor_tria.get_manifold(0));
-  // merged_tria.set_manifold(1, rotor_tria.get_manifold(1));
-  // merged_tria.set_manifold(2, stator_tria.get_manifold(0));
-
+  // Set manifold                                    
   merged_tria.set_manifold(0,
     SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) :
                                         Point<dim>(0, 0, 0)));
-                
-  // attach_manifolds_to_triangulation(merged_tria, manifold_parameters);                                      
 
+  // Initial refinement                                  
   merged_tria.refine_global(n_global_refinements);
 
   // Print information
@@ -120,7 +105,7 @@ test()
   deallog << "Number of vertices : " << merged_tria.n_vertices() << std::endl;
 
   for (const auto &face : merged_tria.active_face_iterators())
-    deallog << "Cell ID : " << face->center() << std::endl;
+    deallog << "Cell center : " << face->center() << std::endl;
 
   // Generate vtu file
   DataOut<dim> data_out;
@@ -138,12 +123,6 @@ test()
                          mapping_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
   data_out.write_vtu_in_parallel("out.vtu", MPI_COMM_WORLD);
-
-  // Generate msh file
-  GridOut go;
-  std::ofstream ofile("out.msh");
-  go.write_msh(merged_tria, ofile);
-
 }
 
 int
