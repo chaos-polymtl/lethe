@@ -20,9 +20,8 @@
 
 template <int dim, int spacedim>
 void
-attach_grid_to_triangulation(
-  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters)
+attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
+                             const Parameters::Mesh       &mesh_parameters)
 
 {
   // GMSH input
@@ -396,17 +395,14 @@ read_mesh_and_manifolds(
 }
 
 template void
-attach_grid_to_triangulation(
-  parallel::DistributedTriangulationBase<2> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters);
+attach_grid_to_triangulation(Triangulation<2>       &triangulation,
+                             const Parameters::Mesh &mesh_parameters);
 template void
-attach_grid_to_triangulation(
-  parallel::DistributedTriangulationBase<3> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters);
+attach_grid_to_triangulation(Triangulation<3>       &triangulation,
+                             const Parameters::Mesh &mesh_parameters);
 template void
-attach_grid_to_triangulation(
-  parallel::DistributedTriangulationBase<2, 3> &triangulation,
-  const Parameters::Mesh                       &mesh_parameters);
+attach_grid_to_triangulation(Triangulation<2, 3>    &triangulation,
+                             const Parameters::Mesh &mesh_parameters);
 
 
 template void
