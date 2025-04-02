@@ -12,6 +12,7 @@ The mortar control section is used when simulating rotor-stator geometries, in w
       set grid type          = subdivided_hyper_rectangle
       set grid arguments     = 1,1,1 : -1,-1,-1 : 1,1,1 : true
       set initial refinement = 0
+      set initial rotation angle = 0
     end
     set rotor boundary id    = 1
     set stator boundary id   = 2
