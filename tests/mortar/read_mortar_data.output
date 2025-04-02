@@ -1,9 +1,4 @@
 
-DEAL::Stator boundary IDs :0 1
-DEAL::Rotor boundary IDs :0 1
-DEAL::After Shifting IDs #
-DEAL::Stator boundary IDs :0 1
-DEAL::Rotor boundary IDs :2 3
 DEAL::Merged triangulation
 DEAL::Number of active cells : 192
 DEAL::Number of vertices : 216
