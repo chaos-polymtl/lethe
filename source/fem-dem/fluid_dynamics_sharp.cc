@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -402,7 +402,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
                       << this->simulation_parameters.particlesParameters
                            ->initial_refinement
                       << std::endl;
-          refine_ib();
+          refine_ib(initial_refinement);
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           if (update_precalculations_flag)
             {
@@ -418,7 +418,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
   if (initial_refinement == false)
     {
       update_precalculations_flag = false;
-      refine_ib();
+      refine_ib(initial_refinement);
       NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
       if (update_precalculations_flag)
         {
@@ -815,8 +815,37 @@ FluidDynamicsSharp<dim>::define_particles()
 
 template <int dim>
 void
-FluidDynamicsSharp<dim>::refine_ib()
+FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
 {
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+
+  // If this is not the initial refinement cycle nor a usual refinement step,
+  // we refine the cells around immersed solids only if they have moved since
+  // the last time step.
+  if (!initial_refinement && !refinement_step)
+    {
+      bool stationary_particles = true;
+      for (unsigned int p = 0; p < particles.size(); ++p)
+        {
+          if ((particles[p].position - particles[p].previous_positions[0])
+                  .norm() > 1e-16 ||
+              (particles[p].orientation - particles[p].previous_orientation[0])
+                  .norm() > 1e-16)
+            {
+              stationary_particles = false;
+              break;
+            }
+        }
+      if (stationary_particles)
+        return;
+    }
+
   TimerOutput::Scope                            t(this->computing_timer,
                        "Refine around immersed boundary");
   Point<dim>                                    center_immersed;

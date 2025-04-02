@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/ib_particle.h>
@@ -294,9 +294,10 @@ private:
    *parameter: "refine mesh inside radius factor" and "refine mesh outside
    *radius factor". These factors multiply the radius of the particle to define
    *the outside and inside radius of the ring\shell.
+   * @param initial_refinement, A bool that indicate if this is the initial refinement.
    */
   void
-  refine_ib();
+  refine_ib(const bool initial_refinement);
 
 
   /**
