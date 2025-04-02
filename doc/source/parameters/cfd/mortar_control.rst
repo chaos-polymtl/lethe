@@ -7,16 +7,17 @@ The mortar control section is used when simulating rotor-stator geometries, in w
 .. code-block:: text
 
   subsection mortar
+    set enable = true
     subsection mesh
-      set type               = dealii
-      set grid type          = subdivided_hyper_rectangle
-      set grid arguments     = 1,1,1 : -1,-1,-1 : 1,1,1 : true
-      set initial refinement = 0
+      set type                   = dealii
+      set grid type              = subdivided_hyper_rectangle
+      set grid arguments         = 1,1,1 : -1,-1,-1 : 1,1,1 : true
+      set initial refinement     = 0
       set initial rotation angle = 0
     end
-    set rotor boundary id    = 1
-    set stator boundary id   = 2
-    set center of rotation   = 0, 0
+    set rotor boundary id  = 1
+    set stator boundary id = 2
+    set center of rotation = 0, 0
   end
 
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
