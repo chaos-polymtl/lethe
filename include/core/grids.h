@@ -25,20 +25,6 @@ void
 attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
                              const Parameters::Mesh       &mesh_parameters);
 
-
-/**
- * @brief Attaches a grid to a triangulation using mesh parameters
- *
- * @param triangulation The triangulation to which a grid is attached
- *
- * @param mesh_parameters The mesh parameters used to decide what type of mesh or primitive is  used
- */
-template <int dim, int spacedim = dim>
-void
-attach_grid_to_triangulation(
-  Triangulation<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters);
-
 /**
  * @brief Modifies the triangulation to setup periodic boundary conditions in the case of CFD simulations
  *
