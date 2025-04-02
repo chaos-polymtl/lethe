@@ -70,6 +70,7 @@ read_mesh_and_manifolds(
  * @param boundary_conditions [stator] The information about the boundary conditions id. This is used to set-up the periodicity of the domain
  * 
  * @param mortar [rotor] The information about the mortar method control, including the rotor mesh parameters
+ * This function currently only works for dealii meshes. 
  */
 template <int dim, int spacedim = dim>
 void
