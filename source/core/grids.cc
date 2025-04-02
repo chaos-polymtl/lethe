@@ -405,6 +405,11 @@ read_mesh_and_manifolds(
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
 
+  AssertThrow(
+    mesh_parameters.type == Parameters::Mesh::Type::dealii,
+    ExcMessage(
+      "GMSH files are currently not compatible with the mortar implementation."));
+
   // Stator triangulation
   Triangulation<dim> stator_temp_tria;
   attach_grid_to_triangulation(stator_temp_tria, mesh_parameters);
