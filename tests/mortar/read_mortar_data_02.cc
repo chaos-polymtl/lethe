@@ -2,31 +2,35 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test reads two mesh input parameters and merges 
+ * @brief This test reads two mesh input parameters and merges
  * them in a unique triangulation. The goal is to test the steps on the
  * function read_mesh_and_manifolds only related to reading and merging two
  * distinct triangulations.
  * Based on the test mortar/plot_01.cc
  */
 
- #include <deal.II/distributed/tria.h>
- #include <deal.II/grid/grid_generator.h>
- #include <deal.II/grid/grid_tools.h>
- #include <deal.II/grid/manifold_lib.h>
- #include <deal.II/grid/tria.h>
- #include <deal.II/numerics/data_out.h>
- #include <deal.II/fe/mapping_q.h>
- #include <deal.II/numerics/vector_tools.h>
- #include <deal.II/grid/grid_out.h>
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/manifold_lib.h>
+#include <deal.II/grid/tria.h>
+
+#include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/vector_tools.h>
 
 // Lethe
 #include <core/grids.h>
 #include <core/parameters.h>
 
 // Tests (with common definitions)
+#include <deal.II/base/conditional_ostream.h>
+
 #include <../tests/tests.h>
 
-#include <deal.II/base/conditional_ostream.h>
 #include <fstream>
 
 void
@@ -42,46 +46,52 @@ test()
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const unsigned int mapping_degree       = 3;
 
-  Parameters::Mesh stator_mesh;
-  Parameters::Mortar<dim> mortar;
-  Parameters::Manifolds manifolds_parameters;
+  Parameters::Mesh                       stator_mesh;
+  Parameters::Mortar<dim>                mortar;
+  Parameters::Manifolds                  manifolds_parameters;
   BoundaryConditions::BoundaryConditions boundary_conditions;
-  
+
   // Stator mesh parameters
-  stator_mesh.type = Parameters::Mesh::Type::dealii;
-  stator_mesh.grid_type = "hyper_cube_with_cylindrical_hole";
-  stator_mesh.grid_arguments = "1.0 : 2.0 : 5.0 : 1 : true";
-  stator_mesh.scale = 1;
-  stator_mesh.simplex = false;
-  stator_mesh.initial_refinement = n_global_refinements;
+  stator_mesh.type                     = Parameters::Mesh::Type::dealii;
+  stator_mesh.grid_type                = "hyper_cube_with_cylindrical_hole";
+  stator_mesh.grid_arguments           = "1.0 : 2.0 : 5.0 : 1 : true";
+  stator_mesh.scale                    = 1;
+  stator_mesh.simplex                  = false;
+  stator_mesh.initial_refinement       = n_global_refinements;
   stator_mesh.refine_until_target_size = false;
 
   // Rotor mesh parameters
-  mortar.enable = "true";
-  mortar.rotor_mesh = std::make_shared<Parameters::Mesh>();
-  mortar.rotor_mesh->type = Parameters::Mesh::Type::dealii;
-  mortar.rotor_mesh->grid_type = "hyper_ball_balanced";
+  mortar.enable                     = "true";
+  mortar.rotor_mesh                 = std::make_shared<Parameters::Mesh>();
+  mortar.rotor_mesh->type           = Parameters::Mesh::Type::dealii;
+  mortar.rotor_mesh->grid_type      = "hyper_ball_balanced";
   mortar.rotor_mesh->grid_arguments = "0, 0 : 1.0";
   mortar.rotor_mesh->rotation_angle = 3.0;
-  mortar.rotor_mesh->scale = 1;
-  mortar.rotor_mesh->simplex = false;
+  mortar.rotor_mesh->scale          = 1;
+  mortar.rotor_mesh->simplex        = false;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> merged_tria(comm);
-  
+
   // Merge stator and rotor triangulations
-  read_mesh_and_manifolds(merged_tria, stator_mesh, manifolds_parameters, false, boundary_conditions, mortar);
+  read_mesh_and_manifolds(merged_tria,
+                          stator_mesh,
+                          manifolds_parameters,
+                          false,
+                          boundary_conditions,
+                          mortar);
 
   // Print information
   deallog << "Merged triangulation" << std::endl;
-  deallog << "Number of active cells : " << merged_tria.n_active_cells() << std::endl;
+  deallog << "Number of active cells : " << merged_tria.n_active_cells()
+          << std::endl;
   deallog << "Number of vertices : " << merged_tria.n_vertices() << std::endl;
 
   for (const auto &face : merged_tria.active_face_iterators())
     deallog << "Cell center : " << face->center() << std::endl;
 
   // Generate vtu file
-  DataOut<dim> data_out;
+  DataOut<dim>       data_out;
   MappingQ<dim, dim> mapping(mapping_degree);
 
   DataOutBase::VtkFlags flags;

@@ -404,7 +404,6 @@ read_mesh_and_manifolds(
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
-
   AssertThrow(
     mesh_parameters.type == Parameters::Mesh::Type::dealii,
     ExcMessage(
@@ -413,35 +412,34 @@ read_mesh_and_manifolds(
   // Stator triangulation
   Triangulation<dim> stator_temp_tria;
   attach_grid_to_triangulation(stator_temp_tria, mesh_parameters);
-  
+
   // Rotor triangulation
   Triangulation<dim> rotor_temp_tria;
   attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
-  GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle, rotor_temp_tria);
+  GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle,
+                    rotor_temp_tria);
 
   // Shift rotor boundary IDs #
   for (const auto &face : rotor_temp_tria.active_face_iterators())
     if (face->at_boundary())
-    {
-      face->set_boundary_id(face->boundary_id() + stator_temp_tria.get_boundary_ids().size());
-    }
+      {
+        face->set_boundary_id(face->boundary_id() +
+                              stator_temp_tria.get_boundary_ids().size());
+      }
 
   // Merge triangulations
-  GridGenerator::merge_triangulations(stator_temp_tria, 
-                                      rotor_temp_tria, 
-                                      triangulation, 
-                                      1.0e-12, 
-                                      true, 
-                                      true);
+  GridGenerator::merge_triangulations(
+    stator_temp_tria, rotor_temp_tria, triangulation, 1.0e-12, true, true);
 
   // TODO
-  // Setup boundary conditions 
+  // Setup boundary conditions
   // setup_periodic_boundary_conditions(triangulation, boundary_conditions);
 
   // Attach manifolds to merged triangulation
   triangulation.set_manifold(0,
-    SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) :
-                                        Point<dim>(0, 0, 0)));
+                             SphericalManifold<dim>((dim == 2) ?
+                                                      Point<dim>(0, 0) :
+                                                      Point<dim>(0, 0, 0)));
   // Initial mesh refinement
   if (mesh_parameters.simplex)
     {
