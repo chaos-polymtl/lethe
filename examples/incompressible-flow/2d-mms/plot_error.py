@@ -8,9 +8,11 @@ This script should be run after running organize_output.py which rearranges the 
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import matplotlib.ticker as ticker
 from matplotlib import font_manager
 from matplotlib import rcParams
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 from pathlib import Path
 import math
@@ -25,7 +27,7 @@ repo = base_dir + '/' + 'mms_quad'
 path=Path(repo)
 pattern = r"degu_(\d+)_degp_(\d+)"
 num_columns = 7
-col_widths = [6, 12, 5, 11, 5, 8, 7]  # Adjust based on your file structure
+col_widths = [6, 11, 5, 11, 5, 8, 7]  # Adjust based on your file structure
 
 m_uL2E = np.empty((0, 0))
 m_pL2E = np.empty((0, 0))
@@ -105,7 +107,8 @@ plt.figure(num=1)
 lines = plt.plot(h, m_uL2E, label='m_uL2E Line')
 
 # Shaded triangular area to show the slope
-highlight_x = np.log10(np.array([5e-3, 6.5e-3]))  # X-limits of the triangle
+# highlight_x = np.log10(np.array([5e-3, 6.5e-3]))  # X-limits of the triangle
+highlight_x = np.log10(np.array([1e-2, 1.3e-2]))  # X-limits of the triangle
 
 # Define a function to apply np.polyfit to each column
 def fit_log(log_h, log_uL2E):
@@ -159,7 +162,9 @@ for i in range(highlight_x.shape[1]):  # Iterate over the columns (over the plot
    
 
 # Define 6 distinct colors for the lines
-colors = ["#d73027","#fdae61", "#fee08b", "#d9ef8b", "#1591EA", "#1a9850"]
+cmap = mpl.colormaps['Set1']  # This gives the 'Set1' colormap
+colors = [cmap(i) for i in range(cmap.N) if i != 5]  # Get 6 colors from the 'Set1' colormap
+
 markers = ['o', 's', '^', 'D', 'x', '*'] # Define markers for each line
 
 # We do this because the files are not read in increasing order of degu and then degp
@@ -195,9 +200,12 @@ plt.xscale('log')
 plt.yscale('log') 
 
 # This has to be after setting the log-scale
-tick_values = [2*10**(-3), 10**(-2), 7*10**(-2)]  # Tick positions
-tick_labels = [r"$2\times 10^{-3}$", r"$10^{-2}$", r"$7\times 10^{-2}$"]  # LaTeX labels
+tick_values = [10**(-2), 9*10**(-2)]  # Tick positions
+tick_labels = [r"$10^{-2}$", r"$9\times 10^{-2}$"]  # LaTeX labels
 plt.xticks(tick_values, tick_labels)  # Set x-ticks and labels
+tick_values = [10**(-8), 10**(-6), 10**(-4), 10**(-2)]  # Tick positions
+tick_labels = [r"$10^{-8}$", r"$10^{-6}$", r"$10^{-4}$", r"$10^{-2}$"]  # LaTeX labels
+plt.yticks(tick_values, tick_labels)  # Set y-ticks and labels
 plt.xlabel('h')       # label for x-axis
 plt.ylabel('$\Vert e\Vert_{2}$')  # label for y-axis
 
@@ -206,7 +214,9 @@ plt.ylabel('$\Vert e\Vert_{2}$')  # label for y-axis
 plt.figure(num=2)
 lines = plt.plot(h, m_pL2E)
 # Shaded triangular area to show the slope
-highlight_x = np.log10(np.array([5e-3, 6.5e-3]))  # X-coordinates of the triangle
+# highlight_x = np.log10(np.array([5e-3, 6.5e-3]))  # X-coordinates of the triangle
+highlight_x = np.log10(np.array([1e-2, 1.3e-2]))  # X-limits of the triangle
+
 # We use the logarithm of the x and y coordinates to avoid having to fit polynomials of varying degrees
 log_h = np.log10(h)  # log(h)
 log_m_pL2E = np.log10(m_pL2E)  # log(uL2E)
@@ -245,14 +255,6 @@ for i in range(highlight_x.shape[1]):  # Iterate over the columns
     y_center = 5*(highlight_y[1,i] + highlight_y[2,i])/12
     # y_center = highlight_y[2,i] 
     plt.text(x_center, y_center, f"{v_O_p_mean[i]}", fontsize=6, ha='center', va='center')
-
-plt.xscale('log') 
-plt.yscale('log') 
-tick_values = [2*10**(-3), 10**(-2), 7*10**(-2)]  # Tick positions
-tick_labels = [r"$2\times 10^{-3}$", r"$10^{-2}$", r"$7\times 10^{-2}$"]  # LaTeX labels
-plt.xticks(tick_values, tick_labels)  # Set x-ticks and labels
-plt.xlabel('h')       # label for x-axis
-plt.ylabel('$\Vert e\Vert_{2}$')  # label for y-axis
 
 lines = [lines[i] for i in sorted_indices]
 for line, color, marker, label in zip(lines, colors, markers, legend_labels_sorted):
@@ -424,15 +426,8 @@ for line, color, marker, label in zip(lines, colors, markers, legend_labels_sort
     simplex_handles.append(line)
 
 # Apply the function along each column of uL2E
-plt.xscale('log') 
-plt.yscale('log') 
-
-# This has to be after setting the log-scale
-tick_values = [2*10**(-3), 10**(-2), 7*10**(-2)]  # Tick positions
-tick_labels = [r"$2\times 10^{-3}$", r"$10^{-2}$", r"$7\times 10^{-2}$"]  # LaTeX labels
-plt.xticks(tick_values, tick_labels)  # Set x-ticks and labels
-plt.xlabel('h')       # label for x-axis
-plt.ylabel('$\Vert e\Vert_{2}$')  # label for y-axis
+# plt.xscale('log') 
+# plt.yscale('log') 
 
 legend_handles = quad_handles + simplex_handles
 legend_labels = quad_labels + simplex_labels
@@ -491,13 +486,6 @@ for i in range(highlight_x.shape[1]):  # Iterate over the columns
       # y_center = highlight_y[2,i] 
       plt.text(x_center, y_center, f"{v_O_p_mean[i]}", fontsize=6, ha='center', va='center')
 
-plt.xscale('log') 
-plt.yscale('log') 
-tick_values = [2*10**(-3), 10**(-2), 7*10**(-2)]  # Tick positions
-tick_labels = [r"$2\times 10^{-3}$", r"$10^{-2}$", r"$7\times 10^{-2}$"]  # LaTeX labels
-plt.xticks(tick_values, tick_labels)  # Set x-ticks and labels
-plt.xlabel('h')       # label for x-axis
-plt.ylabel('$\Vert e\Vert_{2}$')  # label for y-axis
 
 lines = [lines[i] for i in sorted_indices]
 
@@ -507,9 +495,27 @@ for line, color, marker, label in zip(lines, colors, markers, legend_labels_sort
     line.set_label(label)
     line.set_linestyle('--') 
 
+plt.xscale('log') 
+plt.yscale('log') 
+
+tick_values = [10**(-2), 9*10**(-2)]  # Tick positions
+tick_labels = [r"$10^{-2}$", r"$9\times 10^{-2}$"]  # LaTeX labels
+plt.xticks(tick_values, tick_labels)  # Set x-ticks and labels
+
+tick_values = [10**(-7), 10**(-5), 10**(-3), 10**(-1)]  # Tick positions
+tick_labels = [r"$10^{-7}$", r"$10^{-5}$", r"$10^{-3}$", r"$10^{-1}$"]  # LaTeX labels
+plt.yticks(tick_values, tick_labels)  # Set y-ticks and labels
+
+plt.xlabel('h')       # label for x-axis
+plt.ylabel('$\Vert e\Vert_{2}$')  # label for y-axis
+
 # Define the font properties explicitly
 font_properties = font_manager.FontProperties(size=9.5) 
 plt.legend(legend_handles, legend_labels, prop=font_properties , loc='lower right', ncol=2)
+
+# Disable minor ticks
+plt.minorticks_off()
+
 # Reusing the same legend handles and labels   
 plt.savefig("order_of_convergence_pressure.png", dpi=300, bbox_inches='tight')
 plt.clf() 

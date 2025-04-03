@@ -95,12 +95,6 @@ end
 
 subsection mesh adaptation
   set type = uniform
-  #set max number elements     = 20000
-  #set max refinement level    = 6
-  #set min refinement level    = 6
-  #set frequency               = 1
-  #set fraction refinement     = 0.1
-  #set fraction coarsening     = 0.1
 end
 
 #---------------------------------------------------
