@@ -196,6 +196,7 @@ Once the simulations are completed,  the script ``organize_output.py`` must be r
 Results and Discussion
 -----------------------
 
+
 The following figures show the :math:`L^2` norm of the error relative to the analytical solution for the velocity and pressure fields as a function of the mesh size :math:`h`. The error is defined as follows:
 
 .. math::
