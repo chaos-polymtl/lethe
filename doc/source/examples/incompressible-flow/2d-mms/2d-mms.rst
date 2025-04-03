@@ -103,8 +103,8 @@ The mesh used in this example is generated using the deal.II grid generator.
     set type               = dealii
     set grid type          = hyper_cube
     set grid arguments     = -1 : 1 : false
-    set simplex = true  # if using simplex mesh 
-    set initial refinement = 4 # if using quad mesh
+    set simplex            = true      # if using simplex mesh 
+    set initial refinement = 4         # if using quad mesh
     set initial refinement = {{LEVEL}} # if using simplex mesh 
   end
 
