@@ -1,7 +1,8 @@
 """
-DESCRIPTION
+SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-This script extracts a slice from a .vtu file or all the .vtu files linked to a .pvd file. The slice is defined by a point and a normal direction and is saved in a new .vtk file.
+This script extracts a slice from a .vtu file or all the .vtu files linked to a .pvd file. The slice is defined by a point and a normal direction and is saved in a new .vtu file.
 
 To use: python3 extract-slice-from-vtu.py <file> --origin <x>,<y>,<z> --normal <u>,<v>,<w> --np <number of processes>
 """
@@ -40,12 +41,12 @@ def get_vtus_path_from_pvd(pvd_file_path: str) -> list:
     # Extract .vtu files from each .pvtu file
     vtu_files = []
     for pvtu_file in pvtu_files:
-        tree = ET.parse(os.path.dirname(pvd_file_path) + "/" + pvtu_file)
+        tree = ET.parse(os.path.join(os.path.dirname(pvd_file_path), pvtu_file))
         root = tree.getroot()
         for piece in root.findall(".//Piece"):
             vtu_file = piece.get("Source")  # Extract the linked .vtu file from the "Source" attribute
             if vtu_file:
-                vtu_files.append(os.path.dirname(pvd_file_path) + "/" + vtu_file)
+                vtu_files.append(os.path.join(os.path.dirname(pvd_file_path), vtu_file))
 
     return vtu_files
 
@@ -62,11 +63,20 @@ def extract_slice(vtu_file_path: list, origin: np.array, normal: np.array) -> No
     sliced_solution = pv.read(vtu_file_path).slice(normal=normal, origin=origin)
     sliced_solution = sliced_solution.cast_to_unstructured_grid()
 
+    # If the slice is empty (the slice does not intersect the domain), return
+    if sliced_solution.n_points == 0:
+        print(f"Slice is empty for file {vtu_file_path}")
+        return
+
     # Modify the file name and save the file
     file_name = os.path.basename(vtu_file_path)
     sliced_solution.save("sliced-" + file_name)
     
     return
+
+"""
+MAIN
+"""
 
 def run()-> None:
     """
@@ -87,7 +97,7 @@ def run()-> None:
     print("Slicing vtus using point: ", origin, " and normal: ", normal)
 
     if args.file.endswith(".vtu"):
-        extract_slice(args.file)
+        extract_slice(args.file, origin=origin, normal=normal)
     elif args.file.endswith(".pvd"):              
         vtu_files_path = get_vtus_path_from_pvd(args.file)
         if args.np > 1:
