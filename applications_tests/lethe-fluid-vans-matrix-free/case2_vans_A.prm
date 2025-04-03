@@ -66,6 +66,8 @@ end
 
 subsection boundary conditions
   set number = 4
+  set fix pressure constant = true
+
   subsection bc 0
     set id   = 0
     set type = function
@@ -160,7 +162,7 @@ subsection linear solver
   subsection fluid dynamics
     set method                          = gmres
     set relative residual               = 1e-3
-    set minimum residual                = 1e-12
+    set minimum residual                = 1e-11
     set preconditioner                  = gcmg
     set verbosity                       = quiet
     set mg verbosity                    = quiet
