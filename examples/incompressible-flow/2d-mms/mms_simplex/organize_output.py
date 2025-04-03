@@ -21,8 +21,8 @@ base_dir = os.getcwd()
 path=Path(base_dir)
 
 poly_deg_min=1
-poly_deg_max=3
-n_poly_deg = 3
+poly_deg_max=2
+n_poly_deg = 2
 
 poly_deg = (np.linspace(poly_deg_min, poly_deg_max, n_poly_deg)).astype(int)
 
@@ -41,13 +41,12 @@ for poly_deg_u in poly_deg:
         for folders_MMS in path.glob("mms*"):
           
           if folders_MMS.is_dir():
-            print(folders_MMS.name)
             # Pattern of folders to open where each folder is in the form MMS_2D_steady_mesh_ref_x_degu_y_degp_z for when y and z are fixed
             pattern_1 = rf"mesh_ref_(\d+)_degu_{poly_deg_u}_degp_{poly_deg_p}"
             match = re.search(pattern_1, folders_MMS.name)
             if match:
                ref = match.group(1)
-               print(ref)
+               print(f"Refinement level: {ref}")
                filename = base_dir + '/' + folders_MMS.name + "/L2Error.dat"
                print(filename)
                new_column =  np.genfromtxt(filename, delimiter=None, skip_header=1, dtype=float, invalid_raise=False)
@@ -56,7 +55,9 @@ for poly_deg_u in poly_deg:
                  mat = new_row
                else:
                  mat = np.append(mat, new_row, axis=0)
-
+        
+        # Convert the list to a numpy array
+        mat = np.array(mat)
         sorted_mat = mat[mat[:, 0].argsort()]  
         # Now add the order of the error in pressure, velocity, and runtime for each two rows and insert it in the column next to it
         cols_to_modify = [2, 4, 6]
@@ -103,7 +104,7 @@ for folder in path.glob("mms*"):
         dest_path = os.path.join(initial_output_dir, folder.name)
         
         # Move the directory
-        print(f"Moving: {folder} → {dest_path}")
+        print(f"Moving to initial output directory: {folder.name}")
         shutil.move(str(folder), dest_path)
         moved_count += 1
 

@@ -3,7 +3,8 @@
 
 """
 Script to generate different cases (as folders) of the same problem 
-with different polynomial degrees for the velocity and the pressure.
+for the quadrilateral mesh with different polynomial degrees for the 
+velocity and the pressure.
 """
 
 import jinja2

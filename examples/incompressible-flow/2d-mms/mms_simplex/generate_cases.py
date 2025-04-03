@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
-Script to generate different cases (as folders) of the same problem 
+Script to generate different cases (as folders) of the same problem for the simplex mesh
 with different levels of refinement and polynomial degrees for the velocity and the pressure.
 """
 
