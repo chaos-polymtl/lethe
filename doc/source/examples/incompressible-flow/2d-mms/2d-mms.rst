@@ -120,7 +120,7 @@ The velocity components are set to zero on the entire boundary to match the manu
   subsection boundary conditions
   set number = 1
     subsection bc 0
-      set id = 0
+      set id   = 0
       set type = noslip
     end
   end
