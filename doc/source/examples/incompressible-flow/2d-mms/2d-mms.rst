@@ -39,7 +39,7 @@ Obviously, few exact analytical solution of the incompressible Navier-Stokes (NS
 
 - The manufactured solution is chosen such that all terms of the NS equations are non-trivial and non-singular. In other terms, the manufactured solution must be at least twice differentiable, with both its first and second derivatives being non-trivial. The manufactured solution can vary in complexity.
 - Once the manufactured solution is defined, it is substituted into the steady incompressible NS equations, leading to the appearance of source terms. Hence, the manufactured solution is the exact solution of the original equations if the source term is added. 
-- The simulations are run at different mesh resolutions and for different degrees of the polynomial approximations of the velocity and pressure.
+- The simulations are launched with different mesh resolutions and for different degrees of the polynomial approximations of the velocity and pressure.
 - The order of convergence is calculated by measuring the error between the numerical solution and the manufactured solution.
 
 In the current example, we choose the following analytical solution:
