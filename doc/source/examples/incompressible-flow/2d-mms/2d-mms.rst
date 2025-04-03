@@ -177,7 +177,7 @@ The only modification made in the linear solver section is the use of AMG precon
     subsection fluid dynamics
       # Set type of preconditioner for the iterative solver
       set preconditioner = amg
-      set verbosity = verbose
+      set verbosity      = verbose
     end
   end
 
