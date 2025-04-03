@@ -4,9 +4,10 @@
 #ifndef lethe_core_mortar_coupling_manager_h
 #define lethe_core_mortar_coupling_manager_h
 
+#include<core/utilities.h>
+
 #include <deal.II/base/mpi_noncontiguous_partitioner.h>
 #include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
-#include <deal.II/base/point.h>
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/lac/trilinos_precondition.h>
@@ -20,47 +21,6 @@
 #include <deal.II/matrix_free/tools.h>
 
 using namespace dealii;
-
-/**
- * @brief Converts point to radius (angle with the x axis in the x-y plane)
- */
-template <int dim>
-double
-point_to_rad(const Point<dim> &point)
-{
-  const double temp = std::atan(std::abs(point[1]) / std::abs(point[0]));
-
-  // verify quadrant
-  if (point[1] >= 0.0)
-    {
-      if (point[0] >= 0.0)
-        return temp;
-      else
-        return numbers::PI - temp;
-    }
-  else
-    {
-      if (point[0] >= 0.0)
-        return 2 * numbers::PI - temp;
-      else
-        return numbers::PI + temp;
-    }
-}
-
-/**
- * @brief Converts radius to point (in the x-y plane)
- */
-template <int dim>
-Point<dim>
-rad_to_point(const double radius, const double rad)
-{
-  Point<dim> point;
-
-  point[0] = radius * std::cos(rad);
-  point[1] = radius * std::sin(rad);
-
-  return point;
-}
 
 /**
  * @brief Base class for the mortar manager

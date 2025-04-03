@@ -11,6 +11,7 @@
 #include <deal.II/base/revision.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
+#include <deal.II/base/point.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
@@ -895,6 +896,47 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                              ParameterHandler::KeepDeclarationOrder);
       pcout << std::endl << std::endl;
     }
+}
+
+/**
+ * @brief Converts point to radius (angle with the x axis in the x-y plane)
+ */
+template <int dim>
+inline double
+point_to_rad(const Point<dim> &point)
+{
+  const double temp = std::atan(std::abs(point[1]) / std::abs(point[0]));
+
+  // verify quadrant
+  if (point[1] >= 0.0)
+    {
+      if (point[0] >= 0.0)
+        return temp;
+      else
+        return numbers::PI - temp;
+    }
+  else
+    {
+      if (point[0] >= 0.0)
+        return 2 * numbers::PI - temp;
+      else
+        return numbers::PI + temp;
+    }
+}
+
+/**
+ * @brief Converts radius to point (in the x-y plane)
+ */
+template <int dim>
+inline Point<dim>
+rad_to_point(const double radius, const double rad)
+{
+  Point<dim> point;
+
+  point[0] = radius * std::cos(rad);
+  point[1] = radius * std::sin(rad);
+
+  return point;
 }
 
 #endif
