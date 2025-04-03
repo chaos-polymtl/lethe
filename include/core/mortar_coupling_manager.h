@@ -4,7 +4,7 @@
 #ifndef lethe_core_mortar_coupling_manager_h
 #define lethe_core_mortar_coupling_manager_h
 
-#include<core/utilities.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/mpi_noncontiguous_partitioner.h>
 #include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
