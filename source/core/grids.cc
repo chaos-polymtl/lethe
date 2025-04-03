@@ -417,14 +417,27 @@ read_mesh_and_manifolds(
   GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle,
                     rotor_temp_tria);
 
+  // Check manifold IDs at rotor boundary
+  std::set<unsigned int> rotor_boundary_manifold_ids;
   // Shift rotor boundary IDs #
   for (const auto &face : rotor_temp_tria.active_face_iterators())
     if (face->at_boundary())
       {
         face->set_boundary_id(face->boundary_id() +
                               stator_temp_tria.get_boundary_ids().size());
+        if (face->manifold_id() != numbers::flat_manifold_id)
+                              rotor_boundary_manifold_ids.insert(face->manifold_id());
       }
 
+  // Check manifold IDs at stator boundary    
+  std::set<unsigned int> stator_boundary_manifold_ids;
+  for (const auto &face : stator_temp_tria.active_face_iterators())
+    if (face->at_boundary())
+      {
+        if (face->manifold_id() != numbers::flat_manifold_id)
+          stator_boundary_manifold_ids.insert(face->manifold_id());
+      }
+    
   // Merge triangulations
   GridGenerator::merge_triangulations(
     stator_temp_tria, rotor_temp_tria, triangulation, 1.0e-12, true, true);
@@ -434,10 +447,18 @@ read_mesh_and_manifolds(
   // setup_periodic_boundary_conditions(triangulation, boundary_conditions);
 
   // Attach manifolds to merged triangulation
-  triangulation.set_manifold(0,
-                             SphericalManifold<dim>((dim == 2) ?
-                                                      Point<dim>(0, 0) :
-                                                      Point<dim>(0, 0, 0)));
+  unsigned int n = 0;
+    for (unsigned int i = 0; i<rotor_boundary_manifold_ids.size(); i++)
+        {
+          triangulation.set_manifold(n, rotor_temp_tria.get_manifold(i));
+          n++;
+        }
+    for (unsigned int j = 0; j<stator_boundary_manifold_ids.size(); j++)
+        {
+          triangulation.set_manifold(n, stator_temp_tria.get_manifold(j));
+          n++;
+        }
+
   // Initial mesh refinement
   if (mesh_parameters.simplex)
     {
