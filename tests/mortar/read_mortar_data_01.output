@@ -1,7 +1,7 @@
 
 DEAL::Merged triangulation
 DEAL::Number of active cells : 192
-DEAL::Number of vertices : 216
+DEAL::Number of vertices : 240
 DEAL::Cell center : 0.982963 0.129410
 DEAL::Cell center : 0.915976 0.379410
 DEAL::Cell center : 0.786566 0.603553
@@ -50,6 +50,30 @@ DEAL::Cell center : 0.468750 -0.811899
 DEAL::Cell center : 0.406250 -0.703646
 DEAL::Cell center : 0.343750 -0.595392
 DEAL::Cell center : 0.281250 -0.487139
+DEAL::Cell center : 0.491481 0.0647048
+DEAL::Cell center : 0.457988 0.189705
+DEAL::Cell center : 0.393283 0.301777
+DEAL::Cell center : 0.301777 0.393283
+DEAL::Cell center : 0.189705 0.457988
+DEAL::Cell center : 0.0647048 0.491481
+DEAL::Cell center : -0.0647048 0.491481
+DEAL::Cell center : -0.189705 0.457988
+DEAL::Cell center : -0.301777 0.393283
+DEAL::Cell center : -0.393283 0.301777
+DEAL::Cell center : -0.457988 0.189705
+DEAL::Cell center : -0.491481 0.0647048
+DEAL::Cell center : -0.491481 -0.0647048
+DEAL::Cell center : -0.457988 -0.189705
+DEAL::Cell center : -0.393283 -0.301777
+DEAL::Cell center : -0.301777 -0.393283
+DEAL::Cell center : -0.189705 -0.457988
+DEAL::Cell center : -0.0647048 -0.491481
+DEAL::Cell center : 0.0647048 -0.491481
+DEAL::Cell center : 0.189705 -0.457988
+DEAL::Cell center : 0.301777 -0.393283
+DEAL::Cell center : 0.393283 -0.301777
+DEAL::Cell center : 0.457988 -0.189705
+DEAL::Cell center : 0.491481 -0.0647048
 DEAL::Cell center : 0.491481 0.0647048
 DEAL::Cell center : 0.457988 0.189705
 DEAL::Cell center : 0.393283 0.301777
