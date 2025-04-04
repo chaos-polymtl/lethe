@@ -3,8 +3,6 @@
 
 #include <dem/particle_particle_heat_transfer.h>
 
-#include <boost/math/special_functions/erf.hpp>
-
 double
 calculate_corrected_contact_radius(const double effective_radius,
                                    const double effective_youngs_modulus,
@@ -15,7 +13,11 @@ calculate_corrected_contact_radius(const double effective_radius,
                                       (4 * effective_youngs_modulus),
                                     (1.0 / 3.0));
 
-  // apply correction
+  // In certain cases, the simulation effective Young’s modulus
+  // can be chosen a few orders lower than the real effective Young’s modulus
+  // to ensure simulation stability (related to Rayleigh's time).
+  // As a consequence, the contact radius is overestimated, so a correctional
+  // factor is applied here.
   return contact_radius *
          pow(effective_youngs_modulus / effective_real_youngs_modulus,
              1.0 / 5.0);
@@ -41,6 +43,11 @@ calculate_microcontact_resistance(const double equivalent_surface_slope,
           contact_radius) *
          (equivalent_surface_roughness / equivalent_surface_slope) *
          pow(effective_microhardness / (maximum_pressure + DBL_MIN), 0.96);
+
+  // Van Lew, J. T. (2016). On thermal characterization of breeder pebble beds
+  // with microscale numerical modeling of thermofluid and pebble-pebble
+  // interactions (Doctoral dissertation, University of California, Los Angeles)
+  // Equations 3.25 to 3.29.
 }
 
 double
@@ -66,38 +73,6 @@ calculate_solid_macrogap_resistance(const double radius_one,
 }
 
 double
-erfc_inverse_approximation(const double x)
-{
-  if (x <= 0 || x > 1.9)
-    {
-      std::cerr
-        << "Error. Input out of range (0 < x <= 1.9) for erfc-1 function in thermal resistance calculation."
-        << std::endl;
-      return NAN;
-    }
-
-  if (x <= 1e-9)
-    {
-      return sqrt(1.0 / 2.0 *
-                  (log(2.0 / (M_PI * x * x)) - log(log(2.0 / (M_PI * x * x)))));
-    }
-  else if (x <= 0.02)
-    {
-      return 1.0 / (0.218 + 0.735 * pow(x, 0.173));
-    }
-  else if (x <= 0.5)
-    {
-      return (1.05 * pow(0.175, x)) / pow(x, 0.12);
-    }
-  else if (x <= 1.9)
-    {
-      return (1 - x) / (0.707 + 0.862 * x - 0.431 * x * x);
-    }
-
-  return NAN;
-}
-
-double
 calculate_interstitial_gas_microgap_resistance(
   const double equivalent_surface_roughness,
   const double contact_radius,
@@ -106,25 +81,27 @@ calculate_interstitial_gas_microgap_resistance(
   const double maximum_pressure,
   const double effective_microhardness)
 {
-  const double a_1 =
-    erfc_inverse_approximation(2 * maximum_pressure / effective_microhardness);
-  const double a_2 = erfc_inverse_approximation(0.03 * maximum_pressure /
-                                                effective_microhardness) -
-                     a_1;
-  // If the values are out of the range of the erfc^-1 function
-  if (a_1 == NAN || a_2 == NAN)
+  const double x_1 = 2.0 * maximum_pressure / effective_microhardness;
+  const double x_2 = 0.03 * maximum_pressure / effective_microhardness;
+
+  // If the values are out of the valid range ]0, 2[ of the erfc^-1 function,
+  // this resistance has no physical meaning. Particles are too close or not
+  // close enough for a microgap between them to make sense. This resistance is
+  // used in parallel with another one, so putting it to infinity ignores it in
+  // the total resistance.
+  if (x_1 >= 2.0 || x_1 <= 0.0)
     {
       return INFINITY;
     }
-  else
-    {
-      return (2 * sqrt(2) * equivalent_surface_roughness * a_2) /
-             (M_PI * thermal_conductivity_gas * contact_radius *
-              contact_radius *
-              log(1 + a_2 / (a_1 +
-                             gas_parameter_m /
-                               (2 * sqrt(2) * equivalent_surface_roughness))));
-    }
+
+  const double a_1 = boost::math::erfc_inv(x_1);
+  const double a_2 = boost::math::erfc_inv(x_2) - a_1;
+
+  return (2 * std::sqrt(2) * equivalent_surface_roughness * a_2) /
+         (M_PI * thermal_conductivity_gas * contact_radius * contact_radius *
+          std::log(1 + a_2 / (a_1 + gas_parameter_m /
+                                      (2 * std::sqrt(2) *
+                                       equivalent_surface_roughness))));
 }
 
 double
@@ -139,6 +116,7 @@ calculate_interstitial_gas_macrogap_resistance(
   const double S = 2 * (harmonic_radius - (contact_radius * contact_radius) /
                                             (2 * harmonic_radius)) +
                    gas_parameter_m;
+
   return 2.0 / (M_PI * thermal_conductivity_gas * (S * log(S / (S - A)) - A));
 }
 
@@ -169,6 +147,10 @@ calculate_contact_thermal_conductance(
                                        effective_youngs_modulus,
                                        effective_real_youngs_modulus,
                                        normal_force_norm);
+
+  // In the same way as the contact radius, if the effective Young's modulus is
+  // underestimated, the normal overlap is overestimated so a correctional
+  // factor is applied here.
   const double corrected_normal_overlap =
     normal_overlap *
     pow(effective_youngs_modulus / effective_real_youngs_modulus, 2.0 / 3.0);

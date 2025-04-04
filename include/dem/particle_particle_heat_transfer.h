@@ -6,6 +6,8 @@
 
 #include <core/auxiliary_math_functions.h>
 
+#include <boost/math/special_functions/erf.hpp>
+
 #include <float.h>
 
 #include <cmath>
@@ -81,15 +83,6 @@ calculate_solid_macrogap_resistance(const double radius_one,
                                     const double thermal_conductivity_one,
                                     const double thermal_conductivity_two,
                                     const double contact_radius);
-
-/**
- * @brief Define an approximation of the erfc^-1 function for values between 1e-9 and 1.9.
- *
- * @param[in] x Value to which apply the function.
- * @return erfc^-1(x)
- */
-double
-erfc_inverse_approximation(const double x);
 
 /**
  * @brief Calculate the interstitial gas microgap thermal resistance between two particles.
