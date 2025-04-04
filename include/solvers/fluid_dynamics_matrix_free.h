@@ -41,8 +41,9 @@ namespace dealii
  * matrix-free solver.
  */
 template <int dim>
-class MFNavierStokesPreconditionGMG
+class MFNavierStokesPreconditionGMGBase
 {
+protected:
   using Number = double;
 
 #ifndef LETHE_GMG_USE_FLOAT
@@ -99,15 +100,20 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
-  MFNavierStokesPreconditionGMG(
-    const SimulationParameters<dim>          &simulation_parameters,
-    const DoFHandler<dim>                    &dof_handler,
-    const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
-    const std::shared_ptr<Mapping<dim>>      &mapping,
-    const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-    const std::shared_ptr<Function<dim>>      forcing_function,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const std::shared_ptr<FESystem<dim>>      fe);
+  MFNavierStokesPreconditionGMGBase(
+    const SimulationParameters<dim> &simulation_parameters,
+    const DoFHandler<dim>           &dof_handler,
+    const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
+
+  void
+  reinit(const std::shared_ptr<Mapping<dim>>      &mapping,
+         const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+         const std::shared_ptr<Function<dim>>      forcing_function,
+         const std::shared_ptr<SimulationControl> &simulation_control,
+         const std::shared_ptr<FESystem<dim>>      fe);
+
+  virtual void
+  create_level_operator(const unsigned int level) = 0;
 
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
@@ -121,10 +127,7 @@ public:
    * derivatives of previous solutions.
    */
   void
-  initialize(const std::shared_ptr<SimulationControl> &simulation_control,
-             FlowControl<dim>                         &flow_control,
-             const VectorType                         &present_solution,
-             const VectorType &time_derivative_previous_solutions);
+  initialize();
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
@@ -159,7 +162,7 @@ public:
   const MGLevelObject<std::shared_ptr<PreconditionBase<MGVectorType>>> &
   get_mg_smoother_preconditioners() const;
 
-private:
+protected:
   /**
    * @brief Set up AMG object needed for coarse-grid solver or
    * preconditioning.
@@ -293,6 +296,41 @@ public:
   mutable TimerOutput mg_vmult_timer;
 };
 
+/**
+ * @brief A geometric multigrid preconditioner implementation for
+ * incompressible flow.
+ */
+template <int dim>
+class MFNavierStokesPreconditionGMG
+  : public MFNavierStokesPreconditionGMGBase<dim>
+{
+public:
+  using VectorType =
+    typename MFNavierStokesPreconditionGMGBase<dim>::VectorType;
+  using MGVectorType =
+    typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType;
+  using MGNumber = typename MFNavierStokesPreconditionGMGBase<dim>::MGNumber;
+
+
+  /**
+   * Constructor.
+   */
+  MFNavierStokesPreconditionGMG(
+    const SimulationParameters<dim> &simulation_parameters,
+    const DoFHandler<dim>           &dof_handler,
+    const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
+
+  void
+  create_level_operator(const unsigned int level) override;
+
+  void
+  initialize(const std::shared_ptr<SimulationControl> &simulation_control,
+             FlowControl<dim>                         &flow_control,
+             const VectorType                         &present_solution,
+             const VectorType &time_derivative_previous_solutions);
+
+private:
+};
 
 /**
  * @brief A solver for the incompressible Navier-Stokes equations implemented
@@ -445,8 +483,19 @@ private:
                      const double relative_residual);
 
   /**
-   * @brief  Setup the geometric multigrid preconditioner and call the solve
-   * function of the linear solver.
+   * @brief  Create the geometric multigrid preconditioner.
+   */
+  virtual void
+  create_GMG();
+
+  /**
+   * @brief  Intialize the geometric multigrid preconditioner.
+   */
+  virtual void
+  initialize_GMG();
+
+  /**
+   * @brief  Setup the geometric multigrid preconditioner.
    */
   void
   setup_GMG();
@@ -479,7 +528,7 @@ protected:
    * @brief Geometric multigrid preconditioner.
    *
    */
-  std::shared_ptr<MFNavierStokesPreconditionGMG<dim>> gmg_preconditioner;
+  std::shared_ptr<MFNavierStokesPreconditionGMGBase<dim>> gmg_preconditioner;
 
   /**
    * @brief Implicit LU preconditioner.

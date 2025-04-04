@@ -543,21 +543,26 @@ namespace dealii
 } // namespace dealii
 
 template <int dim>
-MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
-  const SimulationParameters<dim>          &simulation_parameters,
-  const DoFHandler<dim>                    &dof_handler,
-  const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
-  const std::shared_ptr<Mapping<dim>>      &mapping,
-  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-  const std::shared_ptr<Function<dim>>      forcing_function,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const std::shared_ptr<FESystem<dim>>      fe)
+MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
+  const SimulationParameters<dim> &simulation_parameters,
+  const DoFHandler<dim>           &dof_handler,
+  const DoFHandler<dim>           &dof_handler_fe_q_iso_q1)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
   , dof_handler_fe_q_iso_q1(dof_handler_fe_q_iso_q1)
   , mg_setup_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
   , mg_vmult_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
+{}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMGBase<dim>::reinit(
+  const std::shared_ptr<Mapping<dim>>      &mapping,
+  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const std::shared_ptr<FESystem<dim>>      fe)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -820,8 +825,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
             }
 
-          this->mg_operators[level] =
-            std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+          this->create_level_operator(level);
 
           this->mg_operators[level]->reinit(
             *mapping,
@@ -1225,8 +1229,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
             }
 
-          this->mg_operators[level] =
-            std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+          this->create_level_operator(level);
 
           this->mg_operators[level]->reinit(
             *mapping,
@@ -1272,86 +1275,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::initialize(
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  FlowControl<dim>                         &flow_control,
-  const VectorType                         &present_solution,
-  const VectorType                         &time_derivative_previous_solutions)
+MFNavierStokesPreconditionGMGBase<dim>::initialize()
 {
-  // Local objects for the different levels
-  MGLevelObject<MGVectorType> mg_solution(this->minlevel, this->maxlevel);
-  MGLevelObject<MGVectorType> mg_time_derivative_previous_solutions(
-    this->minlevel, this->maxlevel);
-
-  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
-    {
-      this->mg_operators[level]->initialize_dof_vector(mg_solution[level]);
-      if (is_bdf(simulation_control->get_assembly_method()))
-        this->mg_operators[level]->initialize_dof_vector(
-          mg_time_derivative_previous_solutions[level]);
-    }
-
-  this->mg_setup_timer.enter_subsection("Execute relevant transfers");
-
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
-    {
-      // Create transfer operator and transfer solution to mg levels
-
-      this->mg_transfer_ls->interpolate_to_mg(this->dof_handler,
-                                              mg_solution,
-                                              present_solution);
-
-      if (is_bdf(simulation_control->get_assembly_method()))
-        this->mg_transfer_ls->interpolate_to_mg(
-          this->dof_handler,
-          mg_time_derivative_previous_solutions,
-          time_derivative_previous_solutions);
-
-      this->mg_matrix =
-        std::make_shared<mg::Matrix<MGVectorType>>(this->ls_mg_operators);
-    }
-  else if (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::gcmg)
-    {
-      this->mg_transfer_gc->interpolate_to_mg(this->dof_handler,
-                                              mg_solution,
-                                              present_solution);
-
-      if (is_bdf(simulation_control->get_assembly_method()))
-        this->mg_transfer_gc->interpolate_to_mg(
-          this->dof_handler,
-          mg_time_derivative_previous_solutions,
-          time_derivative_previous_solutions);
-
-      this->mg_matrix =
-        std::make_shared<mg::Matrix<MGVectorType>>(this->mg_operators);
-    }
-
-  this->mg_setup_timer.leave_subsection("Execute relevant transfers");
-
-  // Evaluate non linear terms for all mg operators
-  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
-    {
-      mg_solution[level].update_ghost_values();
-      this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
-        mg_solution[level]);
-
-      if (is_bdf(simulation_control->get_assembly_method()))
-        {
-          mg_time_derivative_previous_solutions[level].update_ghost_values();
-          this->mg_operators[level]
-            ->evaluate_time_derivative_previous_solutions(
-              mg_time_derivative_previous_solutions[level]);
-
-          if (this->simulation_parameters.flow_control.enable_flow_control)
-            this->mg_operators[level]->update_beta_force(
-              flow_control.get_beta());
-        }
-    }
-
   // Create smoother, fill parameters for each level and intialize it
   this->mg_setup_timer.enter_subsection("Set up and initialize smoother");
 
@@ -1778,8 +1703,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
-                                          const VectorType &src) const
+MFNavierStokesPreconditionGMGBase<dim>::vmult(VectorType       &dst,
+                                              const VectorType &src) const
 {
   if (this->ls_multigrid_preconditioner)
     this->ls_multigrid_preconditioner->vmult(dst, src);
@@ -1799,7 +1724,7 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
+MFNavierStokesPreconditionGMGBase<dim>::print_relevant_info() const
 {
   if (this->coarse_grid_solver_control ||
       this->coarse_grid_solver_control_intermediate)
@@ -1826,23 +1751,23 @@ MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
 template <int dim>
 const MGLevelObject<std::shared_ptr<NavierStokesOperatorBase<
   dim,
-  typename MFNavierStokesPreconditionGMG<dim>::MGNumber>>> &
-MFNavierStokesPreconditionGMG<dim>::get_mg_operators() const
+  typename MFNavierStokesPreconditionGMGBase<dim>::MGNumber>>> &
+MFNavierStokesPreconditionGMGBase<dim>::get_mg_operators() const
 {
   return this->mg_operators;
 }
 
 template <int dim>
 const MGLevelObject<std::shared_ptr<PreconditionBase<
-  typename MFNavierStokesPreconditionGMG<dim>::MGVectorType>>> &
-MFNavierStokesPreconditionGMG<dim>::get_mg_smoother_preconditioners() const
+  typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType>>> &
+MFNavierStokesPreconditionGMGBase<dim>::get_mg_smoother_preconditioners() const
 {
   return this->mg_smoother_preconditioners;
 }
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::setup_AMG()
+MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
 {
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
 
@@ -1954,7 +1879,7 @@ MFNavierStokesPreconditionGMG<dim>::setup_AMG()
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMG<dim>::setup_ILU()
+MFNavierStokesPreconditionGMGBase<dim>::setup_ILU()
 {
   int current_preconditioner_fill_level =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1977,6 +1902,110 @@ MFNavierStokesPreconditionGMG<dim>::setup_ILU()
   coarse_grid_precondition =
     std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
       precondition_ilu);
+}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::create_level_operator(
+  const unsigned int level)
+{
+  this->mg_operators[level] =
+    std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+}
+
+template <int dim>
+MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
+  const SimulationParameters<dim> &simulation_parameters,
+  const DoFHandler<dim>           &dof_handler,
+  const DoFHandler<dim>           &dof_handler_fe_q_iso_q1)
+  : MFNavierStokesPreconditionGMGBase<dim>(simulation_parameters,
+                                           dof_handler,
+                                           dof_handler_fe_q_iso_q1)
+{}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::initialize(
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  FlowControl<dim>                         &flow_control,
+  const VectorType                         &present_solution,
+  const VectorType                         &time_derivative_previous_solutions)
+{
+  // Local objects for the different levels
+  MGLevelObject<MGVectorType> mg_solution(this->minlevel, this->maxlevel);
+  MGLevelObject<MGVectorType> mg_time_derivative_previous_solutions(
+    this->minlevel, this->maxlevel);
+
+  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
+    {
+      this->mg_operators[level]->initialize_dof_vector(mg_solution[level]);
+      if (is_bdf(simulation_control->get_assembly_method()))
+        this->mg_operators[level]->initialize_dof_vector(
+          mg_time_derivative_previous_solutions[level]);
+    }
+
+  this->mg_setup_timer.enter_subsection("Execute relevant transfers");
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    {
+      // Create transfer operator and transfer solution to mg levels
+
+      this->mg_transfer_ls->interpolate_to_mg(this->dof_handler,
+                                              mg_solution,
+                                              present_solution);
+
+      if (is_bdf(simulation_control->get_assembly_method()))
+        this->mg_transfer_ls->interpolate_to_mg(
+          this->dof_handler,
+          mg_time_derivative_previous_solutions,
+          time_derivative_previous_solutions);
+
+      this->mg_matrix =
+        std::make_shared<mg::Matrix<MGVectorType>>(this->ls_mg_operators);
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
+    {
+      this->mg_transfer_gc->interpolate_to_mg(this->dof_handler,
+                                              mg_solution,
+                                              present_solution);
+
+      if (is_bdf(simulation_control->get_assembly_method()))
+        this->mg_transfer_gc->interpolate_to_mg(
+          this->dof_handler,
+          mg_time_derivative_previous_solutions,
+          time_derivative_previous_solutions);
+
+      this->mg_matrix =
+        std::make_shared<mg::Matrix<MGVectorType>>(this->mg_operators);
+    }
+
+  this->mg_setup_timer.leave_subsection("Execute relevant transfers");
+
+  // Evaluate non linear terms for all mg operators
+  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
+    {
+      mg_solution[level].update_ghost_values();
+      this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
+        mg_solution[level]);
+
+      if (is_bdf(simulation_control->get_assembly_method()))
+        {
+          mg_time_derivative_previous_solutions[level].update_ghost_values();
+          this->mg_operators[level]
+            ->evaluate_time_derivative_previous_solutions(
+              mg_time_derivative_previous_solutions[level]);
+
+          if (this->simulation_parameters.flow_control.enable_flow_control)
+            this->mg_operators[level]->update_beta_force(
+              flow_control.get_beta());
+        }
+    }
+
+  MFNavierStokesPreconditionGMGBase<dim>::initialize();
 }
 
 template <int dim>
@@ -2288,16 +2317,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
           // Create the mg operators if they do not exist to be able
           // to change the viscosity for all of them
           if (!gmg_preconditioner)
-            gmg_preconditioner =
-              std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
-                this->simulation_parameters,
-                this->dof_handler,
-                this->dof_handler_fe_q_iso_q1,
-                this->mapping,
-                this->cell_quadrature,
-                this->forcing_function,
-                this->simulation_control,
-                this->fe);
+            this->create_GMG();
 
           auto mg_operators = this->gmg_preconditioner->get_mg_operators();
           for (unsigned int level = mg_operators.min_level();
@@ -2406,16 +2426,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
               // Create the mg operators if they do not exist to be able
               // to change the viscosity for all of them
               if (!gmg_preconditioner)
-                gmg_preconditioner =
-                  std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
-                    this->simulation_parameters,
-                    this->dof_handler,
-                    this->dof_handler_fe_q_iso_q1,
-                    this->mapping,
-                    this->cell_quadrature,
-                    this->forcing_function,
-                    this->simulation_control,
-                    this->fe);
+                this->create_GMG();
 
               auto mg_operators = this->gmg_preconditioner->get_mg_operators();
               for (unsigned int level = mg_operators.min_level();
@@ -2551,25 +2562,41 @@ FluidDynamicsMatrixFree<dim>::calculate_time_derivative_previous_solutions()
 
 template <int dim>
 void
+FluidDynamicsMatrixFree<dim>::create_GMG()
+{
+  gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
+    this->simulation_parameters,
+    this->dof_handler,
+    this->dof_handler_fe_q_iso_q1);
+
+  gmg_preconditioner->reinit(this->mapping,
+                             this->cell_quadrature,
+                             this->forcing_function,
+                             this->simulation_control,
+                             this->fe);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::initialize_GMG()
+{
+  dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
+    ->initialize(this->simulation_control,
+                 this->flow_control,
+                 this->present_solution,
+                 this->time_derivative_previous_solutions);
+}
+
+template <int dim>
+void
 FluidDynamicsMatrixFree<dim>::setup_GMG()
 {
   TimerOutput::Scope t(this->computing_timer, "Setup GMG");
 
   if (!gmg_preconditioner)
-    gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
-      this->simulation_parameters,
-      this->dof_handler,
-      this->dof_handler_fe_q_iso_q1,
-      this->mapping,
-      this->cell_quadrature,
-      this->forcing_function,
-      this->simulation_control,
-      this->fe);
+    this->create_GMG();
 
-  gmg_preconditioner->initialize(this->simulation_control,
-                                 this->flow_control,
-                                 this->present_solution,
-                                 this->time_derivative_previous_solutions);
+  this->initialize_GMG();
 }
 
 template <int dim>
@@ -2871,3 +2898,9 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 
 template class FluidDynamicsMatrixFree<2>;
 template class FluidDynamicsMatrixFree<3>;
+
+template class MFNavierStokesPreconditionGMG<2>;
+template class MFNavierStokesPreconditionGMG<3>;
+
+template class MFNavierStokesPreconditionGMGBase<2>;
+template class MFNavierStokesPreconditionGMGBase<3>;
