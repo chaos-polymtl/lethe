@@ -1787,16 +1787,16 @@ namespace Parameters
   template <int dim>
   struct Mortar
   {
-    // Indicates whether mortar elements are enabled 
-    bool                  enable;
+    // Indicates whether mortar elements are enabled
+    bool enable;
     // Mesh parameters for the rotor part
     std::shared_ptr<Mesh> rotor_mesh;
     // Boundary ID # of the rotor at the rotor-stator interface
-    unsigned int          rotor_boundary_id;
+    unsigned int rotor_boundary_id;
     // Boundary ID # of the stator at the rotor-stator interface
-    unsigned int          stator_boundary_id;
+    unsigned int stator_boundary_id;
     // Center of rotation of the rotor domain
-    Point<dim>            center_of_rotation;
+    Point<dim> center_of_rotation;
 
     void
     declare_parameters(ParameterHandler &prm);

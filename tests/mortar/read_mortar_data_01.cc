@@ -72,7 +72,10 @@ test()
   parallel::distributed::Triangulation<dim> merged_tria(comm);
 
   // Merge stator and rotor triangulations
-  read_mesh_and_manifolds_for_stator_and_rotor(merged_tria, stator_mesh, false, mortar);
+  read_mesh_and_manifolds_for_stator_and_rotor(merged_tria,
+                                               stator_mesh,
+                                               false,
+                                               mortar);
 
   // Print information
   deallog << "Merged triangulation" << std::endl;
