@@ -10,15 +10,15 @@ using namespace DEM;
 // The constructor of plane insertion class. In the constructor, we find which
 // cells are going to be use for the insertion and we also find the centers of
 // those cells.
-template <int dim>
-InsertionPlane<dim>::InsertionPlane(
+template <int dim, typename PropertiesIndex>
+InsertionPlane<dim, PropertiesIndex>::InsertionPlane(
   const std::vector<std::shared_ptr<Distribution>>
     &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : Insertion<dim>(size_distribution_object_container,
-                   triangulation,
-                   dem_parameters)
+  : Insertion<dim, PropertiesIndex>(size_distribution_object_container,
+                                    triangulation,
+                                    dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -40,9 +40,9 @@ InsertionPlane<dim>::InsertionPlane(
     static_cast<double>(RAND_MAX);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionPlane<dim>::find_inplane_cells(
+InsertionPlane<dim, PropertiesIndex>::find_inplane_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
   Point<3>                                         plane_point,
   Tensor<1, 3>                                     plane_normal_vector)
@@ -90,9 +90,9 @@ InsertionPlane<dim>::find_inplane_cells(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionPlane<dim>::find_centers_of_inplane_cells()
+InsertionPlane<dim, PropertiesIndex>::find_centers_of_inplane_cells()
 {
   cells_centers.clear();
   for (const auto &cell : plane_cells_for_insertion)
@@ -103,9 +103,9 @@ InsertionPlane<dim>::find_centers_of_inplane_cells()
 
 // The main insertion function, insert_particle, is utilized to insert the
 // particle at the cell center with a random shifts particles
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionPlane<dim>::insert(
+InsertionPlane<dim, PropertiesIndex>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -314,5 +314,9 @@ InsertionPlane<dim>::insert(
     }
 }
 
-template class InsertionPlane<2>;
-template class InsertionPlane<3>;
+template class InsertionPlane<2, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionPlane<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionPlane<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionPlane<3, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionPlane<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionPlane<3, DEM::DEMMPProperties::PropertiesIndex>;

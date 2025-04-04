@@ -497,6 +497,10 @@ namespace Parameters
                           "-1.0",
                           Patterns::List(Patterns::Double()),
                           "List of diameters");
+        prm.declare_entry("list temperatures",
+                          "300.",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial temperatures");
         // Volume:
         prm.declare_entry(
           "insertion direction sequence",
@@ -533,6 +537,10 @@ namespace Parameters
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
+        prm.declare_entry("initial temperature",
+                          "300.",
+                          Patterns::Double(),
+                          "Initial temperature");
       }
       prm.leave_subsection();
     }
@@ -644,6 +652,9 @@ namespace Parameters
         // Read the diameters list
         list_d = convert_string_to_vector<double>(prm, "list diameters");
 
+        // Read the temperatures list
+        list_T = convert_string_to_vector<double>(prm, "list temperatures");
+
         // Volume:
         std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
@@ -682,6 +693,7 @@ namespace Parameters
         initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =
           value_string_to_tensor<3>(prm.get("initial angular velocity"));
+        initial_T = prm.get_double("initial temperature");
       }
       prm.leave_subsection();
     }

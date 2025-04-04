@@ -212,8 +212,9 @@ private:
   ParticlePointLineForce<dim, DEM::CFDDEMProperties::PropertiesIndex>
     particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-                                  integrator_object;
-  std::shared_ptr<Insertion<dim>> insertion_object;
+    integrator_object;
+  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+    insertion_object;
   std::shared_ptr<
     ParticleParticleContactForceBase<dim,
                                      DEM::CFDDEMProperties::PropertiesIndex>>

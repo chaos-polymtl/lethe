@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/insertion.h>
@@ -6,8 +6,8 @@
 #include <cmath>
 #include <sstream>
 
-template <int dim>
-Insertion<dim>::Insertion(
+template <int dim, typename PropertiesIndex>
+Insertion<dim, PropertiesIndex>::Insertion(
   const std::vector<std::shared_ptr<Distribution>>
     &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -39,12 +39,13 @@ Insertion<dim>::Insertion(
 }
 
 // Prints the insertion information
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
-                                     const unsigned int &remained_particles,
-                                     const unsigned int &particle_type,
-                                     const ConditionalOStream &pcout)
+Insertion<dim, PropertiesIndex>::print_insertion_info(
+  const unsigned int       &inserted_this_step,
+  const unsigned int       &remained_particles,
+  const unsigned int       &particle_type,
+  const ConditionalOStream &pcout)
 {
   std::stringstream ss;
 
@@ -57,9 +58,9 @@ Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
 
 // Carries out assigning the properties of inserted particles. The output vector
 // is used in insert_global_particles as input argument
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-Insertion<dim>::assign_particle_properties(
+Insertion<dim, PropertiesIndex>::assign_particle_properties(
   const DEMSolverParameters<dim>   &dem_parameters,
   const unsigned int               &inserted_this_step_this_proc,
   const unsigned int               &current_inserting_particle_type,
@@ -100,16 +101,28 @@ Insertion<dim>::assign_particle_properties(
       std::vector<double> properties_of_one_particle{
         type, diameter, mass, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z};
 
+      if constexpr (std::is_same_v<PropertiesIndex,
+                                   DEM::DEMMPProperties::PropertiesIndex>)
+        {
+          double T = dem_parameters.insertion_info.initial_T;
+          double specific_heat =
+            physical_properties
+              .specific_heat_particle[current_inserting_particle_type];
+          properties_of_one_particle.push_back(T);
+          properties_of_one_particle.push_back(specific_heat);
+        }
+
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const ConditionalOStream       &pcout)
+Insertion<dim, PropertiesIndex>::
+  calculate_insertion_domain_maximum_particle_number(
+    const DEMSolverParameters<dim> &dem_parameters,
+    const ConditionalOStream       &pcout)
 {
   // Getting properties as local parameters
   const auto insertion_information = dem_parameters.insertion_info;
@@ -206,9 +219,9 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-Insertion<dim>::find_cells_in_removing_box(
+Insertion<dim, PropertiesIndex>::find_cells_in_removing_box(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
   // Clearing the containers
@@ -258,9 +271,9 @@ Insertion<dim>::find_cells_in_removing_box(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-Insertion<dim>::remove_particles_in_box(
+Insertion<dim, PropertiesIndex>::remove_particles_in_box(
   Particles::ParticleHandler<dim> &particle_handler)
 {
   std::vector<
@@ -327,5 +340,9 @@ Insertion<dim>::remove_particles_in_box(
   particle_handler.remove_particles(to_remove_iterators);
 }
 
-template class Insertion<2>;
-template class Insertion<3>;
+template class Insertion<2, DEM::DEMProperties::PropertiesIndex>;
+template class Insertion<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class Insertion<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class Insertion<3, DEM::DEMProperties::PropertiesIndex>;
+template class Insertion<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class Insertion<3, DEM::DEMMPProperties::PropertiesIndex>;
