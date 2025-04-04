@@ -32,6 +32,7 @@ add_library(lethe-dem
   particle_point_line_broad_search.cc
   particle_point_line_contact_force.cc
   particle_point_line_fine_search.cc
+  particle_particle_heat_transfer.cc
   particle_wall_broad_search.cc
   particle_wall_contact_force.cc
   particle_wall_fine_search.cc
@@ -82,6 +83,7 @@ add_library(lethe-dem
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h
   ../../include/dem/particle_particle_fine_search.h
+  ../../include/dem/particle_particle_heat_transfer.h
   ../../include/dem/particle_point_line_broad_search.h
   ../../include/dem/particle_point_line_contact_force.h
   ../../include/dem/particle_point_line_fine_search.h
