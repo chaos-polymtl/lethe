@@ -468,10 +468,10 @@ read_mesh_and_manifolds_for_stator_and_rotor(
     {
       if (mesh_parameters.refine_until_target_size)
         {
-          double minimal_cell_size =
+          const double minimal_cell_size =
             GridTools::minimal_cell_diameter(triangulation);
-          double       target_size = mesh_parameters.target_size;
-          unsigned int number_refinement =
+          const double       target_size = mesh_parameters.target_size;
+          const unsigned int number_refinement =
             floor(std::log(minimal_cell_size / target_size) / std::log(2));
           triangulation.refine_global(number_refinement);
         }
