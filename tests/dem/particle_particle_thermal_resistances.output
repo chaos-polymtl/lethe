@@ -3,7 +3,7 @@ DEAL:: contact radius : 7.51931e-05
 DEAL:: resistance macrocontact : 6649.55
 DEAL:: resistance microcontact: 2992.28
 DEAL:: resistance solid macrogap : 100.023
-DEAL:: resistance gas microgap : 1087.75
+DEAL:: resistance gas microgap : 1089.98
 DEAL:: resistance gas macrogap : 255.915
-DEAL:: total resistance : 339.702
-DEAL:: total conductance : 0.00294375
+DEAL:: total resistance : 339.705
+DEAL:: total conductance : 0.00294373
