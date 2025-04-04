@@ -33,22 +33,18 @@ test()
   Parameters::Lagrangian::ModelParameters<dim> &model_param =
     dem_parameters.model_parameters;
 
+  set_default_dem_parameters(1, dem_parameters);
+
   Tensor<1, dim> g{{0, 0, -9.81}};
-  double         dt                                               = 0.00001;
-  double         particle_diameter                                = 0.005;
-  lagrangian_prop.particle_type_number                            = 1;
-  lagrangian_prop.youngs_modulus_particle[0]                      = 50000000;
-  lagrangian_prop.poisson_ratio_particle[0]                       = 0.3;
-  lagrangian_prop.restitution_coefficient_particle[0]             = 0.5;
-  lagrangian_prop.friction_coefficient_particle[0]                = 0.5;
-  lagrangian_prop.rolling_viscous_damping_coefficient_particle[0] = 0.5;
-  lagrangian_prop.rolling_friction_coefficient_particle[0]        = 0.1;
-  lagrangian_prop.surface_energy_particle[0]                      = 0.;
-  lagrangian_prop.hamaker_constant_particle[0]                    = 0.;
-  lagrangian_prop.rolling_friction_wall                           = 0.1;
-  lagrangian_prop.density_particle[0]                             = 2500;
-  model_param.rolling_resistance_method =
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+  double         dt                                        = 0.00001;
+  double         particle_diameter                         = 0.005;
+  lagrangian_prop.particle_type_number                     = 1;
+  lagrangian_prop.youngs_modulus_particle[0]               = 50000000;
+  lagrangian_prop.poisson_ratio_particle[0]                = 0.3;
+  lagrangian_prop.restitution_coefficient_particle[0]      = 0.5;
+  lagrangian_prop.friction_coefficient_particle[0]         = 0.5;
+  lagrangian_prop.rolling_friction_coefficient_particle[0] = 0.1;
+  lagrangian_prop.density_particle[0]                      = 2500;
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 

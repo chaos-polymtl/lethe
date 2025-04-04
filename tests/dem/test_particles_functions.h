@@ -55,7 +55,7 @@ construct_particle_iterator(
 
 
 /**
- * @brief Set the properties of the particle in the PropertiesIndex.
+ * @brief the properties of the particle in the PropertiesIndex.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
@@ -70,13 +70,13 @@ template <int dim, typename PropertiesIndex>
 void
 set_particle_properties(Particles::ParticleIterator<dim> &pit,
                         int                               type,
-                        double                            particle_diameter,
+                        double                            diameter,
                         double                            mass,
                         Tensor<1, dim>                   &v,
                         Tensor<1, dim>                   &omega)
 {
   pit->get_properties()[PropertiesIndex::type]    = type;
-  pit->get_properties()[PropertiesIndex::dp]      = particle_diameter;
+  pit->get_properties()[PropertiesIndex::dp]      = diameter;
   pit->get_properties()[PropertiesIndex::mass]    = mass;
   pit->get_properties()[PropertiesIndex::v_x]     = v[0];
   pit->get_properties()[PropertiesIndex::omega_x] = omega[0];
@@ -92,5 +92,64 @@ set_particle_properties(Particles::ParticleIterator<dim> &pit,
     }
 }
 
+
+/**
+ * @brief Set default values for all lagrangian properties.
+ *
+ * @tparam dim Integer that denotes the number of spatial dimensions.
+ * @param[in] particle_type_number Number of particle types.
+ * @param[out] dem_parameters Simulation parameters
+ */
+template <int dim>
+void
+set_default_dem_parameters(const unsigned int        particle_type_number,
+                           DEMSolverParameters<dim> &dem_parameters)
+{
+  Parameters::Lagrangian::LagrangianPhysicalProperties &properties =
+    dem_parameters.lagrangian_physical_properties;
+
+  properties.particle_type_number = particle_type_number;
+
+  // Rolling resistance method
+  dem_parameters.model_parameters.rolling_resistance_method =
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+
+  // Particle parameters
+  for (unsigned int i = 0; i < particle_type_number; ++i)
+    {
+      properties.density_particle[i]                             = 1000;
+      properties.youngs_modulus_particle[i]                      = 1000000;
+      properties.poisson_ratio_particle[i]                       = 0.3;
+      properties.restitution_coefficient_particle[i]             = 0.1;
+      properties.friction_coefficient_particle[i]                = 0.1;
+      properties.rolling_friction_coefficient_particle[i]        = 0.1;
+      properties.rolling_viscous_damping_coefficient_particle[i] = 0.1;
+      properties.surface_energy_particle[i]                      = 0.0;
+      properties.hamaker_constant_particle[i]                    = 4.e-19;
+      properties.thermal_conductivity_particle[i]                = 1;
+      properties.specific_heat_particle[i]                       = 1000;
+      properties.microhardness_particle[i]                       = 1.e9;
+      properties.surface_slope_particle[i]                       = 0.1;
+      properties.surface_roughness_particle[i]                   = 1.e-9;
+      properties.thermal_accommodation_particle[i]               = 0.7;
+    }
+
+  // Wall parameters
+  properties.youngs_modulus_wall          = 1000000;
+  properties.poisson_ratio_wall           = 0.3;
+  properties.restitution_coefficient_wall = 0.1;
+  properties.friction_coefficient_wall    = 0.1;
+  properties.rolling_friction_wall        = 0.1;
+  properties.rolling_viscous_damping_wall = 0.1;
+  properties.surface_energy_wall          = 0.0;
+  properties.hamaker_constant_wall        = 4.e-19;
+
+  // Interstitial gas parameters
+  properties.thermal_conductivity_gas     = 0.01;
+  properties.specific_heat_gas            = 1000;
+  properties.dynamic_viscosity_gas        = 1.e-5;
+  properties.specific_heats_ratio_gas     = 1;
+  properties.molecular_mean_free_path_gas = 68.e-9;
+}
 
 #endif // test_particles_functions_h
