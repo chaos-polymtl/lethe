@@ -14,8 +14,8 @@
  * way, no significant overlap is occurring on the insertion of new particle
  * which can occur with other insertion method.
  */
-template <int dim>
-class InsertionPlane : public Insertion<dim>
+template <int dim, typename PropertiesIndex>
+class InsertionPlane : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**

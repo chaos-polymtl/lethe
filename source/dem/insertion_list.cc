@@ -15,15 +15,15 @@ DeclException2(DiameterSizeCoherence,
  * than check if the position list are of the coherent size and to
  * create the insertion_points member
  */
-template <int dim>
-InsertionList<dim>::InsertionList(
+template <int dim, typename PropertiesIndex>
+InsertionList<dim, PropertiesIndex>::InsertionList(
   const std::vector<std::shared_ptr<Distribution>>
     &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : Insertion<dim>(size_distribution_object_container,
-                   triangulation,
-                   dem_parameters)
+  : Insertion<dim, PropertiesIndex>(size_distribution_object_container,
+                                    triangulation,
+                                    dem_parameters)
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -40,6 +40,7 @@ InsertionList<dim>::InsertionList(
   const std::vector<double> &list_wy = dem_parameters.insertion_info.list_wy;
   const std::vector<double> &list_wz = dem_parameters.insertion_info.list_wz;
   std::vector<double>        list_d  = dem_parameters.insertion_info.list_d;
+  std::vector<double>        list_T  = dem_parameters.insertion_info.list_T;
 
   // If the default diameter is negative, the diameter list is resized to the
   // number of particles and assigned the average particle diameter to all
@@ -76,14 +77,15 @@ InsertionList<dim>::InsertionList(
             Tensor<1, 3>({list_wx[i], list_wy[i], list_wz[i]}));
         }
     }
-  diameters = list_d;
+  diameters    = list_d;
+  temperatures = list_T;
 }
 
 // The main insertion function. Insert_global_function is used to insert the
 // particles
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionList<dim>::insert(
+InsertionList<dim, PropertiesIndex>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -172,13 +174,14 @@ InsertionList<dim>::insert(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionList<dim>::assign_particle_properties_for_list_insertion(
-  const DEMSolverParameters<dim>   &dem_parameters,
-  const unsigned int               &inserted_this_step_this_proc,
-  const unsigned int               &current_inserting_particle_type,
-  std::vector<std::vector<double>> &particle_properties)
+InsertionList<dim, PropertiesIndex>::
+  assign_particle_properties_for_list_insertion(
+    const DEMSolverParameters<dim>   &dem_parameters,
+    const unsigned int               &inserted_this_step_this_proc,
+    const unsigned int               &current_inserting_particle_type,
+    std::vector<std::vector<double>> &particle_properties)
 {
   // Clearing and resizing particle_properties
   particle_properties.reserve(inserted_this_step_this_proc);
@@ -209,11 +212,25 @@ InsertionList<dim>::assign_particle_properties_for_list_insertion(
       std::vector<double> properties_of_one_particle{
         type, diameter, mass, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z};
 
+      if constexpr (std::is_same_v<PropertiesIndex,
+                                   DEM::DEMMPProperties::PropertiesIndex>)
+        {
+          double T = this->temperatures[particle_counter];
+          double specific_heat =
+            physical_properties
+              .specific_heat_particle[current_inserting_particle_type];
+          properties_of_one_particle.push_back(T);
+          properties_of_one_particle.push_back(specific_heat);
+        }
+
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
 }
 
-
-template class InsertionList<2>;
-template class InsertionList<3>;
+template class InsertionList<2, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionList<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionList<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionList<3, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionList<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionList<3, DEM::DEMMPProperties::PropertiesIndex>;

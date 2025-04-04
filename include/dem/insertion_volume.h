@@ -9,8 +9,8 @@
 using namespace dealii;
 
 
-template <int dim>
-class InsertionVolume : public Insertion<dim>
+template <int dim, typename PropertiesIndex>
+class InsertionVolume : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**

@@ -6,14 +6,15 @@
 
 #include <dem/insertion.h>
 
-template <int dim>
-class InsertionFile : public Insertion<dim>
+template <int dim, typename PropertiesIndex>
+class InsertionFile : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
    * @brief The InsertionFile class inserts particles using data stored in a file.
    * This allows the insertion of any number of particles at a well-controlled
-   * location with any diameter value, translation and angular velocity.
+   * location with any diameter value, translation, angular velocity and
+   * temperature.
    *
    * @param size_distribution_object_container Contains all distribution for each
    * particle type
@@ -29,7 +30,8 @@ public:
   /**
    * @brief The InsertionFile class inserts particles using data stored in a file.
    * This allows the insertion of any number of particles at a well-controlled
-   * location with any diameter value, translation and angular velocity.
+   * location with any diameter value, translation, angular velocity and
+   * temperature.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -46,7 +48,8 @@ public:
   /**
    * @brief Carries out assigning the properties of inserted particles specifically
    * for the file insertion method. In this method, the initial translation
-   * and angular velocities and the diameter of each particles is set.
+   * and angular velocities, the temperature and the diameter of each particles
+   * is set.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    *

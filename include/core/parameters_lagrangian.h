@@ -239,7 +239,7 @@ namespace Parameters
       /* List */
       // Containers used for the list insertion method
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
-        list_wx, list_wy, list_wz, list_d;
+        list_wx, list_wy, list_wz, list_d, list_T;
 
       /* Volume */
       // Direction sequence for the insertion of particles (1st, 2nd, 3rd)
@@ -248,6 +248,8 @@ namespace Parameters
       Point<3> insertion_box_point_1, insertion_box_point_2;
       // Insertion initial velocity conditions
       Tensor<1, 3> initial_vel, initial_omega;
+      // Insertion initial temperature
+      double initial_T;
       // Insertion distance threshold
       double distance_threshold;
       // Insertion random number range

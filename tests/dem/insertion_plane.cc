@@ -62,9 +62,8 @@ test()
       .particle_average_diameter[0]));
 
   // Calling plane insertion
-  InsertionPlane<dim> insertion_object(distribution_object_container,
-                                       tr,
-                                       dem_parameters);
+  InsertionPlane<dim, PropertiesIndex> insertion_object(
+    distribution_object_container, tr, dem_parameters);
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(

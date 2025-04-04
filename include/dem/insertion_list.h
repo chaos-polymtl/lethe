@@ -6,8 +6,8 @@
 
 #include <dem/insertion.h>
 
-template <int dim>
-class InsertionList : public Insertion<dim>
+template <int dim, typename PropertiesIndex>
+class InsertionList : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
@@ -57,7 +57,8 @@ public:
   /**
    * @brief Carries out assigning the properties of inserted particles specificly
    * for the list insertion method. In this method, the initial translationnal
-   * and angular velocities and the diameter of each particles is set.
+   * and angular velocities, the temperature and the diameter of each particles
+   * is set.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param inserted_this_step_this_proc Number of particles that are inserted
@@ -103,12 +104,13 @@ public:
   unsigned int remaining_particles_of_each_type;
   unsigned int current_inserting_particle_type;
 
-  // Vector of the location, velocity and angular velocity used to insert the
-  // particles
+  // Vector of the location, velocity and angular velocity, diameter and
+  // temperature used to insert the particles
   std::vector<Point<dim>>   insertion_points;
   std::vector<Tensor<1, 3>> velocities;
   std::vector<Tensor<1, 3>> angular_velocities;
   std::vector<double>       diameters;
+  std::vector<double>       temperatures;
 };
 
 #endif /* lethe_insertion_list_h */

@@ -64,7 +64,7 @@ test()
       .particle_average_diameter[0]));
 
   // Calling volume insertion
-  InsertionVolume<dim> insertion_object(
+  InsertionVolume<dim, PropertiesIndex> insertion_object(
     distribution_object_container,
     tr,
     dem_parameters,
