@@ -440,7 +440,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 
   // Merge triangulations
   GridGenerator::merge_triangulations(
-    stator_temp_tria, rotor_temp_tria, triangulation, 1.0e-12, true, true);
+    stator_temp_tria, rotor_temp_tria, triangulation, 0.0, true, true);
 
   // TODO
   // Setup boundary conditions
