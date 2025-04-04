@@ -74,7 +74,7 @@ read_mesh_and_manifolds(
  */
 template <int dim, int spacedim = dim>
 void
-read_mesh_and_manifolds(
+read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
   const bool                                            &restart,
