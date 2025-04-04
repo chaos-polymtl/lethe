@@ -3,6 +3,8 @@
 
 #include <dem/particle_particle_heat_transfer.h>
 
+#include <boost/math/special_functions/erf.hpp>
+
 double
 calculate_corrected_contact_radius(const double effective_radius,
                                    const double effective_youngs_modulus,
@@ -66,15 +68,20 @@ calculate_solid_macrogap_resistance(const double radius_one,
 double
 erfc_inverse_approximation(const double x)
 {
-  if (x < 1e-9 || x > 1.9)
+  if (x <= 0 || x > 1.9)
     {
       std::cerr
-        << "Error. Input out of range (10^-9 <= x <= 1.9) for erfc-1 function in thermal resistance calculation."
+        << "Error. Input out of range (0 < x <= 1.9) for erfc-1 function in thermal resistance calculation."
         << std::endl;
       return NAN;
     }
 
-  if (x <= 0.02)
+  if (x <= 1e-9)
+    {
+      return sqrt(1.0 / 2.0 *
+                  (log(2.0 / (M_PI * x * x)) - log(log(2.0 / (M_PI * x * x)))));
+    }
+  else if (x <= 0.02)
     {
       return 1.0 / (0.218 + 0.735 * pow(x, 0.173));
     }
