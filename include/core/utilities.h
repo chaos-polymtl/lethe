@@ -905,23 +905,8 @@ template <int dim>
 inline double
 point_to_rad(const Point<dim> &point)
 {
-  const double temp = std::atan(std::abs(point[1]) / std::abs(point[0]));
-
-  // verify quadrant
-  if (point[1] >= 0.0)
-    {
-      if (point[0] >= 0.0)
-        return temp;
-      else
-        return numbers::PI - temp;
-    }
-  else
-    {
-      if (point[0] >= 0.0)
-        return 2 * numbers::PI - temp;
-      else
-        return numbers::PI + temp;
-    }
+  return std::fmod(std::atan2(point[1], point[0]) + 2 * numbers::PI,
+                   2 * numbers::PI);
 }
 
 /**
