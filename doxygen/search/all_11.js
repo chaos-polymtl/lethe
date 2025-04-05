@@ -322,7 +322,7 @@ var searchData=
   ['point_5fon_5frotation_5faxis_319',['point_on_rotation_axis',['../structParameters_1_1Lagrangian_1_1BCDEM.html#ac6e42e744984726ce26ed2969d8cf4c3',1,'Parameters::Lagrangian::BCDEM']]],
   ['point_5fon_5frotation_5fvector_320',['point_on_rotation_vector',['../classParticleWallContactForce.html#a53ff143a09a1d504a880c0686850a91e',1,'ParticleWallContactForce']]],
   ['point_5fone_321',['point_one',['../structcell__line__info.html#ad18cd62629bb5d1a20fabeb3fc4892b5',1,'cell_line_info::point_one'],['../structparticle__line__contact__info.html#a40e49cbbb54a3067fd0fbfe523aafb5d',1,'particle_line_contact_info::point_one']]],
-  ['point_5fto_5frad_322',['point_to_rad',['../mortar__coupling__manager_8h.html#ac4684ffe72e910140f24ef8b5acf0e29',1,'mortar_coupling_manager.h']]],
+  ['point_5fto_5frad_322',['point_to_rad',['../utilities_8h.html#ac4684ffe72e910140f24ef8b5acf0e29',1,'utilities.h']]],
   ['point_5fto_5fstring_323',['point_to_string',['../classShape.html#a532f0f37cbc778f665364b3a2e2a559a',1,'Shape']]],
   ['point_5ftwo_324',['point_two',['../structparticle__line__contact__info.html#afd0d0a7fcb4ac5871dae41b38a0abbc2',1,'particle_line_contact_info::point_two'],['../structcell__line__info.html#af5765da5a75940b0a513cb3849d7bd7a',1,'cell_line_info::point_two']]],
   ['points_5fon_5fwalls_325',['points_on_walls',['../classParameters_1_1Lagrangian_1_1FloatingWalls.html#a5ed33e811469326e683da50b146bbda1',1,'Parameters::Lagrangian::FloatingWalls']]],
