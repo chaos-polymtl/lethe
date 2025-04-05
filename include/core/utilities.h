@@ -8,6 +8,7 @@
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/point.h>
 #include <deal.II/base/revision.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
@@ -895,6 +896,32 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                              ParameterHandler::KeepDeclarationOrder);
       pcout << std::endl << std::endl;
     }
+}
+
+/**
+ * @brief Converts point to radius (angle with the x axis in the x-y plane)
+ */
+template <int dim>
+inline double
+point_to_rad(const Point<dim> &point)
+{
+  return std::fmod(std::atan2(point[1], point[0]) + 2 * numbers::PI,
+                   2 * numbers::PI);
+}
+
+/**
+ * @brief Converts radius to point (in the x-y plane)
+ */
+template <int dim>
+inline Point<dim>
+rad_to_point(const double radius, const double rad)
+{
+  Point<dim> point;
+
+  point[0] = radius * std::cos(rad);
+  point[1] = radius * std::sin(rad);
+
+  return point;
 }
 
 #endif
