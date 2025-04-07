@@ -119,7 +119,7 @@ Line Loop(6) = {17,13,-18,-19};
 Plane Surface(6) = {6} ;
 
 Transfinite Surface {6};
-Physical Surface(5) = {6};
+
 
 
 // Reconstruction
@@ -140,4 +140,5 @@ Extrude {0, 0, width} {
 }
 
 Physical Volume(0) = {1, 3, 2, 6, 4, 5};
-
+Physical Surface(1) = {1,2,3,4,5,6};
+Physical Surface(2) = {41,63,85,107,129,151};
