@@ -129,9 +129,15 @@ protected:
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
 
+  /**
+   * @brief Create geometric multigrid preconditioner.
+   */
   void
   create_GMG() override;
 
+  /**
+   * Initializes (or re-initializes) geometric multigrid preconditioneré
+   */
   void
   initialize_GMG() override;
 

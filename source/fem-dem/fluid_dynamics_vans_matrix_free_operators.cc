@@ -4,11 +4,21 @@
 #include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
 #include <fem-dem/void_fraction.h>
 
+#include <deal.II/base/exception_macros.h>
+
 template <int dim, typename number>
 void
 VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
   const VectorType &newton_step)
 {
+  // Assert that a correct stabilization method is used
+  // Currently the VANS solver only supports pspg_supg
+  AssertThrow(this->stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
+              ExcMessage(
+                "PSPG-SUPG stabilization is the only stabilization method"
+                " currently supported by the VANS matrix-free solver"));
+
   NavierStokesOperatorBase<dim, number>::
     evaluate_non_linear_term_and_calculate_tau(newton_step);
 

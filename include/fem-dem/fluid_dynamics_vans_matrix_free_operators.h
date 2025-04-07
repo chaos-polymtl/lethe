@@ -37,13 +37,6 @@ public:
     : NavierStokesOperatorBase<dim, number>()
     , cfd_dem_parameters(cfd_dem_parameters)
   {
-    // AssertThrow(
-    //   this->stabilization ==
-    //     Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
-    //   ExcMessage(
-    //     "PSPG-SUPG stabilization is the only stabilization method currently
-    //     supported by the VANS matrix-free solver"));
-
     AssertThrow(
       this->cfd_dem_parameters.vans_model == Parameters::VANSModel::modelA,
       ExcMessage(

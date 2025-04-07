@@ -93,6 +93,15 @@ public:
    * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
    * @param[in] dof_handler_fe_q_iso_q1 Describes the layout of DoFs for
    * FE_Q_iso_Q1 elements.
+   */
+  MFNavierStokesPreconditionGMGBase(
+    const SimulationParameters<dim> &simulation_parameters,
+    const DoFHandler<dim>           &dof_handler,
+    const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
+
+  /**
+   * @brief Initializes geometric multigrid preconditioner and pre-calculate terms that are constant.
+   *
    * @param[in] mapping Describes the transformations from unit to real cell.
    * @param[in] cell_quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
@@ -100,11 +109,6 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
-  MFNavierStokesPreconditionGMGBase(
-    const SimulationParameters<dim> &simulation_parameters,
-    const DoFHandler<dim>           &dof_handler,
-    const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
-
   void
   reinit(const std::shared_ptr<Mapping<dim>>      &mapping,
          const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
@@ -112,19 +116,17 @@ public:
          const std::shared_ptr<SimulationControl> &simulation_control,
          const std::shared_ptr<FESystem<dim>>      fe);
 
+  /**
+   * @brief Creates the operator for a given level.
+   *
+   * @param[in] level Identifier of the level to be created
+   */
   virtual void
   create_level_operator(const unsigned int level) = 0;
 
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
    * needed for the geometric multigrid preconditioner.
-   *
-   * @param[in] simulation_control Required to get the time stepping method.
-   * @param[in] flow_control Required for dynamic flow control.
-   * @param[in] present_solution Previous solution needed to evaluate the non
-   * linear term.
-   * @param[in] time_derivative_previous_solutions Vector storing time
-   * derivatives of previous solutions.
    */
   void
   initialize();
@@ -320,9 +322,25 @@ public:
     const DoFHandler<dim>           &dof_handler,
     const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
 
+  /*
+   * @brief Creates the operator for one level
+   *
+   * @param[in] level Level to be created.
+   */
   void
   create_level_operator(const unsigned int level) override;
 
+  /*
+   * @brief Initialize smoother, coarse grid solver and multigrid object
+   * needed for the geometric multigrid preconditioner.
+   *
+   * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] flow_control Required for dynamic flow control.
+   * @param[in] present_solution Previous solution needed to evaluate the non
+   * linear term.
+   * @param[in] time_derivative_previous_solutions Vector storing time
+   * derivatives of previous solutions.
+   */
   void
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
              FlowControl<dim>                         &flow_control,
@@ -388,7 +406,8 @@ protected:
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *
-   * @param[in] initial_condition_type The type of initial condition to be set.
+   * @param[in] initial_condition_type The type of initial condition to be
+   *set.
    *
    * @param[in] restart A boolean that indicates if the simulation is being
    * restarted. If set to true, the initial conditions are never set, but are
@@ -447,11 +466,11 @@ protected:
    * the simulation parameters.
    *
    * @param[in] initial_step Indicates if this is the first solution of the
-   * linear system. If this is the case, the non_zero version of the constraints
-   * are used for the Dirichlet boundary conditions.
+   * linear system. If this is the case, the non_zero version of the
+   * constraints are used for the Dirichlet boundary conditions.
    *
-   * @param[in] renewed_matrix Indicates if the matrix has been reassembled, and
-   * thus the preconditioner needs to be reassembled.
+   * @param[in] renewed_matrix Indicates if the matrix has been reassembled,
+   * and thus the preconditioner needs to be reassembled.
    */
   void
   solve_linear_system(const bool initial_step,
@@ -470,8 +489,8 @@ private:
    * @brief GMRES solver with preconditioning.
    *
    * @param[in] initial_step Indicates if this is the first solution of the
-   * linear system. If this is the case, the non_zero version of the constraints
-   * are used for the Dirichlet boundary conditions
+   * linear system. If this is the case, the non_zero version of the
+   * constraints are used for the Dirichlet boundary conditions
    *
    * @param[in] absolute_residual Used to define the linear solver tolerance.
    *
