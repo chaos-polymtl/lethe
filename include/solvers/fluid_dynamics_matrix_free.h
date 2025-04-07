@@ -347,7 +347,6 @@ public:
              const VectorType                         &present_solution,
              const VectorType &time_derivative_previous_solutions);
 
-private:
 };
 
 /**
@@ -407,7 +406,7 @@ protected:
    * and the checkpoint is instead read.
    *
    * @param[in] initial_condition_type The type of initial condition to be
-   *set.
+   * set.
    *
    * @param[in] restart A boolean that indicates if the simulation is being
    * restarted. If set to true, the initial conditions are never set, but are
