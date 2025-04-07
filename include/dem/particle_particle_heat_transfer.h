@@ -15,7 +15,7 @@
 
 
 /**
- * @brief Calculate the contact radius between two particles.
+ * @brief Calculate the corrected contact radius between two particles.
  *
  * @param[in] effective_radius Effective radius of the two particles.
  * @param[in] effective_youngs_modulus Effective young's modulus of the two
@@ -24,7 +24,7 @@
  * the two particles.
  * @param[in] normal_force_norm Norm of the normal contact force between the two
  * particles.
- * @return Contact radius of the two particles.
+ * @return Corrected contact radius of the two particles.
  */
 double
 calculate_corrected_contact_radius(const double effective_radius,
@@ -53,7 +53,8 @@ calculate_macrocontact_resistance(const double harmonic_particle_conductivity,
  * particles' surface roughness.
  * @param[in] effective_microhardness Effective microhardness of the two
  * particles.
- * @param[in] contact_radius Contact radius of the two particles.
+ * @param[in] contact_radius_squared Squared contact radius of the two
+ * particles.
  * @param[in] harmonic_particle_conductivity Harmonic mean of the two particles'
  * thermal conductivities.
  * @param[in] maximum_pressure Maximum pressure for hertzian contacts.
@@ -63,7 +64,7 @@ double
 calculate_microcontact_resistance(const double equivalent_surface_slope,
                                   const double equivalent_surface_roughness,
                                   const double effective_microhardness,
-                                  const double contact_radius,
+                                  const double contact_radius_squared,
                                   const double harmonic_particle_conductivity,
                                   const double maximum_pressure);
 
@@ -74,7 +75,8 @@ calculate_microcontact_resistance(const double equivalent_surface_slope,
  * @param[in] radius_two Radius of particle two.
  * @param[in] thermal_conductivity_one Thermal conductivity of particle one.
  * @param[in] thermal_conductivity_two Thermal conductivity of particle two.
- * @param[in] contact_radius Contact radius of the two particles.
+ * @param[in] contact_radius_squared Squared contact radius of the two
+ * particles.
  * @return Solid macrogap thermal resistance between the two particles.
  */
 double
@@ -82,14 +84,15 @@ calculate_solid_macrogap_resistance(const double radius_one,
                                     const double radius_two,
                                     const double thermal_conductivity_one,
                                     const double thermal_conductivity_two,
-                                    const double contact_radius);
+                                    const double contact_radius_squared);
 
 /**
  * @brief Calculate the interstitial gas microgap thermal resistance between two particles.
  *
  * @param[in] equivalent_surface_roughness Equivalent value of the two
  * particles' surface roughness.
- * @param[in] contact_radius Contact radius of the two particles.
+ * @param[in] contact_radius_squared Squared contact radius of the two
+ * particles.
  * @param[in] gas_parameter_m Gas parameter.
  * @param[in] thermal_conductivity_gas Thermal conductivity of the interstitial
  * gas.
@@ -102,7 +105,7 @@ calculate_solid_macrogap_resistance(const double radius_one,
 double
 calculate_interstitial_gas_microgap_resistance(
   const double equivalent_surface_roughness,
-  const double contact_radius,
+  const double contact_radius_squared,
   const double gas_parameter_m,
   const double thermal_conductivity_gas,
   const double maximum_pressure,
@@ -114,7 +117,8 @@ calculate_interstitial_gas_microgap_resistance(
  * @param[in] harmonic_radius Harmonic mean of the particles' radii.
  * @param[in] thermal_conductivity_gas Thermal conductivity of the interstitial
  * gas.
- * @param[in] contact_radius Contact radius of the two particles.
+ * @param[in] contact_radius_squared Squared contact radius of the two
+ * particles.
  * @param[in] gas_parameter_m Gas parameter.
  *
  * @return Interstitial gas microgap thermal resistance between the two particles.
@@ -123,7 +127,7 @@ double
 calculate_interstitial_gas_macrogap_resistance(
   const double harmonic_radius,
   const double thermal_conductivity_gas,
-  const double contact_radius,
+  const double contact_radius_squared,
   const double gas_parameter_m);
 
 /**
@@ -191,7 +195,7 @@ apply_heat_transfer_on_local_particles(const double temperature_one,
 
 /**
  * @brief Apply the heat transfer to the local-ghost particle pair in contact.
- * The heat transfer is only applied to the local particle, so particle one
+ * The heat transfer is only applied to the local particle, thus particle one
  * should be the local particle here.
  *
  * @param[in] temperature_one Temperature of particle one.

@@ -166,9 +166,9 @@ test()
   const double radius_one = particle_diameter * 0.5;
   const double radius_two = particle_diameter * 0.5;
   const double effective_youngs_modulus =
-    youngs_modulus / (2.0 * (1 - poisson_ratio * poisson_ratio));
+    youngs_modulus / (2.0 * (1. - poisson_ratio * poisson_ratio));
   const double effective_real_youngs_modulus =
-    real_youngs_modulus / (2.0 * (1 - poisson_ratio * poisson_ratio));
+    real_youngs_modulus / (2.0 * (1. - poisson_ratio * poisson_ratio));
   const double harmonic_particle_conductivity =
     harmonic_mean(thermal_conductivity_one, thermal_conductivity_two);
   const double harmonic_radius = harmonic_mean(radius_one, radius_two);
@@ -179,8 +179,8 @@ test()
   const double prandtl_gas =
     dynamic_viscosity_gas * specific_heat_gas / thermal_conductivity_gas;
   const double gas_parameter_m =
-    2 * (2 - thermal_accommodation) / thermal_accommodation *
-    (2 * specific_heats_ratio_gas) / (1 + specific_heats_ratio_gas) *
+    2. * (2. - thermal_accommodation) / thermal_accommodation *
+    (2. * specific_heats_ratio_gas) / (1. + specific_heats_ratio_gas) *
     molecular_mean_free_path_gas / prandtl_gas;
 
   // Calculating the contact radius
@@ -189,6 +189,7 @@ test()
                                        effective_youngs_modulus,
                                        effective_real_youngs_modulus,
                                        normal_force_norm);
+  const double contact_radius_squared = contact_radius * contact_radius;
 
   const double corrected_normal_overlap =
     normal_overlap *
@@ -206,7 +207,7 @@ test()
     calculate_microcontact_resistance(equivalent_surface_slope,
                                       equivalent_surface_roughness,
                                       effective_microhardness,
-                                      contact_radius,
+                                      contact_radius_squared,
                                       harmonic_particle_conductivity,
                                       maximum_pressure);
 
@@ -215,11 +216,11 @@ test()
                                         radius_two,
                                         thermal_conductivity_one,
                                         thermal_conductivity_two,
-                                        contact_radius);
+                                        contact_radius_squared);
 
   const double resistance_gas_microgap =
     calculate_interstitial_gas_microgap_resistance(equivalent_surface_roughness,
-                                                   contact_radius,
+                                                   contact_radius_squared,
                                                    gas_parameter_m,
                                                    thermal_conductivity_gas,
                                                    maximum_pressure,
@@ -228,15 +229,15 @@ test()
   const double resistance_gas_macrogap =
     calculate_interstitial_gas_macrogap_resistance(harmonic_radius,
                                                    thermal_conductivity_gas,
-                                                   contact_radius,
+                                                   contact_radius_squared,
                                                    gas_parameter_m);
 
   // Calculating total conductance and total resistance
   const double total_conductance =
-    1 / (resistance_macrocontact +
-         1 / (1 / resistance_microcontact + 1 / resistance_gas_microgap)) +
-    1 / (resistance_solid_macrogap + resistance_gas_macrogap);
-  const double total_resistance = 1 / total_conductance;
+    1. / (resistance_macrocontact +
+          1. / (1. / resistance_microcontact + 1. / resistance_gas_microgap)) +
+    1. / (resistance_solid_macrogap + resistance_gas_macrogap);
+  const double total_resistance = 1. / total_conductance;
 
   // Output
   deallog << " contact radius : " << contact_radius << std::endl
