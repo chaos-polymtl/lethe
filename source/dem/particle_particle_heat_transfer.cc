@@ -97,10 +97,11 @@ calculate_interstitial_gas_microgap_resistance(
   const double a_1 = boost::math::erfc_inv(x_1);
   const double a_2 = boost::math::erfc_inv(x_2) - a_1;
 
-  return (2 * std::sqrt(2) * equivalent_surface_roughness * a_2) /
+  // 2.82842712475 = 2*sqrt(2)
+  return (2.82842712475 * equivalent_surface_roughness * a_2) /
          (M_PI * thermal_conductivity_gas * contact_radius_squared *
           std::log(1 + a_2 / (a_1 + gas_parameter_m /
-                                      (2 * std::sqrt(2) *
+                                      (2.82842712475 *
                                        equivalent_surface_roughness))));
 }
 
