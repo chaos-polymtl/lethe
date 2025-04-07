@@ -48,10 +48,19 @@ namespace
   public:
     explicit MyMappingQ(const unsigned int polynomial_degree)
       : MappingQ<dim, spacedim>(polynomial_degree)
-    {}
+      , mapping_q(this->get_degree())
+    {
+      const QGaussLobatto<dim> quadrature_gl(this->polynomial_degree + 1);
+
+      for (const auto i : FETools::hierarchic_to_lexicographic_numbering<dim>(
+             this->polynomial_degree))
+        quadrature_points.push_back(quadrature_gl.point(i));
+    }
 
     explicit MyMappingQ(const MyMappingQ<dim, spacedim> &mapping)
       : MappingQ<dim, spacedim>(mapping)
+      , mapping_q(mapping.mapping_q)
+      , quadrature_points(mapping.quadrature_points)
     {}
 
     virtual std::unique_ptr<Mapping<dim, spacedim>>
@@ -101,15 +110,6 @@ namespace
       const typename Triangulation<dim, spacedim>::cell_iterator &cell)
       const override
     {
-      const QGaussLobatto<dim> quadrature_gl(this->polynomial_degree + 1);
-
-      std::vector<Point<dim>> quadrature_points;
-      for (const auto i : FETools::hierarchic_to_lexicographic_numbering<dim>(
-             this->polynomial_degree))
-        quadrature_points.push_back(quadrature_gl.point(i));
-
-      MappingQ<dim, spacedim> mapping_q(this->get_degree());
-
       std::vector<Point<spacedim>> points;
 
       for (const auto &quadrature_point : quadrature_points)
@@ -139,6 +139,9 @@ namespace
 
       return point;
     }
+
+    MappingQ<dim, spacedim> mapping_q;
+    std::vector<Point<dim>> quadrature_points;
   };
 } // namespace
 
