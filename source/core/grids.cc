@@ -394,6 +394,99 @@ read_mesh_and_manifolds(
     }
 }
 
+template <int dim, int spacedim>
+void
+read_mesh_and_manifolds_for_stator_and_rotor(
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::Mesh                                &mesh_parameters,
+  const bool                                            &restart,
+  const Parameters::Mortar<dim>                         &mortar_parameters)
+{
+  AssertThrow(
+    mesh_parameters.type == Parameters::Mesh::Type::dealii,
+    ExcMessage(
+      "GMSH files are currently not compatible with the mortar implementation."));
+
+  // Stator triangulation
+  Triangulation<dim> stator_temp_tria;
+  attach_grid_to_triangulation(stator_temp_tria, mesh_parameters);
+
+  // Rotor triangulation
+  Triangulation<dim> rotor_temp_tria;
+  attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
+  GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle,
+                    rotor_temp_tria);
+
+  // Check manifold IDs at rotor boundary
+  std::set<unsigned int> rotor_boundary_manifold_ids;
+  // Shift rotor boundary IDs #
+  for (const auto &face : rotor_temp_tria.active_face_iterators())
+    if (face->at_boundary())
+      {
+        face->set_boundary_id(face->boundary_id() +
+                              stator_temp_tria.get_boundary_ids().size());
+        if (face->manifold_id() != numbers::flat_manifold_id)
+          rotor_boundary_manifold_ids.insert(face->manifold_id());
+      }
+
+  // Check manifold IDs at stator boundary
+  std::set<unsigned int> stator_boundary_manifold_ids;
+  for (const auto &face : stator_temp_tria.active_face_iterators())
+    if (face->at_boundary())
+      {
+        if (face->manifold_id() != numbers::flat_manifold_id)
+          stator_boundary_manifold_ids.insert(face->manifold_id());
+      }
+
+  // Merge triangulations
+  GridGenerator::merge_triangulations(
+    stator_temp_tria, rotor_temp_tria, triangulation, 0.0, true, true);
+
+  // TODO
+  // Setup boundary conditions
+  // setup_periodic_boundary_conditions(triangulation, boundary_conditions);
+
+  // Attach manifolds to merged triangulation
+  unsigned int n = 0;
+  for (unsigned int i = 0; i < rotor_boundary_manifold_ids.size(); i++)
+    {
+      triangulation.set_manifold(n, rotor_temp_tria.get_manifold(i));
+      n++;
+    }
+  for (unsigned int j = 0; j < stator_boundary_manifold_ids.size(); j++)
+    {
+      triangulation.set_manifold(n, stator_temp_tria.get_manifold(j));
+      n++;
+    }
+
+  // Initial mesh refinement
+  if (mesh_parameters.simplex)
+    {
+      // Refinement isn't possible yet
+    }
+  else
+    {
+      if (mesh_parameters.refine_until_target_size)
+        {
+          const double minimal_cell_size =
+            GridTools::minimal_cell_diameter(triangulation);
+          const double       target_size = mesh_parameters.target_size;
+          const unsigned int number_refinement =
+            floor(std::log(minimal_cell_size / target_size) / std::log(2));
+          triangulation.refine_global(number_refinement);
+        }
+      else if (!restart)
+        {
+          const int initial_refinement = mesh_parameters.initial_refinement;
+          triangulation.refine_global(initial_refinement);
+          refine_triangulation_at_boundaries(
+            mesh_parameters.boundaries_to_refine,
+            mesh_parameters.initial_refinement_at_boundaries,
+            triangulation);
+        }
+    }
+}
+
 template void
 attach_grid_to_triangulation(Triangulation<2>       &triangulation,
                              const Parameters::Mesh &mesh_parameters);
@@ -439,3 +532,16 @@ read_mesh_and_manifolds(
   const Parameters::Manifolds                  &manifolds_parameters,
   const bool                                   &restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions);
+
+template void
+read_mesh_and_manifolds_for_stator_and_rotor(
+  parallel::DistributedTriangulationBase<2> &triangulation,
+  const Parameters::Mesh                    &mesh_parameters,
+  const bool                                &restart,
+  const Parameters::Mortar<2>               &mortar_parameters);
+template void
+read_mesh_and_manifolds_for_stator_and_rotor(
+  parallel::DistributedTriangulationBase<3> &triangulation,
+  const Parameters::Mesh                    &mesh_parameters,
+  const bool                                &restart,
+  const Parameters::Mortar<3>               &mortar_parameters);

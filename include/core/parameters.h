@@ -1782,6 +1782,30 @@ namespace Parameters
   };
 
   /**
+   * @brief Mortar - Defines parameters used to construct mortar elements.
+   */
+  template <int dim>
+  struct Mortar
+  {
+    // Indicates whether mortar elements are enabled
+    bool enable;
+    // Mesh parameters for the rotor part
+    std::shared_ptr<Mesh> rotor_mesh;
+    // Boundary ID # of the rotor at the rotor-stator interface
+    unsigned int rotor_boundary_id;
+    // Boundary ID # of the stator at the rotor-stator interface
+    unsigned int stator_boundary_id;
+    // Center of rotation of the rotor domain
+    Point<dim> center_of_rotation;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Return the vector of size N of entry @entry_string. If the entry is
    * specified in the .prm file, then the changed value is returned, otherwise
    * the default value is returned. If the entry is not equivalent to a vector,

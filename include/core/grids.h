@@ -25,7 +25,6 @@ void
 attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
                              const Parameters::Mesh       &mesh_parameters);
 
-
 /**
  * @brief Modifies the triangulation to setup periodic boundary conditions in the case of CFD simulations
  *
@@ -59,6 +58,32 @@ read_mesh_and_manifolds(
   const bool                                            &restart,
   const BoundaryConditions::BoundaryConditions          &boundary_conditions);
 
+/**
+ * @brief Completely set up a mesh and its manifold for rotor-stator domains
+ *
+ * @param[in, out] triangulation [stator] The triangulation to which a grid is
+ * attached. It will be substituted by the merged rotor-stator triangulation
+ *
+ * @param[in] mesh_parameters [stator] The mesh parameters used to decide what
+ * type of mesh or primitive is  used
+ *
+ * @param[in] manifolds_parameters [stator] The information about the type of
+ * manifolds attached to the boundary conditions
+ *
+ * @param[in] boundary_conditions [stator] The information about the boundary
+ * conditions id. This is used to set-up the periodicity of the domain
+ *
+ * @param[in] mortar [rotor] The information about the mortar method control,
+ * including the rotor mesh parameters This function currently only works for
+ * dealii meshes.
+ */
+template <int dim, int spacedim = dim>
+void
+read_mesh_and_manifolds_for_stator_and_rotor(
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::Mesh                                &mesh_parameters,
+  const bool                                            &restart,
+  const Parameters::Mortar<dim>                         &mortar);
 
 /**
  * @brief Refine a mesh around specific boundary ids
