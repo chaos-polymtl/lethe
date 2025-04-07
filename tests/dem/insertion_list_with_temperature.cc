@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserting particles using volume insertion class.
+ * @brief Inserting particles wit different temperatures using list insertion class.
  */
 
 // Deal.II includes
@@ -13,13 +13,10 @@
 #include <deal.II/particles/particle.h>
 
 // Lethe
+#include <../tests/dem/test_particles_functions.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/insertion_volume.h>
+#include <dem/insertion_list.h>
 
-// Tests (with common definitions)
-#include <../tests/tests.h>
-
-using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
 void
@@ -39,25 +36,25 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining simulation general parameters
-  dem_parameters.insertion_info.list_x = {0.0,0.01,0.02,0.03,0.04};
-  dem_parameters.insertion_info.list_y = {0.0,0.0,0.0,0.0,0.0};
-  dem_parameters.insertion_info.list_z = {0.0,0.0,0.0,0.0,0.0};
-  dem_parameters.insertion_info.list_d = {0.005,0.005,0.005,0.005,0.005};
+  set_default_dem_parameters(1, dem_parameters);
+  dem_parameters.insertion_info.list_x = {0.1, 0.2, 0.3, 0.4, 0.5};
+  dem_parameters.insertion_info.list_y.resize(5);
+  dem_parameters.insertion_info.list_z.resize(5);
+  dem_parameters.insertion_info.list_d = {0.001, 0.002, 0.003, 0.004, 0.005};
   dem_parameters.insertion_info.list_T = {100, 200, 300, 400, 500};
-  dem_parameters.insertion_info.list_vx = {0.0,0.0,0.0,0.0,0.0};
-  dem_parameters.insertion_info.list_vy = {0.0,0.0,0.0,0.0,0.0};
-  dem_parameters.insertion_info.list_vz = {0.0,0.0,0.0,0.0,0.0};
-  dem_parameters.insertion_info.list_wx = {0.0,0.0,0.0,0.0,0.0};
-  dem_parameters.insertion_info.list_wy = {0.0,0.0,0.0,0.0,0.0};
-  dem_parameters.insertion_info.list_wz = {0.0,0.0,0.0,0.0,0.0};
+  dem_parameters.insertion_info.list_vx.resize(5);
+  dem_parameters.insertion_info.list_vy.resize(5);
+  dem_parameters.insertion_info.list_vz.resize(5);
+  dem_parameters.insertion_info.list_wx.resize(5);
+  dem_parameters.insertion_info.list_wy.resize(5);
+  dem_parameters.insertion_info.list_wz.resize(5);
 
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
     Parameters::Lagrangian::SizeDistributionType::uniform);
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
     0.005;
-  dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
-  dem_parameters.lagrangian_physical_properties.number[0]           = 11;
+  dem_parameters.lagrangian_physical_properties.number[0] = 5;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
@@ -68,12 +65,9 @@ test()
     dem_parameters.lagrangian_physical_properties
       .particle_average_diameter[0]));
 
-  // Calling volume insertion
-  InsertionVolume<dim, PropertiesIndex> insertion_object(
-    distribution_object_container,
-    tr,
-    dem_parameters,
-    distribution_object_container[0]->find_max_diameter());
+  // Calling list insertion
+  InsertionList<dim, PropertiesIndex> insertion_object(
+    distribution_object_container, tr, dem_parameters);
 
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
@@ -83,8 +77,13 @@ test()
        particle != particle_handler.end();
        ++particle, ++particle_number)
     {
-      deallog << "The temperature of particle " << particle_number
-              << " is set at: " << particle->get_properties()[PropertiesIndex::T] << " K. " << std::endl;
+      deallog << "For particle " << particle_number
+              << ", temperature is set at: "
+              << particle->get_properties()[PropertiesIndex::T]
+              << " K, diameter is set at: "
+              << particle->get_properties()[PropertiesIndex::dp]
+              << " and x is set at: " << particle->get_location()[0] << "."
+              << std::endl;
     }
 }
 
