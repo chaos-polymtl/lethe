@@ -37,7 +37,7 @@ public:
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
   Parameters::SimulationControl                     simulation_control;
   Parameters::Timer                                 timer;
-  Parameters::FEM                                   fem_parameters;
+  Parameters::FEM<dim>                                   fem_parameters;
   Parameters::Forces                                forces_parameters;
   std::shared_ptr<Parameters::Laser<dim>>           laser_parameters;
   Parameters::PostProcessing                        post_processing;
@@ -102,7 +102,7 @@ public:
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);
 
-    Parameters::FEM::declare_parameters(prm);
+    Parameters::FEM<dim>::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     laser_parameters = std::make_shared<Parameters::Laser<dim>>();

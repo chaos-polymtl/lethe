@@ -1504,9 +1504,49 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-
+  
+  template <int dim>
   void
-  FEM::declare_parameters(ParameterHandler &prm)
+  PressureEnrichment<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("pressure enrichment");
+    {
+      prm.declare_entry("enable",
+                        "false",
+                        Patterns::Bool(),
+                        "enable pressure enrichment");
+      prm.declare_entry("level set type",
+                        "function",
+                        Patterns::Selection("function"),
+                        "format of the level set");                
+    level_set_function = std::make_shared<Functions::ParsedFunction<dim>>();
+    level_set_function->declare_parameters(prm);
+    }
+    prm.leave_subsection();
+  }
+  
+  template <int dim>
+  void
+  PressureEnrichment<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("pressure enrichment");
+    {
+      this->enable = prm.get_bool("enable");
+      const std::string type_string = prm.get("level set type");
+      if (type_string == "function")
+        this->level_set_type = LevelSetType::function;
+      else
+        throw(
+          std::runtime_error("Invalid level set type!"));
+      level_set_function->parse_parameters(prm);
+        
+    }
+    prm.leave_subsection();
+  }
+  
+  template <int dim>
+  void
+  FEM<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("FEM");
     {
@@ -1554,8 +1594,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  FEM::parse_parameters(ParameterHandler &prm)
+  FEM<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("FEM");
     {
@@ -4130,6 +4171,10 @@ namespace Parameters
   }
 
   // Explicitly instantiate template classes and structs
+  template class PressureEnrichment<2>;
+  template class PressureEnrichment<3>;
+  template struct FEM<2>;
+  template struct FEM<3>;
   template class Laser<2>;
   template class Laser<3>;
   template class IBParticles<2>;

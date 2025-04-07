@@ -50,6 +50,11 @@ namespace Parameters
     verbose,
     extra_verbose
   };
+  
+  enum class LevelSetType
+  {
+    function
+  };
 
   /** @brief Class to account for different fluid indicator:
    *  - fluid0: fluid 0 only,
@@ -1070,12 +1075,29 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  template <int dim>
+  class PressureEnrichment
+  {
+  public:
+    bool enable = false;
+    
+    LevelSetType level_set_type;
+    
+    std::shared_ptr<Functions::ParsedFunction<dim>> level_set_function;
+    
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+  
   /**
    * @brief FEM - The finite element section
    * controls the properties of the finite element method. This section
    * controls the order of polynomial integration and the number of quadrature
    * points within the cells.
    */
+  template <int dim>
   struct FEM
   {
     // Interpolation order velocity
@@ -1083,7 +1105,10 @@ namespace Parameters
 
     // Interpolation order pressure
     unsigned int pressure_order;
-
+    
+    // Pressure enrichment
+    PressureEnrichment<dim> pressure_enrichment;
+    
     // Interpolation order void fraction
     unsigned int void_fraction_order;
 
