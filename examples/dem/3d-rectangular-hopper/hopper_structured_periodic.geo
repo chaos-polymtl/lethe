@@ -15,8 +15,8 @@ bottom = -top;
 width = 0.0056;
 
 // Division variables
-nx = 1;
-ny = 7;
+nx = 2;
+ny = 14;
 
 // Upper left
 Point(1) = {hole_left_side, hole_height, 0, 1.0};
