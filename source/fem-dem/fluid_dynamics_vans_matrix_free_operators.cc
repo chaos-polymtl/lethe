@@ -4,8 +4,6 @@
 #include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
 #include <fem-dem/void_fraction.h>
 
-#include <deal.II/base/exception_macros.h>
-
 template <int dim, typename number>
 void
 VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
