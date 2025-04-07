@@ -295,8 +295,8 @@ The feature only works with one pair of periodic boundaries.
 
         subsection boundary condition 0
             set type                      = periodic
-            set periodic id 0             = 0
-            set periodic id 1             = 1
+            set periodic id 0             = 1
+            set periodic id 1             = 2
             set periodic direction        = 2
         end
     end
