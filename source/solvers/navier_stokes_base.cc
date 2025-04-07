@@ -39,6 +39,109 @@
 
 #include <sys/stat.h>
 
+namespace
+{
+
+  template <int dim, int spacedim = dim>
+  class MyMappingQ : public MappingQ<dim, spacedim>
+  {
+  public:
+    explicit MyMappingQ(const unsigned int polynomial_degree)
+      : MappingQ<dim, spacedim>(polynomial_degree)
+    {}
+
+    explicit MyMappingQ(const MyMappingQ<dim, spacedim> &mapping)
+      : MappingQ<dim, spacedim>(mapping)
+    {}
+
+    virtual std::unique_ptr<Mapping<dim, spacedim>>
+    clone() const override
+    {
+      return std::make_unique<MyMappingQ<dim, spacedim>>(*this);
+    }
+
+    virtual bool
+    preserves_vertex_locations() const override
+    {
+      return false;
+    }
+
+    virtual boost::container::small_vector<Point<spacedim>,
+#ifndef _MSC_VER
+                                           ReferenceCells::max_n_vertices<dim>()
+#else
+                                           GeometryInfo<dim>::vertices_per_cell
+#endif
+                                           >
+    get_vertices(const typename Triangulation<dim, spacedim>::cell_iterator
+                   &cell) const override
+    {
+      MappingQ<dim, spacedim> mapping_q(this->get_degree());
+
+      auto points = mapping_q.get_vertices(cell);
+
+      for (auto &p : points)
+        p = transform(p);
+
+      return points;
+    }
+
+    /**
+     * Return the memory consumption (in bytes) of the cache.
+     */
+    std::size_t
+    memory_consumption() const
+    {
+      return sizeof(*this);
+    }
+
+  protected:
+    virtual std::vector<Point<spacedim>>
+    compute_mapping_support_points(
+      const typename Triangulation<dim, spacedim>::cell_iterator &cell)
+      const override
+    {
+      const QGaussLobatto<dim> quadrature_gl(this->polynomial_degree + 1);
+
+      std::vector<Point<dim>> quadrature_points;
+      for (const auto i : FETools::hierarchic_to_lexicographic_numbering<dim>(
+             this->polynomial_degree))
+        quadrature_points.push_back(quadrature_gl.point(i));
+
+      MappingQ<dim, spacedim> mapping_q(this->get_degree());
+
+      std::vector<Point<spacedim>> points;
+
+      for (const auto &quadrature_point : quadrature_points)
+        points.emplace_back(transform(
+          mapping_q.transform_unit_to_real_cell(cell, quadrature_point)));
+
+      return points;
+    }
+
+  private:
+    Point<spacedim>
+    transform(const Point<spacedim> &chart_point) const
+    {
+      const double       deformation = 0.15; // TODO
+      const unsigned int frequency   = 1;    //
+      const double       left        = -1.0; //
+      const double       right       = +1.0; //
+
+      double sinval = deformation;
+      for (unsigned int d = 0; d < dim; ++d)
+        sinval *= std::sin(frequency * 2.0 * dealii::numbers::PI *
+                           (chart_point(d) - left) / (right - left));
+
+      auto point = chart_point;
+      for (unsigned int d = 0; d < dim; ++d)
+        point[d] += sinval;
+
+      return point;
+    }
+  };
+} // namespace
+
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -89,7 +192,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         dim,
         FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
         1);
-      mapping         = std::make_shared<MappingQ<dim>>(velocity_fem_degree);
+
+      if (false)
+        mapping = std::make_shared<MappingQ<dim>>(velocity_fem_degree);
+      else if (true)
+        mapping = std::make_shared<MyMappingQ<dim>>(velocity_fem_degree);
+
       cell_quadrature = std::make_shared<QGauss<dim>>(number_quadrature_points);
       face_quadrature =
         std::make_shared<QGauss<dim - 1>>(number_quadrature_points);
