@@ -42,7 +42,7 @@ var searchData=
   ['residual_5fomega_39',['residual_omega',['../classIBParticle.html#a12df621208693c6b1ac11d63697c3bf3',1,'IBParticle']]],
   ['residual_5fvelocity_40',['residual_velocity',['../classIBParticle.html#a9cda7f56516676e7f3dc9ef2a6cbd676',1,'IBParticle']]],
   ['resize_5fcontainers_5ftrigger_41',['resize_containers_trigger',['../classDEMActionManager.html#a8e9037cd82f07d5bded3ebb494aeb0ea',1,'DEMActionManager']]],
-  ['restart_42',['restart',['../structParameters_1_1Restart.html#ad71babefa334afc643f3093b7b654149',1,'Parameters::Restart::restart'],['../classDEMSolverParameters.html#a518770fc42973abc4721c1ec7c5cac7c',1,'DEMSolverParameters::restart'],['../classCheckpointControl.html#aa7c92ab5298a0ddead0ec82c22cb4ae7',1,'CheckpointControl::restart']]],
+  ['restart_42',['restart',['../classCheckpointControl.html#aa7c92ab5298a0ddead0ec82c22cb4ae7',1,'CheckpointControl::restart'],['../classDEMSolverParameters.html#a518770fc42973abc4721c1ec7c5cac7c',1,'DEMSolverParameters::restart'],['../structParameters_1_1Restart.html#ad71babefa334afc643f3093b7b654149',1,'Parameters::Restart::restart']]],
   ['restart_5fparameters_43',['restart_parameters',['../classSimulationParameters.html#a384c442019a3f12539b07663886f4c81',1,'SimulationParameters']]],
   ['restitution_5fcoefficient_44',['restitution_coefficient',['../classIBParticle.html#a95785ef9825ebd34879b5e4bd25836dd',1,'IBParticle']]],
   ['restitution_5fcoefficient_5fparticle_45',['restitution_coefficient_particle',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#aae18d580cc8beb33ce45b6bb4c90c1a2',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
@@ -72,10 +72,12 @@ var searchData=
   ['rotate_5fpi_69',['rotate_pi',['../classMortarManager.html#a50f9204fecd5162b2ba6b3bf0a57d17e',1,'MortarManager']]],
   ['rotated_5fnodes_5fpositions_70',['rotated_nodes_positions',['../classRBFShape.html#aa6c393f51fc07580a0f6ba64a0b19dee',1,'RBFShape']]],
   ['rotating_5fframe_5ftype_71',['rotating_frame_type',['../structParameters_1_1VelocitySource.html#afd60c8043dcf7a0bfcca777e112252b0',1,'Parameters::VelocitySource']]],
-  ['rotation_5fangle_72',['rotation_angle',['../classParameters_1_1Laser.html#a5067b496d9d961de4797e4387c32add3',1,'Parameters::Laser::rotation_angle'],['../classGridMotion.html#a3b24a212b18918958279f27c27fd4c58',1,'GridMotion::rotation_angle'],['../structParameters_1_1Mesh.html#a00058dc66c40977883cd07e2f3855033',1,'Parameters::Mesh::rotation_angle']]],
+  ['rotation_5fangle_72',['rotation_angle',['../classGridMotion.html#a3b24a212b18918958279f27c27fd4c58',1,'GridMotion::rotation_angle'],['../structParameters_1_1Mesh.html#a00058dc66c40977883cd07e2f3855033',1,'Parameters::Mesh::rotation_angle'],['../classParameters_1_1Laser.html#a5067b496d9d961de4797e4387c32add3',1,'Parameters::Laser::rotation_angle']]],
   ['rotation_5faxis_73',['rotation_axis',['../classParameters_1_1Laser.html#a883b18b03e6ca59001d87b4112d09183',1,'Parameters::Laser::rotation_axis'],['../structParameters_1_1Mesh.html#a10bdb4bcd32b48067e347abb04be7058',1,'Parameters::Mesh::rotation_axis'],['../classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e',1,'GridMotion::rotation_axis']]],
   ['rotation_5fmatrix_74',['rotation_matrix',['../classIBParticle.html#a60c2787b635b03e99b0cd8d0bd450ca5',1,'IBParticle::rotation_matrix'],['../classParameters_1_1Laser.html#a8b8ac2fb0b8307233d3cec2da3c0734c',1,'Parameters::Laser::rotation_matrix'],['../classShape.html#a18a2eaa1dc203ef6ebadfa3e52e5c509',1,'Shape::rotation_matrix']]],
   ['rotational_5fviscous_5ftorque_75',['rotational_viscous_torque',['../structParameters_1_1CFDDEM.html#a1f2fba40324f02c1396e99ebb0561ce2',1,'Parameters::CFDDEM']]],
-  ['rpt_5fparam_76',['rpt_param',['../classRPTCalculatingParameters.html#a8ca8cd3738bb99e99186ed2f38446bf6',1,'RPTCalculatingParameters']]],
-  ['rpt_5fparameters_77',['rpt_parameters',['../classRPT.html#ae8b913a2a26589e95c08cb0d2a5ca16a',1,'RPT::rpt_parameters'],['../classRPTFEMReconstruction.html#a40a5a8175803e43d0b74f8b3af379a93',1,'RPTFEMReconstruction::rpt_parameters']]]
+  ['rotor_5fboundary_5fid_76',['rotor_boundary_id',['../structParameters_1_1Mortar.html#a50d08d147ecc318dda278724af26910a',1,'Parameters::Mortar']]],
+  ['rotor_5fmesh_77',['rotor_mesh',['../structParameters_1_1Mortar.html#ac50e0ff932d627dfe1c6c1e5ca8ef4d0',1,'Parameters::Mortar']]],
+  ['rpt_5fparam_78',['rpt_param',['../classRPTCalculatingParameters.html#a8ca8cd3738bb99e99186ed2f38446bf6',1,'RPTCalculatingParameters']]],
+  ['rpt_5fparameters_79',['rpt_parameters',['../classRPT.html#ae8b913a2a26589e95c08cb0d2a5ca16a',1,'RPT::rpt_parameters'],['../classRPTFEMReconstruction.html#a40a5a8175803e43d0b74f8b3af379a93',1,'RPTFEMReconstruction::rpt_parameters']]]
 ];
