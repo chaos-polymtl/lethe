@@ -346,7 +346,6 @@ public:
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
              const VectorType &time_derivative_previous_solutions);
-
 };
 
 /**

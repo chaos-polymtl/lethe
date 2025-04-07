@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+## [Master] - 2025-04-07
+
+### Added
+
+- MINOR The GMG preconditioner in the matrix-free VANS solver now uses the void fraction on every level instead of only the finest one. [#1458](https://github.com/chaos-polymtl/lethe/pull/1458)
+
 ## [Master] - 2025-04-02
 
 ### Fixed
