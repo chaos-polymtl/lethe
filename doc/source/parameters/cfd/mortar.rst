@@ -1,8 +1,8 @@
-==============
-Mortar Control
-==============
+======
+Mortar
+======
 
-The mortar control section is used when simulating rotor-stator geometries, in which the rotor (fluid) mesh is attached to the stator by mortar elements. 
+The mortar section is used when simulating rotor-stator geometries, in which the rotor (fluid) mesh is attached to the stator by mortar elements. 
 
 .. code-block:: text
 
@@ -23,7 +23,7 @@ The mortar control section is used when simulating rotor-stator geometries, in w
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
 
 .. note::
-  The initial number of cells at the rotor-stator interface has to be the same; the simulation will be aborted if that is not imposed. This restriction will be automatically constrained throughout the simulation if the mesh is refined.
+  The initial number of cells at the rotor-stator interface has to be the same; the simulation will be aborted if that is not respected. This restriction will be automatically constrained throughout the simulation if the mesh is refined.
  
 * The ``rotor boundary id`` and ``stator boundary id`` refer to the boundary index at the rotor-stator interface.
 
