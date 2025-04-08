@@ -1797,6 +1797,12 @@ namespace Parameters
     unsigned int stator_boundary_id;
     // Center of rotation of the rotor domain
     Point<dim> center_of_rotation;
+    // Rotor boundary conditions: velocity components
+    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_BC_u;
+    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_BC_v;
+    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_BC_w;
+    // Rotor boundary conditions: pressure
+    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_BC_p;
 
     void
     declare_parameters(ParameterHandler &prm);
