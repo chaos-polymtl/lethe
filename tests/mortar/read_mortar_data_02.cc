@@ -21,6 +21,8 @@
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
+#include <deal.II/numerics/data_out_faces.h>
+#include <deal.II/numerics/data_postprocessor.h>
 
 // Lethe
 #include <core/grids.h>
@@ -69,6 +71,8 @@ test()
   mortar.rotor_mesh->rotation_angle = 3.0;
   mortar.rotor_mesh->scale          = 1;
   mortar.rotor_mesh->simplex        = false;
+  mortar.rotor_boundary_id          = 0;
+  mortar.stator_boundary_id         = 4;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> merged_tria(comm);
@@ -104,6 +108,23 @@ test()
                          mapping_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
   data_out.write_vtu_in_parallel("out.vtu", MPI_COMM_WORLD);
+
+  // Plot boundary IDs
+  DataPostprocessors::BoundaryIds<dim> boundary_ids;
+  DataOutFaces<dim> data_out_faces;
+  FE_Q<dim>         dummy_fe(1);
+    
+  DoFHandler<dim>   dummy_dof_handler(merged_tria);
+  dummy_dof_handler.distribute_dofs(dummy_fe);
+  
+  Vector<double> dummy_solution (dummy_dof_handler.n_dofs());
+   
+  data_out_faces.attach_dof_handler(dummy_dof_handler);
+  data_out_faces.add_data_vector(dummy_solution, boundary_ids);
+  data_out_faces.build_patches();
+   
+  std::ofstream out("boundary_ids.vtu");
+  data_out_faces.write_vtu(out);
 }
 
 int
