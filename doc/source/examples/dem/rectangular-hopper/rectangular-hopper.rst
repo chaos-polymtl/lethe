@@ -271,7 +271,7 @@ Mesh
 ~~~~
 
 The hopper in this case has the same shape with a depth reduces by a factor of 6. The depth is the same than the article and a new GMSH file is used.
-
+a
 .. code-block:: text
 
     subsection mesh

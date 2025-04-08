@@ -35,16 +35,16 @@ n_proc=16
 # Parse command-line arguments
 parse_command_line "$@"
 
-folder="$output_root/3d-rectangular-hopper"
 
+
+folder="$output_root/3d-rectangular-hopper"
 action="mpirun -np $n_proc lethe-particles hopper.prm" 
 recreate_folder "$folder"
 
 # Recreate the mesh
 gmsh -3 hopper_structured.geo > "$folder/log-mesh"
 
-{ time $action ; } &> "$folder/log"
-
+{ time $action ; } &> "$folder/log" & pid=$!
 show_animation $pid "---> Running regular simulation"
 wait $pid
 
@@ -52,16 +52,14 @@ python3 hopper_post_processing.py -f . --prm hopper.prm --validate
 
 
 folder="$output_root/3d-rectangular-hopper-periodic"
-
 action="mpirun -np $n_proc lethe-particles hopper_periodic.prm" 
 recreate_folder "$folder"
 
 # Recreate the mesh
 gmsh -3 hopper_structured_periodic.geo > "$folder/log-mesh"
 
-{ time $action ; } &> "$folder/log"
-
-show_animation $pid "---> Running periodic BC simulation"
+{ time $action ; } &> "$folder/log" & pid=$!
+show_animation $pid "---> Running periodic BC simulation" 
 wait $pid
 
 python3 hopper_post_processing.py -f . --prm hopper.prm --validate
