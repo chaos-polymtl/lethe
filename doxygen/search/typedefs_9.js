@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operatortype_0',['OperatorType',['../classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a',1,'MFNavierStokesPreconditionGMG']]]
+  ['operatortype_0',['OperatorType',['../classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5',1,'MFNavierStokesPreconditionGMGBase']]]
 ];

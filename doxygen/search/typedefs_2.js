@@ -6,5 +6,5 @@ var searchData=
   ['cell_5fvector_3',['cell_vector',['../structDEM_1_1dem__data__structures.html#a9a91232aeb98d239ed6e94062f99e831',1,'DEM::dem_data_structures']]],
   ['cells_5fneighbor_5flist_4',['cells_neighbor_list',['../structDEM_1_1dem__data__structures.html#aadf0ac9e3930878734ec7aa6996e7a14',1,'DEM::dem_data_structures']]],
   ['cells_5ftotal_5fneighbor_5flist_5',['cells_total_neighbor_list',['../structDEM_1_1dem__data__structures.html#a1ca31764301c3fb1880d0a3d90840804',1,'DEM::dem_data_structures']]],
-  ['coarsegridsolverapply_6',['CoarseGridSolverApply',['../classMFNavierStokesPreconditionGMG.html#af80f2fa4e87f9a4bfcdb730a1fdb9232',1,'MFNavierStokesPreconditionGMG']]]
+  ['coarsegridsolverapply_6',['CoarseGridSolverApply',['../classMFNavierStokesPreconditionGMGBase.html#ae730f3a29971b574ec53b0e3d0a6ca79',1,'MFNavierStokesPreconditionGMGBase']]]
 ];

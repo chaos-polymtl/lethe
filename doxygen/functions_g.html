@@ -99,9 +99,9 @@ $(function() {
 <li>gauss95_derivative()&#160;:&#160;<a class="el" href="classRBFShape.html#affd8c93eb99dc759e503578627831e0c">RBFShape&lt; dim &gt;</a></li>
 <li>gauss99()&#160;:&#160;<a class="el" href="classRBFShape.html#a6b8d26b17a3cdc03cd9189dbff1d0b12">RBFShape&lt; dim &gt;</a></li>
 <li>gauss99_derivative()&#160;:&#160;<a class="el" href="classRBFShape.html#a0a6c6981a2f3798cf10252b78fb62a66">RBFShape&lt; dim &gt;</a></li>
-<li>gc_multigrid_preconditioner&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a1c4b86fdb23e12bcf0581eeefed1addf">MFNavierStokesPreconditionGMG&lt; dim &gt;</a></li>
-<li>gc_multigrid_preconditioner_intermediate&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a20bf9c1895c16e3fe66184aabfa1e59a">MFNavierStokesPreconditionGMG&lt; dim &gt;</a></li>
-<li>GCTransferType&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">MFNavierStokesPreconditionGMG&lt; dim &gt;</a></li>
+<li>gc_multigrid_preconditioner&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a1ba236541db9bf28c707680784fe624e">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
+<li>gc_multigrid_preconditioner_intermediate&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a852a03763344c1d625405a8906cb688f">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
+<li>GCTransferType&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0873055d24b22b50bb3d3ba6f3769fdd">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
 <li>gen&#160;:&#160;<a class="el" href="classCustomDistribution.html#a5d849699f8136a27020a24abe129b883">CustomDistribution</a>, <a class="el" href="classNormalDistribution.html#aa5dce1f2f07dcc009cd5942b50ecd474">NormalDistribution</a></li>
 <li>generate_cut_cell_candidates()&#160;:&#160;<a class="el" href="classFluidDynamicsSharp.html#a0fcc3c518a19dd614bba3a8ddc7c694d">FluidDynamicsSharp&lt; dim &gt;</a></li>
 <li>generate_cut_cells_map()&#160;:&#160;<a class="el" href="classFluidDynamicsSharp.html#a08b8b4b643f67595ca86888f962cc9cf">FluidDynamicsSharp&lt; dim &gt;</a></li>
@@ -192,8 +192,8 @@ $(function() {
 <li>get_log_precision()&#160;:&#160;<a class="el" href="classSimulationControl.html#a67785464f8f10c95cf57035ccc85eb75">SimulationControl</a></li>
 <li>get_material_interaction_id()&#160;:&#160;<a class="el" href="classPhysicalPropertiesManager.html#aec3a03c986e35aa9002043c978b96861">PhysicalPropertiesManager</a></li>
 <li>get_max_displacement_since_mapped()&#160;:&#160;<a class="el" href="classSerialSolid.html#a193745cce84cb1bd27ac415e953c77e2">SerialSolid&lt; dim, spacedim &gt;</a></li>
-<li>get_mg_operators()&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a754cf60c36212c248d8b857a63b77ece">MFNavierStokesPreconditionGMG&lt; dim &gt;</a></li>
-<li>get_mg_smoother_preconditioners()&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a380fc7c05c3923dfa876eac309c6073e">MFNavierStokesPreconditionGMG&lt; dim &gt;</a></li>
+<li>get_mg_operators()&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9647114092ffb503115fe08a0be9d8d5">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
+<li>get_mg_smoother_preconditioners()&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#aa56ceaa547cbb018347749f4209f322b">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
 <li>get_middle_position()&#160;:&#160;<a class="el" href="classDetector.html#a017581ed9e6356607d7bc497d8575c3c">Detector&lt; dim &gt;</a></li>
 <li>get_mobility_cahn_hilliard()&#160;:&#160;<a class="el" href="classPhysicalPropertiesManager.html#a8b2eaeabee10ef2ab251789745b92ffd">PhysicalPropertiesManager</a></li>
 <li>get_mobility_cahn_hilliard_vector()&#160;:&#160;<a class="el" href="classPhysicalPropertiesManager.html#a086f18265f62b9d490e33765a2a8e33e">PhysicalPropertiesManager</a></li>
@@ -318,7 +318,7 @@ $(function() {
 <li>GLSNavierStokesVOFAssemblerMarangoni()&#160;:&#160;<a class="el" href="classGLSNavierStokesVOFAssemblerMarangoni.html#ac57dff3c0e65574411ca77efce99e3a8">GLSNavierStokesVOFAssemblerMarangoni&lt; dim &gt;</a></li>
 <li>GLSNavierStokesVOFAssemblerNonNewtonianCore()&#160;:&#160;<a class="el" href="classGLSNavierStokesVOFAssemblerNonNewtonianCore.html#a58afdd7ae76cb36147c9f2e88152b895">GLSNavierStokesVOFAssemblerNonNewtonianCore&lt; dim &gt;</a></li>
 <li>GLSNavierStokesVOFAssemblerSTF()&#160;:&#160;<a class="el" href="classGLSNavierStokesVOFAssemblerSTF.html#afba9a9946b106c8b547d225f62baffd6">GLSNavierStokesVOFAssemblerSTF&lt; dim &gt;</a></li>
-<li>gmg_preconditioner&#160;:&#160;<a class="el" href="classFluidDynamicsMatrixFree.html#af14c2460441eec912ad9f1c183564586">FluidDynamicsMatrixFree&lt; dim &gt;</a></li>
+<li>gmg_preconditioner&#160;:&#160;<a class="el" href="classFluidDynamicsMatrixFree.html#a8da0c2b90b163140904e78831ab5d23f">FluidDynamicsMatrixFree&lt; dim &gt;</a></li>
 <li>grad_div&#160;:&#160;<a class="el" href="structParameters_1_1CFDDEM.html#a00b7fa0994c5cf465b5ba9fc3dec9f83">Parameters::CFDDEM</a></li>
 <li>grad_div_gamma&#160;:&#160;<a class="el" href="classVANSOperator.html#a3259e11505baf670d385fffcad8e83d2">VANSOperator&lt; dim, number &gt;</a></li>
 <li>grad_kinematic_viscosity_shear_rate&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ae7754a9f031d997877e37f788f749fdb">NavierStokesScratchData&lt; dim &gt;</a></li>

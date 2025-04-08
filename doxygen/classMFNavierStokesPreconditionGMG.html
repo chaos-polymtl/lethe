@@ -80,494 +80,232 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#pri-types">Private Types</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classMFNavierStokesPreconditionGMG-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">MFNavierStokesPreconditionGMG&lt; dim &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for MFNavierStokesPreconditionGMG&lt; dim &gt;:</div>
+<div class="dyncontent">
+<div class="center"><img src="classMFNavierStokesPreconditionGMG__inherit__graph.png" border="0" usemap="#aMFNavierStokesPreconditionGMG_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="aMFNavierStokesPreconditionGMG_3_01dim_01_4_inherit__map" id="aMFNavierStokesPreconditionGMG_3_01dim_01_4_inherit__map">
+<area shape="rect" title="A geometric multigrid preconditioner implementation for incompressible flow." alt="" coords="23,93,232,133"/>
+<area shape="rect" href="classMFNavierStokesVANSPreconditionGMG.html" title="A geometric multigrid preconditioner implementation for incompressible VANS equations." alt="" coords="5,181,249,221"/>
+<area shape="poly" title=" " alt="" coords="130,147,130,181,125,181,125,147"/>
+<area shape="rect" href="classMFNavierStokesPreconditionGMGBase.html" title="A geometric multigrid preconditioner compatible with the matrix&#45;free solver." alt="" coords="23,5,232,45"/>
+<area shape="poly" title=" " alt="" coords="130,59,130,93,125,93,125,59"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a4494eb68c041a1d9455ae89292dd690b" id="r_a4494eb68c041a1d9455ae89292dd690b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a4494eb68c041a1d9455ae89292dd690b">VectorType</a> = typename <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt; dim &gt;::VectorType</td></tr>
+<tr class="separator:a4494eb68c041a1d9455ae89292dd690b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fe85e5d7ae9505b5f21398834bc6513" id="r_a8fe85e5d7ae9505b5f21398834bc6513"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a8fe85e5d7ae9505b5f21398834bc6513">MGVectorType</a> = typename <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt; dim &gt;::MGVectorType</td></tr>
+<tr class="separator:a8fe85e5d7ae9505b5f21398834bc6513"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8700847e8fe8089d8d7c8767f777c883" id="r_a8700847e8fe8089d8d7c8767f777c883"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a8700847e8fe8089d8d7c8767f777c883">MGNumber</a> = typename <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt; dim &gt;::MGNumber</td></tr>
+<tr class="separator:a8700847e8fe8089d8d7c8767f777c883"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6a33142600edd733f02ed5aa368c02db" id="r_a6a33142600edd733f02ed5aa368c02db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a6a33142600edd733f02ed5aa368c02db">MFNavierStokesPreconditionGMG</a> (const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a1f386df60da6c3277e30c272affa1b72">simulation_parameters</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a3dd4d80fbc0ca46231b101ae15400925">dof_handler</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a66ebc84e558a398bdc3edaae4a7b0b78">dof_handler_fe_q_iso_q1</a>, const std::shared_ptr&lt; Mapping&lt; dim &gt; &gt; &amp;mapping, const std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt; &amp;cell_quadrature, const std::shared_ptr&lt; Function&lt; dim &gt; &gt; forcing_function, const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, const std::shared_ptr&lt; FESystem&lt; dim &gt; &gt; fe)</td></tr>
-<tr class="separator:a6a33142600edd733f02ed5aa368c02db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5ddcb3518f6ddf3d318eb8be5612219" id="r_af5ddcb3518f6ddf3d318eb8be5612219"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#af5ddcb3518f6ddf3d318eb8be5612219">initialize</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt; &amp;flow_control, const <a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;present_solution, const <a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;time_derivative_previous_solutions)</td></tr>
+<tr class="memitem:aad65e8f5702b114fc7fc81a59fec7342" id="r_aad65e8f5702b114fc7fc81a59fec7342"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#aad65e8f5702b114fc7fc81a59fec7342">MFNavierStokesPreconditionGMG</a> (const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a22c4248534db2aecca3d0a68b2dc0e27">simulation_parameters</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a6cbbbe131a85075b691bf8d6367e339c">dof_handler</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a80248a5cf229cda3b583783b27834700">dof_handler_fe_q_iso_q1</a>)</td></tr>
+<tr class="separator:aad65e8f5702b114fc7fc81a59fec7342"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fcd5a378fe4e97a9319ac3b5474ec10" id="r_a7fcd5a378fe4e97a9319ac3b5474ec10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a7fcd5a378fe4e97a9319ac3b5474ec10">create_level_operator</a> (const unsigned int level) override</td></tr>
+<tr class="separator:a7fcd5a378fe4e97a9319ac3b5474ec10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5ddcb3518f6ddf3d318eb8be5612219" id="r_af5ddcb3518f6ddf3d318eb8be5612219"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#af5ddcb3518f6ddf3d318eb8be5612219">initialize</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt; &amp;flow_control, const <a class="el" href="classMFNavierStokesPreconditionGMG.html#a4494eb68c041a1d9455ae89292dd690b">VectorType</a> &amp;present_solution, const <a class="el" href="classMFNavierStokesPreconditionGMG.html#a4494eb68c041a1d9455ae89292dd690b">VectorType</a> &amp;time_derivative_previous_solutions)</td></tr>
 <tr class="separator:af5ddcb3518f6ddf3d318eb8be5612219"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61543eb57bdf4f202c72df4c52bc0a2c" id="r_a61543eb57bdf4f202c72df4c52bc0a2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a61543eb57bdf4f202c72df4c52bc0a2c">vmult</a> (<a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;dst, const <a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;src) const</td></tr>
-<tr class="separator:a61543eb57bdf4f202c72df4c52bc0a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace5cde80ed915aaf32296a4ab1f17f44" id="r_ace5cde80ed915aaf32296a4ab1f17f44"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#ace5cde80ed915aaf32296a4ab1f17f44">print_relevant_info</a> () const</td></tr>
-<tr class="separator:ace5cde80ed915aaf32296a4ab1f17f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a754cf60c36212c248d8b857a63b77ece" id="r_a754cf60c36212c248d8b857a63b77ece"><td class="memItemLeft" align="right" valign="top">const MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a754cf60c36212c248d8b857a63b77ece">get_mg_operators</a> () const</td></tr>
-<tr class="separator:a754cf60c36212c248d8b857a63b77ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a380fc7c05c3923dfa876eac309c6073e" id="r_a380fc7c05c3923dfa876eac309c6073e"><td class="memItemLeft" align="right" valign="top">const MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a380fc7c05c3923dfa876eac309c6073e">get_mg_smoother_preconditioners</a> () const</td></tr>
-<tr class="separator:a380fc7c05c3923dfa876eac309c6073e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classMFNavierStokesPreconditionGMGBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classMFNavierStokesPreconditionGMGBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a83d349e2b298663ffed4f24b732a4235 inherit pub_methods_classMFNavierStokesPreconditionGMGBase" id="r_a83d349e2b298663ffed4f24b732a4235"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83d349e2b298663ffed4f24b732a4235">MFNavierStokesPreconditionGMGBase</a> (const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a22c4248534db2aecca3d0a68b2dc0e27">simulation_parameters</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a6cbbbe131a85075b691bf8d6367e339c">dof_handler</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a80248a5cf229cda3b583783b27834700">dof_handler_fe_q_iso_q1</a>)</td></tr>
+<tr class="separator:a83d349e2b298663ffed4f24b732a4235 inherit pub_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a562a5b36b26b0734c53156cf3a72e5d0 inherit pub_methods_classMFNavierStokesPreconditionGMGBase" id="r_a562a5b36b26b0734c53156cf3a72e5d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a562a5b36b26b0734c53156cf3a72e5d0">reinit</a> (const std::shared_ptr&lt; Mapping&lt; dim &gt; &gt; &amp;mapping, const std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt; &amp;cell_quadrature, const std::shared_ptr&lt; Function&lt; dim &gt; &gt; forcing_function, const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, const std::shared_ptr&lt; FESystem&lt; dim &gt; &gt; fe)</td></tr>
+<tr class="separator:a562a5b36b26b0734c53156cf3a72e5d0 inherit pub_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bbc619f6ae34a719d76ef86f557ac88 inherit pub_methods_classMFNavierStokesPreconditionGMGBase" id="r_a4bbc619f6ae34a719d76ef86f557ac88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4bbc619f6ae34a719d76ef86f557ac88">initialize</a> ()</td></tr>
+<tr class="separator:a4bbc619f6ae34a719d76ef86f557ac88 inherit pub_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95056e21c70646e480483114ded724d3 inherit pub_methods_classMFNavierStokesPreconditionGMGBase" id="r_a95056e21c70646e480483114ded724d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a95056e21c70646e480483114ded724d3">vmult</a> (<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4344dde1c6f0a79c50eb82d1f039a691">VectorType</a> &amp;dst, const <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4344dde1c6f0a79c50eb82d1f039a691">VectorType</a> &amp;src) const</td></tr>
+<tr class="separator:a95056e21c70646e480483114ded724d3 inherit pub_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b34749a1067fc89883e23995183a341 inherit pub_methods_classMFNavierStokesPreconditionGMGBase" id="r_a9b34749a1067fc89883e23995183a341"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9b34749a1067fc89883e23995183a341">print_relevant_info</a> () const</td></tr>
+<tr class="separator:a9b34749a1067fc89883e23995183a341 inherit pub_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9647114092ffb503115fe08a0be9d8d5 inherit pub_methods_classMFNavierStokesPreconditionGMGBase" id="r_a9647114092ffb503115fe08a0be9d8d5"><td class="memItemLeft" align="right" valign="top">const MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9647114092ffb503115fe08a0be9d8d5">get_mg_operators</a> () const</td></tr>
+<tr class="separator:a9647114092ffb503115fe08a0be9d8d5 inherit pub_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa56ceaa547cbb018347749f4209f322b inherit pub_methods_classMFNavierStokesPreconditionGMGBase" id="r_aa56ceaa547cbb018347749f4209f322b"><td class="memItemLeft" align="right" valign="top">const MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#aa56ceaa547cbb018347749f4209f322b">get_mg_smoother_preconditioners</a> () const</td></tr>
+<tr class="separator:aa56ceaa547cbb018347749f4209f322b inherit pub_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a1197c661054bb120e972040910dfdcde" id="r_a1197c661054bb120e972040910dfdcde"><td class="memItemLeft" align="right" valign="top">TimerOutput&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a1197c661054bb120e972040910dfdcde">mg_setup_timer</a></td></tr>
-<tr class="separator:a1197c661054bb120e972040910dfdcde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeab203e3eaa472721bcff72c8cdd4739" id="r_aeab203e3eaa472721bcff72c8cdd4739"><td class="memItemLeft" align="right" valign="top">TimerOutput&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#aeab203e3eaa472721bcff72c8cdd4739">mg_vmult_timer</a></td></tr>
-<tr class="separator:aeab203e3eaa472721bcff72c8cdd4739"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
-Private Types</h2></td></tr>
-<tr class="memitem:a22f5d57337030fd907eb893843648509" id="r_a22f5d57337030fd907eb893843648509"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a22f5d57337030fd907eb893843648509">Number</a> = double</td></tr>
-<tr class="separator:a22f5d57337030fd907eb893843648509"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51abc7bcf955d395d274256fef57f053" id="r_a51abc7bcf955d395d274256fef57f053"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">MGNumber</a> = double</td></tr>
-<tr class="separator:a51abc7bcf955d395d274256fef57f053"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af01fe70f358a5898cfcb637287eaf073" id="r_af01fe70f358a5898cfcb637287eaf073"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> = LinearAlgebra::distributed::Vector&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#a22f5d57337030fd907eb893843648509">Number</a> &gt;</td></tr>
-<tr class="separator:af01fe70f358a5898cfcb637287eaf073"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4e05af916c638ddf7bf340190cb006b" id="r_ab4e05af916c638ddf7bf340190cb006b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> = LinearAlgebra::distributed::Vector&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">MGNumber</a> &gt;</td></tr>
-<tr class="separator:ab4e05af916c638ddf7bf340190cb006b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a703de01482feb9a61980103dfdb67299" id="r_a703de01482feb9a61980103dfdb67299"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a703de01482feb9a61980103dfdb67299">TrilinosVectorType</a> = LinearAlgebra::distributed::Vector&lt; double &gt;</td></tr>
-<tr class="separator:a703de01482feb9a61980103dfdb67299"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13b678ca5534e144d7e430c80de29abd" id="r_a13b678ca5534e144d7e430c80de29abd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a13b678ca5534e144d7e430c80de29abd">LSTransferType</a> = MGTransferMatrixFree&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">MGNumber</a> &gt;</td></tr>
-<tr class="separator:a13b678ca5534e144d7e430c80de29abd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a903a5d6b10eb257fc54a6435739ec548" id="r_a903a5d6b10eb257fc54a6435739ec548"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a> = MGTransferGlobalCoarsening&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt;</td></tr>
-<tr class="separator:a903a5d6b10eb257fc54a6435739ec548"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab62152548c42afe49ce7a792ba431f7a" id="r_ab62152548c42afe49ce7a792ba431f7a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a> = <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">MGNumber</a> &gt;</td></tr>
-<tr class="separator:ab62152548c42afe49ce7a792ba431f7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec35ed2064a708f6778a30dcb5c6c20b" id="r_aec35ed2064a708f6778a30dcb5c6c20b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#aec35ed2064a708f6778a30dcb5c6c20b">SmootherPreconditionerType</a> = <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt;</td></tr>
-<tr class="separator:aec35ed2064a708f6778a30dcb5c6c20b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3efbfecec83714a46bbb229ff8beddef" id="r_a3efbfecec83714a46bbb229ff8beddef"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a3efbfecec83714a46bbb229ff8beddef">SmootherType</a> = PreconditionRelaxation&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#aec35ed2064a708f6778a30dcb5c6c20b">SmootherPreconditionerType</a> &gt;</td></tr>
-<tr class="separator:a3efbfecec83714a46bbb229ff8beddef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb54bcabf038669afcb1dfb87ed78e5b" id="r_acb54bcabf038669afcb1dfb87ed78e5b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#acb54bcabf038669afcb1dfb87ed78e5b">PreconditionerTypeLS</a> = PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a13b678ca5534e144d7e430c80de29abd">LSTransferType</a> &gt;</td></tr>
-<tr class="separator:acb54bcabf038669afcb1dfb87ed78e5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb00fea4a252508f256ea8373dd89b6c" id="r_abb00fea4a252508f256ea8373dd89b6c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#abb00fea4a252508f256ea8373dd89b6c">PreconditionerTypeGC</a> = PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a> &gt;</td></tr>
-<tr class="separator:abb00fea4a252508f256ea8373dd89b6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af80f2fa4e87f9a4bfcdb730a1fdb9232" id="r_af80f2fa4e87f9a4bfcdb730a1fdb9232"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#af80f2fa4e87f9a4bfcdb730a1fdb9232">CoarseGridSolverApply</a> = <a class="el" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html">MGCoarseGridApplyPreconditioner</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classPreconditionAdapter.html">PreconditionAdapter</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a703de01482feb9a61980103dfdb67299">TrilinosVectorType</a> &gt; &gt;</td></tr>
-<tr class="separator:af80f2fa4e87f9a4bfcdb730a1fdb9232"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:acbe0cd58f06b468af51b5df022527552" id="r_acbe0cd58f06b468af51b5df022527552"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#acbe0cd58f06b468af51b5df022527552">setup_AMG</a> ()</td></tr>
-<tr class="separator:acbe0cd58f06b468af51b5df022527552"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d8a2e84e7c9e890168af384c7e53784" id="r_a2d8a2e84e7c9e890168af384c7e53784"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a2d8a2e84e7c9e890168af384c7e53784">setup_ILU</a> ()</td></tr>
-<tr class="separator:a2d8a2e84e7c9e890168af384c7e53784"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
-<tr class="memitem:aff87ca3f7c3cbe9a81660dee36f606e8" id="r_aff87ca3f7c3cbe9a81660dee36f606e8"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#aff87ca3f7c3cbe9a81660dee36f606e8">minlevel</a></td></tr>
-<tr class="separator:aff87ca3f7c3cbe9a81660dee36f606e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ab8f5eabf0a17ad23337e2f8de3df34" id="r_a5ab8f5eabf0a17ad23337e2f8de3df34"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a5ab8f5eabf0a17ad23337e2f8de3df34">maxlevel</a></td></tr>
-<tr class="separator:a5ab8f5eabf0a17ad23337e2f8de3df34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a0149e640ff5d53c349c09810c19bad" id="r_a9a0149e640ff5d53c349c09810c19bad"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a9a0149e640ff5d53c349c09810c19bad">intlevel</a></td></tr>
-<tr class="separator:a9a0149e640ff5d53c349c09810c19bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a204a4c22ff843a14b9b1fe962001266f" id="r_a204a4c22ff843a14b9b1fe962001266f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; const Triangulation&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a204a4c22ff843a14b9b1fe962001266f">coarse_grid_triangulations</a></td></tr>
-<tr class="separator:a204a4c22ff843a14b9b1fe962001266f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51a4713fabbde0815f197ffc41c7499d" id="r_a51a4713fabbde0815f197ffc41c7499d"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; DoFHandler&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a51a4713fabbde0815f197ffc41c7499d">dof_handlers</a></td></tr>
-<tr class="separator:a51a4713fabbde0815f197ffc41c7499d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3b401109714dedcec01934d4556c841" id="r_ab3b401109714dedcec01934d4556c841"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MGTwoLevelTransfer&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#ab3b401109714dedcec01934d4556c841">transfers</a></td></tr>
-<tr class="separator:ab3b401109714dedcec01934d4556c841"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e61fb2a067ceaeb197b2b98cdcfd0f7" id="r_a9e61fb2a067ceaeb197b2b98cdcfd0f7"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a9e61fb2a067ceaeb197b2b98cdcfd0f7">mg_operators</a></td></tr>
-<tr class="separator:a9e61fb2a067ceaeb197b2b98cdcfd0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad73418e9dc445f70127ec6338b337e0f" id="r_ad73418e9dc445f70127ec6338b337e0f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; mg::Matrix&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#ad73418e9dc445f70127ec6338b337e0f">mg_matrix</a></td></tr>
-<tr class="separator:ad73418e9dc445f70127ec6338b337e0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b0aa283bb4a86d3548eb04e2f2b7845" id="r_a2b0aa283bb4a86d3548eb04e2f2b7845"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; mg::Matrix&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a2b0aa283bb4a86d3548eb04e2f2b7845">mg_interface_matrix_in</a></td></tr>
-<tr class="separator:a2b0aa283bb4a86d3548eb04e2f2b7845"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31d0198012cabc21f29e197d455a7b27" id="r_a31d0198012cabc21f29e197d455a7b27"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MatrixFreeOperators::MGInterfaceOperator&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a31d0198012cabc21f29e197d455a7b27">ls_mg_operators</a></td></tr>
-<tr class="separator:a31d0198012cabc21f29e197d455a7b27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9eb9a24267dc72685dcf7f9dc87c0a5b" id="r_a9eb9a24267dc72685dcf7f9dc87c0a5b"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MatrixFreeOperators::MGInterfaceOperator&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a9eb9a24267dc72685dcf7f9dc87c0a5b">ls_mg_interface_in</a></td></tr>
-<tr class="separator:a9eb9a24267dc72685dcf7f9dc87c0a5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a754b3b31c6e44516c012d5fea27e9cd6" id="r_a754b3b31c6e44516c012d5fea27e9cd6"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a754b3b31c6e44516c012d5fea27e9cd6">mg_smoother_preconditioners</a></td></tr>
-<tr class="separator:a754b3b31c6e44516c012d5fea27e9cd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aada092b148adc5f2588e849c52c10537" id="r_aada092b148adc5f2588e849c52c10537"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; MGSmootherPrecondition&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a3efbfecec83714a46bbb229ff8beddef">SmootherType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#aada092b148adc5f2588e849c52c10537">mg_smoother</a></td></tr>
-<tr class="separator:aada092b148adc5f2588e849c52c10537"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42307cfe03acebbbcc278a3cacdf5752" id="r_a42307cfe03acebbbcc278a3cacdf5752"><td class="memItemLeft" align="right" valign="top">MGConstrainedDoFs&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a42307cfe03acebbbcc278a3cacdf5752">mg_constrained_dofs</a></td></tr>
-<tr class="separator:a42307cfe03acebbbcc278a3cacdf5752"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a965ed26476b427412bf403129679bb6a" id="r_a965ed26476b427412bf403129679bb6a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#a13b678ca5534e144d7e430c80de29abd">LSTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a965ed26476b427412bf403129679bb6a">mg_transfer_ls</a></td></tr>
-<tr class="separator:a965ed26476b427412bf403129679bb6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a8b4e9ac921f09d8d52257c2d2fd843" id="r_a3a8b4e9ac921f09d8d52257c2d2fd843"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a3a8b4e9ac921f09d8d52257c2d2fd843">mg_transfer_gc</a></td></tr>
-<tr class="separator:a3a8b4e9ac921f09d8d52257c2d2fd843"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b3ebe923667dfd555fc578cd0cd473e" id="r_a5b3ebe923667dfd555fc578cd0cd473e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classPreconditionAdapter.html">PreconditionAdapter</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a703de01482feb9a61980103dfdb67299">TrilinosVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a5b3ebe923667dfd555fc578cd0cd473e">coarse_grid_precondition</a></td></tr>
-<tr class="separator:a5b3ebe923667dfd555fc578cd0cd473e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abdea89e2c246d0e43b5f2a7cb87d9bb5" id="r_abdea89e2c246d0e43b5f2a7cb87d9bb5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverControl &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#abdea89e2c246d0e43b5f2a7cb87d9bb5">coarse_grid_solver_control</a></td></tr>
-<tr class="separator:abdea89e2c246d0e43b5f2a7cb87d9bb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67827aaffdc19762605cadf6737eef6f" id="r_a67827aaffdc19762605cadf6737eef6f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverControl &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a67827aaffdc19762605cadf6737eef6f">direct_solver_control</a></td></tr>
-<tr class="separator:a67827aaffdc19762605cadf6737eef6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50809c698c20c17063172bb95f203414" id="r_a50809c698c20c17063172bb95f203414"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverGMRES&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#a703de01482feb9a61980103dfdb67299">TrilinosVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a50809c698c20c17063172bb95f203414">coarse_grid_solver</a></td></tr>
-<tr class="separator:a50809c698c20c17063172bb95f203414"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e045d81d808e079a3e489a4ef28a960" id="r_a2e045d81d808e079a3e489a4ef28a960"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; MGCoarseGridBase&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a2e045d81d808e079a3e489a4ef28a960">mg_coarse</a></td></tr>
-<tr class="separator:a2e045d81d808e079a3e489a4ef28a960"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3a46054f0d985a3cccac31545e6ea8d" id="r_ad3a46054f0d985a3cccac31545e6ea8d"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverControl &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#ad3a46054f0d985a3cccac31545e6ea8d">coarse_grid_solver_control_intermediate</a></td></tr>
-<tr class="separator:ad3a46054f0d985a3cccac31545e6ea8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdc19fbe968fa065398bf3648bd5c02a" id="r_afdc19fbe968fa065398bf3648bd5c02a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; MGCoarseGridBase&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#afdc19fbe968fa065398bf3648bd5c02a">mg_coarse_intermediate</a></td></tr>
-<tr class="separator:afdc19fbe968fa065398bf3648bd5c02a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63a34984d2f7ccc3a6a05a44667f19a8" id="r_a63a34984d2f7ccc3a6a05a44667f19a8"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverGMRES&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a63a34984d2f7ccc3a6a05a44667f19a8">coarse_grid_solver_intermediate</a></td></tr>
-<tr class="separator:a63a34984d2f7ccc3a6a05a44667f19a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f77807564690d748f274d64b2c8df41" id="r_a6f77807564690d748f274d64b2c8df41"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Multigrid&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a6f77807564690d748f274d64b2c8df41">mg_intermediate</a></td></tr>
-<tr class="separator:a6f77807564690d748f274d64b2c8df41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20bf9c1895c16e3fe66184aabfa1e59a" id="r_a20bf9c1895c16e3fe66184aabfa1e59a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a20bf9c1895c16e3fe66184aabfa1e59a">gc_multigrid_preconditioner_intermediate</a></td></tr>
-<tr class="separator:a20bf9c1895c16e3fe66184aabfa1e59a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c30aa80d59b4a7ffbe95f2652056de5" id="r_a8c30aa80d59b4a7ffbe95f2652056de5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Multigrid&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a8c30aa80d59b4a7ffbe95f2652056de5">mg</a></td></tr>
-<tr class="separator:a8c30aa80d59b4a7ffbe95f2652056de5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec437ec51a67f798ff67b2619f777f0e" id="r_aec437ec51a67f798ff67b2619f777f0e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a13b678ca5534e144d7e430c80de29abd">LSTransferType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#aec437ec51a67f798ff67b2619f777f0e">ls_multigrid_preconditioner</a></td></tr>
-<tr class="separator:aec437ec51a67f798ff67b2619f777f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c4b86fdb23e12bcf0581eeefed1addf" id="r_a1c4b86fdb23e12bcf0581eeefed1addf"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a1c4b86fdb23e12bcf0581eeefed1addf">gc_multigrid_preconditioner</a></td></tr>
-<tr class="separator:a1c4b86fdb23e12bcf0581eeefed1addf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af51c319da31e7599ac678e959463ee3d" id="r_af51c319da31e7599ac678e959463ee3d"><td class="memItemLeft" align="right" valign="top">ConditionalOStream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#af51c319da31e7599ac678e959463ee3d">pcout</a></td></tr>
-<tr class="separator:af51c319da31e7599ac678e959463ee3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f386df60da6c3277e30c272affa1b72" id="r_a1f386df60da6c3277e30c272affa1b72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a1f386df60da6c3277e30c272affa1b72">simulation_parameters</a></td></tr>
-<tr class="separator:a1f386df60da6c3277e30c272affa1b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dd4d80fbc0ca46231b101ae15400925" id="r_a3dd4d80fbc0ca46231b101ae15400925"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a3dd4d80fbc0ca46231b101ae15400925">dof_handler</a></td></tr>
-<tr class="separator:a3dd4d80fbc0ca46231b101ae15400925"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66ebc84e558a398bdc3edaae4a7b0b78" id="r_a66ebc84e558a398bdc3edaae4a7b0b78"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a66ebc84e558a398bdc3edaae4a7b0b78">dof_handler_fe_q_iso_q1</a></td></tr>
-<tr class="separator:a66ebc84e558a398bdc3edaae4a7b0b78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4310b5789472bcb4e5b6cfc83cd78b2" id="r_ad4310b5789472bcb4e5b6cfc83cd78b2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#ad4310b5789472bcb4e5b6cfc83cd78b2">coarse_grid_iterations</a></td></tr>
-<tr class="separator:ad4310b5789472bcb4e5b6cfc83cd78b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_attribs_classMFNavierStokesPreconditionGMGBase"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classMFNavierStokesPreconditionGMGBase')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a410d8a1397ef70155f7664eccb4beb9c inherit pub_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a410d8a1397ef70155f7664eccb4beb9c"><td class="memItemLeft" align="right" valign="top">TimerOutput&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a410d8a1397ef70155f7664eccb4beb9c">mg_setup_timer</a></td></tr>
+<tr class="separator:a410d8a1397ef70155f7664eccb4beb9c inherit pub_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f84c3e1051c961b448334cc307b74f6 inherit pub_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a2f84c3e1051c961b448334cc307b74f6"><td class="memItemLeft" align="right" valign="top">TimerOutput&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a2f84c3e1051c961b448334cc307b74f6">mg_vmult_timer</a></td></tr>
+<tr class="separator:a2f84c3e1051c961b448334cc307b74f6 inherit pub_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_types_classMFNavierStokesPreconditionGMGBase"><td colspan="2" onclick="javascript:toggleInherit('pro_types_classMFNavierStokesPreconditionGMGBase')"><img src="closed.png" alt="-"/>&#160;Protected Types inherited from <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a0c23d4127c886664f507183375dca3e2 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a0c23d4127c886664f507183375dca3e2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0c23d4127c886664f507183375dca3e2">Number</a> = double</td></tr>
+<tr class="separator:a0c23d4127c886664f507183375dca3e2 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb59826ed31b92b6494e1b76ebb5fa35 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_afb59826ed31b92b6494e1b76ebb5fa35"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#afb59826ed31b92b6494e1b76ebb5fa35">MGNumber</a> = double</td></tr>
+<tr class="separator:afb59826ed31b92b6494e1b76ebb5fa35 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4344dde1c6f0a79c50eb82d1f039a691 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a4344dde1c6f0a79c50eb82d1f039a691"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4344dde1c6f0a79c50eb82d1f039a691">VectorType</a> = LinearAlgebra::distributed::Vector&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0c23d4127c886664f507183375dca3e2">Number</a> &gt;</td></tr>
+<tr class="separator:a4344dde1c6f0a79c50eb82d1f039a691 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83497d7eb659c193af08115bb14d49ce inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a83497d7eb659c193af08115bb14d49ce"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> = LinearAlgebra::distributed::Vector&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#afb59826ed31b92b6494e1b76ebb5fa35">MGNumber</a> &gt;</td></tr>
+<tr class="separator:a83497d7eb659c193af08115bb14d49ce inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c10431401fd65edd923ef4974ebd41e inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a4c10431401fd65edd923ef4974ebd41e"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4c10431401fd65edd923ef4974ebd41e">TrilinosVectorType</a> = LinearAlgebra::distributed::Vector&lt; double &gt;</td></tr>
+<tr class="separator:a4c10431401fd65edd923ef4974ebd41e inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a4a6a07555a3ae4a26fb80af809dbaa inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a7a4a6a07555a3ae4a26fb80af809dbaa"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a7a4a6a07555a3ae4a26fb80af809dbaa">LSTransferType</a> = MGTransferMatrixFree&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#afb59826ed31b92b6494e1b76ebb5fa35">MGNumber</a> &gt;</td></tr>
+<tr class="separator:a7a4a6a07555a3ae4a26fb80af809dbaa inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0873055d24b22b50bb3d3ba6f3769fdd inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a0873055d24b22b50bb3d3ba6f3769fdd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0873055d24b22b50bb3d3ba6f3769fdd">GCTransferType</a> = MGTransferGlobalCoarsening&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt;</td></tr>
+<tr class="separator:a0873055d24b22b50bb3d3ba6f3769fdd inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f9732358468a055aa6d38c0d547fef5 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a9f9732358468a055aa6d38c0d547fef5"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a> = <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#afb59826ed31b92b6494e1b76ebb5fa35">MGNumber</a> &gt;</td></tr>
+<tr class="separator:a9f9732358468a055aa6d38c0d547fef5 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b3203e280f8d5dfa56f1a573a96eb97 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a7b3203e280f8d5dfa56f1a573a96eb97"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a7b3203e280f8d5dfa56f1a573a96eb97">SmootherPreconditionerType</a> = <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt;</td></tr>
+<tr class="separator:a7b3203e280f8d5dfa56f1a573a96eb97 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2590c8291bb1077a78669394cffa8e5c inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a2590c8291bb1077a78669394cffa8e5c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a2590c8291bb1077a78669394cffa8e5c">SmootherType</a> = PreconditionRelaxation&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a7b3203e280f8d5dfa56f1a573a96eb97">SmootherPreconditionerType</a> &gt;</td></tr>
+<tr class="separator:a2590c8291bb1077a78669394cffa8e5c inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2182b6449051eb85780675c00fd620b6 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a2182b6449051eb85780675c00fd620b6"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a2182b6449051eb85780675c00fd620b6">PreconditionerTypeLS</a> = PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a7a4a6a07555a3ae4a26fb80af809dbaa">LSTransferType</a> &gt;</td></tr>
+<tr class="separator:a2182b6449051eb85780675c00fd620b6 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36a22fea014ca1efd0c43ac656f99ef1 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_a36a22fea014ca1efd0c43ac656f99ef1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a36a22fea014ca1efd0c43ac656f99ef1">PreconditionerTypeGC</a> = PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0873055d24b22b50bb3d3ba6f3769fdd">GCTransferType</a> &gt;</td></tr>
+<tr class="separator:a36a22fea014ca1efd0c43ac656f99ef1 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae730f3a29971b574ec53b0e3d0a6ca79 inherit pro_types_classMFNavierStokesPreconditionGMGBase" id="r_ae730f3a29971b574ec53b0e3d0a6ca79"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#ae730f3a29971b574ec53b0e3d0a6ca79">CoarseGridSolverApply</a> = <a class="el" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html">MGCoarseGridApplyPreconditioner</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classPreconditionAdapter.html">PreconditionAdapter</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4c10431401fd65edd923ef4974ebd41e">TrilinosVectorType</a> &gt; &gt;</td></tr>
+<tr class="separator:ae730f3a29971b574ec53b0e3d0a6ca79 inherit pro_types_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classMFNavierStokesPreconditionGMGBase"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classMFNavierStokesPreconditionGMGBase')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a2f527f5706be4e927a422d4a61c26fde inherit pro_methods_classMFNavierStokesPreconditionGMGBase" id="r_a2f527f5706be4e927a422d4a61c26fde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a2f527f5706be4e927a422d4a61c26fde">setup_AMG</a> ()</td></tr>
+<tr class="separator:a2f527f5706be4e927a422d4a61c26fde inherit pro_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a350b1509f91f1de140b869396074af09 inherit pro_methods_classMFNavierStokesPreconditionGMGBase" id="r_a350b1509f91f1de140b869396074af09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a350b1509f91f1de140b869396074af09">setup_ILU</a> ()</td></tr>
+<tr class="separator:a350b1509f91f1de140b869396074af09 inherit pro_methods_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classMFNavierStokesPreconditionGMGBase"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classMFNavierStokesPreconditionGMGBase')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a903bd503e85023893cb3397b5c767bcf inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a903bd503e85023893cb3397b5c767bcf"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a903bd503e85023893cb3397b5c767bcf">minlevel</a></td></tr>
+<tr class="separator:a903bd503e85023893cb3397b5c767bcf inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fa29253d2a2f56e5438a54aafbf756a inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a2fa29253d2a2f56e5438a54aafbf756a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a2fa29253d2a2f56e5438a54aafbf756a">maxlevel</a></td></tr>
+<tr class="separator:a2fa29253d2a2f56e5438a54aafbf756a inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af439f6ea70d1be4669c59b97afb3cae7 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_af439f6ea70d1be4669c59b97afb3cae7"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#af439f6ea70d1be4669c59b97afb3cae7">intlevel</a></td></tr>
+<tr class="separator:af439f6ea70d1be4669c59b97afb3cae7 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a984ca3a69827a70f21dcbbda8f68b4c0 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a984ca3a69827a70f21dcbbda8f68b4c0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; const Triangulation&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a984ca3a69827a70f21dcbbda8f68b4c0">coarse_grid_triangulations</a></td></tr>
+<tr class="separator:a984ca3a69827a70f21dcbbda8f68b4c0 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff7da89ae2448b19059d731406d6305b inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_aff7da89ae2448b19059d731406d6305b"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; DoFHandler&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#aff7da89ae2448b19059d731406d6305b">dof_handlers</a></td></tr>
+<tr class="separator:aff7da89ae2448b19059d731406d6305b inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaaaed40be8656c52b908779640b43462 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_aaaaed40be8656c52b908779640b43462"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MGTwoLevelTransfer&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#aaaaed40be8656c52b908779640b43462">transfers</a></td></tr>
+<tr class="separator:aaaaed40be8656c52b908779640b43462 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c20385b06fafe4ee441f6390256b1a9 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a0c20385b06fafe4ee441f6390256b1a9"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0c20385b06fafe4ee441f6390256b1a9">mg_operators</a></td></tr>
+<tr class="separator:a0c20385b06fafe4ee441f6390256b1a9 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a813ab7980b024c340432c95a3483c384 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a813ab7980b024c340432c95a3483c384"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; mg::Matrix&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a813ab7980b024c340432c95a3483c384">mg_matrix</a></td></tr>
+<tr class="separator:a813ab7980b024c340432c95a3483c384 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3794bdea30e0794f1c9ce0b1c89d764b inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a3794bdea30e0794f1c9ce0b1c89d764b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; mg::Matrix&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a3794bdea30e0794f1c9ce0b1c89d764b">mg_interface_matrix_in</a></td></tr>
+<tr class="separator:a3794bdea30e0794f1c9ce0b1c89d764b inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa45dc223e7bb7ee251d5bb6a68a8bc6f inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_aa45dc223e7bb7ee251d5bb6a68a8bc6f"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MatrixFreeOperators::MGInterfaceOperator&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#aa45dc223e7bb7ee251d5bb6a68a8bc6f">ls_mg_operators</a></td></tr>
+<tr class="separator:aa45dc223e7bb7ee251d5bb6a68a8bc6f inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0f613b9d2db6894b33e7350f6b1b2a2 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_ab0f613b9d2db6894b33e7350f6b1b2a2"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MatrixFreeOperators::MGInterfaceOperator&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#ab0f613b9d2db6894b33e7350f6b1b2a2">ls_mg_interface_in</a></td></tr>
+<tr class="separator:ab0f613b9d2db6894b33e7350f6b1b2a2 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04c340d68851f1047608f65a835e37df inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a04c340d68851f1047608f65a835e37df"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a04c340d68851f1047608f65a835e37df">mg_smoother_preconditioners</a></td></tr>
+<tr class="separator:a04c340d68851f1047608f65a835e37df inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a147a969da3fe1bd7a765e6da554db638 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a147a969da3fe1bd7a765e6da554db638"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; MGSmootherPrecondition&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a2590c8291bb1077a78669394cffa8e5c">SmootherType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a147a969da3fe1bd7a765e6da554db638">mg_smoother</a></td></tr>
+<tr class="separator:a147a969da3fe1bd7a765e6da554db638 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25fb4ac5203aa8a25052cd4b3d37e854 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a25fb4ac5203aa8a25052cd4b3d37e854"><td class="memItemLeft" align="right" valign="top">MGConstrainedDoFs&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a25fb4ac5203aa8a25052cd4b3d37e854">mg_constrained_dofs</a></td></tr>
+<tr class="separator:a25fb4ac5203aa8a25052cd4b3d37e854 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79f4c3de337cc537902f7f7346d60957 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a79f4c3de337cc537902f7f7346d60957"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a7a4a6a07555a3ae4a26fb80af809dbaa">LSTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a79f4c3de337cc537902f7f7346d60957">mg_transfer_ls</a></td></tr>
+<tr class="separator:a79f4c3de337cc537902f7f7346d60957 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbda54e43b902c4c73d32b92fefae160 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_acbda54e43b902c4c73d32b92fefae160"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0873055d24b22b50bb3d3ba6f3769fdd">GCTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#acbda54e43b902c4c73d32b92fefae160">mg_transfer_gc</a></td></tr>
+<tr class="separator:acbda54e43b902c4c73d32b92fefae160 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34c70deb41196513a94319e61b7dab1c inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a34c70deb41196513a94319e61b7dab1c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classPreconditionAdapter.html">PreconditionAdapter</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4c10431401fd65edd923ef4974ebd41e">TrilinosVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a34c70deb41196513a94319e61b7dab1c">coarse_grid_precondition</a></td></tr>
+<tr class="separator:a34c70deb41196513a94319e61b7dab1c inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b8dd56c16b6ed6808c68471e350b19a inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a6b8dd56c16b6ed6808c68471e350b19a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverControl &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a6b8dd56c16b6ed6808c68471e350b19a">coarse_grid_solver_control</a></td></tr>
+<tr class="separator:a6b8dd56c16b6ed6808c68471e350b19a inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38793125324acc1243358027f7c6ecb9 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a38793125324acc1243358027f7c6ecb9"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverControl &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a38793125324acc1243358027f7c6ecb9">direct_solver_control</a></td></tr>
+<tr class="separator:a38793125324acc1243358027f7c6ecb9 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5747489f5a8ae9b76f6ca4976ca91af inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_af5747489f5a8ae9b76f6ca4976ca91af"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverGMRES&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4c10431401fd65edd923ef4974ebd41e">TrilinosVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#af5747489f5a8ae9b76f6ca4976ca91af">coarse_grid_solver</a></td></tr>
+<tr class="separator:af5747489f5a8ae9b76f6ca4976ca91af inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a594ae1d14803faeb370617a492e94519 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a594ae1d14803faeb370617a492e94519"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; MGCoarseGridBase&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a594ae1d14803faeb370617a492e94519">mg_coarse</a></td></tr>
+<tr class="separator:a594ae1d14803faeb370617a492e94519 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04daa6571cca5eb05509c2421ab2fe18 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a04daa6571cca5eb05509c2421ab2fe18"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverControl &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a04daa6571cca5eb05509c2421ab2fe18">coarse_grid_solver_control_intermediate</a></td></tr>
+<tr class="separator:a04daa6571cca5eb05509c2421ab2fe18 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e1420aa7725d7f529e819e3d3233930 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a4e1420aa7725d7f529e819e3d3233930"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; MGCoarseGridBase&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4e1420aa7725d7f529e819e3d3233930">mg_coarse_intermediate</a></td></tr>
+<tr class="separator:a4e1420aa7725d7f529e819e3d3233930 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c336db8ca88d35f63b503d1fca97587 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a5c336db8ca88d35f63b503d1fca97587"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; SolverGMRES&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a5c336db8ca88d35f63b503d1fca97587">coarse_grid_solver_intermediate</a></td></tr>
+<tr class="separator:a5c336db8ca88d35f63b503d1fca97587 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc0afb8992029f3a785ae02337feba47 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_acc0afb8992029f3a785ae02337feba47"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Multigrid&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#acc0afb8992029f3a785ae02337feba47">mg_intermediate</a></td></tr>
+<tr class="separator:acc0afb8992029f3a785ae02337feba47 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a852a03763344c1d625405a8906cb688f inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a852a03763344c1d625405a8906cb688f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0873055d24b22b50bb3d3ba6f3769fdd">GCTransferType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a852a03763344c1d625405a8906cb688f">gc_multigrid_preconditioner_intermediate</a></td></tr>
+<tr class="separator:a852a03763344c1d625405a8906cb688f inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a353a94e1ec95aac45983e816600c9760 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a353a94e1ec95aac45983e816600c9760"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Multigrid&lt; <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a353a94e1ec95aac45983e816600c9760">mg</a></td></tr>
+<tr class="separator:a353a94e1ec95aac45983e816600c9760 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae749a2c504331c30c2ce61709ec3d650 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_ae749a2c504331c30c2ce61709ec3d650"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a7a4a6a07555a3ae4a26fb80af809dbaa">LSTransferType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#ae749a2c504331c30c2ce61709ec3d650">ls_multigrid_preconditioner</a></td></tr>
+<tr class="separator:ae749a2c504331c30c2ce61709ec3d650 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ba236541db9bf28c707680784fe624e inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a1ba236541db9bf28c707680784fe624e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; PreconditionMG&lt; dim, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a0873055d24b22b50bb3d3ba6f3769fdd">GCTransferType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a1ba236541db9bf28c707680784fe624e">gc_multigrid_preconditioner</a></td></tr>
+<tr class="separator:a1ba236541db9bf28c707680784fe624e inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad65f0bbc8c909c1dd7cd53bfa8abf7d8 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_ad65f0bbc8c909c1dd7cd53bfa8abf7d8"><td class="memItemLeft" align="right" valign="top">ConditionalOStream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#ad65f0bbc8c909c1dd7cd53bfa8abf7d8">pcout</a></td></tr>
+<tr class="separator:ad65f0bbc8c909c1dd7cd53bfa8abf7d8 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22c4248534db2aecca3d0a68b2dc0e27 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a22c4248534db2aecca3d0a68b2dc0e27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a22c4248534db2aecca3d0a68b2dc0e27">simulation_parameters</a></td></tr>
+<tr class="separator:a22c4248534db2aecca3d0a68b2dc0e27 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cbbbe131a85075b691bf8d6367e339c inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a6cbbbe131a85075b691bf8d6367e339c"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a6cbbbe131a85075b691bf8d6367e339c">dof_handler</a></td></tr>
+<tr class="separator:a6cbbbe131a85075b691bf8d6367e339c inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80248a5cf229cda3b583783b27834700 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_a80248a5cf229cda3b583783b27834700"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a80248a5cf229cda3b583783b27834700">dof_handler_fe_q_iso_q1</a></td></tr>
+<tr class="separator:a80248a5cf229cda3b583783b27834700 inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa295ba39af47cec38f2321f54adf450a inherit pro_attribs_classMFNavierStokesPreconditionGMGBase" id="r_aa295ba39af47cec38f2321f54adf450a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#aa295ba39af47cec38f2321f54adf450a">coarse_grid_iterations</a></td></tr>
+<tr class="separator:aa295ba39af47cec38f2321f54adf450a inherit pro_attribs_classMFNavierStokesPreconditionGMGBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class MFNavierStokesPreconditionGMG&lt; dim &gt;</div><p>A geometric multigrid preconditioner compatible with the matrix-free solver. </p>
+class MFNavierStokesPreconditionGMG&lt; dim &gt;</div><p>A geometric multigrid preconditioner implementation for incompressible flow. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00044">44</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00306">306</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="af80f2fa4e87f9a4bfcdb730a1fdb9232" name="af80f2fa4e87f9a4bfcdb730a1fdb9232"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af80f2fa4e87f9a4bfcdb730a1fdb9232">&#9670;&#160;</a></span>CoarseGridSolverApply</h2>
+<a id="a8700847e8fe8089d8d7c8767f777c883" name="a8700847e8fe8089d8d7c8767f777c883"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8700847e8fe8089d8d7c8767f777c883">&#9670;&#160;</a></span>MGNumber</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::CoarseGridSolverApply =  <a class="el" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html">MGCoarseGridApplyPreconditioner</a>&lt; <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classPreconditionAdapter.html">PreconditionAdapter</a>&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a703de01482feb9a61980103dfdb67299">TrilinosVectorType</a>&gt; &gt;</td>
+          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::MGNumber =  typename <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt;dim&gt;::MGNumber</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00080">80</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00314">314</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
-<a id="a903a5d6b10eb257fc54a6435739ec548" name="a903a5d6b10eb257fc54a6435739ec548"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a903a5d6b10eb257fc54a6435739ec548">&#9670;&#160;</a></span>GCTransferType</h2>
+<a id="a8fe85e5d7ae9505b5f21398834bc6513" name="a8fe85e5d7ae9505b5f21398834bc6513"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fe85e5d7ae9505b5f21398834bc6513">&#9670;&#160;</a></span>MGVectorType</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::GCTransferType =  MGTransferGlobalCoarsening&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt;</td>
+          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::MGVectorType =  typename <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt;dim&gt;::MGVectorType</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00065">65</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00312">312</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
-<a id="a13b678ca5534e144d7e430c80de29abd" name="a13b678ca5534e144d7e430c80de29abd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13b678ca5534e144d7e430c80de29abd">&#9670;&#160;</a></span>LSTransferType</h2>
+<a id="a4494eb68c041a1d9455ae89292dd690b" name="a4494eb68c041a1d9455ae89292dd690b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4494eb68c041a1d9455ae89292dd690b">&#9670;&#160;</a></span>VectorType</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::LSTransferType =  MGTransferMatrixFree&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">MGNumber</a>&gt;</td>
+          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::VectorType =  typename <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt;dim&gt;::VectorType</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00064">64</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a51abc7bcf955d395d274256fef57f053" name="a51abc7bcf955d395d274256fef57f053"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51abc7bcf955d395d274256fef57f053">&#9670;&#160;</a></span>MGNumber</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::MGNumber =  double</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00049">49</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="ab4e05af916c638ddf7bf340190cb006b" name="ab4e05af916c638ddf7bf340190cb006b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4e05af916c638ddf7bf340190cb006b">&#9670;&#160;</a></span>MGVectorType</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::MGVectorType =  LinearAlgebra::distributed::Vector&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">MGNumber</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00062">62</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a22f5d57337030fd907eb893843648509" name="a22f5d57337030fd907eb893843648509"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22f5d57337030fd907eb893843648509">&#9670;&#160;</a></span>Number</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::Number =  double</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00046">46</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="ab62152548c42afe49ce7a792ba431f7a" name="ab62152548c42afe49ce7a792ba431f7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab62152548c42afe49ce7a792ba431f7a">&#9670;&#160;</a></span>OperatorType</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::OperatorType =  <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">MGNumber</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00066">66</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="abb00fea4a252508f256ea8373dd89b6c" name="abb00fea4a252508f256ea8373dd89b6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb00fea4a252508f256ea8373dd89b6c">&#9670;&#160;</a></span>PreconditionerTypeGC</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::PreconditionerTypeGC =  PreconditionMG&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00072">72</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="acb54bcabf038669afcb1dfb87ed78e5b" name="acb54bcabf038669afcb1dfb87ed78e5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb54bcabf038669afcb1dfb87ed78e5b">&#9670;&#160;</a></span>PreconditionerTypeLS</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::PreconditionerTypeLS =  PreconditionMG&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a13b678ca5534e144d7e430c80de29abd">LSTransferType</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00070">70</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="aec35ed2064a708f6778a30dcb5c6c20b" name="aec35ed2064a708f6778a30dcb5c6c20b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec35ed2064a708f6778a30dcb5c6c20b">&#9670;&#160;</a></span>SmootherPreconditionerType</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::SmootherPreconditionerType =  <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00067">67</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a3efbfecec83714a46bbb229ff8beddef" name="a3efbfecec83714a46bbb229ff8beddef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3efbfecec83714a46bbb229ff8beddef">&#9670;&#160;</a></span>SmootherType</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::SmootherType =  PreconditionRelaxation&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#aec35ed2064a708f6778a30dcb5c6c20b">SmootherPreconditionerType</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00068">68</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a703de01482feb9a61980103dfdb67299" name="a703de01482feb9a61980103dfdb67299"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a703de01482feb9a61980103dfdb67299">&#9670;&#160;</a></span>TrilinosVectorType</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::TrilinosVectorType =  LinearAlgebra::distributed::Vector&lt;double&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00063">63</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="af01fe70f358a5898cfcb637287eaf073" name="af01fe70f358a5898cfcb637287eaf073"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af01fe70f358a5898cfcb637287eaf073">&#9670;&#160;</a></span>VectorType</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::VectorType =  LinearAlgebra::distributed::Vector&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a22f5d57337030fd907eb893843648509">Number</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00061">61</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00310">310</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6a33142600edd733f02ed5aa368c02db" name="a6a33142600edd733f02ed5aa368c02db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a33142600edd733f02ed5aa368c02db">&#9670;&#160;</a></span>MFNavierStokesPreconditionGMG()</h2>
+<a id="aad65e8f5702b114fc7fc81a59fec7342" name="aad65e8f5702b114fc7fc81a59fec7342"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad65e8f5702b114fc7fc81a59fec7342">&#9670;&#160;</a></span>MFNavierStokesPreconditionGMG()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -590,37 +328,7 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>dof_handler_fe_q_iso_q1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; Mapping&lt; dim &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>mapping</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>cell_quadrature</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; Function&lt; dim &gt; &gt;&#160;</td>
-          <td class="paramname"><em>forcing_function</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>simulation_control</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; FESystem&lt; dim &gt; &gt;&#160;</td>
-          <td class="paramname"><em>fe</em>&#160;</td>
+          <td class="paramname"><em>dof_handler_fe_q_iso_q1</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -629,74 +337,52 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Constructor. </p>
 
-<p>Construct a new precondition GMG object. Sets constraints, operators and transfer objects. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">simulation_parameters</td><td>Object containing all parameters specified in input file. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>Describes the layout of DoFs and the type of FE. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler_fe_q_iso_q1</td><td>Describes the layout of DoFs for FE_Q_iso_Q1 elements. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Describes the transformations from unit to real cell. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">cell_quadrature</td><td>Required for local operations on cells. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">forcing_function</td><td>Function specified in parameter file as source term. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">simulation_control</td><td>Required to get the time stepping method. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">fe</td><td>Describes the FE system for the vector-valued problem. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00546">546</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="simulation__parameters_8h_source.html#l00046">SimulationParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00190">MFNavierStokesPreconditionGMG&lt; dim &gt;::coarse_grid_triangulations</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00280">MFNavierStokesPreconditionGMG&lt; dim &gt;::dof_handler</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00283">MFNavierStokesPreconditionGMG&lt; dim &gt;::dof_handler_fe_q_iso_q1</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00193">MFNavierStokesPreconditionGMG&lt; dim &gt;::dof_handlers</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00247">PhysicalPropertiesManager::get_kinematic_viscosity_scale()</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddceda2510c39011c5be704182423e3a695e91">Parameters::LinearSolver::h</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedad2ccda10db94c2b5d51beed10484c025">Parameters::LinearSolver::hp</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00186">MFNavierStokesPreconditionGMG&lt; dim &gt;::intlevel</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00209">MFNavierStokesPreconditionGMG&lt; dim &gt;::ls_mg_interface_in</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00207">MFNavierStokesPreconditionGMG&lt; dim &gt;::ls_mg_operators</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00183">MFNavierStokesPreconditionGMG&lt; dim &gt;::maxlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00222">MFNavierStokesPreconditionGMG&lt; dim &gt;::mg_constrained_dofs</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">MFNavierStokesPreconditionGMG&lt; dim &gt;::mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00290">MFNavierStokesPreconditionGMG&lt; dim &gt;::mg_setup_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00228">MFNavierStokesPreconditionGMG&lt; dim &gt;::mg_transfer_gc</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00225">MFNavierStokesPreconditionGMG&lt; dim &gt;::mg_transfer_ls</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00180">MFNavierStokesPreconditionGMG&lt; dim &gt;::minlevel</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddceda83878c91171338902e0fe0fb97a8c47a">Parameters::LinearSolver::p</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::partial_slip</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00274">MFNavierStokesPreconditionGMG&lt; dim &gt;::pcout</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedada984e42a5899bbdac496ef0cbadcee2">Parameters::LinearSolver::ph</a>, <a class="el" href="simulation__parameters_8h_source.html#l00067">SimulationParameters&lt; dim &gt;::physical_properties_manager</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8">BoundaryConditions::slip</a>, <a class="el" href="structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef">Parameters::Stabilization::stabilization</a>, <a class="el" href="simulation__parameters_8h_source.html#l00060">SimulationParameters&lt; dim &gt;::stabilization</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">MFNavierStokesPreconditionGMG&lt; dim &gt;::transfers</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01917">1917</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a754cf60c36212c248d8b857a63b77ece" name="a754cf60c36212c248d8b857a63b77ece"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a754cf60c36212c248d8b857a63b77ece">&#9670;&#160;</a></span>get_mg_operators()</h2>
+<a id="a7fcd5a378fe4e97a9319ac3b5474ec10" name="a7fcd5a378fe4e97a9319ac3b5474ec10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7fcd5a378fe4e97a9319ac3b5474ec10">&#9670;&#160;</a></span>create_level_operator()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, typename <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053">::MGNumber</a> &gt; &gt; &gt; &amp; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::get_mg_operators </td>
+          <td class="memname">void <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::create_level_operator </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>level</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Getter function for all level operators. </p>
-<dl class="section return"><dt>Returns</dt><dd>Multigrid object that contains all level operators. </dd></dl>
+<p>Creates the operator for a given level. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>Identifier of the level to be created </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01830">1830</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p>Implements <a class="el" href="classMFNavierStokesPreconditionGMGBase.html#af7665874c6bc00f8bd9dc52337439f26">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a>.</p>
 
-</div>
-</div>
-<a id="a380fc7c05c3923dfa876eac309c6073e" name="a380fc7c05c3923dfa876eac309c6073e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a380fc7c05c3923dfa876eac309c6073e">&#9670;&#160;</a></span>get_mg_smoother_preconditioners()</h2>
+<p>Reimplemented in <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a5e0afa1f8d6c5027f489ff988648fa62">MFNavierStokesVANSPreconditionGMG&lt; dim &gt;</a>.</p>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">const MGLevelObject&lt; std::shared_ptr&lt; <a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt; typename <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">::MGVectorType</a> &gt; &gt; &gt; &amp; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::get_mg_smoother_preconditioners </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Getter function for all level smoother preconditioners. </p>
-<dl class="section return"><dt>Returns</dt><dd>Multigrid object that contains all level smoother preconditioners. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01838">1838</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01909">1909</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -723,13 +409,13 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classMFNavierStokesPreconditionGMG.html#a4494eb68c041a1d9455ae89292dd690b">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classMFNavierStokesPreconditionGMG.html#a4494eb68c041a1d9455ae89292dd690b">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>time_derivative_previous_solutions</em>&#160;</td>
         </tr>
         <tr>
@@ -740,1154 +426,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Initialize smoother, coarse grid solver and multigrid object needed for the geometric multigrid preconditioner. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">simulation_control</td><td>Required to get the time stepping method. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">flow_control</td><td>Required for dynamic flow control. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">present_solution</td><td>Previous solution needed to evaluate the non linear term. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">time_derivative_previous_solutions</td><td>Vector storing time derivatives of previous solutions. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01928">1928</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01275">1275</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269a1b95d77c3911463763940c13b3c75245">Parameters::LinearSolver::AdditiveSchwarzMethod</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::amg</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a0f4a018960b285bffe538a588e3bd8aaa7caa701b2bd5a182b80c72b9bdf88e2d">Parameters::LinearSolver::direct</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="flow__control_8h_source.html#l00087">FlowControl&lt; dim &gt;::get_beta()</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a0f4a018960b285bffe538a588e3bd8aaad43c33b8e3d5435d9cbe65c156887a02">Parameters::LinearSolver::gmres</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::ilu</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00040">is_bdf()</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
-
-</div>
-</div>
-<a id="ace5cde80ed915aaf32296a4ab1f17f44" name="ace5cde80ed915aaf32296a4ab1f17f44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace5cde80ed915aaf32296a4ab1f17f44">&#9670;&#160;</a></span>print_relevant_info()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::print_relevant_info </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Prints relevant multigrid information. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01802">1802</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
-
-</div>
-</div>
-<a id="acbe0cd58f06b468af51b5df022527552" name="acbe0cd58f06b468af51b5df022527552"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbe0cd58f06b468af51b5df022527552">&#9670;&#160;</a></span>setup_AMG()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::setup_AMG </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set up AMG object needed for coarse-grid solver or preconditioning. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01845">1845</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, and <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>.</p>
-
-</div>
-</div>
-<a id="a2d8a2e84e7c9e890168af384c7e53784" name="a2d8a2e84e7c9e890168af384c7e53784"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d8a2e84e7c9e890168af384c7e53784">&#9670;&#160;</a></span>setup_ILU()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::setup_ILU </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set up ILU object needed for coarse-grid solver or preconditioning. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01957">1957</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
-
-</div>
-</div>
-<a id="a61543eb57bdf4f202c72df4c52bc0a2c" name="a61543eb57bdf4f202c72df4c52bc0a2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61543eb57bdf4f202c72df4c52bc0a2c">&#9670;&#160;</a></span>vmult()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::vmult </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;&#160;</td>
-          <td class="paramname"><em>dst</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classMFNavierStokesPreconditionGMG.html#af01fe70f358a5898cfcb637287eaf073">VectorType</a> &amp;&#160;</td>
-          <td class="paramname"><em>src</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calls the v cycle function of the multigrid object. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">dst</td><td>Destination vector holding the result. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>Input source vector. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01781">1781</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ad4310b5789472bcb4e5b6cfc83cd78b2" name="ad4310b5789472bcb4e5b6cfc83cd78b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4310b5789472bcb4e5b6cfc83cd78b2">&#9670;&#160;</a></span>coarse_grid_iterations</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;unsigned int&gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::coarse_grid_iterations</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Vector holding number of coarse grid iterations. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00286">286</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a5b3ebe923667dfd555fc578cd0cd473e" name="a5b3ebe923667dfd555fc578cd0cd473e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b3ebe923667dfd555fc578cd0cd473e">&#9670;&#160;</a></span>coarse_grid_precondition</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classPreconditionAdapter.html">PreconditionAdapter</a>&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a703de01482feb9a61980103dfdb67299">TrilinosVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::coarse_grid_precondition</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Coarse grid solver (algebraic multigrid, ILU, direct solver) </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00232">232</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a50809c698c20c17063172bb95f203414" name="a50809c698c20c17063172bb95f203414"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50809c698c20c17063172bb95f203414">&#9670;&#160;</a></span>coarse_grid_solver</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;SolverGMRES&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a703de01482feb9a61980103dfdb67299">TrilinosVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::coarse_grid_solver</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>GMRES as coarse grid solver. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00241">241</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="abdea89e2c246d0e43b5f2a7cb87d9bb5" name="abdea89e2c246d0e43b5f2a7cb87d9bb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdea89e2c246d0e43b5f2a7cb87d9bb5">&#9670;&#160;</a></span>coarse_grid_solver_control</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;SolverControl&gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::coarse_grid_solver_control</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Solver control for the coarse grid solver. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00235">235</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="ad3a46054f0d985a3cccac31545e6ea8d" name="ad3a46054f0d985a3cccac31545e6ea8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3a46054f0d985a3cccac31545e6ea8d">&#9670;&#160;</a></span>coarse_grid_solver_control_intermediate</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;SolverControl&gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::coarse_grid_solver_control_intermediate</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Solver control for the coarse grid solver (intermediate level) </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00247">247</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a63a34984d2f7ccc3a6a05a44667f19a8" name="a63a34984d2f7ccc3a6a05a44667f19a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63a34984d2f7ccc3a6a05a44667f19a8">&#9670;&#160;</a></span>coarse_grid_solver_intermediate</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;SolverGMRES&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::coarse_grid_solver_intermediate</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>GMRES as coarse grid solver (intermediate level) </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00253">253</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a204a4c22ff843a14b9b1fe962001266f" name="a204a4c22ff843a14b9b1fe962001266f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a204a4c22ff843a14b9b1fe962001266f">&#9670;&#160;</a></span>coarse_grid_triangulations</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::shared_ptr&lt;const Triangulation&lt;dim&gt; &gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::coarse_grid_triangulations</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Triangulations for the global coarsening case. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00190">190</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a67827aaffdc19762605cadf6737eef6f" name="a67827aaffdc19762605cadf6737eef6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a67827aaffdc19762605cadf6737eef6f">&#9670;&#160;</a></span>direct_solver_control</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;SolverControl&gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::direct_solver_control</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Solver control for the direct solver. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00238">238</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a3dd4d80fbc0ca46231b101ae15400925" name="a3dd4d80fbc0ca46231b101ae15400925"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3dd4d80fbc0ca46231b101ae15400925">&#9670;&#160;</a></span>dof_handler</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const DoFHandler&lt;dim&gt;&amp; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::dof_handler</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Describes the layout of DoFs and the type of FE. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00280">280</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a66ebc84e558a398bdc3edaae4a7b0b78" name="a66ebc84e558a398bdc3edaae4a7b0b78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66ebc84e558a398bdc3edaae4a7b0b78">&#9670;&#160;</a></span>dof_handler_fe_q_iso_q1</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const DoFHandler&lt;dim&gt;&amp; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::dof_handler_fe_q_iso_q1</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Describes the layout of DoFs for FE_Q_iso_Q1 elements. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00283">283</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a51a4713fabbde0815f197ffc41c7499d" name="a51a4713fabbde0815f197ffc41c7499d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51a4713fabbde0815f197ffc41c7499d">&#9670;&#160;</a></span>dof_handlers</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MGLevelObject&lt;DoFHandler&lt;dim&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::dof_handlers</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>DoF handlers for each of the levels of the global coarsening algorithm. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00193">193</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a1c4b86fdb23e12bcf0581eeefed1addf" name="a1c4b86fdb23e12bcf0581eeefed1addf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c4b86fdb23e12bcf0581eeefed1addf">&#9670;&#160;</a></span>gc_multigrid_preconditioner</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;PreconditionMG&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::gc_multigrid_preconditioner</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Global coarsening multigrid preconditioner object. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00271">271</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a20bf9c1895c16e3fe66184aabfa1e59a" name="a20bf9c1895c16e3fe66184aabfa1e59a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20bf9c1895c16e3fe66184aabfa1e59a">&#9670;&#160;</a></span>gc_multigrid_preconditioner_intermediate</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;PreconditionMG&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::gc_multigrid_preconditioner_intermediate</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Global coarsening multigrid preconditioner object (intermediate level) </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00260">260</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a9a0149e640ff5d53c349c09810c19bad" name="a9a0149e640ff5d53c349c09810c19bad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a0149e640ff5d53c349c09810c19bad">&#9670;&#160;</a></span>intlevel</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::intlevel</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Intermediate level of the multigrid hierarchy. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00186">186</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a9eb9a24267dc72685dcf7f9dc87c0a5b" name="a9eb9a24267dc72685dcf7f9dc87c0a5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9eb9a24267dc72685dcf7f9dc87c0a5b">&#9670;&#160;</a></span>ls_mg_interface_in</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MGLevelObject&lt;MatrixFreeOperators::MGInterfaceOperator&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::ls_mg_interface_in</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00209">209</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a31d0198012cabc21f29e197d455a7b27" name="a31d0198012cabc21f29e197d455a7b27"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31d0198012cabc21f29e197d455a7b27">&#9670;&#160;</a></span>ls_mg_operators</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MGLevelObject&lt;MatrixFreeOperators::MGInterfaceOperator&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::ls_mg_operators</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00207">207</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="aec437ec51a67f798ff67b2619f777f0e" name="aec437ec51a67f798ff67b2619f777f0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec437ec51a67f798ff67b2619f777f0e">&#9670;&#160;</a></span>ls_multigrid_preconditioner</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;PreconditionMG&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a13b678ca5534e144d7e430c80de29abd">LSTransferType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::ls_multigrid_preconditioner</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Local smoothing multigrid preconditioner object. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00267">267</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a5ab8f5eabf0a17ad23337e2f8de3df34" name="a5ab8f5eabf0a17ad23337e2f8de3df34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ab8f5eabf0a17ad23337e2f8de3df34">&#9670;&#160;</a></span>maxlevel</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::maxlevel</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Max level of the multigrid hierarchy. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00183">183</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a8c30aa80d59b4a7ffbe95f2652056de5" name="a8c30aa80d59b4a7ffbe95f2652056de5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c30aa80d59b4a7ffbe95f2652056de5">&#9670;&#160;</a></span>mg</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;Multigrid&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Multigrid method. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00263">263</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a2e045d81d808e079a3e489a4ef28a960" name="a2e045d81d808e079a3e489a4ef28a960"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e045d81d808e079a3e489a4ef28a960">&#9670;&#160;</a></span>mg_coarse</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;MGCoarseGridBase&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_coarse</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Multigrid wrapper for the coarse grid solver. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00244">244</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="afdc19fbe968fa065398bf3648bd5c02a" name="afdc19fbe968fa065398bf3648bd5c02a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afdc19fbe968fa065398bf3648bd5c02a">&#9670;&#160;</a></span>mg_coarse_intermediate</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;MGCoarseGridBase&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_coarse_intermediate</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Multigrid wrapper for the coarse grid solver (intermediate level) </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00250">250</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a42307cfe03acebbbcc278a3cacdf5752" name="a42307cfe03acebbbcc278a3cacdf5752"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42307cfe03acebbbcc278a3cacdf5752">&#9670;&#160;</a></span>mg_constrained_dofs</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MGConstrainedDoFs <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_constrained_dofs</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Collection of boundary constraints and refinement edge constrations for the different levels in the local smoothing approach. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00222">222</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a2b0aa283bb4a86d3548eb04e2f2b7845" name="a2b0aa283bb4a86d3548eb04e2f2b7845"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b0aa283bb4a86d3548eb04e2f2b7845">&#9670;&#160;</a></span>mg_interface_matrix_in</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;mg::Matrix&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_interface_matrix_in</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Interface edge matrix needed only for local smoothing. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00205">205</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a6f77807564690d748f274d64b2c8df41" name="a6f77807564690d748f274d64b2c8df41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f77807564690d748f274d64b2c8df41">&#9670;&#160;</a></span>mg_intermediate</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;Multigrid&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_intermediate</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Multigrid method (intermediate level) </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00256">256</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="ad73418e9dc445f70127ec6338b337e0f" name="ad73418e9dc445f70127ec6338b337e0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad73418e9dc445f70127ec6338b337e0f">&#9670;&#160;</a></span>mg_matrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;mg::Matrix&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_matrix</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Multigrid level object storing all operators. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00202">202</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a9e61fb2a067ceaeb197b2b98cdcfd0f7" name="a9e61fb2a067ceaeb197b2b98cdcfd0f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e61fb2a067ceaeb197b2b98cdcfd0f7">&#9670;&#160;</a></span>mg_operators</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MGLevelObject&lt;std::shared_ptr&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_operators</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Level operators for the geometric multigrid. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">199</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a1197c661054bb120e972040910dfdcde" name="a1197c661054bb120e972040910dfdcde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1197c661054bb120e972040910dfdcde">&#9670;&#160;</a></span>mg_setup_timer</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">TimerOutput <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_setup_timer</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Timer for specific geometric multigrid components. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00290">290</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="aada092b148adc5f2588e849c52c10537" name="aada092b148adc5f2588e849c52c10537"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aada092b148adc5f2588e849c52c10537">&#9670;&#160;</a></span>mg_smoother</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; MGSmootherPrecondition&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab62152548c42afe49ce7a792ba431f7a">OperatorType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#a3efbfecec83714a46bbb229ff8beddef">SmootherType</a>, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_smoother</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Smoother object. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">218</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a754b3b31c6e44516c012d5fea27e9cd6" name="a754b3b31c6e44516c012d5fea27e9cd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a754b3b31c6e44516c012d5fea27e9cd6">&#9670;&#160;</a></span>mg_smoother_preconditioners</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MGLevelObject&lt;std::shared_ptr&lt;<a class="el" href="classPreconditionBase.html">PreconditionBase</a>&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_smoother_preconditioners</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Preconditioners associated to smoothers. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00213">213</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a3a8b4e9ac921f09d8d52257c2d2fd843" name="a3a8b4e9ac921f09d8d52257c2d2fd843"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a8b4e9ac921f09d8d52257c2d2fd843">&#9670;&#160;</a></span>mg_transfer_gc</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a903a5d6b10eb257fc54a6435739ec548">GCTransferType</a>&gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_transfer_gc</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Transfer operator for global coarsening. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00228">228</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a965ed26476b427412bf403129679bb6a" name="a965ed26476b427412bf403129679bb6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a965ed26476b427412bf403129679bb6a">&#9670;&#160;</a></span>mg_transfer_ls</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classMFNavierStokesPreconditionGMG.html#a13b678ca5534e144d7e430c80de29abd">LSTransferType</a>&gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_transfer_ls</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Transfer operator for local smoothing. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00225">225</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="aeab203e3eaa472721bcff72c8cdd4739" name="aeab203e3eaa472721bcff72c8cdd4739"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeab203e3eaa472721bcff72c8cdd4739">&#9670;&#160;</a></span>mg_vmult_timer</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">TimerOutput <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::mg_vmult_timer</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Internal timer for vmult timings. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00293">293</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="aff87ca3f7c3cbe9a81660dee36f606e8" name="aff87ca3f7c3cbe9a81660dee36f606e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff87ca3f7c3cbe9a81660dee36f606e8">&#9670;&#160;</a></span>minlevel</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::minlevel</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Min level of the multigrid hierarchy. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00180">180</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="af51c319da31e7599ac678e959463ee3d" name="af51c319da31e7599ac678e959463ee3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af51c319da31e7599ac678e959463ee3d">&#9670;&#160;</a></span>pcout</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ConditionalOStream <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::pcout</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Conditional Ostream. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00274">274</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a1f386df60da6c3277e30c272affa1b72" name="a1f386df60da6c3277e30c272affa1b72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1f386df60da6c3277e30c272affa1b72">&#9670;&#160;</a></span>simulation_parameters</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt;dim&gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::simulation_parameters</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Simulation parameters. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00277">277</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="ab3b401109714dedcec01934d4556c841" name="ab3b401109714dedcec01934d4556c841"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3b401109714dedcec01934d4556c841">&#9670;&#160;</a></span>transfers</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MGLevelObject&lt;MGTwoLevelTransfer&lt;dim, <a class="el" href="classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::transfers</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Transfers for each of the levels of the global coarsening algorithm. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">196</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="flow__control_8h_source.html#l00087">FlowControl&lt; dim &gt;::get_beta()</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01278">MFNavierStokesPreconditionGMGBase&lt; dim &gt;::initialize()</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00040">is_bdf()</a>, and <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>.</p>
 
 </div>
 </div>
