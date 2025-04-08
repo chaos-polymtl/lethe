@@ -152,12 +152,18 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                    &this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
-  
-  this->dof_handler_level_set.distribute_dofs(*this->fe_level_set);
-  
-  this->level_set.reinit(this->dof_handler_level_set.locally_owned_dofs(),
-                                  DoFTools::extract_locally_relevant_dofs(this->dof_handler_level_set),
-                                this->mpi_communicator);
+
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_type !=
+      Parameters::LevelSetType::none)
+      {
+        this->dof_handler_level_set.distribute_dofs(*this->fe_level_set);
+
+        this->level_set.reinit(this->dof_handler_level_set.locally_owned_dofs(),
+                               DoFTools::extract_locally_relevant_dofs(
+                                 this->dof_handler_level_set),
+                               this->mpi_communicator);
+      }
+
 }
 
 template <int dim>
@@ -479,24 +485,28 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
 {
-  if (this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_type != Parameters::LevelSetType::none)
-  {
-    if (this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_type == Parameters::LevelSetType::function)
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment
+        .level_set_type != Parameters::LevelSetType::none)
     {
-        GlobalVectorType tmp_level_set;
-        
-        tmp_level_set.reinit(this->dof_handler_level_set.locally_owned_dofs(), this->mpi_communicator);
-          
-        VectorTools::interpolate(*this->mapping, this->dof_handler_level_set,
-                       *this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_function,
-                       tmp_level_set);
-        
-        this->level_set = tmp_level_set;
-                       
+      if (this->simulation_parameters.fem_parameters.pressure_enrichment
+            .level_set_type == Parameters::LevelSetType::function)
+        {
+          GlobalVectorType tmp_level_set;
+
+          tmp_level_set.reinit(this->dof_handler_level_set.locally_owned_dofs(),
+                               this->mpi_communicator);
+
+          VectorTools::interpolate(*this->mapping,
+                                   this->dof_handler_level_set,
+                                   *this->simulation_parameters.fem_parameters
+                                      .pressure_enrichment.level_set_function,
+                                   tmp_level_set);
+
+          this->level_set = tmp_level_set;
+        }
+      this->mesh_classifier->reclassify();
     }
-    this->mesh_classifier->reclassify();
-  }
-  
+
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 
   this->system_matrix = 0;
@@ -557,6 +567,29 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                         *this->mapping);
     }
 
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment
+        .level_set_type != Parameters::LevelSetType::none)
+    {
+      hp::FECollection<dim> fe_collection;
+      fe_collection.push_back(*this->fe);
+
+      const QGauss<1> quadrature_1D(
+        this->simulation_parameters.fem_parameters.velocity_order + 1);
+
+      NonMatching::RegionUpdateFlags region_update_flags;
+      region_update_flags.inside = update_values | update_gradients |
+                                   update_JxW_values | update_quadrature_points;
+      region_update_flags.outside = update_values | update_gradients |
+                                    update_JxW_values |
+                                    update_quadrature_points;
+
+      scratch_data.enable_pressure_enrichment(fe_collection,
+                                              quadrature_1D,
+                                              region_update_flags,
+                                              *this->mesh_classifier,
+                                              this->dof_handler_level_set,
+                                              this->level_set);
+    }
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
@@ -581,15 +614,25 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  if (this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_type != Parameters::LevelSetType::none)
-  {
-    const NonMatching::LocationToLevelSet cell_location = this->mesh_classifier->location_to_level_set(cell);
-  
-    if (cell_location == NonMatching::LocationToLevelSet::intersected)
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment
+        .level_set_type != Parameters::LevelSetType::none)
     {
-      std::cout << "boop" << std::endl;
+      const NonMatching::LocationToLevelSet cell_location =
+        this->mesh_classifier->location_to_level_set(cell);
+  
+      if (cell_location == NonMatching::LocationToLevelSet::intersected)
+        {
+          scratch_data.reinit(
+            cell,
+            this->evaluation_point,
+            this->previous_solutions,
+            this->forcing_function,
+            this->flow_control.get_beta(),
+            this->simulation_parameters.stabilization.pressure_scaling_factor);
+          copy_data.reallocate();
+          
+        }
     }
-  }
   else
     scratch_data.reinit(
       cell,
@@ -598,9 +641,9 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
       this->forcing_function,
       this->flow_control.get_beta(),
       this->simulation_parameters.stabilization.pressure_scaling_factor);
-  
 
-  
+
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_vof =

@@ -26,6 +26,9 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
 
+#include <deal.II/non_matching/fe_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
+
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -1003,6 +1006,59 @@ public:
   void
   calculate_physical_properties();
 
+  template <typename VectorType>
+  void
+  enable_pressure_enrichment(
+    const hp::FECollection<dim>            &fe_collection,
+    const Quadrature<1>                    &quadrature,
+    const NonMatching::RegionUpdateFlags    region_update_flags,
+    const NonMatching::MeshClassifier<dim> &mesh_classifier,
+    const DoFHandler<dim>                  &dof_handler,
+    const VectorType                       &level_set)
+  {
+    non_matching_fe_values =
+      std::make_shared<NonMatching::FEValues<dim>>(fe_collection,
+                                                   quadrature,
+                                                   region_update_flags,
+                                                   mesh_classifier,
+                                                   dof_handler,
+                                                   level_set);
+  }
+  
+  void
+  reallocate(const unsigned int new_n_q_points, const unsigned int new_n_dofs);
+
+  template <typename VectorType>
+  void
+  reinit_intersected(const typename DoFHandler<dim>::active_cell_iterator &cell,
+         const VectorType                                     &current_solution,
+         const std::vector<VectorType> &previous_solutions,
+         std::shared_ptr<Function<dim>> forcing_function,
+         Tensor<1, dim>                 beta_force,
+         const double                   pressure_scaling_factor)
+  {
+    this->non_matching_fe_values->reinit(cell);
+    
+    unsigned int new_n_q_points = 0;
+    const unsigned int new_n_dofs = this->fe_values.get_fe().n_dofs_per_cell();
+        
+    const std::optional<FEValues<dim>> &inside_fe_values =
+      non_matching_fe_values.get_inside_fe_values();
+    
+    if (inside_fe_values)
+      new_n_q_points += inside_fe_values->get_quadrature().size();
+      
+    const std::optional<FEValues<dim>> &outside_fe_values =
+      non_matching_fe_values.get_outside_fe_values();
+    
+    if (inside_fe_values)
+      new_n_q_points += outside_fe_values->get_quadrature().size();
+      
+    this->reallocate(new_n_q_points,new_n_dofs);
+
+    
+  }
+  
   // For auxiliary physics solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;
 
@@ -1225,6 +1281,9 @@ public:
   std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
   std::vector<std::vector<std::vector<double>>>         face_phi_p;
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
+
+  /// NonMatching FeValues for pressure enrichment
+  std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values;
 };
 
 #endif

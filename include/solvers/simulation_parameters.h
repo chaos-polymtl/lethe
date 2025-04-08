@@ -37,7 +37,7 @@ public:
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
   Parameters::SimulationControl                     simulation_control;
   Parameters::Timer                                 timer;
-  Parameters::FEM<dim>                                   fem_parameters;
+  Parameters::FEM<dim>                              fem_parameters;
   Parameters::Forces                                forces_parameters;
   std::shared_ptr<Parameters::Laser<dim>>           laser_parameters;
   Parameters::PostProcessing                        post_processing;

@@ -201,6 +201,15 @@ public:
           strong_jacobian[q][i] = 0;
       }
   }
+  
+  void 
+  reallocate(const unsigned int new_n_q_points)
+  {
+    strong_residual.resize(n_q_points);
+    strong_jacobian.resize(n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+    
+    reset();
+  }
 
   FullMatrix<double>                       local_matrix;
   Vector<double>                           local_rhs;

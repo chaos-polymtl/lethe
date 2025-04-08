@@ -372,6 +372,82 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
 }
 
+template <int dim>
+void
+NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points, const unsigned int new_n_dofs)
+{
+  // Initialize size of arrays
+  this->n_q_points = new_n_q_points;
+  this->n_dofs     = new_n_dofs;
+
+  // Initialize arrays related to quadrature
+  this->JxW.resize(n_q_points);
+
+  // Initialize component array
+  this->components.resize(n_dofs);
+
+  // Forcing term array
+  this->rhs_force.resize(n_q_points, Vector<double>(dim + 1));
+  this->force.resize(n_q_points);
+  this->mass_source.resize(n_q_points);
+
+  // Initialize arrays related to velocity and pressure
+  this->velocities.first_vector_component = 0;
+  this->pressure.component                = dim;
+
+  // Velocity
+  this->velocity_values.resize(n_q_points);
+  this->velocity_divergences.resize(n_q_points);
+  this->velocity_gradients.resize(n_q_points);
+  this->velocity_laplacians.resize(n_q_points);
+  this->velocity_hessians.resize(n_q_points);
+  this->shear_rate.resize(n_q_points);
+
+  // Velocity for BDF schemes
+  this->previous_velocity_values.resize(
+    maximum_number_of_previous_solutions(),
+    std::vector<Tensor<1, dim>>(n_q_points));
+
+  // Pressure
+  this->pressure_values.resize(n_q_points);
+  this->pressure_gradients.resize(n_q_points);
+  this->pressure_scaling_factor = 1;
+
+  // Pressure for BDF schemes (compressible Navier-Stokes)
+  this->previous_pressure_values.resize(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(n_q_points));
+  // Initialize arrays related to shape functions
+  // Velocity shape functions
+  this->phi_u.resize(
+    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+  this->grad_phi_u.resize(
+    n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
+  this->div_phi_u.resize(n_q_points, std::vector<double>(n_dofs));
+  this->hess_phi_u.resize(
+    n_q_points, std::vector<Tensor<3, dim>>(n_dofs));
+  this->laplacian_phi_u.resize(
+    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+
+  // Pressure shape functions
+  this->phi_p.resize(n_q_points, std::vector<double>(n_dofs));
+  this->grad_phi_p.resize(
+    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+
+  // Physical properties
+  fields[field::pressure].resize(n_q_points);
+  fields[field::shear_rate].resize(n_q_points);
+  
+  density.resize(n_q_points);
+  dynamic_viscosity.resize(n_q_points);
+  kinematic_viscosity.resize(n_q_points);
+  dynamic_viscosity_for_stabilization.resize(n_q_points);
+  kinematic_viscosity_for_stabilization.resize(n_q_points);
+  thermal_expansion.resize(n_q_points);
+  grad_kinematic_viscosity_shear_rate.resize(n_q_points);
+
+  previous_density.resize(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(this->n_q_points));
+}
 
 template <int dim>
 void

@@ -54,7 +54,7 @@ class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
 public:
   VOFAssemblerCore(const std::shared_ptr<SimulationControl> &simulation_control,
-                   const Parameters::FEM<dim>                   fem_parameters,
+                   const Parameters::FEM<dim>                fem_parameters,
                    const Parameters::VOF                     vof_parameters)
     : simulation_control(simulation_control)
     , fem_parameters(fem_parameters)
@@ -82,7 +82,7 @@ public:
                StabilizedMethodsCopyData &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::FEM<dim>                    fem_parameters;
+  const Parameters::FEM<dim>               fem_parameters;
   const Parameters::VOF                    vof_parameters;
 
   // Controls if the compressibility term is assembled in the VOF equation

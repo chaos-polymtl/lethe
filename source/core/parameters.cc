@@ -1504,7 +1504,7 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-  
+
   template <int dim>
   void
   PressureEnrichment<dim>::declare_parameters(ParameterHandler &prm)
@@ -1514,8 +1514,8 @@ namespace Parameters
       prm.declare_entry("level set type",
                         "none",
                         Patterns::Selection("none|function"),
-                        "format of the level set");                
-    
+                        "format of the level set");
+
       prm.enter_subsection("level set function");
       {
         level_set_function = std::make_shared<Functions::ParsedFunction<dim>>();
@@ -1525,7 +1525,7 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-  
+
   template <int dim>
   void
   PressureEnrichment<dim>::parse_parameters(ParameterHandler &prm)
@@ -1538,19 +1538,17 @@ namespace Parameters
       else if (type_string == "function")
         this->level_set_type = LevelSetType::function;
       else
-        throw(
-          std::runtime_error("Invalid level set type!"));
-      
+        throw(std::runtime_error("Invalid level set type!"));
+
       prm.enter_subsection("level set function");
       {
         level_set_function->parse_parameters(prm);
       }
       prm.leave_subsection();
-        
     }
     prm.leave_subsection();
   }
-  
+
   template <int dim>
   void
   FEM<dim>::declare_parameters(ParameterHandler &prm)
@@ -1597,9 +1595,8 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
-        
+
       pressure_enrichment.declare_parameters(prm);
-      
     }
     prm.leave_subsection();
   }
@@ -1620,9 +1617,8 @@ namespace Parameters
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
-        
+
       pressure_enrichment.parse_parameters(prm);
-        
     }
     prm.leave_subsection();
   }
