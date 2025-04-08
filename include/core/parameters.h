@@ -53,6 +53,7 @@ namespace Parameters
   
   enum class LevelSetType
   {
+    none,
     function
   };
 
@@ -1079,7 +1080,6 @@ namespace Parameters
   class PressureEnrichment
   {
   public:
-    bool enable = false;
     
     LevelSetType level_set_type;
     
@@ -1098,8 +1098,9 @@ namespace Parameters
    * points within the cells.
    */
   template <int dim>
-  struct FEM
+  class FEM
   {
+  public:
     // Interpolation order velocity
     unsigned int velocity_order;
 
@@ -1128,7 +1129,7 @@ namespace Parameters
     unsigned int phase_cahn_hilliard_order;
     unsigned int potential_cahn_hilliard_order;
 
-    static void
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);

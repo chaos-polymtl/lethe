@@ -102,7 +102,7 @@ public:
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);
 
-    Parameters::FEM<dim>::declare_parameters(prm);
+    fem_parameters.declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     laser_parameters = std::make_shared<Parameters::Laser<dim>>();

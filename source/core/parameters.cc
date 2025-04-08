@@ -1511,16 +1511,17 @@ namespace Parameters
   {
     prm.enter_subsection("pressure enrichment");
     {
-      prm.declare_entry("enable",
-                        "false",
-                        Patterns::Bool(),
-                        "enable pressure enrichment");
       prm.declare_entry("level set type",
-                        "function",
-                        Patterns::Selection("function"),
+                        "none",
+                        Patterns::Selection("none|function"),
                         "format of the level set");                
-    level_set_function = std::make_shared<Functions::ParsedFunction<dim>>();
-    level_set_function->declare_parameters(prm);
+    
+      prm.enter_subsection("level set function");
+      {
+        level_set_function = std::make_shared<Functions::ParsedFunction<dim>>();
+        level_set_function->declare_parameters(prm);
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -1531,14 +1532,20 @@ namespace Parameters
   {
     prm.enter_subsection("pressure enrichment");
     {
-      this->enable = prm.get_bool("enable");
       const std::string type_string = prm.get("level set type");
-      if (type_string == "function")
+      if (type_string == "none")
+        this->level_set_type = LevelSetType::none;
+      else if (type_string == "function")
         this->level_set_type = LevelSetType::function;
       else
         throw(
           std::runtime_error("Invalid level set type!"));
-      level_set_function->parse_parameters(prm);
+      
+      prm.enter_subsection("level set function");
+      {
+        level_set_function->parse_parameters(prm);
+      }
+      prm.leave_subsection();
         
     }
     prm.leave_subsection();
@@ -1590,6 +1597,9 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
+        
+      pressure_enrichment.declare_parameters(prm);
+      
     }
     prm.leave_subsection();
   }
@@ -1610,6 +1620,9 @@ namespace Parameters
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
+        
+      pressure_enrichment.parse_parameters(prm);
+        
     }
     prm.leave_subsection();
   }
@@ -4173,8 +4186,8 @@ namespace Parameters
   // Explicitly instantiate template classes and structs
   template class PressureEnrichment<2>;
   template class PressureEnrichment<3>;
-  template struct FEM<2>;
-  template struct FEM<3>;
+  template class FEM<2>;
+  template class FEM<3>;
   template class Laser<2>;
   template class Laser<3>;
   template class IBParticles<2>;

@@ -175,6 +175,17 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   this->pcout << std::setprecision(
     simulation_parameters.simulation_control.log_precision);
+
+  if (p_nsparam.fem_parameters.pressure_enrichment.level_set_type != Parameters::LevelSetType::none)
+    {
+      fe_level_set = std::make_shared<FE_Q<dim>>(1);
+        
+      dof_handler_level_set.clear();
+      dof_handler_level_set.reinit(*this->triangulation);
+      
+      mesh_classifier = std::make_shared<NonMatching::MeshClassifier<dim>>(dof_handler_level_set, level_set);
+    }
+    
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -561,7 +572,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       multiphysics->solve(false,
                           simulation_parameters.simulation_control.method);
       multiphysics->percolate_time_vectors(false);
-
+              
       if (simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
               .verbosity != Parameters::Verbosity::quiet ||
           simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

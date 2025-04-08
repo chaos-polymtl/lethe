@@ -152,6 +152,12 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                    &this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
+  
+  this->dof_handler_level_set.distribute_dofs(*this->fe_level_set);
+  
+  this->level_set.reinit(this->dof_handler_level_set.locally_owned_dofs(),
+                                  DoFTools::extract_locally_relevant_dofs(this->dof_handler_level_set),
+                                this->mpi_communicator);
 }
 
 template <int dim>
@@ -473,6 +479,24 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
 {
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_type != Parameters::LevelSetType::none)
+  {
+    if (this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_type == Parameters::LevelSetType::function)
+    {
+        GlobalVectorType tmp_level_set;
+        
+        tmp_level_set.reinit(this->dof_handler_level_set.locally_owned_dofs(), this->mpi_communicator);
+          
+        VectorTools::interpolate(*this->mapping, this->dof_handler_level_set,
+                       *this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_function,
+                       tmp_level_set);
+        
+        this->level_set = tmp_level_set;
+                       
+    }
+    this->mesh_classifier->reclassify();
+  }
+  
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 
   this->system_matrix = 0;
@@ -557,14 +581,26 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions,
-    this->forcing_function,
-    this->flow_control.get_beta(),
-    this->simulation_parameters.stabilization.pressure_scaling_factor);
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment.level_set_type != Parameters::LevelSetType::none)
+  {
+    const NonMatching::LocationToLevelSet cell_location = this->mesh_classifier->location_to_level_set(cell);
+  
+    if (cell_location == NonMatching::LocationToLevelSet::intersected)
+    {
+      std::cout << "boop" << std::endl;
+    }
+  }
+  else
+    scratch_data.reinit(
+      cell,
+      this->evaluation_point,
+      this->previous_solutions,
+      this->forcing_function,
+      this->flow_control.get_beta(),
+      this->simulation_parameters.stabilization.pressure_scaling_factor);
+  
 
+  
   if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_vof =

@@ -40,6 +40,8 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
+#include <deal.II/non_matching/fe_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
 #include <deal.II/numerics/data_out.h>
 
 using namespace dealii;
@@ -942,6 +944,17 @@ protected:
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
+  
+  /// MeshClassifier for enrichment purposes
+  std::shared_ptr<NonMatching::MeshClassifier<dim>> mesh_classifier;
+  
+  /// DoFHandler used by the MeshClassifier
+  DoFHandler<dim> dof_handler_level_set;
+  
+  std::shared_ptr<FiniteElement<dim>> fe_level_set;
+  
+  /// Level set vector used by the MeshClassifier
+  VectorType level_set;
 };
 
 #endif
