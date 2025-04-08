@@ -7,6 +7,19 @@
 # Load the validation functions
 . ../../../contrib/validation/validation_functions.sh
 
+# Function to display ... animation
+show_animation() {
+    local message=$2
+    local dots=("")
+    while kill -0 $1 2>/dev/null; do
+        for i in ".  " ".. " "..." "   "; do
+            printf "\r%s%s " "$message" "$i"
+            sleep 0.5
+        done
+    done
+    printf "\n" # Ensure a new line after the loop
+}
+
 # Store filenames of all plots in a variable (space-seperated)
 plots="hopper-flow-rate.pdf"
 
@@ -31,6 +44,26 @@ recreate_folder "$folder"
 gmsh -3 hopper_structured.geo > "$folder/log-mesh"
 
 { time $action ; } &> "$folder/log"
+
+show_animation $pid "---> Running regular simulation"
+wait $pid
+
+python3 hopper_post_processing.py -f . --prm hopper.prm --validate
+
+
+folder="$output_root/3d-rectangular-hopper-periodic"
+
+action="mpirun -np $n_proc lethe-particles hopper_periodic.prm" 
+recreate_folder "$folder"
+
+# Recreate the mesh
+gmsh -3 hopper_structured_periodic.geo > "$folder/log-mesh"
+
+{ time $action ; } &> "$folder/log"
+
+show_animation $pid "---> Running periodic BC simulation"
+wait $pid
+
 python3 hopper_post_processing.py -f . --prm hopper.prm --validate
 
 # Copy the information to the log folder
