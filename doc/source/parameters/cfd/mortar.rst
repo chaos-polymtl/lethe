@@ -18,6 +18,17 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     set rotor boundary id  = 1
     set stator boundary id = 2
     set center of rotation = 0, 0
+    subsection rotor boundary conditions
+      subsection u
+        set Function expression = -y
+      end
+      subsection v
+        set Function expression = x
+      end
+      subsection p
+        set Function expression = 1
+      end
+    end
   end
 
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
@@ -29,3 +40,4 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 
 * The ``center of rotation`` defines the coordinates for the prescribed rotation at the rotor domain.
 
+* The subsection ``rotor boundary conditions`` allows us to prescribe the expressions for boundary conditions in the rotor domain.
