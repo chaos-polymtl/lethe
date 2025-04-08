@@ -1,6 +1,6 @@
 
-DEAL::For particle 1, temperature is set at: 100.000 K, diameter is set at: 0.00100000 and x is set at: 0.100000.
-DEAL::For particle 2, temperature is set at: 200.000 K, diameter is set at: 0.00200000 and x is set at: 0.200000.
-DEAL::For particle 3, temperature is set at: 300.000 K, diameter is set at: 0.00300000 and x is set at: 0.300000.
-DEAL::For particle 4, temperature is set at: 400.000 K, diameter is set at: 0.00400000 and x is set at: 0.400000.
-DEAL::For particle 5, temperature is set at: 500.000 K, diameter is set at: 0.00500000 and x is set at: 0.500000.
+DEAL::For particle 1, temperature is set at: 100.000 and x is set at: 0.100000
+DEAL::For particle 2, temperature is set at: 200.000 and x is set at: 0.200000
+DEAL::For particle 3, temperature is set at: 300.000 and x is set at: 0.300000
+DEAL::For particle 4, temperature is set at: 400.000 and x is set at: 0.400000
+DEAL::For particle 5, temperature is set at: 500.000 and x is set at: 0.500000

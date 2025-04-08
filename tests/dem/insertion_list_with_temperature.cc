@@ -40,7 +40,7 @@ test()
   dem_parameters.insertion_info.list_x = {0.1, 0.2, 0.3, 0.4, 0.5};
   dem_parameters.insertion_info.list_y.resize(5);
   dem_parameters.insertion_info.list_z.resize(5);
-  dem_parameters.insertion_info.list_d = {0.001, 0.002, 0.003, 0.004, 0.005};
+  dem_parameters.insertion_info.list_d.resize(5);
   dem_parameters.insertion_info.list_T = {100, 200, 300, 400, 500};
   dem_parameters.insertion_info.list_vx.resize(5);
   dem_parameters.insertion_info.list_vy.resize(5);
@@ -80,9 +80,7 @@ test()
       deallog << "For particle " << particle_number
               << ", temperature is set at: "
               << particle->get_properties()[PropertiesIndex::T]
-              << " K, diameter is set at: "
-              << particle->get_properties()[PropertiesIndex::dp]
-              << " and x is set at: " << particle->get_location()[0] << "."
+              << " and x is set at: " << particle->get_location()[0]
               << std::endl;
     }
 }
