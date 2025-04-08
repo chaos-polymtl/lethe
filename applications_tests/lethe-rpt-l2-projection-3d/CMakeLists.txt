@@ -9,5 +9,5 @@ DEAL_II_PICKUP_TESTS()
 
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
-       	set_tests_properties(lethe-rpt-l2-projection-3d/rpt_l2_projection.mpirun=1.debug PROPERTIES TIMEOUT 1500)
+       	set_tests_properties(lethe-rpt-l2-projection-3d/rpt_l2_projection.mpirun=1.debug PROPERTIES TIMEOUT 1800)
 ENDIF()
