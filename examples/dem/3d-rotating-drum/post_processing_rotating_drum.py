@@ -135,6 +135,7 @@ else:
     plt.savefig("lethe-rotating-drum-comparison-depth.png",dpi=300)
     plt.show()
 
+plt.figure()
 plt.plot(x_free_surface/R, vel_value_x_free_surface/np.max(vel_value_x_free_surface),  label="Lethe")
 plt.plot(free_surface_exp[:,0],
          free_surface_exp[:,1], "xk", label="RPT")

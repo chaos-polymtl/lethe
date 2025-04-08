@@ -4,15 +4,9 @@
 # This script automates the validation process for the 2D lid-driven cavity benchmark
 # in Lethe.
 
-# Function to recreate the folder
-recreate_folder() {
-    local folder_path="$1"
+# Load the validation functions
+. ../../../contrib/validation/validation_functions.sh
 
-    if [ -d "$folder_path" ]; then
-        rm -rf "$folder_path"  # Deletes the folder and its contents
-    fi
-    mkdir -p "$folder_path"  # Creates the folder
-}
 
 # Store filenames of all plots in a variable (space-seperated)
 plots=" dissipation_comparison.pdf"
@@ -21,39 +15,13 @@ plots=" dissipation_comparison.pdf"
 data="solution_enstrophy.dat solution_kinetic_energy.dat"
 
 # Default path
-default_value="./"
+output_root="./"
 
 # Default number of cores
 n_proc=16
 
 # Parse command-line arguments
-output_root=$default_value
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -p|--path)
-            if [[ -n $2 && $2 != -* ]]; then
-                output_root="$2"
-                shift 2
-            else
-                echo "Warning: Missing value for $1. Using default value: $default_value"
-                shift
-            fi
-            ;;
-        *)
-    esac
-    case $1 in
-        -np|--nproc)
-            if [[ -n $2 && $2 != -* ]]; then
-                n_proc="$2"
-                shift 2
-            else
-                echo "Warning: Missing value for $1. Using default value: $n_proc"
-                shift
-            fi
-            ;;
-        *)
-    esac
-done
+parse_command_line "$@"
 
 folder="$output_root/3d-taylor-green-vortex"
 action="mpirun -np $n_proc lethe-fluid-matrix-free tgv-matrix-free-validation.prm"

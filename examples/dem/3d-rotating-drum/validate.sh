@@ -4,66 +4,20 @@
 # This script automates the validation process for the 2D Taylor-Couette benchmark
 # in Lethe.
 
-# Function to recreate the folder
-recreate_folder() {
-    local folder_path="$1"
-
-    if [ -d "$folder_path" ]; then
-        rm -rf "$folder_path"  # Deletes the folder and its contents
-    fi
-    mkdir -p "$folder_path"  # Creates the folder
-}
-
-# Function to display ... animation
-show_animation() {
-    local message=$2
-    local dots=("")
-    while kill -0 $1 2>/dev/null; do
-        for i in ".  " ".. " "..." "   "; do
-            printf "\r%s%s " "$message" "$i"
-            sleep 0.5
-        done
-    done
-    printf "\n" # Ensure a new line after the loop
-}
+# Load the validation functions
+. ../../../contrib/validation/validation_functions.sh
 
 # Store filenames of all plots in a variable (space-seperated)
 plots="lethe-rotating-drum-comparison-depth.pdf lethe-rotating-drum-comparison-free-surface.pdf"
 
 # Default path
-default_value="./"
+output_root="./"
 
 # Default number of cores
 n_proc=1
 
 # Parse command-line arguments
-output_root=$default_value
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -p|--path)
-            if [[ -n $2 && $2 != -* ]]; then
-                output_root="$2"
-                shift 2
-            else
-                echo "Warning: Missing value for $1. Using default value: $default_value"
-                shift
-            fi
-            ;;
-        *)
-    esac
-    case $1 in
-        -np|--nproc)
-            if [[ -n $2 && $2 != -* ]]; then
-                n_proc="$2"
-                shift 2
-            else
-                echo "Warning: Missing value for $1. Using default value: $n_proc"
-                shift
-            fi
-            ;;
-        *)
-    esac
-done
+parse_command_line "$@"
 
 folder="$output_root/3d-rotating-drum"
 action="mpirun -np $n_proc lethe-particles load-rotating-drum.prm"
