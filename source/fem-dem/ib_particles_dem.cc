@@ -135,7 +135,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 {
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d]               = 0.;
+                      contact_info.tangential_displacement[d]               = 0.;
                       contact_info.rolling_resistance_spring_torque[d] = 0.;
                     }
                   pp_contact_map[particle_one.particle_id]
@@ -310,7 +310,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                   // if the adjacent pair is not in contact anymore
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d]               = 0.;
+                      contact_info.tangential_displacement[d]               = 0.;
                       contact_info.rolling_resistance_spring_torque[d] = 0.;
                     }
                   pp_contact_map[particle_one.particle_id].erase(
@@ -603,7 +603,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 {
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d]           = 0;
+                      contact_info.tangential_displacement[d]           = 0;
                       contact_info.tangential_relative_velocity[d] = 0;
                     }
 
@@ -786,11 +786,11 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 }
               else
                 {
-                  // Set to 0 the tangential overlap if the particle is not
+                  // Set to 0 the tangential displacement if the particle is not
                   // in contact with the wall anymore.
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d]               = 0.;
+                      contact_info.tangential_displacement[d]               = 0.;
                       contact_info.rolling_resistance_spring_torque[d] = 0.;
                     }
                 }
@@ -1058,17 +1058,17 @@ IBParticlesDEM<dim>::calculate_force_model(
     contact_relative_velocity -
     (normal_relative_velocity_value * normal_unit_vector);
 
-  // Calculation of new tangential_overlap, since this value is
+  // Calculation of new tangential_displacement, since this value is
   // history-dependent it needs the value at previous time-step
   // This variable is the main reason that we have iterations over
-  // two different vectors : tangential_overlap of the particles
+  // two different vectors : tangential_displacement of the particles
   // which were already in contact needs to be
-  // modified using its history, while the tangential_overlaps of
+  // modified using its history, while the tangential_displacements of
   // new particles are equal to zero
   // delta_t_new = delta_t_old + v_rt*dt
   contact_info.tangential_relative_velocity.push_back(
     tangential_relative_velocity);
-  contact_info.tangential_overlap += tangential_relative_velocity * dt;
+  contact_info.tangential_displacement += tangential_relative_velocity * dt;
 
   ///////////// Hertz contact force model ////////////////
   // Calculation of effective radius and mass
@@ -1104,7 +1104,7 @@ IBParticlesDEM<dim>::calculate_force_model(
   // forces. Since we need dashpot tangential force in the gross sliding
   // again, we define it as a separate variable
   tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap;
+    tangential_spring_constant * contact_info.tangential_displacement;
 
   double coulomb_threshold =
     effective_coefficient_of_friction * normal_force.norm();
@@ -1112,7 +1112,7 @@ IBParticlesDEM<dim>::calculate_force_model(
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangential
+      // Gross sliding occurs and the tangential displacement and tangential
       // force are limited to Coulomb's criterion
       tangential_force =
         coulomb_threshold *
@@ -1503,19 +1503,19 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                       if (previous_contact_info_iterator !=
                           last_pw_contact_info.find(particle_id)->second.end())
                         {
-                          contact_info.tangential_overlap =
+                          contact_info.tangential_displacement =
                             previous_contact_info_iterator->second
-                              .tangential_overlap;
+                              .tangential_displacement;
                         }
                       else
                         {
-                          contact_info.tangential_overlap = 0;
+                          contact_info.tangential_displacement = 0;
                         }
                     }
                   else
                     {
                       // one of the map is empty and we try to acces it.
-                      contact_info.tangential_overlap = 0;
+                      contact_info.tangential_displacement = 0;
                     }
                 }
             }
@@ -1543,18 +1543,18 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                           last_pp_contact_info.find(particle_one_id)
                             ->second.end())
                         {
-                          contact_info.tangential_overlap =
+                          contact_info.tangential_displacement =
                             previous_contact_info_iterator->second
-                              .tangential_overlap;
+                              .tangential_displacement;
                         }
                       else
                         {
-                          contact_info.tangential_overlap = 0;
+                          contact_info.tangential_displacement = 0;
                         }
                     }
                   else
                     {
-                      contact_info.tangential_overlap = 0;
+                      contact_info.tangential_displacement = 0;
                     }
                 }
             }
@@ -1643,7 +1643,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             }
         }
 
-      // RK4 for the particle wall tangential overlap
+      // RK4 for the particle wall tangential displacement
       for (auto it = pw_contact_map.begin(); it != pw_contact_map.end(); it++)
         {
           unsigned int particle_id = it->first;
@@ -1655,7 +1655,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               // is not the case, this means this is a new contact, or the
               // contact ended. In this case, we simply take the last RK step
               // registered as the derivative for the integration.
-              Tensor<1, 3> previous_tangential_overlap;
+              Tensor<1, 3> previous_tangential_displacement;
               if (last_pw_contact_info.find(particle_id) !=
                   last_pw_contact_info.end())
                 {
@@ -1665,19 +1665,19 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   if (previous_contact_info_iterator !=
                       last_pw_contact_info.find(particle_id)->second.end())
                     {
-                      previous_tangential_overlap =
+                      previous_tangential_displacement =
                         previous_contact_info_iterator->second
-                          .tangential_overlap;
+                          .tangential_displacement;
                     }
                 }
               else
                 {
-                  previous_tangential_overlap = 0;
+                  previous_tangential_displacement = 0;
                 }
               if (contact_info.tangential_relative_velocity.size() == 4)
                 {
-                  contact_info.tangential_overlap =
-                    previous_tangential_overlap +
+                  contact_info.tangential_displacement =
+                    previous_tangential_displacement +
                     dt_dem / 6.0 *
                       (contact_info.tangential_relative_velocity[0] +
                        2 * contact_info.tangential_relative_velocity[1] +
@@ -1686,15 +1686,15 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                 }
               else if (contact_info.tangential_relative_velocity.size() > 0)
                 {
-                  contact_info.tangential_overlap =
-                    previous_tangential_overlap +
+                  contact_info.tangential_displacement =
+                    previous_tangential_displacement +
                     dt_dem *
                       contact_info.tangential_relative_velocity
                         [contact_info.tangential_relative_velocity.size()];
                 }
               else
                 {
-                  contact_info.tangential_overlap = 0;
+                  contact_info.tangential_displacement = 0;
                 }
 
 
@@ -1702,7 +1702,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               contact_info.tangential_relative_velocity.clear();
             }
         }
-      // Same for particle-particle tangential overlap
+      // Same for particle-particle tangential displacement
       for (auto it = pp_contact_map.begin(); it != pp_contact_map.end(); it++)
         {
           unsigned int particle_one_id = it->first;
@@ -1714,7 +1714,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               // is not the case, this means this is a new contact, or the
               // contact ended. In this case, we simply take the last RK step
               // registered as the derivative for the integration.
-              Tensor<1, 3> previous_tangential_overlap;
+              Tensor<1, 3> previous_tangential_displacement;
               if (last_pp_contact_info.find(particle_one_id) !=
                   last_pp_contact_info.end())
                 {
@@ -1724,19 +1724,19 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   if (previous_contact_info_iterator !=
                       last_pp_contact_info.find(particle_one_id)->second.end())
                     {
-                      previous_tangential_overlap =
+                      previous_tangential_displacement =
                         previous_contact_info_iterator->second
-                          .tangential_overlap;
+                          .tangential_displacement;
                     }
                 }
               else
                 {
-                  previous_tangential_overlap = 0;
+                  previous_tangential_displacement = 0;
                 }
               if (contact_info.tangential_relative_velocity.size() == 4)
                 {
-                  contact_info.tangential_overlap =
-                    previous_tangential_overlap +
+                  contact_info.tangential_displacement =
+                    previous_tangential_displacement +
                     dt_dem / 6.0 *
                       (contact_info.tangential_relative_velocity[0] +
                        2 * contact_info.tangential_relative_velocity[1] +
@@ -1745,15 +1745,15 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                 }
               else if (contact_info.tangential_relative_velocity.size() > 0)
                 {
-                  contact_info.tangential_overlap =
-                    previous_tangential_overlap +
+                  contact_info.tangential_displacement =
+                    previous_tangential_displacement +
                     dt_dem *
                       contact_info.tangential_relative_velocity
                         [contact_info.tangential_relative_velocity.size()];
                 }
               else
                 {
-                  contact_info.tangential_overlap = 0;
+                  contact_info.tangential_displacement = 0;
                 }
               // clear the vector for the next set of 4 Rk steps
               contact_info.tangential_relative_velocity.clear();

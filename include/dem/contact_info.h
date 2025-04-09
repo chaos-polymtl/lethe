@@ -15,14 +15,14 @@ using namespace dealii;
  * @brief Handle the information related to the calculation of the
  * particle-particle contact force. Notably it is responsible for storing
  * information that has to be preserved over multiple iterations of a contact,
- * namely everything related to tangential overlaps
+ * namely everything related to tangential displacements
  */
 template <int dim>
 struct particle_particle_contact_info
 {
   Particles::ParticleIterator<dim> particle_one;
   Particles::ParticleIterator<dim> particle_two;
-  Tensor<1, 3>                     tangential_overlap;
+  Tensor<1, 3>                     tangential_displacement;
   Tensor<1, 3>                     rolling_resistance_spring_torque;
 };
 
@@ -56,7 +56,7 @@ public:
     , boundary_id(boundary_id)
     , normal_overlap(0)
     , normal_relative_velocity(0)
-    , tangential_overlap({0, 0, 0})
+    , tangential_displacement({0, 0, 0})
     , tangential_relative_velocity({0, 0, 0})
     , rolling_resistance_spring_torque({0, 0, 0})
   {}
@@ -76,7 +76,7 @@ public:
     , boundary_id(0)
     , normal_overlap(0)
     , normal_relative_velocity(0)
-    , tangential_overlap({0, 0, 0})
+    , tangential_displacement({0, 0, 0})
     , tangential_relative_velocity({0, 0, 0})
   {}
 
@@ -86,7 +86,7 @@ public:
   types::boundary_id               boundary_id;
   double                           normal_overlap;
   double                           normal_relative_velocity;
-  Tensor<1, 3>                     tangential_overlap;
+  Tensor<1, 3>                     tangential_displacement;
   Tensor<1, 3>                     tangential_relative_velocity;
   Tensor<1, 3>                     rolling_resistance_spring_torque;
 };

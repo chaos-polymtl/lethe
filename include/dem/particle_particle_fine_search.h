@@ -14,7 +14,7 @@ using namespace dealii;
  * @brief Iterates over a vector of maps (pairs_in_contact) to see if the
  * particles which were in contact in the last time step, are still in contact
  * or not. If they are still in contact it will update the collision info,
- * including tangential overlap, based on new properties of the particle pair,
+ * including tangential displacement, based on new properties of the particle pair,
  * if they are not in contact anymore it will delete the pair from the
  * pairs_in_contact and also its information from pairs_in_contact_info.
  * Then it iterates over the contact candidates from broad search to see if

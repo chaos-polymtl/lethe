@@ -308,16 +308,16 @@ protected:
       contact_relative_velocity -
       (normal_relative_velocity_value * normal_unit_vector);
 
-    // Calculation of new tangential_overlap, since this value is history-
+    // Calculation of new tangential_displacement, since this value is history-
     // dependent it needs the value at previous time-step. This variable is the
     // main reason that we have iteration over  two different vectors :
-    // tangential_overlap of the particles which were already in contact needs
-    // to modified using its history, while the tangential_overlaps of new
+    // tangential_displacement of the particles which were already in contact needs
+    // to modified using its history, while the tangential_displacements of new
     // particles are equal to zero
     // delta_t_new = delta_t_old + v_rt*dt
-    contact_info.tangential_overlap += tangential_relative_velocity * dt;
-    contact_info.tangential_overlap -=
-      (contact_info.tangential_overlap * normal_unit_vector) *
+    contact_info.tangential_displacement += tangential_relative_velocity * dt;
+    contact_info.tangential_displacement -=
+      (contact_info.tangential_displacement * normal_unit_vector) *
       normal_unit_vector;
   }
 
@@ -807,7 +807,7 @@ private:
       tangential_damping_constant * tangential_relative_velocity;
 
     tangential_force =
-      (tangential_spring_constant * contact_info.tangential_overlap) +
+      (tangential_spring_constant * contact_info.tangential_displacement) +
       damping_tangential_force;
 
     double coulomb_threshold = friction_coeff * normal_force_value;
@@ -815,21 +815,21 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential overlap is recalculated from
+        // Gross sliding occurs and the tangential displacement is recalculated from
         // the tangential force limited to Coulomb's criterion
         const Tensor<1, 3> limited_tangential_force =
           coulomb_threshold *
           (tangential_force / (tangential_force.norm() + DBL_MIN));
 
-        // Calculate the tangential overlap from the limited tangential force
+        // Calculate the tangential displacement from the limited tangential force
         // minus the spring tangential force divided by the spring constant.
-        contact_info.tangential_overlap =
+        contact_info.tangential_displacement =
           (limited_tangential_force - damping_tangential_force) /
           (tangential_spring_constant + DBL_MIN);
 
-        // Recalculate the tangential force using the new tangential overlap.
+        // Recalculate the tangential force using the new tangential displacement.
         tangential_force =
-          (tangential_spring_constant * contact_info.tangential_overlap) +
+          (tangential_spring_constant * contact_info.tangential_displacement) +
           damping_tangential_force;
       }
 
@@ -857,7 +857,7 @@ private:
   /**
    * @brief Calculate the particle-particle non-linear contact force and torque
    * based on the updated values in contact_info. It uses the Hertz-Mindlin
-   * contact model. If gross sliding occurs, the tangential overlap is
+   * contact model. If gross sliding occurs, the tangential displacement is
    * recalculated from the limited tangential to the Coulomb's criterion.
    *
    * @param[in,out] contact_info A container that contains the required
@@ -962,7 +962,7 @@ private:
     Tensor<1, 3> damping_tangential_force =
       tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
-      (tangential_spring_constant * contact_info.tangential_overlap) +
+      (tangential_spring_constant * contact_info.tangential_displacement) +
       damping_tangential_force;
 
     double coulomb_threshold = friction_coeff * normal_force_value;
@@ -970,21 +970,21 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential overlap is recalculated from
+        // Gross sliding occurs and the tangential displacement is recalculated from
         // the tangential force limited to Coulomb's criterion
         const Tensor<1, 3> limited_tangential_force =
           coulomb_threshold *
           (tangential_force / (tangential_force.norm() + DBL_MIN));
 
-        // Calculate the tangential overlap from the limited tangential force
+        // Calculate the tangential displacement from the limited tangential force
         // minus the spring tangential force divided by the spring constant.
-        contact_info.tangential_overlap =
+        contact_info.tangential_displacement =
           (limited_tangential_force - damping_tangential_force) /
           (tangential_spring_constant + DBL_MIN);
 
-        // Recalculate the tangential force using the new tangential overlap.
+        // Recalculate the tangential force using the new tangential displacement.
         tangential_force =
-          (tangential_spring_constant * contact_info.tangential_overlap) +
+          (tangential_spring_constant * contact_info.tangential_displacement) +
           damping_tangential_force;
       }
 
@@ -1012,7 +1012,7 @@ private:
   /**
    * @brief Calculate the particle-particle non-linear contact force and torque
    * based on the updated values in contact_info. It uses the Hertz-Mindlin
-   * contact model. If gross sliding occurs, the tangential overlap and
+   * contact model. If gross sliding occurs, the tangential displacement and
    * tangential force are limited to Coulomb's criterion.
    *
    * @param[in,out] contact_info A container that contains the required
@@ -1114,7 +1114,7 @@ private:
     Tensor<1, 3> damping_tangential_force =
       tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
-      (tangential_spring_constant * contact_info.tangential_overlap) +
+      (tangential_spring_constant * contact_info.tangential_displacement) +
       damping_tangential_force;
 
     double coulomb_threshold = friction_coeff * normal_force_value;
@@ -1122,7 +1122,7 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential overlap and tangential
+        // Gross sliding occurs and the tangential displacement and tangential
         // force are limited to Coulomb's criterion
         tangential_force =
           coulomb_threshold *
@@ -1244,14 +1244,14 @@ private:
 
     // Calculation of tangential force using the spring tangential constant.
     tangential_force =
-      tangential_spring_constant * contact_info.tangential_overlap;
+      tangential_spring_constant * contact_info.tangential_displacement;
 
     double coulomb_threshold = friction_coeff * normal_force_value;
 
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential overlap and tangential
+        // Gross sliding occurs and the tangential displacement and tangential
         // force are limited to Coulomb's criterion
         tangential_force =
           coulomb_threshold *
@@ -1395,7 +1395,7 @@ private:
                    normal_unit_vector;
 
     tangential_force =
-      tangential_spring_constant * contact_info.tangential_overlap +
+      tangential_spring_constant * contact_info.tangential_displacement +
       tangential_damping_constant * tangential_relative_velocity;
 
     // JKR theory says that the coulomb threshold must be modified with the
@@ -1408,7 +1408,7 @@ private:
 
     if (tangential_force.norm() > modified_coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential overlap and tangential
+        // Gross sliding occurs and the tangential displacement and tangential
         // force are limited to Coulomb's criterion
         tangential_force =
           modified_coulomb_threshold *
@@ -1528,7 +1528,7 @@ private:
     else if (normal_overlap > delta_0)
       {
         cohesive_term = -F_po;
-        contact_info.tangential_overlap.clear();
+        contact_info.tangential_displacement.clear();
         contact_info.rolling_resistance_spring_torque.clear();
       }
     // No contact. Particle are far from each other. The cohesive force is not
@@ -1537,7 +1537,7 @@ private:
       {
         cohesive_term = -hamaker_constant * effective_radius /
                         (6. * Utilities::fixed_power<2>(normal_overlap));
-        contact_info.tangential_overlap.clear();
+        contact_info.tangential_displacement.clear();
         contact_info.rolling_resistance_spring_torque.clear();
       }
     normal_force += cohesive_term * normal_unit_vector;
@@ -1965,8 +1965,8 @@ private:
         else
           {
             // If the adjacent pair is not in contact anymore, only the
-            // tangential overlap is set to zero
-            contact_info.tangential_overlap.clear();
+            // tangential displacement is set to zero
+            contact_info.tangential_displacement.clear();
             contact_info.rolling_resistance_spring_torque.clear();
           }
 

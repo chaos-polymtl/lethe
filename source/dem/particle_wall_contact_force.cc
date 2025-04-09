@@ -70,20 +70,20 @@ ParticleWallContactForce<dim, PropertiesIndex>::update_contact_information(
   Tensor<1, 3> tangential_relative_velocity =
     contact_relative_velocity - normal_relative_velocity;
 
-  // Calculation of new tangential_overlap, since this value is
+  // Calculation of new tangential_displacement, since this value is
   // history-dependent it needs the value at previous time-step
   // This variable is the main reason that we have iteration over
   // two different vectors (pairs_in_contact and
-  // contact_pair_candidates): tangential_overlap of the particles
+  // contact_pair_candidates): tangential_displacement of the particles
   // which were already in contact (pairs_in_contact) needs to be
-  // modified using its history, while the tangential_overlaps of
+  // modified using its history, while the tangential_displacements of
   // new particles are equal to zero
-  Tensor<1, 3> modified_tangential_overlap =
-    contact_info.tangential_overlap + tangential_relative_velocity * dt;
+  Tensor<1, 3> modified_tangential_displacement =
+    contact_info.tangential_displacement + tangential_relative_velocity * dt;
 
   // Updating the contact_info container based on the new calculated values
   contact_info.normal_relative_velocity     = normal_relative_velocity_value;
-  contact_info.tangential_overlap           = modified_tangential_overlap;
+  contact_info.tangential_displacement           = modified_tangential_displacement;
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
@@ -136,14 +136,14 @@ ParticleWallContactForce<dim, PropertiesIndex>::
   Tensor<1, 3> tangential_relative_velocity =
     contact_relative_velocity - normal_relative_velocity;
 
-  // Calculate the new tangential_overlap, since this value is
+  // Calculate the new tangential_displacement, since this value is
   // history-dependent, it needs the value at previous time-step
-  Tensor<1, 3> modified_tangential_overlap =
-    contact_info.tangential_overlap + tangential_relative_velocity * dt;
+  Tensor<1, 3> modified_tangential_displacement =
+    contact_info.tangential_displacement + tangential_relative_velocity * dt;
 
   // Updating the contact_info container based on the new calculated values
   contact_info.normal_relative_velocity     = normal_relative_velocity_value;
-  contact_info.tangential_overlap           = modified_tangential_overlap;
+  contact_info.tangential_displacement           = modified_tangential_displacement;
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
