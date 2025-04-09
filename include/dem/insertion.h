@@ -144,6 +144,7 @@ protected:
     const DEMSolverParameters<dim>   &dem_parameters,
     const unsigned int               &inserted_this_step_this_proc,
     const unsigned int               &current_inserting_particle_type,
+    const std::vector<Point<dim>>    &insertion_points,
     std::vector<std::vector<double>> &particle_properties);
 
   /**

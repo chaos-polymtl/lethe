@@ -204,6 +204,7 @@ namespace Parameters
           &thermal_accommodation_particle);
     };
 
+    template <int dim>
     struct InsertionInfo
     {
       // Insertion method
@@ -248,8 +249,9 @@ namespace Parameters
       Point<3> insertion_box_point_1, insertion_box_point_2;
       // Insertion initial velocity conditions
       Tensor<1, 3> initial_vel, initial_omega;
-      // Insertion initial temperature
-      double initial_T;
+      // Function that returns the initial temperature of a particle based on
+      // time or its position.
+      std::shared_ptr<Function<dim>> initial_temperature_function;
       // Insertion distance threshold
       double distance_threshold;
       // Insertion random number range
