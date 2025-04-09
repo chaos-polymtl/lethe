@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
-This code  rearranges the output of the simplex mesh simulations to match the hierarchy and formatting of that obtained for the quad mesh. The simulations generate 
+This code rearranges the output of the simplex mesh simulations to match the hierarchy and formatting of that obtained for the quad mesh. The simulations generate 
 initially a separate folder and output file for each mesh resolution and each pair of velocity and pressure shape functions. This code reorganizes all of the folders 
 into a new folder structure where each folder corresponds to a pair of velocity and pressure shape functions and contains a L2Error.dat file that contains the error
 for the different mesh resolutions, similar to the one obtained when using mesh adaptation with the quadrilateral mesh.

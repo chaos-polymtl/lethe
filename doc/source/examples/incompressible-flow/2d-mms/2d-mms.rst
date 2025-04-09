@@ -37,7 +37,7 @@ Description of the Case
 Numerical models require both verification and validation. While code verification ensures that the mathematical and numerical schemes are consistent and that the code implementation is free from programming errors, code validation focuses on verifying the agreement of the mathematical model with the underlying physics. The Method of Manufactured Solution (MMS, see Roache (2002) [#Roache2002]_) is employed for code verification and involves evaluating the error defined as the difference between the manufactured solution and the computed solution. Specifically, the MMS can be used to verify or determine the order of convergence of a solver.
 Obviously, few exact analytical solution of the incompressible Navier-Stokes (NS) equations are known. Therefore, the following procedure is adopted:
 
-- The manufactured solution is chosen such that all terms of the NS equations are non-trivial and non-singular. In other terms, the manufactured solution must be at least twice differentiable, with both its first and second derivatives being non-trivial. The manufactured solution can vary in complexity.
+- The manufactured solution is chosen such that all terms of the NS equations are non-trivial and non-singular. In other words, the manufactured solution must be at least twice differentiable, with both its first and second derivatives being non-trivial. The manufactured solution can vary in complexity.
 - Once the manufactured solution is defined, it is substituted into the steady incompressible NS equations, leading to the appearance of source terms. Hence, the manufactured solution is the exact solution of the original equations if the source term is added. 
 - The simulations are launched with different mesh resolutions and for different degrees of the polynomial approximations of the velocity and pressure.
 - The order of convergence is calculated by measuring the error between the numerical solution and the manufactured solution.
@@ -71,7 +71,7 @@ where :math:`\nu` is the kinematic viscosity.
 Parameter File
 --------------
 
-The simulations are conducted on the domain :math:`\Omega = [-1,1] \times [-1,1]` using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh). The polynomial degree :math:`k_v` of the velocity interpolation was varied from :math:`k_v=1` to :math:`k_v=3` for the quadrilateral mesh, and from :math:`k_v=1` to :math:`k_v=2` for the triangular mesh, as deal.II does not yet support higher-order polynomials for simplex mesh elements. Additionally, for each velocity approximation degree :math:`k_v`, the pressure field polynomial degree :math:`k_p` ranged from :math:`k_p=1`  up to  :math:`k_p = k_v` . Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.
+The simulations are conducted on the domain :math:`\Omega = [-1,1] \times [-1,1]` using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh). The polynomial degree :math:`k_v` of the velocity interpolation was varied from :math:`k_v=1` to :math:`k_v=3` for the quadrilateral mesh, and from :math:`k_v=1` to :math:`k_v=2` for the triangular mesh, as deal.II does not yet support higher-order polynomials for simplex mesh elements. Additionally, for each velocity approximation degree :math:`k_v`, the pressure field polynomial degree :math:`k_p` ranged from :math:`k_p=1`  up to  :math:`k_p = k_v`. Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.
 
 Since several parameter files are needed with a common syntax, except for the three parameters varied, a `parameter file template <https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html>`_ is employed for automated file launch.
 
@@ -113,7 +113,7 @@ For a mesh with quadrilateral cells, the initial level of refinement is set to 4
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The velocity components are set to zero on the entire boundary to match the manufactured solution. However, different values or analytical functions can be prescribed for the velocity on various boundary sections, depending on the chosen manufactured solution. Additionally, the order of convergence of the numerical scheme can be analyzed for different types of boundary conditions (see `Boundary Conditions - CFD <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_).
+The velocity components are set to zero on the entire boundary to match the manufactured solution. However, if the manufactured solution requires varying velocity conditions on different parts of the boundary, specific values or analytical functions can be assigned to the corresponding boundary section. Thus, each boundary section must have a unique ID and be linked to the correct boundary condition in the parameter file. Additionally, the order of convergence of the numerical scheme can be analyzed for different types of boundary conditions (see `Boundary Conditions - CFD <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_).
 
 .. code-block:: text
 
@@ -137,7 +137,6 @@ For this analysis, the Reynolds number (based on the maximum velocity in the dom
         set kinematic viscosity = 1
       end
     end
-
 
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
@@ -190,12 +189,11 @@ while the second one launches the simulations. The run time for the mesh with qu
 
 As mentioned in section :ref:`Mesh_section`, for the quadrilateral mesh, for each combination of velocity and pressure polynomial approximations, the mesh is refined automatically in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions containing the corresponding parameter file is created. Within each folder, the results corresponding to the different mesh resolutions are stored in a single ``L2Error.dat``. This is not the case for the simplex mesh, where a parameter file and an output file are created within a separate folder for each combination of velocity and pressure approximations and mesh resolution.
 
-Once the simulations are completed,  the script ``organize_output.py`` must be run to rearrange the results for a triangular mesh into a folder structure similar to that obtained for the quadrilateral mesh. After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single ``L2Error.dat`` file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.
+Once the simulations are completed, the script ``organize_output.py`` must be run to rearrange the results for a triangular mesh into a folder structure similar to that obtained for the quadrilateral mesh. After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single ``L2Error.dat`` file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.
 
 -----------------------
 Results and Discussion
 -----------------------
-
 
 The following figures show the :math:`L^2` norm of the error relative to the analytical solution for the velocity and pressure fields as a function of the mesh size :math:`h`. The error is defined as follows:
 
@@ -241,7 +239,6 @@ Possibilities for Extension
 - **Use more complex analytical functions:**  Using a non-divergence free velocity field leads to the apperance of a source term in the mass conservation equation, as well as the contribution of all the components of the stress tensor in the momentum conservation equations. More complex manufactured solutions may be found in Blais and Bertrand (2015) [#Blais2015]_.
 
 - **Unsteady equations:** Using the transient form of the equations with a manufactured solution that also depends on time provides insight into the convergence in time.
-
 
 -----------
 References
