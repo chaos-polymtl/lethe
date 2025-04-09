@@ -5,6 +5,7 @@
 #define lethe_interface_tools_h
 
 #include <core/lethe_grid_tools.h>
+#include <core/solutions_output.h>
 #include <core/utilities.h>
 #include <core/vector.h>
 
@@ -307,6 +308,71 @@ namespace InterfaceTools
                                       &interface_reconstruction_cells,
     std::set<types::global_dof_index> &intersected_dofs);
 
+
+  template <int dim>
+  class InterfaceReconstructionDataOutInterface
+    : public dealii::DataOutInterface<0, dim>
+  {
+  public:
+    InterfaceReconstructionDataOutInterface();
+
+    void
+    build_patches(
+      const std::map<types::global_cell_index, std::vector<Point<dim>>>
+        &interface_reconstruction_vertices);
+
+  private:
+    const std::vector<DataOutBase::Patch<0, dim>> &
+    get_patches() const override;
+
+    std::vector<std::string>
+    get_dataset_names() const override;
+
+    /// Output information that is filled by build_patches() and
+    /// written by the write function of the base class.
+    std::vector<DataOutBase::Patch<0, dim>> patches;
+
+    /// A list of field names for all data components stored in patches.
+    std::vector<std::string> dataset_names;
+  };
+
+  template <int dim>
+  InterfaceReconstructionDataOutInterface<
+    dim>::InterfaceReconstructionDataOutInterface()
+  {}
+
+  template <int dim>
+  void
+  InterfaceReconstructionDataOutInterface<dim>::build_patches(
+    const std::map<types::global_cell_index, std::vector<Point<dim>>>
+      &interface_reconstruction_vertices)
+  {
+    for (auto const &cell : interface_reconstruction_vertices)
+      {
+        std::vector<Point<dim>> vertices = cell.second;
+        for (const Point<dim> &vertex : vertices)
+          {
+            DataOutBase::Patch<0, dim> temp;
+            temp.vertices[0] = vertex;
+            patches.push_back(temp);
+          }
+      }
+  }
+
+  template <int dim>
+  const std::vector<DataOutBase::Patch<0, dim>> &
+  InterfaceReconstructionDataOutInterface<dim>::get_patches() const
+  {
+    return patches;
+  }
+
+  template <int dim>
+  std::vector<std::string>
+  InterfaceReconstructionDataOutInterface<dim>::get_dataset_names() const
+  {
+    return dataset_names;
+  }
+
   /**
    * @brief Solver to compute the signed distance from a given level of a level-set field. It is based on the method proposed in the following article: Ausas, R.F., Dari, E.A. and Buscaglia, G.C. (2011), A geometric mass-preserving redistancing scheme for the level set function. Int. J. Numer. Meth. Fluids, 65: 989-1010. https://doi.org/10.1002/fld.2227.
    *
@@ -408,12 +474,28 @@ namespace InterfaceTools
     void
     output_interface_reconstruction(const std::string  output_name,
                                     const std::string  output_path,
-                                    const unsigned int it) const;
+                                    const double       time,
+                                    const unsigned int it);
+
+    /**
+     * @brief Output the signed distance field
+     *
+     * @param[in] output_name name of the output file
+     *
+     * @param[in] output_path path to the output file
+     *
+     * @param[in] it iteration number
+     *
+     */
+    void
+    output_signed_distance(const std::string  output_name,
+                           const std::string  output_path,
+                           const double       time,
+                           const unsigned int it);
 
     /**
      * @brief Attach the solution vector to the DataOut provided. This function
-     * enable the auxiliary physics to output their solution via the background
-     * solver.
+     * enable to output the signed ditance solution via the background solver.
      *
      * @param[in,out] data_out DataOut responsible for solution output
      */
@@ -836,6 +918,12 @@ namespace InterfaceTools
 
     /// Set of DoFs belonging to intersected cells
     std::set<types::global_dof_index> intersected_dofs;
+
+    /// PVDHandler for interface reconstruction
+    PVDHandler pvd_handler_reconstruction;
+
+    /// PVDHandler for signed distance
+    PVDHandler pvd_handler_signed_distance;
   };
 } // namespace InterfaceTools
 
