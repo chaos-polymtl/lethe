@@ -44,8 +44,8 @@ update_contact_container_iterators(
 {
   // Get trigger for clearing contact structures
   auto      *action_manager = DEMActionManager::get_action_manager();
-  const bool clear_tangential_overlap =
-    action_manager->check_clear_tangential_overlap();
+  const bool clear_tangential_displacement =
+    action_manager->check_clear_tangential_displacement();
 
   // Loop over particle-object (particle/wall/line/point) pairs in contact
   for (auto pairs_in_contact_iterator = pairs_in_contact.begin();
@@ -118,9 +118,9 @@ update_contact_container_iterators(
                   adjacent_map_iterator->second.particle_two =
                     particle_two_container->second;
 
-                  if (clear_tangential_overlap)
+                  if (clear_tangential_displacement)
                     {
-                      adjacent_map_iterator->second.tangential_overlap.clear();
+                      adjacent_map_iterator->second.tangential_displacement.clear();
                       adjacent_map_iterator->second
                         .rolling_resistance_spring_torque.clear();
                     }
