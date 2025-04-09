@@ -417,26 +417,72 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle,
                     rotor_temp_tria);
 
-  // Check manifold IDs at rotor boundary
-  std::set<unsigned int> rotor_boundary_manifold_ids;
-  // Shift rotor boundary IDs #
-  for (const auto &face : rotor_temp_tria.active_face_iterators())
-    if (face->at_boundary())
-      {
-        face->set_boundary_id(face->boundary_id() +
-                              stator_temp_tria.get_boundary_ids().size());
-        if (face->manifold_id() != numbers::flat_manifold_id)
-          rotor_boundary_manifold_ids.insert(face->manifold_id());
-      }
+  // Get stator manifold ids without flat id
+  unsigned int stator_ids_no_flat = 0;
+  for (const auto &id : stator_temp_tria.get_manifold_ids())
+  {
+    if (id != numbers::flat_manifold_id)
+      stator_ids_no_flat++;
+  }
 
-  // Check manifold IDs at stator boundary
-  std::set<unsigned int> stator_boundary_manifold_ids;
+  // Get rotor manifold ids without flat id
+  unsigned int rotor_ids_no_flat = 0;
+  for (const auto &id : rotor_temp_tria.get_manifold_ids())
+  {
+    if (id != numbers::flat_manifold_id)
+      rotor_ids_no_flat++;
+  }
+
+  // Faces at rotor-stator interface
+  unsigned int n_faces_rotor_interface = 0;
+  unsigned int n_faces_stator_interface = 0;
+
+  // Shift rotor boundary IDs #
+  // Shift rotor face manifold IDs # 
+  // Check number of faces at rotor interface with stator
+  for (const auto &face : rotor_temp_tria.active_face_iterators())
+    {
+      if (face->at_boundary())
+        {
+          face->set_boundary_id(face->boundary_id() +
+                              stator_temp_tria.get_boundary_ids().size());
+          if(face->boundary_id() == mortar_parameters.rotor_boundary_id)
+            n_faces_rotor_interface++;
+        }
+      if (face->manifold_id() != numbers::flat_manifold_id)
+        face->set_manifold_id(face->manifold_id() + stator_ids_no_flat);
+    }
+
+  // Shift rotor cell manifold IDs #
+  for (const auto &cell : rotor_temp_tria.active_cell_iterators())
+  {
+    if (cell->manifold_id() != numbers::flat_manifold_id)
+      cell->set_manifold_id(cell->manifold_id() + stator_ids_no_flat);
+  }
+
+  // Check number of faces at stator interface with rotor
   for (const auto &face : stator_temp_tria.active_face_iterators())
+  {
     if (face->at_boundary())
       {
-        if (face->manifold_id() != numbers::flat_manifold_id)
-          stator_boundary_manifold_ids.insert(face->manifold_id());
+        if(face->boundary_id() == mortar_parameters.stator_boundary_id)
+          n_faces_stator_interface++;
       }
+  }
+
+  AssertThrow(n_faces_rotor_interface == n_faces_stator_interface,
+              ExcMessage("The number of faces at the rotor interface ID #" + 
+                std::to_string(mortar_parameters.rotor_boundary_id) + 
+                " is different from the number of faces at the stator interface ID #" +
+                std::to_string(mortar_parameters.stator_boundary_id) + "."));
+
+  // Store rotor manifolds in shifted IDs #
+  for(unsigned int m = 0; m < rotor_temp_tria.get_manifold_ids().size(); m++)
+  {
+    unsigned int temp = rotor_temp_tria.get_manifold_ids()[m];
+    if (temp != numbers::flat_manifold_id)
+      rotor_temp_tria.set_manifold(m+1, rotor_temp_tria.get_manifold(m));
+  }
 
   // Merge triangulations
   GridGenerator::merge_triangulations(
@@ -448,14 +494,14 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 
   // Attach manifolds to merged triangulation
   unsigned int n = 0;
-  for (unsigned int i = 0; i < rotor_boundary_manifold_ids.size(); i++)
+  for (unsigned int i = 0; i < stator_ids_no_flat; i++)
     {
-      triangulation.set_manifold(n, rotor_temp_tria.get_manifold(i));
+      triangulation.set_manifold(n, stator_temp_tria.get_manifold(i));
       n++;
     }
-  for (unsigned int j = 0; j < stator_boundary_manifold_ids.size(); j++)
+  for (unsigned int j = stator_ids_no_flat; j < stator_ids_no_flat + rotor_ids_no_flat; j++)
     {
-      triangulation.set_manifold(n, stator_temp_tria.get_manifold(j));
+      triangulation.set_manifold(n, rotor_temp_tria.get_manifold(j));
       n++;
     }
 
