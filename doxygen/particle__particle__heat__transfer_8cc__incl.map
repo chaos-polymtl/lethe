@@ -1,0 +1,17 @@
+<map id="/home/runner/work/lethe/lethe/source/dem/particle_particle_heat_transfer.cc" name="/home/runner/work/lethe/lethe/source/dem/particle_particle_heat_transfer.cc">
+<area shape="rect" id="Node000001" title=" " alt="" coords="288,5,480,60"/>
+<area shape="rect" id="Node000002" href="$particle__particle__heat__transfer_8h.html" title=" " alt="" coords="304,108,464,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="387,60,387,94,381,94,381,60"/>
+<area shape="rect" id="Node000003" href="$auxiliary__math__functions_8h.html" title=" " alt="" coords="5,196,157,236"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="318,151,162,195,160,190,317,145"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="181,196,328,236"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="357,150,296,190,293,186,354,146"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="353,203,415,229"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="387,148,387,189,381,189,381,148"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="439,203,502,229"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="405,146,451,191,447,195,401,150"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="527,203,607,229"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="425,146,531,195,529,200,423,150"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="52,284,111,309"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="84,236,84,270,79,270,79,236"/>
+</map>
