@@ -64,6 +64,7 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
   const DEMSolverParameters<dim>   &dem_parameters,
   const unsigned int               &inserted_this_step_this_proc,
   const unsigned int               &current_inserting_particle_type,
+  const std::vector<Point<dim>>    &insertion_points,
   std::vector<std::vector<double>> &particle_properties)
 {
   // Clearing and resizing particle_properties
@@ -104,7 +105,9 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
       if constexpr (std::is_same_v<PropertiesIndex,
                                    DEM::DEMMPProperties::PropertiesIndex>)
         {
-          double T = dem_parameters.insertion_info.initial_T;
+          double T =
+            dem_parameters.insertion_info.initial_temperature_function->value(
+              insertion_points[particle_counter]);
           double specific_heat =
             physical_properties
               .specific_heat_particle[current_inserting_particle_type];

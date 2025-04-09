@@ -68,7 +68,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
     0.5 * (parameters.insertion_info.distance_threshold - 1);
 
   if (parameters.insertion_info.insertion_method ==
-        Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume &&
+        Parameters::Lagrangian::InsertionInfo<dim>::InsertionMethod::volume &&
       parameters.insertion_info.insertion_maximum_offset >=
         insertion_distance_per_particle)
     pcout

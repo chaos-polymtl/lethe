@@ -142,6 +142,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       this->assign_particle_properties(dem_parameters,
                                        this->inserted_this_step_this_proc,
                                        current_inserting_particle_type,
+                                       insertion_points_on_proc,
                                        particle_properties);
 
       // Insert the particles using the points and assigned properties
@@ -180,11 +181,11 @@ InsertionVolume<dim, PropertiesIndex>::create_random_number_container(
 template <int dim, typename PropertiesIndex>
 void
 InsertionVolume<dim, PropertiesIndex>::find_insertion_location_volume(
-  Point<dim>                                  &insertion_location,
-  const unsigned int                           id,
-  const double                                 random_number1,
-  const double                                 random_number2,
-  const Parameters::Lagrangian::InsertionInfo &insertion_information)
+  Point<dim>                                       &insertion_location,
+  const unsigned int                                id,
+  const double                                      random_number1,
+  const double                                      random_number2,
+  const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information)
 {
   std::vector<int> insertion_index;
   insertion_index.resize(dim);

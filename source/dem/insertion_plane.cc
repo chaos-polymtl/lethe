@@ -270,18 +270,9 @@ InsertionPlane<dim, PropertiesIndex>::insert(
           empty_cells_on_proc.erase(it); // Erase the first element
         }
 
-      // A vector of vectors, which contains all the properties of all inserted
-      // particles at each insertion step
-      std::vector<std::vector<double>> particle_properties;
-
-      this->assign_particle_properties(
-        dem_parameters,
-        number_of_particles_to_insert_on_this_core,
-        current_inserting_particle_type,
-        particle_properties);
-
-      // This is to iterate over the particle_properties vector
-      unsigned int i = 0;
+      std::vector<Point<dim>> insertion_points_on_proc;
+      insertion_points_on_proc.reserve(
+        number_of_particles_to_insert_on_this_core);
 
       // Loop over the empty cells we have kept.
       for (const auto &cell : empty_cells_on_proc)
@@ -302,6 +293,29 @@ InsertionPlane<dim, PropertiesIndex>::insert(
               insertion_location(2) +=
                 static_cast<double>(rand()) * maximum_range_for_randomness;
             }
+
+          insertion_points_on_proc.push_back(insertion_location);
+        }
+
+      // A vector of vectors, which contains all the properties of all inserted
+      // particles at each insertion step
+      std::vector<std::vector<double>> particle_properties;
+
+      this->assign_particle_properties(
+        dem_parameters,
+        number_of_particles_to_insert_on_this_core,
+        current_inserting_particle_type,
+        insertion_points_on_proc,
+        particle_properties);
+
+      // This is to iterate over the particle_properties vector
+      unsigned int i = 0;
+
+      // Insert the particles using the points and assigned properties
+      for (const auto &cell : empty_cells_on_proc)
+        {
+          // Use the pre-calculated insertion positions
+          Point<dim> insertion_location = insertion_points_on_proc[i];
 
           // Insertion
           Point<dim> ref_point;
