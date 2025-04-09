@@ -185,7 +185,7 @@ public:
         *matrix_free.get_mapping_info().mapping,
         matrix_free.get_dof_handler(),
         matrix_free.get_affine_constraints(),
-        matrix_free.get_quadrature(),
+        construct_quadrature(matrix_free.get_quadrature()),
         n_subdivisions,
         radius,
         rotate_pi,
@@ -351,6 +351,21 @@ protected:
 
   std::shared_ptr<CouplingOperator<dim, n_components, Number>>
     coupling_operator;
+
+private:
+  static Quadrature<dim>
+  construct_quadrature(const Quadrature<dim> &quad)
+  {
+    const double oversamling_factor = 2.0; // make parameter
+
+    for (unsigned int i = 1; i <= 10; ++i)
+      if (quad == QGauss<dim>(i))
+        return QGauss<dim>(i * oversamling_factor);
+
+    AssertThrow(false, ExcNotImplemented());
+
+    return quad;
+  }
 };
 
 
