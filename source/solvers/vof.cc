@@ -805,6 +805,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       // Set column names according to dim for volume and mass values
       std::string volume_column_name;
       std::string mass_column_name;
+      
+      std::string geometric_volume_column_name;
 
       // To display when verbose
       std::vector<std::string> dependent_column_names;
@@ -829,7 +831,13 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             }
         }
 
-
+      // Compute geometric outside volume (fluid 0)
+      const double geometric_volume_outside = InterfaceTools::compute_volume(*mapping, dof_handler,*fe,this->present_solution,0.5, mpi_communicator);
+      // Compute geometric inside volume (fluid 1)
+      const double global_volume =
+        GridTools::volume(*this->triangulation, *this->mapping);
+      const double geometric_volume_inside = global_volume - geometric_volume_outside;
+      
       for (unsigned int i = 0; i < n_fluids; i++)
         {
           // Calculate volume and mass
@@ -868,6 +876,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 {
                   volume_column_name = "surface_" + fluid_id;
                   mass_column_name   = "mass_per_length_" + fluid_id;
+                  geometric_volume_column_name = "geometric_surface_" + fluid_id;
                 }
               else if constexpr (dim == 3)
                 {
@@ -880,7 +889,18 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                    this->volume_monitored);
               this->table_monitoring_vof.set_scientific(volume_column_name,
                                                         true);
-
+              // Add "geometric surface" or "geometric volume" column
+              if (fluid_id == "fluid_1")
+              {
+                this->table_monitoring_vof.add_value(geometric_volume_column_name, geometric_volume_inside);
+                this->table_monitoring_vof.set_scientific(geometric_volume_column_name, true);
+              }
+              else
+              {
+                this->table_monitoring_vof.add_value(geometric_volume_column_name, geometric_volume_outside);
+                this->table_monitoring_vof.set_scientific(geometric_volume_column_name, true);
+              }
+              
               // Add "mass per length" or "mass" column
               this->table_monitoring_vof.add_value(mass_column_name,
                                                    this->mass_monitored);
@@ -2457,8 +2477,8 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(const GlobalVectorType
   GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
 
   const double tanh_thickness =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .geometric_interface_reinitialization.tanh_thickness;
+    this->simulation_parameters.multiphysics.vof_parameters.regularization_method
+          .geometric_interface_reinitialization.tanh_thickness;
 
   for (auto p : this->locally_owned_dofs)
     {
@@ -2483,8 +2503,8 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(const GlobalVectorType
   GlobalVectorType solution_owned(this->locally_owned_dofs, mpi_communicator);
 
   const double tanh_thickness =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .geometric_interface_reinitialization.tanh_thickness;
+    this->simulation_parameters.multiphysics.vof_parameters.regularization_method
+          .geometric_interface_reinitialization.tanh_thickness;
       
   for (auto p : this->locally_owned_dofs)
     {
@@ -2508,12 +2528,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
   GlobalVectorType previous_level_set(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   
-  if (simulation_parameters.multiphysics.vof_parameters
-    .geometric_interface_reinitialization.reinitialization_frequency != 1)
-    for (auto &previous_solution : previous_solutions)
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method.frequency != 1)
     {
-      
-      compute_level_set_from_phase_fraction(previous_solution, previous_level_set);
+      compute_level_set_from_phase_fraction(this->previous_solutions[0], previous_level_set);
 
       signed_distance_solver->set_level_set_from_background_mesh(dof_handler,
                                                                  previous_level_set);
@@ -2529,7 +2546,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
       previous_level_set = previous_level_set_owned;
 
-      compute_phase_fraction_from_level_set(previous_level_set, previous_solution);
+      compute_phase_fraction_from_level_set(previous_level_set, this->previous_solutions[0]);
     }
 
   compute_level_set_from_phase_fraction(this->present_solution, this->level_set);
