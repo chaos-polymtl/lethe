@@ -71,9 +71,9 @@ test()
   mortar.rotor_mesh->rotation_angle = 3.0;
   mortar.rotor_mesh->scale          = 1;
   mortar.rotor_mesh->simplex        = false;
-  mortar.rotor_boundary_id          = 0;
   mortar.stator_boundary_id         = 4;
-
+  mortar.rotor_boundary_id          = 5; // after shifting
+  
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> merged_tria(comm);
 
