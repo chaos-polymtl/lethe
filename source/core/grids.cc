@@ -481,7 +481,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   {
     unsigned int temp = rotor_temp_tria.get_manifold_ids()[m];
     if (temp != numbers::flat_manifold_id)
-      rotor_temp_tria.set_manifold(m+1, rotor_temp_tria.get_manifold(m));
+      rotor_temp_tria.set_manifold(m+stator_ids_no_flat, rotor_temp_tria.get_manifold(m));
   }
 
   // Merge triangulations
