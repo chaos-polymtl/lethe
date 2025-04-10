@@ -1795,10 +1795,6 @@ namespace Parameters
     unsigned int rotor_boundary_id;
     // Boundary ID # of the stator at the rotor-stator interface
     unsigned int stator_boundary_id;
-    // Number of faces at the rotor side of the mortar interface
-    unsigned int n_faces_rotor_interface;
-    // Number of faces at the stator side of the mortar interface
-    unsigned int n_faces_stator_interface;
 
     void
     declare_parameters(ParameterHandler &prm);
