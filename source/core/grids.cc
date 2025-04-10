@@ -476,8 +476,12 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       "The number of faces at the rotor interface ID #" +
       std::to_string(mortar.rotor_boundary_id) +
       " is different from the number of faces at the stator interface ID #" +
-      std::to_string(mortar_parameters.stator_boundary_id) + "."));
+      std::to_string(mortar.stator_boundary_id) + "."));
 
+  // Store number of faces at the rotor-stator interface in the mortar structure
+  mortar.n_faces_rotor_interface = n_faces_rotor_interface;
+  mortar.n_faces_stator_interface = n_faces_stator_interface;
+  
   // Store rotor manifolds in shifted IDs #
   for (unsigned int m = 0; m < rotor_temp_tria.get_manifold_ids().size(); m++)
     {
