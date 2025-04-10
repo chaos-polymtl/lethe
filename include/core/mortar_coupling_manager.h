@@ -174,7 +174,8 @@ public:
 
         return points;
       }
-    else // point at the inner boundary lies somewhere in the face of the outer boundary cell
+    else // point at the inner boundary lies somewhere in the face of the outer
+         // boundary cell
       {
         // rad_0: first cell vertex (fixed)
         // rad_1: shifted vertex
@@ -263,7 +264,7 @@ public:
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
    * @param[in] rad Angular coordinate of cell center
-   * @param[out] points Angular weights of quadrature points of the cell 
+   * @param[out] points Angular weights of quadrature points of the cell
    */
   std::vector<double>
   get_weights(const double &rad) const
