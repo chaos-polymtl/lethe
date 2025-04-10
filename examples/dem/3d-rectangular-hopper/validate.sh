@@ -7,19 +7,6 @@
 # Load the validation functions
 . ../../../contrib/validation/validation_functions.sh
 
-# Function to display ... animation
-show_animation() {
-    local message=$2
-    local dots=("")
-    while kill -0 $1 2>/dev/null; do
-        for i in ".  " ".. " "..." "   "; do
-            printf "\r%s%s " "$message" "$i"
-            sleep 0.5
-        done
-    done
-    printf "\n" # Ensure a new line after the loop
-}
-
 # Store filenames of all plots in a variable (space-seperated)
 plots="hopper-flow-rate.pdf"
 
@@ -34,8 +21,6 @@ n_proc=16
 
 # Parse command-line arguments
 parse_command_line "$@"
-
-
 
 folder="$output_root/3d-rectangular-hopper"
 action="mpirun -np $n_proc lethe-particles hopper.prm" 
