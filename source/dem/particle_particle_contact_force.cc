@@ -53,8 +53,8 @@ ParticleParticleContactForce<dim,
     std::vector<Tensor<1, 3>> &force,
     std::vector<double>       &heat_transfer_rate)
 {
-  // Calculating the contact forces and heat transfer rates for local-local adjacent
-  // particles.
+  // Calculating the contact forces and heat transfer rates for local-local
+  // adjacent particles.
   for (auto &&adjacent_particles_list :
        local_adjacent_particles | boost::adaptors::map_values)
     {
@@ -62,8 +62,8 @@ ParticleParticleContactForce<dim,
         adjacent_particles_list, torque, force, heat_transfer_rate, dt);
     }
 
-  // Calculating the contact forces and heat transfer rates for local-ghost adjacent
-  // particles.
+  // Calculating the contact forces and heat transfer rates for local-ghost
+  // adjacent particles.
   for (auto &&adjacent_particles_list :
        ghost_adjacent_particles | boost::adaptors::map_values)
     {
@@ -71,34 +71,46 @@ ParticleParticleContactForce<dim,
         adjacent_particles_list, torque, force, heat_transfer_rate, dt);
     }
 
-  // Calculating the contact forces and heat transfer rates for local-local periodic
-  // adjacent particles.
+  // Calculating the contact forces and heat transfer rates for local-local
+  // periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
        local_local_periodic_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<
         ContactType::local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, heat_transfer_rate, dt);
+        periodic_adjacent_particles_list,
+        torque,
+        force,
+        heat_transfer_rate,
+        dt);
     }
 
-  // Calculating the contact forces and heat transfer rates for local-ghost periodic
-  // adjacent particles.
+  // Calculating the contact forces and heat transfer rates for local-ghost
+  // periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
        local_ghost_periodic_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<
         ContactType::ghost_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, heat_transfer_rate, dt);
+        periodic_adjacent_particles_list,
+        torque,
+        force,
+        heat_transfer_rate,
+        dt);
     }
 
-  // Calculating the contact forces and heat transfer rates for ghost-local periodic
-  // adjacent particles.
+  // Calculating the contact forces and heat transfer rates for ghost-local
+  // periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
        ghost_local_periodic_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<
         ContactType::ghost_local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, heat_transfer_rate, dt);
+        periodic_adjacent_particles_list,
+        torque,
+        force,
+        heat_transfer_rate,
+        dt);
     }
 }
 
@@ -128,8 +140,8 @@ ParticleParticleContactForce<dim,
 {
   std::vector<double> heat_transfer_rate;
 
-  // Calling calculate_particle_particle_contact_force_and_heat_transfer_rate with
-  // empty heat_transfer_rate
+  // Calling calculate_particle_particle_contact_force_and_heat_transfer_rate
+  // with empty heat_transfer_rate
   calculate_particle_particle_contact_force_and_heat_transfer_rate(
     local_adjacent_particles,
     ghost_adjacent_particles,

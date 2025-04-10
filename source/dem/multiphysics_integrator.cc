@@ -15,9 +15,9 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
        ++particle)
     {
       const types::particle_index particle_id = particle->get_local_index();
-      auto         particle_properties        = particle->get_properties();
-      double      &particle_heat_transfer_rate     = heat_transfer_rate[particle_id];
-      double       particle_heat_source       = heat_source[particle_id];
+      auto    particle_properties             = particle->get_properties();
+      double &particle_heat_transfer_rate     = heat_transfer_rate[particle_id];
+      double  particle_heat_source            = heat_source[particle_id];
       const double mass_inverse =
         1 / particle_properties[PropertiesIndex::mass];
       const double specific_heat_inverse =
@@ -25,8 +25,8 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
 
       // Integration
       particle_properties[PropertiesIndex::T] +=
-        dt * (particle_heat_transfer_rate + particle_heat_source) * mass_inverse *
-        specific_heat_inverse;
+        dt * (particle_heat_transfer_rate + particle_heat_source) *
+        mass_inverse * specific_heat_inverse;
 
       // Reinitialize heat_transfer_rate
       particle_heat_transfer_rate = 0;

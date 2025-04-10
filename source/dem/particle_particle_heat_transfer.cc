@@ -208,8 +208,8 @@ void
 apply_heat_transfer_on_local_particles(const double temperature_one,
                                        const double temperature_two,
                                        const double thermal_conductance,
-                                       double      &particle_one_heat_transfer_rate,
-                                       double      &particle_two_heat_transfer_rate)
+                                       double &particle_one_heat_transfer_rate,
+                                       double &particle_two_heat_transfer_rate)
 {
   const double heat_transfer_rate =
     thermal_conductance * (temperature_two - temperature_one);
@@ -218,10 +218,11 @@ apply_heat_transfer_on_local_particles(const double temperature_one,
 }
 
 void
-apply_heat_transfer_on_single_local_particle(const double temperature_one,
-                                             const double temperature_two,
-                                             const double thermal_conductance,
-                                             double &particle_one_heat_transfer_rate)
+apply_heat_transfer_on_single_local_particle(
+  const double temperature_one,
+  const double temperature_two,
+  const double thermal_conductance,
+  double      &particle_one_heat_transfer_rate)
 {
   particle_one_heat_transfer_rate +=
     thermal_conductance * (temperature_two - temperature_one);
