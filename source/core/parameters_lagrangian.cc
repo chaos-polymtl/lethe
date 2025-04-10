@@ -542,9 +542,13 @@ namespace Parameters
           std::make_shared<Functions::ParsedFunction<dim>>(1);
         prm.enter_subsection("initial temperature function");
         {
+#if DEAL_II_VERSION_GTE(9, 7, 0)
           initial_temperature_function_parsed->declare_parameters(prm,
                                                                   1,
-                                                                  "300.0");
+                                                                  "300");
+#else
+          initial_temperature_function_parsed->declare_parameters(prm, 1);
+#endif
         }
       }
       prm.leave_subsection();
