@@ -20,9 +20,9 @@
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/numerics/data_out.h>
-#include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/data_out_faces.h>
 #include <deal.II/numerics/data_postprocessor.h>
+#include <deal.II/numerics/vector_tools.h>
 
 // Lethe
 #include <core/grids.h>
@@ -73,7 +73,7 @@ test()
   mortar.rotor_mesh->simplex        = false;
   mortar.stator_boundary_id         = 4;
   mortar.rotor_boundary_id          = 5; // after shifting
-  
+
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> merged_tria(comm);
 
@@ -111,18 +111,18 @@ test()
 
   // Plot boundary IDs
   DataPostprocessors::BoundaryIds<dim> boundary_ids;
-  DataOutFaces<dim> data_out_faces;
-  FE_Q<dim>         dummy_fe(1);
-    
-  DoFHandler<dim>   dummy_dof_handler(merged_tria);
+  DataOutFaces<dim>                    data_out_faces;
+  FE_Q<dim>                            dummy_fe(1);
+
+  DoFHandler<dim> dummy_dof_handler(merged_tria);
   dummy_dof_handler.distribute_dofs(dummy_fe);
-  
-  Vector<double> dummy_solution (dummy_dof_handler.n_dofs());
-   
+
+  Vector<double> dummy_solution(dummy_dof_handler.n_dofs());
+
   data_out_faces.attach_dof_handler(dummy_dof_handler);
   data_out_faces.add_data_vector(dummy_solution, boundary_ids);
   data_out_faces.build_patches();
-   
+
   std::ofstream out("boundary_ids.vtu");
   data_out_faces.write_vtu(out);
 }
