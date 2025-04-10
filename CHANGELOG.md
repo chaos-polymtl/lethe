@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-10
+
+### Added
+
+- MINOR Added an example demonstrating the use of the Method of Manufactured Solutions (MMS) with the incompressible solver, using quadrilateral and simplex meshes at varying resolutions. [#1461](https://github.com/chaos-polymtl/lethe/pull/1461)
 
 ## [Master] - 2025-04-07
 
@@ -1023,6 +1028,7 @@ The lethe v1.0 release comes with a structured and stable syntax. All of the exa
 - MINOR The rotational vector for the rotational boundary condition in the lethe-particles solver is now define with one line in the parameters file. [#920](https://github.com/chaos-polymtl/lethe/pull/920)
 
 
+## [Master] - 2025 -
 
 ## [Sample] - YYYY/MM/DD
 
