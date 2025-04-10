@@ -400,7 +400,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
   const bool                                            &restart,
-  Parameters::Mortar<dim>                               &mortar)
+  const Parameters::Mortar<dim>                         &mortar)
 {
   AssertThrow(
     mesh_parameters.type == Parameters::Mesh::Type::dealii,
@@ -476,10 +476,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       std::to_string(mortar.rotor_boundary_id) +
       " is different from the number of faces at the stator interface ID #" +
       std::to_string(mortar.stator_boundary_id) + "."));
-
-  // Store number of faces at the rotor-stator interface in the mortar structure
-  mortar.n_faces_rotor_interface  = n_faces_rotor_interface;
-  mortar.n_faces_stator_interface = n_faces_stator_interface;
 
   // Store rotor manifolds in shifted IDs #
   for (unsigned int m = 0; m < rotor_temp_tria.get_manifold_ids().size(); m++)
@@ -592,10 +588,10 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<2> &triangulation,
   const Parameters::Mesh                    &mesh_parameters,
   const bool                                &restart,
-  Parameters::Mortar<2>                     &mortar);
+  const Parameters::Mortar<2>               &mortar);
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<3> &triangulation,
   const Parameters::Mesh                    &mesh_parameters,
   const bool                                &restart,
-  Parameters::Mortar<3>                     &mortar);
+  const Parameters::Mortar<3>               &mortar);
