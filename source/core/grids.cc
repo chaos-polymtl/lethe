@@ -414,8 +414,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   // Rotor triangulation
   Triangulation<dim> rotor_temp_tria;
   attach_grid_to_triangulation(rotor_temp_tria, *mortar.rotor_mesh);
-  GridTools::rotate(mortar.rotor_mesh->rotation_angle,
-                    rotor_temp_tria);
+  GridTools::rotate(mortar.rotor_mesh->rotation_angle, rotor_temp_tria);
 
   // Get stator manifold ids without flat id
   unsigned int stator_ids_no_flat = 0;
@@ -479,9 +478,9 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       std::to_string(mortar.stator_boundary_id) + "."));
 
   // Store number of faces at the rotor-stator interface in the mortar structure
-  mortar.n_faces_rotor_interface = n_faces_rotor_interface;
+  mortar.n_faces_rotor_interface  = n_faces_rotor_interface;
   mortar.n_faces_stator_interface = n_faces_stator_interface;
-  
+
   // Store rotor manifolds in shifted IDs #
   for (unsigned int m = 0; m < rotor_temp_tria.get_manifold_ids().size(); m++)
     {
