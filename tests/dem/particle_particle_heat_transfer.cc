@@ -115,7 +115,7 @@ test()
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       MOI;
-  std::vector<double>       heat_transfer;
+  std::vector<double>       heat_transfer_rate;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
   force.resize(particle_handler.get_max_local_particle_index());
@@ -123,7 +123,7 @@ test()
   MOI.resize(force.size());
   for (auto &moi_val : MOI)
     moi_val = 1;
-  heat_transfer.resize(force.size());
+  heat_transfer_rate.resize(force.size());
 
   contact_manager.update_local_particles_in_cells(particle_handler);
 
@@ -135,7 +135,7 @@ test()
   // Calling fine search
   contact_manager.execute_particle_particle_fine_search(neighborhood_threshold);
 
-  // Calculating and applying contact force and heat transfer
+  // Calculating and applying contact force and heat transfer rate
   ParticleParticleContactForce<
     dim,
     PropertiesIndex,
@@ -144,7 +144,7 @@ test()
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
   nonlinear_force_object
-    .calculate_particle_particle_contact_force_and_heat_transfer(
+    .calculate_particle_particle_contact_force_and_heat_transfer_rate(
       contact_manager.get_local_adjacent_particles(),
       contact_manager.get_ghost_adjacent_particles(),
       contact_manager.get_local_local_periodic_adjacent_particles(),
@@ -153,12 +153,12 @@ test()
       dt,
       torque,
       force,
-      heat_transfer);
+      heat_transfer_rate);
 
   // Output
   auto particle_one = particle_handler.begin();
   deallog << "The heat transfer applied to particle one is "
-          << heat_transfer[particle_one->get_id()] << " J/s." << std::endl;
+          << heat_transfer_rate[particle_one->get_id()] << " J/s." << std::endl;
 }
 
 int

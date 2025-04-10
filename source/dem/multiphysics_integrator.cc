@@ -7,7 +7,7 @@ template <int dim, typename PropertiesIndex>
 void
 integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
                       const double                     dt,
-                      std::vector<double>             &heat_transfer,
+                      std::vector<double>             &heat_transfer_rate,
                       const std::vector<double>       &heat_source)
 {
   for (auto particle = particle_handler.begin();
@@ -16,7 +16,7 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
     {
       const types::particle_index particle_id = particle->get_local_index();
       auto         particle_properties        = particle->get_properties();
-      double      &particle_heat_transfer     = heat_transfer[particle_id];
+      double      &particle_heat_transfer_rate     = heat_transfer_rate[particle_id];
       double       particle_heat_source       = heat_source[particle_id];
       const double mass_inverse =
         1 / particle_properties[PropertiesIndex::mass];
@@ -25,11 +25,11 @@ integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
 
       // Integration
       particle_properties[PropertiesIndex::T] +=
-        dt * (particle_heat_transfer + particle_heat_source) * mass_inverse *
+        dt * (particle_heat_transfer_rate + particle_heat_source) * mass_inverse *
         specific_heat_inverse;
 
-      // Reinitialize heat_transfer
-      particle_heat_transfer = 0;
+      // Reinitialize heat_transfer_rate
+      particle_heat_transfer_rate = 0;
     }
 }
 
@@ -37,12 +37,12 @@ template void
 integrate_temperature<2, DEM::DEMMPProperties::PropertiesIndex>(
   Particles::ParticleHandler<2> &particle_handler,
   const double                   dt,
-  std::vector<double>           &heat_transfer,
+  std::vector<double>           &heat_transfer_rate,
   const std::vector<double>     &heat_source);
 
 template void
 integrate_temperature<3, DEM::DEMMPProperties::PropertiesIndex>(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,
-  std::vector<double>           &heat_transfer,
+  std::vector<double>           &heat_transfer_rate,
   const std::vector<double>     &heat_source);

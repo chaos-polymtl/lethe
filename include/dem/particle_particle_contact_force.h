@@ -35,7 +35,7 @@ class ParticleParticleContactForceBase
 {
 public:
   /**
-   * @brief Calculate the contact forces and heat transfer using the contact pair information
+   * @brief Calculate the contact forces and heat transfer rates using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
    * @param local_adjacent_particles Container of the contact pair candidates
@@ -55,10 +55,10 @@ public:
    * @param dt DEM time step.
    * @param torque Torque acting on particles.
    * @param force Force acting on particles.
-   * @param heat_transfer Heat transfer applied to particles.
+   * @param heat_transfer_rate Heat transfer rate applied to particles.
    */
   virtual void
-  calculate_particle_particle_contact_force_and_heat_transfer(
+  calculate_particle_particle_contact_force_and_heat_transfer_rate(
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
@@ -72,7 +72,7 @@ public:
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    std::vector<double>       &heat_transfer) = 0;
+    std::vector<double>       &heat_transfer_rate) = 0;
 
   /**
    * @brief Calculate the contact forces using the contact pair information
@@ -150,7 +150,7 @@ public:
   {}
 
   /**
-   * @brief Calculate the contact forces and heat transfer using the contact pair information
+   * @brief Calculate the contact forces and heat transfer rates using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
    * @param local_adjacent_particles Container of the contact pair candidates
@@ -170,10 +170,10 @@ public:
    * @param dt DEM time step.
    * @param torque Torque acting on particles.
    * @param force Force acting on particles.
-   * @param heat_transfer Heat transfer applied to particles.
+   * @param heat_transfer_rate Heat transfer rate applied to particles.
    */
   virtual void
-  calculate_particle_particle_contact_force_and_heat_transfer(
+  calculate_particle_particle_contact_force_and_heat_transfer_rate(
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
@@ -187,7 +187,7 @@ public:
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    std::vector<double>       &heat_transfer) override;
+    std::vector<double>       &heat_transfer_rate) override;
 
   /**
    * @brief Calculate the contact forces using the contact pair information
@@ -1673,7 +1673,7 @@ private:
   }
 
   /**
-   * @brief Set every containers needed to carry the heat transfer
+   * @brief Set every containers needed to carry the heat transfer rate
    * calculation.
    *
    * @param[in] dem_parameters DEM parameters declared in the .prm
@@ -1745,7 +1745,7 @@ private:
    * particles
    * @param[out] torque Torque acting on particles.
    * @param[out] force Force acting on particles.
-   * @param[out] heat_transfer Heat transfer applied to particles.
+   * @param[out] heat_transfer_rate Heat transfer rate applied to particles.
    * @param[in] dt DEM time step.
    */
   template <ContactType contact_type>
@@ -1755,7 +1755,7 @@ private:
                               &adjacent_particles_list,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    std::vector<double>       &heat_transfer,
+    std::vector<double>       &heat_transfer_rate,
     const double               dt)
   {
     // No contact calculation if no adjacent particles
@@ -1974,9 +1974,9 @@ private:
                                      DEM::DEMMPProperties::PropertiesIndex>)
           {
             AssertThrow(
-              heat_transfer.size() == force.size(),
+              heat_transfer_rate.size() == force.size(),
               ExcMessage(
-                "Invalid size of heat_transfer in particle particle heat transfer calculation."));
+                "Invalid size of heat_transfer_rate in particle particle heat transfer rate calculation."));
 
             if (normal_overlap > 0)
               {
@@ -1992,10 +1992,10 @@ private:
                   particle_two_properties[PropertiesIndex::T];
                 types::particle_index particle_two_id =
                   particle_two->get_local_index();
-                double &particle_one_heat_transfer =
-                  heat_transfer[particle_one_id];
-                double &particle_two_heat_transfer =
-                  heat_transfer[particle_two_id];
+                double &particle_one_heat_transfer_rate =
+                  heat_transfer_rate[particle_one_id];
+                double &particle_two_heat_transfer_rate =
+                  heat_transfer_rate[particle_two_id];
 
                 double thermal_conductance;
                 calculate_contact_thermal_conductance(
@@ -2025,8 +2025,8 @@ private:
                       temperature_one,
                       temperature_two,
                       thermal_conductance,
-                      particle_one_heat_transfer,
-                      particle_two_heat_transfer);
+                      particle_one_heat_transfer_rate,
+                      particle_two_heat_transfer_rate);
                   }
 
                 // Apply the heat transfer only to the local
@@ -2040,7 +2040,7 @@ private:
                       temperature_one,
                       temperature_two,
                       thermal_conductance,
-                      particle_one_heat_transfer);
+                      particle_one_heat_transfer_rate);
                   }
 
                 // Apply the heat transfer only to the local
@@ -2053,7 +2053,7 @@ private:
                       temperature_two,
                       temperature_one,
                       thermal_conductance,
-                      particle_two_heat_transfer);
+                      particle_two_heat_transfer_rate);
                   }
               }
           }
