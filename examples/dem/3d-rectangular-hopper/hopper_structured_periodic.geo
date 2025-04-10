@@ -15,8 +15,8 @@ bottom = -top;
 width = 0.0056;
 
 // Division variables
-nx = 1;
-ny = 7;
+nx = 2;
+ny = 14;
 
 // Upper left
 Point(1) = {hole_left_side, hole_height, 0, 1.0};
@@ -35,7 +35,6 @@ Line Loop(1) = {1,2,-3,-4};
 Plane Surface(1) = {1} ;
 
 Transfinite Surface {1};
-Physical Surface(0) = {1};
 
 
 // Upper middle
@@ -52,7 +51,6 @@ Line Loop(2) = {5,4,-6,-7};
 Plane Surface(2) = {2} ;
 
 Transfinite Surface {2};
-Physical Surface(1) = {2};
 
 
 // Upper right
@@ -69,7 +67,6 @@ Line Loop(3) = {8,7,-9,-10};
 Plane Surface(3) = {3} ;
 
 Transfinite Surface {3};
-Physical Surface(2) = {3};
 
 // Bottom middle
 Point(9) = {hole_right_side, bottom, 0, 1.0};
@@ -85,7 +82,6 @@ Line Loop(4) = {11,12,-5,-13};
 Plane Surface(4) = {4} ;
 
 Transfinite Surface {4};
-Physical Surface(3) = {4};
 
 
 // Bottom left
@@ -102,7 +98,6 @@ Line Loop(5) = {14,15,-16,-12};
 Plane Surface(5) = {5} ;
 
 Transfinite Surface {5};
-Physical Surface(4) = {5};
 
 
 // Bottom right 
@@ -119,7 +114,7 @@ Line Loop(6) = {17,13,-18,-19};
 Plane Surface(6) = {6} ;
 
 Transfinite Surface {6};
-Physical Surface(5) = {6};
+
 
 
 // Reconstruction
@@ -140,4 +135,6 @@ Extrude {0, 0, width} {
 }
 
 Physical Volume(0) = {1, 3, 2, 6, 4, 5};
-
+Physical Surface(0) = {28,32,36,80,84,58,72,116,120,124,138,146,150,94};
+Physical Surface(1) = {1,2,3,4,5,6};
+Physical Surface(2) = {41,63,85,107,129,151};

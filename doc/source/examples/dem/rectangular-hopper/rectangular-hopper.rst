@@ -196,6 +196,13 @@ Floating wall in this example is handled as explained in the `Silo example <../s
 ----------------------
 Running the Simulation
 ----------------------
+To launch the simulation, the mesh must first be generated. Assuming that GMSH is installed on your machine, the following command can be used:
+
+.. code-block:: text
+  :class: copy-button
+
+  gmsh -3 hopper_structured.geo -o hopper_structured.msh
+
 This simulation can be launched by
 
 .. code-block:: text
@@ -203,6 +210,7 @@ This simulation can be launched by
 
   mpirun -np 8 lethe-particles hopper.prm
 
+.
 
 ---------------
 Post-processing
@@ -295,8 +303,8 @@ The feature only works with one pair of periodic boundaries.
 
         subsection boundary condition 0
             set type                      = periodic
-            set periodic id 0             = 0
-            set periodic id 1             = 1
+            set periodic id 0             = 1
+            set periodic id 1             = 2
             set periodic direction        = 2
         end
     end
@@ -345,6 +353,24 @@ Since the geometry of the mesh and the number of the particles are not the same,
         set insertion maximum offset                       = 0.1
         set insertion prn seed                             = 20
     end
+
+Running the Simulation
+~~~~~~~~~~~~~~~~~~~~~~
+Similarly to the non-periodic rectangular hopper simulation, the mesh must first be generated using the following command
+
+.. code-block:: text
+  :class: copy-button
+
+  gmsh -3 hopper_structured_periodic.geo -o hopper_structured_periodic.msh
+
+, and launched by
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-particles hopper.prm
+
+.
 
 Results Comparison
 ~~~~~~~~~~~~~~~~~~
