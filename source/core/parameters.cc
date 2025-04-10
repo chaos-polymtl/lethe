@@ -4152,27 +4152,6 @@ namespace Parameters
         "2",
         Patterns::Integer(),
         "Stator boundary ID # of the mortar matching interface");
-      std::string default_entry_point = (dim == 2) ? "0., 0." : "0., 0., 0.";
-      prm.declare_entry("center of rotation",
-                        default_entry_point,
-                        Patterns::List(Patterns::Double()),
-                        "Center of rotation coordinates of rotor domain");
-      prm.enter_subsection("rotor boundary conditions");
-      {
-        prm.enter_subsection("u");
-        rotor_BC_u->declare_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("v");
-        rotor_BC_v->declare_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("w");
-        rotor_BC_w->declare_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("p");
-        rotor_BC_p->declare_parameters(prm);
-        prm.leave_subsection();
-      }
-      prm.leave_subsection();
     }
     prm.leave_subsection();
   };
@@ -4190,30 +4169,6 @@ namespace Parameters
       this->rotor_boundary_id = prm.get_integer("rotor boundary id");
 
       this->stator_boundary_id = prm.get_integer("stator boundary id");
-
-      this->center_of_rotation =
-        value_string_to_tensor<dim>(prm.get("center of rotation"));
-
-      prm.enter_subsection("rotor boundary conditions");
-      {
-        prm.enter_subsection("u");
-        rotor_BC_u = std::make_shared<Functions::ParsedFunction<dim>>();
-        rotor_BC_u->parse_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("v");
-        rotor_BC_v = std::make_shared<Functions::ParsedFunction<dim>>();
-        rotor_BC_v->parse_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("w");
-        rotor_BC_w = std::make_shared<Functions::ParsedFunction<dim>>();
-        rotor_BC_w->parse_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("p");
-        rotor_BC_p = std::make_shared<Functions::ParsedFunction<dim>>();
-        rotor_BC_p->parse_parameters(prm);
-        prm.leave_subsection();
-      }
-      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
