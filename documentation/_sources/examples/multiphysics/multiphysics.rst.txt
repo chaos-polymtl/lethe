@@ -47,7 +47,7 @@ Multiphysics
 
       multiphysics_2 [label="Heat Transfer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/heat-transfer.html"];
 
-      multiphysics_2_1 [label="Rayleigh-Bénard Convection", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/cooling-fin/cooling-fin.html"];
+      multiphysics_2_1 [label="Cooling fin", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/cooling-fin/cooling-fin.html"];
 
       multiphysics_2_2 [label="Rayleigh-Bénard Convection", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html"];
 

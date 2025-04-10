@@ -480,17 +480,17 @@ end
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>
-<tr class="row-odd"><td><figure class="align-center" id="id10">
+<tr class="row-odd"><td><figure class="align-center" id="id11">
 <a class="reference internal image-reference" href="../../../_images/packed_hopper_2d.png"><img alt="Mesh" src="../../../_images/packed_hopper_2d.png" style="width: 300px;" /></a>
 <figcaption>
-<p><span class="caption-text">Rectangular hopper packed with particle before the discharge with a 2d view.</span><a class="headerlink" href="#id10" title="Link to this image">#</a></p>
+<p><span class="caption-text">Rectangular hopper packed with particle before the discharge with a 2d view.</span><a class="headerlink" href="#id11" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </td>
-<td><figure class="align-center" id="id11">
+<td><figure class="align-center" id="id12">
 <a class="reference internal image-reference" href="../../../_images/packed_hopper_3d.png"><img alt="Mesh" src="../../../_images/packed_hopper_3d.png" style="width: 300px;" /></a>
 <figcaption>
-<p><span class="caption-text">Rectangular hopper packed with particle before the discharge with a 3d view.</span><a class="headerlink" href="#id11" title="Link to this image">#</a></p>
+<p><span class="caption-text">Rectangular hopper packed with particle before the discharge with a 3d view.</span><a class="headerlink" href="#id12" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </td>
@@ -611,10 +611,15 @@ end
 </section>
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
+<p>To launch the simulation, the mesh must first be generated. Assuming that GMSH is installed on your machine, the following command can be used:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>gmsh -3 hopper_structured.geo -o hopper_structured.msh
+</pre></div>
+</div>
 <p>This simulation can be launched by</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-particles hopper.prm
 </pre></div>
 </div>
+<p>.</p>
 </section>
 <section id="post-processing">
 <h2>Post-processing<a class="headerlink" href="#post-processing" title="Link to this heading">#</a></h2>
@@ -632,10 +637,10 @@ end
 <section id="results-post-processing">
 <h2>Results Post-processing<a class="headerlink" href="#results-post-processing" title="Link to this heading">#</a></h2>
 <p>Mass flow rate results after post-processing and comparison with the results of Anand <em>et al.</em> <a class="reference external" href="https://doi.org/10.1016/j.ces.2008.08.015">[1]</a> for the base case of the hooper with a 90° angle.</p>
-<figure class="align-center" id="id12">
+<figure class="align-center" id="id13">
 <a class="reference internal image-reference" href="../../../_images/figure_hopper.png"><img alt="Results of mass discharge." src="../../../_images/figure_hopper.png" style="width: 600px;" /></a>
 <figcaption>
-<p><span class="caption-text">Mass discharge results.</span><a class="headerlink" href="#id12" title="Link to this image">#</a></p>
+<p><span class="caption-text">Mass discharge results.</span><a class="headerlink" href="#id13" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -644,10 +649,10 @@ end
 <p>As seen in the following figure, the simulation was not run until all the particles are discharged in the bottom part.
 Since the mass flow rate is constant during the discharge, simulating the very end is not necessary.
 The simulated mass discharging rate is 84.94 g/s.</p>
-<figure class="align-center" id="id13">
+<figure class="align-center" id="id14">
 <a class="reference internal image-reference" href="../../../_images/simulation_end.png"><img alt="Mesh" src="../../../_images/simulation_end.png" style="width: 300px;" /></a>
 <figcaption>
-<p><span class="caption-text">Rectangular hopper at the end of the simulation.</span><a class="headerlink" href="#id13" title="Link to this image">#</a></p>
+<p><span class="caption-text">Rectangular hopper at the end of the simulation.</span><a class="headerlink" href="#id14" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -667,10 +672,10 @@ The modifications on the parameters of the previous example is the mesh thicknes
 end
 </pre></div>
 </div>
-<figure class="align-center" id="id14">
+<figure class="align-center" id="id15">
 <a class="reference internal image-reference" href="../../../_images/packed_hopper_periodic_3d.png"><img alt="Mesh" src="../../../_images/packed_hopper_periodic_3d.png" style="width: 300px;" /></a>
 <figcaption>
-<p><span class="caption-text">Rectangular periodic hopper packed with particle before the discharge with a 3d view.</span><a class="headerlink" href="#id14" title="Link to this image">#</a></p>
+<p><span class="caption-text">Rectangular periodic hopper packed with particle before the discharge with a 3d view.</span><a class="headerlink" href="#id15" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -684,8 +689,8 @@ The feature only works with one pair of periodic boundaries.</p>
 
     subsection boundary condition 0
         set type                      = periodic
-        set periodic id 0             = 0
-        set periodic id 1             = 1
+        set periodic id 0             = 1
+        set periodic id 1             = 2
         set periodic direction        = 2
     end
 end
@@ -733,14 +738,26 @@ end
 </pre></div>
 </div>
 </section>
+<section id="id10">
+<h3>Running the Simulation<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>Similarly to the non-periodic rectangular hopper simulation, the mesh must first be generated using the following command</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>gmsh -3 hopper_structured_periodic.geo -o hopper_structured_periodic.msh
+</pre></div>
+</div>
+<p>, and launched by</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-particles hopper.prm
+</pre></div>
+</div>
+<p>.</p>
+</section>
 <section id="results-comparison">
 <h3>Results Comparison<a class="headerlink" href="#results-comparison" title="Link to this heading">#</a></h3>
 <p>Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
 The simulated mass discharging rate is 85.09 g/s from the original simulation and 91.73 g/s with PBC. Also, the run time of the simulation goes from about 1 hours and 30 minutes to 10 minutes on 8 cores with an Intel i7-11700K.</p>
-<figure class="align-center" id="id15">
+<figure class="align-center" id="id16">
 <a class="reference internal image-reference" href="../../../_images/figure_hopper_comparison.png"><img alt="Comparison" src="../../../_images/figure_hopper_comparison.png" style="width: 600px;" /></a>
 <figcaption>
-<p><span class="caption-text">Comparison of mass discharge results from the 2 simulations and the journal article.</span><a class="headerlink" href="#id15" title="Link to this image">#</a></p>
+<p><span class="caption-text">Comparison of mass discharge results from the 2 simulations and the journal article.</span><a class="headerlink" href="#id16" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -834,6 +851,7 @@ The simulated mass discharging rate is 85.09 g/s from the original simulation an
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
 <li><a class="reference internal" href="#id8">Lagrangian Physical Properties</a></li>
 <li><a class="reference internal" href="#id9">Insertion Info</a></li>
+<li><a class="reference internal" href="#id10">Running the Simulation</a></li>
 <li><a class="reference internal" href="#results-comparison">Results Comparison</a></li>
 </ul>
 </li>
