@@ -83,7 +83,7 @@ ParticleWallContactForce<dim, PropertiesIndex>::update_contact_information(
 
   // Updating the contact_info container based on the new calculated values
   contact_info.normal_relative_velocity     = normal_relative_velocity_value;
-  contact_info.tangential_displacement           = modified_tangential_displacement;
+  contact_info.tangential_displacement      = modified_tangential_displacement;
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
@@ -143,7 +143,7 @@ ParticleWallContactForce<dim, PropertiesIndex>::
 
   // Updating the contact_info container based on the new calculated values
   contact_info.normal_relative_velocity     = normal_relative_velocity_value;
-  contact_info.tangential_displacement           = modified_tangential_displacement;
+  contact_info.tangential_displacement      = modified_tangential_displacement;
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 

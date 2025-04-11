@@ -30,8 +30,8 @@ struct initial_particle_properties
 
 /**
  * @brief Store the output vectors of the time, the force and torque acting on particle 0,
- * the normal overlap, the tangential displacement and the velocities and angular
- * velocities for both particles.
+ * the normal overlap, the tangential displacement and the velocities and
+ * angular velocities for both particles.
  */
 struct full_contact_output
 {
@@ -284,7 +284,8 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
           file << time << " " << force_0[0] << " " << force_0[1] << " "
                << force_0[2] << " " << torque_0[0] << " " << torque_0[1] << " "
                << torque_0[2] << " " << normal_overlap << " "
-               << tangential_displacement[0] << " " << tangential_displacement[1] << " "
+               << tangential_displacement[0] << " "
+               << tangential_displacement[1] << " "
                << tangential_displacement[2] << " " << velocity_0[0] << " "
                << velocity_0[1] << " " << velocity_0[2] << " " << velocity_1[0]
                << " " << velocity_1[1] << " " << velocity_1[2] << " "

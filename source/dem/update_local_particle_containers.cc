@@ -120,7 +120,8 @@ update_contact_container_iterators(
 
                   if (clear_tangential_displacement)
                     {
-                      adjacent_map_iterator->second.tangential_displacement.clear();
+                      adjacent_map_iterator->second.tangential_displacement
+                        .clear();
                       adjacent_map_iterator->second
                         .rolling_resistance_spring_torque.clear();
                     }
