@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_insertion_h
@@ -40,7 +40,7 @@ using namespace dealii;
  * @brief Base interface for classes that carry out the insertion of particles
  * in the system.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class Insertion
 {
 public:
@@ -144,6 +144,7 @@ protected:
     const DEMSolverParameters<dim>   &dem_parameters,
     const unsigned int               &inserted_this_step_this_proc,
     const unsigned int               &current_inserting_particle_type,
+    const std::vector<Point<dim>>    &insertion_points,
     std::vector<std::vector<double>> &particle_properties);
 
   /**

@@ -268,33 +268,33 @@ DEMSolver<dim, PropertiesIndex>::set_contact_search_iteration_function()
 }
 
 template <int dim, typename PropertiesIndex>
-std::shared_ptr<Insertion<dim>>
+std::shared_ptr<Insertion<dim, PropertiesIndex>>
 DEMSolver<dim, PropertiesIndex>::set_insertion_type()
 {
   using namespace Parameters::Lagrangian;
-  InsertionInfo::InsertionMethod insertion_method =
+  typename InsertionInfo<dim>::InsertionMethod insertion_method =
     parameters.insertion_info.insertion_method;
 
   switch (insertion_method)
     {
-      case InsertionInfo::InsertionMethod::file:
+      case InsertionInfo<dim>::InsertionMethod::file:
         {
-          return std::make_shared<InsertionFile<dim>>(
+          return std::make_shared<InsertionFile<dim, PropertiesIndex>>(
             size_distribution_object_container, triangulation, parameters);
         }
-      case InsertionInfo::InsertionMethod::list:
+      case InsertionInfo<dim>::InsertionMethod::list:
         {
-          return std::make_shared<InsertionList<dim>>(
+          return std::make_shared<InsertionList<dim, PropertiesIndex>>(
             size_distribution_object_container, triangulation, parameters);
         }
-      case InsertionInfo::InsertionMethod::plane:
+      case InsertionInfo<dim>::InsertionMethod::plane:
         {
-          return std::make_shared<InsertionPlane<dim>>(
+          return std::make_shared<InsertionPlane<dim, PropertiesIndex>>(
             size_distribution_object_container, triangulation, parameters);
         }
-      case InsertionInfo::InsertionMethod::volume:
+      case InsertionInfo<dim>::InsertionMethod::volume:
         {
-          return std::make_shared<InsertionVolume<dim>>(
+          return std::make_shared<InsertionVolume<dim, PropertiesIndex>>(
             size_distribution_object_container,
             triangulation,
             parameters,

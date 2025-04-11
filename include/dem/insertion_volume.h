@@ -9,8 +9,8 @@
 using namespace dealii;
 
 
-template <int dim>
-class InsertionVolume : public Insertion<dim>
+template <int dim, typename PropertiesIndex>
+class InsertionVolume : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
@@ -104,11 +104,11 @@ private:
    */
   void
   find_insertion_location_volume(
-    Point<dim>                                  &insertion_location,
-    const unsigned int                           id,
-    const double                                 random_number1,
-    const double                                 random_number2,
-    const Parameters::Lagrangian::InsertionInfo &insertion_information);
+    Point<dim>                                       &insertion_location,
+    const unsigned int                                id,
+    const double                                      random_number1,
+    const double                                      random_number2,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information);
 
   unsigned int current_inserting_particle_type;
 

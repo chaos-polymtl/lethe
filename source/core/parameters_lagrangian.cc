@@ -402,8 +402,9 @@ namespace Parameters
       seed_for_distributions.reserve(particle_type_maximum_number);
     }
 
+    template <int dim>
     void
-    InsertionInfo::declare_parameters(ParameterHandler &prm)
+    InsertionInfo<dim>::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("insertion info");
       {
@@ -497,6 +498,10 @@ namespace Parameters
                           "-1.0",
                           Patterns::List(Patterns::Double()),
                           "List of diameters");
+        prm.declare_entry("list temperatures",
+                          "300.",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial temperatures");
         // Volume:
         prm.declare_entry(
           "insertion direction sequence",
@@ -533,12 +538,25 @@ namespace Parameters
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
+        auto initial_temperature_function_parsed =
+          std::make_shared<Functions::ParsedFunction<dim>>(1);
+        prm.enter_subsection("initial temperature function");
+        {
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+          initial_temperature_function_parsed->declare_parameters(prm,
+                                                                  1,
+                                                                  "300");
+#else
+          initial_temperature_function_parsed->declare_parameters(prm, 1);
+#endif
+        }
       }
       prm.leave_subsection();
     }
 
+    template <int dim>
     void
-    InsertionInfo::parse_parameters(ParameterHandler &prm)
+    InsertionInfo<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("insertion info");
       {
@@ -644,6 +662,9 @@ namespace Parameters
         // Read the diameters list
         list_d = convert_string_to_vector<double>(prm, "list diameters");
 
+        // Read the temperatures list
+        list_T = convert_string_to_vector<double>(prm, "list temperatures");
+
         // Volume:
         std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
@@ -682,6 +703,15 @@ namespace Parameters
         initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =
           value_string_to_tensor<3>(prm.get("initial angular velocity"));
+
+        auto initial_temperature_function_parsed =
+          std::make_shared<Functions::ParsedFunction<dim>>(1);
+        prm.enter_subsection("initial temperature function");
+        {
+          initial_temperature_function_parsed->parse_parameters(prm);
+          initial_temperature_function = initial_temperature_function_parsed;
+        }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }
@@ -1643,6 +1673,8 @@ namespace Parameters
     template class FloatingGrid<3>;
     template class GridMotion<2>;
     template class GridMotion<3>;
+    template class InsertionInfo<2>;
+    template class InsertionInfo<3>;
 
   } // namespace Lagrangian
 } // namespace Parameters

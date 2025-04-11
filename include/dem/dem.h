@@ -106,7 +106,7 @@ private:
    *
    * @return The pointer to the insertion object
    */
-  std::shared_ptr<Insertion<dim>>
+  std::shared_ptr<Insertion<dim, PropertiesIndex>>
   set_insertion_type();
 
   /**
@@ -373,7 +373,7 @@ private:
   /**
    * @brief The insertion object.
    */
-  std::shared_ptr<Insertion<dim>> insertion_object;
+  std::shared_ptr<Insertion<dim, PropertiesIndex>> insertion_object;
 
   /**
    * @brief The visualization object.

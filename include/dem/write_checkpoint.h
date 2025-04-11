@@ -33,7 +33,7 @@
  * @param mpi_communicator
  * @param checkpoint_controller Checkpoint controller
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 write_checkpoint(
   TimerOutput                                             &computing_timer,
@@ -43,7 +43,7 @@ write_checkpoint(
   PVDHandler                                              &grid_pvdhandler,
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
-  std::shared_ptr<Insertion<dim>>                         &insertion_object,
+  std::shared_ptr<Insertion<dim, PropertiesIndex>>        &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
   const ConditionalOStream                                &pcout,
   MPI_Comm                                                &mpi_communicator,
