@@ -324,6 +324,15 @@ public:
           }
       }
 
+    reinit_boundary_face_values(cell, current_solution);
+  }
+
+  template <typename VectorType>
+  void
+  reinit_boundary_face_values(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType                                     &current_solution)
+  {
     is_boundary_cell = cell->at_boundary();
     if (is_boundary_cell)
       {
@@ -1009,56 +1018,283 @@ public:
   template <typename VectorType>
   void
   enable_pressure_enrichment(
-    const hp::FECollection<dim>            &fe_collection,
-    const Quadrature<1>                    &quadrature,
-    const NonMatching::RegionUpdateFlags    region_update_flags,
-    const NonMatching::MeshClassifier<dim> &mesh_classifier,
     const DoFHandler<dim>                  &dof_handler,
-    const VectorType                       &level_set)
+    const VectorType                       &level_set_in)
   {
-    non_matching_fe_values =
-      std::make_shared<NonMatching::FEValues<dim>>(fe_collection,
-                                                   quadrature,
+    VectorType level_set;
+    level_set.reinit(dof_handler.locally_owned_dofs(),
+                             DoFTools::extract_locally_relevant_dofs(
+                               dof_handler),
+                             dof_handler.get_mpi_communicator());
+                             
+    
+     level_set = level_set_in;
+
+    this->fe_collection = std::make_shared<hp::FECollection<dim>>(this->fe_values.get_fe());
+    // fe_collection->push_back(this->fe_values.get_fe());
+
+    const QGauss<1> quadrature_1D(2);
+
+    NonMatching::RegionUpdateFlags region_update_flags;
+    region_update_flags.inside = update_values | update_gradients |
+                                 update_JxW_values | update_quadrature_points;
+    region_update_flags.outside = update_values | update_gradients |
+                                  update_JxW_values |
+                                  update_quadrature_points;
+                                  
+    this->mesh_classifier = std::make_shared<NonMatching::MeshClassifier<dim>>(
+      dof_handler, level_set);
+    
+    this->mesh_classifier->reclassify();
+    
+    this->non_matching_fe_values =
+      std::make_shared<NonMatching::FEValues<dim>>(*this->fe_collection,
+                                                   quadrature_1D,
                                                    region_update_flags,
-                                                   mesh_classifier,
+                                                   *mesh_classifier,
                                                    dof_handler,
                                                    level_set);
   }
-  
+
   void
   reallocate(const unsigned int new_n_q_points, const unsigned int new_n_dofs);
 
   template <typename VectorType>
   void
-  reinit_intersected(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType                                     &current_solution,
-         const std::vector<VectorType> &previous_solutions,
-         std::shared_ptr<Function<dim>> forcing_function,
-         Tensor<1, dim>                 beta_force,
-         const double                   pressure_scaling_factor)
+  append_fe_values(
+                   const VectorType              &current_solution,
+                   const std::vector<VectorType> &previous_solutions,
+                   std::shared_ptr<Function<dim>> forcing_function,
+                   Tensor<1, dim>                 beta_force,
+                   const unsigned int             start,
+                   const FEValues<dim>           &reinited_fe_falues_to_append)
   {
-    this->non_matching_fe_values->reinit(cell);
-    
-    unsigned int new_n_q_points = 0;
-    const unsigned int new_n_dofs = this->fe_values.get_fe().n_dofs_per_cell();
-        
-    const std::optional<FEValues<dim>> &inside_fe_values =
-      non_matching_fe_values.get_inside_fe_values();
-    
-    if (inside_fe_values)
-      new_n_q_points += inside_fe_values->get_quadrature().size();
-      
-    const std::optional<FEValues<dim>> &outside_fe_values =
-      non_matching_fe_values.get_outside_fe_values();
-    
-    if (inside_fe_values)
-      new_n_q_points += outside_fe_values->get_quadrature().size();
-      
-    this->reallocate(new_n_q_points,new_n_dofs);
+    const unsigned int append_n_q_points =
+      reinited_fe_falues_to_append.get_quadrature().size();
 
-    
+    std::vector<Point<dim>> append_quadrature_points =
+      this->fe_values.get_quadrature_points();
+    auto &append_fe = reinited_fe_falues_to_append.get_fe();
+
+    std::vector<Vector<double>> append_rhs_force =
+      std::vector<Vector<double>>(append_n_q_points, Vector<double>(dim + 1));
+
+    forcing_function->vector_value_list(append_quadrature_points,
+                                        append_rhs_force);
+
+    for (unsigned int q = 0; q < append_n_q_points; ++q)
+      {
+        for (int d = 0; d < dim; ++d)
+          {
+            this->rhs_force[q + start][d] = append_rhs_force[q][d];
+          }
+      }
+
+    // Establish the force vector
+    for (unsigned int q = 0; q < append_n_q_points; ++q)
+      {
+        for (int d = 0; d < dim; ++d)
+          {
+            const unsigned int component_i =
+              append_fe.system_to_component_index(d).first;
+            this->force[q + start][d] = this->rhs_force[q + start](component_i);
+          }
+
+        const unsigned int component_mass =
+          append_fe.system_to_component_index(dim).first;
+        this->mass_source[q + start] =
+          this->rhs_force[q + start](component_mass);
+
+        // Correct force to include the dynamic forcing term for flow
+        // control
+        force[q + start] = force[q + start] + beta_force;
+      }
+
+    std::vector<Tensor<1, dim>> append_velocity_values =
+      std::vector<Tensor<1, dim>>(append_n_q_points);
+
+    reinited_fe_falues_to_append[velocities].get_function_values(current_solution,
+                                                        append_velocity_values);
+
+    std::vector<Tensor<2, dim>> append_velocity_gradients =
+      std::vector<Tensor<2, dim>>(append_n_q_points);
+
+    reinited_fe_falues_to_append[velocities].get_function_gradients(
+      current_solution, append_velocity_gradients);
+
+    std::vector<Tensor<1, dim>> append_velocity_laplacians =
+      std::vector<Tensor<1, dim>>(append_n_q_points);
+
+    reinited_fe_falues_to_append[velocities].get_function_laplacians(
+      current_solution, append_velocity_laplacians);
+      
+    std::vector<Tensor<3, dim>> append_velocity_hessians =
+      std::vector<Tensor<3, dim>>(append_n_q_points);
+    if (gather_hessian)
+      {
+        reinited_fe_falues_to_append[velocities].get_function_hessians(
+          current_solution, append_velocity_hessians);
+      }
+
+    std::vector<double> append_velocity_divergences =
+      std::vector<double>(append_n_q_points);
+
+    for (unsigned int q = 0; q < append_n_q_points; ++q)
+      {
+        append_velocity_divergences[q] = trace(append_velocity_gradients[q]);
+      }
+
+    std::vector<double> append_pressure_values =
+      std::vector<double>(append_n_q_points);
+
+    reinited_fe_falues_to_append[pressure].get_function_values(current_solution,
+                                                      append_pressure_values);
+
+    std::vector<Tensor<1, dim>> append_pressure_gradients =
+      std::vector<Tensor<1, dim>>(append_n_q_points);
+
+    reinited_fe_falues_to_append[pressure].get_function_gradients(
+      current_solution, append_pressure_gradients);
+
+
+
+    for (unsigned int q = 0; q < append_n_q_points; ++q)
+      {
+        this->velocity_values[q + start]     = append_velocity_values[q];
+        this->velocity_gradients[q + start]  = append_velocity_gradients[q];
+        this->velocity_laplacians[q + start] = append_velocity_laplacians[q];
+        if (gather_hessian)
+          this->velocity_hessians[q + start] = append_velocity_hessians[q];
+        this->velocity_divergences[q + start] = append_velocity_divergences[q];
+
+        this->pressure_values[q + start]    = append_pressure_values[q];
+        this->pressure_gradients[q + start] = append_pressure_gradients[q];
+      }
+
+    std::vector<std::vector<double>> append_previous_pressure_values =
+      std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                       std::vector<double>(append_n_q_points));
+
+    if (!this->properties_manager.density_is_constant())
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        {
+          reinited_fe_falues_to_append[pressure].get_function_values(
+            previous_solutions[p], append_previous_pressure_values[p]);
+
+          for (unsigned int q = 0; q < append_n_q_points; ++q)
+            {
+              this->previous_pressure_values[p][q + start] =
+                append_previous_pressure_values[p][q];
+            }
+        }
+
+    for (unsigned int q = 0; q < append_n_q_points; ++q)
+      {
+        this->JxW[q + start] = reinited_fe_falues_to_append.JxW(q);
+        for (unsigned int k = 0; k < n_dofs; ++k)
+          {
+            // Velocity
+            this->phi_u[q + start][k] =
+              reinited_fe_falues_to_append[velocities].value(k, q);
+            this->div_phi_u[q + start][k] =
+              reinited_fe_falues_to_append[velocities].divergence(k, q);
+            this->grad_phi_u[q + start][k] =
+              reinited_fe_falues_to_append[velocities].gradient(k, q);
+            this->hess_phi_u[q + start][k] =
+              reinited_fe_falues_to_append[velocities].hessian(k, q);
+            for (int d = 0; d < dim; ++d)
+              this->laplacian_phi_u[q + start][k][d] =
+                trace(this->hess_phi_u[q + start][k][d]);
+            // Pressure
+            this->phi_p[q + start][k] = reinited_fe_falues_to_append[pressure].value(k, q);
+            this->grad_phi_p[q + start][k] =
+              reinited_fe_falues_to_append[pressure].gradient(k, q);
+          }
+      }
   }
-  
+
+  template <typename VectorType>
+  std::pair<unsigned int, unsigned int>
+  reinit_intersected(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                     const VectorType              &current_solution,
+                     const std::vector<VectorType> &previous_solutions,
+                     std::shared_ptr<Function<dim>> forcing_function,
+                     Tensor<1, dim>                 beta_force,
+                     const double                   pressure_scaling_factor)
+  {
+
+
+    // const NonMatching::LocationToLevelSet cell_location =
+      // mesh_classifier->location_to_level_set(cell);
+    
+    // if (cell_location == NonMatching::LocationToLevelSet::intersected )
+    // {
+    //   std::cout << "Ahhhh"<< std::endl;
+    // }
+    this->mesh_classifier->reclassify();
+    
+    // std::cout << "Bip" << std::endl;
+    this->non_matching_fe_values->reinit(cell);
+    // std::cout << "Boop" << std::endl;
+
+    unsigned int       new_n_q_points = 0;
+    const unsigned int new_n_dofs = this->fe_values.get_fe().n_dofs_per_cell();
+
+    const std::optional<FEValues<dim>> &inside_fe_values =
+      this->non_matching_fe_values->get_inside_fe_values();
+
+    unsigned int inside_n_q_points  = 0;
+    unsigned int outside_n_q_points = 0;
+
+    if (inside_fe_values)
+      inside_n_q_points = inside_fe_values->get_quadrature().size();
+
+    const std::optional<FEValues<dim>> &outside_fe_values =
+      this->non_matching_fe_values->get_outside_fe_values();
+
+    if (outside_fe_values)
+      outside_n_q_points = outside_fe_values->get_quadrature().size();
+
+    new_n_q_points = inside_n_q_points + outside_n_q_points;
+
+    this->reallocate(new_n_q_points, new_n_dofs);
+    
+    if (inside_fe_values)
+      append_fe_values(
+                     current_solution,
+                     previous_solutions,
+                     forcing_function,
+                     beta_force,
+                     0,
+                     *inside_fe_values);
+                     
+    if (outside_fe_values)
+      append_fe_values(
+                     current_solution,
+                     previous_solutions,
+                     forcing_function,
+                     beta_force,
+                     inside_n_q_points,
+                     *outside_fe_values);
+
+
+    auto &fe = this->fe_values.get_fe();
+    for (const unsigned int k : fe_values.dof_indices())
+      {
+        components[k] = fe.system_to_component_index(k).first;
+      }
+
+    double cell_measure =
+      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
+    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
+
+    this->pressure_scaling_factor = pressure_scaling_factor;
+
+    reinit_boundary_face_values(cell, current_solution);
+    
+    return {new_n_q_points,new_n_dofs};
+  }
+
   // For auxiliary physics solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;
 
@@ -1284,6 +1520,12 @@ public:
 
   /// NonMatching FeValues for pressure enrichment
   std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values;
+  
+  std::shared_ptr<NonMatching::MeshClassifier<dim>> mesh_classifier;
+  
+  std::shared_ptr<hp::FECollection<dim>> fe_collection;
+  
+  
 };
 
 #endif

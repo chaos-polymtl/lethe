@@ -374,7 +374,8 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points, const unsigned int new_n_dofs)
+NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points,
+                                         const unsigned int new_n_dofs)
 {
   // Initialize size of arrays
   this->n_q_points = new_n_q_points;
@@ -404,9 +405,9 @@ NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points, cons
   this->shear_rate.resize(n_q_points);
 
   // Velocity for BDF schemes
-  this->previous_velocity_values.resize(
-    maximum_number_of_previous_solutions(),
-    std::vector<Tensor<1, dim>>(n_q_points));
+  this->previous_velocity_values.resize(maximum_number_of_previous_solutions(),
+                                        std::vector<Tensor<1, dim>>(
+                                          n_q_points));
 
   // Pressure
   this->pressure_values.resize(n_q_points);
@@ -415,28 +416,23 @@ NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points, cons
 
   // Pressure for BDF schemes (compressible Navier-Stokes)
   this->previous_pressure_values.resize(maximum_number_of_previous_solutions(),
-                                     std::vector<double>(n_q_points));
+                                        std::vector<double>(n_q_points));
   // Initialize arrays related to shape functions
   // Velocity shape functions
-  this->phi_u.resize(
-    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
-  this->grad_phi_u.resize(
-    n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
+  this->phi_u.resize(n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+  this->grad_phi_u.resize(n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
   this->div_phi_u.resize(n_q_points, std::vector<double>(n_dofs));
-  this->hess_phi_u.resize(
-    n_q_points, std::vector<Tensor<3, dim>>(n_dofs));
-  this->laplacian_phi_u.resize(
-    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+  this->hess_phi_u.resize(n_q_points, std::vector<Tensor<3, dim>>(n_dofs));
+  this->laplacian_phi_u.resize(n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
 
   // Pressure shape functions
   this->phi_p.resize(n_q_points, std::vector<double>(n_dofs));
-  this->grad_phi_p.resize(
-    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+  this->grad_phi_p.resize(n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
 
   // Physical properties
   fields[field::pressure].resize(n_q_points);
   fields[field::shear_rate].resize(n_q_points);
-  
+
   density.resize(n_q_points);
   dynamic_viscosity.resize(n_q_points);
   kinematic_viscosity.resize(n_q_points);
@@ -446,7 +442,7 @@ NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points, cons
   grad_kinematic_viscosity_shear_rate.resize(n_q_points);
 
   previous_density.resize(maximum_number_of_previous_solutions(),
-                                     std::vector<double>(this->n_q_points));
+                          std::vector<double>(this->n_q_points));
 }
 
 template <int dim>

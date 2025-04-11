@@ -40,6 +40,7 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
+#include <deal.II/non_matching/fe_values.h>
 #include <deal.II/non_matching/mesh_classifier.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -955,6 +956,9 @@ protected:
 
   /// Level set vector used by the MeshClassifier
   VectorType level_set;
+  
+  std::unique_ptr<NonMatching::FEValues<dim>> non_matching_fe_values;
+  
 };
 
 #endif

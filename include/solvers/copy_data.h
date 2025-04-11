@@ -201,13 +201,14 @@ public:
           strong_jacobian[q][i] = 0;
       }
   }
-  
-  void 
-  reallocate(const unsigned int new_n_q_points)
+
+  void
+  reallocate(const unsigned int new_n_q_points, const unsigned int new_n_dofs)
   {
-    strong_residual.resize(n_q_points);
-    strong_jacobian.resize(n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
-    
+    strong_residual.resize(new_n_q_points);
+    strong_jacobian.resize(new_n_q_points,
+                           std::vector<Tensor<1, dim>>(new_n_dofs));
+
     reset();
   }
 
