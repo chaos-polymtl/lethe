@@ -102,7 +102,7 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3,DEM::DEMProperties::PropertiesIndex>();
+      test<3, DEM::DEMProperties::PropertiesIndex>();
     }
   catch (std::exception &exc)
     {
