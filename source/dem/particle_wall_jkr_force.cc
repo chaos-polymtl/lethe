@@ -241,7 +241,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
           else
             {
               contact_information.normal_overlap = 0.;
-              contact_information.tangential_overlap.clear();
+              contact_information.tangential_displacement.clear();
               contact_information.rolling_resistance_spring_torque.clear();
             }
         }
@@ -399,7 +399,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
                       else
                         {
                           contact_info.normal_overlap = 0;
-                          contact_info.tangential_overlap.clear();
+                          contact_info.tangential_displacement.clear();
                           contact_info.rolling_resistance_spring_torque.clear();
                         }
                     }
@@ -500,7 +500,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
   Tensor<1, 3> damping_tangential_force =
     tangential_damping_constant * contact_info.tangential_relative_velocity;
   Tensor<1, 3> tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap +
+    tangential_spring_constant * contact_info.tangential_displacement +
     damping_tangential_force;
   double tangential_force_norm = tangential_force.norm();
 
@@ -515,16 +515,16 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
   // Check for gross sliding
   if (tangential_force_norm > modified_coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangential
+      // Gross sliding occurs and the tangential displacement and tangential
       // force are limited to Coulomb's criterion
-      contact_info.tangential_overlap =
+      contact_info.tangential_displacement =
         (modified_coulomb_threshold *
            (tangential_force / (tangential_force_norm + DBL_MIN)) -
          damping_tangential_force) /
         (tangential_spring_constant + DBL_MIN);
 
       tangential_force =
-        (tangential_spring_constant * contact_info.tangential_overlap) +
+        (tangential_spring_constant * contact_info.tangential_displacement) +
         damping_tangential_force;
     }
 

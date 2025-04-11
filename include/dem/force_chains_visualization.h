@@ -182,7 +182,7 @@ private:
    * contact only for local-local and local-ghost contacts with no periodicity.
    * This is a simplified version of the contact calculation of the
    * particle-particle contact forces class, without the other contact types and
-   * the update of the particles forces, torques and tangential overlap.
+   * the update of the particles forces, torques and tangential displacement.
    *
    * @tparam force_model The particle-particle contact force model.
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
