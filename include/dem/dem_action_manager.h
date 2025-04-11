@@ -65,13 +65,13 @@ public:
     // velocity computed at the first DEM time step (counter = 0) of the CFD
     // time step) The contact search is executed to make sure the mobility
     // status of the cell matches the particles that are in.
-    load_balance_trigger                 = false;
-    contact_search_trigger               = mobility_status_reset_trigger;
-    clear_tangential_displacement_trigger     = false;
-    solid_object_search_trigger          = false;
-    sparse_contacts_cells_update_trigger = false;
-    read_checkpoint_trigger              = false;
-    mobility_status_reset_trigger        = false;
+    load_balance_trigger                  = false;
+    contact_search_trigger                = mobility_status_reset_trigger;
+    clear_tangential_displacement_trigger = false;
+    solid_object_search_trigger           = false;
+    sparse_contacts_cells_update_trigger  = false;
+    read_checkpoint_trigger               = false;
+    mobility_status_reset_trigger         = false;
   }
 
   /**
@@ -178,10 +178,10 @@ public:
   inline void
   restart_simulation()
   {
-    read_checkpoint_trigger          = true;
-    contact_search_trigger           = true;
+    read_checkpoint_trigger               = true;
+    contact_search_trigger                = true;
     clear_tangential_displacement_trigger = true;
-    solid_object_search_trigger      = solid_objects_enabled ? true : false;
+    solid_object_search_trigger = solid_objects_enabled ? true : false;
     sparse_contacts_cells_update_trigger =
       sparse_contacts_enabled ? true : false;
   }
@@ -195,12 +195,10 @@ public:
    *                   balanced
    * - contact search: cells and particles will not be on the same processor,
    *                   so all the contact search needs to be performed.
-   * - clearing the tangential displacement: the tangential displacement history of the
-   *                                    particles pairs (or particle-wall) are
-   *                                    lost when particles are handled by
-   *                                    another processor. For consistency
-   *                                    reasons, all the tangential displacement
-   *                                    history is reset for all particles.
+   * - clearing the tangential displacement: the tangential displacement history
+   * of the particles pairs (or particle-wall) are lost when particles are
+   * handled by another processor. For consistency reasons, all the tangential
+   * displacement history is reset for all particles.
    * - resizing the containers: the containers need to be resized to the new
    *                            number of local particles.
    * - solid object search (if enabled): the solid objects need to be mapped to
@@ -212,11 +210,11 @@ public:
   inline void
   load_balance_step()
   {
-    load_balance_trigger             = true;
-    contact_search_trigger           = true;
+    load_balance_trigger                  = true;
+    contact_search_trigger                = true;
     clear_tangential_displacement_trigger = true;
-    resize_containers_trigger        = true;
-    solid_object_search_trigger      = solid_objects_enabled ? true : false;
+    resize_containers_trigger             = true;
+    solid_object_search_trigger = solid_objects_enabled ? true : false;
     sparse_contacts_cells_update_trigger =
       sparse_contacts_enabled ? true : false;
   }

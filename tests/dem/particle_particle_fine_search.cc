@@ -128,8 +128,10 @@ test()
                   << information_iterator->second.particle_two->get_id()
                   << std::endl;
           deallog << "tangential displacement at the beginning of contact is: "
-                  << information_iterator->second.tangential_displacement[0] << " "
-                  << information_iterator->second.tangential_displacement[1] << " "
+                  << information_iterator->second.tangential_displacement[0]
+                  << " "
+                  << information_iterator->second.tangential_displacement[1]
+                  << " "
                   << information_iterator->second.tangential_displacement[2]
                   << std::endl;
           ++information_iterator;

@@ -311,10 +311,9 @@ protected:
     // Calculation of new tangential_displacement, since this value is history-
     // dependent it needs the value at previous time-step. This variable is the
     // main reason that we have iteration over  two different vectors :
-    // tangential_displacement of the particles which were already in contact needs
-    // to modified using its history, while the tangential_displacements of new
-    // particles are equal to zero
-    // delta_t_new = delta_t_old + v_rt*dt
+    // tangential_displacement of the particles which were already in contact
+    // needs to modified using its history, while the tangential_displacements
+    // of new particles are equal to zero delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_displacement += tangential_relative_velocity * dt;
     contact_info.tangential_displacement -=
       (contact_info.tangential_displacement * normal_unit_vector) *
@@ -815,19 +814,21 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential displacement is recalculated from
-        // the tangential force limited to Coulomb's criterion
+        // Gross sliding occurs and the tangential displacement is recalculated
+        // from the tangential force limited to Coulomb's criterion
         const Tensor<1, 3> limited_tangential_force =
           coulomb_threshold *
           (tangential_force / (tangential_force.norm() + DBL_MIN));
 
-        // Calculate the tangential displacement from the limited tangential force
-        // minus the spring tangential force divided by the spring constant.
+        // Calculate the tangential displacement from the limited tangential
+        // force minus the spring tangential force divided by the spring
+        // constant.
         contact_info.tangential_displacement =
           (limited_tangential_force - damping_tangential_force) /
           (tangential_spring_constant + DBL_MIN);
 
-        // Recalculate the tangential force using the new tangential displacement.
+        // Recalculate the tangential force using the new tangential
+        // displacement.
         tangential_force =
           (tangential_spring_constant * contact_info.tangential_displacement) +
           damping_tangential_force;
@@ -970,19 +971,21 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential displacement is recalculated from
-        // the tangential force limited to Coulomb's criterion
+        // Gross sliding occurs and the tangential displacement is recalculated
+        // from the tangential force limited to Coulomb's criterion
         const Tensor<1, 3> limited_tangential_force =
           coulomb_threshold *
           (tangential_force / (tangential_force.norm() + DBL_MIN));
 
-        // Calculate the tangential displacement from the limited tangential force
-        // minus the spring tangential force divided by the spring constant.
+        // Calculate the tangential displacement from the limited tangential
+        // force minus the spring tangential force divided by the spring
+        // constant.
         contact_info.tangential_displacement =
           (limited_tangential_force - damping_tangential_force) /
           (tangential_spring_constant + DBL_MIN);
 
-        // Recalculate the tangential force using the new tangential displacement.
+        // Recalculate the tangential force using the new tangential
+        // displacement.
         tangential_force =
           (tangential_spring_constant * contact_info.tangential_displacement) +
           damping_tangential_force;
