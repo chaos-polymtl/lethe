@@ -11,6 +11,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_particle_heat_transfer.h>
 #include <dem/rolling_resistance_torque_models.h>
 
@@ -53,12 +54,11 @@ public:
    * candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
-   * @param torque Torque acting on particles.
-   * @param force Force acting on particles.
-   * @param heat_transfer_rate Heat transfer rate applied to particles.
+   * @param outcome Interaction outcomes : torque, force, heat transfer
+   * rate applied to particles.
    */
   virtual void
-  calculate_particle_particle_contact_force_and_heat_transfer_rate(
+  calculate_particle_particle_contact(
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
@@ -70,47 +70,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
                               &ghost_local_periodic_adjacent_particles,
     const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    std::vector<double>       &heat_transfer_rate) = 0;
-
-  /**
-   * @brief Calculate the contact forces using the contact pair information
-   * obtained in the fine search and physical properties of particles.
-   *
-   * @param local_adjacent_particles Container of the contact pair candidates
-   * information for calculation of the local particle-particle contact forces.
-   * @param ghost_adjacent_particles Container of the contact pair candidates
-   * information for calculation of the local-ghost particle-particle contact
-   * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local periodic
-   * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local-ghost periodic
-   * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the ghost-local periodic
-   * particle-particle contact forces.
-   * @param dt DEM time step.
-   * @param torque Torque acting on particles.
-   * @param force Force acting on particles.
-   */
-  virtual void
-  calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+    ParticleInteractionOutcomes<PropertiesIndex> &outcome) = 0;
 
   void
   set_periodic_offset(const Tensor<1, dim> &periodic_offset)
@@ -168,12 +128,11 @@ public:
    * candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
-   * @param torque Torque acting on particles.
-   * @param force Force acting on particles.
-   * @param heat_transfer_rate Heat transfer rate applied to particles.
+   * @param[out] outcome Interaction outcomes : torque, force, heat transfer
+   * rate applied to particles.
    */
   virtual void
-  calculate_particle_particle_contact_force_and_heat_transfer_rate(
+  calculate_particle_particle_contact(
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
@@ -185,47 +144,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
                               &ghost_local_periodic_adjacent_particles,
     const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    std::vector<double>       &heat_transfer_rate) override;
-
-  /**
-   * @brief Calculate the contact forces using the contact pair information
-   * obtained in the fine search and physical properties of particles.
-   *
-   * @param local_adjacent_particles Container of the contact pair candidates
-   * information for calculation of the local particle-particle contact forces.
-   * @param ghost_adjacent_particles Container of the contact pair candidates
-   * information for calculation of the local-ghost particle-particle contact
-   * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local periodic
-   * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local-ghost periodic
-   * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the ghost-local periodic
-   * particle-particle contact forces.
-   * @param dt DEM time step.
-   * @param torque Torque acting on particles.
-   * @param force Force acting on particles.
-   */
-  virtual void
-  calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    ParticleInteractionOutcomes<PropertiesIndex> &outcome) override;
 
 protected:
   /**
@@ -1746,20 +1665,17 @@ private:
    *
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
    * particles
-   * @param[out] torque Torque acting on particles.
-   * @param[out] force Force acting on particles.
-   * @param[out] heat_transfer_rate Heat transfer rate applied to particles.
    * @param[in] dt DEM time step.
+   * @param[out] outcome Interaction outcomes : torque, force, heat transfer
+   * rate applied to particles.
    */
   template <ContactType contact_type>
   inline void
   execute_contact_calculation(
     typename DEM::dem_data_structures<dim>::particle_contact_info
-                              &adjacent_particles_list,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    std::vector<double>       &heat_transfer_rate,
-    const double               dt)
+                                &adjacent_particles_list,
+    const double                 dt,
+    ParticleInteractionOutcomes<PropertiesIndex> &outcome)
   {
     // No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())
@@ -1781,8 +1697,8 @@ private:
     auto particle_one_properties = particle_one->get_properties();
 
     types::particle_index particle_one_id     = particle_one->get_local_index();
-    Tensor<1, 3>         &particle_one_torque = torque[particle_one_id];
-    Tensor<1, 3>         &particle_one_force  = force[particle_one_id];
+    Tensor<1, 3>         &particle_one_torque = outcome.torque[particle_one_id];
+    Tensor<1, 3>         &particle_one_force  = outcome.force[particle_one_id];
 
     // Fix particle one location for 2d and 3d
     Point<3> particle_one_location = get_location(particle_one);
@@ -1915,8 +1831,10 @@ private:
                 types::particle_index particle_two_id =
                   particle_two->get_local_index();
 
-                Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                Tensor<1, 3> &particle_two_force  = force[particle_two_id];
+                Tensor<1, 3> &particle_two_torque =
+                  outcome.torque[particle_two_id];
+                Tensor<1, 3> &particle_two_force =
+                  outcome.force[particle_two_id];
 
                 this->apply_force_and_torque_on_local_particles(
                   normal_force,
@@ -1953,8 +1871,10 @@ private:
                 types::particle_index particle_two_id =
                   particle_two->get_local_index();
 
-                Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                Tensor<1, 3> &particle_two_force  = force[particle_two_id];
+                Tensor<1, 3> &particle_two_torque =
+                  outcome.torque[particle_two_id];
+                Tensor<1, 3> &particle_two_force =
+                  outcome.force[particle_two_id];
 
                 this->apply_force_and_torque_on_single_local_particle(
                   normal_force,
@@ -1977,7 +1897,7 @@ private:
                                      DEM::DEMMPProperties::PropertiesIndex>)
           {
             AssertThrow(
-              heat_transfer_rate.size() == force.size(),
+              outcome.heat_transfer_rate.size() == outcome.force.size(),
               ExcMessage(
                 "Invalid size of heat_transfer_rate in particle particle heat transfer rate calculation."));
 
@@ -1996,9 +1916,9 @@ private:
                 types::particle_index particle_two_id =
                   particle_two->get_local_index();
                 double &particle_one_heat_transfer_rate =
-                  heat_transfer_rate[particle_one_id];
+                  outcome.heat_transfer_rate[particle_one_id];
                 double &particle_two_heat_transfer_rate =
-                  heat_transfer_rate[particle_two_id];
+                  outcome.heat_transfer_rate[particle_two_id];
 
                 double thermal_conductance;
                 calculate_contact_thermal_conductance(
