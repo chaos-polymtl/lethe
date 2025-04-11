@@ -130,14 +130,14 @@ Functions</h2></td></tr>
 <tr class="separator:aee45ecfa98ac70b94b20e7ffcbce3c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6b527b6163b2ca0f07ab546ea12c18a" id="r_ad6b527b6163b2ca0f07ab546ea12c18a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__heat__transfer_8cc.html#ad6b527b6163b2ca0f07ab546ea12c18a">calculate_contact_thermal_conductance</a> (const double radius_one, const double radius_two, const double effective_youngs_modulus, const double effective_real_youngs_modulus, const double equivalent_surface_roughness, const double equivalent_surface_slope, const double effective_microhardness, const double thermal_conductivity_one, const double thermal_conductivity_two, const double thermal_conductivity_gas, const double gas_parameter_m, const double normal_overlap, const double normal_force_norm, double &amp;thermal_conductance)</td></tr>
 <tr class="separator:ad6b527b6163b2ca0f07ab546ea12c18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b203974c4d76b0194cf31d5b2d85d57" id="r_a6b203974c4d76b0194cf31d5b2d85d57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__heat__transfer_8cc.html#a6b203974c4d76b0194cf31d5b2d85d57">apply_heat_transfer_on_local_particles</a> (const double temperature_one, const double temperature_two, const double thermal_conductance, double &amp;particle_one_heat_transfer, double &amp;particle_two_heat_transfer)</td></tr>
-<tr class="separator:a6b203974c4d76b0194cf31d5b2d85d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9eaa48b606037a51b54b5b53f02b02a" id="r_af9eaa48b606037a51b54b5b53f02b02a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__heat__transfer_8cc.html#af9eaa48b606037a51b54b5b53f02b02a">apply_heat_transfer_on_single_local_particle</a> (const double temperature_one, const double temperature_two, const double thermal_conductance, double &amp;particle_one_heat_transfer)</td></tr>
-<tr class="separator:af9eaa48b606037a51b54b5b53f02b02a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85aeee87547a4cc6ce2f2f8edcdc6963" id="r_a85aeee87547a4cc6ce2f2f8edcdc6963"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__heat__transfer_8cc.html#a85aeee87547a4cc6ce2f2f8edcdc6963">apply_heat_transfer_on_local_particles</a> (const double temperature_one, const double temperature_two, const double thermal_conductance, double &amp;particle_one_heat_transfer_rate, double &amp;particle_two_heat_transfer_rate)</td></tr>
+<tr class="separator:a85aeee87547a4cc6ce2f2f8edcdc6963"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac69c8dac19df3afb6bdd1383792dadfb" id="r_ac69c8dac19df3afb6bdd1383792dadfb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__heat__transfer_8cc.html#ac69c8dac19df3afb6bdd1383792dadfb">apply_heat_transfer_on_single_local_particle</a> (const double temperature_one, const double temperature_two, const double thermal_conductance, double &amp;particle_one_heat_transfer_rate)</td></tr>
+<tr class="separator:ac69c8dac19df3afb6bdd1383792dadfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a6b203974c4d76b0194cf31d5b2d85d57" name="a6b203974c4d76b0194cf31d5b2d85d57"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b203974c4d76b0194cf31d5b2d85d57">&#9670;&#160;</a></span>apply_heat_transfer_on_local_particles()</h2>
+<a id="a85aeee87547a4cc6ce2f2f8edcdc6963" name="a85aeee87547a4cc6ce2f2f8edcdc6963"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85aeee87547a4cc6ce2f2f8edcdc6963">&#9670;&#160;</a></span>apply_heat_transfer_on_local_particles()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -164,13 +164,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>particle_one_heat_transfer</em>, </td>
+          <td class="paramname"><em>particle_one_heat_transfer_rate</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>particle_two_heat_transfer</em>&#160;</td>
+          <td class="paramname"><em>particle_two_heat_transfer_rate</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -186,20 +186,18 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">temperature_one</td><td>Temperature of particle one. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">temperature_two</td><td>Temperature of particle two. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">thermal_conductance</td><td>Total thermal conductance between the two particles. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_one_heat_transfer</td><td>Heat transfer due to contact applied to particle one. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_two_heat_transfer</td><td>Heat transfer due to contact applied to particle two. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_one_heat_transfer_rate</td><td>Heat transfer rate due to contact applied to particle one. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_two_heat_transfer_rate</td><td>Heat transfer rate due to contact applied to particle two. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__heat__transfer_8cc_source.html#l00208">208</a> of file <a class="el" href="particle__particle__heat__transfer_8cc_source.html">particle_particle_heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>.</p>
-
 </div>
 </div>
-<a id="af9eaa48b606037a51b54b5b53f02b02a" name="af9eaa48b606037a51b54b5b53f02b02a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9eaa48b606037a51b54b5b53f02b02a">&#9670;&#160;</a></span>apply_heat_transfer_on_single_local_particle()</h2>
+<a id="ac69c8dac19df3afb6bdd1383792dadfb" name="ac69c8dac19df3afb6bdd1383792dadfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac69c8dac19df3afb6bdd1383792dadfb">&#9670;&#160;</a></span>apply_heat_transfer_on_single_local_particle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -226,7 +224,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>particle_one_heat_transfer</em>&#160;</td>
+          <td class="paramname"><em>particle_one_heat_transfer_rate</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -242,7 +240,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">temperature_one</td><td>Temperature of particle one. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">temperature_two</td><td>Temperature of particle two. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">thermal_conductance</td><td>Total thermal conductance between the two particles. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_one_heat_transfer</td><td>Heat transfer due to contact applied to particle one. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_one_heat_transfer_rate</td><td>Heat transfer rate due to contact applied to particle one. </td></tr>
   </table>
   </dd>
 </dl>

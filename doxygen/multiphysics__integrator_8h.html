@@ -204,13 +204,13 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2d5d25e8de65ce53b6d5765fd088c5f5" id="r_a2d5d25e8de65ce53b6d5765fd088c5f5"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
-<tr class="memitem:a2d5d25e8de65ce53b6d5765fd088c5f5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="multiphysics__integrator_8h.html#a2d5d25e8de65ce53b6d5765fd088c5f5">integrate_temperature</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, std::vector&lt; double &gt; &amp;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8">heat_transfer</a>, const std::vector&lt; double &gt; &amp;heat_source)</td></tr>
-<tr class="separator:a2d5d25e8de65ce53b6d5765fd088c5f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b02bbc46c1c8a0d5d812d4a505f7fc6" id="r_a5b02bbc46c1c8a0d5d812d4a505f7fc6"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a5b02bbc46c1c8a0d5d812d4a505f7fc6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="multiphysics__integrator_8h.html#a5b02bbc46c1c8a0d5d812d4a505f7fc6">integrate_temperature</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, std::vector&lt; double &gt; &amp;heat_transfer_rate, const std::vector&lt; double &gt; &amp;heat_source)</td></tr>
+<tr class="separator:a5b02bbc46c1c8a0d5d812d4a505f7fc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a2d5d25e8de65ce53b6d5765fd088c5f5" name="a2d5d25e8de65ce53b6d5765fd088c5f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d5d25e8de65ce53b6d5765fd088c5f5">&#9670;&#160;</a></span>integrate_temperature()</h2>
+<a id="a5b02bbc46c1c8a0d5d812d4a505f7fc6" name="a5b02bbc46c1c8a0d5d812d4a505f7fc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b02bbc46c1c8a0d5d812d4a505f7fc6">&#9670;&#160;</a></span>integrate_temperature()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -233,7 +233,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>heat_transfer</em>, </td>
+          <td class="paramname"><em>heat_transfer_rate</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -261,15 +261,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">particle_handler</td><td>Storage of particles and their accessor functions. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">heat_transfer</td><td>Particle-particle heat transfer. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">heat_transfer_rate</td><td>Particle-particle heat transfer rate. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">heat_source</td><td>Additional heat source term. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__integrator_8cc_source.html#l00008">8</a> of file <a class="el" href="multiphysics__integrator_8cc_source.html">multiphysics_integrator.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>.</p>
 
 </div>
 </div>
