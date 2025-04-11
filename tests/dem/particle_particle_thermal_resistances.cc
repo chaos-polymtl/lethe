@@ -35,24 +35,21 @@ test()
   Parameters::Lagrangian::ModelParameters<dim> &model_param =
     dem_parameters.model_parameters;
 
+  set_default_dem_parameters(1, dem_parameters);
+
   const Tensor<1, dim> g{{0, 0, 0}};
-  const double         dt                                    = 0.001;
-  const double         particle_diameter                     = 0.01;
-  const double         youngs_modulus                        = 5000000;
-  const double         poisson_ratio                         = 0.22;
-  const double         specific_heat                         = 840;
-  properties.particle_type_number                            = 1;
-  properties.youngs_modulus_particle[0]                      = youngs_modulus;
-  properties.poisson_ratio_particle[0]                       = poisson_ratio;
-  properties.restitution_coefficient_particle[0]             = 0.8;
-  properties.friction_coefficient_particle[0]                = 1;
-  properties.rolling_friction_coefficient_particle[0]        = 0.02;
-  properties.density_particle[0]                             = 2521;
-  properties.rolling_viscous_damping_coefficient_particle[0] = 0.;
-  properties.surface_energy_particle[0]                      = 0.;
-  properties.hamaker_constant_particle[0]                    = 0.;
-  model_param.rolling_resistance_method =
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+  const double         dt                             = 0.001;
+  const double         particle_diameter              = 0.01;
+  const double         youngs_modulus                 = 5000000;
+  const double         poisson_ratio                  = 0.22;
+  const double         specific_heat                  = 840;
+  properties.particle_type_number                     = 1;
+  properties.youngs_modulus_particle[0]               = youngs_modulus;
+  properties.poisson_ratio_particle[0]                = poisson_ratio;
+  properties.restitution_coefficient_particle[0]      = 0.8;
+  properties.friction_coefficient_particle[0]         = 1;
+  properties.rolling_friction_coefficient_particle[0] = 0.02;
+  properties.density_particle[0]                      = 2521;
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
@@ -121,6 +118,7 @@ test()
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       MOI;
+  std::vector<double>       heat_transfer_rate;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
   force.resize(particle_handler.get_max_local_particle_index());
@@ -128,6 +126,7 @@ test()
   MOI.resize(force.size());
   for (auto &moi_val : MOI)
     moi_val = 1;
+  heat_transfer_rate.resize(force.size());
 
   contact_manager.update_local_particles_in_cells(particle_handler);
 
@@ -147,15 +146,17 @@ test()
       hertz_mindlin_limit_overlap,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
-  nonlinear_force_object.calculate_particle_particle_contact_force(
-    contact_manager.get_local_adjacent_particles(),
-    contact_manager.get_ghost_adjacent_particles(),
-    contact_manager.get_local_local_periodic_adjacent_particles(),
-    contact_manager.get_local_ghost_periodic_adjacent_particles(),
-    contact_manager.get_ghost_local_periodic_adjacent_particles(),
-    dt,
-    torque,
-    force);
+  nonlinear_force_object
+    .calculate_particle_particle_contact_force_and_heat_transfer_rate(
+      contact_manager.get_local_adjacent_particles(),
+      contact_manager.get_ghost_adjacent_particles(),
+      contact_manager.get_local_local_periodic_adjacent_particles(),
+      contact_manager.get_local_ghost_periodic_adjacent_particles(),
+      contact_manager.get_ghost_local_periodic_adjacent_particles(),
+      dt,
+      torque,
+      force,
+      heat_transfer_rate);
 
   // Calculating additional parameters for thermal DEM
   auto     particle_one          = particle_handler.begin();

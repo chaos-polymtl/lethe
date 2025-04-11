@@ -64,9 +64,9 @@ test()
   pit_1->get_properties()[PropertiesIndex::specific_heat] = specific_heat;
 
   // Initialize variables
-  std::vector<double> heat_transfer;
+  std::vector<double> heat_transfer_rate;
   std::vector<double> heat_source;
-  heat_transfer.push_back(0);
+  heat_transfer_rate.push_back(0);
   heat_source.push_back(0);
   double T_analytical;
   double particle_temperature_error_dt_1;
@@ -77,10 +77,10 @@ test()
   double time = 0;
   while (time < time_final)
     {
-      heat_transfer[0] = -particle_properties[PropertiesIndex::T];
+      heat_transfer_rate[0] = -particle_properties[PropertiesIndex::T];
       integrate_temperature<dim, PropertiesIndex>(particle_handler,
                                                   dt_1,
-                                                  heat_transfer,
+                                                  heat_transfer_rate,
                                                   heat_source);
       time += dt_1;
     }
@@ -105,10 +105,10 @@ test()
   time = 0;
   while (time <= time_final)
     {
-      heat_transfer[0] = -particle_properties[PropertiesIndex::T];
+      heat_transfer_rate[0] = -particle_properties[PropertiesIndex::T];
       integrate_temperature<dim, PropertiesIndex>(particle_handler,
                                                   dt_2,
-                                                  heat_transfer,
+                                                  heat_transfer_rate,
                                                   heat_source);
       time += dt_2;
     }

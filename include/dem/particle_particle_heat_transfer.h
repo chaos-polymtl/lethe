@@ -180,18 +180,18 @@ calculate_contact_thermal_conductance(
  * @param[in] temperature_two Temperature of particle two.
  * @param[in] thermal_conductance Total thermal conductance between the two
  * particles.
- * @param[in,out] particle_one_heat_transfer Heat transfer due to contact
- * applied to particle one.
- * @param[in,out] particle_two_heat_transfer Heat transfer due to contact
- * applied to particle two.
+ * @param[in,out] particle_one_heat_transfer_rate Heat transfer rate due to
+ * contact applied to particle one.
+ * @param[in,out] particle_two_heat_transfer_rate Heat transfer rate due to
+ * contact applied to particle two.
  *
  */
 void
 apply_heat_transfer_on_local_particles(const double temperature_one,
                                        const double temperature_two,
                                        const double thermal_conductance,
-                                       double      &particle_one_heat_transfer,
-                                       double      &particle_two_heat_transfer);
+                                       double &particle_one_heat_transfer_rate,
+                                       double &particle_two_heat_transfer_rate);
 
 /**
  * @brief Apply the heat transfer to the local-ghost particle pair in contact.
@@ -202,8 +202,8 @@ apply_heat_transfer_on_local_particles(const double temperature_one,
  * @param[in] temperature_two Temperature of particle two.
  * @param[in] thermal_conductance Total thermal conductance between the two
  * particles.
- * @param[in,out] particle_one_heat_transfer Heat transfer due to contact
- * applied to particle one.
+ * @param[in,out] particle_one_heat_transfer_rate Heat transfer rate due to
+ * contact applied to particle one.
  *
  */
 void
@@ -211,6 +211,6 @@ apply_heat_transfer_on_single_local_particle(
   const double temperature_one,
   const double temperature_two,
   const double thermal_conductance,
-  double      &particle_one_heat_transfer);
+  double      &particle_one_heat_transfer_rate);
 
 #endif

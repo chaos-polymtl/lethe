@@ -21,14 +21,14 @@
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  * @param particle_handler Storage of particles and their accessor functions.
  * @param[in] dt DEM time step.
- * @param[in,out] heat_transfer Particle-particle heat transfer.
+ * @param[in,out] heat_transfer_rate Particle-particle heat transfer rate.
  * @param[in] heat_source Additional heat source term.
  */
 template <int dim, typename PropertiesIndex>
 void
 integrate_temperature(Particles::ParticleHandler<dim> &particle_handler,
                       const double                     dt,
-                      std::vector<double>             &heat_transfer,
+                      std::vector<double>             &heat_transfer_rate,
                       const std::vector<double>       &heat_source);
 
 #endif
