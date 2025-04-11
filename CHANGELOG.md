@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-10
+
+### Added
+
+- MAJOR A new subsection, named mortar, has been added for dealing with rotor-stator geometries. The information for both domains is read (considering dealii mesh type) and the merged triangulation is stored. Correspondent manifolds and boundary IDs are properly stored. [#1490](https://github.com/chaos-polymtl/lethe/pull/1490)
 
 ## [Master] - 2025-04-07
 
