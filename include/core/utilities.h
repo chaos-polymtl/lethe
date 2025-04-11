@@ -812,11 +812,9 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
  */
 template <int dim>
 inline double
-point_to_rad(const Point<dim> &point,
-             const Point<dim>  center_of_rotation = Point<dim>())
+point_to_rad(const Point<dim> &point)
 {
-  return std::fmod(std::atan2(point[1] - center_of_rotation[1],
-                              point[0] - center_of_rotation[0]) +
+  return std::fmod(std::atan2(point[1], point[0]) +
                      2 * numbers::PI,
                    2 * numbers::PI);
 }
