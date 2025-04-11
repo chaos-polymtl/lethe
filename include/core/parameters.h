@@ -1795,6 +1795,8 @@ namespace Parameters
     unsigned int rotor_boundary_id;
     // Boundary ID # of the stator at the rotor-stator interface
     unsigned int stator_boundary_id;
+    // Center of rotation of the rotor domain
+    Point<dim> center_of_rotation;
 
     void
     declare_parameters(ParameterHandler &prm);
