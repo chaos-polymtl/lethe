@@ -123,10 +123,10 @@ namespace
     Point<spacedim>
     transform(const Point<spacedim> &chart_point) const
     {
-      const double       deformation = 0.15; // TODO
+      const double       deformation = 0.0;//15; // TODO
       const unsigned int frequency   = 1;    //
-      const double       left        = -1.0; //
-      const double       right       = +1.0; //
+      const double       left        = 0; //
+      const double       right       = 6.28318530718; //
 
       double sinval = deformation;
       for (unsigned int d = 0; d < dim; ++d)
@@ -1686,7 +1686,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
-  if (!firstIter)
+  if (true || !firstIter)
     {
       // Calculate forces on the boundary conditions
       if (this->simulation_parameters.forces_parameters.calculate_force)
