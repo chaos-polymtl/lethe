@@ -4,8 +4,6 @@
 #ifndef lethe_utilities_h
 #define lethe_utilities_h
 
-#include <core/revision.h>
-
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
@@ -770,16 +768,8 @@ extract_values_from_map(const std::map<key, val> &map)
  * @param[in] argv arguments themselves in C style.
  */
 
-inline std::string
-concatenate_strings(const int argc, char **argv)
-{
-  std::string result = std::string(argv[0]);
-
-  for (int i = 1; i < argc; ++i)
-    result = result + " " + std::string(argv[i]);
-
-  return result;
-}
+std::string
+concatenate_strings(const int argc, char **argv);
 
 /**
  * @brief Print the information of the deal.II and Lethe branches
@@ -787,26 +777,8 @@ concatenate_strings(const int argc, char **argv)
  *
  * @param[in] pcout Parallel output stream
  */
-inline void
-print_version_info(const ConditionalOStream &pcout)
-{
-  (void)pcout;
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-  // Copy the tags to be able to delete the first v
-  std::string lethe_tag  = LETHE_GIT_FANCY_TAG;
-  std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;
-
-  // Print tags using the right format
-  pcout << "lethe/" << lethe_tag.erase(0, 1) << " deal.II/"
-        << dealii_tag.erase(0, 1) << std::endl;
-  pcout << std::endl;
-#else
-  AssertThrow(
-    false,
-    ExcMessage(
-      "To print version information using -V you need a version of deal.II >= 9.7.0."));
-#endif
-}
+void
+print_version_info(const ConditionalOStream &pcout);
 
 /**
  * @brief Parse the arguments given to the application
@@ -818,44 +790,8 @@ print_version_info(const ConditionalOStream &pcout)
  * strings with the rest of the arguments that are not flags; in Lethe,
  * this corresponds to the parameter file given to the application.
  */
-inline std::tuple<std::map<std::string, bool>, std::vector<std::string>>
-parse_args(int argc, char **argv)
-{
-  int                         argi = 1; // skip program name
-  std::map<std::string, bool> options{};
-  for (; argi < argc; ++argi)
-    {
-      std::string arg{argv[argi]};
-      auto        n{arg.length()};
-      if (n == 0 || arg[0] != '-' || n == 1)
-        { // empty arg or single hyphen
-          break;
-        }
-      if (arg[1] != '-')
-        { // short option
-          for (decltype(n) i = 1; i < n; ++i)
-            {
-              options[std::string{'-'} + std::string{arg[i]}] = true;
-            }
-        }
-      else
-        { // long option
-          if (n == 2)
-            { // done options on "--" and skip it
-              argi++;
-              break;
-            }
-          options[arg] = true;
-        }
-    }
-  std::vector<std::string> args{};
-  for (; argi < argc; ++argi)
-    {
-      std::string arg{argv[argi]};
-      args.push_back(arg);
-    }
-  return {options, args};
-}
+std::tuple<std::map<std::string, bool>, std::vector<std::string>>
+parse_args(int argc, char **argv);
 
 /**
  * @brief Print the parameters given by the parameter file of the application
@@ -864,39 +800,10 @@ parse_args(int argc, char **argv)
  * @param[in] prm Object containing the parameters parsed from the parameter
  * file
  */
-inline void
+void
 print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const ParameterHandler   &prm,
-                                const std::string        &file_name)
-{
-  const std::string print_parameters =
-    get_last_value_of_parameter(file_name, "print parameters");
-
-  if (print_parameters == "only changed")
-    {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-      prm.print_parameters(pcout.get_stream(),
-                           ParameterHandler::OutputStyle::PRM |
-                             ParameterHandler::OutputStyle::Short |
-                             ParameterHandler::KeepDeclarationOrder |
-                             ParameterHandler::KeepOnlyChanged);
-      pcout << std::endl << std::endl;
-#else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "To print only changed parameters you need a version of deal.II >= 9.7.0."));
-#endif
-    }
-  else if (print_parameters == "all")
-    {
-      prm.print_parameters(pcout.get_stream(),
-                           ParameterHandler::OutputStyle::PRM |
-                             ParameterHandler::OutputStyle::Short |
-                             ParameterHandler::KeepDeclarationOrder);
-      pcout << std::endl << std::endl;
-    }
-}
+                                const std::string        &file_name);
 
 /**
  * @brief Converts point to radius (angle with the x axis in the x-y plane)
