@@ -107,7 +107,10 @@ end
 subsection linear solver
   subsection fluid dynamics
     # Set type of preconditioner for the iterative solver
-    set preconditioner = amg
-    set verbosity      = verbose
+    set preconditioner               = amg
+    set amg preconditioner ilu fill  = 3
+    set max krylov vectors           = 500
+    set max iters                    = 500
+    set verbosity                    = verbose
   end
 end
