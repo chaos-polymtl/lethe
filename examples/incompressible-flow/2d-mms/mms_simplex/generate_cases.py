@@ -19,7 +19,7 @@ PRM_FILE = 'mms_2d_steady.prm'
 n_poly_deg = 2
 
 # Generation of data points
-coarse_mesh_ref = 4
+coarse_mesh_ref = 3
 fine_mesh_ref = 7
 poly_deg_min=1
 poly_deg_max=2
