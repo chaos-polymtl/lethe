@@ -35,11 +35,9 @@
 
 using namespace dealii;
 
-int
-main(int argc, char **argv)
+void
+run(const std::string formulation)
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;
   using VectorType          = LinearAlgebra::distributed::Vector<Number>;
@@ -55,13 +53,39 @@ main(int argc, char **argv)
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
-  const double       delta_1_scaling      = 0.001;
   const double       sip_factor           = 10.0;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
 
-  FESystem<dim> fe(FE_Q<dim>(fe_degree), dim, FE_Q<dim>(fe_degree), 1);
+  std::shared_ptr<FiniteElement<dim>> fe;
+  double                              delta_1_scaling = 0.0;
+
+  if (formulation == "equal")
+    {
+      delta_1_scaling = 0.001;
+      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                           dim,
+                                           FE_Q<dim>(fe_degree),
+                                           1);
+    }
+  else if (formulation == "th")
+    {
+      delta_1_scaling = 0.0;
+      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                           dim,
+                                           FE_Q<dim>(fe_degree - 1),
+                                           1);
+    }
+  else if (formulation == "pdisc")
+    {
+      delta_1_scaling = 0.0;
+      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                           dim,
+                                           FE_DGP<dim>(fe_degree - 1),
+                                           1);
+    }
+
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
@@ -101,7 +125,7 @@ main(int argc, char **argv)
       false);
 
   DoFHandler<dim> dof_handler(tria);
-  dof_handler.distribute_dofs(fe);
+  dof_handler.distribute_dofs(*fe);
 
   AffineConstraints<double> constraints;
   const IndexSet            locally_relevant_dofs =
@@ -203,7 +227,7 @@ main(int argc, char **argv)
         mapping, dof_handler, quadrature, *rhs_func, rhs, constraints);
 
       FEValues<dim>              fe_values(mapping,
-                              fe,
+                              *fe,
                               quadrature,
                               update_values | update_gradients |
                                 update_JxW_values | update_quadrature_points);
@@ -218,8 +242,8 @@ main(int argc, char **argv)
             const double delta_1 =
               delta_1_scaling * cell->minimum_vertex_distance();
 
-            Vector<double> rhs_local(fe.n_dofs_per_cell());
-            std::vector<types::global_dof_index> indices(fe.n_dofs_per_cell());
+            Vector<double> rhs_local(fe->n_dofs_per_cell());
+            std::vector<types::global_dof_index> indices(fe->n_dofs_per_cell());
 
             cell->get_dof_indices(indices);
 
@@ -310,10 +334,11 @@ main(int argc, char **argv)
 
   LinearAlgebra::distributed::Vector<double> analytical_solution;
   op.initialize_dof_vector(analytical_solution);
-  VectorTools::interpolate(mapping,
-                           dof_handler,
-                           *exact_solution,
-                           analytical_solution);
+  if (formulation != "pdisc") // TODO
+    VectorTools::interpolate(mapping,
+                             dof_handler,
+                             *exact_solution,
+                             analytical_solution);
   data_out.add_data_vector(dof_handler,
                            analytical_solution,
                            labels_ana,
@@ -322,5 +347,21 @@ main(int argc, char **argv)
   data_out.build_patches(mapping,
                          fe_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
-  data_out.write_vtu_in_parallel("poisson_dg.vtu", MPI_COMM_WORLD);
+
+  static unsigned int counter = 0;
+  data_out.write_vtu_in_parallel("poisson_dg." + std::to_string(counter) +
+                                   ".vtu",
+                                 MPI_COMM_WORLD);
+  counter++;
+}
+
+
+int
+main(int argc, char **argv)
+{
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+
+  run("equal");
+  run("th");
+  run("pdisc");
 }
