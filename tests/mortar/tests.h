@@ -481,8 +481,10 @@ template <int dim,
 class GeneralStokesOperator : public Subscriptor
 {
 public:
-  using FECellIntegrator =
-    FEEvaluation<dim, -1, 0, dim + 1, Number, VectorizedArrayType>;
+  using FECellIntegratorU =
+    FEEvaluation<dim, -1, 0, dim, Number, VectorizedArrayType>;
+  using FECellIntegratorP =
+    FEEvaluation<dim, -1, 0, 1, Number, VectorizedArrayType>;
 
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
@@ -615,12 +617,48 @@ public:
   {
     matrix_free.initialize_dof_vector(diagonal);
 
-    MatrixFreeTools::compute_diagonal(
-      matrix_free,
-      diagonal,
-      &GeneralStokesOperator<dim, Number, VectorizedArrayType>::
-        do_vmult_cell_single,
-      this);
+    MatrixFreeTools::internal::
+      ComputeMatrixScratchData<dim, VectorizedArray<Number>, false>
+        data_cell;
+
+    data_cell.dof_numbers               = {0, 0};
+    data_cell.quad_numbers              = {0, 0};
+    data_cell.n_components              = {dim, 1};
+    data_cell.first_selected_components = {0, dim};
+    data_cell.batch_type                = {0, 0};
+
+    data_cell
+      .op_create = [&](const std::pair<unsigned int, unsigned int> &range) {
+      std::vector<
+        std::unique_ptr<FEEvaluationData<dim, VectorizedArray<Number>, false>>>
+        phi;
+
+      phi.emplace_back(
+        std::make_unique<FECellIntegratorU>(matrix_free, range, 0, 0, 0));
+
+      phi.emplace_back(
+        std::make_unique<FECellIntegratorP>(matrix_free, range, 0, 0, dim));
+
+      return phi;
+    };
+
+    data_cell.op_reinit = [](auto &phi, const unsigned batch) {
+      static_cast<FECellIntegratorU &>(*phi[0]).reinit(batch);
+      static_cast<FECellIntegratorP &>(*phi[1]).reinit(batch);
+    };
+
+    data_cell.op_compute = [&](auto &phi) {
+      auto &phi_0 = static_cast<FECellIntegratorU &>(*phi[0]);
+      auto &phi_1 = static_cast<FECellIntegratorP &>(*phi[1]);
+
+      do_vmult_cell_single(phi_0, phi_1);
+    };
+
+    std::vector<VectorType *> diagonal_global_components(1);
+    diagonal_global_components[0] = &diagonal;
+
+    MatrixFreeTools::internal::compute_diagonal(
+      matrix_free, data_cell, {}, {}, diagonal, diagonal_global_components);
 
     // add coupling terms
     if (coupling_operator_v)
@@ -691,13 +729,45 @@ public:
       {
         system_matrix = 0.0;
 
-        MatrixFreeTools::compute_matrix(
-          matrix_free,
-          *constraints,
-          system_matrix,
-          &GeneralStokesOperator<dim, Number, VectorizedArrayType>::
-            do_vmult_cell_single,
-          this);
+        MatrixFreeTools::internal::
+          ComputeMatrixScratchData<dim, VectorizedArray<Number>, false>
+            data_cell;
+
+        data_cell.dof_numbers               = {0, 0};
+        data_cell.quad_numbers              = {0, 0};
+        data_cell.n_components              = {dim, 1};
+        data_cell.first_selected_components = {0, dim};
+        data_cell.batch_type                = {0, 0};
+
+        data_cell.op_create =
+          [&](const std::pair<unsigned int, unsigned int> &range) {
+            std::vector<std::unique_ptr<
+              FEEvaluationData<dim, VectorizedArray<Number>, false>>>
+              phi;
+
+            phi.emplace_back(
+              std::make_unique<FECellIntegratorU>(matrix_free, range, 0, 0, 0));
+
+            phi.emplace_back(std::make_unique<FECellIntegratorP>(
+              matrix_free, range, 0, 0, dim));
+
+            return phi;
+          };
+
+        data_cell.op_reinit = [](auto &phi, const unsigned batch) {
+          static_cast<FECellIntegratorU &>(*phi[0]).reinit(batch);
+          static_cast<FECellIntegratorP &>(*phi[1]).reinit(batch);
+        };
+
+        data_cell.op_compute = [&](auto &phi) {
+          auto &phi_0 = static_cast<FECellIntegratorU &>(*phi[0]);
+          auto &phi_1 = static_cast<FECellIntegratorP &>(*phi[1]);
+
+          do_vmult_cell_single(phi_0, phi_1);
+        };
+
+        MatrixFreeTools::internal::compute_matrix(
+          matrix_free, *constraints, data_cell, {}, {}, system_matrix);
 
         // apply coupling terms
         if (coupling_operator_v)
@@ -715,80 +785,87 @@ public:
 
 private:
   void
-  do_vmult_cell(const MatrixFree<dim, Number>               &data,
+  do_vmult_cell(const MatrixFree<dim, Number>               &matrix_free,
                 VectorType                                  &dst,
                 const VectorType                            &src,
-                const std::pair<unsigned int, unsigned int> &cell_range) const
+                const std::pair<unsigned int, unsigned int> &range) const
   {
-    FECellIntegrator phi(data);
-
-    for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
+    FECellIntegratorU integrator_u(matrix_free, range, 0, 0, 0);
+    FECellIntegratorP integrator_p(matrix_free, range, 0, 0, dim);
+    for (unsigned cell = range.first; cell < range.second; ++cell)
       {
-        phi.reinit(cell);
-        phi.read_dof_values(src);
+        integrator_u.reinit(cell);
+        integrator_p.reinit(cell);
 
-        do_vmult_cell_single(phi);
-        phi.distribute_local_to_global(dst);
+        integrator_u.read_dof_values(src);
+        integrator_p.read_dof_values(src);
+        do_vmult_cell_single(integrator_u, integrator_p);
+        integrator_u.distribute_local_to_global(dst);
+        integrator_p.distribute_local_to_global(dst);
       }
   }
 
   void
-  do_vmult_cell_single(FECellIntegrator &phi) const
+  do_vmult_cell_single(FECellIntegratorU &phi_u, FECellIntegratorP &phi_p) const
   {
-    phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-    const auto cell = phi.get_current_cell_index();
+    const auto cell = phi_u.get_current_cell_index();
 
     VectorizedArrayType delta_1;
     for (unsigned int v = 0;
          v < this->matrix_free.n_active_entries_per_cell_batch(cell);
          ++v)
       delta_1[v] =
-        0.01 *
+        delta_1_scaling *
         this->matrix_free.get_cell_iterator(cell, v)->minimum_vertex_distance();
 
-    for (unsigned int q = 0; q < phi.n_q_points; ++q)
+    for (unsigned int q = 0; q < phi_u.n_q_points; ++q)
       {
-        typename FECellIntegrator::value_type    value_result    = {};
-        typename FECellIntegrator::gradient_type gradient_result = {};
+        typename FECellIntegratorP::value_type    p_value_result    = {};
+        typename FECellIntegratorP::gradient_type p_gradient_result = {};
+        typename FECellIntegratorU::value_type    u_value_result    = {};
+        typename FECellIntegratorU::gradient_type u_gradient_result = {};
 
-        const auto value    = phi.get_value(q);
-        const auto gradient = phi.get_gradient(q);
+        const auto p_value    = phi_p.get_value(q);
+        const auto p_gradient = phi_p.get_gradient(q);
 
-        const VectorizedArray<Number>                 p_value = value[dim];
-        const Tensor<1, dim, VectorizedArray<Number>> p_gradient =
-          gradient[dim];
-
-        Tensor<2, dim, VectorizedArray<Number>> u_gradient;
-
-        for (unsigned int d = 0; d < dim; ++d)
-          u_gradient[d] = gradient[d];
+        const auto u_gradient = phi_u.get_gradient(q);
 
         // a)     (ε(v), 2νε(u))
         if (true)
-          symm_scalar_product_add(gradient_result,
-                                  u_gradient,
-                                  VectorizedArrayType(2.0));
+          {
+            symm_scalar_product_add(u_gradient_result,
+                                    u_gradient,
+                                    VectorizedArrayType(2.0));
+          }
         else
-          for (unsigned int d = 0; d < dim; ++d)
-            gradient_result[d] += u_gradient[d];
+          {
+            u_gradient_result = u_gradient;
+          }
 
         // b)   - (div(v), p)
         for (unsigned int d = 0; d < dim; ++d)
-          gradient_result[d][d] -= p_value;
+          u_gradient_result[d][d] -= p_value;
 
         // c)     (q, div(u))
         for (unsigned int d = 0; d < dim; ++d)
-          value_result[dim] += u_gradient[d][d];
+          p_value_result += u_gradient[d][d];
 
         // d) δ_1 (∇q, ∇p)
-        gradient_result[dim] = delta_1 * p_gradient;
+        if (delta_1_scaling != 0.0)
+          p_gradient_result = delta_1 * p_gradient;
 
-        phi.submit_value(value_result, q);
-        phi.submit_gradient(gradient_result, q);
+        phi_p.submit_value(p_value_result, q);
+        phi_p.submit_gradient(p_gradient_result, q);
+
+        phi_u.submit_value(u_value_result, q);
+        phi_u.submit_gradient(u_gradient_result, q);
       }
 
-    phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
   }
 
   MatrixFree<dim, Number, VectorizedArrayType> matrix_free;

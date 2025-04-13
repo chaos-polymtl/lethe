@@ -449,6 +449,24 @@ symm_scalar_product_add(Tensor<1, dim_, Tensor<1, dim, Number>> &v_gradient,
       }
 }
 
+template <int dim, typename Number>
+inline DEAL_II_ALWAYS_INLINE void
+symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
+                        const Tensor<2, dim, Number> &u_gradient,
+                        const Number                 &factor)
+{
+  for (unsigned int d = 0; d < dim; ++d)
+    v_gradient[d][d] += u_gradient[d][d] * factor;
+
+  for (unsigned int e = 0; e < dim; ++e)
+    for (unsigned int d = e + 1; d < dim; ++d)
+      {
+        const auto tmp = (u_gradient[d][e] + u_gradient[e][d]) * (factor * 0.5);
+        v_gradient[d][e] += tmp;
+        v_gradient[e][d] += tmp;
+      }
+}
+
 template <int dim, int n_components, typename Number>
 class CouplingOperator
 {
