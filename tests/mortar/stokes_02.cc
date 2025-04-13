@@ -274,7 +274,7 @@ run(const std::string formulation)
       PreconditionIdentity preconditioner;
       solution = 0.0;
       solver.solve(op, solution, rhs, preconditioner);
-      pcout << reduction_control.last_step() << std::endl;
+      pcout << reduction_control.last_step();
     }
   if (false)
     {
@@ -283,7 +283,7 @@ run(const std::string formulation)
       op.compute_inverse_diagonal(preconditioner.get_vector());
       solution = 0.0;
       solver.solve(op, solution, rhs, preconditioner);
-      pcout << reduction_control.last_step() << std::endl;
+      pcout << reduction_control.last_step();
     }
   if (false)
     {
@@ -292,7 +292,7 @@ run(const std::string formulation)
       preconditioner.initialize(op.get_system_matrix());
       solution = 0.0;
       solver.solve(op, solution, rhs, preconditioner);
-      pcout << reduction_control.last_step() << std::endl;
+      pcout << reduction_control.last_step();
     }
   if (true)
     {
@@ -301,58 +301,100 @@ run(const std::string formulation)
       preconditioner.initialize(op.get_system_matrix());
       solution = 0.0;
       solver.solve(op, solution, rhs, preconditioner);
-      pcout << reduction_control.last_step() << std::endl;
+      pcout << reduction_control.last_step();
     }
 
-  DataOut<dim> data_out;
+  if (true)
+    {
+      DataOut<dim> data_out;
 
-  DataOutBase::VtkFlags flags;
-  flags.write_higher_order_cells = true;
-  data_out.set_flags(flags);
+      DataOutBase::VtkFlags flags;
+      flags.write_higher_order_cells = true;
+      data_out.set_flags(flags);
 
-  std::vector<std::string> labels(dim + 1, "u");
-  labels[dim] = "p";
+      std::vector<std::string> labels(dim + 1, "u");
+      labels[dim] = "p";
 
-  std::vector<std::string> labels_ana(dim + 1, "ana_u");
-  labels_ana[dim] = "ana_p";
+      std::vector<std::string> labels_ana(dim + 1, "ana_u");
+      labels_ana[dim] = "ana_p";
 
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    data_component_interpretation(
-      dim + 1, DataComponentInterpretation::component_is_part_of_vector);
-  data_component_interpretation[dim] =
-    DataComponentInterpretation::component_is_scalar;
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        data_component_interpretation(
+          dim + 1, DataComponentInterpretation::component_is_part_of_vector);
+      data_component_interpretation[dim] =
+        DataComponentInterpretation::component_is_scalar;
 
-  data_out.attach_dof_handler(dof_handler);
-  data_out.add_data_vector(dof_handler,
-                           solution,
-                           labels,
-                           data_component_interpretation);
+      data_out.attach_dof_handler(dof_handler);
+      data_out.add_data_vector(dof_handler,
+                               solution,
+                               labels,
+                               data_component_interpretation);
 
-  Vector<double> ranks(tria.n_active_cells());
-  ranks = Utilities::MPI::this_mpi_process(comm);
-  data_out.add_data_vector(ranks, "ranks");
+      Vector<double> ranks(tria.n_active_cells());
+      ranks = Utilities::MPI::this_mpi_process(comm);
+      data_out.add_data_vector(ranks, "ranks");
 
-  LinearAlgebra::distributed::Vector<double> analytical_solution;
-  op.initialize_dof_vector(analytical_solution);
-  if (formulation != "pdisc") // TODO
-    VectorTools::interpolate(mapping,
-                             dof_handler,
-                             *exact_solution,
-                             analytical_solution);
-  data_out.add_data_vector(dof_handler,
-                           analytical_solution,
-                           labels_ana,
-                           data_component_interpretation);
+      LinearAlgebra::distributed::Vector<double> analytical_solution;
+      op.initialize_dof_vector(analytical_solution);
+      if (formulation != "pdisc") // TODO
+        VectorTools::interpolate(mapping,
+                                 dof_handler,
+                                 *exact_solution,
+                                 analytical_solution);
+      data_out.add_data_vector(dof_handler,
+                               analytical_solution,
+                               labels_ana,
+                               data_component_interpretation);
 
-  data_out.build_patches(mapping,
-                         fe_degree + 1,
-                         DataOut<dim>::CurvedCellRegion::curved_inner_cells);
+      data_out.build_patches(
+        mapping,
+        fe_degree + 1,
+        DataOut<dim>::CurvedCellRegion::curved_inner_cells);
 
-  static unsigned int counter = 0;
-  data_out.write_vtu_in_parallel("poisson_dg." + std::to_string(counter) +
-                                   ".vtu",
-                                 MPI_COMM_WORLD);
-  counter++;
+      static unsigned int counter = 0;
+      data_out.write_vtu_in_parallel("poisson_dg." + std::to_string(counter) +
+                                       ".vtu",
+                                     MPI_COMM_WORLD);
+      counter++;
+    }
+
+  if (true)
+    {
+      solution.update_ghost_values();
+
+      const ComponentSelectFunction<dim> u_mask(std::make_pair(0, dim),
+                                                dim + 1);
+      const ComponentSelectFunction<dim> p_mask(dim, dim + 1);
+
+      Vector<float> norm_per_cell(tria.n_active_cells());
+      VectorTools::integrate_difference(dof_handler,
+                                        solution,
+                                        *exact_solution,
+                                        norm_per_cell,
+                                        QGauss<dim>(fe->degree + 2),
+                                        VectorTools::L2_norm,
+                                        &u_mask);
+      const double error_L2_norm_u =
+        VectorTools::compute_global_error(tria,
+                                          norm_per_cell,
+                                          VectorTools::L2_norm);
+
+      VectorTools::integrate_difference(dof_handler,
+                                        solution,
+                                        *exact_solution,
+                                        norm_per_cell,
+                                        QGauss<dim>(fe->degree + 2),
+                                        VectorTools::L2_norm,
+                                        &p_mask);
+      const double error_L2_norm_p =
+        VectorTools::compute_global_error(tria,
+                                          norm_per_cell,
+                                          VectorTools::L2_norm);
+
+      std::cout << " " << error_L2_norm_u << " " << error_L2_norm_p;
+    }
+
+  std::cout << std::endl;
 }
 
 
