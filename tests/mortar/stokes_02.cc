@@ -9,6 +9,7 @@
 
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/fe/fe_dgp.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_q.h>
@@ -54,7 +55,7 @@ main(int argc, char **argv)
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
-  const double       delta_1_scaling      = 0.01;
+  const double       delta_1_scaling      = 0.001;
   const double       sip_factor           = 10.0;
 
   ConditionalOStream pcout(std::cout,

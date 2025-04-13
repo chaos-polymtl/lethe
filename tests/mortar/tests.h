@@ -851,11 +851,11 @@ private:
 
         // c)     (q, div(u))
         for (unsigned int d = 0; d < dim; ++d)
-          p_value_result += u_gradient[d][d];
+          p_value_result -= u_gradient[d][d];
 
         // d) δ_1 (∇q, ∇p)
         if (delta_1_scaling != 0.0)
-          p_gradient_result = delta_1 * p_gradient;
+          p_gradient_result = -delta_1 * p_gradient;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
