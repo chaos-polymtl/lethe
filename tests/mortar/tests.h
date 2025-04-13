@@ -535,18 +535,28 @@ public:
       bid_1,
       sip_factor,
       0);
-    coupling_operator_p = std::make_shared<CouplingOperator<dim, 1, Number>>(
-      *matrix_free.get_mapping_info().mapping,
-      matrix_free.get_dof_handler(),
-      matrix_free.get_affine_constraints(),
-      matrix_free.get_quadrature(),
-      n_subdivisions,
-      radius,
-      rotate_pi,
-      bid_0,
-      bid_1,
-      sip_factor,
-      dim);
+
+    const bool is_p_disc = matrix_free.get_dof_handler()
+                             .get_fe()
+                             .base_element(matrix_free.get_dof_handler()
+                                             .get_fe()
+                                             .component_to_base_index(dim)
+                                             .first)
+                             .n_dofs_per_vertex() == 0;
+
+    if (is_p_disc == false)
+      coupling_operator_p = std::make_shared<CouplingOperator<dim, 1, Number>>(
+        *matrix_free.get_mapping_info().mapping,
+        matrix_free.get_dof_handler(),
+        matrix_free.get_affine_constraints(),
+        matrix_free.get_quadrature(),
+        n_subdivisions,
+        radius,
+        rotate_pi,
+        bid_0,
+        bid_1,
+        sip_factor,
+        dim);
   }
 
   virtual types::global_dof_index
