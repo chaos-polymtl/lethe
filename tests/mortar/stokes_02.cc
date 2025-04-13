@@ -60,7 +60,7 @@ main(int argc, char **argv)
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
 
-  FESystem<dim> fe(FE_Q<dim>(fe_degree), dim + 1);
+  FESystem<dim> fe(FE_Q<dim>(fe_degree), dim, FE_Q<dim>(fe_degree), 1);
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
