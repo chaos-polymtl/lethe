@@ -63,7 +63,7 @@ run(const std::string formulation)
 
   if (formulation == "equal")
     {
-      delta_1_scaling = 0.001;
+      delta_1_scaling = 0.0001;
       fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
                                            dim,
                                            FE_Q<dim>(fe_degree),
@@ -265,6 +265,8 @@ run(const std::string formulation)
           }
     }
 
+  rhs.compress(VectorOperation::add);
+
   ReductionControl        reduction_control(10000, 1e-20, 1e-6);
   SolverGMRES<VectorType> solver(reduction_control);
 
@@ -391,10 +393,10 @@ run(const std::string formulation)
                                           norm_per_cell,
                                           VectorTools::L2_norm);
 
-      std::cout << " " << error_L2_norm_u << " " << error_L2_norm_p;
+      pcout << " " << error_L2_norm_u << " " << error_L2_norm_p;
     }
 
-  std::cout << std::endl;
+  pcout << std::endl;
 }
 
 

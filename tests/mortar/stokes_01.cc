@@ -54,7 +54,7 @@ main(int argc, char **argv)
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
-  const double       delta_1_scaling      = 0.001;
+  const double       delta_1_scaling      = 0.0001;
   const double       sip_factor           = 10.0;
 
   ConditionalOStream pcout(std::cout,
@@ -240,6 +240,8 @@ main(int argc, char **argv)
           }
     }
 
+  rhs.compress(VectorOperation::add);
+
   ReductionControl        reduction_control(10000, 1e-20, 1e-6);
   SolverGMRES<VectorType> solver(reduction_control);
 
@@ -360,8 +362,8 @@ main(int argc, char **argv)
                                           norm_per_cell,
                                           VectorTools::L2_norm);
 
-      std::cout << " " << error_L2_norm_u << " " << error_L2_norm_p;
+      pcout << " " << error_L2_norm_u << " " << error_L2_norm_p;
     }
 
-  std::cout << std::endl;
+  pcout << std::endl;
 }
