@@ -420,7 +420,7 @@ public:
          v < this->matrix_free.n_active_entries_per_cell_batch(cell);
          ++v)
       delta_1[v] =
-        0.01 *
+        delta_1_scaling *
         this->matrix_free.get_cell_iterator(cell, v)->minimum_vertex_distance();
 
     for (unsigned int q = 0; q < phi.n_q_points; ++q)
@@ -455,10 +455,10 @@ public:
 
         // c)     (q, div(u))
         for (unsigned int d = 0; d < dim; ++d)
-          value_result[dim] += u_gradient[d][d];
+          value_result[dim] -= u_gradient[d][d];
 
         // d) δ_1 (∇q, ∇p)
-        gradient_result[dim] = delta_1 * p_gradient;
+        gradient_result[dim] = -delta_1 * p_gradient;
 
         phi.submit_value(value_result, q);
         phi.submit_gradient(gradient_result, q);
