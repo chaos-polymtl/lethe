@@ -127,7 +127,7 @@ InterfaceTools::reconstruct_interface(
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      if (cell->is_locally_owned())
+      if ((cell->is_locally_owned()) || (cell->is_ghost()))
         {
           std::vector<Point<dim>>        surface_vertices;
           std::vector<CellData<dim - 1>> surface_cells;
@@ -144,14 +144,15 @@ InterfaceTools::reconstruct_interface(
               interface_reconstruction_vertices[cell_index] = surface_vertices;
               interface_reconstruction_cells[cell_index]    = surface_cells;
 
-              // Store the dofs of the intersected volume cell
+              if (cell->is_locally_owned())
+              {// Store the dofs of the intersected volume cell
               std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
               cell->get_dof_indices(dof_indices);
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   intersected_dofs.insert(dof_indices[i]);
-                }
+                }}
             }
         }
     }
@@ -234,8 +235,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   FETools::interpolate(background_dof_handler,
                        background_level_set_vector,
                        dof_handler,
+                       constraints,
                        tmp_local_level_set);
-
+                       
   level_set = tmp_local_level_set;
 }
 
@@ -243,6 +245,10 @@ template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 {
+  if (verbosity != Parameters::Verbosity::quiet)
+  {
+    announce_string(this->pcout, "Signed Distance Solver");
+  }
   // Gain the writing right.
   zero_out_ghost_values();
 
@@ -292,7 +298,7 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
 {
   /* Initialization of the active dofs to the max distance we want to
-   redistanciate. It requires a loop on the active dofs to initialize also
+   find the signed distance. It requires a loop on the active dofs to initialize also
    the distance value of the ghost dofs. Otherwise, they are set to 0.0 by
    default. */
   for (auto p : this->locally_active_dofs)
@@ -417,7 +423,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
       for (const unsigned int &intersected_dof : intersected_dofs)
         {
           const Point<dim> y = dof_support_points.at(intersected_dof);
-
+          
           /* Loop over the surface cells of the interface reconstruction in
            * the volume cell. In 2D, there is only 1 surface cell (line),
            * while in 3D, it can vary from 1 to 4 or 5 (triangles), depending
@@ -487,7 +493,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   int count = 0;
   while (change)
     {
-      pcout << "Redistanciating layer " << count << std::endl;
+      if (verbosity != Parameters::Verbosity::quiet)
+        pcout << "Solving signed distance of layer " << count << std::endl;
       change = false;
 
       for (const auto &cell : dof_handler.active_cell_iterators())
@@ -857,7 +864,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           approximation space.
 
           We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,VOF -
-          V_K(phi* + eta_K) = 0, where phi* is the redistanciated
+          V_K(phi* + eta_K) = 0, where phi* is the current
           signed distance, eta_K is the correction on the signed_distance that
           we are looking for. We use the secant method to do so. See Ausas et
           al. (2010) for more details.*/
@@ -996,14 +1003,14 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
 {
   /* We want to find a global correction function to apply to the dof value of
-      the signed_distance so that the geometric global volume encompassed by the
-      level 0 of the signed_distance V and by the iso-contour 0.5 of the phase
-      fraction V_VOF match. This is required because the computed distance
+     the signed_distance so that the geometric global volume encompassed by the
+     level 0 of the signed_distance V and by the iso-contour 0.5 of the phase
+     fraction V_VOF match. This is required because the computed distance
      doesn't belong to the Q1 approximation space. We solve the non-linear
      problem: DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the
-      redistanciated signed distance, xi = C*eta is the correction function on
+     curent signed distance, xi = C*eta is the correction function on
      the signed_distance that we are looking for, with eta being the cell wise
-      correction compute with compute_cell_wise_volume_correction() and C being
+     correction compute with compute_cell_wise_volume_correction() and C being
      a constant. We use the secant method to do so. See Ausas et al. (2010) for
      more details.*/
 
@@ -1095,7 +1102,33 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   // If the secant method does not converge, do not correct.
   if (secant_it >= 20)
     C_n = 0.0;
+  
+  if (verbosity != Parameters::Verbosity::quiet)
+  {
+      unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+    if (this_mpi_process == 0)
+    {
+      std::vector<std::string> column_names = {"Initial volume", "Volume after redistanciation", "Remaining error on the volume"};
+      
+      TableHandler volume_conservation_table;
+      volume_conservation_table.declare_column(column_names[0]);
+      volume_conservation_table.add_value(column_names[0], global_volume);
+      volume_conservation_table.set_scientific(column_names[0], true);
+      
+      volume_conservation_table.declare_column(column_names[1]);
+      volume_conservation_table.add_value(column_names[1], global_volume_n);
+      volume_conservation_table.set_scientific(column_names[1], true);
+      
+      volume_conservation_table.declare_column(column_names[2]);
+      volume_conservation_table.add_value(column_names[2], global_delta_volume_n);
+      volume_conservation_table.set_scientific(column_names[2], true);
+      
+      volume_conservation_table.write_text(std::cout);
+    }
 
+  }
+    
   // Update signed_distance with the correction
   signed_distance_with_ghost.add(C_n, volume_correction);
   signed_distance_with_ghost.update_ghost_values();

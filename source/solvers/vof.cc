@@ -363,15 +363,33 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                "curvature");
     }
 
-  if ((simulation_parameters.multiphysics.vof_parameters.regularization_method
-         .geometric_interface_reinitialization.enable) &&
-      ((simulation_control->get_step_number() %
-          simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.frequency ==
-        0) ||
-       (simulation_control->get_step_number() == 0)))
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .geometric_interface_reinitialization.enable)
     {
-      signed_distance_solver->attach_solution_to_output(data_out);
+      if ((simulation_control->get_step_number() %
+            simulation_parameters.multiphysics.vof_parameters
+              .regularization_method.frequency !=
+          0) || (simulation_control->get_step_number() == 0))
+          {
+            signed_distance_solver->setup_dofs();
+            
+            compute_level_set_from_phase_fraction(this->present_solution,
+                                                  this->level_set);
+
+            signed_distance_solver->set_level_set_from_background_mesh(dof_handler,
+                                                                       this->level_set);
+
+            signed_distance_solver->solve();
+
+          }
+        signed_distance_solver->attach_solution_to_output(data_out);
+        
+        signed_distance_solver->output_interface_reconstruction(
+          "interface_reconstruction_" +
+            this->simulation_parameters.simulation_control.output_name,
+          this->simulation_parameters.simulation_control.output_folder,
+          simulation_control->get_current_time(),
+          simulation_control->get_step_number());
     }
 }
 
@@ -942,9 +960,17 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   Parameters::Verbosity::verbose)
                 {
                   dependent_column_names.emplace_back(volume_column_name);
+                  dependent_column_names.emplace_back(geometric_volume_column_name);
+                  
                   dependent_column_names.emplace_back(mass_column_name);
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->volume_monitored);
+                  if (fluid_id == "fluid_1")
+                    volumes_masses_momentum_and_sharpening_threshold.emplace_back(geometric_volume_inside
+                    );
+                  else
+                    volumes_masses_momentum_and_sharpening_threshold.emplace_back(geometric_volume_outside
+                  );
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->mass_monitored);
                   for (unsigned int d = 0; d < dim; ++d)
@@ -2090,19 +2116,6 @@ VolumeOfFluid<dim>::set_initial_conditions()
         }
     }
 
-  // Compute the signed distance from the initial phase fraction, but do not
-  // reinitialize the phase fraction (only for visalization purposes)
-  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-        .geometric_interface_reinitialization.enable)
-    {
-      compute_level_set_from_phase_fraction(this->present_solution,
-                                            this->level_set);
-
-      signed_distance_solver->set_level_set_from_background_mesh(
-        dof_handler, this->level_set);
-
-      signed_distance_solver->solve();
-    }
   percolate_time_vectors();
 }
 
@@ -2568,7 +2581,12 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 {
-  this->pcout << "In redistanciation..." << std::endl;
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method.verbosity != Parameters::Verbosity::quiet)
+  {
+    announce_string(this->pcout, "VOF geometric interface reinitialization");
+    this->pcout << "In redistanciation of the previous solution ..." << std::endl;
+  }
+
   auto mpi_communicator = this->triangulation->get_communicator();
 
   signed_distance_solver->setup_dofs();
@@ -2594,13 +2612,18 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
       FETools::interpolate(signed_distance_solver->dof_handler,
                            signed_distance_solver->get_signed_distance(),
                            this->dof_handler,
+                           this->nonzero_constraints,
                            previous_level_set_owned);
+                           
 
       previous_level_set = previous_level_set_owned;
 
       compute_phase_fraction_from_level_set(previous_level_set,
                                             this->previous_solutions[0]);
     }
+  
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method.verbosity != Parameters::Verbosity::quiet)  
+    this->pcout << "In redistanciation of the present solution ..." << std::endl;
 
   compute_level_set_from_phase_fraction(this->present_solution,
                                         this->level_set);
@@ -2615,19 +2638,14 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   FETools::interpolate(signed_distance_solver->dof_handler,
                        signed_distance_solver->get_signed_distance(),
                        this->dof_handler,
+                       this->nonzero_constraints,
                        level_set_owned);
-
+                       
+                
   this->level_set = level_set_owned;
 
   compute_phase_fraction_from_level_set(this->level_set,
                                         this->present_solution);
-
-  signed_distance_solver->output_interface_reconstruction(
-    "interface_reconstruction_" +
-      this->simulation_parameters.simulation_control.output_name,
-    this->simulation_parameters.simulation_control.output_folder,
-    simulation_control->get_current_time(),
-    simulation_control->get_step_number());
 
   // signed_distance_solver->output_signed_distance(
   // "signed_distance_" +
