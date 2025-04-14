@@ -2572,7 +2572,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
                     particles[p].previous_orientation[0])
                 {
                   particles[p].clear_shape_cache();
-                  // One particle h as moved significantly, the combined shape
+                  // One particle has moved significantly: the combined shape
                   // cache should be cleared for visualization purposes.
                   clear_combined_shape_cache = true;
                 }
