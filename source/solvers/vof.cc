@@ -326,6 +326,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
 
+  // TODO AA Remove this later
   for (unsigned int i = 0;
        i < previous_algebraic_reinitialization_solutions.size();
        i++)
