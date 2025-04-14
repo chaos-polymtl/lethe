@@ -173,7 +173,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
     pit_1, p.type[1], p.diameter[1], p.mass[1], p.velocity[1], p.omega[1]);
 
   ParticleInteractionOutcomes<PropertiesIndex> outcome;
-  std::vector<double>       MOI;
+  std::vector<double>                          MOI;
   particle_handler.sort_particles_into_subdomains_and_cells();
   outcome.resize_interaction_containers(
     particle_handler.get_max_local_particle_index());
@@ -309,7 +309,8 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
         }
 
       // Integration
-      integrator_object.integrate(particle_handler, g, dt, outcome.torque, outcome.force, MOI);
+      integrator_object.integrate(
+        particle_handler, g, dt, outcome.torque, outcome.force, MOI);
 
       // Update contacts
       contact_manager.update_contacts();

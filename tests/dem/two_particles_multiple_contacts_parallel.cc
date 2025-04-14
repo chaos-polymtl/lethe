@@ -160,7 +160,7 @@ test()
 
   // Defining variables
   ParticleInteractionOutcomes<PropertiesIndex> outcome;
-  std::vector<double>       MOI;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
   outcome.resize_interaction_containers(
@@ -208,7 +208,8 @@ test()
         step_force = outcome.force[0][1];
 
       // Integration
-      integrator_object.integrate(particle_handler, g, dt, outcome.torque, outcome.force, MOI);
+      integrator_object.integrate(
+        particle_handler, g, dt, outcome.torque, outcome.force, MOI);
 
       contact_manager.update_contacts();
 

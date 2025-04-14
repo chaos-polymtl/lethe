@@ -89,7 +89,7 @@ test()
     pit2, type, particle_diameter, mass, v2, omega2);
 
   ParticleInteractionOutcomes<PropertiesIndex> outcome;
-  std::vector<double>       MOI;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
   outcome.resize_interaction_containers(
@@ -128,8 +128,9 @@ test()
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force vector for particle 1 is: "
-          << outcome.force[particle->get_id()][0] << " " << outcome.force[particle->get_id()][1]
-          << " " << outcome.force[particle->get_id()][2] << " N " << std::endl;
+          << outcome.force[particle->get_id()][0] << " "
+          << outcome.force[particle->get_id()][1] << " "
+          << outcome.force[particle->get_id()][2] << " N " << std::endl;
 }
 
 int
