@@ -1273,9 +1273,8 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
       // Resize and reinitialize displacement container
       displacement.resize(
         this->particle_handler.get_max_local_particle_index());
-      // Resize and reinitialize displacement container
-      outcome.force.resize(displacement.size());
-      outcome.torque.resize(displacement.size());
+      // Resize and reinitialize outcome containers
+      outcome.resize_interaction_containers(displacement.size());
       MOI.resize(displacement.size());
 
       // Updating moment of inertia container
