@@ -1697,9 +1697,9 @@ LetheGridTools::find_point_triangle_distance(
   if constexpr (dim == 2)
     {
       const Tensor<1, dim> d = point_1 - point_0;
-
-      const double t_bar = d * (point - point_0) / (d.norm() * d.norm());
-
+  
+      const double t_bar = d * (point - point_0) / (d.norm() * d.norm()+1e-12);
+  
       if (t_bar <= 0.0)
         {
           const Tensor<1, dim> point_minus_p0 = point - point_0;

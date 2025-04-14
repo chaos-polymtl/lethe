@@ -405,11 +405,13 @@ namespace InterfaceTools
                                           background_triangulation,
       std::shared_ptr<FiniteElement<dim>> background_fe,
       const double                        p_max_distance,
-      const double                        p_iso_level)
+      const double                        p_iso_level,
+    const Parameters::Verbosity p_verbosity)
       : dof_handler(*background_triangulation)
       , fe(background_fe)
       , max_distance(p_max_distance)
       , iso_level(p_iso_level)
+      , verbosity(p_verbosity)
       , pcout(std::cout,
               (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
     {
@@ -870,6 +872,9 @@ namespace InterfaceTools
     /// Iso-level describing the interface from which the signed distance is
     /// computed
     const double iso_level;
+    
+    /// Verbosity level
+    const Parameters::Verbosity verbosity;
 
     /// Parallel output stream
     ConditionalOStream pcout;
@@ -923,7 +928,7 @@ namespace InterfaceTools
     PVDHandler pvd_handler_reconstruction;
 
     /// PVDHandler for signed distance
-    PVDHandler pvd_handler_signed_distance;
+    PVDHandler pvd_handler_signed_distance;    
   };
 } // namespace InterfaceTools
 

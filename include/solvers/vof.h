@@ -156,7 +156,7 @@ public:
           simulation_parameters.multiphysics.vof_parameters
             .regularization_method.geometric_interface_reinitialization
             .max_reinitialization_distance,
-          0.0);
+          0.0, simulation_parameters.multiphysics.vof_parameters.regularization_method.verbosity);
       }
   }
 
