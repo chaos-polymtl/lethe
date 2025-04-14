@@ -88,14 +88,13 @@ test()
   set_particle_properties<dim, PropertiesIndex>(
     pit2, type, particle_diameter, mass, v2, omega2);
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
+  ParticleInteractionOutcomes<PropertiesIndex> outcome;
   std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  outcome.resize_interaction_containers(
+    particle_handler.get_max_local_particle_index());
+  MOI.resize(outcome.force.size());
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -117,21 +116,20 @@ test()
       hertz_mindlin_limit_overlap,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
-  nonlinear_force_object.calculate_particle_particle_contact_force(
+  nonlinear_force_object.calculate_particle_particle_contact(
     contact_manager.get_local_adjacent_particles(),
     contact_manager.get_ghost_adjacent_particles(),
     contact_manager.get_local_local_periodic_adjacent_particles(),
     contact_manager.get_local_ghost_periodic_adjacent_particles(),
     contact_manager.get_ghost_local_periodic_adjacent_particles(),
     dt,
-    torque,
-    force);
+    outcome);
 
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force vector for particle 1 is: "
-          << force[particle->get_id()][0] << " " << force[particle->get_id()][1]
-          << " " << force[particle->get_id()][2] << " N " << std::endl;
+          << outcome.force[particle->get_id()][0] << " " << outcome.force[particle->get_id()][1]
+          << " " << outcome.force[particle->get_id()][2] << " N " << std::endl;
 }
 
 int
