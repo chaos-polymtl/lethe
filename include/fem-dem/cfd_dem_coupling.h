@@ -196,8 +196,6 @@ private:
 
   unsigned int coupling_frequency;
   Tensor<1, 3> g;
-  // std::vector<Tensor<1, 3>>                  torque;
-  // std::vector<Tensor<1, 3>>                  force;
   ParticleInteractionOutcomes<DEM::CFDDEMProperties::PropertiesIndex> outcome;
   std::vector<double>                        displacement;
   std::vector<double>                        MOI;

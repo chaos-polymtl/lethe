@@ -390,16 +390,9 @@ private:
    */
   PVDHandler particles_pvdhandler_force_chains;
 
-  // /**
-  //  * @brief The vector of torque of particles.
-  //  */
-  // std::vector<Tensor<1, 3>> torque;
-
-  // /**
-  //  * @brief The vector of force of particles.
-  //  */
-  // std::vector<Tensor<1, 3>> force;
-
+  /**
+   * @brief Class object to store the vectors of force, torque and heat transfer rate applied to particles.
+   */
   ParticleInteractionOutcomes<PropertiesIndex> outcome;
 
   /**
