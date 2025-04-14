@@ -390,15 +390,17 @@ private:
    */
   PVDHandler particles_pvdhandler_force_chains;
 
-  /**
-   * @brief The vector of torque of particles.
-   */
-  std::vector<Tensor<1, 3>> torque;
+  // /**
+  //  * @brief The vector of torque of particles.
+  //  */
+  // std::vector<Tensor<1, 3>> torque;
 
-  /**
-   * @brief The vector of force of particles.
-   */
-  std::vector<Tensor<1, 3>> force;
+  // /**
+  //  * @brief The vector of force of particles.
+  //  */
+  // std::vector<Tensor<1, 3>> force;
+
+  ParticleInteractionOutcomes<PropertiesIndex> outcome;
 
   /**
    * @brief The displacement tracking of particles for the dynamic contact

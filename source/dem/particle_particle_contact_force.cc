@@ -47,8 +47,8 @@ ParticleParticleContactForce<dim,
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
+                &ghost_local_periodic_adjacent_particles,
+    const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &outcome)
 {
   // Calculating the contact forces and heat transfer rates for local-local
@@ -76,9 +76,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::local_periodic_particle_particle>(
-        periodic_adjacent_particles_list,
-        dt,
-        outcome);
+        periodic_adjacent_particles_list, dt, outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for local-ghost
@@ -88,9 +86,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_periodic_particle_particle>(
-        periodic_adjacent_particles_list,
-        dt,
-        outcome);
+        periodic_adjacent_particles_list, dt, outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for ghost-local
@@ -100,9 +96,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_local_periodic_particle_particle>(
-        periodic_adjacent_particles_list,
-        dt,
-        outcome);
+        periodic_adjacent_particles_list, dt, outcome);
     }
 }
 
