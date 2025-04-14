@@ -63,6 +63,12 @@ main(int argc, char *argv[])
                 dem_parameters);
               problem.solve();
             }
+          else if (solver_type == DEM::SolverType::dem_mp)
+            {
+              DEMSolver<2, DEM::DEMMPProperties::PropertiesIndex> problem(
+                dem_parameters);
+              problem.solve();
+            }
           else
             {
               AssertThrow(
@@ -89,12 +95,17 @@ main(int argc, char *argv[])
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
 
-          // const DEM::SolverType solver_type =
-          // dem_parameters.model_parameters.solver_type;
-          const DEM::SolverType solver_type = DEM::SolverType::dem;
+          const DEM::SolverType solver_type =
+            dem_parameters.model_parameters.solver_type;
           if (solver_type == DEM::SolverType::dem)
             {
               DEMSolver<3, DEM::DEMProperties::PropertiesIndex> problem(
+                dem_parameters);
+              problem.solve();
+            }
+          else if (solver_type == DEM::SolverType::dem_mp)
+            {
+              DEMSolver<3, DEM::DEMMPProperties::PropertiesIndex> problem(
                 dem_parameters);
               problem.solve();
             }
