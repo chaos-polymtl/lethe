@@ -519,8 +519,8 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
     contact_manager.get_particle_wall_in_contact(),
     simulation_control->get_time_step(),
-    torque,
-    force);
+    outcome.torque,
+    outcome.force);
 
   if (parameters.forces_torques.calculate_force_torque)
     {
@@ -536,8 +536,8 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
-        torque,
-        force);
+        outcome.torque,
+        outcome.force);
     }
 
   // Particle-solid objects contact force
@@ -547,8 +547,8 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
         ->calculate_particle_floating_wall_contact_force(
           contact_manager.get_particle_floating_mesh_in_contact(),
           simulation_control->get_time_step(),
-          torque,
-          force,
+          outcome.torque,
+          outcome.force,
           solid_surfaces);
     }
 
@@ -556,7 +556,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
     .calculate_particle_point_contact_force(
       &contact_manager.get_particle_points_in_contact(),
       parameters.lagrangian_physical_properties,
-      force);
+      outcome.force);
 
   if constexpr (dim == 3)
     {
@@ -564,7 +564,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
         .calculate_particle_line_contact_force(
           &contact_manager.get_particle_lines_in_contact(),
           parameters.lagrangian_physical_properties,
-          force);
+          outcome.force);
     }
 }
 
@@ -830,8 +830,8 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
       // Resize and reinitialize displacement container
       displacement.resize(particle_handler.get_max_local_particle_index());
       // Resize and reinitialize displacement container
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
+      outcome.force.resize(displacement.size());
+      outcome.torque.resize(displacement.size());
       MOI.resize(displacement.size());
 
       // Updating moment of inertia container
@@ -1004,15 +1004,14 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Particle-particle contact force
       particle_particle_contact_force_object
-        ->calculate_particle_particle_contact_force(
+        ->calculate_particle_particle_contact(
           contact_manager.get_local_adjacent_particles(),
           contact_manager.get_ghost_adjacent_particles(),
           contact_manager.get_local_local_periodic_adjacent_particles(),
           contact_manager.get_local_ghost_periodic_adjacent_particles(),
           contact_manager.get_ghost_local_periodic_adjacent_particles(),
           simulation_control->get_time_step(),
-          torque,
-          force);
+          outcome);
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
@@ -1040,8 +1039,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
             particle_handler,
             g,
             simulation_control->get_time_step(),
-            torque,
-            force,
+            outcome.torque,
+            outcome.force,
             MOI);
         }
       else
@@ -1049,8 +1048,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
           integrator_object->integrate(particle_handler,
                                        g,
                                        simulation_control->get_time_step(),
-                                       torque,
-                                       force,
+                                       outcome.torque,
+                                       outcome.force,
                                        MOI,
                                        triangulation,
                                        sparse_contacts_object);

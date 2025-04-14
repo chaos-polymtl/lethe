@@ -845,11 +845,11 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 
       types::particle_index particle_id = particle->get_local_index();
 
-      force[particle_id][0] += particle_properties
+      outcome.force[particle_id][0] += particle_properties
         [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x];
-      force[particle_id][1] += particle_properties
+      outcome.force[particle_id][1] += particle_properties
         [DEM::CFDDEMProperties::PropertiesIndex::fem_force_y];
-      force[particle_id][2] += particle_properties
+      outcome.force[particle_id][2] += particle_properties
         [DEM::CFDDEMProperties::PropertiesIndex::fem_force_z];
     }
 }
@@ -866,11 +866,11 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
 
       types::particle_index particle_id = particle->get_local_index();
 
-      torque[particle_id][0] += particle_properties
+      outcome.torque[particle_id][0] += particle_properties
         [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x];
-      torque[particle_id][1] += particle_properties
+      outcome.torque[particle_id][1] += particle_properties
         [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_y];
-      torque[particle_id][2] += particle_properties
+      outcome.torque[particle_id][2] += particle_properties
         [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_z];
     }
 }
@@ -883,8 +883,8 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
     contact_manager.get_particle_wall_in_contact(),
     dem_time_step,
-    torque,
-    force);
+    outcome.torque,
+    outcome.force);
 
   if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
         .calculate_force_torque)
@@ -902,15 +902,15 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
-        torque,
-        force);
+        outcome.torque,
+        outcome.force);
     }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
       &contact_manager.get_particle_points_in_contact(),
       dem_parameters.lagrangian_physical_properties,
-      force);
+      outcome.force);
 
   if constexpr (dim == 3)
     {
@@ -918,7 +918,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
         .calculate_particle_line_contact_force(
           &contact_manager.get_particle_lines_in_contact(),
           dem_parameters.lagrangian_physical_properties,
-          force);
+          outcome.force);
     }
 }
 
@@ -1274,8 +1274,8 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
       displacement.resize(
         this->particle_handler.get_max_local_particle_index());
       // Resize and reinitialize displacement container
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
+      outcome.force.resize(displacement.size());
+      outcome.torque.resize(displacement.size());
       MOI.resize(displacement.size());
 
       // Updating moment of inertia container
@@ -1306,16 +1306,14 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   dem_contact_build(counter);
 
   // Particle-particle contact force
-  particle_particle_contact_force_object
-    ->calculate_particle_particle_contact_force(
-      contact_manager.get_local_adjacent_particles(),
-      contact_manager.get_ghost_adjacent_particles(),
-      contact_manager.get_local_local_periodic_adjacent_particles(),
-      contact_manager.get_local_ghost_periodic_adjacent_particles(),
-      contact_manager.get_ghost_local_periodic_adjacent_particles(),
-      dem_time_step,
-      torque,
-      force);
+  particle_particle_contact_force_object->calculate_particle_particle_contact(
+    contact_manager.get_local_adjacent_particles(),
+    contact_manager.get_ghost_adjacent_particles(),
+    contact_manager.get_local_local_periodic_adjacent_particles(),
+    contact_manager.get_local_ghost_periodic_adjacent_particles(),
+    contact_manager.get_ghost_local_periodic_adjacent_particles(),
+    dem_time_step,
+    outcome);
 
   // Particles-walls contact force:
   particle_wall_contact_force();
@@ -1337,7 +1335,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // agitation.
   // Update the cell average velocities and accelerations
   sparse_contacts_object.update_average_velocities_acceleration(
-    this->particle_handler, g, force, dem_time_step);
+    this->particle_handler, g, outcome.force, dem_time_step);
 
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
@@ -1345,8 +1343,12 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // TODO do all DEM time step at first CFD time step are half step?
   if (this->simulation_control->get_step_number() == 0)
     {
-      integrator_object->integrate_half_step_location(
-        this->particle_handler, g, dem_time_step, torque, force, MOI);
+      integrator_object->integrate_half_step_location(this->particle_handler,
+                                                      g,
+                                                      dem_time_step,
+                                                      outcome.torque,
+                                                      outcome.force,
+                                                      MOI);
     }
   else
     {
@@ -1356,8 +1358,8 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
       integrator_object->integrate(this->particle_handler,
                                    g,
                                    dem_time_step,
-                                   torque,
-                                   force,
+                                   outcome.torque,
+                                   outcome.force,
                                    MOI,
                                    *parallel_triangulation,
                                    sparse_contacts_object);

@@ -68,8 +68,8 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
+                &ghost_local_periodic_adjacent_particles,
+    const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &outcome) = 0;
 
   void
@@ -142,8 +142,8 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
+                &ghost_local_periodic_adjacent_particles,
+    const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &outcome) override;
 
 protected:
@@ -1673,8 +1673,8 @@ private:
   inline void
   execute_contact_calculation(
     typename DEM::dem_data_structures<dim>::particle_contact_info
-                                &adjacent_particles_list,
-    const double                 dt,
+                                                 &adjacent_particles_list,
+    const double                                  dt,
     ParticleInteractionOutcomes<PropertiesIndex> &outcome)
   {
     // No contact calculation if no adjacent particles
