@@ -438,7 +438,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   unsigned int n_faces_stator_interface = 0;
 
   // Shift rotor boundary IDs #
-  // Shift rotor face manifold IDs #
   // Check number of faces at rotor interface with stator
   for (const auto &face : rotor_temp_tria.active_face_iterators())
     {
@@ -449,15 +448,41 @@ read_mesh_and_manifolds_for_stator_and_rotor(
           if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
             n_faces_rotor_interface++;
         }
-      if (face->manifold_id() != numbers::flat_manifold_id)
-        face->set_manifold_id(face->manifold_id() + stator_ids_no_flat);
     }
 
-  // Shift rotor cell manifold IDs #
+  // Keep track of modified IDs in faces and lines
+  std::vector<bool> changed_manifold_ids_faces(rotor_temp_tria.n_active_faces(),
+                                               false);
+  std::vector<bool> changed_manifold_ids_lines(rotor_temp_tria.n_active_lines(),
+                                               false);
+
+  // Shift rotor manifold IDs #
   for (const auto &cell : rotor_temp_tria.active_cell_iterators())
     {
       if (cell->manifold_id() != numbers::flat_manifold_id)
         cell->set_manifold_id(cell->manifold_id() + stator_ids_no_flat);
+      for (const auto &face : cell->face_iterators())
+        {
+          if (face->manifold_id() != numbers::flat_manifold_id &&
+              !changed_manifold_ids_faces[face->index()])
+            {
+              face->set_manifold_id(face->manifold_id() + stator_ids_no_flat);
+              changed_manifold_ids_faces[face->index()] = true;
+            }
+          if (dim == 3)
+            {
+              for (const auto line_index : cell->line_indices())
+                {
+                  if (cell->line(line_index)->manifold_id() !=
+                        numbers::flat_manifold_id &&
+                      !changed_manifold_ids_lines[line_index])
+                    cell->line(line_index)
+                      ->set_manifold_id(cell->line(line_index)->manifold_id() +
+                                        stator_ids_no_flat);
+                  changed_manifold_ids_lines[line_index] = true;
+                }
+            }
+        }
     }
 
   // Check number of faces at stator interface with rotor
