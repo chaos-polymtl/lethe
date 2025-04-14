@@ -113,7 +113,7 @@ test()
 
   // Initializing variables
   ParticleInteractionOutcomes<PropertiesIndex> outcome;
-  std::vector<double>       MOI;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
   outcome.resize_interaction_containers(
@@ -140,20 +140,20 @@ test()
       hertz_mindlin_limit_overlap,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
-  nonlinear_force_object
-    .calculate_particle_particle_contact(
-      contact_manager.get_local_adjacent_particles(),
-      contact_manager.get_ghost_adjacent_particles(),
-      contact_manager.get_local_local_periodic_adjacent_particles(),
-      contact_manager.get_local_ghost_periodic_adjacent_particles(),
-      contact_manager.get_ghost_local_periodic_adjacent_particles(),
-      dt,
-      outcome);
+  nonlinear_force_object.calculate_particle_particle_contact(
+    contact_manager.get_local_adjacent_particles(),
+    contact_manager.get_ghost_adjacent_particles(),
+    contact_manager.get_local_local_periodic_adjacent_particles(),
+    contact_manager.get_local_ghost_periodic_adjacent_particles(),
+    contact_manager.get_ghost_local_periodic_adjacent_particles(),
+    dt,
+    outcome);
 
   // Output
   auto particle_one = particle_handler.begin();
   deallog << "The heat transfer applied to particle one is "
-          << outcome.heat_transfer_rate[particle_one->get_id()] << " J/s." << std::endl;
+          << outcome.heat_transfer_rate[particle_one->get_id()] << " J/s."
+          << std::endl;
 }
 
 int

@@ -8,16 +8,22 @@
 using namespace dealii;
 
 /**
- * @brief A class to store particle interaction outcomes such as torque, force, and heat transfer.
+ * @brief Class where the outcomes of particle-particle interactions are stored.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
 template <typename PropertiesIndex>
 class ParticleInteractionOutcomes
 {
 public:
+  // Class members
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       heat_transfer_rate;
 
+  /**
+   * @brief Resize the containers of force, torque and heat_transfer_rate.
+   * @param particles_number
+   */
   void
   resize_interaction_containers(const unsigned int particles_number)
   {
