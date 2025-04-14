@@ -30,11 +30,10 @@ template <int dim>
 void
 test()
 {
-  /* This test checks the accuracy of the
-  InterfaceTools::SignedDistanceSolver class from within an abitrary structure
-  that replicates the usual physical solver structure, denoted by the background
-  prefix. This test perfoms a verification of the signed distance computations
-  for a sphere.
+  /* This test checks the InterfaceTools::SignedDistanceSolver class from within
+  an arbitrary structure that replicates the usual physical solver structure, 
+  denoted by the background prefix. This test performs verification of the 
+  signed distance computations for a sphere.
   */
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
@@ -99,7 +98,8 @@ test()
       background_triangulation,
       background_fe,
       max_reinitialization_distance,
-      0.0);
+      0.0,
+      Parameters::Verbosity::quiet);
 
   signed_distance_solver->setup_dofs();
   signed_distance_solver->set_level_set_from_background_mesh(
