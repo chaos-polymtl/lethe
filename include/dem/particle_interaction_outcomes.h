@@ -19,7 +19,7 @@ public:
   std::vector<double>       heat_transfer_rate;
 
   void
-  resize_outcome_containers(const unsigned int particles_number)
+  resize_interaction_containers(const unsigned int particles_number)
   {
     force.resize(particles_number);
     torque.resize(particles_number);
