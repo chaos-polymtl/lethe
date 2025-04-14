@@ -458,7 +458,7 @@ public:
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
                    const AffineConstraints<Number> &constraints,
-                   const Quadrature<dim>           &quadrature,
+                   const Quadrature<dim>            quadrature,
                    const unsigned int               n_subdivisions,
                    const double                     radius,
                    const double                     rotate_pi,
@@ -497,7 +497,7 @@ private:
   const Mapping<dim>              &mapping;
   const DoFHandler<dim>           &dof_handler;
   const AffineConstraints<Number> &constraints;
-  const Quadrature<dim>           &quadrature;
+  const Quadrature<dim>            quadrature;
 
   std::vector<std::tuple<std::vector<double>,
                          typename Triangulation<dim>::active_cell_iterator,
@@ -535,7 +535,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const Mapping<dim>              &mapping,
   const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<Number> &constraints,
-  const Quadrature<dim>           &quadrature,
+  const Quadrature<dim>            quadrature,
   const unsigned int               n_subdivisions,
   const double                     radius,
   const double                     rotate_pi,
