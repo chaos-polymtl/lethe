@@ -145,14 +145,16 @@ InterfaceTools::reconstruct_interface(
               interface_reconstruction_cells[cell_index]    = surface_cells;
 
               if (cell->is_locally_owned())
-              {// Store the dofs of the intersected volume cell
-              std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-              cell->get_dof_indices(dof_indices);
+                { // Store the dofs of the intersected volume cell
+                  std::vector<types::global_dof_index> dof_indices(
+                    dofs_per_cell);
+                  cell->get_dof_indices(dof_indices);
 
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  intersected_dofs.insert(dof_indices[i]);
-                }}
+                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                    {
+                      intersected_dofs.insert(dof_indices[i]);
+                    }
+                }
             }
         }
     }
@@ -237,7 +239,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                        dof_handler,
                        constraints,
                        tmp_local_level_set);
-                       
+
   level_set = tmp_local_level_set;
 }
 
@@ -246,9 +248,9 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 {
   if (verbosity != Parameters::Verbosity::quiet)
-  {
-    announce_string(this->pcout, "Signed Distance Solver");
-  }
+    {
+      announce_string(this->pcout, "Signed Distance Solver");
+    }
   // Gain the writing right.
   zero_out_ghost_values();
 
@@ -298,8 +300,8 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
 {
   /* Initialization of the active dofs to the max distance we want to
-   find the signed distance. It requires a loop on the active dofs to initialize also
-   the distance value of the ghost dofs. Otherwise, they are set to 0.0 by
+   find the signed distance. It requires a loop on the active dofs to initialize
+   also the distance value of the ghost dofs. Otherwise, they are set to 0.0 by
    default. */
   for (auto p : this->locally_active_dofs)
     {
@@ -423,7 +425,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
       for (const unsigned int &intersected_dof : intersected_dofs)
         {
           const Point<dim> y = dof_support_points.at(intersected_dof);
-          
+
           /* Loop over the surface cells of the interface reconstruction in
            * the volume cell. In 2D, there is only 1 surface cell (line),
            * while in 3D, it can vary from 1 to 4 or 5 (triangles), depending
@@ -1102,33 +1104,36 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   // If the secant method does not converge, do not correct.
   if (secant_it >= 20)
     C_n = 0.0;
-  
+
   if (verbosity != Parameters::Verbosity::quiet)
-  {
-      unsigned int this_mpi_process(
-    Utilities::MPI::this_mpi_process(mpi_communicator));
-    if (this_mpi_process == 0)
     {
-      std::vector<std::string> column_names = {"Initial volume", "Volume after redistanciation", "Remaining error on the volume"};
-      
-      TableHandler volume_conservation_table;
-      volume_conservation_table.declare_column(column_names[0]);
-      volume_conservation_table.add_value(column_names[0], global_volume);
-      volume_conservation_table.set_scientific(column_names[0], true);
-      
-      volume_conservation_table.declare_column(column_names[1]);
-      volume_conservation_table.add_value(column_names[1], global_volume_n);
-      volume_conservation_table.set_scientific(column_names[1], true);
-      
-      volume_conservation_table.declare_column(column_names[2]);
-      volume_conservation_table.add_value(column_names[2], global_delta_volume_n);
-      volume_conservation_table.set_scientific(column_names[2], true);
-      
-      volume_conservation_table.write_text(std::cout);
+      unsigned int this_mpi_process(
+        Utilities::MPI::this_mpi_process(mpi_communicator));
+      if (this_mpi_process == 0)
+        {
+          std::vector<std::string> column_names = {
+            "Initial volume",
+            "Volume after redistanciation",
+            "Remaining error on the volume"};
+
+          TableHandler volume_conservation_table;
+          volume_conservation_table.declare_column(column_names[0]);
+          volume_conservation_table.add_value(column_names[0], global_volume);
+          volume_conservation_table.set_scientific(column_names[0], true);
+
+          volume_conservation_table.declare_column(column_names[1]);
+          volume_conservation_table.add_value(column_names[1], global_volume_n);
+          volume_conservation_table.set_scientific(column_names[1], true);
+
+          volume_conservation_table.declare_column(column_names[2]);
+          volume_conservation_table.add_value(column_names[2],
+                                              global_delta_volume_n);
+          volume_conservation_table.set_scientific(column_names[2], true);
+
+          volume_conservation_table.write_text(std::cout);
+        }
     }
 
-  }
-    
   // Update signed_distance with the correction
   signed_distance_with_ghost.add(C_n, volume_correction);
   signed_distance_with_ghost.update_ghost_values();

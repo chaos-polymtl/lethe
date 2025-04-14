@@ -42,10 +42,13 @@ public:
         VOFSubequationsID::curvature_projection,
         p_simulation_parameters,
         ((p_simulation_parameters.multiphysics.vof_parameters
-            .surface_tension_force.verbosity != Parameters::Verbosity::quiet) || ((p_simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.algebraic_interface_reinitialization.enable) &&
-         (p_simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.verbosity != Parameters::Verbosity::quiet))) ?
+            .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
+         ((p_simulation_parameters.multiphysics.vof_parameters
+             .regularization_method.algebraic_interface_reinitialization
+             .enable) &&
+          (p_simulation_parameters.multiphysics.vof_parameters
+             .regularization_method.verbosity !=
+           Parameters::Verbosity::quiet))) ?
           Parameters::Verbosity::verbose :
           Parameters::Verbosity::quiet,
         p_pcout,
