@@ -159,15 +159,13 @@ test()
 
 
   // Defining variables
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
+  ParticleInteractionOutcomes<PropertiesIndex> outcome;
   std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  outcome.resize_interaction_containers(
+    particle_handler.get_max_local_particle_index());
+  MOI.resize(outcome.force.size());
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -176,7 +174,7 @@ test()
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
       // Reinitializing forces
-      reinitialize_force(particle_handler, torque, force);
+      reinitialize_force(particle_handler, outcome.torque, outcome.force);
 
       particle_handler.exchange_ghost_particles();
 
@@ -195,23 +193,22 @@ test()
 
       // Integration
       // Calling non-linear force
-      nonlinear_force_object.calculate_particle_particle_contact_force(
+      nonlinear_force_object.calculate_particle_particle_contact(
         contact_manager.get_local_adjacent_particles(),
         contact_manager.get_ghost_adjacent_particles(),
         contact_manager.get_local_local_periodic_adjacent_particles(),
         contact_manager.get_local_ghost_periodic_adjacent_particles(),
         contact_manager.get_ghost_local_periodic_adjacent_particles(),
         dt,
-        torque,
-        force);
+        outcome);
 
       // Store force before integration for proc 1
       // TODO - Improve this in the future, this is not clean.
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 1)
-        step_force = force[0][1];
+        step_force = outcome.force[0][1];
 
       // Integration
-      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+      integrator_object.integrate(particle_handler, g, dt, outcome.torque, outcome.force, MOI);
 
       contact_manager.update_contacts();
 
