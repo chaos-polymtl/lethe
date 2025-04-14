@@ -31,8 +31,8 @@ void
 test()
 {
   /* This test checks the InterfaceTools::SignedDistanceSolver class from within
-  an arbitrary structure that replicates the usual physical solver structure, 
-  denoted by the background prefix. This test performs verification of the 
+  an arbitrary structure that replicates the usual physical solver structure,
+  denoted by the background prefix. This test performs verification of the
   signed distance computations for a sphere.
   */
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);

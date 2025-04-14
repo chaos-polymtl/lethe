@@ -406,7 +406,7 @@ namespace InterfaceTools
       std::shared_ptr<FiniteElement<dim>> background_fe,
       const double                        p_max_distance,
       const double                        p_iso_level,
-    const Parameters::Verbosity p_verbosity)
+      const Parameters::Verbosity         p_verbosity)
       : dof_handler(*background_triangulation)
       , fe(background_fe)
       , max_distance(p_max_distance)
@@ -872,7 +872,7 @@ namespace InterfaceTools
     /// Iso-level describing the interface from which the signed distance is
     /// computed
     const double iso_level;
-    
+
     /// Verbosity level
     const Parameters::Verbosity verbosity;
 
@@ -928,7 +928,7 @@ namespace InterfaceTools
     PVDHandler pvd_handler_reconstruction;
 
     /// PVDHandler for signed distance
-    PVDHandler pvd_handler_signed_distance;    
+    PVDHandler pvd_handler_signed_distance;
   };
 } // namespace InterfaceTools
 

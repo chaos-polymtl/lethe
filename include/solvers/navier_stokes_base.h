@@ -248,13 +248,13 @@ protected:
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
-      
+
     if (!restart)
-    {
-      this->postprocess_fd(true);
-      multiphysics->postprocess(true);
-      this->write_output_results(this->present_solution);
-    }
+      {
+        this->postprocess_fd(true);
+        multiphysics->postprocess(true);
+        this->write_output_results(this->present_solution);
+      }
   }
 
   /**
