@@ -3,12 +3,17 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-14
+
+### Changed
+
+- MAJOR The "tangential overlap" terminology is a misused of language since an overlap means that two things are occupying the same physical space which is not the case this vector. For this reason, this terminology was replaced by "tangential displacement" every where in the code and in the documentation. [#1492](https://github.com/chaos-polymtl/lethe/pull/1492)
+
 ## [Master] - 2025-04-13
 
 ### Fixed
 
 - MINOR In the sharp immersed boundaries solver, added a condition that clears the combined_shape cache if a particle has moved. This fixes a bug that would lead to an incorrect level set function when particles would move accross subdomains. This only affected the visualization of the particles. [#1479](https://github.com/chaos-polymtl/lethe/pull/1495)
-
 
 ## [Master] - 2025-04-10
 
