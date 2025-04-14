@@ -48,8 +48,8 @@ test()
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const unsigned int mapping_degree       = 3;
 
-  Parameters::Mesh        stator_mesh;
-  Parameters::Mortar<dim> mortar;
+  Parameters::Mesh        mesh_parameters;
+  Parameters::Mortar<dim> mortar_parameters;
 
   // Stator mesh parameters
   stator_mesh.type                     = Parameters::Mesh::Type::dealii;
@@ -63,33 +63,33 @@ test()
   stator_mesh.initial_refinement_at_boundaries = 0;
 
   // Rotor mesh parameters
-  mortar.enable                     = "true";
-  mortar.rotor_mesh                 = std::make_shared<Parameters::Mesh>();
-  mortar.rotor_mesh->type           = Parameters::Mesh::Type::dealii;
-  mortar.rotor_mesh->grid_type      = "hyper_ball_balanced";
-  mortar.rotor_mesh->grid_arguments = "0, 0 : 1.0";
-  mortar.rotor_mesh->rotation_angle = 3.0;
-  mortar.rotor_mesh->scale          = 1;
-  mortar.rotor_mesh->simplex        = false;
-  mortar.stator_boundary_id         = 4;
-  mortar.rotor_boundary_id          = 5; // after shifting
+  mortar_parameters.enable           = "true";
+  mortar_parameters.rotor_mesh       = std::make_shared<Parameters::Mesh>();
+  mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
+  mortar_parameters.rotor_mesh->grid_type      = "hyper_ball_balanced";
+  mortar_parameters.rotor_mesh->grid_arguments = "0, 0 : 1.0";
+  mortar_parameters.rotor_mesh->rotation_angle = 3.0;
+  mortar_parameters.rotor_mesh->scale          = 1;
+  mortar_parameters.rotor_mesh->simplex        = false;
+  mortar_parameters.stator_boundary_id         = 4;
+  mortar_parameters.rotor_boundary_id          = 5; // after shifting
 
   // Initialized merged triangulation
-  parallel::distributed::Triangulation<dim> merged_tria(comm);
+  parallel::distributed::Triangulation<dim> triangulation(comm);
 
   // Merge stator and rotor triangulations
-  read_mesh_and_manifolds_for_stator_and_rotor(merged_tria,
-                                               stator_mesh,
+  read_mesh_and_manifolds_for_stator_and_rotor(triangulation,
+                                               mesh_parameters,
                                                false,
-                                               mortar);
+                                               mortar_parameters);
 
   // Print information
   deallog << "Merged triangulation" << std::endl;
-  deallog << "Number of active cells : " << merged_tria.n_active_cells()
+  deallog << "Number of active cells : " << triangulation.n_active_cells()
           << std::endl;
-  deallog << "Number of vertices : " << merged_tria.n_vertices() << std::endl;
+  deallog << "Number of vertices : " << triangulation.n_vertices() << std::endl;
 
-  for (const auto &face : merged_tria.active_face_iterators())
+  for (const auto &face : triangulation.active_face_iterators())
     deallog << "Cell center : " << face->center() << std::endl;
 
   // Generate vtu file
@@ -99,9 +99,9 @@ test()
   DataOutBase::VtkFlags flags;
   flags.write_higher_order_cells = true;
   data_out.set_flags(flags);
-  data_out.attach_triangulation(merged_tria);
+  data_out.attach_triangulation(triangulation);
 
-  Vector<double> ranks(merged_tria.n_active_cells());
+  Vector<double> ranks(triangulation.n_active_cells());
   ranks = Utilities::MPI::this_mpi_process(comm);
   data_out.add_data_vector(ranks, "ranks");
   data_out.build_patches(mapping,
@@ -114,7 +114,7 @@ test()
   DataOutFaces<dim>                    data_out_faces;
   FE_Q<dim>                            dummy_fe(1);
 
-  DoFHandler<dim> dummy_dof_handler(merged_tria);
+  DoFHandler<dim> dummy_dof_handler(triangulation);
   dummy_dof_handler.distribute_dofs(dummy_fe);
 
   Vector<double> dummy_solution(dummy_dof_handler.n_dofs());
