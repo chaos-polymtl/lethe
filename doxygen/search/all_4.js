@@ -471,7 +471,7 @@ var searchData=
   ['cost_5ffunction_5ftype_468',['cost_function_type',['../structParameters_1_1RPTTuningParameters.html#abc86743273ad9cf8e3bdec146bbc6f71',1,'Parameters::RPTTuningParameters']]],
   ['costfunctiontype_469',['CostFunctionType',['../structParameters_1_1RPTTuningParameters.html#ac0a5432712a06ab61dbfbc8d10ebf8e5',1,'Parameters::RPTTuningParameters']]],
   ['coupling_5ffrequency_470',['coupling_frequency',['../structParameters_1_1CFDDEM.html#ae01d0c363ceadbb6dd18a59e41ac283d',1,'Parameters::CFDDEM::coupling_frequency'],['../classCFDDEMSolver.html#a5211b344539c82079852bac18c1c03bc',1,'CFDDEMSolver::coupling_frequency'],['../classParameters_1_1IBParticles.html#a3e1c7256851691a4c64290b9f4b28d52',1,'Parameters::IBParticles::coupling_frequency']]],
-  ['couplingoperator_471',['couplingoperator',['../classCouplingOperator.html',1,'CouplingOperator&lt; dim, n_components, Number &gt;'],['../classCouplingOperator.html#a49206b924da04c5efe11d6bbdb1878d8',1,'CouplingOperator::CouplingOperator()']]],
+  ['couplingoperator_471',['couplingoperator',['../classCouplingOperator.html',1,'CouplingOperator&lt; dim, n_components, Number &gt;'],['../classCouplingOperator.html#ad3cec069dc2523800a00751fba73bd8c',1,'CouplingOperator::CouplingOperator()']]],
   ['cp_5fl_472',['cp_l',['../structParameters_1_1PhaseChange.html#a142d592998fbda35586e88270f5b9f73',1,'Parameters::PhaseChange']]],
   ['cp_5fs_473',['cp_s',['../structParameters_1_1PhaseChange.html#aa6efc0f78d5fbecca11488c842f9e905',1,'Parameters::PhaseChange']]],
   ['create_5fbool_5fdof_5fmask_474',['create_bool_dof_mask',['../fluid__dynamics__matrix__free__operators_8cc.html#a3b586bfd310632eb0c877a0042cae50f',1,'fluid_dynamics_matrix_free_operators.cc']]],
