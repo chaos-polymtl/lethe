@@ -814,8 +814,7 @@ template <int dim>
 inline double
 point_to_rad(const Point<dim> &point)
 {
-  return std::fmod(std::atan2(point[1], point[0]) +
-                     2 * numbers::PI,
+  return std::fmod(std::atan2(point[1], point[0]) + 2 * numbers::PI,
                    2 * numbers::PI);
 }
 
