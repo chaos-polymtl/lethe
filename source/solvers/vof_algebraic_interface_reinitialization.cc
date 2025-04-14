@@ -171,11 +171,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
     this->multiphysics_interface->get_dof_handler(PhysicsID::VOF);
 
   // Interpolate VOF solution to algebraic interface reinitialization
-  VectorTools::interpolate_to_different_mesh(
-    *dof_handler_vof,
-    *this->multiphysics_interface->get_solution(PhysicsID::VOF),
-    this->dof_handler,
-    this->newton_update);
+  FETools::interpolate(*dof_handler_vof,
+                       *this->multiphysics_interface->get_solution(
+                         PhysicsID::VOF),
+                       this->dof_handler,
+                       this->newton_update);
 
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;

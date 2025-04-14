@@ -122,6 +122,22 @@ public:
             this->dof_handler));
       }
 
+    // Setup previous solutions and solutions transfers for BDF consistency when
+    // using algebraic reinitialization
+    previous_algebraic_reinitialization_solutions.resize(
+      previous_solutions.size());
+    previous_algebraic_reinitialization_solutions_transfer.reserve(
+      previous_algebraic_reinitialization_solutions.size());
+    for (unsigned int i = 0;
+         i < previous_algebraic_reinitialization_solutions.size();
+         ++i)
+      {
+        previous_algebraic_reinitialization_solutions_transfer.emplace_back(
+          parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
+            this->dof_handler));
+      }
+
+
     // Check the value of interface sharpness
     if (simulation_parameters.multiphysics.vof_parameters.regularization_method
           .sharpening.interface_sharpness < 1.0)
@@ -687,6 +703,40 @@ private:
   reinitialize_interface_with_algebraic_method();
 
   /**
+   * @brief According to the time-stepping scheme, check if this is a solution
+   * that requires regularization.
+   *
+   * @return @p true if solution should be regularized @p false otherwise.
+   */
+  inline bool
+  check_if_solution_needs_to_be_regularized_as_previous_solution()
+  {
+    const unsigned int current_step_number =
+      simulation_control->get_step_number();
+    const unsigned int regularization_frequency =
+      simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .frequency;
+    for (unsigned int i = 1;
+         i < previous_algebraic_reinitialization_solutions.size();
+         i++)
+      {
+        if ((current_step_number + i) % regularization_frequency == 0)
+          return true;
+      }
+    return false;
+  }
+
+  /**
+   * @brief Reinitialize the interface between fluids of solutions preceding the
+   * reinitialization process using the algebraic approach.
+   *
+   * @note Reinitializing previous solutions avoids inconsistencies in the time
+   * integration scheme.
+   */
+  void
+  reinitialize_previous_solution_interface_with_algebraic_method();
+
+  /**
    * @brief Reinitialize the interface between fluids using the geometric
    * approach.
    */
@@ -769,6 +819,13 @@ private:
 
   // Phase fraction filter
   std::shared_ptr<VolumeOfFluidFilterBase> filter;
+
+  // Previous algebraic reinitialization solutions
+  std::vector<GlobalVectorType> previous_algebraic_reinitialization_solutions;
+
+  // Previous algebraic reinitialization solutions transfer
+  std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
+    previous_algebraic_reinitialization_solutions_transfer;
 
   // Signed distance solver for geometric redistanciation
   std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>

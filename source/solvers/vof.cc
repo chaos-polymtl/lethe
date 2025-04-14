@@ -326,6 +326,20 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
 
+  for (unsigned int i = 0;
+       i < previous_algebraic_reinitialization_solutions.size();
+       i++)
+    data_out.add_data_vector(
+      this->dof_handler,
+      this->previous_algebraic_reinitialization_solutions[i],
+      "previous_algebraic_solution" + Utilities::int_to_string(i, 2));
+
+  for (unsigned int i = 0; i < previous_solutions.size(); i++)
+    data_out.add_data_vector(this->dof_handler,
+                             this->previous_solutions[i],
+                             "previous_vof_solution" +
+                               Utilities::int_to_string(i, 2));
+
   // Filter phase fraction
   data_out.add_data_vector(this->dof_handler,
                            this->filtered_solution,
@@ -1150,21 +1164,17 @@ VolumeOfFluid<dim>::modify_solution()
 
   // Apply algebraic interface reinitialization
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-        .algebraic_interface_reinitialization.enable &&
-      (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.vof_parameters.regularization_method
-           .frequency ==
-       0))
-    reinitialize_interface_with_algebraic_method();
-
-  // Apply geometric interface reinitialization
-  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-        .geometric_interface_reinitialization.enable &&
-      (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.vof_parameters.regularization_method
-           .frequency ==
-       0))
-    reinitialize_interface_with_geometric_method();
+        .algebraic_interface_reinitialization.enable)
+    {
+      if (simulation_control->get_step_number() %
+            simulation_parameters.multiphysics.vof_parameters
+              .regularization_method.frequency ==
+          0)
+        reinitialize_interface_with_algebraic_method();
+      else if (
+        this->check_if_solution_needs_to_be_regularized_as_previous_solution())
+        reinitialize_previous_solution_interface_with_algebraic_method();
+    }
 
   // Apply filter to phase fraction values
   apply_phase_filter();
@@ -1591,6 +1601,17 @@ VolumeOfFluid<dim>::pre_mesh_adaptation()
       this->previous_solutions_transfer[i]
         .prepare_for_coarsening_and_refinement(this->previous_solutions[i]);
     }
+
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.algebraic_interface_reinitialization.enable)
+    for (unsigned int i = 0;
+         i < this->previous_algebraic_reinitialization_solutions.size();
+         ++i)
+      {
+        this->previous_algebraic_reinitialization_solutions_transfer[i]
+          .prepare_for_coarsening_and_refinement(
+            this->previous_algebraic_reinitialization_solutions[i]);
+      }
 }
 
 
@@ -1621,6 +1642,23 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->nonzero_constraints.distribute(tmp_previous_solution);
       this->previous_solutions[i] = tmp_previous_solution;
     }
+
+  // Transfer previous algebraic reinitialization solutions
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.algebraic_interface_reinitialization.enable)
+    for (unsigned int i = 0;
+         i < this->previous_algebraic_reinitialization_solutions.size();
+         ++i)
+      {
+        GlobalVectorType previous_reinitialized_solution_owned(
+          this->locally_owned_dofs, mpi_communicator);
+        this->previous_algebraic_reinitialization_solutions_transfer[i]
+          .interpolate(previous_reinitialized_solution_owned);
+        this->nonzero_constraints.distribute(
+          previous_reinitialized_solution_owned);
+        this->previous_algebraic_reinitialization_solutions[i] =
+          previous_reinitialized_solution_owned;
+      }
 
   // Apply filter to phase fraction
   apply_phase_filter();
@@ -1663,6 +1701,12 @@ VolumeOfFluid<dim>::write_checkpoint()
     {
       sol_set_transfer.emplace_back(&this->previous_solutions[i]);
     }
+  for (auto &previous_algebraic_reinitialization_solution :
+       this->previous_algebraic_reinitialization_solutions)
+    {
+      sol_set_transfer.emplace_back(
+        &previous_algebraic_reinitialization_solution);
+    }
   this->solution_transfer->prepare_for_serialization(sol_set_transfer);
 
   // Serialize tables
@@ -1696,10 +1740,14 @@ VolumeOfFluid<dim>::read_checkpoint()
 {
   auto mpi_communicator        = this->triangulation->get_communicator();
   auto previous_solutions_size = this->previous_solutions.size();
+  auto previous_algebraic_reinitialization_solutions_size =
+    this->previous_algebraic_reinitialization_solutions.size();
   this->pcout << "Reading VOF checkpoint" << std::endl;
 
-  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions_size);
-  GlobalVectorType                distributed_system(this->locally_owned_dofs,
+  std::vector<GlobalVectorType *> input_vectors(
+    1 + previous_solutions_size +
+    previous_algebraic_reinitialization_solutions_size);
+  GlobalVectorType distributed_system(this->locally_owned_dofs,
                                       mpi_communicator);
   input_vectors[0] = &distributed_system;
 
@@ -1713,12 +1761,33 @@ VolumeOfFluid<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
+  std::vector<GlobalVectorType>
+    distributed_previous_algebraic_reinitialization_solutions;
+  distributed_previous_algebraic_reinitialization_solutions.reserve(
+    previous_algebraic_reinitialization_solutions_size);
+  for (unsigned int i = 0;
+       i < previous_algebraic_reinitialization_solutions_size;
+       ++i)
+    {
+      distributed_previous_algebraic_reinitialization_solutions.emplace_back(
+        GlobalVectorType(this->locally_owned_dofs, mpi_communicator));
+      input_vectors[i + 1 + previous_solutions_size] =
+        &distributed_previous_algebraic_reinitialization_solutions[i];
+    }
+
   this->solution_transfer->deserialize(input_vectors);
 
   this->present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions_size; ++i)
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
+    }
+  for (unsigned int i = 0;
+       i < previous_algebraic_reinitialization_solutions_size;
+       ++i)
+    {
+      this->previous_algebraic_reinitialization_solutions[i] =
+        distributed_previous_algebraic_reinitialization_solutions[i];
     }
 
   // Apply filter to phase fraction
@@ -1797,6 +1866,14 @@ VolumeOfFluid<dim>::setup_dofs()
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
                       mpi_communicator);
+    }
+  for (auto &previous_algebraic_reinitialization_solution :
+       this->previous_algebraic_reinitialization_solutions)
+    {
+      previous_algebraic_reinitialization_solution.reinit(
+        this->locally_owned_dofs,
+        this->locally_relevant_dofs,
+        mpi_communicator);
     }
 
   this->system_rhs.reinit(this->locally_owned_dofs, mpi_communicator);
@@ -2422,6 +2499,18 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
+  // Apply previous reinitialized solutions to VOF field
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.frequency != 1)
+    {
+      for (unsigned int i = 0; i < previous_solutions.size(); i++)
+        {
+          previous_solutions[i] =
+            previous_algebraic_reinitialization_solutions[i];
+        }
+    }
+
+  // Prepare to solve with algebraic reinitialization method
   apply_phase_filter();
   this->subequations->solve_specific_subequation(
     VOFSubequationsID::phase_gradient_projection);
@@ -2433,7 +2522,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     VOFSubequationsID::algebraic_interface_reinitialization);
 
   // Overwrite the VOF solution with the algebraic interface reinitialization
-  VectorTools::interpolate_to_different_mesh(
+  FETools::interpolate(
     *this->subequations->get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),
     *this->subequations->get_solution(
@@ -2442,6 +2531,49 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     this->local_evaluation_point);
   this->nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
+}
+
+template <int dim>
+void
+VolumeOfFluid<
+  dim>::reinitialize_previous_solution_interface_with_algebraic_method()
+{
+  auto             mpi_communicator = this->triangulation->get_communicator();
+  GlobalVectorType previous_reinitialized_solution_owned(
+    this->locally_owned_dofs, mpi_communicator);
+
+  // Prepare to solve with algebraic reinitialization method
+  apply_phase_filter();
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::phase_gradient_projection);
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::curvature_projection);
+
+  // Solve algebraic reinitialization steps
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::algebraic_interface_reinitialization);
+
+  // Percolate previous solution vector
+  for (unsigned int i =
+         this->previous_algebraic_reinitialization_solutions.size() - 1;
+       i > 0;
+       --i)
+    {
+      this->previous_algebraic_reinitialization_solutions[i] =
+        this->previous_algebraic_reinitialization_solutions[i - 1];
+    };
+
+  // Interpolate current solution to vector
+  FETools::interpolate(
+    *this->subequations->get_dof_handler(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    *this->subequations->get_solution(
+      VOFSubequationsID::algebraic_interface_reinitialization),
+    this->dof_handler,
+    previous_reinitialized_solution_owned);
+  this->nonzero_constraints.distribute(previous_reinitialized_solution_owned);
+  this->previous_algebraic_reinitialization_solutions[0] =
+    previous_reinitialized_solution_owned;
 }
 
 template <int dim>
