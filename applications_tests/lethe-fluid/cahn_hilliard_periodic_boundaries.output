@@ -3,22 +3,10 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 243
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 162
-
--------------------------
-Cahn-Hilliard Barycenter
--------------------------
-    time     x_cahn_hilliard y_cahn_hilliard vx_cahn_hilliard vy_cahn_hilliard 
-0.000000e+00    9.141646e-18   -7.214176e-18     1.710754e-18     0.000000e+00 
    Number of active cells:       160
    Number of degrees of freedom: 567
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 378
-
--------------------------
-Cahn-Hilliard Barycenter
--------------------------
-    time     x_cahn_hilliard y_cahn_hilliard vx_cahn_hilliard vy_cahn_hilliard 
-0.000000e+00    7.841238e-18   -5.939492e-19     1.368603e-18     0.000000e+00 
    Number of active cells:       388
    Number of degrees of freedom: 1335
    Volume of triangulation:      4
