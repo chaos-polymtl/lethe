@@ -264,7 +264,8 @@ public:
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
    * @param[in] rad Angular coordinate of cell center
-   * @param[out] points Angular weights of quadrature points of the cell
+   *
+   * @return points Angular weights of quadrature points of the cell
    */
   std::vector<double>
   get_weights(const double &rad) const
@@ -317,7 +318,8 @@ public:
   /**
    * @brief Returns the normal vector for the quadrature points
    * @param[in] rad Angular coordinate of cell center
-   * @param[out] result Normal vectors of the cell quadrature points
+   * 
+   * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
   get_normals(const double &rad) const
@@ -337,11 +339,12 @@ private:
   /**
    * @brief Returns the mesh alignement type and cell index
    * @param[in] rad Angular coordinate of cell center
-   * @param[out] type Cell configuration type at the interface
-   *                  type = 0: mesh aligned
-   *                  type = 1: mesh not aligned, inner domain (allows rotation)
-   *                  type = 2: mesh not aligned, outer domain (fixed)
-   * @param[out] id Index of the cell in which lies the rotated cell center
+   * 
+   * @return type Cell configuration type at the interface
+   * type = 0: mesh aligned
+   * type = 1: mesh not aligned, inner domain (allows rotation)
+   * type = 2: mesh not aligned, outer domain (fixed)
+   * @return id Index of the cell in which lies the rotated cell center
    */
   std::pair<unsigned int, unsigned int>
   get_config(const double &rad) const
