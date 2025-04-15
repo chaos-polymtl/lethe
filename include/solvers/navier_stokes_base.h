@@ -953,11 +953,12 @@ protected:
   DoFHandler<dim> dof_handler_level_set;
 
   std::shared_ptr<FiniteElement<dim>> fe_level_set;
+  
+  std::shared_ptr<hp::FECollection<dim>> fe_collection;
+  
 
   /// Level set vector used by the MeshClassifier
-  VectorType level_set;
-  
-  std::unique_ptr<NonMatching::FEValues<dim>> non_matching_fe_values;
+  GlobalVectorType level_set;
   
 };
 

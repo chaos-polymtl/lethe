@@ -1122,6 +1122,8 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  std::cout << "Pouette" << std::endl;
+  
   // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1140,6 +1142,7 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
 
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
+  std::cout << "Pouette before loop" << std::endl;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1147,18 +1150,21 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
       velocity[0] = scratch_data.velocity_values[q];
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
-
+      
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
           strong_residual[q] += bdf_coefs[p] * velocity[p];
         }
-
+      
+      std::cout << "Pouette after previous" << std::endl;
+      
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           strong_jacobian[q][j] += bdf_coefs[0] * scratch_data.phi_u[q][j];
         }
 
+      std::cout << "Pouette strong_jacobian" << std::endl;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -1168,9 +1174,15 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) += phi_u_j * phi_u_i * bdf_coefs[0] * JxW[q];
+              std::cout << "Pouette local_matrix" << std::endl;
             }
         }
+      std::cout << "Pouette end quadrature looop q = " << q << std::endl;
+        
     }
+    
+    std::cout << "Pouette pouette" << std::endl;
+    
 }
 
 template <int dim>
