@@ -186,11 +186,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
       mesh_classifier = std::make_shared<NonMatching::MeshClassifier<dim>>(
         dof_handler_level_set, level_set);
-      
+
       fe_collection = std::make_shared<hp::FECollection<dim>>(FESystem<dim>(
         FE_Q<dim>(this->simulation_parameters.fem_parameters.velocity_order),
         dim,
-        FE_Q<dim>(this->simulation_parameters.fem_parameters.pressure_order),1));
+        FE_Q<dim>(this->simulation_parameters.fem_parameters.pressure_order),
+        1));
     }
 }
 

@@ -156,7 +156,8 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   if (this->simulation_parameters.fem_parameters.pressure_enrichment
         .level_set_type != Parameters::LevelSetType::none)
     {
-      this->dof_handler_level_set.distribute_dofs(hp::FECollection<dim>(*this->fe_level_set));
+      this->dof_handler_level_set.distribute_dofs(
+        hp::FECollection<dim>(*this->fe_level_set));
 
       this->level_set.reinit(this->dof_handler_level_set.locally_owned_dofs(),
                              DoFTools::extract_locally_relevant_dofs(
@@ -569,9 +570,10 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
   if (this->simulation_parameters.fem_parameters.pressure_enrichment
         .level_set_type != Parameters::LevelSetType::none)
     {
-        
-      scratch_data.enable_pressure_enrichment(this->dof_handler_level_set, this->level_set, *this->mesh_classifier, *this->fe_collection);
-
+      scratch_data.enable_pressure_enrichment(this->dof_handler_level_set,
+                                              this->level_set,
+                                              *this->mesh_classifier,
+                                              *this->fe_collection);
     }
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -607,33 +609,35 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
         {
           unsigned int new_n_q_points, new_n_dofs;
 
-          std::tie(new_n_q_points,new_n_dofs) =
-          scratch_data.reinit_intersected(
+          std::tie(new_n_q_points, new_n_dofs) =
+            scratch_data.reinit_intersected(
+              cell,
+              this->evaluation_point,
+              this->previous_solutions,
+              this->forcing_function,
+              this->flow_control.get_beta(),
+              this->simulation_parameters.stabilization
+                .pressure_scaling_factor);
+          // std::cout << "Biiiiiip" << std::endl;
+
+          copy_data.reallocate(new_n_q_points, new_n_dofs);
+          // std::cout << "Boooooop" << std::endl;
+        }
+      else
+        {
+          scratch_data.reallocate(this->cell_quadrature->size(),
+                                  this->fe->n_dofs_per_cell());
+          copy_data.reallocate(this->cell_quadrature->size(),
+                               this->fe->n_dofs_per_cell());
+
+          scratch_data.reinit(
             cell,
             this->evaluation_point,
             this->previous_solutions,
             this->forcing_function,
             this->flow_control.get_beta(),
             this->simulation_parameters.stabilization.pressure_scaling_factor);
-          std::cout << "Biiiiiip" << std::endl;
-            
-          copy_data.reallocate(new_n_q_points,new_n_dofs);
-          std::cout << "Boooooop" << std::endl;
-          
         }
-      else
-      {
-        scratch_data.reallocate(this->cell_quadrature->size(), this->fe->n_dofs_per_cell());
-        copy_data.reallocate(this->cell_quadrature->size(),  this->fe->n_dofs_per_cell());
-          
-        scratch_data.reinit(
-          cell,
-          this->evaluation_point,
-          this->previous_solutions,
-          this->forcing_function,
-          this->flow_control.get_beta(),
-          this->simulation_parameters.stabilization.pressure_scaling_factor);
-      }
     }
   else
     scratch_data.reinit(
@@ -731,7 +735,6 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
 
   copy_data.reset();
 
-  std::cout << "Beeeep" << std::endl;
 
   if (this->simulation_parameters.physical_properties_manager
           .get_number_of_solids() < 1 ||
@@ -743,8 +746,8 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
         }
     }
 
-  
-  
+
+
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
@@ -832,6 +835,15 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
                                         *this->mapping);
     }
 
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment
+        .level_set_type != Parameters::LevelSetType::none)
+    {
+      scratch_data.enable_pressure_enrichment(this->dof_handler_level_set,
+                                              this->level_set,
+                                              *this->mesh_classifier,
+                                              *this->fe_collection);
+    }
+
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
@@ -860,13 +872,55 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions,
-    this->forcing_function,
-    this->flow_control.get_beta(),
-    this->simulation_parameters.stabilization.pressure_scaling_factor);
+  if (this->simulation_parameters.fem_parameters.pressure_enrichment
+        .level_set_type != Parameters::LevelSetType::none)
+    {
+      const NonMatching::LocationToLevelSet cell_location =
+        this->mesh_classifier->location_to_level_set(cell);
+
+      if (cell_location == NonMatching::LocationToLevelSet::intersected)
+        {
+          unsigned int new_n_q_points, new_n_dofs;
+
+          std::tie(new_n_q_points, new_n_dofs) =
+            scratch_data.reinit_intersected(
+              cell,
+              this->evaluation_point,
+              this->previous_solutions,
+              this->forcing_function,
+              this->flow_control.get_beta(),
+              this->simulation_parameters.stabilization
+                .pressure_scaling_factor);
+          // std::cout << "Biiiiiip" << std::endl;
+
+          copy_data.reallocate(new_n_q_points, new_n_dofs);
+          // std::cout << "Boooooop" << std::endl;
+        }
+      else
+        {
+          scratch_data.reallocate(this->cell_quadrature->size(),
+                                  this->fe->n_dofs_per_cell());
+          copy_data.reallocate(this->cell_quadrature->size(),
+                               this->fe->n_dofs_per_cell());
+
+          scratch_data.reinit(
+            cell,
+            this->evaluation_point,
+            this->previous_solutions,
+            this->forcing_function,
+            this->flow_control.get_beta(),
+            this->simulation_parameters.stabilization.pressure_scaling_factor);
+        }
+    }
+  else
+    scratch_data.reinit(
+      cell,
+      this->evaluation_point,
+      this->previous_solutions,
+      this->forcing_function,
+      this->flow_control.get_beta(),
+      this->simulation_parameters.stabilization.pressure_scaling_factor);
+
 
   if (this->simulation_parameters.multiphysics.VOF)
     {

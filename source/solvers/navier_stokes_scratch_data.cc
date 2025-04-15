@@ -406,25 +406,22 @@ NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points,
 
   // Velocity for BDF schemes
   for (unsigned int p = 0; p < maximum_number_of_previous_solutions(); ++p)
-  {
-    std::cout << "hooooooo" << std::endl;
-    this->previous_velocity_values[p].resize(n_q_points);
-  }                                        
+    {
+      this->previous_velocity_values[p].resize(n_q_points);
+    }
 
   // Pressure
   this->pressure_values.resize(n_q_points);
   this->pressure_gradients.resize(n_q_points);
   this->pressure_scaling_factor = 1;
 
-  std::cout << "ooook" << std::endl;
 
   // Pressure for BDF schemes (compressible Navier-Stokes)
   for (unsigned int p = 0; p < maximum_number_of_previous_solutions(); ++p)
-  {
-    std::cout << "hooooooo" << std::endl;
-    this->previous_pressure_values[p].resize(n_q_points);
-  }
-  
+    {
+      this->previous_pressure_values[p].resize(n_q_points);
+    }
+
   // Initialize arrays related to shape functions
   // Velocity shape functions
   this->phi_u.resize(n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
