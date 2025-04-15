@@ -1142,14 +1142,24 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
 
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
-  std::cout << "Pouette before loop" << std::endl;
+  std::cout << "Pouette before loop on n_q_points = "<< n_q_points << std::endl;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      std::cout << "Pouette begin quadrature looop q = " << q << std::endl;
+      
       velocity[0] = scratch_data.velocity_values[q];
+      std::cout << "Pouette velocity[0]" << std::endl;
+      
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+      {
         velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
+        std::cout << "Pouette velocity[p + 1] " << p + 1 << std::endl;
+        
+      }
+        
+      std::cout << "Pouette end velocity[p + 1]" << std::endl;
       
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
@@ -1157,7 +1167,7 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
           strong_residual[q] += bdf_coefs[p] * velocity[p];
         }
       
-      std::cout << "Pouette after previous" << std::endl;
+      std::cout << "Pouette after strong_residual" << std::endl;
       
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -1174,7 +1184,6 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) += phi_u_j * phi_u_i * bdf_coefs[0] * JxW[q];
-              std::cout << "Pouette local_matrix" << std::endl;
             }
         }
       std::cout << "Pouette end quadrature looop q = " << q << std::endl;

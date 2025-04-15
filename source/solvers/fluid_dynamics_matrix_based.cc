@@ -621,6 +621,19 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
           std::cout << "Boooooop" << std::endl;
           
         }
+      else
+      {
+        scratch_data.reallocate(this->cell_quadrature->size(), this->fe->n_dofs_per_cell());
+        copy_data.reallocate(this->cell_quadrature->size(),  this->fe->n_dofs_per_cell());
+          
+        scratch_data.reinit(
+          cell,
+          this->evaluation_point,
+          this->previous_solutions,
+          this->forcing_function,
+          this->flow_control.get_beta(),
+          this->simulation_parameters.stabilization.pressure_scaling_factor);
+      }
     }
   else
     scratch_data.reinit(
@@ -733,19 +746,6 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   
   
   cell->get_dof_indices(copy_data.local_dof_indices);
-  
-  if (this->simulation_parameters.fem_parameters.pressure_enrichment
-        .level_set_type != Parameters::LevelSetType::none)
-    {
-      const NonMatching::LocationToLevelSet cell_location =
-        this->mesh_classifier->location_to_level_set(cell);
-        
-      if (cell_location == NonMatching::LocationToLevelSet::intersected)
-        {
-          scratch_data.reallocate(scratch_data.fe_values.get_quadrature_points().size(), scratch_data.fe_values.get_fe().n_dofs_per_cell());
-          copy_data.reallocate(scratch_data.fe_values.get_quadrature_points().size(), scratch_data.fe_values.get_fe().n_dofs_per_cell());
-        }
-    }
 }
 
 template <int dim>
