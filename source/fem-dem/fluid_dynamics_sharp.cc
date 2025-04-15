@@ -1687,6 +1687,8 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::output_field_hook(DataOut<dim> &data_out)
 {
+  // If the particles have moved, the combined shapes will have been cleared by
+  // the particle integration routines.
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
@@ -2170,10 +2172,17 @@ FluidDynamicsSharp<dim>::integrate_particles()
 
       unsigned int worst_residual_particle_id = UINT_MAX;
 
+      bool clear_combined_shape_cache = false;
+
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
           if (particles[p].integrate_motion)
             {
+              // If the motion of a single particle is to be integrated, the
+              // combined cache should be cleared after the integration.
+              // Otherwise, the visualization of the level set will be wrong.
+              clear_combined_shape_cache = true;
+
               // calculate the volume of fluid displaced by the particle.
               double volume = particles[p].volume;
 
@@ -2563,17 +2572,18 @@ FluidDynamicsSharp<dim>::integrate_particles()
                     particles[p].previous_orientation[0])
                 {
                   particles[p].clear_shape_cache();
+                  // One particle has moved significantly: the combined shape
+                  // cache should be cleared for visualization purposes.
+                  clear_combined_shape_cache = true;
                 }
-              if (particles[p].position != particles[p].previous_positions[0] ||
-                  particles[p].orientation !=
-                    particles[p].previous_orientation[0])
-                {
-                  particles[p].clear_shape_cache();
-                }
+
               particles[p].set_position(particles[p].position);
               particles[p].set_orientation(particles[p].orientation);
             }
         }
+
+      if (clear_combined_shape_cache)
+        combined_shapes->clear_cache();
 
 
       if (this->simulation_parameters.non_linear_solver
