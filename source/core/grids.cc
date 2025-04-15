@@ -469,7 +469,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
               face->set_manifold_id(face->manifold_id() + stator_ids_no_flat);
               changed_manifold_ids_faces[face->index()] = true;
             }
-          if (dim == 3)
+          if constexpr (dim == 3)
             {
               for (const auto line_index : cell->line_indices())
                 {
