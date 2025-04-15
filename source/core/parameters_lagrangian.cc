@@ -550,6 +550,7 @@ namespace Parameters
           initial_temperature_function_parsed->declare_parameters(prm, 1);
 #endif
         }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }
