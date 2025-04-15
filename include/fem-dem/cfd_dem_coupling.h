@@ -197,6 +197,8 @@ private:
   unsigned int coupling_frequency;
   Tensor<1, 3> g;
   ParticleInteractionOutcomes<DEM::CFDDEMProperties::PropertiesIndex> outcome;
+  std::vector<Tensor<1, 3>>                 &torque = outcome.torque;
+  std::vector<Tensor<1, 3>>                 &force  = outcome.force;
   std::vector<double>                        displacement;
   std::vector<double>                        MOI;
   double                                     neighborhood_threshold_squared;
