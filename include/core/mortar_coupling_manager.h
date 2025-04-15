@@ -318,7 +318,7 @@ public:
   /**
    * @brief Returns the normal vector for the quadrature points
    * @param[in] rad Angular coordinate of cell center
-   * 
+   *
    * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
@@ -339,7 +339,7 @@ private:
   /**
    * @brief Returns the mesh alignement type and cell index
    * @param[in] rad Angular coordinate of cell center
-   * 
+   *
    * @return type Cell configuration type at the interface
    * type = 0: mesh aligned
    * type = 1: mesh not aligned, inner domain (allows rotation)
