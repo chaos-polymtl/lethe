@@ -438,13 +438,13 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   unsigned int n_faces_stator_interface = 0;
 
   // Shift rotor boundary IDs #
+  unsigned int n_boundary_ids_stator = stator_temp_tria.get_boundary_ids().size();
   // Check number of faces at rotor interface with stator
   for (const auto &face : rotor_temp_tria.active_face_iterators())
     {
       if (face->at_boundary())
         {
-          face->set_boundary_id(face->boundary_id() +
-                                stator_temp_tria.get_boundary_ids().size());
+          face->set_boundary_id(face->boundary_id() + n_boundary_ids_stator);
           if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
             n_faces_rotor_interface++;
         }
