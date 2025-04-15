@@ -519,8 +519,8 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
     contact_manager.get_particle_wall_in_contact(),
     simulation_control->get_time_step(),
-    outcome.torque,
-    outcome.force);
+    torque,
+    force);
 
   if (parameters.forces_torques.calculate_force_torque)
     {
@@ -536,8 +536,8 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
-        outcome.torque,
-        outcome.force);
+        torque,
+        force);
     }
 
   // Particle-solid objects contact force
@@ -547,8 +547,8 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
         ->calculate_particle_floating_wall_contact_force(
           contact_manager.get_particle_floating_mesh_in_contact(),
           simulation_control->get_time_step(),
-          outcome.torque,
-          outcome.force,
+          torque,
+          force,
           solid_surfaces);
     }
 
@@ -556,7 +556,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
     .calculate_particle_point_contact_force(
       &contact_manager.get_particle_points_in_contact(),
       parameters.lagrangian_physical_properties,
-      outcome.force);
+      force);
 
   if constexpr (dim == 3)
     {
@@ -564,7 +564,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
         .calculate_particle_line_contact_force(
           &contact_manager.get_particle_lines_in_contact(),
           parameters.lagrangian_physical_properties,
-          outcome.force);
+          force);
     }
 }
 
@@ -1038,8 +1038,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
             particle_handler,
             g,
             simulation_control->get_time_step(),
-            outcome.torque,
-            outcome.force,
+            torque,
+            force,
             MOI);
         }
       else
@@ -1047,8 +1047,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
           integrator_object->integrate(particle_handler,
                                        g,
                                        simulation_control->get_time_step(),
-                                       outcome.torque,
-                                       outcome.force,
+                                       torque,
+                                       force,
                                        MOI,
                                        triangulation,
                                        sparse_contacts_object);
