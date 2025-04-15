@@ -1896,11 +1896,6 @@ private:
         if constexpr (std::is_same_v<PropertiesIndex,
                                      DEM::DEMMPProperties::PropertiesIndex>)
           {
-            AssertThrow(
-              outcome.heat_transfer_rate.size() == outcome.force.size(),
-              ExcMessage(
-                "Invalid size of heat_transfer_rate in particle particle heat transfer rate calculation."));
-
             if (normal_overlap > 0)
               {
                 const unsigned int particle_one_type =
