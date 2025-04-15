@@ -232,7 +232,7 @@ var searchData=
   ['check_5fand_5fmove_5fparticles_229',['check_and_move_particles',['../classPeriodicBoundariesManipulator.html#abdb5962ff49ead6c6a7540934a604183',1,'PeriodicBoundariesManipulator']]],
   ['check_5fcell_5fis_5fconnected_5fto_5ffluid_230',['check_cell_is_connected_to_fluid',['../classNavierStokesBase.html#a2f7059bc37e23e4ed073847455f678e8',1,'NavierStokesBase']]],
   ['check_5fcell_5fmobility_231',['check_cell_mobility',['../classAdaptiveSparseContacts.html#a8cbe56abd0a6cc4741b5f13153e3830e',1,'AdaptiveSparseContacts']]],
-  ['check_5fclear_5ftangential_5foverlap_232',['check_clear_tangential_overlap',['../classDEMActionManager.html#a793cc519de62e5986b807b49fc0831ae',1,'DEMActionManager']]],
+  ['check_5fclear_5ftangential_5fdisplacement_232',['check_clear_tangential_displacement',['../classDEMActionManager.html#a17f905ba1e3899e985c93491dfc3353e',1,'DEMActionManager']]],
   ['check_5fcontact_5fdetection_5fmethod_233',['check_contact_detection_method',['../classCFDDEMSolver.html#a0f5073d46ace47716591ff826eabc2a4',1,'CFDDEMSolver']]],
   ['check_5fcontact_5fsearch_234',['check_contact_search',['../classDEMActionManager.html#a17c917b2a7383bc9c426a58da7860d13',1,'DEMActionManager']]],
   ['check_5fcontact_5fsearch_5fiteration_5fconstant_235',['check_contact_search_iteration_constant',['../classDEMSolver.html#a671b854f55cff557b99a7acf2df2587f',1,'DEMSolver']]],

@@ -140,8 +140,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae3df485d63963ead88d62c3ea4091178"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affc49864ba516d7d700486acb790445d" id="r_affc49864ba516d7d700486acb790445d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#affc49864ba516d7d700486acb790445d">check_solid_object_search</a> ()</td></tr>
 <tr class="separator:affc49864ba516d7d700486acb790445d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a793cc519de62e5986b807b49fc0831ae" id="r_a793cc519de62e5986b807b49fc0831ae"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#a793cc519de62e5986b807b49fc0831ae">check_clear_tangential_overlap</a> ()</td></tr>
-<tr class="separator:a793cc519de62e5986b807b49fc0831ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17f905ba1e3899e985c93491dfc3353e" id="r_a17f905ba1e3899e985c93491dfc3353e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#a17f905ba1e3899e985c93491dfc3353e">check_clear_tangential_displacement</a> ()</td></tr>
+<tr class="separator:a17f905ba1e3899e985c93491dfc3353e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c4fddca5e5e97c58c8dbf6825763998" id="r_a0c4fddca5e5e97c58c8dbf6825763998"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#a0c4fddca5e5e97c58c8dbf6825763998">check_resize_containers</a> ()</td></tr>
 <tr class="separator:a0c4fddca5e5e97c58c8dbf6825763998"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb75631941fcab34b0cf5d08a7559fb0" id="r_afb75631941fcab34b0cf5d08a7559fb0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#afb75631941fcab34b0cf5d08a7559fb0">check_mobility_status_reset</a> ()</td></tr>
@@ -173,8 +173,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:ac15057f7e671c993d88c6c1d58422982"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28510bde58a667a3a6307335613d5090" id="r_a28510bde58a667a3a6307335613d5090"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#a28510bde58a667a3a6307335613d5090">load_balance_trigger</a></td></tr>
 <tr class="separator:a28510bde58a667a3a6307335613d5090"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c6e80821fe726e68dfa06c813a79b33" id="r_a9c6e80821fe726e68dfa06c813a79b33"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#a9c6e80821fe726e68dfa06c813a79b33">clear_tangential_overlap_trigger</a></td></tr>
-<tr class="separator:a9c6e80821fe726e68dfa06c813a79b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae188883f0847d0a890588b658d97b065" id="r_ae188883f0847d0a890588b658d97b065"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#ae188883f0847d0a890588b658d97b065">clear_tangential_displacement_trigger</a></td></tr>
+<tr class="separator:ae188883f0847d0a890588b658d97b065"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e9037cd82f07d5bded3ebb494aeb0ea" id="r_a8e9037cd82f07d5bded3ebb494aeb0ea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#a8e9037cd82f07d5bded3ebb494aeb0ea">resize_containers_trigger</a></td></tr>
 <tr class="separator:a8e9037cd82f07d5bded3ebb494aeb0ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbe1e073825c758d23ef7b376d39b323" id="r_adbe1e073825c758d23ef7b376d39b323"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMActionManager.html#adbe1e073825c758d23ef7b376d39b323">contact_search_trigger</a></td></tr>
@@ -257,13 +257,13 @@ Static Private Attributes</h2></td></tr>
 
 <p>Constructor of the <a class="el" href="classDEMActionManager.html" title="Manage the actions to be performed in the DEM solver and on the DEM part of the coupling CFD-DEM solv...">DEMActionManager</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00390">390</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00388">388</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a793cc519de62e5986b807b49fc0831ae" name="a793cc519de62e5986b807b49fc0831ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a793cc519de62e5986b807b49fc0831ae">&#9670;&#160;</a></span>check_clear_tangential_overlap()</h2>
+<a id="a17f905ba1e3899e985c93491dfc3353e" name="a17f905ba1e3899e985c93491dfc3353e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17f905ba1e3899e985c93491dfc3353e">&#9670;&#160;</a></span>check_clear_tangential_displacement()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,7 +272,7 @@ Static Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool DEMActionManager::check_clear_tangential_overlap </td>
+          <td class="memname">bool DEMActionManager::check_clear_tangential_displacement </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -285,11 +285,11 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Check if the tangential overlap history needs to be cleared. </p>
+<p>Check if the tangential displacement history needs to be cleared. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00352">352</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00350">350</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00443">clear_tangential_overlap_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_displacement_trigger</a>.</p>
 
 </div>
 </div>
@@ -318,9 +318,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the contact search needs to be performed. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00325">325</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00323">323</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -352,7 +352,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00164">164</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00428">grid_motion_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00426">grid_motion_enabled</a>.</p>
 
 </div>
 </div>
@@ -381,9 +381,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the repartitioning (load balancing) needs to be performed. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00316">316</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00314">314</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00438">load_balance_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00436">load_balance_trigger</a>.</p>
 
 </div>
 </div>
@@ -412,9 +412,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the mobility status need to be reset to mobile. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00370">370</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00368">368</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00470">mobility_status_reset_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>.</p>
 
 </div>
 </div>
@@ -446,7 +446,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00093">93</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00413">periodic_boundaries_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00411">periodic_boundaries_enabled</a>.</p>
 
 </div>
 </div>
@@ -475,9 +475,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the containers need to be resized. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00361">361</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00359">359</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00449">resize_containers_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00447">resize_containers_trigger</a>.</p>
 
 </div>
 </div>
@@ -506,9 +506,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if checkpoint needs to be read. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00307">307</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00305">305</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00433">read_checkpoint_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00431">read_checkpoint_trigger</a>.</p>
 
 </div>
 </div>
@@ -537,9 +537,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the solid object has to be searched. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00343">343</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00341">341</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00460">solid_object_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -571,7 +571,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00118">118</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00418">solid_objects_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>.</p>
 
 </div>
 </div>
@@ -603,7 +603,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00143">143</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00423">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -632,9 +632,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the sparse contacts cells need to be updated. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00334">334</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00332">332</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00465">sparse_contacts_cells_update_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>.</p>
 
 </div>
 </div>
@@ -666,9 +666,9 @@ Static Private Attributes</h2></td></tr>
 <li>contact search: might be from a selected frequency for the contact search (frequent method) or from the displacement evaluation (dynamic) </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00248">248</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00246">246</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -700,9 +700,9 @@ Static Private Attributes</h2></td></tr>
 <li>mobility status reset: all the mobility status of the cells need to be mobile since the velocity of the particles are not yet computed and the status can not be evaluated. In the case of CFD-DEM, we force the full computation of the particles at the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step since hydrodynamic forces, which have just been calculated, may change the behavior of particles. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00281">281</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00279">279</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00470">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00423">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -733,7 +733,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8cc_source.html#l00009">9</a> of file <a class="el" href="dem__action__manager_8cc_source.html">dem_action_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00390">DEMActionManager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00408">instance</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00388">DEMActionManager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00406">instance</a>.</p>
 
 </div>
 </div>
@@ -765,9 +765,9 @@ Static Private Attributes</h2></td></tr>
 <li>contact search: the contact search is performed in order to call the sorting of particles in cells and for the update of the particle reference locations prior of the void fraction calculation. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00298">298</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00296">296</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -798,15 +798,15 @@ Static Private Attributes</h2></td></tr>
 <p>It triggers:</p><ul>
 <li>load balancing: the used method has determined that the load needs to be balanced</li>
 <li>contact search: cells and particles will not be on the same processor, so all the contact search needs to be performed.</li>
-<li>clearing the tangential overlap: the tangential overlap history of the particles pairs (or particle-wall) are lost when particles are handled by another processor. For consistency reasons, all the tangential overlap history is reset for all particles.</li>
+<li>clearing the tangential displacement: the tangential displacement history of the particles pairs (or particle-wall) are lost when particles are handled by another processor. For consistency reasons, all the tangential displacement history is reset for all particles.</li>
 <li>resizing the containers: the containers need to be resized to the new number of local particles.</li>
 <li>solid object search (if enabled): the solid objects need to be mapped to the rebalanced cells.</li>
 <li>update the sparse contacts cells (if enabled): the sparse contacts cells need to be updated since they only contain local and ghost cells. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00213">213</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00211">211</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00443">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00438">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00449">resize_containers_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00460">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00418">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00465">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00423">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_displacement_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00436">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00447">resize_containers_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -872,9 +872,9 @@ Static Private Attributes</h2></td></tr>
 <li>contact search: since there are new particles in the simulation, contact search needs to be performed for all particles. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00233">233</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00231">231</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -905,7 +905,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00062">62</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00443">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00438">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00470">mobility_status_reset_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00433">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00460">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00465">sparse_contacts_cells_update_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_displacement_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00436">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00431">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>.</p>
 
 </div>
 </div>
@@ -937,7 +937,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00179">179</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00443">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00433">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00460">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00418">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00465">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00423">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_displacement_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00431">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -968,7 +968,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00152">152</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00428">grid_motion_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00426">grid_motion_enabled</a>.</p>
 
 </div>
 </div>
@@ -999,7 +999,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00081">81</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00413">periodic_boundaries_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00411">periodic_boundaries_enabled</a>.</p>
 
 </div>
 </div>
@@ -1030,7 +1030,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00103">103</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00460">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00418">solid_objects_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>.</p>
 
 </div>
 </div>
@@ -1061,7 +1061,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00128">128</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00470">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00423">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -1091,9 +1091,9 @@ Static Private Attributes</h2></td></tr>
 <p>Set triggers for actions to be performed in the current time step because of a solid object search step. </p>
 <p>It triggers the solid object search and the contact search. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00260">260</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00258">258</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00454">contact_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00460">solid_object_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -1122,15 +1122,15 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the default broad search functions should be used. It depends if adaptive sparse contacts is enabled, if so, it is a step where the mobility status are reset. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00381">381</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00379">379</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00470">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00423">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a9c6e80821fe726e68dfa06c813a79b33" name="a9c6e80821fe726e68dfa06c813a79b33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c6e80821fe726e68dfa06c813a79b33">&#9670;&#160;</a></span>clear_tangential_overlap_trigger</h2>
+<a id="ae188883f0847d0a890588b658d97b065" name="ae188883f0847d0a890588b658d97b065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae188883f0847d0a890588b658d97b065">&#9670;&#160;</a></span>clear_tangential_displacement_trigger</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1139,7 +1139,7 @@ Static Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool DEMActionManager::clear_tangential_overlap_trigger</td>
+          <td class="memname">bool DEMActionManager::clear_tangential_displacement_trigger</td>
         </tr>
       </table>
   </td>
@@ -1149,9 +1149,9 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Flag of the trigger for clearing the tangential overlap history. </p>
+<p>Flag of the trigger for clearing the tangential displacement history. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00443">443</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00441">441</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1177,7 +1177,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the contact search. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00454">454</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00452">452</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1203,7 +1203,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for motion of grid in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00428">428</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00426">426</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1229,7 +1229,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Pointer to the unique of the <a class="el" href="classDEMActionManager.html" title="Manage the actions to be performed in the DEM solver and on the DEM part of the coupling CFD-DEM solv...">DEMActionManager</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00408">408</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00406">406</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1255,7 +1255,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for load balancing execution. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00438">438</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00436">436</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1281,7 +1281,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the mobility status reset to mobile status. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00470">470</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00468">468</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1307,7 +1307,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for periodic boundaries in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00413">413</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00411">411</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1333,7 +1333,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for reading the checkpoint. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00433">433</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00431">431</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1359,7 +1359,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for resize the vector dependant of the local particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00449">449</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00447">447</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1385,7 +1385,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the solid object search, mapping the solid with the background triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00460">460</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00458">458</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1411,7 +1411,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for solid objects in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00418">418</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00416">416</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1437,7 +1437,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the update of the sparse contacts cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00465">465</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00463">463</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1463,7 +1463,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for the enabling of the sparse contacts. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00423">423</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00421">421</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>

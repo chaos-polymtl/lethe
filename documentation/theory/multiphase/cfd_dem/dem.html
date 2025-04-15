@@ -471,7 +471,7 @@ I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij
 <p>Where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span> normal overlap;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> tangential overlap vector;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> tangential displacement vector;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{n}_{ij}\)</span> contact normal vector;</p></li>
 <li><p><span class="math notranslate nohighlight">\(k_\mathrm{n}, k_\mathrm{t}\)</span> spring constants;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\eta_\mathrm{n}, \eta_\mathrm{t}\)</span> damping model constants;</p></li>
@@ -489,8 +489,8 @@ I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij
 <div class="math notranslate nohighlight">
 \[\mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}\]</div>
 </div>
-<p>The normal overlap (<span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span>) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential overlap (<span class="math notranslate nohighlight">\(\delta_\mathrm{t}\)</span>) depends on the contact history and is updated during a contact.
-The normal and tangential overlaps are calculated as follow:</p>
+<p>The normal overlap (<span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span>) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential displacement (<span class="math notranslate nohighlight">\(\delta_\mathrm{t}\)</span>) depends on the contact history and is updated during a contact.
+The normal and tangential displacements are calculated as follow:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\delta_{\mathrm{n}} =&amp; \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
@@ -498,7 +498,7 @@ The normal and tangential overlaps are calculated as follow:</p>
 </div>
 <section id="relative-velocities">
 <h3>Relative Velocities<a class="headerlink" href="#relative-velocities" title="Link to this heading">#</a></h3>
-<p>The relative velocities are calculated to update the tangential overlap and for their contribution in the force models:</p>
+<p>The relative velocities are calculated to update the tangential displacement and for their contribution in the force models:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{v}_{ij} &amp;= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij} \\
@@ -576,8 +576,8 @@ S_\mathrm{t} &amp;= 8G_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\end{split}\]<
 \[|\mathbf{F}_{ij}^{\mathrm{t}}| \geq \mu |\mathbf{F}_{ij}^\mathrm{n}|\]</div>
 </div>
 <p>A breach means the collision is having gross sliding and tangential force needs to be limited to the Coulomb’s limit.
-To do so, the tangential overlap <span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> is first limited and then the tangential force is recalculated.</p>
-<p>When using nonlinear viscoelastic contact model, the tangential overlap is computed from tangential spring force :</p>
+To do so, the tangential displacement <span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> is first limited and then the tangential force is recalculated.</p>
+<p>When using nonlinear viscoelastic contact model, the tangential displacement is computed from tangential spring force :</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{\delta_\mathrm{t}} &amp;= \frac{\mathbf{\tilde{F}_{ij}}}{-k_\mathrm{t}} \\

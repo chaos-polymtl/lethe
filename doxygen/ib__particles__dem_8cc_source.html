@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">ib_particles_dem.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="ib__particles__dem_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors</span></div>
+<a href="ib__particles__dem_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="parameters__lagrangian_8h.html">core/parameters_lagrangian.h</a>&gt;</span></div>
@@ -235,7 +235,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                {</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                    {</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a>[d]               = 0.;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a7aa068bbe1dd34b5c11bcdb3a0b4248d">tangential_displacement</a>[d]          = 0.;</div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a63cc9278b774212cedf25f25c499d140">rolling_resistance_spring_torque</a>[d] = 0.;</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                    }</div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                  pp_contact_map[particle_one.particle_id]</div>
@@ -410,7 +410,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                  <span class="comment">// if the adjacent pair is not in contact anymore</span></div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                    {</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a>[d]               = 0.;</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a7aa068bbe1dd34b5c11bcdb3a0b4248d">tangential_displacement</a>[d]          = 0.;</div>
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a63cc9278b774212cedf25f25c499d140">rolling_resistance_spring_torque</a>[d] = 0.;</div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                    }</div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                  pp_contact_map[particle_one.particle_id].erase(</div>
@@ -709,7 +709,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>                {</div>
 <div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
 <div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>                    {</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a>[d]           = 0;</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a7aa068bbe1dd34b5c11bcdb3a0b4248d">tangential_displacement</a>[d]      = 0;</div>
 <div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">tangential_relative_velocity</a>[d] = 0;</div>
 <div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>                    }</div>
 <div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span> </div>
@@ -892,11 +892,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>                }</div>
 <div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>              <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>                {</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>                  <span class="comment">// Set to 0 the tangential overlap if the particle is not</span></div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>                  <span class="comment">// Set to 0 the tangential displacement if the particle is not</span></div>
 <div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>                  <span class="comment">// in contact with the wall anymore.</span></div>
 <div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
 <div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>                    {</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a>[d]               = 0.;</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a7aa068bbe1dd34b5c11bcdb3a0b4248d">tangential_displacement</a>[d]          = 0.;</div>
 <div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>                      contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a63cc9278b774212cedf25f25c499d140">rolling_resistance_spring_torque</a>[d] = 0.;</div>
 <div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>                    }</div>
 <div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>                }</div>
@@ -1168,17 +1168,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span>    contact_relative_velocity -</div>
 <div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>    (normal_relative_velocity_value * normal_unit_vector);</div>
 <div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span> </div>
-<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>  <span class="comment">// Calculation of new tangential_overlap, since this value is</span></div>
+<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>  <span class="comment">// Calculation of new tangential_displacement, since this value is</span></div>
 <div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>  <span class="comment">// history-dependent it needs the value at previous time-step</span></div>
 <div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span>  <span class="comment">// This variable is the main reason that we have iterations over</span></div>
-<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>  <span class="comment">// two different vectors : tangential_overlap of the particles</span></div>
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>  <span class="comment">// two different vectors : tangential_displacement of the particles</span></div>
 <div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>  <span class="comment">// which were already in contact needs to be</span></div>
-<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>  <span class="comment">// modified using its history, while the tangential_overlaps of</span></div>
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>  <span class="comment">// modified using its history, while the tangential_displacements of</span></div>
 <div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>  <span class="comment">// new particles are equal to zero</span></div>
 <div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>  <span class="comment">// delta_t_new = delta_t_old + v_rt*dt</span></div>
 <div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>  contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">tangential_relative_velocity</a>.push_back(</div>
 <div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>    tangential_relative_velocity);</div>
-<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>  contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a> += tangential_relative_velocity * dt;</div>
+<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>  contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a7aa068bbe1dd34b5c11bcdb3a0b4248d">tangential_displacement</a> += tangential_relative_velocity * dt;</div>
 <div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span><span class="comment"></span> </div>
 <div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span><span class="comment">  ///////////// Hertz contact force model ////////////////</span></div>
 <div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span><span class="comment"></span>  <span class="comment">// Calculation of effective radius and mass</span></div>
@@ -1214,7 +1214,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01104" name="l01104"></a><span class="lineno"> 1104</span>  <span class="comment">// forces. Since we need dashpot tangential force in the gross sliding</span></div>
 <div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span>  <span class="comment">// again, we define it as a separate variable</span></div>
 <div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span>  tangential_force =</div>
-<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>    tangential_spring_constant * contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a>;</div>
+<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>    tangential_spring_constant * contact_info.<a class="code hl_variable" href="structIBParticlesDEM_1_1ContactInfo.html#a7aa068bbe1dd34b5c11bcdb3a0b4248d">tangential_displacement</a>;</div>
 <div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span> </div>
 <div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>  <span class="keywordtype">double</span> coulomb_threshold =</div>
 <div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span>    effective_coefficient_of_friction * normal_force.norm();</div>
@@ -1222,7 +1222,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>  <span class="comment">// Check for gross sliding</span></div>
 <div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>  <span class="keywordflow">if</span> (tangential_force.norm() &gt; coulomb_threshold)</div>
 <div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>    {</div>
-<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span>      <span class="comment">// Gross sliding occurs and the tangential overlap and tangential</span></div>
+<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span>      <span class="comment">// Gross sliding occurs and the tangential displacement and tangential</span></div>
 <div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>      <span class="comment">// force are limited to Coulomb&#39;s criterion</span></div>
 <div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>      tangential_force =</div>
 <div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span>        coulomb_threshold *</div>
@@ -1615,19 +1615,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span>                      <span class="keywordflow">if</span> (previous_contact_info_iterator !=</div>
 <div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>                          last_pw_contact_info.find(particle_id)-&gt;second.end())</div>
 <div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span>                        {</div>
-<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>                          contact_info.tangential_overlap =</div>
+<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>                          contact_info.tangential_displacement =</div>
 <div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>                            previous_contact_info_iterator-&gt;second</div>
-<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>                              .tangential_overlap;</div>
+<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>                              .tangential_displacement;</div>
 <div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>                        }</div>
 <div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span>                      <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>                        {</div>
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>                          contact_info.tangential_overlap = 0;</div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>                          contact_info.tangential_displacement = 0;</div>
 <div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span>                        }</div>
 <div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>                    }</div>
 <div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>                  <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>                    {</div>
 <div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>                      <span class="comment">// one of the map is empty and we try to acces it.</span></div>
-<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>                      contact_info.tangential_overlap = 0;</div>
+<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>                      contact_info.tangential_displacement = 0;</div>
 <div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>                    }</div>
 <div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>                }</div>
 <div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span>            }</div>
@@ -1655,18 +1655,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span>                          last_pp_contact_info.find(particle_one_id)</div>
 <div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span>                            -&gt;second.end())</div>
 <div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span>                        {</div>
-<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span>                          contact_info.tangential_overlap =</div>
+<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span>                          contact_info.tangential_displacement =</div>
 <div class="line"><a id="l01547" name="l01547"></a><span class="lineno"> 1547</span>                            previous_contact_info_iterator-&gt;second</div>
-<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span>                              .tangential_overlap;</div>
+<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span>                              .tangential_displacement;</div>
 <div class="line"><a id="l01549" name="l01549"></a><span class="lineno"> 1549</span>                        }</div>
 <div class="line"><a id="l01550" name="l01550"></a><span class="lineno"> 1550</span>                      <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01551" name="l01551"></a><span class="lineno"> 1551</span>                        {</div>
-<div class="line"><a id="l01552" name="l01552"></a><span class="lineno"> 1552</span>                          contact_info.tangential_overlap = 0;</div>
+<div class="line"><a id="l01552" name="l01552"></a><span class="lineno"> 1552</span>                          contact_info.tangential_displacement = 0;</div>
 <div class="line"><a id="l01553" name="l01553"></a><span class="lineno"> 1553</span>                        }</div>
 <div class="line"><a id="l01554" name="l01554"></a><span class="lineno"> 1554</span>                    }</div>
 <div class="line"><a id="l01555" name="l01555"></a><span class="lineno"> 1555</span>                  <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01556" name="l01556"></a><span class="lineno"> 1556</span>                    {</div>
-<div class="line"><a id="l01557" name="l01557"></a><span class="lineno"> 1557</span>                      contact_info.tangential_overlap = 0;</div>
+<div class="line"><a id="l01557" name="l01557"></a><span class="lineno"> 1557</span>                      contact_info.tangential_displacement = 0;</div>
 <div class="line"><a id="l01558" name="l01558"></a><span class="lineno"> 1558</span>                    }</div>
 <div class="line"><a id="l01559" name="l01559"></a><span class="lineno"> 1559</span>                }</div>
 <div class="line"><a id="l01560" name="l01560"></a><span class="lineno"> 1560</span>            }</div>
@@ -1755,7 +1755,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01643" name="l01643"></a><span class="lineno"> 1643</span>            }</div>
 <div class="line"><a id="l01644" name="l01644"></a><span class="lineno"> 1644</span>        }</div>
 <div class="line"><a id="l01645" name="l01645"></a><span class="lineno"> 1645</span> </div>
-<div class="line"><a id="l01646" name="l01646"></a><span class="lineno"> 1646</span>      <span class="comment">// RK4 for the particle wall tangential overlap</span></div>
+<div class="line"><a id="l01646" name="l01646"></a><span class="lineno"> 1646</span>      <span class="comment">// RK4 for the particle wall tangential displacement</span></div>
 <div class="line"><a id="l01647" name="l01647"></a><span class="lineno"> 1647</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = pw_contact_map.begin(); it != pw_contact_map.end(); it++)</div>
 <div class="line"><a id="l01648" name="l01648"></a><span class="lineno"> 1648</span>        {</div>
 <div class="line"><a id="l01649" name="l01649"></a><span class="lineno"> 1649</span>          <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_id = it-&gt;first;</div>
@@ -1767,7 +1767,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>              <span class="comment">// is not the case, this means this is a new contact, or the</span></div>
 <div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>              <span class="comment">// contact ended. In this case, we simply take the last RK step</span></div>
 <div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>              <span class="comment">// registered as the derivative for the integration.</span></div>
-<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>              Tensor&lt;1, 3&gt; previous_tangential_overlap;</div>
+<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>              Tensor&lt;1, 3&gt; previous_tangential_displacement;</div>
 <div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>              <span class="keywordflow">if</span> (last_pw_contact_info.find(particle_id) !=</div>
 <div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>                  last_pw_contact_info.end())</div>
 <div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span>                {</div>
@@ -1777,19 +1777,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span>                  <span class="keywordflow">if</span> (previous_contact_info_iterator !=</div>
 <div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>                      last_pw_contact_info.find(particle_id)-&gt;second.end())</div>
 <div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>                    {</div>
-<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>                      previous_tangential_overlap =</div>
+<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>                      previous_tangential_displacement =</div>
 <div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span>                        previous_contact_info_iterator-&gt;second</div>
-<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>                          .tangential_overlap;</div>
+<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>                          .tangential_displacement;</div>
 <div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>                    }</div>
 <div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>                }</div>
 <div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>              <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>                {</div>
-<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>                  previous_tangential_overlap = 0;</div>
+<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>                  previous_tangential_displacement = 0;</div>
 <div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>                }</div>
 <div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span>              <span class="keywordflow">if</span> (contact_info.tangential_relative_velocity.size() == 4)</div>
 <div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span>                {</div>
-<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span>                  contact_info.tangential_overlap =</div>
-<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>                    previous_tangential_overlap +</div>
+<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span>                  contact_info.tangential_displacement =</div>
+<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>                    previous_tangential_displacement +</div>
 <div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>                    dt_dem / 6.0 *</div>
 <div class="line"><a id="l01682" name="l01682"></a><span class="lineno"> 1682</span>                      (contact_info.tangential_relative_velocity[0] +</div>
 <div class="line"><a id="l01683" name="l01683"></a><span class="lineno"> 1683</span>                       2 * contact_info.tangential_relative_velocity[1] +</div>
@@ -1798,15 +1798,15 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01686" name="l01686"></a><span class="lineno"> 1686</span>                }</div>
 <div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (contact_info.tangential_relative_velocity.size() &gt; 0)</div>
 <div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span>                {</div>
-<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>                  contact_info.tangential_overlap =</div>
-<div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span>                    previous_tangential_overlap +</div>
+<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>                  contact_info.tangential_displacement =</div>
+<div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span>                    previous_tangential_displacement +</div>
 <div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span>                    dt_dem *</div>
 <div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>                      contact_info.tangential_relative_velocity</div>
 <div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span>                        [contact_info.tangential_relative_velocity.size()];</div>
 <div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>                }</div>
 <div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>              <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01696" name="l01696"></a><span class="lineno"> 1696</span>                {</div>
-<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>                  contact_info.tangential_overlap = 0;</div>
+<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>                  contact_info.tangential_displacement = 0;</div>
 <div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>                }</div>
 <div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span> </div>
 <div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span> </div>
@@ -1814,7 +1814,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01702" name="l01702"></a><span class="lineno"> 1702</span>              contact_info.tangential_relative_velocity.clear();</div>
 <div class="line"><a id="l01703" name="l01703"></a><span class="lineno"> 1703</span>            }</div>
 <div class="line"><a id="l01704" name="l01704"></a><span class="lineno"> 1704</span>        }</div>
-<div class="line"><a id="l01705" name="l01705"></a><span class="lineno"> 1705</span>      <span class="comment">// Same for particle-particle tangential overlap</span></div>
+<div class="line"><a id="l01705" name="l01705"></a><span class="lineno"> 1705</span>      <span class="comment">// Same for particle-particle tangential displacement</span></div>
 <div class="line"><a id="l01706" name="l01706"></a><span class="lineno"> 1706</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = pp_contact_map.begin(); it != pp_contact_map.end(); it++)</div>
 <div class="line"><a id="l01707" name="l01707"></a><span class="lineno"> 1707</span>        {</div>
 <div class="line"><a id="l01708" name="l01708"></a><span class="lineno"> 1708</span>          <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_one_id = it-&gt;first;</div>
@@ -1826,7 +1826,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01714" name="l01714"></a><span class="lineno"> 1714</span>              <span class="comment">// is not the case, this means this is a new contact, or the</span></div>
 <div class="line"><a id="l01715" name="l01715"></a><span class="lineno"> 1715</span>              <span class="comment">// contact ended. In this case, we simply take the last RK step</span></div>
 <div class="line"><a id="l01716" name="l01716"></a><span class="lineno"> 1716</span>              <span class="comment">// registered as the derivative for the integration.</span></div>
-<div class="line"><a id="l01717" name="l01717"></a><span class="lineno"> 1717</span>              Tensor&lt;1, 3&gt; previous_tangential_overlap;</div>
+<div class="line"><a id="l01717" name="l01717"></a><span class="lineno"> 1717</span>              Tensor&lt;1, 3&gt; previous_tangential_displacement;</div>
 <div class="line"><a id="l01718" name="l01718"></a><span class="lineno"> 1718</span>              <span class="keywordflow">if</span> (last_pp_contact_info.find(particle_one_id) !=</div>
 <div class="line"><a id="l01719" name="l01719"></a><span class="lineno"> 1719</span>                  last_pp_contact_info.end())</div>
 <div class="line"><a id="l01720" name="l01720"></a><span class="lineno"> 1720</span>                {</div>
@@ -1836,19 +1836,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01724" name="l01724"></a><span class="lineno"> 1724</span>                  <span class="keywordflow">if</span> (previous_contact_info_iterator !=</div>
 <div class="line"><a id="l01725" name="l01725"></a><span class="lineno"> 1725</span>                      last_pp_contact_info.find(particle_one_id)-&gt;second.end())</div>
 <div class="line"><a id="l01726" name="l01726"></a><span class="lineno"> 1726</span>                    {</div>
-<div class="line"><a id="l01727" name="l01727"></a><span class="lineno"> 1727</span>                      previous_tangential_overlap =</div>
+<div class="line"><a id="l01727" name="l01727"></a><span class="lineno"> 1727</span>                      previous_tangential_displacement =</div>
 <div class="line"><a id="l01728" name="l01728"></a><span class="lineno"> 1728</span>                        previous_contact_info_iterator-&gt;second</div>
-<div class="line"><a id="l01729" name="l01729"></a><span class="lineno"> 1729</span>                          .tangential_overlap;</div>
+<div class="line"><a id="l01729" name="l01729"></a><span class="lineno"> 1729</span>                          .tangential_displacement;</div>
 <div class="line"><a id="l01730" name="l01730"></a><span class="lineno"> 1730</span>                    }</div>
 <div class="line"><a id="l01731" name="l01731"></a><span class="lineno"> 1731</span>                }</div>
 <div class="line"><a id="l01732" name="l01732"></a><span class="lineno"> 1732</span>              <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01733" name="l01733"></a><span class="lineno"> 1733</span>                {</div>
-<div class="line"><a id="l01734" name="l01734"></a><span class="lineno"> 1734</span>                  previous_tangential_overlap = 0;</div>
+<div class="line"><a id="l01734" name="l01734"></a><span class="lineno"> 1734</span>                  previous_tangential_displacement = 0;</div>
 <div class="line"><a id="l01735" name="l01735"></a><span class="lineno"> 1735</span>                }</div>
 <div class="line"><a id="l01736" name="l01736"></a><span class="lineno"> 1736</span>              <span class="keywordflow">if</span> (contact_info.tangential_relative_velocity.size() == 4)</div>
 <div class="line"><a id="l01737" name="l01737"></a><span class="lineno"> 1737</span>                {</div>
-<div class="line"><a id="l01738" name="l01738"></a><span class="lineno"> 1738</span>                  contact_info.tangential_overlap =</div>
-<div class="line"><a id="l01739" name="l01739"></a><span class="lineno"> 1739</span>                    previous_tangential_overlap +</div>
+<div class="line"><a id="l01738" name="l01738"></a><span class="lineno"> 1738</span>                  contact_info.tangential_displacement =</div>
+<div class="line"><a id="l01739" name="l01739"></a><span class="lineno"> 1739</span>                    previous_tangential_displacement +</div>
 <div class="line"><a id="l01740" name="l01740"></a><span class="lineno"> 1740</span>                    dt_dem / 6.0 *</div>
 <div class="line"><a id="l01741" name="l01741"></a><span class="lineno"> 1741</span>                      (contact_info.tangential_relative_velocity[0] +</div>
 <div class="line"><a id="l01742" name="l01742"></a><span class="lineno"> 1742</span>                       2 * contact_info.tangential_relative_velocity[1] +</div>
@@ -1857,15 +1857,15 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01745" name="l01745"></a><span class="lineno"> 1745</span>                }</div>
 <div class="line"><a id="l01746" name="l01746"></a><span class="lineno"> 1746</span>              <span class="keywordflow">else</span> <span class="keywordflow">if</span> (contact_info.tangential_relative_velocity.size() &gt; 0)</div>
 <div class="line"><a id="l01747" name="l01747"></a><span class="lineno"> 1747</span>                {</div>
-<div class="line"><a id="l01748" name="l01748"></a><span class="lineno"> 1748</span>                  contact_info.tangential_overlap =</div>
-<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>                    previous_tangential_overlap +</div>
+<div class="line"><a id="l01748" name="l01748"></a><span class="lineno"> 1748</span>                  contact_info.tangential_displacement =</div>
+<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>                    previous_tangential_displacement +</div>
 <div class="line"><a id="l01750" name="l01750"></a><span class="lineno"> 1750</span>                    dt_dem *</div>
 <div class="line"><a id="l01751" name="l01751"></a><span class="lineno"> 1751</span>                      contact_info.tangential_relative_velocity</div>
 <div class="line"><a id="l01752" name="l01752"></a><span class="lineno"> 1752</span>                        [contact_info.tangential_relative_velocity.size()];</div>
 <div class="line"><a id="l01753" name="l01753"></a><span class="lineno"> 1753</span>                }</div>
 <div class="line"><a id="l01754" name="l01754"></a><span class="lineno"> 1754</span>              <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01755" name="l01755"></a><span class="lineno"> 1755</span>                {</div>
-<div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>                  contact_info.tangential_overlap = 0;</div>
+<div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>                  contact_info.tangential_displacement = 0;</div>
 <div class="line"><a id="l01757" name="l01757"></a><span class="lineno"> 1757</span>                }</div>
 <div class="line"><a id="l01758" name="l01758"></a><span class="lineno"> 1758</span>              <span class="comment">// clear the vector for the next set of 4 Rk steps</span></div>
 <div class="line"><a id="l01759" name="l01759"></a><span class="lineno"> 1759</span>              contact_info.tangential_relative_velocity.clear();</div>
@@ -1912,7 +1912,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a0e7bfaf9d59cb7e34fdbf1de9a5753f8"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a0e7bfaf9d59cb7e34fdbf1de9a5753f8">IBParticlesDEM::ContactInfo::normal_overlap</a></div><div class="ttdeci">double normal_overlap</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00045">ib_particles_dem.h:45</a></div></div>
 <div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a1a5fdc174f0ad61d5f20bdef5d96aa1f"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">IBParticlesDEM::ContactInfo::tangential_relative_velocity</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; tangential_relative_velocity</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00050">ib_particles_dem.h:50</a></div></div>
 <div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a63cc9278b774212cedf25f25c499d140"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a63cc9278b774212cedf25f25c499d140">IBParticlesDEM::ContactInfo::rolling_resistance_spring_torque</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; rolling_resistance_spring_torque</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00048">ib_particles_dem.h:48</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a9238350d0412c863254843d60c168c7a"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">IBParticlesDEM::ContactInfo::tangential_overlap</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tangential_overlap</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00047">ib_particles_dem.h:47</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a7aa068bbe1dd34b5c11bcdb3a0b4248d"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a7aa068bbe1dd34b5c11bcdb3a0b4248d">IBParticlesDEM::ContactInfo::tangential_displacement</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tangential_displacement</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00047">ib_particles_dem.h:47</a></div></div>
 <div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html">IBParticlesDEM::ObjectProperties</a></div><div class="ttdoc">Struct is used to reduce the number of parameters passed in the function calculate_force_model.</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00055">ib_particles_dem.h:56</a></div></div>
 <div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a0ee6783e5c8fd39a0207746c2d80dd09"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a0ee6783e5c8fd39a0207746c2d80dd09">IBParticlesDEM::ObjectProperties::object_mass</a></div><div class="ttdeci">double object_mass</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00057">ib_particles_dem.h:57</a></div></div>
 <div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a1b62a3b88fa72874489a2205d987a688"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a1b62a3b88fa72874489a2205d987a688">IBParticlesDEM::ObjectProperties::object_radius</a></div><div class="ttdeci">double object_radius</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8h_source.html#l00058">ib_particles_dem.h:58</a></div></div>

@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">particle_wall_jkr_force.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="particle__wall__jkr__force_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors</span></div>
+<a href="particle__wall__jkr__force_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="lethe__grid__tools_8h.html">core/lethe_grid_tools.h</a>&gt;</span></div>
@@ -337,7 +337,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>          <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            {</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>              contact_information.normal_overlap = 0.;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>              contact_information.tangential_overlap.clear();</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>              contact_information.tangential_displacement.clear();</div>
 <div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>              contact_information.rolling_resistance_spring_torque.clear();</div>
 <div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            }</div>
 <div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        }</div>
@@ -497,7 +497,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>                      <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>                        {</div>
 <div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>                          contact_info.normal_overlap = 0;</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                          contact_info.tangential_overlap.clear();</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                          contact_info.tangential_displacement.clear();</div>
 <div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                          contact_info.rolling_resistance_spring_torque.clear();</div>
 <div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                        }</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                    }</div>
@@ -600,7 +600,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>  Tensor&lt;1, 3&gt; damping_tangential_force =</div>
 <div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>    tangential_damping_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#ad558e190a2cf82c5b71de369f33e7f2a">tangential_relative_velocity</a>;</div>
 <div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>  Tensor&lt;1, 3&gt; tangential_force =</div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a> +</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad4d3eeaa60714017f1285a89200f10e">tangential_displacement</a> +</div>
 <div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>    damping_tangential_force;</div>
 <div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>  <span class="keywordtype">double</span> tangential_force_norm = tangential_force.norm();</div>
 <div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
@@ -615,16 +615,16 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>  <span class="comment">// Check for gross sliding</span></div>
 <div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>  <span class="keywordflow">if</span> (tangential_force_norm &gt; modified_coulomb_threshold)</div>
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>    {</div>
-<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>      <span class="comment">// Gross sliding occurs and the tangential overlap and tangential</span></div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>      <span class="comment">// Gross sliding occurs and the tangential displacement and tangential</span></div>
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>      <span class="comment">// force are limited to Coulomb&#39;s criterion</span></div>
-<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a> =</div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>      contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad4d3eeaa60714017f1285a89200f10e">tangential_displacement</a> =</div>
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>        (modified_coulomb_threshold *</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>           (tangential_force / (tangential_force_norm + DBL_MIN)) -</div>
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>         damping_tangential_force) /</div>
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>        (tangential_spring_constant + DBL_MIN);</div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span> </div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>      tangential_force =</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        (tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">tangential_overlap</a>) +</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        (tangential_spring_constant * contact_info.<a class="code hl_variable" href="classparticle__wall__contact__info.html#aad4d3eeaa60714017f1285a89200f10e">tangential_displacement</a>) +</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>        damping_tangential_force;</div>
 <div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>    }</div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span> </div>
@@ -695,7 +695,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassparticle__wall__contact__info_html"><div class="ttname"><a href="classparticle__wall__contact__info.html">particle_wall_contact_info</a></div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00030">contact_info.h:31</a></div></div>
 <div class="ttc" id="aclassparticle__wall__contact__info_html_a4dcf98dca50108f9cc6d25854c7fab80"><div class="ttname"><a href="classparticle__wall__contact__info.html#a4dcf98dca50108f9cc6d25854c7fab80">particle_wall_contact_info::normal_overlap</a></div><div class="ttdeci">double normal_overlap</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00087">contact_info.h:87</a></div></div>
 <div class="ttc" id="aclassparticle__wall__contact__info_html_a528c805ed9a47e5bfc49ac67cf8e9f86"><div class="ttname"><a href="classparticle__wall__contact__info.html#a528c805ed9a47e5bfc49ac67cf8e9f86">particle_wall_contact_info::normal_vector</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; normal_vector</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00084">contact_info.h:84</a></div></div>
-<div class="ttc" id="aclassparticle__wall__contact__info_html_aad455d45927e0e222aac061964f9f304"><div class="ttname"><a href="classparticle__wall__contact__info.html#aad455d45927e0e222aac061964f9f304">particle_wall_contact_info::tangential_overlap</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tangential_overlap</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00089">contact_info.h:89</a></div></div>
+<div class="ttc" id="aclassparticle__wall__contact__info_html_aad4d3eeaa60714017f1285a89200f10e"><div class="ttname"><a href="classparticle__wall__contact__info.html#aad4d3eeaa60714017f1285a89200f10e">particle_wall_contact_info::tangential_displacement</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tangential_displacement</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00089">contact_info.h:89</a></div></div>
 <div class="ttc" id="aclassparticle__wall__contact__info_html_ac9b3c405410ab567525ff5db26951da5"><div class="ttname"><a href="classparticle__wall__contact__info.html#ac9b3c405410ab567525ff5db26951da5">particle_wall_contact_info::rolling_resistance_spring_torque</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; rolling_resistance_spring_torque</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00091">contact_info.h:91</a></div></div>
 <div class="ttc" id="aclassparticle__wall__contact__info_html_ad558e190a2cf82c5b71de369f33e7f2a"><div class="ttname"><a href="classparticle__wall__contact__info.html#ad558e190a2cf82c5b71de369f33e7f2a">particle_wall_contact_info::tangential_relative_velocity</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tangential_relative_velocity</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00090">contact_info.h:90</a></div></div>
 <div class="ttc" id="aclassparticle__wall__contact__info_html_adf9ba5eac230730acd52ade238ecf3a3"><div class="ttname"><a href="classparticle__wall__contact__info.html#adf9ba5eac230730acd52ade238ecf3a3">particle_wall_contact_info::normal_relative_velocity</a></div><div class="ttdeci">double normal_relative_velocity</div><div class="ttdef"><b>Definition</b> <a href="contact__info_8h_source.html#l00088">contact_info.h:88</a></div></div>

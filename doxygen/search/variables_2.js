@@ -79,7 +79,7 @@ var searchData=
   ['chemical_5fpotential_5fvalues_76',['chemical_potential_values',['../classCahnHilliardScratchData.html#aa186ab8e882ed1fcf55dee2cf21716d8',1,'CahnHilliardScratchData']]],
   ['clear_5fbox_5fpoint_5f1_77',['clear_box_point_1',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1cfeaf19a5fcd8b2336274baa7ea8487',1,'Parameters::Lagrangian::InsertionInfo']]],
   ['clear_5fbox_5fpoint_5f2_78',['clear_box_point_2',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#aab9c603250c82b621c8e816e3943d044',1,'Parameters::Lagrangian::InsertionInfo']]],
-  ['clear_5ftangential_5foverlap_5ftrigger_79',['clear_tangential_overlap_trigger',['../classDEMActionManager.html#a9c6e80821fe726e68dfa06c813a79b33',1,'DEMActionManager']]],
+  ['clear_5ftangential_5fdisplacement_5ftrigger_79',['clear_tangential_displacement_trigger',['../classDEMActionManager.html#ae188883f0847d0a890588b658d97b065',1,'DEMActionManager']]],
   ['closest_5fpoint_5fcache_80',['closest_point_cache',['../classShape.html#aad72eb3feaa5852170232e3c19855330',1,'Shape']]],
   ['coarse_5fgrid_5fiterations_81',['coarse_grid_iterations',['../classMFNavierStokesPreconditionGMGBase.html#aa295ba39af47cec38f2321f54adf450a',1,'MFNavierStokesPreconditionGMGBase']]],
   ['coarse_5fgrid_5fprecondition_82',['coarse_grid_precondition',['../classMFNavierStokesPreconditionGMGBase.html#a34c70deb41196513a94319e61b7dab1c',1,'MFNavierStokesPreconditionGMGBase']]],
