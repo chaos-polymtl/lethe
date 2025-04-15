@@ -543,9 +543,7 @@ namespace Parameters
         prm.enter_subsection("initial temperature function");
         {
 #if DEAL_II_VERSION_GTE(9, 7, 0)
-          initial_temperature_function_parsed->declare_parameters(prm,
-                                                                  1,
-                                                                  "300");
+          initial_temperature_function_parsed->declare_parameters(prm, 1, "0");
 #else
           initial_temperature_function_parsed->declare_parameters(prm, 1);
 #endif
