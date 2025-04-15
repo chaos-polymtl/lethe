@@ -38,7 +38,7 @@ The normal and tangential contact forces use linear or nonlinear viscoelastic mo
 Where:
 
 * :math:`\delta_{\mathrm{n}}` normal overlap;
-* :math:`\mathbf{\delta_\mathrm{t}}` tangential overlap vector;
+* :math:`\mathbf{\delta_\mathrm{t}}` tangential displacement vector;
 * :math:`\mathbf{n}_{ij}` contact normal vector;
 * :math:`k_\mathrm{n}, k_\mathrm{t}` spring constants;
 * :math:`\eta_\mathrm{n}, \eta_\mathrm{t}` damping model constants;
@@ -58,8 +58,8 @@ The contact normal vector :math:`\mathbf{n}_{ij}` is computed as:
 .. math::
     \mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}
 
-The normal overlap (:math:`\delta_{\mathrm{n}}`) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential overlap (:math:`\delta_\mathrm{t}`) depends on the contact history and is updated during a contact.
-The normal and tangential overlaps are calculated as follow:
+The normal overlap (:math:`\delta_{\mathrm{n}}`) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential displacement (:math:`\delta_\mathrm{t}`) depends on the contact history and is updated during a contact.
+The normal and tangential displacements are calculated as follow:
 
 .. math::
     \delta_{\mathrm{n}} =& \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
@@ -68,7 +68,7 @@ The normal and tangential overlaps are calculated as follow:
 ~~~~~~~~~~~~~~~~~~~~~
 Relative Velocities
 ~~~~~~~~~~~~~~~~~~~~~
-The relative velocities are calculated to update the tangential overlap and for their contribution in the force models:
+The relative velocities are calculated to update the tangential displacement and for their contribution in the force models:
 
 .. math::
     \mathbf{v}_{ij} &= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij} \\
@@ -136,9 +136,9 @@ Coulomb's criterion is breached when the following condition is broken during a 
 
 
 A breach means the collision is having gross sliding and tangential force needs to be limited to the Coulomb's limit.
-To do so, the tangential overlap :math:`\mathbf{\delta_\mathrm{t}}` is first limited and then the tangential force is recalculated.
+To do so, the tangential displacement :math:`\mathbf{\delta_\mathrm{t}}` is first limited and then the tangential force is recalculated.
 
-When using nonlinear viscoelastic contact model, the tangential overlap is computed from tangential spring force :
+When using nonlinear viscoelastic contact model, the tangential displacement is computed from tangential spring force :
 
 .. math::
     \mathbf{\delta_\mathrm{t}} &= \frac{\mathbf{\tilde{F}_{ij}}}{-k_\mathrm{t}} \\

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
@@ -226,7 +226,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
           else
             {
               contact_information.normal_overlap = 0.;
-              contact_information.tangential_overlap.clear();
+              contact_information.tangential_displacement.clear();
               contact_information.rolling_resistance_spring_torque.clear();
             }
         }
@@ -385,7 +385,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
                       else
                         {
                           contact_info.normal_overlap = 0;
-                          contact_info.tangential_overlap.clear();
+                          contact_info.tangential_displacement.clear();
                           contact_info.rolling_resistance_spring_torque.clear();
                         }
                     }
@@ -437,7 +437,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
     sqrt(model_parameter_sn * particle_properties[PropertiesIndex::mass]);
 
   // There is a minus sign since the tangential force is applied in the opposite
-  // direction of the tangential_overlap
+  // direction of the tangential_displacement
   const double tangential_spring_constant =
     -8. * this->effective_shear_modulus[particle_type] *
       radius_times_overlap_sqrt +
@@ -459,7 +459,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
 
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap +
+    tangential_spring_constant * contact_info.tangential_displacement +
     damping_tangential_force;
 
   const double coulomb_threshold =
@@ -470,16 +470,16 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
   const double tangential_force_norm = tangential_force.norm();
   if (tangential_force_norm > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangential
+      // Gross sliding occurs and the tangential displacement and tangential
       // force are limited to Coulomb's criterion
-      contact_info.tangential_overlap =
+      contact_info.tangential_displacement =
         (coulomb_threshold *
            (tangential_force / (tangential_force_norm + DBL_MIN)) -
          damping_tangential_force) /
         (tangential_spring_constant + DBL_MIN);
 
       tangential_force =
-        (tangential_spring_constant * contact_info.tangential_overlap) +
+        (tangential_spring_constant * contact_info.tangential_displacement) +
         damping_tangential_force;
     }
 

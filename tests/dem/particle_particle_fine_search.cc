@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -127,10 +127,12 @@ test()
                   << " and "
                   << information_iterator->second.particle_two->get_id()
                   << std::endl;
-          deallog << "Tangential overlap at the beginning of contact is: "
-                  << information_iterator->second.tangential_overlap[0] << " "
-                  << information_iterator->second.tangential_overlap[1] << " "
-                  << information_iterator->second.tangential_overlap[2]
+          deallog << "Tangential displacement at the beginning of contact is: "
+                  << information_iterator->second.tangential_displacement[0]
+                  << " "
+                  << information_iterator->second.tangential_displacement[1]
+                  << " "
+                  << information_iterator->second.tangential_displacement[2]
                   << std::endl;
           ++information_iterator;
         }

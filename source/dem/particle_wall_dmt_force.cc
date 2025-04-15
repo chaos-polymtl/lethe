@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
@@ -181,11 +181,10 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                   // j)
                   cohesive_force = -F_po * -normal_vector;
 
-                  // No contact means there is no tangential
-                  // overlap.
+                  // No contact means there is no tangential displacement.
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_information.tangential_overlap[d] = 0.;
+                      contact_information.tangential_displacement[d] = 0.;
                     }
                 }
               else // between delta_* and delta_0.
@@ -202,7 +201,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                   // overlap.
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_information.tangential_overlap[d] = 0.;
+                      contact_information.tangential_displacement[d] = 0.;
                     }
                   cohesive_force = -F_cohesion * -normal_vector;
                 }
@@ -229,7 +228,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
               // overlap.
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0.;
+                  contact_information.tangential_displacement[d] = 0.;
                 }
             }
         }
@@ -438,7 +437,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                               // overlap.
                               for (int d = 0; d < dim; ++d)
                                 {
-                                  contact_info.tangential_overlap[d] = 0.;
+                                  contact_info.tangential_displacement[d] = 0.;
                                   contact_info
                                     .rolling_resistance_spring_torque[d] = 0.;
                                 }
@@ -458,7 +457,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                               // overlap.
                               for (int d = 0; d < dim; ++d)
                                 {
-                                  contact_info.tangential_overlap[d] = 0.;
+                                  contact_info.tangential_displacement[d] = 0.;
                                   contact_info
                                     .rolling_resistance_spring_torque[d] = 0.;
                                 }
@@ -490,7 +489,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                           // overlap.
                           for (int d = 0; d < dim; ++d)
                             {
-                              contact_info.tangential_overlap[d] = 0.;
+                              contact_info.tangential_displacement[d] = 0.;
                               contact_info.rolling_resistance_spring_torque[d] =
                                 0.;
                             }

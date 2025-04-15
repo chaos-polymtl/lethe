@@ -30,8 +30,8 @@ struct initial_particle_properties
 
 /**
  * @brief Store the output vectors of the time, the force and torque acting on particle 0,
- * the normal overlap, the tangential overlap and the velocities and angular
- * velocities for both particles.
+ * the normal overlap, the tangential displacement and the velocities and
+ * angular velocities for both particles.
  */
 struct full_contact_output
 {
@@ -39,7 +39,7 @@ struct full_contact_output
   std::vector<Tensor<1, 3>> force;
   std::vector<Tensor<1, 3>> torque;
   std::vector<double>       normal_overlap;
-  std::vector<Tensor<1, 3>> tangential_overlap;
+  std::vector<Tensor<1, 3>> tangential_displacement;
   std::vector<Tensor<1, 3>> velocity_0;
   std::vector<Tensor<1, 3>> velocity_1;
   std::vector<Tensor<1, 3>> omega_0;
@@ -133,7 +133,7 @@ using namespace Parameters::Lagrangian;
  * @param filename Name of file where force and overlap are written.
  *
  * @return Struct of vectors of time, force and torque acting on particle 0, normal overlap,
- * tangential overlap, velocities, angular velocities.
+ * tangential displacement, velocities, angular velocities.
  */
 template <int dim,
           typename PropertiesIndex,
@@ -202,7 +202,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   Point<3>          &position_1 = particle_1->get_location();
   Tensor<1, 3>      &force_0    = force[particle_0->get_id()];
   Tensor<1, 3>      &torque_0   = torque[particle_0->get_id()];
-  Tensor<1, 3>       tangential_overlap{{0, 0, 0}};
+  Tensor<1, 3>       tangential_displacement{{0, 0, 0}};
   Tensor<1, 3>       velocity_0;
   Tensor<1, 3>       velocity_1;
   Tensor<1, 3>       omega_0;
@@ -216,7 +216,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   // Open file and write names of columns
   std::ofstream file(filename + ".dat", std::ios::binary);
   file
-    << "time force_0_x force_0_y force_0_z torque_0_x torque_0_y torque_0_z normal_overlap tangential_overlap_x tangential_overlap_y tangential_overlap_z velocity_0_x velocity_0_y velocity_0_z velocity_1_x velocity_1_y velocity_1_z omega_0_x omega_0_y omega_0_z omega_1_x omega_1_y omega_1_z"
+    << "time force_0_x force_0_y force_0_z torque_0_x torque_0_y torque_0_z normal_overlap tangential_displacement_x tangential_displacement_y tangential_displacement_z velocity_0_x velocity_0_y velocity_0_z velocity_1_x velocity_1_y velocity_1_z omega_0_x omega_0_y omega_0_z omega_1_x omega_1_y omega_1_z"
     << "\n";
 
   for (unsigned int iteration = 0; iteration < max_iteration; ++iteration)
@@ -259,7 +259,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
           contact_is_ongoing = false;
         }
 
-      // Calculating overlap and tangential overlap
+      // Calculating overlap and tangential displacement
       update_velocities<PropertiesIndex>(particle_0->get_properties(),
                                          particle_1->get_properties(),
                                          velocity_0,
@@ -275,7 +275,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
       tangential_relative_velocity =
         relative_velocity -
         ((relative_velocity * normal_unit_vector) * normal_unit_vector);
-      tangential_overlap += tangential_relative_velocity * dt;
+      tangential_displacement += tangential_relative_velocity * dt;
 
       // Printing on file and storing data at each output interval
       //  and at the first iteration after end of contact
@@ -284,8 +284,9 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
           file << time << " " << force_0[0] << " " << force_0[1] << " "
                << force_0[2] << " " << torque_0[0] << " " << torque_0[1] << " "
                << torque_0[2] << " " << normal_overlap << " "
-               << tangential_overlap[0] << " " << tangential_overlap[1] << " "
-               << tangential_overlap[2] << " " << velocity_0[0] << " "
+               << tangential_displacement[0] << " "
+               << tangential_displacement[1] << " "
+               << tangential_displacement[2] << " " << velocity_0[0] << " "
                << velocity_0[1] << " " << velocity_0[2] << " " << velocity_1[0]
                << " " << velocity_1[1] << " " << velocity_1[2] << " "
                << omega_0[0] << " " << omega_0[1] << " " << omega_0[2] << " "
@@ -295,7 +296,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
           output.force.push_back(force_0);
           output.torque.push_back(torque_0);
           output.normal_overlap.push_back(normal_overlap);
-          output.tangential_overlap.push_back(tangential_overlap);
+          output.tangential_displacement.push_back(tangential_displacement);
           output.velocity_0.push_back(velocity_0);
           output.velocity_1.push_back(velocity_1);
           output.omega_0.push_back(omega_0);

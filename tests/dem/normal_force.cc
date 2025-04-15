@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -188,14 +188,14 @@ test()
             particle_wall_pairs_in_contact_iterator->begin();
 
           particle_wall_contact_information_iterator->second
-            .tangential_overlap[0] = 0.0;
+            .tangential_displacement[0] = 0.0;
           particle_wall_contact_information_iterator->second
-            .tangential_overlap[1] = 0.0;
+            .tangential_displacement[1] = 0.0;
 
           if (dim == 3)
             {
               particle_wall_contact_information_iterator->second
-                .tangential_overlap[2] = 0.0;
+                .tangential_displacement[2] = 0.0;
             }
           particle_wall_contact_information_iterator->second
             .tangential_relative_velocity[0] = 0.0;

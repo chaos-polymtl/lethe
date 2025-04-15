@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_force_chains_visualization_h
@@ -182,7 +182,7 @@ private:
    * contact only for local-local and local-ghost contacts with no periodicity.
    * This is a simplified version of the contact calculation of the
    * particle-particle contact forces class, without the other contact types and
-   * the update of the particles forces, torques and tangential overlap.
+   * the update of the particles forces, torques and tangential displacement.
    *
    * @tparam force_model The particle-particle contact force model.
    * @param[in] adjacent_particles_list Container of the adjacent particles of a

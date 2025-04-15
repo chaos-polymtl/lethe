@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ib_particles_dem_h
@@ -44,7 +44,7 @@ public:
     Point<3>     contact_point;
     double       normal_overlap;
     double       normal_relative_velocity;
-    Tensor<1, 3> tangential_overlap;
+    Tensor<1, 3> tangential_displacement;
     Tensor<1, 3> rolling_resistance_spring_torque;
     std::vector<Tensor<1, 3>>
       tangential_relative_velocity; // keep each step of RK4 in memory
