@@ -6,6 +6,7 @@ on:
     # Runs on every push on master branch
     branches:
       - master
+      - reinitialize-previous-solutions
   pull_request:
     paths-ignore:
       - 'doc/**'

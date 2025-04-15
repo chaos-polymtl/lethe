@@ -1702,12 +1702,15 @@ VolumeOfFluid<dim>::write_checkpoint()
     {
       sol_set_transfer.emplace_back(&this->previous_solutions[i]);
     }
-  for (auto &previous_algebraic_reinitialization_solution :
-       this->previous_algebraic_reinitialization_solutions)
-    {
-      sol_set_transfer.emplace_back(
-        &previous_algebraic_reinitialization_solution);
-    }
+  // Algebraic interface reinitialization
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .algebraic_interface_reinitialization.enable)
+    for (auto &previous_algebraic_reinitialization_solution :
+         this->previous_algebraic_reinitialization_solutions)
+      {
+        sol_set_transfer.emplace_back(
+          &previous_algebraic_reinitialization_solution);
+      }
   this->solution_transfer->prepare_for_serialization(sol_set_transfer);
 
   // Serialize tables
@@ -1745,9 +1748,13 @@ VolumeOfFluid<dim>::read_checkpoint()
     this->previous_algebraic_reinitialization_solutions.size();
   this->pcout << "Reading VOF checkpoint" << std::endl;
 
-  std::vector<GlobalVectorType *> input_vectors(
-    1 + previous_solutions_size +
-    previous_algebraic_reinitialization_solutions_size);
+  std::vector<GlobalVectorType *> input_vectors =
+    (!simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .algebraic_interface_reinitialization.enable) ?
+      std::vector<GlobalVectorType *>(1 + previous_solutions_size) :
+      std::vector<GlobalVectorType *>(
+        1 + previous_solutions_size +
+        previous_algebraic_reinitialization_solutions_size);
   GlobalVectorType distributed_system(this->locally_owned_dofs,
                                       mpi_communicator);
   input_vectors[0] = &distributed_system;
@@ -1766,15 +1773,17 @@ VolumeOfFluid<dim>::read_checkpoint()
     distributed_previous_algebraic_reinitialization_solutions;
   distributed_previous_algebraic_reinitialization_solutions.reserve(
     previous_algebraic_reinitialization_solutions_size);
-  for (unsigned int i = 0;
-       i < previous_algebraic_reinitialization_solutions_size;
-       ++i)
-    {
-      distributed_previous_algebraic_reinitialization_solutions.emplace_back(
-        GlobalVectorType(this->locally_owned_dofs, mpi_communicator));
-      input_vectors[i + 1 + previous_solutions_size] =
-        &distributed_previous_algebraic_reinitialization_solutions[i];
-    }
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .algebraic_interface_reinitialization.enable)
+    for (unsigned int i = 0;
+         i < previous_algebraic_reinitialization_solutions_size;
+         ++i)
+      {
+        distributed_previous_algebraic_reinitialization_solutions.emplace_back(
+          GlobalVectorType(this->locally_owned_dofs, mpi_communicator));
+        input_vectors[i + 1 + previous_solutions_size] =
+          &distributed_previous_algebraic_reinitialization_solutions[i];
+      }
 
   this->solution_transfer->deserialize(input_vectors);
 
@@ -1783,13 +1792,15 @@ VolumeOfFluid<dim>::read_checkpoint()
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
     }
-  for (unsigned int i = 0;
-       i < previous_algebraic_reinitialization_solutions_size;
-       ++i)
-    {
-      this->previous_algebraic_reinitialization_solutions[i] =
-        distributed_previous_algebraic_reinitialization_solutions[i];
-    }
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .algebraic_interface_reinitialization.enable)
+    for (unsigned int i = 0;
+         i < previous_algebraic_reinitialization_solutions_size;
+         ++i)
+      {
+        this->previous_algebraic_reinitialization_solutions[i] =
+          distributed_previous_algebraic_reinitialization_solutions[i];
+      }
 
   // Apply filter to phase fraction
   apply_phase_filter();
