@@ -1,5 +1,5 @@
 
-DEAL::Merged triangulation
+DEAL::MPI=0
 DEAL::Number of active cells : 320
 DEAL::Number of vertices : 369
 DEAL::Cell center : 2.00000 0.250000

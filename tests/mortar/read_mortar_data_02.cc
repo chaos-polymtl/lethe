@@ -86,13 +86,23 @@ test()
                                                mortar_parameters);
 
   // Print information
-  deallog << "Merged triangulation" << std::endl;
-  deallog << "Number of active cells : " << triangulation.n_active_cells()
-          << std::endl;
-  deallog << "Number of vertices : " << triangulation.n_vertices() << std::endl;
+  for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
+       ++processor_number)
+    {
+      MPI_Barrier(comm);
+      if (processor_number == this_mpi_process)
+        {
+          deallog << "MPI=" << this_mpi_process << std::endl;
+          deallog << "Number of active cells : "
+                  << triangulation.n_active_cells() << std::endl;
+          deallog << "Number of vertices : " << triangulation.n_vertices()
+                  << std::endl;
 
-  for (const auto &face : triangulation.active_face_iterators())
-    deallog << "Cell center : " << face->center() << std::endl;
+          for (const auto &face : triangulation.active_face_iterators())
+            deallog << "Cell center : " << face->center() << std::endl;
+        }
+      MPI_Barrier(comm);
+    }
 
   // Generate vtu file
   DataOut<dim>       data_out;
