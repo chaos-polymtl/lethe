@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-16
+
+### Fixed
+
+- MINOR The solutions of the algebraic interface reinitialization method in the VOF auxiliary physics preceding an interface regularization time-step are now also regularized using the same process to ensure consistency in the time integration scheme. A new application-test (`vof-algebraic-interface-reinitialization-advected-circle-bdf2-frequency-check`) has been added to test this implementation. Also, the PR [#1431](https://github.com/chaos-polymtl/lethe/pull/1431) had added output of the initial condition regardless of the prescribed output frequency. This was adjusted to only output solutions if the prescribed output frequency indicates that outputs are requested. [#1498](https://github.com/chaos-polymtl/lethe/pull/1498)
+
 ## [Master] - 2025-04-14
 
 ### Changed
