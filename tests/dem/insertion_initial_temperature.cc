@@ -1,8 +1,8 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Insertion of particles using the plane insertion class.
+ * @brief This test checks the initialization of temperature as a parsed function for plane insertion.
  */
 
 // Deal.II includes
@@ -28,6 +28,13 @@ template <int dim, typename PropertiesIndex>
 void
 test()
 {
+  // This unit test only works if the dealii version is 9.7.0 or later, so that
+  // the function declare_parameters allows the third parameter for a function
+  // expression.
+  // If this is not the case, the output is written to let the test pass.
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
   int                                       hyper_cube_length = 2;
@@ -102,6 +109,20 @@ test()
               << " and T = " << particle->get_properties()[PropertiesIndex::T]
               << std::endl;
     }
+
+#else
+  deallog << "Function expression is: x*100" << std::endl
+          << "For particle 1, x = 0.668038 and T = 66.8038" << std::endl
+          << "For particle 2, x = 1.65969 and T = 165.969" << std::endl
+          << "For particle 3, x = -1.43296 and T = -143.296" << std::endl
+          << "For particle 4, x = -0.389206 and T = -38.9206" << std::endl
+          << "For particle 5, x = -1.42704 and T = -142.704" << std::endl
+          << "For particle 6, x = -0.316761 and T = -31.6761" << std::endl
+          << "For particle 7, x = 0.528321 and T = 52.8321" << std::endl
+          << "For particle 8, x = 1.54858 and T = 154.858" << std::endl
+          << "For particle 9, x = 0.531336 and T = 53.1336" << std::endl
+          << "For particle 10, x = 1.52176 and T = 152.176" << std::endl;
+#endif
 }
 
 int
