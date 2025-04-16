@@ -2500,7 +2500,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.frequency != 1)
     {
-      for (unsigned int i = 0; i < previous_solutions.size(); i++)
+      for (unsigned int i = 0;
+           i < previous_algebraic_reinitialization_solutions.size();
+           i++)
         {
           previous_solutions[i] =
             previous_algebraic_reinitialization_solutions[i];

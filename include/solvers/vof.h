@@ -125,7 +125,7 @@ public:
     // Setup previous solutions and solutions transfers for BDF consistency when
     // using algebraic reinitialization
     previous_algebraic_reinitialization_solutions.resize(
-      previous_solutions.size());
+      previous_solutions.size() - 1);
     previous_algebraic_reinitialization_solutions_transfer.reserve(
       previous_algebraic_reinitialization_solutions.size());
     for (unsigned int i = 0;
