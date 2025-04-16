@@ -11,14 +11,13 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = bdf1
-  set time end                     = 24
-  set time step                    = 0.01
+  set method                       = steady_bdf
+  set time end                     = 10
+  set time step                    = 0.001
   set adapt                        = true
   set max cfl                      = 0.9
   set stop tolerance               = 1e-5
   set adaptative time step scaling = 1.3
-  set number mesh adapt            = 0
   set output name                  = rayleigh-benard_convection
   set output control               = time
   set output time frequency        = 0.5
@@ -40,7 +39,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = none # <none|iteration|end>
+  set type = iteration 
 end
 
 #---------------------------------------------------
@@ -51,6 +50,9 @@ subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0
+  end
+  subsection temperature
+    set Function expression = 5+x
   end
 end
 
@@ -175,16 +177,15 @@ end
 subsection non-linear solver
   subsection heat transfer
     set verbosity      = verbose
-    set tolerance      = 1e-8
+    set tolerance      = 1e-6
     set max iterations = 20
   end
   subsection fluid dynamics
     set solver           = inexact_newton
     set verbosity        = verbose
-    set matrix tolerance = 0.1
+    set matrix tolerance = 0.01
     set reuse matrix     = true
-    set tolerance        = 1e-8
-    set max iterations   = 20
+    set tolerance        = 1e-6
   end
 end
 

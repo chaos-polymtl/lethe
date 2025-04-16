@@ -11,7 +11,7 @@ Features
 
 - Solver: ``lethe-fluid`` 
 - Buoyant force (natural convection)
-- Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
+- Steady problem handled by an adaptive BDF1 time-stepping scheme
 
 
 ---------------------------
@@ -69,8 +69,7 @@ For simplicity, we present only the parameter file for :math:`Ra=10^4`.
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`. A simulation time of :math:`24` s has been selected to ensure that the system reaches a quasi-steady state. The initial time-step is set to :math:`0.001` s, but this will be adapted during the simulation.
+The time integration is handled by a 1st order backward differentiation scheme to reach a steady-state solution `(steady_bdf)`. A stop tolerance of :math:`1e-5` has been selected to ensure that the system reaches steady-state. The initial time-step is set to :math:`0.001` s, but this will be adapted during the simulation.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
@@ -80,8 +79,7 @@ The time integration is handled by a 1st order backward differentiation scheme
 
     subsection simulation control
       set method                       = bdf1
-      set time end                     = 24
-      set time step                    = 0.01
+      set time step                    = 0.001
       set adapt                        = true
       set max cfl                      = 0.9
       set stop tolerance               = 1e-5
@@ -137,6 +135,16 @@ The ``physical properties`` subsection defines the physical properties of the fl
       end
     end
 
+Initial Conditions
+~~~~~~~~~~~~~~~~~~~
+
+To ensure that the instability is generated, we set the initial velocity to zero and the temperature to a linear function of :math:`5+x` (from 5 to 10). This ensures that the Rayleigh-Benard instability occurs in a controlled fashion instead of randomly.
+
+.. code-block:: text
+
+    subsection temperature
+      set Function expression = 5+x
+    end
 
 ---------------------------
 Running the Simulation
@@ -169,7 +177,7 @@ to run the simulations using eight CPU cores for the :math:`Ra=10^4` and :math:`
 Results
 -------
 
-The following animation shows the evolution of the temperature field with the flow direction for the simulation at :math:`Ra=10^6`:
+The following animation shows the evolution of the temperature field with the flow direction for the simulation at :math:`Ra=10^6` when starting from a zero temperature initial condition:
 
 .. raw:: html
 

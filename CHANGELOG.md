@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR In the sharp immersed boundaries solver, added a condition that clears the combined_shape cache if a particle has moved. This fixes a bug that would lead to an incorrect level set function when particles would move accross subdomains. This only affected the visualization of the particles. [#1479](https://github.com/chaos-polymtl/lethe/pull/1495)
 
+- MINOR The Rayleigh-Benard convection example would sometimes not work correctly on some machines and instead generate a static solution. This has been fixed by adding an initial condition in which a linear temperature profile is imposed in the direction orthogonal to the gravity (along the x axis). This also increases the robustness of the example. [#1496](https://github.com/chaos-polymtl/lethe/pull/1496)
+
 ## [Master] - 2025-04-10
 
 ### Added
