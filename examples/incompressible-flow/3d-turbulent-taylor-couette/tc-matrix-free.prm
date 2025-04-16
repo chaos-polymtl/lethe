@@ -61,10 +61,12 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii
-  set grid type          = cylinder_shell
-  set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
-  set initial refinement = 4
+  set type                        = dealii
+  set grid type                   = cylinder_shell
+  set grid arguments              = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
+  set initial refinement          = 4
+  set initial boundary refinement = 1
+  set boundaries refined          = 0, 1
 end
 
 #---------------------------------------------------
