@@ -39,6 +39,8 @@ using namespace dealii;
 /**
  * @brief Base interface for classes that carry out the insertion of particles
  * in the system.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
 template <int dim, typename PropertiesIndex>
 class Insertion
