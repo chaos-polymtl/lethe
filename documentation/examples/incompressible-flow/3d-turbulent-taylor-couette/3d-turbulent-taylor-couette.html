@@ -507,7 +507,7 @@ p &amp;= \frac{1}{2}A^2r^2 + 2AB\ln(r) - \frac{\frac{1}{2}B^2}{r^2} + \frac{1}{2
 </tbody>
 </table>
 </div>
-<p>Since Lethe uses a Cartesian coordinate system, the following expressions have been transformed to proceed with the simulation. For an incompressible flow, the enstrophy and the kinetic energy are defined as:</p>
+<p>Since Lethe uses a Cartesian coordinate system, the expressions have been transformed to proceed with the simulation. For an incompressible flow, the enstrophy and the kinetic energy are defined as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathcal{E} &amp;= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega \\
@@ -521,19 +521,21 @@ E_k &amp;= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection specifies the computational grid:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-  set type               = dealii
-  set grid type          = cylinder_shell
-  set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
-  set initial refinement = 4
+  set type                        = dealii
+  set grid type                   = cylinder_shell
+  set grid arguments              = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
+  set initial refinement          = 4
+  set initial boundary refinement = 1
+  set boundaries refined          = 0, 1
 end
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> specifies the mesh format used. We use the  <code class="docutils literal notranslate"><span class="pre">cylinder_shell</span></code> from deal.II <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a> that creates a shell from two concentric cylinders with the option to set-up specific boundary conditions to each surface. The arguments are the length (3.14159265359), the inner cylinder radius (0.5), the outer cylinder radius (1.0), the number of azimuthal cells (5) and the number of axial cells (4).</p>
-<p>The last parameter specifies the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> of the grid. Indicating an <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">4</span></code> implies that the initial mesh is refined 4 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 16 radial elements, 80 azimuthal elements and 64 axial elements for a total of 81,920 cells. The following figure illustrates the mesh:</p>
-<a class="reference internal image-reference" href="../../../_images/mesh1.png" id="mesh-taylor-couette"><img alt="The mesh" class="align-center" id="mesh-taylor-couette" src="../../../_images/mesh1.png" style="height: 6cm;" /></a>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> specifies the mesh format used. We use the  <code class="docutils literal notranslate"><span class="pre">cylinder_shell</span></code> from deal.II <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a> that creates a shell from two concentric cylinders with the option to set-up specific boundary conditions to each surface. The arguments are the length (3.14159265359), the inner cylinder radius (0.5), the outer cylinder radius (1.0), the number of azimuthal cells (5) and the number of axial cells (4).
+Indicating an <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">4</span></code> implies that the initial mesh is refined 4 times globally; in 3D each cell is divided by 8 per refinement. However, in addition to this global refinements, the cells next to the walls are refined one more time locally. This is indicated through the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">boundary</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">1</span></code> parameter and the <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">boundaries</span> <span class="pre">refined</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">1</span></code> parameter, which indicates the boundaries IDs of the wall of the cylinder. The following figure illustrates the mesh:</p>
+<a class="reference internal image-reference" href="../../../_images/mesh_153kcells.png" id="mesh-taylor-couette"><img alt="The mesh" class="align-center" id="mesh-taylor-couette" src="../../../_images/mesh_153kcells.png" style="height: 10cm;" /></a>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The mesh resolution used in the case study consists of 20 radial elements, 80 azimuthal elements, and 64 axial elements totalling 102,400 elements.</p>
+<p>The mesh resolution used in the case study consists of 153,600 cells. If one more initial refinement is used, 942,080 cells are obtained.</p>
 </div>
 </section>
 <section id="boundary-conditions">
@@ -677,49 +679,50 @@ end
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><figure class="align-default">
-<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_82k_Q2.png"><img alt="../../../_images/enstrophy_comparison_82k_Q2.png" src="../../../_images/enstrophy_comparison_82k_Q2.png" style="width: 620px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_Q2Q2_153k.png"><img alt="../../../_images/enstrophy_comparison_Q2Q2_153k.png" src="../../../_images/enstrophy_comparison_Q2Q2_153k.png" style="width: 620px;" /></a>
 </figure>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>We note that the enstrophy history does not match either reference scheme. Increasing the order from Q2 to Q3 leads to the following results, which are quite close to the P4 and P5 solutions, especially considering that our mesh has about 20% fewer elements:</p>
+<p>We note that the enstrophy history does not match either reference scheme. Increasing the order from Q2 to Q3 leads to the following results, which are quite close to the P4 and P5 solutions:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><figure class="align-default">
-<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_82k_Q3.png"><img alt="../../../_images/enstrophy_comparison_82k_Q3.png" src="../../../_images/enstrophy_comparison_82k_Q3.png" style="width: 620px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_Q3Q3_153k.png"><img alt="../../../_images/enstrophy_comparison_Q3Q3_153k.png" src="../../../_images/enstrophy_comparison_Q3Q3_153k.png" style="width: 620px;" /></a>
 </figure>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>We then revert the scheme order back to Q2 and refine the mesh by setting the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">5</span></code> in the mesh subsection resulting in a total of 655,360 cells. While this simulation closely matches the references, we observe that the second peak of enstrophy seems to require higher-order elements to be fully captured:</p>
+<p>We then revert the scheme order back to Q2 and refine the mesh by setting the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">5</span></code> in the mesh subsection resulting in a total of 942,080 cells. This simulation closely matches the references for the first 30 seconds and captures the second peak of enstrophy better than the previous simulations:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><figure class="align-default">
-<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_655k_Q2.png"><img alt="../../../_images/enstrophy_comparison_655k_Q2.png" src="../../../_images/enstrophy_comparison_655k_Q2.png" style="width: 620px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_Q2Q2_942k.png"><img alt="../../../_images/enstrophy_comparison_Q2Q2_942k.png" src="../../../_images/enstrophy_comparison_Q2Q2_942k.png" style="width: 620px;" /></a>
 </figure>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Finally, employing the finer mesh with Q3 elements actually yields a higher second peak of enstrophy and some disparities at the end of the simulation. This could suggest that the results from the case study may not have fully converged yet. Considering one more refinement could be interesting to observe if the solution begins to be mesh-independent:</p>
+<p>Finally, employing the finer mesh with Q3 elements actually yields a more accurate prediction of the second peak and certain values of the enstrophy between 30 and 60 seconds.</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><figure class="align-default">
-<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_655k_Q3.png"><img alt="../../../_images/enstrophy_comparison_655k_Q3.png" src="../../../_images/enstrophy_comparison_655k_Q3.png" style="width: 620px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/enstrophy_comparison_Q3Q3_942k.png"><img alt="../../../_images/enstrophy_comparison_Q3Q3_942k.png" src="../../../_images/enstrophy_comparison_Q3Q3_942k.png" style="width: 620px;" /></a>
 </figure>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>Considering one more refinement could be interesting to observe if the solution begins to be mesh-independent.</p>
 </section>
 <section id="possibilities-for-extension">
 <h2>Possibilities for Extension<a class="headerlink" href="#possibilities-for-extension" title="Link to this heading">#</a></h2>
