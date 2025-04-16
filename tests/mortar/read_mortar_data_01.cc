@@ -51,13 +51,15 @@ test()
   Parameters::Mortar<dim> mortar;
 
   // Stator mesh parameters
-  stator_mesh.type                     = Parameters::Mesh::Type::dealii;
-  stator_mesh.grid_type                = "hyper_shell";
-  stator_mesh.grid_arguments           = "0, 0 : 0.5 : 1.0 : 6 : true";
-  stator_mesh.scale                    = 1;
-  stator_mesh.simplex                  = false;
-  stator_mesh.initial_refinement       = n_global_refinements;
-  stator_mesh.refine_until_target_size = false;
+  stator_mesh.type                             = Parameters::Mesh::Type::dealii;
+  stator_mesh.grid_type                        = "hyper_shell";
+  stator_mesh.grid_arguments                   = "0, 0 : 0.5 : 1.0 : 6 : true";
+  stator_mesh.scale                            = 1;
+  stator_mesh.simplex                          = false;
+  stator_mesh.initial_refinement               = n_global_refinements;
+  stator_mesh.refine_until_target_size         = false;
+  stator_mesh.boundaries_to_refine             = std::vector<int>();
+  stator_mesh.initial_refinement_at_boundaries = 0;
 
   // Rotor mesh parameters
   mortar.enable                     = "true";

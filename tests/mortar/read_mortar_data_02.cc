@@ -57,6 +57,8 @@ test()
   stator_mesh.simplex                  = false;
   stator_mesh.initial_refinement       = n_global_refinements;
   stator_mesh.refine_until_target_size = false;
+  stator_mesh.boundaries_to_refine     = std::vector<int>();
+  stator_mesh.initial_refinement_at_boundaries = 0;
 
   // Rotor mesh parameters
   mortar.enable                     = "true";
