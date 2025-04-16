@@ -463,7 +463,7 @@ initlog(bool                          console = false,
                                               std::ios::left)
 {
   deallogname = "output";
-  deallogfile.open(deallogname.c_str());
+  deallogfile.open(deallogname.c_str(), std::ios::app);
   deallog.attach(deallogfile, true, flags);
   deallog.depth_console(console ? 10 : 0);
 }
