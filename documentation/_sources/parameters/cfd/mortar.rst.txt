@@ -15,7 +15,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
       set initial refinement     = 0
       set initial rotation angle = 0
     end
-    set rotor boundary id  = 1
+    set rotor boundary id  = 4
     set stator boundary id = 2
     set center of rotation = 0, 0
   end
@@ -27,5 +27,8 @@ The mortar section is used when simulating rotor-stator geometries, in which the
  
 * The ``rotor boundary id`` and ``stator boundary id`` refer to the boundary index at the rotor-stator interface.
 
-* The ``center of rotation`` defines the coordinates for the prescribed rotation at the rotor domain.
+.. warning::
+  In ``dealii`` meshes the boundary IDs are automatically assigned to the geometries using the deal.II `colorization <https://www.dealii.org/current/doxygen/deal.II/DEALGlossary.html#GlossColorization>`_ function, and thus the rotor/stator IDs might be duplicated.
+  To circumvent this, the rotor boundary IDs are shifted. The ``rotor boundary id`` entry refers to the shifted ID number, assuming that the enumeration starts sequentially from the last entry of the stator boundary IDs.
 
+* The ``center of rotation`` is the reference point for the prescribed rotation at the rotor domain.

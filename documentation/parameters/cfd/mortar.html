@@ -449,7 +449,7 @@
     set initial refinement     = 0
     set initial rotation angle = 0
   end
-  set rotor boundary id  = 1
+  set rotor boundary id  = 4
   set stator boundary id = 2
   set center of rotation = 0, 0
 end
@@ -464,7 +464,14 @@ end
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">boundary</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">stator</span> <span class="pre">boundary</span> <span class="pre">id</span></code> refer to the boundary index at the rotor-stator interface.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> defines the coordinates for the prescribed rotation at the rotor domain.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">dealii</span></code> meshes the boundary IDs are automatically assigned to the geometries using the deal.II <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/DEALGlossary.html#GlossColorization">colorization</a> function, and thus the rotor/stator IDs might be duplicated.
+To circumvent this, the rotor boundary IDs are shifted. The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">boundary</span> <span class="pre">id</span></code> entry refers to the shifted ID number, assuming that the enumeration starts sequentially from the last entry of the stator boundary IDs.</p>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> is the reference point for the prescribed rotation at the rotor domain.</p></li>
 </ul>
 </section>
 
