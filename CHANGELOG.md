@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-16
+
+### Added
+
+- MAJOR The mortar feature from [#1462](https://github.com/chaos-polymtl/lethe/pull/1462) started to be integrated into the lethe-fluid application. Together with [#1481](https://github.com/chaos-polymtl/lethe/pull/1481), a new mortar subsection is now available the parameters file. Rotor and stator meshes generated using dealii grids are merged into a unique triangulation; coupling at the interface is not yet considered. [#1490](https://github.com/chaos-polymtl/lethe/pull/1490) 
+
 ## [Master] - 2025-04-14
 
 ### Changed
