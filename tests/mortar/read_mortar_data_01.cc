@@ -39,6 +39,8 @@ void
 test()
 {
   const MPI_Comm comm = MPI_COMM_WORLD;
+  unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
+  unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
   const unsigned int dim                  = 2;
   const unsigned int n_global_refinements = 2;
@@ -107,7 +109,7 @@ test()
   data_out.build_patches(mapping,
                          mapping_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
-  data_out.write_vtu_in_parallel("out.vtu", MPI_COMM_WORLD);
+  data_out.write_vtu_in_parallel("out.vtu", comm);
 
   // Plot boundary IDs
   DataPostprocessors::BoundaryIds<dim> boundary_ids;
