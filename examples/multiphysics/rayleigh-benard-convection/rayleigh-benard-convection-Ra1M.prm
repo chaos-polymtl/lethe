@@ -16,7 +16,7 @@ subsection simulation control
   set time step                    = 0.001
   set adapt                        = true
   set max cfl                      = 0.9
-  set stop tolerance               = 1e-2
+  set stop tolerance               = 1e-3
   set adaptative time step scaling = 1.3
   set output name                  = rayleigh-benard_convection
   set output control               = time
