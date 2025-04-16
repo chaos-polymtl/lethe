@@ -5,7 +5,6 @@ on:
     # Runs on every push on master branch
     branches:
       - master
-      - reinitialize-previous-solutions
   # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   pull_request:
     paths-ignore:
