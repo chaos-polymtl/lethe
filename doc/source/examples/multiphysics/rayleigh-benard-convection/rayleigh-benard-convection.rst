@@ -177,7 +177,7 @@ to run the simulations using eight CPU cores for the :math:`Ra=10^4` and :math:`
 Results
 -------
 
-The following animation shows the evolution of the temperature field with the flow direction for the simulation at :math:`Ra=10^6`:
+The following animation shows the evolution of the temperature field with the flow direction for the simulation at :math:`Ra=10^6` when starting from a zero temperature initial condition:
 
 .. raw:: html
 
