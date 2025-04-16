@@ -13,6 +13,7 @@
 #include <dem/insertion_list.h>
 #include <dem/insertion_plane.h>
 #include <dem/insertion_volume.h>
+#include <dem/multiphysics_integrator.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
 #include <dem/set_particle_particle_contact_force_model.h>
@@ -1031,6 +1032,17 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Particle-wall contact force
       particle_wall_contact_force();
+
+      // Integration of temperature for multiphysic DEM
+      if constexpr (std::is_same_v<PropertiesIndex,
+                                   DEM::DEMMPProperties::PropertiesIndex>)
+        {
+          integrate_temperature<dim, PropertiesIndex>(
+            particle_handler,
+            simulation_control->get_time_step(),
+            outcome.heat_transfer_rate,
+            std::vector<double>(force.size()));
+        }
 
       // Integration of force and velocity for new location of particles
       // The half step is calculated at the first iteration
