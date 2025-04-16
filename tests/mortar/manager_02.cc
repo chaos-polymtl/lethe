@@ -23,6 +23,7 @@ main()
        {0.0, 0.1, 0.5, 0.9, 1.1, 2.1, n_subdivisions - 0.9})
     {
       const double rotate = delta * scale;
+      std::cout << "Rotation angle: " << rotate << std::endl;
 
       const MortarManager<dim> manager(n_subdivisions,
                                        n_quadrature_points,
@@ -32,9 +33,11 @@ main()
       const auto print = [&](const double shift) {
         for (unsigned int i = 0; i < n_subdivisions; ++i)
           {
+            // center point of each cell (in radians)
             const double rad = delta * (i + shift + 0.5);
 
-            std::cout << rad << ": " << std::endl;
+            std::cout << "Shift: " << shift << std::endl;
+            std::cout << "Cell center at " << rad << ": " << std::endl;
 
             const auto indices = manager.get_indices(rad);
             const auto weights = manager.get_weights(rad);
@@ -56,13 +59,15 @@ main()
         std::cout << std::endl;
       };
 
+      // print generated points for aligned mesh (scale = 0.0)
       print(0.0);
 
+      // print generated points for non-aligned mesh
       if (scale != 0.0)
-        print(scale - std::floor(scale));
+        print(scale - std::floor(scale)); // outer (fixed) mesh
 
       if (scale != 0.0)
-        print(scale);
+        print(scale); // inner (rotated) mesh
 
       std::cout << std::endl << std::endl << std::endl;
     }

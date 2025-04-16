@@ -806,7 +806,9 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const std::string        &file_name);
 
 /**
- * @brief Converts point to radius (angle with the x axis in the x-y plane)
+ * @brief Converts point to radius
+ * @param[in] point Point in cartesian coordinates (x-y plane)
+ * @param[in] center_of_rotation Reference point
  */
 template <int dim>
 inline double

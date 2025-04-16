@@ -58,7 +58,7 @@ public:
   }
 
   /**
-   * @brief Returns the number of coupling points at the interface
+   * @brief Returns the total number of quadrature points at the inner/outer boundary interface
    */
   unsigned int
   get_n_points() const
@@ -74,7 +74,8 @@ public:
   }
 
   /**
-   * @brief Returns the number of coupling points at the interface
+   * @brief Returns the number of quadrature points at each inner/outer cell matching pair
+   * @param[in] rad Angular coordinate of cell center
    */
   unsigned int
   get_n_points(const double &rad) const
@@ -93,10 +94,12 @@ public:
 
   /**
    * @brief Returns the indices of all quadrature points at both sides of the interface
+   * @param[in] rad Angular coordinate of cell center
    */
   std::vector<unsigned int>
   get_indices(const double &rad) const
   {
+    // mesh alignment type and cell index
     const auto [type, id] = get_config(rad);
 
     if (type == 0) // aligned
@@ -150,10 +153,13 @@ public:
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
+   * @param[in] rad Angular coordinate of cell center
+   * @param[out] points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
   get_points(const double rad) const
   {
+    // mesh alignment type and cell index
     const auto [type, id] = get_config(rad);
     // angle variation within each cell
     const double delta = 2 * numbers::PI / n_subdivisions;
@@ -168,19 +174,23 @@ public:
 
         return points;
       }
-    else
+    else // point at the inner boundary lies somewhere in the face of the outer
+         // boundary cell
       {
+        // rad_0: first cell vertex (fixed)
+        // rad_1: shifted vertex
+        // rad_2: last cell vertex (fixed)
         double rad_0, rad_1, rad_2;
-
+        // minimum rotation angle
         double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
 
-        if (type == 2)
+        if (type == 2) // outside
           {
             rad_0 = id * delta;
             rad_1 = id * delta + rot_min;
             rad_2 = (id + 1) * delta;
           }
-        else
+        else // inside
           {
             rad_0 = id * delta + rot_min;
             rad_1 = (id + 1) * delta;
@@ -219,20 +229,20 @@ public:
 
         return points;
       }
-    else
+    else // inside/outside
       {
         double rad_0, rad_1, rad_2;
 
         double rot_min =
           (rotate_pi - std::floor(rotate_pi / delta) * delta) / delta;
 
-        if (type == 2)
+        if (type == 2) // outside
           {
             rad_0 = 0.0;
             rad_1 = rot_min;
             rad_2 = 1.0;
           }
-        else
+        else // inside
           {
             rad_0 = 0.0;
             rad_1 = 1.0 - rot_min;
@@ -253,12 +263,16 @@ public:
 
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
+   * @param[in] rad Angular coordinate of cell center
+   *
+   * @return points Angular weights of quadrature points of the cell
    */
   std::vector<double>
   get_weights(const double &rad) const
   {
+    // mesh alignment type and cell index
     const auto [type, id] = get_config(rad);
-
+    // angle variation within each cell
     const double delta = 2 * numbers::PI / n_subdivisions;
 
     if (type == 0) // aligned
@@ -276,13 +290,13 @@ public:
 
         double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
 
-        if (type == 2)
+        if (type == 2) // outside
           {
             rad_0 = id * delta;
             rad_1 = id * delta + rot_min;
             rad_2 = (id + 1) * delta;
           }
-        else
+        else // inside
           {
             rad_0 = id * delta + rot_min;
             rad_1 = (id + 1) * delta;
@@ -303,10 +317,14 @@ public:
 
   /**
    * @brief Returns the normal vector for the quadrature points
+   * @param[in] rad Angular coordinate of cell center
+   *
+   * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
   get_normals(const double &rad) const
   {
+    // Coordinates of cell quadrature points
     const auto points = get_points(rad);
 
     std::vector<Tensor<1, dim, double>> result;
@@ -319,12 +337,14 @@ public:
 
 private:
   /**
-   * @brief Verifies whether the mesh is aligned
-   * @param[out] type Cell configuration type at the interface
-   *                  type = 0: mesh aligned
-   *                  type = 1: mesh not aligned, points are closer than a
-   * tolerance type = 2: mesh not aligned, points are in rotated configuration
-   * @param[out] id Point index
+   * @brief Returns the mesh alignement type and cell index
+   * @param[in] rad Angular coordinate of cell center
+   *
+   * @return type Cell configuration type at the interface
+   * type = 0: mesh aligned
+   * type = 1: mesh not aligned, inner domain (allows rotation)
+   * type = 2: mesh not aligned, outer domain (fixed)
+   * @return id Index of the cell in which lies the rotated cell center
    */
   std::pair<unsigned int, unsigned int>
   get_config(const double &rad) const
@@ -349,10 +369,10 @@ private:
       {
         // case 2: mesh is not aligned
         if (std::abs(segment - std::round(segment)) < tolerance)
-          // inner-outer points very close to match
+          // outer (fixed) domain
           return {2, std::round(segment)};
         else
-          // points do not match
+          // inner (rotated) domain
           return {1,
                   static_cast<unsigned int>(std::round(segment_rot)) %
                     (2 * n_subdivisions)};

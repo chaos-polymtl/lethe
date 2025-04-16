@@ -20,6 +20,8 @@
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/data_out_faces.h>
+#include <deal.II/numerics/data_postprocessor.h>
 #include <deal.II/numerics/vector_tools.h>
 
 // Lethe
@@ -37,6 +39,8 @@ void
 test()
 {
   const MPI_Comm comm = MPI_COMM_WORLD;
+  unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
+  unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
   const unsigned int dim                  = 2;
   const unsigned int n_global_refinements = 2;
@@ -46,47 +50,59 @@ test()
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const unsigned int mapping_degree       = 3;
 
-  Parameters::Mesh        stator_mesh;
-  Parameters::Mortar<dim> mortar;
+  Parameters::Mesh        mesh_parameters;
+  Parameters::Mortar<dim> mortar_parameters;
 
   // Stator mesh parameters
-  stator_mesh.type                     = Parameters::Mesh::Type::dealii;
-  stator_mesh.grid_type                = "hyper_cube_with_cylindrical_hole";
-  stator_mesh.grid_arguments           = "1.0 : 2.0 : 5.0 : 1 : true";
-  stator_mesh.scale                    = 1;
-  stator_mesh.simplex                  = false;
-  stator_mesh.initial_refinement       = n_global_refinements;
-  stator_mesh.refine_until_target_size = false;
-  stator_mesh.boundaries_to_refine     = std::vector<int>();
-  stator_mesh.initial_refinement_at_boundaries = 0;
+  mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
+  mesh_parameters.grid_type                = "hyper_cube_with_cylindrical_hole";
+  mesh_parameters.grid_arguments           = "1.0 : 2.0 : 5.0 : 1 : true";
+  mesh_parameters.scale                    = 1;
+  mesh_parameters.simplex                  = false;
+  mesh_parameters.initial_refinement       = n_global_refinements;
+  mesh_parameters.refine_until_target_size = false;
+  mesh_parameters.boundaries_to_refine     = std::vector<int>();
+  mesh_parameters.initial_refinement_at_boundaries = 0;
 
   // Rotor mesh parameters
-  mortar.enable                     = "true";
-  mortar.rotor_mesh                 = std::make_shared<Parameters::Mesh>();
-  mortar.rotor_mesh->type           = Parameters::Mesh::Type::dealii;
-  mortar.rotor_mesh->grid_type      = "hyper_ball_balanced";
-  mortar.rotor_mesh->grid_arguments = "0, 0 : 1.0";
-  mortar.rotor_mesh->rotation_angle = 3.0;
-  mortar.rotor_mesh->scale          = 1;
-  mortar.rotor_mesh->simplex        = false;
+  mortar_parameters.enable           = "true";
+  mortar_parameters.rotor_mesh       = std::make_shared<Parameters::Mesh>();
+  mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
+  mortar_parameters.rotor_mesh->grid_type      = "hyper_ball_balanced";
+  mortar_parameters.rotor_mesh->grid_arguments = "0, 0 : 1.0";
+  mortar_parameters.rotor_mesh->rotation_angle = 3.0;
+  mortar_parameters.rotor_mesh->scale          = 1;
+  mortar_parameters.rotor_mesh->simplex        = false;
+  mortar_parameters.stator_boundary_id         = 4;
+  mortar_parameters.rotor_boundary_id          = 5; // after shifting
 
   // Initialized merged triangulation
-  parallel::distributed::Triangulation<dim> merged_tria(comm);
+  parallel::distributed::Triangulation<dim> triangulation(comm);
 
   // Merge stator and rotor triangulations
-  read_mesh_and_manifolds_for_stator_and_rotor(merged_tria,
-                                               stator_mesh,
+  read_mesh_and_manifolds_for_stator_and_rotor(triangulation,
+                                               mesh_parameters,
                                                false,
-                                               mortar);
+                                               mortar_parameters);
 
   // Print information
-  deallog << "Merged triangulation" << std::endl;
-  deallog << "Number of active cells : " << merged_tria.n_active_cells()
-          << std::endl;
-  deallog << "Number of vertices : " << merged_tria.n_vertices() << std::endl;
+  for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
+       ++processor_number)
+    {
+      MPI_Barrier(comm);
+      if (processor_number == this_mpi_process)
+        {
+          deallog << "MPI=" << this_mpi_process << std::endl;
+          deallog << "Number of active cells : "
+                  << triangulation.n_active_cells() << std::endl;
+          deallog << "Number of vertices : " << triangulation.n_vertices()
+                  << std::endl;
 
-  for (const auto &face : merged_tria.active_face_iterators())
-    deallog << "Cell center : " << face->center() << std::endl;
+          for (const auto &face : triangulation.active_face_iterators())
+            deallog << "Cell center : " << face->center() << std::endl;
+        }
+      MPI_Barrier(comm);
+    }
 
   // Generate vtu file
   DataOut<dim>       data_out;
@@ -95,15 +111,32 @@ test()
   DataOutBase::VtkFlags flags;
   flags.write_higher_order_cells = true;
   data_out.set_flags(flags);
-  data_out.attach_triangulation(merged_tria);
+  data_out.attach_triangulation(triangulation);
 
-  Vector<double> ranks(merged_tria.n_active_cells());
+  Vector<double> ranks(triangulation.n_active_cells());
   ranks = Utilities::MPI::this_mpi_process(comm);
   data_out.add_data_vector(ranks, "ranks");
   data_out.build_patches(mapping,
                          mapping_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
-  data_out.write_vtu_in_parallel("out.vtu", MPI_COMM_WORLD);
+  data_out.write_vtu_in_parallel("out.vtu", comm);
+
+  // Plot boundary IDs
+  DataPostprocessors::BoundaryIds<dim> boundary_ids;
+  DataOutFaces<dim>                    data_out_faces;
+  FE_Q<dim>                            dummy_fe(1);
+
+  DoFHandler<dim> dummy_dof_handler(triangulation);
+  dummy_dof_handler.distribute_dofs(dummy_fe);
+
+  Vector<double> dummy_solution(dummy_dof_handler.n_dofs());
+
+  data_out_faces.attach_dof_handler(dummy_dof_handler);
+  data_out_faces.add_data_vector(dummy_solution, boundary_ids);
+  data_out_faces.build_patches();
+
+  std::ofstream out("boundary_ids.vtu");
+  data_out_faces.write_vtu(out);
 }
 
 int
