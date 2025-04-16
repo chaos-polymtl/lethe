@@ -243,7 +243,17 @@ protected:
             multiphysics->set_initial_conditions();
             this->postprocess_fd(true);
             multiphysics->postprocess(true);
-            this->write_output_results(this->present_solution);
+            if ((this->simulation_parameters.simulation_control
+                     .output_control ==
+                   Parameters::SimulationControl::OutputControl::iteration &&
+                 this->simulation_parameters.simulation_control
+                     .output_iteration_frequency != 0) ||
+                (this->simulation_parameters.simulation_control
+                     .output_control ==
+                   Parameters::SimulationControl::OutputControl::time &&
+                 this->simulation_parameters.simulation_control
+                     .output_time_frequency != -1))
+              this->write_output_results(this->present_solution);
           }
         ref_iter++;
       }
