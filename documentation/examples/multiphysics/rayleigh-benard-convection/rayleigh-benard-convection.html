@@ -445,7 +445,7 @@
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
 <li><p>Buoyant force (natural convection)</p></li>
-<li><p>Unsteady problem handled by an adaptive BDF1 time-stepping scheme</p></li>
+<li><p>Steady problem handled by an adaptive BDF1 time-stepping scheme</p></li>
 </ul>
 </section>
 <section id="files-used-in-this-example">
@@ -489,8 +489,7 @@ Pr &amp;= \frac{\mu c_\text{p}}{k}\end{split}\]</div>
 </div>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>The time integration is handled by a 1st order backward differentiation scheme
-<cite>(bdf1)</cite>. A simulation time of <span class="math notranslate nohighlight">\(24\)</span> s has been selected to ensure that the system reaches a quasi-steady state. The initial time-step is set to <span class="math notranslate nohighlight">\(0.001\)</span> s, but this will be adapted during the simulation.</p>
+<p>The time integration is handled by a 1st order backward differentiation scheme to reach a steady-state solution <cite>(steady_bdf)</cite>. A stop tolerance of <span class="math notranslate nohighlight">\(1e-5\)</span> has been selected to ensure that the system reaches steady-state. The initial time-step is set to <span class="math notranslate nohighlight">\(0.001\)</span> s, but this will be adapted during the simulation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
@@ -498,8 +497,7 @@ time-step is modified during the simulation to keep the maximum value of the CFL
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method                       = bdf1
-  set time end                     = 24
-  set time step                    = 0.01
+  set time step                    = 0.001
   set adapt                        = true
   set max cfl                      = 0.9
   set stop tolerance               = 1e-5
@@ -551,6 +549,15 @@ end
 </pre></div>
 </div>
 </section>
+<section id="initial-conditions">
+<h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
+<p>To ensure that the instability is generated, we set the initial velocity to zero and the temperature to a linear function of <span class="math notranslate nohighlight">\(5+x\)</span> (from 5 to 10). This ensures that the Rayleigh-Benard instability occurs in a controlled fashion instead of randomly.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection temperature
+  set Function expression = 5+x
+end
+</pre></div>
+</div>
+</section>
 </section>
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
@@ -572,7 +579,7 @@ run in parallel using mpirun. The first simulation takes
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
-<p>The following animation shows the evolution of the temperature field with the flow direction for the simulation at <span class="math notranslate nohighlight">\(Ra=10^6\)</span>:</p>
+<p>The following animation shows the evolution of the temperature field with the flow direction for the simulation at <span class="math notranslate nohighlight">\(Ra=10^6\)</span> when starting from a zero temperature initial condition:</p>
 <iframe width="640" height="360" src="https://www.youtube.com/embed/NSJJpPauiXo" frameborder="0" allowfullscreen></iframe><p>Below, we also present the velocity profiles at steady-state of our simulation compared to the ones presented by Ouertatani <em>et al.</em> <a class="footnote-reference brackets" href="#ouertatani" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> as a verfification of the Lethe software.</p>
 <p><a class="reference internal" href="../../../_images/solution-rayleigh-uy.png"><img alt="fig1" src="../../../_images/solution-rayleigh-uy.png" style="width: 45%;" /></a> <a class="reference internal" href="../../../_images/solution-rayleigh-xv.png"><img alt="fig2" src="../../../_images/solution-rayleigh-xv.png" style="width: 47%;" /></a></p>
 <p>The results can be postprocessed using the provided Python script (<code class="docutils literal notranslate"><span class="pre">rayleigh-benard-convection.py</span></code>). Here is an example of how to call the script:</p>
@@ -674,6 +681,7 @@ run in parallel using mpirun. The first simulation takes
 <li><a class="reference internal" href="#multiphysics">Multiphysics</a></li>
 <li><a class="reference internal" href="#source-term">Source Term</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
+<li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
