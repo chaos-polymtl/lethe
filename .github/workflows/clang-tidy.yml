@@ -25,7 +25,7 @@ env:
 jobs:
   tidy:
     name: tidy
-    runs-on: [ubuntu-22.04]
+    runs-on: [ubuntu-latest]
 
     strategy:
       fail-fast: false
