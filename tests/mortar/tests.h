@@ -171,6 +171,13 @@ public:
 
   /**
    * @brief Create coupling operator
+   * 
+   * @param[in] n_subdivisions Number of cells at the interface between inner and outer domains
+   * @param[in] radius Radius at the interface between inner and outer domains
+   * @param[in] rotate_pi Rotation angle for the inner domain
+   * @param[in] bid_0 Boundary ID of inner domain (rotor) 
+   * @param[in] bid_1 Boundary ID of outer domain (stator)
+   * @param[in] sip_factor Penalty factor (akin to symmetric interior penalty factor in SIPG)
    */
   void
   add_coupling(const unsigned int n_subdivisions,
