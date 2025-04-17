@@ -181,8 +181,10 @@ template <int dim>
 void
 VOFLinearSubequationsSolver<dim>::solve()
 {
+  check_dependencies_validity();
   assemble_system_matrix_and_rhs();
   solve_linear_system_and_update_solution();
+  this->subequations_interface->set_solution_valid(this->subequation_id);
 }
 
 

@@ -370,6 +370,13 @@ private:
       }
   }
 
+  /**
+   * @brief Check if the solutions on which the subequation depends on are
+   * valid.
+   */
+  void
+  check_dependencies_validity();
+
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> *subequations_interface;
   MultiphysicsInterface<dim>

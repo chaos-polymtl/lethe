@@ -38,7 +38,6 @@
 
 #include <map>
 
-
 DeclException1(
   InvalidNumberOfFluid,
   int,
@@ -50,6 +49,15 @@ DeclException1(
   types::boundary_id,
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the VOF physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
+
+DeclException1(
+  InvalidSubequationSolution,
+  std::string,
+  "The current solution of the "
+    << arg1
+    << "is invalid. \n"
+       "a new VOF solution has been set but the subequation was not solved "
+       "afterwards.");
 
 
 template <int dim>
@@ -429,6 +437,13 @@ public:
   GlobalVectorType *
   get_projected_phase_fraction_gradient_solution()
   {
+    // Throw error if the projected phase fraction gradient solution is invalid
+    AssertThrow(this->subequations->get_solution_validity(
+                  VOFSubequationsID::phase_gradient_projection),
+                InvalidSubequationSolution(
+                  this->subequations->get_subequation_string(
+                    VOFSubequationsID::phase_gradient_projection)));
+
     return this->subequations->get_solution(
       VOFSubequationsID::phase_gradient_projection);
   }
@@ -436,6 +451,13 @@ public:
   GlobalVectorType *
   get_curvature_solution()
   {
+    // Throw error if the projected phase fraction gradient solution is invalid
+    AssertThrow(this->subequations->get_solution_validity(
+                  VOFSubequationsID::curvature_projection),
+                InvalidSubequationSolution(
+                  this->subequations->get_subequation_string(
+                    VOFSubequationsID::curvature_projection)));
+
     return this->subequations->get_solution(
       VOFSubequationsID::curvature_projection);
   }
@@ -675,9 +697,16 @@ private:
 
   /**
    * @brief Apply filter on phase fraction values.
+   *
+   * @param[in] original_solution VOF solution vector to which the filter is to
+   * be applied.
+   *
+   * @param[out] filtered_solution Solution vector with filtered phase fraction
+   * values.
    */
   void
-  apply_phase_filter();
+  apply_phase_filter(const GlobalVectorType &original_solution,
+                     GlobalVectorType       &filtered_solution);
 
   /**
    * @brief Reinitialize the interface between fluids using the algebraic

@@ -111,6 +111,13 @@ protected:
   void
   solve_linear_system_and_update_solution() override;
 
+  /**
+   * @brief Check if the solutions on which the subequation depends on are
+   * valid.
+   */
+  virtual void
+  check_dependencies_validity() = 0;
+
 
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> *subequations_interface;

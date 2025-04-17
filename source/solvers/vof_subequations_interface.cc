@@ -60,6 +60,7 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
               this);
         }
     }
+  reset_subequations_solutions_validity();
 }
 
 template class VOFSubequationsInterface<2>;

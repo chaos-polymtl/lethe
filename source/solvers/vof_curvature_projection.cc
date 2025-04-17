@@ -149,6 +149,18 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
   this->system_rhs.compress(VectorOperation::add);
 }
 
+template <int dim>
+void
+VOFCurvatureProjection<dim>::check_dependencies_validity()
+{
+  AssertThrow(this->subequations_interface->get_solution_validity(
+                VOFSubequationsID::phase_gradient_projection),
+              PhaseGradientProjectionIsInvalid(
+                this->subequations_interface->get_subequation_string(
+                  VOFSubequationsID::phase_gradient_projection),
+                this->subequations_interface->get_subequation_string(
+                  this->subequation_id)));
+}
 
 template class VOFCurvatureProjection<2>;
 template class VOFCurvatureProjection<3>;

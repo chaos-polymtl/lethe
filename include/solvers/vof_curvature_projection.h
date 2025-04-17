@@ -83,6 +83,12 @@ private:
    */
   void
   assemble_system_matrix_and_rhs() override;
+
+  /**
+   * @brief Check if the phase gradient L2 projection has been solved.
+   */
+  void
+  check_dependencies_validity() override;
 };
 
 #endif

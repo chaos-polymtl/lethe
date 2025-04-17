@@ -1167,12 +1167,14 @@ VolumeOfFluid<dim>::modify_solution()
     reinitialize_interface_with_geometric_method();
 
   // Apply filter to phase fraction values
-  apply_phase_filter();
+  apply_phase_filter(this->present_solution, this->filtered_solution);
 
   // Solve phase fraction gradient and curvature projections
   if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
         .enable)
     {
+      this->subequations->set_vof_filtered_solution_and_dof_handler(
+        this->filtered_solution, &this->dof_handler);
       this->subequations->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->subequations->solve_specific_subequation(
@@ -1623,7 +1625,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
     }
 
   // Apply filter to phase fraction
-  apply_phase_filter();
+  apply_phase_filter(this->present_solution, this->filtered_solution);
 }
 
 template <int dim>
@@ -1722,7 +1724,7 @@ VolumeOfFluid<dim>::read_checkpoint()
     }
 
   // Apply filter to phase fraction
-  apply_phase_filter();
+  apply_phase_filter(this->present_solution, this->filtered_solution);
 
   // Deserialize tables
   const std::string prefix =
@@ -1993,7 +1995,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
   if (simulation_parameters.initial_condition->enable_projection_step)
     smooth_phase_fraction();
 
-  apply_phase_filter();
+  apply_phase_filter(this->present_solution, this->filtered_solution);
 
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.sharpening.type ==
@@ -2386,14 +2388,16 @@ VolumeOfFluid<dim>::assemble_mass_matrix(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::apply_phase_filter()
+VolumeOfFluid<dim>::apply_phase_filter(
+  const GlobalVectorType &original_solution,
+  GlobalVectorType       &filtered_solution)
 {
   // Initializations
   auto             mpi_communicator = this->triangulation->get_communicator();
   GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
                                            mpi_communicator);
-  filtered_solution_owned = this->present_solution;
-  filtered_solution.reinit(this->present_solution);
+  filtered_solution_owned = original_solution;
+  filtered_solution.reinit(original_solution);
 
   // Create filter object
   filter = VolumeOfFluidFilterBase::model_cast(
@@ -2422,7 +2426,23 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
-  apply_phase_filter();
+  // Reinitialized previous VOF solutions TODO AA
+
+  // TODO AA test with BDF2 and AR
+
+
+
+  // Apply filter to solution and set VOF information in the subequation
+  // interface
+  apply_phase_filter(this->present_solution, this->filtered_solution);
+  this->subequations->set_vof_filtered_solution_and_dof_handler(
+    this->filtered_solution, &this->dof_handler);
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.algebraic_interface_reinitialization
+        .output_reinitialization_steps)
+    this->subequations->set_vof_solution(this->present_solution);
+
+  // Solve phase gradient projection and curvature
   this->subequations->solve_specific_subequation(
     VOFSubequationsID::phase_gradient_projection);
   this->subequations->solve_specific_subequation(
@@ -2433,7 +2453,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     VOFSubequationsID::algebraic_interface_reinitialization);
 
   // Overwrite the VOF solution with the algebraic interface reinitialization
-  VectorTools::interpolate_to_different_mesh(
+  FETools::interpolate(
     *this->subequations->get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),
     *this->subequations->get_solution(
