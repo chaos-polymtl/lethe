@@ -1797,6 +1797,8 @@ namespace Parameters
     unsigned int stator_boundary_id;
     // Center of rotation of the rotor domain
     Point<dim> center_of_rotation;
+    // Penalty factor for mortar elements
+    double sip_factor;
 
     void
     declare_parameters(ParameterHandler &prm);
