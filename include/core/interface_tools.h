@@ -486,6 +486,8 @@ namespace InterfaceTools
      *
      * @param[in] output_path path to the output file
      *
+     * @param[in] time current time 
+     *
      * @param[in] it iteration number
      *
      */
@@ -497,7 +499,7 @@ namespace InterfaceTools
 
     /**
      * @brief Attach the solution vector to the DataOut provided. This function
-     * enable to output the signed ditance solution via the background solver.
+     * enables to output the signed distance solution via the background solver.
      *
      * @param[in,out] data_out DataOut responsible for solution output
      */

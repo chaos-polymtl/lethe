@@ -144,7 +144,7 @@ test()
                                       error_per_cell,
                                       VectorTools::L2_norm);
 
-  deallog << "The norm L2 of the signed distance error in " << dim
+  deallog << "The L2 norm of the signed distance error in " << dim
           << "D is: " << error_L2 << std::endl;
 }
 
