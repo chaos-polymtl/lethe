@@ -586,9 +586,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       " is different from the number of faces at the stator interface ID #" +
       std::to_string(mortar_parameters.stator_boundary_id) + "."));
 
-  // TODO
   // Setup boundary conditions
-  // setup_periodic_boundary_conditions(triangulation, boundary_conditions);
+  setup_periodic_boundary_conditions(triangulation, boundary_conditions);
 
   // Initial mesh refinement
   if (mesh_parameters.simplex)
