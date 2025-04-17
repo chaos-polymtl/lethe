@@ -51,9 +51,10 @@ test()
   const double       r2_o                 = radius * 1.0;
   const unsigned int mapping_degree       = 3;
 
-  Parameters::Mesh        mesh_parameters;
-  Parameters::Mortar<dim> mortar_parameters;
-  Parameters::Manifolds   manifolds_parameters;
+  Parameters::Mesh                       mesh_parameters;
+  Parameters::Mortar<dim>                mortar_parameters;
+  Parameters::Manifolds                  manifolds_parameters;
+  BoundaryConditions::BoundaryConditions boundary_conditions;
 
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
@@ -85,6 +86,7 @@ test()
                                                mesh_parameters,
                                                manifolds_parameters,
                                                false,
+                                               boundary_conditions,
                                                mortar_parameters);
 
   // Print information

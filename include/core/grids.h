@@ -85,6 +85,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                            &restart,
+  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters);
 
 /**

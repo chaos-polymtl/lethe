@@ -401,6 +401,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                            &restart,
+  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
   /* Dealii meshes: since the rotor and stator meshes are read separately,
@@ -665,15 +666,17 @@ read_mesh_and_manifolds(
 
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
-  parallel::DistributedTriangulationBase<2> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
-  const Parameters::Manifolds               &manifolds_parameters,
-  const bool                                &restart,
-  const Parameters::Mortar<2>               &mortar_parameters);
+  parallel::DistributedTriangulationBase<2>    &triangulation,
+  const Parameters::Mesh                       &mesh_parameters,
+  const Parameters::Manifolds                  &manifolds_parameters,
+  const bool                                   &restart,
+  const BoundaryConditions::BoundaryConditions &boundary_conditions,
+  const Parameters::Mortar<2>                  &mortar_parameters);
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
-  parallel::DistributedTriangulationBase<3> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
-  const Parameters::Manifolds               &manifolds_parameters,
-  const bool                                &restart,
-  const Parameters::Mortar<3>               &mortar_parameters);
+  parallel::DistributedTriangulationBase<3>    &triangulation,
+  const Parameters::Mesh                       &mesh_parameters,
+  const Parameters::Manifolds                  &manifolds_parameters,
+  const bool                                   &restart,
+  const BoundaryConditions::BoundaryConditions &boundary_conditions,
+  const Parameters::Mortar<3>                  &mortar_parameters);
