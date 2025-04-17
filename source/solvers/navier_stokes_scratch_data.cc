@@ -446,8 +446,10 @@ NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points,
   thermal_expansion.resize(n_q_points);
   grad_kinematic_viscosity_shear_rate.resize(n_q_points);
 
-  previous_density.resize(maximum_number_of_previous_solutions(),
-                          std::vector<double>(this->n_q_points));
+  for (unsigned int p = 0; p < maximum_number_of_previous_solutions(); ++p)
+    {
+      this->previous_density[p].resize(n_q_points);
+    }
 }
 
 template <int dim>

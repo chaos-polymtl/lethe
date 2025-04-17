@@ -209,6 +209,9 @@ public:
     strong_jacobian.resize(new_n_q_points,
                            std::vector<Tensor<1, dim>>(new_n_dofs));
 
+    local_matrix = FullMatrix<double>(new_n_dofs);
+    local_rhs.reinit(new_n_dofs);
+
     reset();
   }
 

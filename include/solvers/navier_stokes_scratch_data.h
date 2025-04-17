@@ -1049,7 +1049,7 @@ public:
       ObserverPointer<hp::FECollection<dim>>(&fe_collection_in);
     // fe_collection->push_back(this->fe_values.get_fe());
 
-    const QGauss<1> quadrature_1D(4);
+    const QGauss<1> quadrature_1D(this->fe_values.get_fe().degree + 1);
 
     NonMatching::RegionUpdateFlags region_update_flags;
     region_update_flags.inside = update_values | update_gradients |
@@ -1183,6 +1183,22 @@ public:
         this->pressure_gradients[q + start] = append_pressure_gradients[q];
       }
 
+    std::vector<std::vector<Tensor<1, dim>>> append_previous_velocity_values =
+      std::vector<std::vector<Tensor<1, dim>>>(
+        maximum_number_of_previous_solutions(),
+        std::vector<Tensor<1, dim>>(append_n_q_points));
+
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        reinited_fe_falues_to_append[velocities].get_function_values(
+          previous_solutions[p], append_previous_velocity_values[p]);
+        for (unsigned int q = 0; q < append_n_q_points; ++q)
+          {
+            this->previous_velocity_values[p][q + start] =
+              append_previous_velocity_values[p][q];
+          }
+      }
+
     std::vector<std::vector<double>> append_previous_pressure_values =
       std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                        std::vector<double>(append_n_q_points));
@@ -1203,7 +1219,8 @@ public:
     for (unsigned int q = 0; q < append_n_q_points; ++q)
       {
         this->JxW[q + start] = reinited_fe_falues_to_append.JxW(q);
-        for (unsigned int k = 0; k < n_dofs; ++k)
+        for (unsigned int k = 0; k < this->fe_values.get_fe().n_dofs_per_cell();
+             ++k)
           {
             // Velocity
             this->phi_u[q + start][k] =
@@ -1222,6 +1239,22 @@ public:
               reinited_fe_falues_to_append[pressure].value(k, q);
             this->grad_phi_p[q + start][k] =
               reinited_fe_falues_to_append[pressure].gradient(k, q);
+          }
+
+        // Enrichment dofs
+        const unsigned int dof_start =
+          this->fe_values.get_fe().n_dofs_per_cell();
+        for (unsigned int k = 0; k < this->n_dofs - dof_start; ++k)
+          {
+            this->phi_u[q + start][k + dof_start]      = 0;
+            this->div_phi_u[q + start][k + dof_start]  = 0;
+            this->grad_phi_u[q + start][k + dof_start] = 0;
+            this->hess_phi_u[q + start][k + dof_start] = 0;
+            for (int d = 0; d < dim; ++d)
+              this->laplacian_phi_u[q + start][k + dof_start][d] = 0;
+
+            this->phi_p[q + start][k + dof_start]      = 0;
+            this->grad_phi_p[q + start][k + dof_start] = 0;
           }
       }
   }
@@ -1242,7 +1275,7 @@ public:
     // {
     //   std::cout << "Ahhhh"<< std::endl;
     // }
-    // std::cout << "Ahhhh"<< std::endl;
+    // std::cout << "Ahhhh"<< sreinit_intd::endl;
 
     // this->mesh_classifier->reclassify();
 
@@ -1253,7 +1286,8 @@ public:
     // std::cout << "Hiiiii"<< std::endl;
 
     unsigned int       new_n_q_points = 0;
-    const unsigned int new_n_dofs = this->fe_values.get_fe().n_dofs_per_cell();
+    const unsigned int new_n_dofs =
+      this->fe_values.get_fe().n_dofs_per_cell() + 2;
 
     const std::optional<FEValues<dim>> &inside_fe_values =
       this->non_matching_fe_values->get_inside_fe_values();
@@ -1298,6 +1332,9 @@ public:
       {
         components[k] = fe.system_to_component_index(k).first;
       }
+    components[fe_values.get_fe().n_dofs_per_cell()]     = dim;
+    components[fe_values.get_fe().n_dofs_per_cell() + 1] = dim;
+
 
     double cell_measure =
       compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
