@@ -829,9 +829,8 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
     {
       // Resize and reinitialize displacement container
       displacement.resize(particle_handler.get_max_local_particle_index());
-      // Resize and reinitialize displacement container
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
+      // Resize and reinitialize outcome containers
+      outcome.resize_interaction_containers(displacement.size());
       MOI.resize(displacement.size());
 
       // Updating moment of inertia container
@@ -1004,15 +1003,14 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Particle-particle contact force
       particle_particle_contact_force_object
-        ->calculate_particle_particle_contact_force(
+        ->calculate_particle_particle_contact(
           contact_manager.get_local_adjacent_particles(),
           contact_manager.get_ghost_adjacent_particles(),
           contact_manager.get_local_local_periodic_adjacent_particles(),
           contact_manager.get_local_ghost_periodic_adjacent_particles(),
           contact_manager.get_ghost_local_periodic_adjacent_particles(),
           simulation_control->get_time_step(),
-          torque,
-          force);
+          outcome);
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
