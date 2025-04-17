@@ -145,7 +145,7 @@ InterfaceTools::reconstruct_interface(
               interface_reconstruction_cells[cell_index]    = surface_cells;
 
               if (cell->is_locally_owned())
-                { // Store the dofs of the intersected volume cell
+                { // Store the DoFs of the intersected volume cell
                   std::vector<types::global_dof_index> dof_indices(
                     dofs_per_cell);
                   cell->get_dof_indices(dof_indices);
@@ -272,8 +272,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
                                         interface_reconstruction_cells,
                                         intersected_dofs);
 
-  /* Compute the distance for the dofs of the intersected cells (the ones in
-  the intersected_dofs set). They correspond to the first neighbor dofs.*/
+  /* Compute the distance for the DoFs of the intersected cells (the ones in
+  the intersected_dofs set). They correspond to the first neighbor DoFs.*/
   compute_first_neighbors_distance();
 
   /* Compute signed distance from distance (only first neighbors have an
@@ -284,11 +284,11 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   compute_cell_wise_volume_correction();
   conserve_global_volume();
 
-  /* Compute the distance for the dofs of the rest of the mesh. They
-  correspond to the second neighbors dofs. */
+  /* Compute the distance for the DoFs of the rest of the mesh. They
+  correspond to the second neighbors DoFs. */
   compute_second_neighbors_distance();
 
-  // Compute signed distance from distance (all DOFs have updated value)
+  // Compute signed distance from distance (all DoFs have updated value)
   compute_signed_distance_from_distance();
 
   // Update ghost values to regain reading ability.
@@ -299,9 +299,9 @@ template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
 {
-  /* Initialization of the active dofs to the max distance we want to
-   find the signed distance. It requires a loop on the active dofs to initialize
-   also the distance value of the ghost dofs. Otherwise, they are set to 0.0 by
+  /* Initialization of the active DoFs to the max distance we want to
+   find the signed distance. It requires a loop on the active DoFs to initialize
+   also the distance value of the ghost DoFs. Otherwise, they are set to 0.0 by
    default. */
   for (auto p : this->locally_active_dofs)
     {
@@ -374,13 +374,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::exchange_distance()
   values and to have a read only version of the vector*/
   distance_with_ghost = distance;
 
-  /* Zero out ghost DOFs to regain write functionalities in distance (it
+  /* Zero out ghost DoFs to regain write functionalities in distance (it
   becomes write only, that is why we need distance_with_ghost - to read the
   ghost values in it).*/
   distance.zero_out_ghost_values();
 
   /* Copy the ghost values back in distance (zero_out_ghost_values() puts
-  zeros in ghost DOFs)*/
+  zeros in ghost DoFs)*/
   for (auto p : this->locally_active_dofs)
     {
       /* We need to have the ghost values in distance for future
@@ -394,7 +394,7 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   compute_first_neighbors_distance()
 {
-  /* The signed distance for the first neighbors (the Dofs belonging to the
+  /* The signed distance for the first neighbors (the DoFs belonging to the
    * cells intersected by the reconstructed interface. This is a brute force
    * distance computation, meaning the distance is computed geometrically, as
    * presented by Ausas et al. (2011). */
@@ -463,10 +463,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 {
   /* The signed distance for the second neighbors (the cells not intersected
    * by the interface) is resolved according the minimization problem
-   * presented by Ausas et al. (2011). The method looks for the point in the opposite
-   * faces of each second neighbor DoFs that minimizes the distance to the
-   * interface. It works in a similar manner as a marching algorithm from the
-   * knowledge of the signed distance for the interface first neighbors. */
+   * presented by Ausas et al. (2011). The method looks for the point in the
+   * opposite faces of each second neighbor DoFs that minimizes the distance to
+   * the interface. It works in a similar manner as a marching algorithm from
+   * the knowledge of the signed distance for the interface first neighbors. */
 
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
 
@@ -520,7 +520,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                    cell_dof_values.begin(),
                                    cell_dof_values.end());
 
-              // Loop over the cell's Dofs
+              // Loop over the cell's DoFs
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   /* If the dof belongs to an intersected cell, the distance
@@ -664,7 +664,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           face minimizing the distance)*/
                           Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
 
-                          /* Relax the correction if it brings us outside 
+                          /* Relax the correction if it brings us outside
                           the cell */
                           double relaxation = 1.0;
 
@@ -704,10 +704,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           /* Flag indicating if the correction brings us
                           outside the cell.*/
                           bool check = false;
+
+                          // Tolerance on the position for the outside check
+                          const double tol = 1e-12;
                           for (unsigned int k = 0; k < dim; ++k)
                             {
-                              if (x_n_p1_ref[k] > 1.0 + 1e-12 ||
-                                  x_n_p1_ref[k] < 0.0 - 1e-12)
+                              if (x_n_p1_ref[k] > 1.0 + tol ||
+                                  x_n_p1_ref[k] < 0.0 - tol)
                                 {
                                   check = true;
 
@@ -715,18 +718,18 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                   the face boundary. Select the minimum
                                   relaxation of the all directions to ensure
                                   the solution stays inside the face.*/
-                                  if (correction[k] > 1e-12)
+                                  if (correction[k] > tol)
                                     {
                                       relaxation =
                                         std::min((1.0 - x_n_ref[k]) /
-                                                   (correction[k] + 1e-12),
+                                                   (correction[k] + tol),
                                                  relaxation);
                                     }
-                                  else if (correction[k] < -1e-12)
+                                  else if (correction[k] < -tol)
                                     {
                                       relaxation =
                                         std::min((0.0 - x_n_ref[k]) /
-                                                   (correction[k] + 1e-12),
+                                                   (correction[k] + tol),
                                                  relaxation);
                                     }
                                 }
@@ -777,7 +780,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           distance(dof_indices[i]) = approx_distance;
                         }
                     } // End of the loop on the opposite faces
-                }     // End of the loop on the dofs
+                }     // End of the loop on the DoFs
             }
         } // End of the loop on the cells
 
@@ -811,13 +814,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   values of the signed distance are needed for volume computations.*/
   signed_distance_with_ghost = signed_distance;
 
-  /* Zero out ghost DOFs to regain write functionalities in signed_distance
+  /* Zero out ghost DoFs to regain write functionalities in signed_distance
   (it becomes write-only, that is why we need signed_distance_with_ghost -
   to read the ghost values in it).*/
   signed_distance.zero_out_ghost_values();
 
   /* Copy the ghost values back in signed_distance (zero_out_ghost_values()
-  puts zeros in ghost DOFs)*/
+  puts zeros in ghost DoFs)*/
   for (auto p : this->locally_active_dofs)
     {
       signed_distance(p) = signed_distance_with_ghost(p);
@@ -988,7 +991,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           cell->get_dof_indices(dof_indices);
 
           // L2 projection of the cell-wise (discontinuous) correction to have
-          // a continuous correction at the dofs.
+          // a continuous correction at the DoFs.
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
               volume_correction(dof_indices[i]) += eta_n * n_cells_per_dofs_inv;

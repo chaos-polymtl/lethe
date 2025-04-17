@@ -126,7 +126,7 @@ namespace InterfaceTools
     /// Finite element discretizing the field of interest
     FEType fe;
 
-    /// Number of dofs per element
+    /// Number of DoFs per element
     unsigned int n_cell_wise_dofs;
 
     /// Value of the level-set field at the DoFs of the cell
@@ -204,11 +204,11 @@ namespace InterfaceTools
    *
    * @param[in] cell Cell for which the volume is computed
    *
-   * @param[in] cell_dof_values Cell DOFs value of the level set field
+   * @param[in] cell_dof_level_set_values Cell DOF values of the level-set field
    *
    * @param[in] corr Correction to apply to the DOF values (constant for all
-   * DOFs). It can be used if we want the volume enclosed by the iso-level equal
-   * to the calue of the correction.
+   * DoFs). It can be used if we want the volume enclosed by the iso-level equal
+   * to the value of the correction.
    *
    * @param[in] n_quad_points Number of quadrature points for the volume
    * integration faces
@@ -239,6 +239,8 @@ namespace InterfaceTools
    *
    * @param[in] dof_handler DofHandler associated to the triangulation on which
    * the volume is computed
+   *
+   * @param[in] fe Finite element
    *
    * @param[in] level_set_vector Level-set vector
    *
@@ -290,7 +292,7 @@ namespace InterfaceTools
    * (dim-1) of the reconstructed surface for each intersected volume cell
    * (dim).
    *
-   * @param[in,out] intersected_dofs Set of DOFs that belong to intersected
+   * @param[in,out] intersected_dofs Set of DoFs that belong to intersected
    * volume cell (dim).
    *
    */
@@ -309,22 +311,48 @@ namespace InterfaceTools
     std::set<types::global_dof_index> &intersected_dofs);
 
 
+  /**
+   * @brief Interface to build the patches of the interface reconstruction
+   * vertices for visualization. It reproduce the same structure as particle
+   * visualization.
+   *
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   *
+   */
   template <int dim>
   class InterfaceReconstructionDataOutInterface
     : public dealii::DataOutInterface<0, dim>
   {
   public:
+    /**
+     * @brief Default constructor.
+     */
     InterfaceReconstructionDataOutInterface();
 
+    /**
+     * @brief Build the patches of the interface reconstruction vertices for
+     * visualization.
+     *
+     * @param[in,out] interface_reconstruction_vertices Cell-wise map of the
+     * reconstructed surface vertices. The map contains vectors storing the
+     * vertices of the reconstructed surface for each intersected volume cell
+     * (dim).
+     */
     void
     build_patches(
       const std::map<types::global_cell_index, std::vector<Point<dim>>>
         &interface_reconstruction_vertices);
 
   private:
+    /**
+     * @brief Implementation of the corresponding function of the base class.
+     */
     const std::vector<DataOutBase::Patch<0, dim>> &
     get_patches() const override;
 
+    /**
+     * @brief Implementation of the corresponding function of the base class.
+     */
     std::vector<std::string>
     get_dataset_names() const override;
 
@@ -349,7 +377,7 @@ namespace InterfaceTools
   {
     for (auto const &cell : interface_reconstruction_vertices)
       {
-        std::vector<Point<dim>> vertices = cell.second;
+        const std::vector<Point<dim>> &vertices = cell.second;
         for (const Point<dim> &vertex : vertices)
           {
             DataOutBase::Patch<0, dim> temp;
@@ -399,6 +427,8 @@ namespace InterfaceTools
      * @param[in] p_iso_level Iso-level from which the signed distance is
      * computed
      *
+     * @param[in] p_verbosity Verbosity level
+     *
      */
     SignedDistanceSolver(
       std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -421,8 +451,7 @@ namespace InterfaceTools
     /**
      * @brief setup_dofs
      *
-     * Initialize the degree of freedom and the memory
-     * associated with them
+     * Initialize the DoFs and the memory associated with them
      */
     void
     setup_dofs();
@@ -470,6 +499,8 @@ namespace InterfaceTools
      *
      * @param[in] output_path path to the output file
      *
+     * @param[in] time current time
+     *
      * @param[in] it iteration number
      *
      */
@@ -486,7 +517,7 @@ namespace InterfaceTools
      *
      * @param[in] output_path path to the output file
      *
-     * @param[in] time current time 
+     * @param[in] time current time
      *
      * @param[in] it iteration number
      *
@@ -511,14 +542,14 @@ namespace InterfaceTools
 
   private:
     /**
-     * @brief Zero the ghost dofs entries of the solution vectors to gain write
+     * @brief Zero the ghost DoFs entries of the solution vectors to gain write
      * access to the ghost elements
      */
     void
     zero_out_ghost_values();
 
     /**
-     * @brief Update the ghost dofs entries of the solution vectors to gain read
+     * @brief Update the ghost DoFs entries of the solution vectors to gain read
      * access to the ghost elements
      */
     void
@@ -539,14 +570,14 @@ namespace InterfaceTools
 
     /**
      * @brief Compute the geometric distance (brute force) between the interface
-     * reconstruction and the dofs of the intersected cells (first neighbors)
+     * reconstruction and the DoFs of the intersected cells (first neighbors)
      */
     void
     compute_first_neighbors_distance();
 
     /**
      * @brief Compute the geometric distance (marching method) between the
-     * interface reconstruction and the rest of the dofs (second neighbors)
+     * interface reconstruction and the rest of the DoFs (second neighbors)
      */
     void
     compute_second_neighbors_distance();
@@ -755,7 +786,7 @@ namespace InterfaceTools
      * the reference cell. This is required because the distance minimization
      * problem is resolved in the reference face space (dim-1).
      *
-     * @param[in] x_ref_face point dim-1 in the reference face
+     * @param[in] correction_ref_face Newton correction in the reference face
      *
      * @param[in] local_face_id local id of the face
      *
@@ -897,13 +928,13 @@ namespace InterfaceTools
     LinearAlgebra::distributed::Vector<double> signed_distance;
 
     /// Solution vector of the signed distance with ghost values (read-only
-    /// vesion of signed_distance)
+    /// version of signed_distance)
     LinearAlgebra::distributed::Vector<double> signed_distance_with_ghost;
 
     /// Solution vector of the distance (write only)
     LinearAlgebra::distributed::Vector<double> distance;
 
-    /// Solution vector of the distance with ghost values (read-only vesion of
+    /// Solution vector of the distance with ghost values (read-only version of
     /// distance)
     LinearAlgebra::distributed::Vector<double> distance_with_ghost;
 
@@ -911,14 +942,15 @@ namespace InterfaceTools
     /// cell-wise volume encompassed by the level 0 of level_set
     LinearAlgebra::distributed::Vector<double> volume_correction;
 
-    /// Hanging node contraints
+    /// Hanging node constraints
     AffineConstraints<double> constraints;
 
     /// Surface vertices of the interface reconstruction stored in a cell-wise
     /// map (volume cell)
     std::map<types::global_cell_index, std::vector<Point<dim>>>
       interface_reconstruction_vertices;
-    /// Surface cells of the interface recontruction stored in a cell-wise map
+
+    /// Surface cells of the interface reconstruction stored in a cell-wise map
     /// (volume cell)
     std::map<types::global_cell_index, std::vector<CellData<dim - 1>>>
       interface_reconstruction_cells;
