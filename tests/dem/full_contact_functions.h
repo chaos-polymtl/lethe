@@ -199,8 +199,8 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   double             distance;
   Point<3>          &position_0 = particle_0->get_location();
   Point<3>          &position_1 = particle_1->get_location();
-  Tensor<1, 3>      &force_0    = force[particle_0->get_id()];
-  Tensor<1, 3>      &torque_0   = torque[particle_0->get_id()];
+  Tensor<1, 3>      &force_0    = outcome.force[particle_0->get_id()];
+  Tensor<1, 3>      &torque_0   = outcome.torque[particle_0->get_id()];
   Tensor<1, 3>       tangential_displacement{{0, 0, 0}};
   Tensor<1, 3>       velocity_0;
   Tensor<1, 3>       velocity_1;
