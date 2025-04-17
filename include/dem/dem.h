@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dem_h
@@ -106,7 +106,7 @@ private:
    *
    * @return The pointer to the insertion object
    */
-  std::shared_ptr<Insertion<dim>>
+  std::shared_ptr<Insertion<dim, PropertiesIndex>>
   set_insertion_type();
 
   /**
@@ -373,7 +373,7 @@ private:
   /**
    * @brief The insertion object.
    */
-  std::shared_ptr<Insertion<dim>> insertion_object;
+  std::shared_ptr<Insertion<dim, PropertiesIndex>> insertion_object;
 
   /**
    * @brief The visualization object.

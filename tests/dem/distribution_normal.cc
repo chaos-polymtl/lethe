@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -69,7 +69,7 @@ test()
     dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
 
   // Calling volume insertion
-  InsertionVolume<dim> insertion_object(
+  InsertionVolume<dim, PropertiesIndex> insertion_object(
     distribution_object_container,
     tr,
     dem_parameters,

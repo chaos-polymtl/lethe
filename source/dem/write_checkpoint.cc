@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/checkpoint_control.h>
@@ -12,7 +12,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 write_checkpoint(
   TimerOutput                                             &computing_timer,
@@ -22,7 +22,7 @@ write_checkpoint(
   PVDHandler                                              &grid_pvdhandler,
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
-  std::shared_ptr<Insertion<dim>>                         &insertion_object,
+  std::shared_ptr<Insertion<dim, PropertiesIndex>>        &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
   const ConditionalOStream                                &pcout,
   MPI_Comm                                                &mpi_communicator,
@@ -88,29 +88,97 @@ write_checkpoint(
 }
 
 template void
-write_checkpoint(TimerOutput                             &computing_timer,
-                 const DEMSolverParameters<2>            &parameters,
-                 std::shared_ptr<SimulationControl>      &simulation_control,
-                 PVDHandler                              &particles_pvdhandler,
-                 PVDHandler                              &grid_pvdhandler,
-                 parallel::distributed::Triangulation<2> &triangulation,
-                 Particles::ParticleHandler<2>           &particle_handler,
-                 std::shared_ptr<Insertion<2>>           &insertion_object,
-                 std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects,
-                 const ConditionalOStream                        &pcout,
-                 MPI_Comm                &mpi_communicator,
-                 const CheckpointControl &checkpoint_controller);
+write_checkpoint(
+  TimerOutput                             &computing_timer,
+  const DEMSolverParameters<2>            &parameters,
+  std::shared_ptr<SimulationControl>      &simulation_control,
+  PVDHandler                              &particles_pvdhandler,
+  PVDHandler                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<2> &triangulation,
+  Particles::ParticleHandler<2>           &particle_handler,
+  std::shared_ptr<Insertion<2, DEM::DEMProperties::PropertiesIndex>>
+                                                  &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects,
+  const ConditionalOStream                        &pcout,
+  MPI_Comm                                        &mpi_communicator,
+  const CheckpointControl                         &checkpoint_controller);
 
 template void
-write_checkpoint(TimerOutput                             &computing_timer,
-                 const DEMSolverParameters<3>            &parameters,
-                 std::shared_ptr<SimulationControl>      &simulation_control,
-                 PVDHandler                              &particles_pvdhandler,
-                 PVDHandler                              &grid_pvdhandler,
-                 parallel::distributed::Triangulation<3> &triangulation,
-                 Particles::ParticleHandler<3>           &particle_handler,
-                 std::shared_ptr<Insertion<3>>           &insertion_object,
-                 std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects,
-                 const ConditionalOStream                        &pcout,
-                 MPI_Comm                &mpi_communicator,
-                 const CheckpointControl &checkpoint_controller);
+write_checkpoint(
+  TimerOutput                             &computing_timer,
+  const DEMSolverParameters<3>            &parameters,
+  std::shared_ptr<SimulationControl>      &simulation_control,
+  PVDHandler                              &particles_pvdhandler,
+  PVDHandler                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<3> &triangulation,
+  Particles::ParticleHandler<3>           &particle_handler,
+  std::shared_ptr<Insertion<3, DEM::DEMProperties::PropertiesIndex>>
+                                                  &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects,
+  const ConditionalOStream                        &pcout,
+  MPI_Comm                                        &mpi_communicator,
+  const CheckpointControl                         &checkpoint_controller);
+
+template void
+write_checkpoint(
+  TimerOutput                             &computing_timer,
+  const DEMSolverParameters<2>            &parameters,
+  std::shared_ptr<SimulationControl>      &simulation_control,
+  PVDHandler                              &particles_pvdhandler,
+  PVDHandler                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<2> &triangulation,
+  Particles::ParticleHandler<2>           &particle_handler,
+  std::shared_ptr<Insertion<2, DEM::CFDDEMProperties::PropertiesIndex>>
+                                                  &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects,
+  const ConditionalOStream                        &pcout,
+  MPI_Comm                                        &mpi_communicator,
+  const CheckpointControl                         &checkpoint_controller);
+
+template void
+write_checkpoint(
+  TimerOutput                             &computing_timer,
+  const DEMSolverParameters<3>            &parameters,
+  std::shared_ptr<SimulationControl>      &simulation_control,
+  PVDHandler                              &particles_pvdhandler,
+  PVDHandler                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<3> &triangulation,
+  Particles::ParticleHandler<3>           &particle_handler,
+  std::shared_ptr<Insertion<3, DEM::CFDDEMProperties::PropertiesIndex>>
+                                                  &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects,
+  const ConditionalOStream                        &pcout,
+  MPI_Comm                                        &mpi_communicator,
+  const CheckpointControl                         &checkpoint_controller);
+
+template void
+write_checkpoint(
+  TimerOutput                             &computing_timer,
+  const DEMSolverParameters<2>            &parameters,
+  std::shared_ptr<SimulationControl>      &simulation_control,
+  PVDHandler                              &particles_pvdhandler,
+  PVDHandler                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<2> &triangulation,
+  Particles::ParticleHandler<2>           &particle_handler,
+  std::shared_ptr<Insertion<2, DEM::DEMMPProperties::PropertiesIndex>>
+                                                  &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects,
+  const ConditionalOStream                        &pcout,
+  MPI_Comm                                        &mpi_communicator,
+  const CheckpointControl                         &checkpoint_controller);
+
+template void
+write_checkpoint(
+  TimerOutput                             &computing_timer,
+  const DEMSolverParameters<3>            &parameters,
+  std::shared_ptr<SimulationControl>      &simulation_control,
+  PVDHandler                              &particles_pvdhandler,
+  PVDHandler                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<3> &triangulation,
+  Particles::ParticleHandler<3>           &particle_handler,
+  std::shared_ptr<Insertion<3, DEM::DEMMPProperties::PropertiesIndex>>
+                                                  &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects,
+  const ConditionalOStream                        &pcout,
+  MPI_Comm                                        &mpi_communicator,
+  const CheckpointControl                         &checkpoint_controller);

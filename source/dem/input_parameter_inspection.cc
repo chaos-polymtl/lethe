@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/input_parameter_inspection.h>
@@ -68,7 +68,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
     0.5 * (parameters.insertion_info.distance_threshold - 1);
 
   if (parameters.insertion_info.insertion_method ==
-        Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume &&
+        Parameters::Lagrangian::InsertionInfo<dim>::InsertionMethod::volume &&
       parameters.insertion_info.insertion_maximum_offset >=
         insertion_distance_per_particle)
     pcout

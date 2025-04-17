@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
@@ -8,15 +8,15 @@
 
 using namespace DEM;
 
-template <int dim>
-InsertionFile<dim>::InsertionFile(
+template <int dim, typename PropertiesIndex>
+InsertionFile<dim, PropertiesIndex>::InsertionFile(
   const std::vector<std::shared_ptr<Distribution>>
     &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : Insertion<dim>(size_distribution_object_container,
-                   triangulation,
-                   dem_parameters)
+  : Insertion<dim, PropertiesIndex>(size_distribution_object_container,
+                                    triangulation,
+                                    dem_parameters)
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
   , number_of_files(dem_parameters.insertion_info.list_of_input_files.size())
@@ -26,9 +26,9 @@ InsertionFile<dim>::InsertionFile(
   this->current_inserting_particle_type = 0;
   this->current_file_id                 = 0;
 }
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionFile<dim>::insert(
+InsertionFile<dim, PropertiesIndex>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -137,13 +137,14 @@ InsertionFile<dim>::insert(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionFile<dim>::assign_particle_properties_for_file_insertion(
-  const DEMSolverParameters<dim>             &dem_parameters,
-  const unsigned int                         &inserted_this_step_this_proc,
-  std::map<std::string, std::vector<double>> &particles_data,
-  std::vector<std::vector<double>>           &particle_properties)
+InsertionFile<dim, PropertiesIndex>::
+  assign_particle_properties_for_file_insertion(
+    const DEMSolverParameters<dim>             &dem_parameters,
+    const unsigned int                         &inserted_this_step_this_proc,
+    std::map<std::string, std::vector<double>> &particles_data,
+    std::vector<std::vector<double>>           &particle_properties)
 {
   // Clearing and resizing particle_properties
   particle_properties.reserve(inserted_this_step_this_proc);
@@ -174,10 +175,25 @@ InsertionFile<dim>::assign_particle_properties_for_file_insertion(
       std::vector<double> properties_of_one_particle{
         type, diameter, mass, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z};
 
+      if constexpr (std::is_same_v<PropertiesIndex,
+                                   DEM::DEMMPProperties::PropertiesIndex>)
+        {
+          double T = particles_data["T"][particle_counter];
+          double specific_heat =
+            physical_properties
+              .specific_heat_particle[this->current_inserting_particle_type];
+          properties_of_one_particle.push_back(T);
+          properties_of_one_particle.push_back(specific_heat);
+        }
+
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
 }
 
-template class InsertionFile<2>;
-template class InsertionFile<3>;
+template class InsertionFile<2, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionFile<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionFile<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionFile<3, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionFile<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionFile<3, DEM::DEMMPProperties::PropertiesIndex>;

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_insertion_volume_h
@@ -9,8 +9,8 @@
 using namespace dealii;
 
 
-template <int dim>
-class InsertionVolume : public Insertion<dim>
+template <int dim, typename PropertiesIndex>
+class InsertionVolume : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
@@ -104,11 +104,11 @@ private:
    */
   void
   find_insertion_location_volume(
-    Point<dim>                                  &insertion_location,
-    const unsigned int                           id,
-    const double                                 random_number1,
-    const double                                 random_number2,
-    const Parameters::Lagrangian::InsertionInfo &insertion_information);
+    Point<dim>                                       &insertion_location,
+    const unsigned int                                id,
+    const double                                      random_number1,
+    const double                                      random_number2,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information);
 
   unsigned int current_inserting_particle_type;
 

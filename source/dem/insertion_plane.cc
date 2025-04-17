@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -10,15 +10,15 @@ using namespace DEM;
 // The constructor of plane insertion class. In the constructor, we find which
 // cells are going to be use for the insertion and we also find the centers of
 // those cells.
-template <int dim>
-InsertionPlane<dim>::InsertionPlane(
+template <int dim, typename PropertiesIndex>
+InsertionPlane<dim, PropertiesIndex>::InsertionPlane(
   const std::vector<std::shared_ptr<Distribution>>
     &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : Insertion<dim>(size_distribution_object_container,
-                   triangulation,
-                   dem_parameters)
+  : Insertion<dim, PropertiesIndex>(size_distribution_object_container,
+                                    triangulation,
+                                    dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -40,9 +40,9 @@ InsertionPlane<dim>::InsertionPlane(
     static_cast<double>(RAND_MAX);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionPlane<dim>::find_inplane_cells(
+InsertionPlane<dim, PropertiesIndex>::find_inplane_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
   Point<3>                                         plane_point,
   Tensor<1, 3>                                     plane_normal_vector)
@@ -90,9 +90,9 @@ InsertionPlane<dim>::find_inplane_cells(
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionPlane<dim>::find_centers_of_inplane_cells()
+InsertionPlane<dim, PropertiesIndex>::find_centers_of_inplane_cells()
 {
   cells_centers.clear();
   for (const auto &cell : plane_cells_for_insertion)
@@ -103,9 +103,9 @@ InsertionPlane<dim>::find_centers_of_inplane_cells()
 
 // The main insertion function, insert_particle, is utilized to insert the
 // particle at the cell center with a random shifts particles
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionPlane<dim>::insert(
+InsertionPlane<dim, PropertiesIndex>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -270,18 +270,9 @@ InsertionPlane<dim>::insert(
           empty_cells_on_proc.erase(it); // Erase the first element
         }
 
-      // A vector of vectors, which contains all the properties of all inserted
-      // particles at each insertion step
-      std::vector<std::vector<double>> particle_properties;
-
-      this->assign_particle_properties(
-        dem_parameters,
-        number_of_particles_to_insert_on_this_core,
-        current_inserting_particle_type,
-        particle_properties);
-
-      // This is to iterate over the particle_properties vector
-      unsigned int i = 0;
+      std::vector<Point<dim>> insertion_points_on_proc;
+      insertion_points_on_proc.reserve(
+        number_of_particles_to_insert_on_this_core);
 
       // Loop over the empty cells we have kept.
       for (const auto &cell : empty_cells_on_proc)
@@ -303,6 +294,29 @@ InsertionPlane<dim>::insert(
                 static_cast<double>(rand()) * maximum_range_for_randomness;
             }
 
+          insertion_points_on_proc.push_back(insertion_location);
+        }
+
+      // A vector of vectors, which contains all the properties of all inserted
+      // particles at each insertion step
+      std::vector<std::vector<double>> particle_properties;
+
+      this->assign_particle_properties(
+        dem_parameters,
+        number_of_particles_to_insert_on_this_core,
+        current_inserting_particle_type,
+        insertion_points_on_proc,
+        particle_properties);
+
+      // This is to iterate over the particle_properties vector
+      unsigned int i = 0;
+
+      // Insert the particles using the points and assigned properties
+      for (const auto &cell : empty_cells_on_proc)
+        {
+          // Use the pre-calculated insertion positions
+          Point<dim> insertion_location = insertion_points_on_proc[i];
+
           // Insertion
           Point<dim> ref_point;
           particle_handler.insert_particle(insertion_location,
@@ -314,5 +328,9 @@ InsertionPlane<dim>::insert(
     }
 }
 
-template class InsertionPlane<2>;
-template class InsertionPlane<3>;
+template class InsertionPlane<2, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionPlane<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionPlane<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionPlane<3, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionPlane<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionPlane<3, DEM::DEMMPProperties::PropertiesIndex>;

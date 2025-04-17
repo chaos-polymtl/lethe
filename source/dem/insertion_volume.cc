@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/insertion_volume.h>
@@ -10,16 +10,16 @@ using namespace DEM;
 // number of inserted particles. The number of insertion points in each
 // direction (number_of_particles_x_direction, number_of_particles_y_direction
 // and number_of_particles_z_direction) are also obtained
-template <int dim>
-InsertionVolume<dim>::InsertionVolume(
+template <int dim, typename PropertiesIndex>
+InsertionVolume<dim, PropertiesIndex>::InsertionVolume(
   const std::vector<std::shared_ptr<Distribution>>
     &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters,
   const double                                     maximum_particle_diameter)
-  : Insertion<dim>(size_distribution_object_container,
-                   triangulation,
-                   dem_parameters)
+  : Insertion<dim, PropertiesIndex>(size_distribution_object_container,
+                                    triangulation,
+                                    dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -31,9 +31,9 @@ InsertionVolume<dim>::InsertionVolume(
 
 // The main insertion function. Insert_global_function is utilized to insert
 // the particles
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionVolume<dim>::insert(
+InsertionVolume<dim, PropertiesIndex>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -142,6 +142,7 @@ InsertionVolume<dim>::insert(
       this->assign_particle_properties(dem_parameters,
                                        this->inserted_this_step_this_proc,
                                        current_inserting_particle_type,
+                                       insertion_points_on_proc,
                                        particle_properties);
 
       // Insert the particles using the points and assigned properties
@@ -161,9 +162,9 @@ InsertionVolume<dim>::insert(
 
 // This function creates a vector of random doubles using the input parameters
 // in the parameter handler
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-InsertionVolume<dim>::create_random_number_container(
+InsertionVolume<dim, PropertiesIndex>::create_random_number_container(
   std::vector<double> &random_container,
   const double         maximum_range,
   const int            seed_for_insertion)
@@ -177,52 +178,17 @@ InsertionVolume<dim>::create_random_number_container(
 }
 
 // This function assigns the insertion points of the inserted particles
-template <>
+template <int dim, typename PropertiesIndex>
 void
-InsertionVolume<2>::find_insertion_location_volume(
-  Point<2>                                    &insertion_location,
-  const unsigned int                           id,
-  const double                                 random_number1,
-  const double                                 random_number2,
-  const Parameters::Lagrangian::InsertionInfo &insertion_information)
+InsertionVolume<dim, PropertiesIndex>::find_insertion_location_volume(
+  Point<dim>                                       &insertion_location,
+  const unsigned int                                id,
+  const double                                      random_number1,
+  const double                                      random_number2,
+  const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information)
 {
   std::vector<int> insertion_index;
-  insertion_index.resize(2);
-
-  unsigned int axis_0, axis_1;
-  int          number_of_particles_0;
-
-  // First direction (axis) to have particles inserted
-  axis_0                  = insertion_information.direction_sequence.at(0);
-  number_of_particles_0   = this->number_of_particles_directions[axis_0];
-  insertion_index[axis_0] = id % number_of_particles_0;
-  insertion_location[axis_0] =
-    this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number1) *
-                               this->maximum_diameter;
-
-  // Second direction (axis) to have particles inserted
-  axis_1                  = insertion_information.direction_sequence.at(1);
-  insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
-  insertion_location[axis_1] =
-    this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number2) *
-                               this->maximum_diameter;
-}
-
-template <>
-void
-InsertionVolume<3>::find_insertion_location_volume(
-  Point<3>                                    &insertion_location,
-  const unsigned int                           id,
-  const double                                 random_number1,
-  const double                                 random_number2,
-  const Parameters::Lagrangian::InsertionInfo &insertion_information)
-{
-  std::vector<int> insertion_index;
-  insertion_index.resize(3);
+  insertion_index.resize(dim);
 
   unsigned int axis_0, axis_1, axis_2;
   int          number_of_particles_0, number_of_particles_1;
@@ -238,26 +204,44 @@ InsertionVolume<3>::find_insertion_location_volume(
                                this->maximum_diameter;
 
   // Second direction (axis) to have particles inserted
-  axis_1                = insertion_information.direction_sequence.at(1);
-  number_of_particles_1 = this->number_of_particles_directions[axis_1];
-  insertion_index[axis_1] =
-    static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
-    (number_of_particles_0);
-  insertion_location[axis_1] =
-    this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number2) *
-                               this->maximum_diameter;
+  axis_1 = insertion_information.direction_sequence.at(1);
 
-  // Third direction (axis) to have particles inserted
-  axis_2 = insertion_information.direction_sequence.at(2);
-  insertion_index[axis_2] =
-    static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
-  insertion_location[axis_2] =
-    this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number1) *
-                               this->maximum_diameter;
+  if constexpr (dim == 2)
+    {
+      insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
+      insertion_location[axis_1] =
+        this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
+                                    insertion_information.distance_threshold -
+                                  random_number2) *
+                                   this->maximum_diameter;
+    }
+  else
+    {
+      number_of_particles_1 = this->number_of_particles_directions[axis_1];
+      insertion_index[axis_1] =
+        static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
+        (number_of_particles_0);
+      insertion_location[axis_1] =
+        this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
+                                    insertion_information.distance_threshold -
+                                  random_number2) *
+                                   this->maximum_diameter;
+
+      // Third direction (axis) to have particles inserted
+      axis_2 = insertion_information.direction_sequence.at(2);
+      insertion_index[axis_2] =
+        static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
+      insertion_location[axis_2] =
+        this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
+                                    insertion_information.distance_threshold -
+                                  random_number1) *
+                                   this->maximum_diameter;
+    }
 }
-template class InsertionVolume<2>;
-template class InsertionVolume<3>;
+
+template class InsertionVolume<2, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionVolume<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionVolume<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionVolume<3, DEM::DEMProperties::PropertiesIndex>;
+template class InsertionVolume<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class InsertionVolume<3, DEM::DEMMPProperties::PropertiesIndex>;

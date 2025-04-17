@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_insertion_plane_h
@@ -14,8 +14,8 @@
  * way, no significant overlap is occurring on the insertion of new particle
  * which can occur with other insertion method.
  */
-template <int dim>
-class InsertionPlane : public Insertion<dim>
+template <int dim, typename PropertiesIndex>
+class InsertionPlane : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**

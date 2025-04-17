@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -21,7 +21,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
 test()
 {
@@ -60,7 +60,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::DEMProperties::PropertiesIndex::n_properties);
+    tr, mapping, PropertiesIndex::n_properties);
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
@@ -71,7 +71,7 @@ test()
     dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
 
   // Calling volume insertion
-  InsertionVolume<dim> insertion_object(
+  InsertionVolume<dim, PropertiesIndex> insertion_object(
     distribution_object_container,
     tr,
     dem_parameters,
@@ -87,7 +87,7 @@ test()
     {
       auto particle_properties = particle->get_properties();
 
-      double dp = particle_properties[DEM::DEMProperties::PropertiesIndex::dp];
+      double dp = particle_properties[PropertiesIndex::dp];
 
       deallog << "Particle " << particle_number << " diameter is: " << dp
               << std::endl;
@@ -102,7 +102,7 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3>();
+      test<3, DEM::DEMProperties::PropertiesIndex>();
     }
   catch (std::exception &exc)
     {

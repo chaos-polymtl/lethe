@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dem_cfd_coupling_h
@@ -212,8 +212,9 @@ private:
   ParticlePointLineForce<dim, DEM::CFDDEMProperties::PropertiesIndex>
     particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-                                  integrator_object;
-  std::shared_ptr<Insertion<dim>> insertion_object;
+    integrator_object;
+  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+    insertion_object;
   std::shared_ptr<
     ParticleParticleContactForceBase<dim,
                                      DEM::CFDDEMProperties::PropertiesIndex>>
