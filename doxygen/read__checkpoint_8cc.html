@@ -241,17 +241,25 @@ Include dependency graph for read_checkpoint.cc:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4b7f57aaf970ee3a3343bb7850535284" id="r_a4b7f57aaf970ee3a3343bb7850535284"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a4b7f57aaf970ee3a3343bb7850535284"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a4b7f57aaf970ee3a3343bb7850535284">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
-<tr class="separator:a4b7f57aaf970ee3a3343bb7850535284"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a126c67a63dbc43d297bc16a1c20912e6" id="r_a126c67a63dbc43d297bc16a1c20912e6"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a126c67a63dbc43d297bc16a1c20912e6">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2 &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
-<tr class="separator:a126c67a63dbc43d297bc16a1c20912e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaeeffe24618cffc9bccdfc7d5470a970" id="r_aaeeffe24618cffc9bccdfc7d5470a970"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#aaeeffe24618cffc9bccdfc7d5470a970">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3 &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
-<tr class="separator:aaeeffe24618cffc9bccdfc7d5470a970"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cec515d2e74c0d1d38ea5ad526a9639" id="r_a0cec515d2e74c0d1d38ea5ad526a9639"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a0cec515d2e74c0d1d38ea5ad526a9639"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a0cec515d2e74c0d1d38ea5ad526a9639">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:a0cec515d2e74c0d1d38ea5ad526a9639"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6982954729b07eaf331e57ad1377dbba" id="r_a6982954729b07eaf331e57ad1377dbba"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a6982954729b07eaf331e57ad1377dbba">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:a6982954729b07eaf331e57ad1377dbba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afee90f9d3f05ceaeb86f70754275483c" id="r_afee90f9d3f05ceaeb86f70754275483c"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#afee90f9d3f05ceaeb86f70754275483c">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:afee90f9d3f05ceaeb86f70754275483c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbec0bf02de3b5c130053bb4253d3f90" id="r_adbec0bf02de3b5c130053bb4253d3f90"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#adbec0bf02de3b5c130053bb4253d3f90">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:adbec0bf02de3b5c130053bb4253d3f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfb65748e8bd148f4df96477bf800759" id="r_adfb65748e8bd148f4df96477bf800759"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#adfb65748e8bd148f4df96477bf800759">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:adfb65748e8bd148f4df96477bf800759"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac46552d8e40da1a0d8839927a31de4c2" id="r_ac46552d8e40da1a0d8839927a31de4c2"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#ac46552d8e40da1a0d8839927a31de4c2">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:ac46552d8e40da1a0d8839927a31de4c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a51f7ce21e6a896cc2703e021225e5c" id="r_a7a51f7ce21e6a896cc2703e021225e5c"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a7a51f7ce21e6a896cc2703e021225e5c">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt; &gt; &gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:a7a51f7ce21e6a896cc2703e021225e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a126c67a63dbc43d297bc16a1c20912e6" name="a126c67a63dbc43d297bc16a1c20912e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a126c67a63dbc43d297bc16a1c20912e6">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[1/3]</span></h2>
+<a id="adbec0bf02de3b5c130053bb4253d3f90" name="adbec0bf02de3b5c130053bb4253d3f90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbec0bf02de3b5c130053bb4253d3f90">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[1/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -301,7 +309,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>insertion_object</em>, </td>
         </tr>
         <tr>
@@ -326,8 +334,160 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aaeeffe24618cffc9bccdfc7d5470a970" name="aaeeffe24618cffc9bccdfc7d5470a970"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaeeffe24618cffc9bccdfc7d5470a970">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[2/3]</span></h2>
+<a id="ac46552d8e40da1a0d8839927a31de4c2" name="ac46552d8e40da1a0d8839927a31de4c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac46552d8e40da1a0d8839927a31de4c2">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[2/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void read_checkpoint </td>
+          <td>(</td>
+          <td class="paramtype">TimerOutput &amp;&#160;</td>
+          <td class="paramname"><em>computing_timer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>simulation_control</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>particles_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>grid_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parallel::distributed::Triangulation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>insertion_object</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt; &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solid_surfaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;&#160;</td>
+          <td class="paramname"><em>checkpoint_controller</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6982954729b07eaf331e57ad1377dbba" name="a6982954729b07eaf331e57ad1377dbba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6982954729b07eaf331e57ad1377dbba">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[3/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void read_checkpoint </td>
+          <td>(</td>
+          <td class="paramtype">TimerOutput &amp;&#160;</td>
+          <td class="paramname"><em>computing_timer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>simulation_control</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>particles_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>grid_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parallel::distributed::Triangulation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>insertion_object</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt; &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solid_surfaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;&#160;</td>
+          <td class="paramname"><em>checkpoint_controller</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adfb65748e8bd148f4df96477bf800759" name="adfb65748e8bd148f4df96477bf800759"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfb65748e8bd148f4df96477bf800759">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[4/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -377,7 +537,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>insertion_object</em>, </td>
         </tr>
         <tr>
@@ -402,13 +562,165 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a4b7f57aaf970ee3a3343bb7850535284" name="a4b7f57aaf970ee3a3343bb7850535284"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b7f57aaf970ee3a3343bb7850535284">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[3/3]</span></h2>
+<a id="a7a51f7ce21e6a896cc2703e021225e5c" name="a7a51f7ce21e6a896cc2703e021225e5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a51f7ce21e6a896cc2703e021225e5c">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[5/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void read_checkpoint </td>
+          <td>(</td>
+          <td class="paramtype">TimerOutput &amp;&#160;</td>
+          <td class="paramname"><em>computing_timer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>simulation_control</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>particles_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>grid_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parallel::distributed::Triangulation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>insertion_object</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt; &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solid_surfaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;&#160;</td>
+          <td class="paramname"><em>checkpoint_controller</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afee90f9d3f05ceaeb86f70754275483c" name="afee90f9d3f05ceaeb86f70754275483c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afee90f9d3f05ceaeb86f70754275483c">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[6/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void read_checkpoint </td>
+          <td>(</td>
+          <td class="paramtype">TimerOutput &amp;&#160;</td>
+          <td class="paramname"><em>computing_timer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>simulation_control</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>particles_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>grid_pvdhandler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parallel::distributed::Triangulation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a> &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>insertion_object</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt; &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solid_surfaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;&#160;</td>
+          <td class="paramname"><em>checkpoint_controller</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0cec515d2e74c0d1d38ea5ad526a9639" name="a0cec515d2e74c0d1d38ea5ad526a9639"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cec515d2e74c0d1d38ea5ad526a9639">&#9670;&#160;</a></span>read_checkpoint() <span class="overload">[7/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void read_checkpoint </td>
@@ -455,7 +767,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>insertion_object</em>, </td>
         </tr>
         <tr>
@@ -497,7 +809,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="read__checkpoint_8cc_source.html#l00019">19</a> of file <a class="el" href="read__checkpoint_8cc_source.html">read_checkpoint.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00078">CheckpointControl::deserialize()</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00058">CheckpointControl::get_filename()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00049">CheckpointControl::get_next_checkpoint_id()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00532">Parameters::Lagrangian::LagrangianPostProcessing::lagrangian_post_processing_enabled</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::post_processing</a>, and <a class="el" href="pvd__handler_8cc_source.html#l00024">PVDHandler::read()</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00078">CheckpointControl::deserialize()</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00058">CheckpointControl::get_filename()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00049">CheckpointControl::get_next_checkpoint_id()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00536">Parameters::Lagrangian::LagrangianPostProcessing::lagrangian_post_processing_enabled</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::post_processing</a>, and <a class="el" href="pvd__handler_8cc_source.html#l00024">PVDHandler::read()</a>.</p>
 
 </div>
 </div>

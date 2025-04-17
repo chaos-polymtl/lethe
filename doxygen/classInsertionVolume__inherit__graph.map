@@ -1,5 +1,5 @@
-<map id="InsertionVolume&lt; dim &gt;" name="InsertionVolume&lt; dim &gt;">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,79,188,104"/>
-<area shape="rect" id="Node000002" href="$classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="29,5,164,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,44,99,79,94,79,94,44"/>
+<map id="InsertionVolume&lt; dim, PropertiesIndex &gt;" name="InsertionVolume&lt; dim, PropertiesIndex &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="16,93,188,133"/>
+<area shape="rect" id="Node000002" href="$classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,5,199,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,59,105,93,99,93,99,59"/>
 </map>

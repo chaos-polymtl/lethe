@@ -253,18 +253,18 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:acd71769b8c53aabfd8d89da3a42084f7" id="r_acd71769b8c53aabfd8d89da3a42084f7"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:acd71769b8c53aabfd8d89da3a42084f7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="write__checkpoint_8h.html#acd71769b8c53aabfd8d89da3a42084f7">write_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt; &gt; &gt; &amp;solid_objects, const ConditionalOStream &amp;pcout, MPI_Comm &amp;mpi_communicator, const <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
-<tr class="separator:acd71769b8c53aabfd8d89da3a42084f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a599af1ba9674775bcca1ff562484baa1" id="r_a599af1ba9674775bcca1ff562484baa1"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a599af1ba9674775bcca1ff562484baa1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="write__checkpoint_8h.html#a599af1ba9674775bcca1ff562484baa1">write_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt; &gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt; &gt; &gt; &amp;solid_objects, const ConditionalOStream &amp;pcout, MPI_Comm &amp;mpi_communicator, const <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:a599af1ba9674775bcca1ff562484baa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="acd71769b8c53aabfd8d89da3a42084f7" name="acd71769b8c53aabfd8d89da3a42084f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd71769b8c53aabfd8d89da3a42084f7">&#9670;&#160;</a></span>write_checkpoint()</h2>
+<a id="a599af1ba9674775bcca1ff562484baa1" name="a599af1ba9674775bcca1ff562484baa1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a599af1ba9674775bcca1ff562484baa1">&#9670;&#160;</a></span>write_checkpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void write_checkpoint </td>
@@ -311,7 +311,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>insertion_object</em>, </td>
         </tr>
         <tr>
@@ -367,7 +367,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="write__checkpoint_8cc_source.html#l00017">17</a> of file <a class="el" href="write__checkpoint_8cc_source.html">write_checkpoint.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00058">CheckpointControl::get_filename()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00049">CheckpointControl::get_next_checkpoint_id()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00532">Parameters::Lagrangian::LagrangianPostProcessing::lagrangian_post_processing_enabled</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="pvd__handler_8cc_source.html#l00011">PVDHandler::save()</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00068">CheckpointControl::serialize()</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00058">CheckpointControl::get_filename()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00049">CheckpointControl::get_next_checkpoint_id()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00536">Parameters::Lagrangian::LagrangianPostProcessing::lagrangian_post_processing_enabled</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="pvd__handler_8cc_source.html#l00011">PVDHandler::save()</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00068">CheckpointControl::serialize()</a>.</p>
 
 </div>
 </div>

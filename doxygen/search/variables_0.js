@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['a_0',['a',['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a'],['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A']]],
+  ['a_0',['a',['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a'],['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a']]],
   ['a_5finverse_1',['A_inverse',['../classBlockDiagPreconditioner.html#aaebbf0f342b00811c1839c90176936bc',1,'BlockDiagPreconditioner']]],
   ['abort_5fat_5fconvergence_5ffailure_2',['abort_at_convergence_failure',['../structParameters_1_1NonLinearSolver.html#a491f1c3c8f1c66e2ee84e42fd23be06e',1,'Parameters::NonLinearSolver']]],
   ['action_5fmanager_3',['action_manager',['../classDEMSolver.html#adc01d9af8e6a5b70937b76e2b5e80247',1,'DEMSolver']]],
@@ -41,7 +41,7 @@ var searchData=
   ['analyse_5fpositions_38',['analyse_positions',['../structParameters_1_1RPTReconstructionParameters.html#a945325d0a10ffe9de6cee4b2f1516fe9',1,'Parameters::RPTReconstructionParameters']]],
   ['analytical_5fsolution_39',['analytical_solution',['../classSimulationParameters.html#a4e87eaeafb95e780e16748b3d8bb5e9b',1,'SimulationParameters']]],
   ['angle_5fof_5fcontact_40',['angle_of_contact',['../classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a35173bde5fa0eba1b8f3c5846e8f3d73',1,'BoundaryConditions::CahnHilliardBoundaryConditions']]],
-  ['angular_5fvelocities_41',['angular_velocities',['../classInsertionList.html#ad65f2e8510e293f9a8521b0e9d511feb',1,'InsertionList']]],
+  ['angular_5fvelocities_41',['angular_velocities',['../classInsertionList.html#a0bd793266b0450ac7a3095bd534d7629',1,'InsertionList']]],
   ['angular_5fvelocity_42',['angular_velocity',['../classSerialSolid.html#a003ffc90baf84fd9cf292f0824d4a0c0',1,'SerialSolid::angular_velocity'],['../classParameters_1_1RigidSolidObject.html#a6f3a925025e5e8597f9f225ef19a7831',1,'Parameters::RigidSolidObject::angular_velocity']]],
   ['apparent_5fviscosity_5foutput_5fname_43',['apparent_viscosity_output_name',['../structParameters_1_1PostProcessing.html#a123689413f0db3cb459a130ddc83d54c',1,'Parameters::PostProcessing']]],
   ['apparent_5fviscosity_5ftable_44',['apparent_viscosity_table',['../classNavierStokesBase.html#a67c36cce57ca8e833124304b210cd505',1,'NavierStokesBase']]],
@@ -66,6 +66,6 @@ var searchData=
   ['average_5fvelocity_5f1n_63',['average_velocity_1n',['../classFlowControl.html#a8ae774535e50107219c481d41488953b',1,'FlowControl']]],
   ['average_5fvelocity_5ffile_5fname_64',['average_velocity_file_name',['../classParameters_1_1InitialConditions.html#a8153d8e4aede20142fd8dd9d725095e9',1,'Parameters::InitialConditions']]],
   ['average_5fvelocity_5ffolder_65',['average_velocity_folder',['../classParameters_1_1InitialConditions.html#ad7057047793622a590cab56728a37853',1,'Parameters::InitialConditions']]],
-  ['axis_5fmax_66',['axis_max',['../classInsertion.html#adc2f7023b383a4838b00c89e9b3fb853',1,'Insertion']]],
-  ['axis_5fmin_67',['axis_min',['../classInsertion.html#a3b3ab9d52069d054158da951a1f1d049',1,'Insertion']]]
+  ['axis_5fmax_66',['axis_max',['../classInsertion.html#a7ce178482c5cd1f0570ef0a69574e1ed',1,'Insertion']]],
+  ['axis_5fmin_67',['axis_min',['../classInsertion.html#a6e865cb04d7eb40d3531852612a4e18b',1,'Insertion']]]
 ];

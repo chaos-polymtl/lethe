@@ -140,7 +140,7 @@ $(function() {
 <li>analytical_solution&#160;:&#160;<a class="el" href="classSimulationParameters.html#a4e87eaeafb95e780e16748b3d8bb5e9b">SimulationParameters&lt; dim &gt;</a></li>
 <li>AnalyticalSolution()&#160;:&#160;<a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#aca6eea7e4b34a56a65c4035f8cfbcefb">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;</a></li>
 <li>angle_of_contact&#160;:&#160;<a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a35173bde5fa0eba1b8f3c5846e8f3d73">BoundaryConditions::CahnHilliardBoundaryConditions&lt; dim &gt;</a></li>
-<li>angular_velocities&#160;:&#160;<a class="el" href="classInsertionList.html#ad65f2e8510e293f9a8521b0e9d511feb">InsertionList&lt; dim &gt;</a></li>
+<li>angular_velocities&#160;:&#160;<a class="el" href="classInsertionList.html#a0bd793266b0450ac7a3095bd534d7629">InsertionList&lt; dim, PropertiesIndex &gt;</a></li>
 <li>angular_velocity&#160;:&#160;<a class="el" href="classParameters_1_1RigidSolidObject.html#a6f3a925025e5e8597f9f225ef19a7831">Parameters::RigidSolidObject&lt; dim &gt;</a>, <a class="el" href="classSerialSolid.html#a003ffc90baf84fd9cf292f0824d4a0c0">SerialSolid&lt; dim, spacedim &gt;</a></li>
 <li>announce_physics()&#160;:&#160;<a class="el" href="classMultiphysicsInterface.html#a883dff2ef4631a5342cbe80d63eb3ab4">MultiphysicsInterface&lt; dim &gt;</a></li>
 <li>apparent_viscosity_output_name&#160;:&#160;<a class="el" href="structParameters_1_1PostProcessing.html#a123689413f0db3cb459a130ddc83d54c">Parameters::PostProcessing</a></li>
@@ -179,9 +179,9 @@ $(function() {
 <li>assemblers_inside_ib&#160;:&#160;<a class="el" href="classFluidDynamicsSharp.html#aef21bd5d4911c27668c3ebe91afe5652">FluidDynamicsSharp&lt; dim &gt;</a></li>
 <li>assembly_method&#160;:&#160;<a class="el" href="classSimulationControl.html#afcef58567807100d062bceb13c9540a5">SimulationControl</a></li>
 <li>assign_mobility_status()&#160;:&#160;<a class="el" href="classAdaptiveSparseContacts.html#a167ab54076fb2b1387d45bdd23886119">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a></li>
-<li>assign_particle_properties()&#160;:&#160;<a class="el" href="classInsertion.html#ab0fc776602a95be2f3857654f76dda1e">Insertion&lt; dim &gt;</a></li>
-<li>assign_particle_properties_for_file_insertion()&#160;:&#160;<a class="el" href="classInsertionFile.html#a202ee0aad205e130b0e6e729c759b853">InsertionFile&lt; dim &gt;</a></li>
-<li>assign_particle_properties_for_list_insertion()&#160;:&#160;<a class="el" href="classInsertionList.html#abf164e96ce388544bf8928f0c6882d69">InsertionList&lt; dim &gt;</a></li>
+<li>assign_particle_properties()&#160;:&#160;<a class="el" href="classInsertion.html#aa9d42c275f7d088d8f21d32c52d8eaef">Insertion&lt; dim, PropertiesIndex &gt;</a></li>
+<li>assign_particle_properties_for_file_insertion()&#160;:&#160;<a class="el" href="classInsertionFile.html#a3a745f03efcc95fd23ef280bddd35e76">InsertionFile&lt; dim, PropertiesIndex &gt;</a></li>
+<li>assign_particle_properties_for_list_insertion()&#160;:&#160;<a class="el" href="classInsertionList.html#a724779780aa6467ad26d5353f7f95e17">InsertionList&lt; dim, PropertiesIndex &gt;</a></li>
 <li>attach_solution_to_output()&#160;:&#160;<a class="el" href="classAuxiliaryPhysics.html#adf185a85398b75121b700d94b49fac05">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>, <a class="el" href="classCahnHilliard.html#af56ea0db69002200c35099b710677727">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#af2d9b3b3b73b759f3b6077b49a16b8c4">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#ae2fbaac6cbe7e1e40774452fe48be8f8">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;</a>, <a class="el" href="classMultiphysicsInterface.html#ae85388ebab7df1c070ef200cd7413f71">MultiphysicsInterface&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a6955ae103f6915c54838a8a168cf34ab">Tracer&lt; dim &gt;</a>, <a class="el" href="classVolumeOfFluid.html#a463bc13b582623393aba7167da3859d8">VolumeOfFluid&lt; dim &gt;</a></li>
 <li>attenuation_coefficient_detector&#160;:&#160;<a class="el" href="structParameters_1_1RPTParameters.html#aa6c886cedeb192b8ab46beaf24be26e7">Parameters::RPTParameters</a></li>
 <li>attenuation_coefficient_reactor&#160;:&#160;<a class="el" href="classDetector.html#a064682b775833deadb2123a781051f64">Detector&lt; dim &gt;</a>, <a class="el" href="structParameters_1_1DetectorParameters.html#a07e76925408179a90acb6e33354b3976">Parameters::DetectorParameters</a>, <a class="el" href="classParticleDetectorInteractions.html#ad5513e13933c0535240699883431b3f2">ParticleDetectorInteractions&lt; dim &gt;</a></li>
@@ -202,8 +202,8 @@ $(function() {
 <li>average_velocity_folder&#160;:&#160;<a class="el" href="classParameters_1_1InitialConditions.html#ad7057047793622a590cab56728a37853">Parameters::InitialConditions&lt; dim &gt;</a></li>
 <li>AverageScalar()&#160;:&#160;<a class="el" href="classAverageScalar.html#aaa4af605c91ba0fb4b1ef6eec76db15b">AverageScalar&lt; dim &gt;</a></li>
 <li>AverageVelocities()&#160;:&#160;<a class="el" href="classAverageVelocities.html#ae46cc1b344953c98e55fd58add46d360">AverageVelocities&lt; dim, VectorType, DofsType &gt;</a></li>
-<li>axis_max&#160;:&#160;<a class="el" href="classInsertion.html#adc2f7023b383a4838b00c89e9b3fb853">Insertion&lt; dim &gt;</a></li>
-<li>axis_min&#160;:&#160;<a class="el" href="classInsertion.html#a3b3ab9d52069d054158da951a1f1d049">Insertion&lt; dim &gt;</a></li>
+<li>axis_max&#160;:&#160;<a class="el" href="classInsertion.html#a7ce178482c5cd1f0570ef0a69574e1ed">Insertion&lt; dim, PropertiesIndex &gt;</a></li>
+<li>axis_min&#160;:&#160;<a class="el" href="classInsertion.html#a6e865cb04d7eb40d3531852612a4e18b">Insertion&lt; dim, PropertiesIndex &gt;</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

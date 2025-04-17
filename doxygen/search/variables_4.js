@@ -3,7 +3,7 @@ var searchData=
   ['edge_5fconstrained_5fcell_0',['edge_constrained_cell',['../classNavierStokesOperatorBase.html#aa29d24496e2e4002e2ebcd18420d20ac',1,'NavierStokesOperatorBase']]],
   ['edge_5fconstrained_5findices_1',['edge_constrained_indices',['../classNavierStokesOperatorBase.html#a389bc303dfe5899dec3dbb35e76a6dcd',1,'NavierStokesOperatorBase']]],
   ['edge_5fconstrained_5fvalues_2',['edge_constrained_values',['../classNavierStokesOperatorBase.html#a90f09ebc4431f3b1dc4f0ae65ee5abcf',1,'NavierStokesOperatorBase']]],
-  ['edge_5fof_5fremoval_5fbox_3',['edge_of_removal_box',['../classInsertion.html#a36c8de12aef711e1cb2cc95c8f1fd3e8',1,'Insertion']]],
+  ['edge_5fof_5fremoval_5fbox_3',['edge_of_removal_box',['../classInsertion.html#ae80ad85d2877973a5227dd7ffc17c2b1',1,'Insertion']]],
   ['effective_5fbeta_5fface_4',['effective_beta_face',['../classNavierStokesOperatorBase.html#a66be91d31a9a6e2a549cda171af555fb',1,'NavierStokesOperatorBase']]],
   ['effective_5fcoefficient_5fof_5ffriction_5',['effective_coefficient_of_friction',['../classParticleParticleContactForce.html#ae808d4c64383be581ea334cac02a5026',1,'ParticleParticleContactForce::effective_coefficient_of_friction'],['../classParticleWallContactForce.html#a98c8901e820538fe3871d88223e4a1f4',1,'ParticleWallContactForce::effective_coefficient_of_friction']]],
   ['effective_5fcoefficient_5fof_5frestitution_6',['effective_coefficient_of_restitution',['../classParticleParticleContactForce.html#ad61538a41d871346b73c6245d946bbe6',1,'ParticleParticleContactForce::effective_coefficient_of_restitution'],['../classParticleWallContactForce.html#a0941470981a030cfa0c42c07b166a76b',1,'ParticleWallContactForce::effective_coefficient_of_restitution']]],

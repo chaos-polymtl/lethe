@@ -213,8 +213,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a2cc767dc7b4690956d8f17e0a1493a1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45ad3e5a9e30bbba2e93542404c3e0dd" id="r_a45ad3e5a9e30bbba2e93542404c3e0dd"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classIntegrator.html">Integrator</a>&lt; dim, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#a45ad3e5a9e30bbba2e93542404c3e0dd">integrator_object</a></td></tr>
 <tr class="separator:a45ad3e5a9e30bbba2e93542404c3e0dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27c8e1056413040ee58418299759ad2b" id="r_a27c8e1056413040ee58418299759ad2b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#a27c8e1056413040ee58418299759ad2b">insertion_object</a></td></tr>
-<tr class="separator:a27c8e1056413040ee58418299759ad2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae75935dcff086f3b2cdb1168d27062b5" id="r_ae75935dcff086f3b2cdb1168d27062b5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#ae75935dcff086f3b2cdb1168d27062b5">insertion_object</a></td></tr>
+<tr class="separator:ae75935dcff086f3b2cdb1168d27062b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a170f6ac25e57409acc42b4266c389736" id="r_a170f6ac25e57409acc42b4266c389736"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#a170f6ac25e57409acc42b4266c389736">particle_particle_contact_force_object</a></td></tr>
 <tr class="separator:a170f6ac25e57409acc42b4266c389736"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8c0e397fde2653982b8108fe53c9a50" id="r_af8c0e397fde2653982b8108fe53c9a50"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#af8c0e397fde2653982b8108fe53c9a50">particle_wall_contact_force_object</a></td></tr>
@@ -696,7 +696,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l00623">623</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00290">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::contact_detection_frequency</a>, <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a25b59506e85f5d1182f0692ea7397d33">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::contact_detection_method</a>, and <a class="el" href="find__contact__detection__step_8cc_source.html#l00011">find_particle_contact_detection_step()</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00294">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::contact_detection_frequency</a>, <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a25b59506e85f5d1182f0692ea7397d33">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::contact_detection_method</a>, and <a class="el" href="find__contact__detection__step_8cc_source.html#l00011">find_particle_contact_detection_step()</a>.</p>
 
 </div>
 </div>
@@ -1350,7 +1350,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00226">226</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00227">227</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1376,7 +1376,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00254">254</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00255">255</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1428,7 +1428,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00248">248</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00249">249</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1454,7 +1454,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00251">251</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00252">252</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1506,7 +1506,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00272">272</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00273">273</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1532,7 +1532,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00263">263</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00264">264</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1558,7 +1558,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00264">264</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00265">265</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1636,7 +1636,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00234">234</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00235">235</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1688,12 +1688,12 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00260">260</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00261">261</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
-<a id="a27c8e1056413040ee58418299759ad2b" name="a27c8e1056413040ee58418299759ad2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27c8e1056413040ee58418299759ad2b">&#9670;&#160;</a></span>insertion_object</h2>
+<a id="ae75935dcff086f3b2cdb1168d27062b5" name="ae75935dcff086f3b2cdb1168d27062b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae75935dcff086f3b2cdb1168d27062b5">&#9670;&#160;</a></span>insertion_object</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1704,7 +1704,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classInsertion.html">Insertion</a>&lt;dim&gt; &gt; <a class="el" href="classCFDDEMSolver.html">CFDDEMSolver</a>&lt; dim &gt;::insertion_object</td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classInsertion.html">Insertion</a>&lt;dim, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2f">DEM::CFDDEMProperties::PropertiesIndex</a>&gt; &gt; <a class="el" href="classCFDDEMSolver.html">CFDDEMSolver</a>&lt; dim &gt;::insertion_object</td>
         </tr>
       </table>
   </td>
@@ -1714,7 +1714,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00216">216</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00217">217</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1844,7 +1844,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00266">266</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00267">267</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1896,7 +1896,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00220">220</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00221">221</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1948,7 +1948,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00223">223</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00224">224</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1974,7 +1974,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00261">261</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00262">262</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2000,7 +2000,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00238">238</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00239">239</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2026,7 +2026,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00241">241</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00242">242</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2052,7 +2052,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00257">257</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00258">258</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2130,7 +2130,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00230">230</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00231">231</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2156,7 +2156,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00245">245</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00246">246</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2183,7 +2183,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Post-processing variables to output total fluid volume and total particles volume </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00270">270</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00271">271</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2209,7 +2209,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00265">265</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00266">266</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2261,7 +2261,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00236">236</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00237">237</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2287,7 +2287,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00232">232</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00233">233</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2313,7 +2313,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00225">225</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00226">226</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: InsertionList&lt; dim &gt; Class Template Reference</title>
+<title>Lethe Open-Source Library: InsertionList&lt; dim, PropertiesIndex &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -83,113 +83,115 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classInsertionList-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">InsertionList&lt; dim &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">InsertionList&lt; dim, PropertiesIndex &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for InsertionList&lt; dim &gt;:</div>
+Inheritance diagram for InsertionList&lt; dim, PropertiesIndex &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classInsertionList__inherit__graph.png" border="0" usemap="#aInsertionList_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="aInsertionList_3_01dim_01_4_inherit__map" id="aInsertionList_3_01dim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,79,163,104"/>
-<area shape="rect" href="classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="17,5,151,31"/>
-<area shape="poly" title=" " alt="" coords="87,44,87,79,81,79,81,44"/>
+<div class="center"><img src="classInsertionList__inherit__graph.png" border="0" usemap="#aInsertionList_3_01dim_00_01PropertiesIndex_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="aInsertionList_3_01dim_00_01PropertiesIndex_01_4_inherit__map" id="aInsertionList_3_01dim_00_01PropertiesIndex_01_4_inherit__map">
+<area shape="rect" title=" " alt="" coords="29,93,175,133"/>
+<area shape="rect" href="classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,5,199,45"/>
+<area shape="poly" title=" " alt="" coords="105,59,105,93,99,93,99,59"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3d283f43177ec3a57a4b40d227ee5e4a" id="r_a3d283f43177ec3a57a4b40d227ee5e4a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a3d283f43177ec3a57a4b40d227ee5e4a">InsertionList</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
-<tr class="separator:a3d283f43177ec3a57a4b40d227ee5e4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36b866905735b1f91ddc22588c6b9060" id="r_a36b866905735b1f91ddc22588c6b9060"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a36b866905735b1f91ddc22588c6b9060">insert</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters) override</td></tr>
-<tr class="separator:a36b866905735b1f91ddc22588c6b9060"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf164e96ce388544bf8928f0c6882d69" id="r_abf164e96ce388544bf8928f0c6882d69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#abf164e96ce388544bf8928f0c6882d69">assign_particle_properties_for_list_insertion</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;<a class="el" href="classInsertion.html#ad0a52bf0b712bcf669b0948737e13cd3">inserted_this_step_this_proc</a>, const unsigned int &amp;<a class="el" href="classInsertionList.html#a53f63221e1c5b1580c4af354e240287b">current_inserting_particle_type</a>, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
-<tr class="separator:abf164e96ce388544bf8928f0c6882d69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a9d0d49a0e34d1a3e602e0b0ba1f6e5" id="r_a2a9d0d49a0e34d1a3e602e0b0ba1f6e5"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a2a9d0d49a0e34d1a3e602e0b0ba1f6e5">serialize</a> (boost::archive::text_oarchive &amp;ar) override</td></tr>
-<tr class="separator:a2a9d0d49a0e34d1a3e602e0b0ba1f6e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f9919ccae880531235b9fd432e0e57c" id="r_a7f9919ccae880531235b9fd432e0e57c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a7f9919ccae880531235b9fd432e0e57c">deserialize</a> (boost::archive::text_iarchive &amp;ar) override</td></tr>
-<tr class="separator:a7f9919ccae880531235b9fd432e0e57c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classInsertion')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim &gt;</a></td></tr>
-<tr class="memitem:ae5a96094bdccbbe99b9b5fcb7a480629 inherit pub_methods_classInsertion" id="r_ae5a96094bdccbbe99b9b5fcb7a480629"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ae5a96094bdccbbe99b9b5fcb7a480629">Insertion</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
-<tr class="separator:ae5a96094bdccbbe99b9b5fcb7a480629 inherit pub_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a335c82a92eb5eb0142a57fd5b9392152 inherit pub_methods_classInsertion" id="r_a335c82a92eb5eb0142a57fd5b9392152"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a335c82a92eb5eb0142a57fd5b9392152">~Insertion</a> ()</td></tr>
-<tr class="separator:a335c82a92eb5eb0142a57fd5b9392152 inherit pub_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a695204a1a93d0cf8d941689e26a6226d" id="r_a695204a1a93d0cf8d941689e26a6226d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a695204a1a93d0cf8d941689e26a6226d">InsertionList</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
+<tr class="separator:a695204a1a93d0cf8d941689e26a6226d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a584654a6d8248de47952a54f108ce3cc" id="r_a584654a6d8248de47952a54f108ce3cc"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a584654a6d8248de47952a54f108ce3cc">insert</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters) override</td></tr>
+<tr class="separator:a584654a6d8248de47952a54f108ce3cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a724779780aa6467ad26d5353f7f95e17" id="r_a724779780aa6467ad26d5353f7f95e17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a724779780aa6467ad26d5353f7f95e17">assign_particle_properties_for_list_insertion</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;<a class="el" href="classInsertion.html#a377cf98cd6e196db680fefd500189fe2">inserted_this_step_this_proc</a>, const unsigned int &amp;<a class="el" href="classInsertionList.html#aab5ad2cefe23263e50bba916d39f04d6">current_inserting_particle_type</a>, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
+<tr class="separator:a724779780aa6467ad26d5353f7f95e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b549e533efb74748ee46dced84ba21b" id="r_a9b549e533efb74748ee46dced84ba21b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a9b549e533efb74748ee46dced84ba21b">serialize</a> (boost::archive::text_oarchive &amp;ar) override</td></tr>
+<tr class="separator:a9b549e533efb74748ee46dced84ba21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59a53b60bc3f04696b707460faa94cbf" id="r_a59a53b60bc3f04696b707460faa94cbf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a59a53b60bc3f04696b707460faa94cbf">deserialize</a> (boost::archive::text_iarchive &amp;ar) override</td></tr>
+<tr class="separator:a59a53b60bc3f04696b707460faa94cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classInsertion')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim, PropertiesIndex &gt;</a></td></tr>
+<tr class="memitem:af090756dc0183fd28606caa33ae805da inherit pub_methods_classInsertion" id="r_af090756dc0183fd28606caa33ae805da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#af090756dc0183fd28606caa33ae805da">Insertion</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
+<tr class="separator:af090756dc0183fd28606caa33ae805da inherit pub_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8e3623a113b16ab3fb9c1293b7846e0 inherit pub_methods_classInsertion" id="r_ad8e3623a113b16ab3fb9c1293b7846e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ad8e3623a113b16ab3fb9c1293b7846e0">~Insertion</a> ()</td></tr>
+<tr class="separator:ad8e3623a113b16ab3fb9c1293b7846e0 inherit pub_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a0bdbc4ceecde9fc547d26fc6a276e43f" id="r_a0bdbc4ceecde9fc547d26fc6a276e43f"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a0bdbc4ceecde9fc547d26fc6a276e43f">remaining_particles_of_each_type</a></td></tr>
-<tr class="separator:a0bdbc4ceecde9fc547d26fc6a276e43f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53f63221e1c5b1580c4af354e240287b" id="r_a53f63221e1c5b1580c4af354e240287b"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a53f63221e1c5b1580c4af354e240287b">current_inserting_particle_type</a></td></tr>
-<tr class="separator:a53f63221e1c5b1580c4af354e240287b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49af5583d26db14fd0f4f66bbbc6f9f7" id="r_a49af5583d26db14fd0f4f66bbbc6f9f7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a49af5583d26db14fd0f4f66bbbc6f9f7">insertion_points</a></td></tr>
-<tr class="separator:a49af5583d26db14fd0f4f66bbbc6f9f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c2968a33752574deaffcac8063cd328" id="r_a6c2968a33752574deaffcac8063cd328"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a6c2968a33752574deaffcac8063cd328">velocities</a></td></tr>
-<tr class="separator:a6c2968a33752574deaffcac8063cd328"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad65f2e8510e293f9a8521b0e9d511feb" id="r_ad65f2e8510e293f9a8521b0e9d511feb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#ad65f2e8510e293f9a8521b0e9d511feb">angular_velocities</a></td></tr>
-<tr class="separator:ad65f2e8510e293f9a8521b0e9d511feb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b5822316796c41c40e5a9badfe7c295" id="r_a7b5822316796c41c40e5a9badfe7c295"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a7b5822316796c41c40e5a9badfe7c295">diameters</a></td></tr>
-<tr class="separator:a7b5822316796c41c40e5a9badfe7c295"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a118d1cc94d9fd05229344d11ab2e7b16" id="r_a118d1cc94d9fd05229344d11ab2e7b16"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a118d1cc94d9fd05229344d11ab2e7b16">remaining_particles_of_each_type</a></td></tr>
+<tr class="separator:a118d1cc94d9fd05229344d11ab2e7b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab5ad2cefe23263e50bba916d39f04d6" id="r_aab5ad2cefe23263e50bba916d39f04d6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#aab5ad2cefe23263e50bba916d39f04d6">current_inserting_particle_type</a></td></tr>
+<tr class="separator:aab5ad2cefe23263e50bba916d39f04d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea817e118abd58336b1cf2406031eb38" id="r_aea817e118abd58336b1cf2406031eb38"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#aea817e118abd58336b1cf2406031eb38">insertion_points</a></td></tr>
+<tr class="separator:aea817e118abd58336b1cf2406031eb38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a9cb5215b8d6ce901e5b51d565e0310" id="r_a0a9cb5215b8d6ce901e5b51d565e0310"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a0a9cb5215b8d6ce901e5b51d565e0310">velocities</a></td></tr>
+<tr class="separator:a0a9cb5215b8d6ce901e5b51d565e0310"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bd793266b0450ac7a3095bd534d7629" id="r_a0bd793266b0450ac7a3095bd534d7629"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a0bd793266b0450ac7a3095bd534d7629">angular_velocities</a></td></tr>
+<tr class="separator:a0bd793266b0450ac7a3095bd534d7629"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cc9687353859c972db828762415d965" id="r_a4cc9687353859c972db828762415d965"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a4cc9687353859c972db828762415d965">diameters</a></td></tr>
+<tr class="separator:a4cc9687353859c972db828762415d965"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd864b5523aacb70cf952c80d2444690" id="r_acd864b5523aacb70cf952c80d2444690"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#acd864b5523aacb70cf952c80d2444690">temperatures</a></td></tr>
+<tr class="separator:acd864b5523aacb70cf952c80d2444690"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classInsertion')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim &gt;</a></td></tr>
-<tr class="memitem:a2154d471f9857470ee1430028ed0877e inherit pro_methods_classInsertion" id="r_a2154d471f9857470ee1430028ed0877e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a2154d471f9857470ee1430028ed0877e">print_insertion_info</a> (const unsigned int &amp;<a class="el" href="classInsertion.html#af2c570045018de7fc91c0fb63ba084b1">inserted_this_step</a>, const unsigned int &amp;remained_particles, const unsigned int &amp;particle_type, const ConditionalOStream &amp;pcout)</td></tr>
-<tr class="separator:a2154d471f9857470ee1430028ed0877e inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0fc776602a95be2f3857654f76dda1e inherit pro_methods_classInsertion" id="r_ab0fc776602a95be2f3857654f76dda1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ab0fc776602a95be2f3857654f76dda1e">assign_particle_properties</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;<a class="el" href="classInsertion.html#ad0a52bf0b712bcf669b0948737e13cd3">inserted_this_step_this_proc</a>, const unsigned int &amp;current_inserting_particle_type, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
-<tr class="separator:ab0fc776602a95be2f3857654f76dda1e inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ef020b59a1b122f8245badc093efdc2 inherit pro_methods_classInsertion" id="r_a4ef020b59a1b122f8245badc093efdc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a4ef020b59a1b122f8245badc093efdc2">calculate_insertion_domain_maximum_particle_number</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const ConditionalOStream &amp;pcout)</td></tr>
-<tr class="separator:a4ef020b59a1b122f8245badc093efdc2 inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1eeb88ad7f23bc50e0587fee37258bb3 inherit pro_methods_classInsertion" id="r_a1eeb88ad7f23bc50e0587fee37258bb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a1eeb88ad7f23bc50e0587fee37258bb3">find_cells_in_removing_box</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation)</td></tr>
-<tr class="separator:a1eeb88ad7f23bc50e0587fee37258bb3 inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8843f788eeac3ede326d7ee3138e031c inherit pro_methods_classInsertion" id="r_a8843f788eeac3ede326d7ee3138e031c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a8843f788eeac3ede326d7ee3138e031c">remove_particles_in_box</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</td></tr>
-<tr class="separator:a8843f788eeac3ede326d7ee3138e031c inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classInsertion')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim &gt;</a></td></tr>
-<tr class="memitem:af2c570045018de7fc91c0fb63ba084b1 inherit pro_attribs_classInsertion" id="r_af2c570045018de7fc91c0fb63ba084b1"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#af2c570045018de7fc91c0fb63ba084b1">inserted_this_step</a></td></tr>
-<tr class="separator:af2c570045018de7fc91c0fb63ba084b1 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3af756f899f5ed44408f82ac4d75f6d3 inherit pro_attribs_classInsertion" id="r_a3af756f899f5ed44408f82ac4d75f6d3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a3af756f899f5ed44408f82ac4d75f6d3">number_of_particles_directions</a></td></tr>
-<tr class="separator:a3af756f899f5ed44408f82ac4d75f6d3 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b3ab9d52069d054158da951a1f1d049 inherit pro_attribs_classInsertion" id="r_a3b3ab9d52069d054158da951a1f1d049"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a3b3ab9d52069d054158da951a1f1d049">axis_min</a></td></tr>
-<tr class="separator:a3b3ab9d52069d054158da951a1f1d049 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc2f7023b383a4838b00c89e9b3fb853 inherit pro_attribs_classInsertion" id="r_adc2f7023b383a4838b00c89e9b3fb853"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#adc2f7023b383a4838b00c89e9b3fb853">axis_max</a></td></tr>
-<tr class="separator:adc2f7023b383a4838b00c89e9b3fb853 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9e99cb2c9755016ad092f8879f3f4cd inherit pro_attribs_classInsertion" id="r_ac9e99cb2c9755016ad092f8879f3f4cd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ac9e99cb2c9755016ad092f8879f3f4cd">maximum_diameter</a></td></tr>
-<tr class="separator:ac9e99cb2c9755016ad092f8879f3f4cd inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0a52bf0b712bcf669b0948737e13cd3 inherit pro_attribs_classInsertion" id="r_ad0a52bf0b712bcf669b0948737e13cd3"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ad0a52bf0b712bcf669b0948737e13cd3">inserted_this_step_this_proc</a></td></tr>
-<tr class="separator:ad0a52bf0b712bcf669b0948737e13cd3 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa37df9385edf189426ce85ac0bde61f8 inherit pro_attribs_classInsertion" id="r_aa37df9385edf189426ce85ac0bde61f8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#aa37df9385edf189426ce85ac0bde61f8">distributions_objects</a></td></tr>
-<tr class="separator:aa37df9385edf189426ce85ac0bde61f8 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63d94c28fb4cb51ef799012c27ca4a86 inherit pro_attribs_classInsertion" id="r_a63d94c28fb4cb51ef799012c27ca4a86"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a63d94c28fb4cb51ef799012c27ca4a86">removing_particles_in_region</a></td></tr>
-<tr class="separator:a63d94c28fb4cb51ef799012c27ca4a86 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2db21c82ba18453416fcdeca8bc894c7 inherit pro_attribs_classInsertion" id="r_a2db21c82ba18453416fcdeca8bc894c7"><td class="memItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a2db21c82ba18453416fcdeca8bc894c7">p_min</a></td></tr>
-<tr class="separator:a2db21c82ba18453416fcdeca8bc894c7 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa897d221b919ec64ecc522792ce4083a inherit pro_attribs_classInsertion" id="r_aa897d221b919ec64ecc522792ce4083a"><td class="memItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#aa897d221b919ec64ecc522792ce4083a">p_max</a></td></tr>
-<tr class="separator:aa897d221b919ec64ecc522792ce4083a inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4626c5651bad04e81f79f573e7190ea inherit pro_attribs_classInsertion" id="r_aa4626c5651bad04e81f79f573e7190ea"><td class="memItemLeft" align="right" valign="top">std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#aa4626c5651bad04e81f79f573e7190ea">in_removal_box</a></td></tr>
-<tr class="separator:aa4626c5651bad04e81f79f573e7190ea inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36c8de12aef711e1cb2cc95c8f1fd3e8 inherit pro_attribs_classInsertion" id="r_a36c8de12aef711e1cb2cc95c8f1fd3e8"><td class="memItemLeft" align="right" valign="top">std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a36c8de12aef711e1cb2cc95c8f1fd3e8">edge_of_removal_box</a></td></tr>
-<tr class="separator:a36c8de12aef711e1cb2cc95c8f1fd3e8 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33a9fc9ad41c10f94f38120424bad454 inherit pro_attribs_classInsertion" id="r_a33a9fc9ad41c10f94f38120424bad454"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a33a9fc9ad41c10f94f38120424bad454">mark_for_update</a></td></tr>
-<tr class="separator:a33a9fc9ad41c10f94f38120424bad454 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7458657c2cbf3c5351812e1109646f51 inherit pro_attribs_classInsertion" id="r_a7458657c2cbf3c5351812e1109646f51"><td class="memItemLeft" align="right" valign="top">boost::signals2::connection&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a7458657c2cbf3c5351812e1109646f51">change_to_triangulation</a></td></tr>
-<tr class="separator:a7458657c2cbf3c5351812e1109646f51 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classInsertion')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim, PropertiesIndex &gt;</a></td></tr>
+<tr class="memitem:af215e7ea8960025c4b7af35a9d74fc8a inherit pro_methods_classInsertion" id="r_af215e7ea8960025c4b7af35a9d74fc8a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#af215e7ea8960025c4b7af35a9d74fc8a">print_insertion_info</a> (const unsigned int &amp;<a class="el" href="classInsertion.html#a01163ffcd1355a03ae5c1257cec57aff">inserted_this_step</a>, const unsigned int &amp;remained_particles, const unsigned int &amp;particle_type, const ConditionalOStream &amp;pcout)</td></tr>
+<tr class="separator:af215e7ea8960025c4b7af35a9d74fc8a inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9d42c275f7d088d8f21d32c52d8eaef inherit pro_methods_classInsertion" id="r_aa9d42c275f7d088d8f21d32c52d8eaef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#aa9d42c275f7d088d8f21d32c52d8eaef">assign_particle_properties</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;<a class="el" href="classInsertion.html#a377cf98cd6e196db680fefd500189fe2">inserted_this_step_this_proc</a>, const unsigned int &amp;current_inserting_particle_type, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;insertion_points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
+<tr class="separator:aa9d42c275f7d088d8f21d32c52d8eaef inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c08df7a62332bb7c519f35cfb111771 inherit pro_methods_classInsertion" id="r_a1c08df7a62332bb7c519f35cfb111771"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a1c08df7a62332bb7c519f35cfb111771">calculate_insertion_domain_maximum_particle_number</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const ConditionalOStream &amp;pcout)</td></tr>
+<tr class="separator:a1c08df7a62332bb7c519f35cfb111771 inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bde4870acae9bbf9ab83ceb2a0272d3 inherit pro_methods_classInsertion" id="r_a2bde4870acae9bbf9ab83ceb2a0272d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a2bde4870acae9bbf9ab83ceb2a0272d3">find_cells_in_removing_box</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation)</td></tr>
+<tr class="separator:a2bde4870acae9bbf9ab83ceb2a0272d3 inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f825bcb3c690f0a95817daaa9f1853f inherit pro_methods_classInsertion" id="r_a0f825bcb3c690f0a95817daaa9f1853f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a0f825bcb3c690f0a95817daaa9f1853f">remove_particles_in_box</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</td></tr>
+<tr class="separator:a0f825bcb3c690f0a95817daaa9f1853f inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classInsertion')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim, PropertiesIndex &gt;</a></td></tr>
+<tr class="memitem:a01163ffcd1355a03ae5c1257cec57aff inherit pro_attribs_classInsertion" id="r_a01163ffcd1355a03ae5c1257cec57aff"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a01163ffcd1355a03ae5c1257cec57aff">inserted_this_step</a></td></tr>
+<tr class="separator:a01163ffcd1355a03ae5c1257cec57aff inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a321c04ed4a49e68ca025f5e81e5688b8 inherit pro_attribs_classInsertion" id="r_a321c04ed4a49e68ca025f5e81e5688b8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a321c04ed4a49e68ca025f5e81e5688b8">number_of_particles_directions</a></td></tr>
+<tr class="separator:a321c04ed4a49e68ca025f5e81e5688b8 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e865cb04d7eb40d3531852612a4e18b inherit pro_attribs_classInsertion" id="r_a6e865cb04d7eb40d3531852612a4e18b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a6e865cb04d7eb40d3531852612a4e18b">axis_min</a></td></tr>
+<tr class="separator:a6e865cb04d7eb40d3531852612a4e18b inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ce178482c5cd1f0570ef0a69574e1ed inherit pro_attribs_classInsertion" id="r_a7ce178482c5cd1f0570ef0a69574e1ed"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a7ce178482c5cd1f0570ef0a69574e1ed">axis_max</a></td></tr>
+<tr class="separator:a7ce178482c5cd1f0570ef0a69574e1ed inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a635ff01d7037aa885d071bc4cfd3f665 inherit pro_attribs_classInsertion" id="r_a635ff01d7037aa885d071bc4cfd3f665"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a635ff01d7037aa885d071bc4cfd3f665">maximum_diameter</a></td></tr>
+<tr class="separator:a635ff01d7037aa885d071bc4cfd3f665 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a377cf98cd6e196db680fefd500189fe2 inherit pro_attribs_classInsertion" id="r_a377cf98cd6e196db680fefd500189fe2"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a377cf98cd6e196db680fefd500189fe2">inserted_this_step_this_proc</a></td></tr>
+<tr class="separator:a377cf98cd6e196db680fefd500189fe2 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a689891aa7f13a5396895ad84fb620d61 inherit pro_attribs_classInsertion" id="r_a689891aa7f13a5396895ad84fb620d61"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a689891aa7f13a5396895ad84fb620d61">distributions_objects</a></td></tr>
+<tr class="separator:a689891aa7f13a5396895ad84fb620d61 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8975798e3cdbb513209bab64bd93dfb inherit pro_attribs_classInsertion" id="r_ac8975798e3cdbb513209bab64bd93dfb"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ac8975798e3cdbb513209bab64bd93dfb">removing_particles_in_region</a></td></tr>
+<tr class="separator:ac8975798e3cdbb513209bab64bd93dfb inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d3c5008dfae0fa38ef16a383bef8878 inherit pro_attribs_classInsertion" id="r_a8d3c5008dfae0fa38ef16a383bef8878"><td class="memItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a8d3c5008dfae0fa38ef16a383bef8878">p_min</a></td></tr>
+<tr class="separator:a8d3c5008dfae0fa38ef16a383bef8878 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8f15a778967281d86272c36607105e5 inherit pro_attribs_classInsertion" id="r_af8f15a778967281d86272c36607105e5"><td class="memItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#af8f15a778967281d86272c36607105e5">p_max</a></td></tr>
+<tr class="separator:af8f15a778967281d86272c36607105e5 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68ead0805baa5479db78dfe10d12e6e8 inherit pro_attribs_classInsertion" id="r_a68ead0805baa5479db78dfe10d12e6e8"><td class="memItemLeft" align="right" valign="top">std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a68ead0805baa5479db78dfe10d12e6e8">in_removal_box</a></td></tr>
+<tr class="separator:a68ead0805baa5479db78dfe10d12e6e8 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae80ad85d2877973a5227dd7ffc17c2b1 inherit pro_attribs_classInsertion" id="r_ae80ad85d2877973a5227dd7ffc17c2b1"><td class="memItemLeft" align="right" valign="top">std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ae80ad85d2877973a5227dd7ffc17c2b1">edge_of_removal_box</a></td></tr>
+<tr class="separator:ae80ad85d2877973a5227dd7ffc17c2b1 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a235d97d47b5fe75ed3c8e78d6ae14efc inherit pro_attribs_classInsertion" id="r_a235d97d47b5fe75ed3c8e78d6ae14efc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a235d97d47b5fe75ed3c8e78d6ae14efc">mark_for_update</a></td></tr>
+<tr class="separator:a235d97d47b5fe75ed3c8e78d6ae14efc inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d7992614d04517eea7a579853a45292 inherit pro_attribs_classInsertion" id="r_a5d7992614d04517eea7a579853a45292"><td class="memItemLeft" align="right" valign="top">boost::signals2::connection&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a5d7992614d04517eea7a579853a45292">change_to_triangulation</a></td></tr>
+<tr class="separator:a5d7992614d04517eea7a579853a45292 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class InsertionList&lt; dim &gt;</div>
+<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
+class InsertionList&lt; dim, PropertiesIndex &gt;</div>
 <p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00010">10</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3d283f43177ec3a57a4b40d227ee5e4a" name="a3d283f43177ec3a57a4b40d227ee5e4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d283f43177ec3a57a4b40d227ee5e4a">&#9670;&#160;</a></span>InsertionList()</h2>
+<a id="a695204a1a93d0cf8d941689e26a6226d" name="a695204a1a93d0cf8d941689e26a6226d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a695204a1a93d0cf8d941689e26a6226d">&#9670;&#160;</a></span>InsertionList()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;<a class="el" href="classInsertionList.html">::InsertionList</a> </td>
+          <td class="memname"><a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;<a class="el" href="classInsertionList.html">::InsertionList</a> </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>size_distribution_object_container</em>, </td>
@@ -226,21 +228,21 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00019">19</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00110">InsertionList&lt; dim &gt;::angular_velocities</a>, <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion__list_8h_source.html#l00111">InsertionList&lt; dim &gt;::diameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00026">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion__list_8h_source.html#l00108">InsertionList&lt; dim &gt;::insertion_points</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00242">Parameters::Lagrangian::InsertionInfo::list_d</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00241">Parameters::Lagrangian::InsertionInfo::list_vx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00241">Parameters::Lagrangian::InsertionInfo::list_vy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00241">Parameters::Lagrangian::InsertionInfo::list_vz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00242">Parameters::Lagrangian::InsertionInfo::list_wx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00242">Parameters::Lagrangian::InsertionInfo::list_wy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00242">Parameters::Lagrangian::InsertionInfo::list_wz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00241">Parameters::Lagrangian::InsertionInfo::list_x</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00241">Parameters::Lagrangian::InsertionInfo::list_y</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00241">Parameters::Lagrangian::InsertionInfo::list_z</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00053">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_average_diameter</a>, and <a class="el" href="insertion__list_8h_source.html#l00109">InsertionList&lt; dim &gt;::velocities</a>.</p>
+<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00111">InsertionList&lt; dim, PropertiesIndex &gt;::angular_velocities</a>, <a class="el" href="insertion__list_8h_source.html#l00105">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion__list_8h_source.html#l00112">InsertionList&lt; dim, PropertiesIndex &gt;::diameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00026">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion__list_8h_source.html#l00109">InsertionList&lt; dim, PropertiesIndex &gt;::insertion_points</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00053">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_average_diameter</a>, <a class="el" href="insertion__list_8h_source.html#l00113">InsertionList&lt; dim, PropertiesIndex &gt;::temperatures</a>, and <a class="el" href="insertion__list_8h_source.html#l00110">InsertionList&lt; dim, PropertiesIndex &gt;::velocities</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="abf164e96ce388544bf8928f0c6882d69" name="abf164e96ce388544bf8928f0c6882d69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf164e96ce388544bf8928f0c6882d69">&#9670;&#160;</a></span>assign_particle_properties_for_list_insertion()</h2>
+<a id="a724779780aa6467ad26d5353f7f95e17" name="a724779780aa6467ad26d5353f7f95e17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a724779780aa6467ad26d5353f7f95e17">&#9670;&#160;</a></span>assign_particle_properties_for_list_insertion()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::assign_particle_properties_for_list_insertion </td>
+          <td class="memname">void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::assign_particle_properties_for_list_insertion </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>dem_parameters</em>, </td>
@@ -271,7 +273,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Carries out assigning the properties of inserted particles specificly for the list insertion method. In this method, the initial translationnal and angular velocities and the diameter of each particles is set. </p>
+<p>Carries out assigning the properties of inserted particles specificly for the list insertion method. In this method, the initial translationnal and angular velocities, the temperature and the diameter of each particles is set. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
@@ -282,25 +284,25 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00177">177</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00179">179</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>.</p>
 
 </div>
 </div>
-<a id="a7f9919ccae880531235b9fd432e0e57c" name="a7f9919ccae880531235b9fd432e0e57c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f9919ccae880531235b9fd432e0e57c">&#9670;&#160;</a></span>deserialize()</h2>
+<a id="a59a53b60bc3f04696b707460faa94cbf" name="a59a53b60bc3f04696b707460faa94cbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59a53b60bc3f04696b707460faa94cbf">&#9670;&#160;</a></span>deserialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::deserialize </td>
+          <td class="memname">virtual void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::deserialize </td>
           <td>(</td>
           <td class="paramtype">boost::archive::text_iarchive &amp;&#160;</td>
           <td class="paramname"><em>ar</em></td><td>)</td>
@@ -322,27 +324,27 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classInsertion.html#a62c8d44efdff9e519ded751acd0f009f">Insertion&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classInsertion.html#ae7c88428e0a6aaf1c41c5799f26a1896">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00096">96</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00097">97</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00103">InsertionList&lt; dim &gt;::remaining_particles_of_each_type</a>.</p>
+<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00105">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim, PropertiesIndex &gt;::remaining_particles_of_each_type</a>.</p>
 
 </div>
 </div>
-<a id="a36b866905735b1f91ddc22588c6b9060" name="a36b866905735b1f91ddc22588c6b9060"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36b866905735b1f91ddc22588c6b9060">&#9670;&#160;</a></span>insert()</h2>
+<a id="a584654a6d8248de47952a54f108ce3cc" name="a584654a6d8248de47952a54f108ce3cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a584654a6d8248de47952a54f108ce3cc">&#9670;&#160;</a></span>insert()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::insert </td>
+          <td class="memname">void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::insert </td>
           <td>(</td>
           <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
@@ -382,27 +384,27 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classInsertion.html#ab7b6cf7393246d7d5b3ffeec6d721a14">Insertion&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classInsertion.html#acc31a2b8a42ff47cd608039dd3c6e063">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00086">86</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00088">88</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00074">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00050">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
 
 </div>
 </div>
-<a id="a2a9d0d49a0e34d1a3e602e0b0ba1f6e5" name="a2a9d0d49a0e34d1a3e602e0b0ba1f6e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a9d0d49a0e34d1a3e602e0b0ba1f6e5">&#9670;&#160;</a></span>serialize()</h2>
+<a id="a9b549e533efb74748ee46dced84ba21b" name="a9b549e533efb74748ee46dced84ba21b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b549e533efb74748ee46dced84ba21b">&#9670;&#160;</a></span>serialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::serialize </td>
+          <td class="memname">virtual void <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::serialize </td>
           <td>(</td>
           <td class="paramtype">boost::archive::text_oarchive &amp;&#160;</td>
           <td class="paramname"><em>ar</em></td><td>)</td>
@@ -424,61 +426,25 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classInsertion.html#aa1a40e2170d1de2098ef2672a62103c1">Insertion&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classInsertion.html#addda914be05260ece7ad5c1f9b6e53ed">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00084">84</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00085">85</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00103">InsertionList&lt; dim &gt;::remaining_particles_of_each_type</a>.</p>
+<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00105">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim, PropertiesIndex &gt;::remaining_particles_of_each_type</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ad65f2e8510e293f9a8521b0e9d511feb" name="ad65f2e8510e293f9a8521b0e9d511feb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad65f2e8510e293f9a8521b0e9d511feb">&#9670;&#160;</a></span>angular_velocities</h2>
+<a id="a0bd793266b0450ac7a3095bd534d7629" name="a0bd793266b0450ac7a3095bd534d7629"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bd793266b0450ac7a3095bd534d7629">&#9670;&#160;</a></span>angular_velocities</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::angular_velocities</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00110">110</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
-
-</div>
-</div>
-<a id="a53f63221e1c5b1580c4af354e240287b" name="a53f63221e1c5b1580c4af354e240287b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53f63221e1c5b1580c4af354e240287b">&#9670;&#160;</a></span>current_inserting_particle_type</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::current_inserting_particle_type</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00104">104</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
-
-</div>
-</div>
-<a id="a7b5822316796c41c40e5a9badfe7c295" name="a7b5822316796c41c40e5a9badfe7c295"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b5822316796c41c40e5a9badfe7c295">&#9670;&#160;</a></span>diameters</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::diameters</td>
+          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::angular_velocities</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -487,57 +453,111 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a49af5583d26db14fd0f4f66bbbc6f9f7" name="a49af5583d26db14fd0f4f66bbbc6f9f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49af5583d26db14fd0f4f66bbbc6f9f7">&#9670;&#160;</a></span>insertion_points</h2>
+<a id="aab5ad2cefe23263e50bba916d39f04d6" name="aab5ad2cefe23263e50bba916d39f04d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab5ad2cefe23263e50bba916d39f04d6">&#9670;&#160;</a></span>current_inserting_particle_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Point&lt;dim&gt; &gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::insertion_points</td>
+          <td class="memname">unsigned int <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00108">108</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00105">105</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
-<a id="a0bdbc4ceecde9fc547d26fc6a276e43f" name="a0bdbc4ceecde9fc547d26fc6a276e43f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0bdbc4ceecde9fc547d26fc6a276e43f">&#9670;&#160;</a></span>remaining_particles_of_each_type</h2>
+<a id="a4cc9687353859c972db828762415d965" name="a4cc9687353859c972db828762415d965"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cc9687353859c972db828762415d965">&#9670;&#160;</a></span>diameters</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::remaining_particles_of_each_type</td>
+          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::diameters</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00103">103</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00112">112</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
-<a id="a6c2968a33752574deaffcac8063cd328" name="a6c2968a33752574deaffcac8063cd328"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c2968a33752574deaffcac8063cd328">&#9670;&#160;</a></span>velocities</h2>
+<a id="aea817e118abd58336b1cf2406031eb38" name="aea817e118abd58336b1cf2406031eb38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea817e118abd58336b1cf2406031eb38">&#9670;&#160;</a></span>insertion_points</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim &gt;::velocities</td>
+          <td class="memname">std::vector&lt;Point&lt;dim&gt; &gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::insertion_points</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00109">109</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+
+</div>
+</div>
+<a id="a118d1cc94d9fd05229344d11ab2e7b16" name="a118d1cc94d9fd05229344d11ab2e7b16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a118d1cc94d9fd05229344d11ab2e7b16">&#9670;&#160;</a></span>remaining_particles_of_each_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::remaining_particles_of_each_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00104">104</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+
+</div>
+</div>
+<a id="acd864b5523aacb70cf952c80d2444690" name="acd864b5523aacb70cf952c80d2444690"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd864b5523aacb70cf952c80d2444690">&#9670;&#160;</a></span>temperatures</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::temperatures</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00113">113</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+
+</div>
+</div>
+<a id="a0a9cb5215b8d6ce901e5b51d565e0310" name="a0a9cb5215b8d6ce901e5b51d565e0310"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a9cb5215b8d6ce901e5b51d565e0310">&#9670;&#160;</a></span>velocities</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt; <a class="el" href="classInsertionList.html">InsertionList</a>&lt; dim, PropertiesIndex &gt;::velocities</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00110">110</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
