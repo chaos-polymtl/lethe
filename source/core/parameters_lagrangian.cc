@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "core/parameters_lagrangian.h"
@@ -499,7 +499,7 @@ namespace Parameters
                           Patterns::List(Patterns::Double()),
                           "List of diameters");
         prm.declare_entry("list temperatures",
-                          "300.",
+                          "0.",
                           Patterns::List(Patterns::Double()),
                           "List of initial temperatures");
         // Volume:
