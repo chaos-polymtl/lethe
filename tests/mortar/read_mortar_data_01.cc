@@ -27,6 +27,7 @@
 // Lethe
 #include <core/grids.h>
 #include <core/parameters.h>
+#include <core/boundary_conditions.h>
 
 // Tests (with common definitions)
 #include <deal.II/base/conditional_ostream.h>
@@ -55,7 +56,8 @@ test()
   Parameters::Mortar<dim>                mortar_parameters;
   Parameters::Manifolds                  manifolds_parameters;
   BoundaryConditions::BoundaryConditions boundary_conditions;
-
+  boundary_conditions.type[0] = BoundaryConditions::BoundaryType::none;
+  
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
   mesh_parameters.grid_type                = "hyper_shell";
