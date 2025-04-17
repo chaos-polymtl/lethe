@@ -397,7 +397,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   /* The signed distance for the first neighbors (the Dofs belonging to the
    * cells intersected by the reconstructed interface. This is a brute force
    * distance computation, meaning the distance is computed geometrically, as
-   * presented by Ausas (2010). */
+   * presented by Ausas et al. (2011). */
 
   // DoF coordinates
   std::map<types::global_dof_index, Point<dim>> dof_support_points =
@@ -408,7 +408,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
     {
       const unsigned int cell_index = intersected_cell.first;
 
-      // Create interface recontruction triangulation (surface triangulation)
+      // Create interface reconstruction triangulation (surface triangulation)
       // in the intersected volume cell
       std::vector<Point<dim>> surface_vertices =
         interface_reconstruction_vertices.at(cell_index);
@@ -419,9 +419,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                                  surface_cells,
                                                  {});
 
-      /* Loop over all DoFs of the volume mesh belonging to a intersected
+      /* Loop over all DoFs of the volume mesh belonging to an intersected
        * volume cell. This is more expensive, but it is required to have the
-       * the right signed distance approximation for the first neighbors.*/
+       * right signed distance approximation for the first neighbors.*/
       for (const unsigned int &intersected_dof : intersected_dofs)
         {
           const Point<dim> y = dof_support_points.at(intersected_dof);
@@ -462,8 +462,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   compute_second_neighbors_distance()
 {
   /* The signed distance for the second neighbors (the cells not intersected
-   * by the interface is resolved according the minimization problem
-   * presented by Ausas (2010). The method looks for the point in the opposite
+   * by the interface) is resolved according the minimization problem
+   * presented by Ausas et al. (2011). The method looks for the point in the opposite
    * faces of each second neighbor DoFs that minimizes the distance to the
    * interface. It works in a similar manner as a marching algorithm from the
    * knowledge of the signed distance for the interface first neighbors. */
@@ -485,12 +485,12 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
     *mapping, *fe, update_values | update_gradients | update_jacobians);
 
   /* The method is iterative, hence, we solve as long as the distance
-  approximation changes for at least one dof. We use the flag change to
+  approximation changes for at least one dof. We use the flag "change" to
   track this change. */
   bool change = true;
 
   /* The count corresponds to how many times we iterate. In fact, it
-  correspond to the number of cell layers (starting from the interface)
+  corresponds to the number of cell layers (starting from the interface)
   that the approximation of the distance is known. */
   int count = 0;
   while (change)
@@ -664,7 +664,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           face minimizing the distance)*/
                           Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
 
-                          /* Relax the correction if it brings us outside of
+                          /* Relax the correction if it brings us outside 
                           the cell */
                           double relaxation = 1.0;
 
@@ -689,7 +689,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                               |_____________|
 
                           If the solution is outside the face more than three
-                          times, we constraint the solution on the right
+                          times, we constrain the solution on the right
                           boundary of the face:
                                _____________
                               |             |         real
@@ -702,7 +702,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           */
 
                           /* Flag indicating if the correction brings us
-                          outside of the cell.*/
+                          outside the cell.*/
                           bool check = false;
                           for (unsigned int k = 0; k < dim; ++k)
                             {
@@ -858,8 +858,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               continue;
             }
 
-          /* We want to find a cell wise correction to apply to the cell's dof
-          values of the signed_distance so that the geometric cell wise volume
+          /* We want to find a cell-wise correction to apply to the cell's dof
+          values of the signed_distance so that the geometric cell-wise volume
           encompassed by the level 0 of the signed_distance V_K and by the
           iso-contour 0.5 of the phase fraction V_K,VOF match. This is
           required because the computed distance doesn't belong to the Q1
@@ -869,7 +869,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           V_K(phi* + eta_K) = 0, where phi* is the current
           signed distance, eta_K is the correction on the signed_distance that
           we are looking for. We use the secant method to do so. See Ausas et
-          al. (2010) for more details.*/
+          al. (2011) for more details.*/
 
           // Get the level set values
           Vector<double> cell_level_set_dof_values(dofs_per_cell);
@@ -1010,10 +1010,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
      fraction V_VOF match. This is required because the computed distance
      doesn't belong to the Q1 approximation space. We solve the non-linear
      problem: DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the
-     curent signed distance, xi = C*eta is the correction function on
-     the signed_distance that we are looking for, with eta being the cell wise
-     correction compute with compute_cell_wise_volume_correction() and C being
-     a constant. We use the secant method to do so. See Ausas et al. (2010) for
+     current signed distance, xi = C*eta is the correction function on
+     the signed_distance that we are looking for, with eta being the cell-wise
+     correction computed with compute_cell_wise_volume_correction() and C being
+     a constant. We use the secant method to do so. See Ausas et al. (2011) for
      more details.*/
 
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
@@ -1038,14 +1038,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
 
   /* Global constant C that we are solving for to obtain
       DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0
-  where eta is the cell wise correction computed with
+  where eta is the cell-wise correction computed with
   compute_cell_wise_volume_correction()*/
   double C_nm1 = 0.0;
   double C_n   = 0.0;
   double C_np1 = 0.0;
 
   /* Compute the volume and the difference with the targeted volume for 1st
-  initial guess of the correction funtion (xi_nm1 = C_nm1*eta)*/
+  initial guess of the correction function (xi_nm1 = C_nm1*eta)*/
   C_nm1 = 1.0;
   LinearAlgebra::distributed::Vector<double> signed_distance_0(
     signed_distance_with_ghost);

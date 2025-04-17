@@ -1,3 +1,3 @@
 
-DEAL::The norm L2 of the signed distance error in 2D is: 0.00926418
-DEAL::The norm L2 of the signed distance error in 3D is: 0.0177175
+DEAL::The L2 norm of the signed distance error in 2D is: 0.00926418
+DEAL::The L2 norm of the signed distance error in 3D is: 0.0177175

@@ -2651,13 +2651,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
   compute_phase_fraction_from_level_set(this->level_set,
                                         this->present_solution);
-
-  // signed_distance_solver->output_signed_distance(
-  // "signed_distance_" +
-  //   this->simulation_parameters.simulation_control.output_name,
-  // this->simulation_parameters.simulation_control.output_folder,
-  // simulation_control->get_current_time(),
-  // simulation_control->get_step_number());
 }
 
 

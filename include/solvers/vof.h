@@ -690,14 +690,24 @@ private:
   reinitialize_interface_with_algebraic_method();
 
   /**
-   * @brief Compute level-set field from the phase fraction field using a inverse tanh-based transformation.
+   * @brief Compute level-set field from the phase fraction field using an
+   * inverse tanh-based transformation.
+   *
+   * @param[in] solution Phase fraction solution field
+   * 
+   * @param[out] level_set_solution Level-set solution field
    */
   void
   compute_level_set_from_phase_fraction(const GlobalVectorType &solution,
                                         GlobalVectorType &level_set_solution);
 
   /**
-   * @brief Compute the phase fraction field from level-set field using a tanh-based transformation.
+   * @brief Compute the phase fraction field from level-set field using a
+   * tanh-based transformation.
+   *
+   * @param[in] level_set_solution Level-set solution field
+   * 
+   * @param[out] phase_fraction_solution Phase fraction solution field
    */
   void
   compute_phase_fraction_from_level_set(
@@ -746,8 +756,8 @@ private:
   TrilinosWrappers::SparseMatrix system_matrix;
   GlobalVectorType               filtered_solution;
 
-  // Level-set field obtained from the phase fraction field using a tanh-based
-  // transformation
+  /// Level-set field obtained from the phase fraction field using a tanh-based
+  /// transformation
   GlobalVectorType level_set;
 
 
