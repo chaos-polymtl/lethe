@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-04-17
+
+### Added
+
+- MAJOR The template parameter PropertiesIndex was added to the insertion classes to initialize the temperature only in multiphysic DEM. The template parameter dim was added to InsertionInfo (Parameters Lagrangian) to initialize the temperature with a parsed function in the parameter file for plane and volume insertion, which were modified accordingly. [#1491](https://github.com/chaos-polymtl/lethe/pull/1491) 
+
 ## [Master] - 2025-04-16
 
 ### Added
