@@ -1631,6 +1631,7 @@ FluidDynamicsMatrixBased<dim>::solve()
       this->simulation_parameters.mesh,
       this->simulation_parameters.manifolds_parameters,
       this->simulation_parameters.restart_parameters.restart,
+      this->simulation_parameters.boundary_conditions,
       this->simulation_parameters.mortar);
   else
     read_mesh_and_manifolds(
