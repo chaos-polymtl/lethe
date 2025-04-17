@@ -106,6 +106,11 @@ namespace Parameters
                         Patterns::Bool(),
                         "Adaptative time-stepping <true|false>");
       prm.declare_entry(
+        "enable static capillary time-step constraint",
+        "false",
+        Patterns::Bool(),
+        "Consider static capillary time-step constraint <true|false>");
+      prm.declare_entry(
         "time step independent of end time",
         "true",
         Patterns::Bool(),
@@ -241,6 +246,8 @@ namespace Parameters
       dt       = prm.get_double("time step");
       time_end = prm.get_double("time end");
       adapt    = prm.get_bool("adapt");
+      capillary_time_step_constraint.static_capillary_time_step_constraint =
+        prm.get_bool("enable static capillary time-step constraint");
       time_step_independent_of_end_time =
         prm.get_bool("time step independent of end time");
       maxCFL         = prm.get_double("max cfl");

@@ -942,6 +942,9 @@ protected:
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
+
+  /// Minimum cell size (used to compute the capillary time-step constraint)
+  std::shared_ptr<double> minimum_cell_size = std::make_shared<double>(DBL_MAX);
 };
 
 #endif

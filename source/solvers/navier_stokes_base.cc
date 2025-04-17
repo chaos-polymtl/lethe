@@ -137,6 +137,13 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     {
       simulation_control = std::make_shared<SimulationControlTransient>(
         simulation_parameters.simulation_control);
+      // Dynamic pointer cast since set_minimum_cell_size() is only defined in
+      // SimulationControlTransient and not in the base class
+      std::shared_ptr<SimulationControlTransient> simulation_control_transient =
+        std::dynamic_pointer_cast<SimulationControlTransient>(
+          simulation_control);
+      simulation_control_transient->set_minimum_cell_size(
+        this->minimum_cell_size);
     }
 
   // Provide the simulation control object to the physical property manager
@@ -690,6 +697,27 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
                Parameters::MeshAdaptation::Type::uniform)
         refine_mesh_uniform();
     }
+
+  if (this->simulation_parameters.simulation_control
+        .capillary_time_step_constraint.static_capillary_time_step_constraint)
+    {
+      // Dynamic pointer cast since
+      // update_time_step_with_capillary_time_step_constraint() is only defined
+      // in SimulationControlTransient and not in the base class
+      std::shared_ptr<SimulationControlTransient> simulation_control_transient =
+        std::dynamic_pointer_cast<SimulationControlTransient>(
+          this->simulation_control);
+
+      // Compute minimum cell size
+      *this->minimum_cell_size =
+        identify_minimum_cell_size(*this->mapping,
+                                   this->dof_handler,
+                                   *this->cell_quadrature,
+                                   this->mpi_communicator);
+
+      simulation_control_transient
+        ->update_time_step_with_capillary_time_step_constraint();
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -898,6 +926,29 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
           previous_solutions_transfer[i].interpolate(tmp_previous_solution);
           nonzero_constraints.distribute(tmp_previous_solution);
           previous_solutions[i] = tmp_previous_solution;
+        }
+
+      if (this->simulation_parameters.simulation_control
+            .capillary_time_step_constraint
+            .static_capillary_time_step_constraint)
+        {
+          // Dynamic pointer cast since
+          // update_time_step_with_capillary_time_step_constraint() is only
+          // defined in SimulationControlTransient and not in the base class
+          std::shared_ptr<SimulationControlTransient>
+            simulation_control_transient =
+              std::dynamic_pointer_cast<SimulationControlTransient>(
+                this->simulation_control);
+
+          // Compute minimum cell size
+          *this->minimum_cell_size =
+            identify_minimum_cell_size(*this->mapping,
+                                       this->dof_handler,
+                                       *this->cell_quadrature,
+                                       this->mpi_communicator);
+
+          simulation_control_transient
+            ->update_time_step_with_capillary_time_step_constraint();
         }
 
       multiphysics->post_mesh_adaptation();

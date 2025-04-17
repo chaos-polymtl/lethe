@@ -90,6 +90,23 @@ namespace Parameters
       gear3
     } lagrangian_method;
 
+    /// Struct containing elements to compute static capillary time-step
+    /// constraint
+    struct CapillaryTimeStepConstraint
+    {
+      /// Compute capillary time-step constraint if true
+      bool static_capillary_time_step_constraint;
+
+      /// Surface tension coefficient at reference state
+      double surface_tension_coefficient = 0.0;
+
+      /// Smallest cell-size
+      double minimum_cell_size = DBL_MAX;
+
+      /// Sum of the densities of the 2 fluid phases
+      double density_sum = 0.0;
+    } capillary_time_step_constraint;
+
     // Initial time step
     double dt;
 
@@ -170,6 +187,37 @@ namespace Parameters
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Set the value of the surface tension coefficient from
+     * Parameters::SurfaceTensionParameters
+     *
+     * @param[in] p_surface_tension_coefficient Surface tension coefficient
+     * value at reference state from Parameters::SurfaceTensionParameters
+     */
+    void
+    set_surface_tension_coefficient(const double p_surface_tension_coefficient)
+    {
+      capillary_time_step_constraint.surface_tension_coefficient =
+        p_surface_tension_coefficient;
+    }
+
+    /**
+     * @brief
+     *
+     * @param[in] p_density_sum
+     */
+    void
+    set_density_sum(const double p_density_sum)
+    {
+      capillary_time_step_constraint.density_sum = p_density_sum;
+    }
+
+    void
+    set_smallest_cell_size(const double p_minimum_cell_size)
+    {
+      capillary_time_step_constraint.minimum_cell_size = p_minimum_cell_size;
+    }
   };
 
 

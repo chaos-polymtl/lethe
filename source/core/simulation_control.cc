@@ -49,11 +49,9 @@ void
 SimulationControl::add_time_step(double p_timestep)
 {
   time_step = p_timestep;
-  // Store previous time step in table
+  // Percolate previous time-steps in vector
   for (unsigned int i_time = time_step_vector.size() - 1; i_time > 0; --i_time)
     time_step_vector[i_time] = time_step_vector[i_time - 1];
-
-  // Calculate time step, right now this is a dummy function
   time_step_vector[0] = p_timestep;
 }
 
@@ -215,6 +213,7 @@ SimulationControlTransient::SimulationControlTransient(
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
+  , capillary_time_step_constraint(param.capillary_time_step_constraint)
   , time_last_output(0.)
   , output_time_frequency(param.output_time_frequency)
   , output_times_vector(param.output_times_vector)
@@ -222,7 +221,14 @@ SimulationControlTransient::SimulationControlTransient(
   , no_more_output_times(false)
   , output_time_interval(param.output_time_interval)
   , output_control(param.output_control)
-{}
+{
+  this->initial_time_step = std::min(param.dt, max_dt);
+  this->time_step         = this->initial_time_step;
+  for (auto &time_step_i : this->time_step_vector)
+    {
+      time_step_i = this->time_step;
+    }
+}
 
 void
 SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
@@ -285,6 +291,12 @@ SimulationControlTransient::calculate_time_step()
         new_time_step = time_step * max_CFL / CFL;
 
       new_time_step = std::min(new_time_step, max_dt);
+    }
+
+  if (capillary_time_step_constraint.static_capillary_time_step_constraint)
+    {
+      const double capillary_time_step = compute_capillary_time_step();
+      new_time_step = std::min(new_time_step, capillary_time_step);
     }
 
   // Ensure that the time step for the last iteration is kept regardless of the
@@ -448,6 +460,14 @@ SimulationControlTransient::read(const std::string &prefix)
     // We understand that users providing this value when adaptive time stepping
     // is not enabled means a time step change is the desired effect.
     set_current_time_step(initial_time_step);
+}
+
+
+void
+SimulationControlTransient::set_minimum_cell_size(
+  std::shared_ptr<double> &p_minimum_cell_size)
+{
+  this->minimum_cell_size = p_minimum_cell_size;
 }
 
 SimulationControlTransientDEM::SimulationControlTransientDEM(

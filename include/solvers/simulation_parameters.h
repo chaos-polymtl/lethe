@@ -206,6 +206,27 @@ public:
 
     physical_properties_manager.initialize(physical_properties);
 
+    if (simulation_control.capillary_time_step_constraint
+          .static_capillary_time_step_constraint &&
+        physical_properties.number_of_material_interactions > 0)
+      {
+        // Get surface tension coefficient
+        simulation_control.set_surface_tension_coefficient(
+          physical_properties.material_interactions[0]
+            .surface_tension_parameters.surface_tension_coefficient);
+
+        // Compute density sum and store in simulation control
+        double density_sum = 0.0;
+        for (unsigned int i_fluid = 0;
+             i_fluid < physical_properties.number_of_fluids;
+             ++i_fluid)
+          {
+            density_sum += physical_properties.fluids[i_fluid].density;
+          }
+        simulation_control.set_density_sum(density_sum);
+      }
+
+    // TODO AA check capillary time step constraint with material interactions
 
     // Check consistency of parameters parsed in different subsections
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)

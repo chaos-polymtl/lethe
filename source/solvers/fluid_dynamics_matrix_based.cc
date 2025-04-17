@@ -969,7 +969,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       std::shared_ptr<RheologicalModel> viscosity_model =
         this->simulation_parameters.physical_properties_manager.get_rheology();
 
-      // Gather n and viscosity final paramerters
+      // Gather n and viscosity final parameters
       const double n_end         = viscosity_model->get_n();
       const double viscosity_end = viscosity_model->get_kinematic_viscosity();
 

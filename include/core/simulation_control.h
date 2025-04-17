@@ -504,6 +504,13 @@ protected:
   // Max time step
   double max_dt;
 
+  /// Capillary time-step constraint
+  Parameters::SimulationControl::CapillaryTimeStepConstraint
+    capillary_time_step_constraint;
+
+  /// Minimum cell size
+  std::shared_ptr<double> minimum_cell_size = std::make_shared<double>(DBL_MAX);
+
   // Time last output
   double time_last_output;
 
@@ -528,12 +535,30 @@ protected:
   Parameters::SimulationControl::OutputControl output_control;
 
   /**
+   * @brief Compute the capillary time-step constraint from physical properties
+   * and smallest cell-size of the current mesh.
+   *
+   * @return Static capillary time-step value as defined in Numerical time-step
+   * restrictions as a result of capillary waves (Denner & van Wachem, 2015)
+   */
+  inline double
+  compute_capillary_time_step()
+  {
+    const double inv_denominator =
+      1.0 / (2 * numbers::PI *
+             capillary_time_step_constraint.surface_tension_coefficient);
+    return std::sqrt(capillary_time_step_constraint.density_sum *
+                     Utilities::fixed_power<3>(*minimum_cell_size) *
+                     inv_denominator);
+  }
+
+  /**
    * @brief Calculates the next value of the time step. If adaptation
    * is enabled, the time step is calculated in order to ensure
    * that the CFL condition is bound by the maximal CFL value.
    * The new time step is equal to adaptative_time_step_scaling * the previous
    * time step. If the time_step_independent_of_end_time is set to false, the
-   * time step is asjusted to meet exactly the end time; the default is to not
+   * time step is adjusted to meet exactly the end time; the default is to not
    * modify the time step.
    */
   virtual double
@@ -584,6 +609,42 @@ public:
    */
   void
   read(const std::string &prefix) override;
+
+  /**
+   * @brief Sets the minimum cell-size used in the computation of the capillary
+   * time-step constraint
+   *
+   * @param[in] p_minimum_cell_size Smallest cell-size computed with
+   * identify_minimum_cell_size()
+   */
+  void
+  set_minimum_cell_size(std::shared_ptr<double> &p_minimum_cell_size);
+
+  /**
+   * @brief Update the current time-step with the computed capillary time-step
+   * if it is more constraining.
+   */
+  inline void
+  update_time_step_with_capillary_time_step_constraint()
+  {
+    time_step = std::min(time_step, compute_capillary_time_step());
+
+    if (is_at_start())
+      {
+        // Change all values in the vector if initial time-step TODO AA check if
+        // this is needed
+        for (auto &time_step_i : this->time_step_vector)
+          {
+            time_step_i = this->time_step;
+          }
+      }
+    else
+      {
+        // After refining the mesh, change current time-step without affecting
+        // other values in the vector
+        time_step_vector[0] = time_step;
+      }
+  }
 };
 
 /**
