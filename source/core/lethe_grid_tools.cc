@@ -1511,7 +1511,7 @@ LetheGridTools::find_point_triangle_distance(
   const std::vector<Point<dim>> &triangle,
   const Point<dim>              &point)
 {
-  double D;
+  double distance;
 
   const Point<dim> &point_0 = triangle[0];
   const Point<dim> &point_1 = triangle[1];
@@ -1691,7 +1691,7 @@ LetheGridTools::find_point_triangle_distance(
 
       pt_in_triangle = point_0 + s * e_0 + t * e_1;
 
-      D = pt_in_triangle.distance(point);
+      distance = pt_in_triangle.distance(point);
     }
 
   if constexpr (dim == 2)
@@ -1704,21 +1704,21 @@ LetheGridTools::find_point_triangle_distance(
       if (t_bar <= 0.0)
         {
           const Tensor<1, dim> point_minus_p0 = point - point_0;
-          D                                   = point_minus_p0.norm();
+          distance                            = point_minus_p0.norm();
         }
       else if (t_bar >= 1.0)
         {
           const Tensor<1, dim> point_minus_p1 = point - point_1;
-          D                                   = point_minus_p1.norm();
+          distance                            = point_minus_p1.norm();
         }
       else
         {
           const Tensor<1, dim> projection = point - (point_0 + t_bar * d);
-          D                               = projection.norm();
+          distance                        = projection.norm();
         }
     }
 
-  return D;
+  return distance;
 }
 
 template double

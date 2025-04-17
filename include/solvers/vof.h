@@ -694,7 +694,7 @@ private:
    * inverse tanh-based transformation.
    *
    * @param[in] solution Phase fraction solution field
-   * 
+   *
    * @param[out] level_set_solution Level-set solution field
    */
   void
@@ -706,7 +706,7 @@ private:
    * tanh-based transformation.
    *
    * @param[in] level_set_solution Level-set solution field
-   * 
+   *
    * @param[out] phase_fraction_solution Phase fraction solution field
    */
   void

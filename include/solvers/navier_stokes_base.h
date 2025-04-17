@@ -253,7 +253,8 @@ protected:
       {
         this->postprocess_fd(true);
         multiphysics->postprocess(true);
-        this->write_output_results(this->present_solution);
+        if (this->simulation_control->is_output_iteration())
+          this->write_output_results(this->present_solution);
       }
   }
 
