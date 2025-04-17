@@ -53,6 +53,7 @@ test()
 
   Parameters::Mesh        mesh_parameters;
   Parameters::Mortar<dim> mortar_parameters;
+  Parameters::Manifolds   manifolds_parameters;
 
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
@@ -82,6 +83,7 @@ test()
   // Merge stator and rotor triangulations
   read_mesh_and_manifolds_for_stator_and_rotor(triangulation,
                                                mesh_parameters,
+                                               manifolds_parameters,
                                                false,
                                                mortar_parameters);
 

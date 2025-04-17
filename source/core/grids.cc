@@ -399,6 +399,7 @@ void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                            &restart,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
@@ -614,11 +615,13 @@ template void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<2> &triangulation,
   const Parameters::Mesh                    &mesh_parameters,
+  const Parameters::Manifolds               &manifolds_parameters,
   const bool                                &restart,
   const Parameters::Mortar<2>               &mortar_parameters);
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<3> &triangulation,
   const Parameters::Mesh                    &mesh_parameters,
+  const Parameters::Manifolds               &manifolds_parameters,
   const bool                                &restart,
   const Parameters::Mortar<3>               &mortar_parameters);
