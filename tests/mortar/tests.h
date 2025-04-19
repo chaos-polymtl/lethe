@@ -435,7 +435,7 @@ public:
          v < this->matrix_free.n_active_entries_per_cell_batch(cell);
          ++v)
       delta_1[v] =
-        0.01 *
+        delta_1_scaling *
         this->matrix_free.get_cell_iterator(cell, v)->minimum_vertex_distance();
 
     for (unsigned int q = 0; q < phi.n_q_points; ++q)
@@ -470,10 +470,10 @@ public:
 
         // c)     (q, div(u))
         for (unsigned int d = 0; d < dim; ++d)
-          value_result[dim] += u_gradient[d][d];
+          value_result[dim] -= u_gradient[d][d];
 
         // d) δ_1 (∇q, ∇p)
-        gradient_result[dim] = delta_1 * p_gradient;
+        gradient_result[dim] = -delta_1 * p_gradient;
 
         phi.submit_value(value_result, q);
         phi.submit_gradient(gradient_result, q);
@@ -483,5 +483,412 @@ public:
   }
 
 private:
+  const double delta_1_scaling;
+};
+
+
+/**
+ * @brief Base class for the operator base
+ */
+template <int dim,
+          typename Number,
+          typename VectorizedArrayType = VectorizedArray<Number>>
+class GeneralStokesOperator : public Subscriptor
+{
+public:
+  using FECellIntegratorU =
+    FEEvaluation<dim, -1, 0, dim, Number, VectorizedArrayType>;
+  using FECellIntegratorP =
+    FEEvaluation<dim, -1, 0, 1, Number, VectorizedArrayType>;
+
+  using VectorType = LinearAlgebra::distributed::Vector<Number>;
+
+
+  GeneralStokesOperator(const MappingQ<dim>             &mapping,
+                        const DoFHandler<dim>           &dof_handler,
+                        const AffineConstraints<Number> &constraints,
+                        const Quadrature<dim>           &quadrature,
+                        const double                     delta_1_scaling)
+    : delta_1_scaling(delta_1_scaling)
+  {
+    reinit(mapping, dof_handler, constraints, quadrature);
+  }
+
+  void
+  reinit(const Mapping<dim>              &mapping,
+         const DoFHandler<dim>           &dof_handler,
+         const AffineConstraints<Number> &constraints,
+         const Quadrature<dim>           &quadrature)
+  {
+    typename MatrixFree<dim, Number, VectorizedArrayType>::AdditionalData data;
+    data.mapping_update_flags =
+      update_quadrature_points | update_gradients | update_values;
+
+    matrix_free.reinit(mapping, dof_handler, constraints, quadrature, data);
+
+    valid_system = false;
+  }
+
+  /**
+   * @brief Create coupling operator
+   */
+  void
+  add_coupling(const unsigned int n_subdivisions,
+               const double       radius,
+               const double       rotate_pi,
+               const unsigned int bid_0,
+               const unsigned int bid_1,
+               const double       sip_factor = 1.0)
+  {
+    coupling_operator_v = std::make_shared<CouplingOperator<dim, dim, Number>>(
+      *matrix_free.get_mapping_info().mapping,
+      matrix_free.get_dof_handler(),
+      matrix_free.get_affine_constraints(),
+      matrix_free.get_quadrature(),
+      n_subdivisions,
+      radius,
+      rotate_pi,
+      bid_0,
+      bid_1,
+      sip_factor,
+      0);
+
+    const bool is_p_disc = matrix_free.get_dof_handler()
+                             .get_fe()
+                             .base_element(matrix_free.get_dof_handler()
+                                             .get_fe()
+                                             .component_to_base_index(dim)
+                                             .first)
+                             .n_dofs_per_vertex() == 0;
+
+    if (is_p_disc == false)
+      coupling_operator_p = std::make_shared<CouplingOperator<dim, 1, Number>>(
+        *matrix_free.get_mapping_info().mapping,
+        matrix_free.get_dof_handler(),
+        matrix_free.get_affine_constraints(),
+        matrix_free.get_quadrature(),
+        n_subdivisions,
+        radius,
+        rotate_pi,
+        bid_0,
+        bid_1,
+        sip_factor,
+        dim);
+  }
+
+  virtual types::global_dof_index
+  m() const
+  {
+    if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+      return this->matrix_free.get_dof_handler().n_dofs(
+        this->matrix_free.get_mg_level());
+    else
+      return this->matrix_free.get_dof_handler().n_dofs();
+  }
+
+  Number
+  el(unsigned int, unsigned int) const
+  {
+    DEAL_II_NOT_IMPLEMENTED();
+    return 0;
+  }
+
+  void
+  initialize_dof_vector(VectorType &dst) const
+  {
+    matrix_free.initialize_dof_vector(dst);
+  }
+
+  void
+  vmult(VectorType &dst, const VectorType &src) const
+  {
+    src.update_ghost_values();
+
+    matrix_free.cell_loop(
+      &GeneralStokesOperator<dim, Number, VectorizedArrayType>::do_vmult_cell,
+      this,
+      dst,
+      src,
+      true);
+
+    // apply coupling terms
+    if (coupling_operator_v)
+      coupling_operator_v->vmult_add(dst, src);
+
+    if (coupling_operator_p)
+      coupling_operator_p->vmult_add(dst, src);
+
+    src.zero_out_ghost_values();
+  }
+
+  void
+  Tvmult(VectorType &dst, const VectorType &src) const
+  {
+    vmult(dst, src);
+  }
+
+  void
+  compute_inverse_diagonal(VectorType &diagonal) const
+  {
+    matrix_free.initialize_dof_vector(diagonal);
+
+    MatrixFreeTools::internal::
+      ComputeMatrixScratchData<dim, VectorizedArray<Number>, false>
+        data_cell;
+
+    data_cell.dof_numbers               = {0, 0};
+    data_cell.quad_numbers              = {0, 0};
+    data_cell.n_components              = {dim, 1};
+    data_cell.first_selected_components = {0, dim};
+    data_cell.batch_type                = {0, 0};
+
+    data_cell
+      .op_create = [&](const std::pair<unsigned int, unsigned int> &range) {
+      std::vector<
+        std::unique_ptr<FEEvaluationData<dim, VectorizedArray<Number>, false>>>
+        phi;
+
+      phi.emplace_back(
+        std::make_unique<FECellIntegratorU>(matrix_free, range, 0, 0, 0));
+
+      phi.emplace_back(
+        std::make_unique<FECellIntegratorP>(matrix_free, range, 0, 0, dim));
+
+      return phi;
+    };
+
+    data_cell.op_reinit = [](auto &phi, const unsigned batch) {
+      static_cast<FECellIntegratorU &>(*phi[0]).reinit(batch);
+      static_cast<FECellIntegratorP &>(*phi[1]).reinit(batch);
+    };
+
+    data_cell.op_compute = [&](auto &phi) {
+      auto &phi_0 = static_cast<FECellIntegratorU &>(*phi[0]);
+      auto &phi_1 = static_cast<FECellIntegratorP &>(*phi[1]);
+
+      do_vmult_cell_single(phi_0, phi_1);
+    };
+
+    std::vector<VectorType *> diagonal_global_components(1);
+    diagonal_global_components[0] = &diagonal;
+
+    MatrixFreeTools::internal::compute_diagonal(
+      matrix_free, data_cell, {}, {}, diagonal, diagonal_global_components);
+
+    // add coupling terms
+    if (coupling_operator_v)
+      coupling_operator_v->add_diagonal_entries(diagonal);
+
+    if (coupling_operator_p)
+      coupling_operator_p->add_diagonal_entries(diagonal);
+
+    for (auto &i : diagonal)
+      i = (i != 0.0) ? (1.0 / i) : 1.0;
+  }
+
+  const TrilinosWrappers::SparseMatrix &
+  get_system_matrix() const
+  {
+    initialize_system_matrix();
+
+    return system_matrix;
+  }
+
+  void
+  initialize_system_matrix() const
+  {
+    const auto &dof_handler = matrix_free.get_dof_handler();
+
+    auto constraints = &matrix_free.get_affine_constraints();
+
+    AffineConstraints<Number> affine_constraints_tmp;
+
+    if (coupling_operator_v)
+      {
+        affine_constraints_tmp.copy_from(
+          coupling_operator_v->get_affine_constraints());
+
+        if (coupling_operator_p)
+          affine_constraints_tmp.merge(
+            coupling_operator_p->get_affine_constraints(),
+            AffineConstraints<Number>::MergeConflictBehavior::left_object_wins,
+            true);
+
+        affine_constraints_tmp.close();
+      }
+
+    if (system_matrix.m() == 0 || system_matrix.n() == 0)
+      {
+        system_matrix.clear();
+
+        TrilinosWrappers::SparsityPattern dsp;
+
+        dsp.reinit(dof_handler.locally_owned_dofs(),
+                   dof_handler.get_communicator());
+
+        DoFTools::make_sparsity_pattern(dof_handler, dsp, *constraints);
+
+        // apply coupling terms
+        if (coupling_operator_v)
+          coupling_operator_v->add_sparsity_pattern_entries(dsp);
+
+        if (coupling_operator_p)
+          coupling_operator_p->add_sparsity_pattern_entries(dsp);
+
+        dsp.compress();
+
+        system_matrix.reinit(dsp);
+      }
+
+    if (this->valid_system == false)
+      {
+        system_matrix = 0.0;
+
+        MatrixFreeTools::internal::
+          ComputeMatrixScratchData<dim, VectorizedArray<Number>, false>
+            data_cell;
+
+        data_cell.dof_numbers               = {0, 0};
+        data_cell.quad_numbers              = {0, 0};
+        data_cell.n_components              = {dim, 1};
+        data_cell.first_selected_components = {0, dim};
+        data_cell.batch_type                = {0, 0};
+
+        data_cell.op_create =
+          [&](const std::pair<unsigned int, unsigned int> &range) {
+            std::vector<std::unique_ptr<
+              FEEvaluationData<dim, VectorizedArray<Number>, false>>>
+              phi;
+
+            phi.emplace_back(
+              std::make_unique<FECellIntegratorU>(matrix_free, range, 0, 0, 0));
+
+            phi.emplace_back(std::make_unique<FECellIntegratorP>(
+              matrix_free, range, 0, 0, dim));
+
+            return phi;
+          };
+
+        data_cell.op_reinit = [](auto &phi, const unsigned batch) {
+          static_cast<FECellIntegratorU &>(*phi[0]).reinit(batch);
+          static_cast<FECellIntegratorP &>(*phi[1]).reinit(batch);
+        };
+
+        data_cell.op_compute = [&](auto &phi) {
+          auto &phi_0 = static_cast<FECellIntegratorU &>(*phi[0]);
+          auto &phi_1 = static_cast<FECellIntegratorP &>(*phi[1]);
+
+          do_vmult_cell_single(phi_0, phi_1);
+        };
+
+        MatrixFreeTools::internal::compute_matrix(
+          matrix_free, *constraints, data_cell, {}, {}, system_matrix);
+
+        // apply coupling terms
+        if (coupling_operator_v)
+          coupling_operator_v->add_system_matrix_entries(system_matrix);
+
+        if (coupling_operator_p)
+          coupling_operator_p->add_system_matrix_entries(system_matrix);
+
+        system_matrix.compress(VectorOperation::add);
+
+        this->valid_system = true;
+      }
+  }
+
+
+private:
+  void
+  do_vmult_cell(const MatrixFree<dim, Number>               &matrix_free,
+                VectorType                                  &dst,
+                const VectorType                            &src,
+                const std::pair<unsigned int, unsigned int> &range) const
+  {
+    FECellIntegratorU integrator_u(matrix_free, range, 0, 0, 0);
+    FECellIntegratorP integrator_p(matrix_free, range, 0, 0, dim);
+    for (unsigned cell = range.first; cell < range.second; ++cell)
+      {
+        integrator_u.reinit(cell);
+        integrator_p.reinit(cell);
+
+        integrator_u.read_dof_values(src);
+        integrator_p.read_dof_values(src);
+        do_vmult_cell_single(integrator_u, integrator_p);
+        integrator_u.distribute_local_to_global(dst);
+        integrator_p.distribute_local_to_global(dst);
+      }
+  }
+
+  void
+  do_vmult_cell_single(FECellIntegratorU &phi_u, FECellIntegratorP &phi_p) const
+  {
+    phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+    const auto cell = phi_u.get_current_cell_index();
+
+    VectorizedArrayType delta_1;
+    for (unsigned int v = 0;
+         v < this->matrix_free.n_active_entries_per_cell_batch(cell);
+         ++v)
+      delta_1[v] =
+        delta_1_scaling *
+        this->matrix_free.get_cell_iterator(cell, v)->minimum_vertex_distance();
+
+    for (unsigned int q = 0; q < phi_u.n_q_points; ++q)
+      {
+        typename FECellIntegratorP::value_type    p_value_result    = {};
+        typename FECellIntegratorP::gradient_type p_gradient_result = {};
+        typename FECellIntegratorU::value_type    u_value_result    = {};
+        typename FECellIntegratorU::gradient_type u_gradient_result = {};
+
+        const auto p_value    = phi_p.get_value(q);
+        const auto p_gradient = phi_p.get_gradient(q);
+
+        const auto u_gradient = phi_u.get_gradient(q);
+
+        // a)     (ε(v), 2νε(u))
+        if (true)
+          {
+            symm_scalar_product_add(u_gradient_result,
+                                    u_gradient,
+                                    VectorizedArrayType(2.0));
+          }
+        else
+          {
+            u_gradient_result = u_gradient;
+          }
+
+        // b)   - (div(v), p)
+        for (unsigned int d = 0; d < dim; ++d)
+          u_gradient_result[d][d] -= p_value;
+
+        // c)     (q, div(u))
+        for (unsigned int d = 0; d < dim; ++d)
+          p_value_result -= u_gradient[d][d];
+
+        // d) δ_1 (∇q, ∇p)
+        if (delta_1_scaling != 0.0)
+          p_gradient_result = -delta_1 * p_gradient;
+
+        phi_p.submit_value(p_value_result, q);
+        phi_p.submit_gradient(p_gradient_result, q);
+
+        phi_u.submit_value(u_value_result, q);
+        phi_u.submit_gradient(u_gradient_result, q);
+      }
+
+    phi_u.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+  }
+
+  MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
+  mutable TrilinosWrappers::SparseMatrix       system_matrix;
+  mutable bool                                 valid_system;
+
+  std::shared_ptr<CouplingOperator<dim, dim, Number>> coupling_operator_v;
+  std::shared_ptr<CouplingOperator<dim, 1, Number>>   coupling_operator_p;
+
   const double delta_1_scaling;
 };

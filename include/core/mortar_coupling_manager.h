@@ -10,6 +10,8 @@
 #include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
 #include <deal.II/base/quadrature_lib.h>
 
+#include <deal.II/fe/fe_system.h>
+
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
@@ -467,6 +469,24 @@ symm_scalar_product_add(Tensor<1, dim_, Tensor<1, dim, Number>> &v_gradient,
       }
 }
 
+template <int dim, typename Number>
+inline DEAL_II_ALWAYS_INLINE void
+symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
+                        const Tensor<2, dim, Number> &u_gradient,
+                        const Number                 &factor)
+{
+  for (unsigned int d = 0; d < dim; ++d)
+    v_gradient[d][d] += u_gradient[d][d] * factor;
+
+  for (unsigned int e = 0; e < dim; ++e)
+    for (unsigned int d = e + 1; d < dim; ++d)
+      {
+        const auto tmp = (u_gradient[d][e] + u_gradient[e][d]) * (factor * 0.5);
+        v_gradient[d][e] += tmp;
+        v_gradient[e][d] += tmp;
+      }
+}
+
 template <int dim, int n_components, typename Number>
 class CouplingOperator
 {
@@ -484,7 +504,8 @@ public:
                    const double                     rotate_pi,
                    const unsigned int               bid_0,
                    const unsigned int               bid_1,
-                   const double                     sip_factor = 1.0);
+                   const double                     sip_factor = 1.0,
+                   const unsigned int first_selected_component = 0);
 
   const AffineConstraints<Number> &
   get_affine_constraints() const;
@@ -514,6 +535,15 @@ private:
   get_rad(const typename Triangulation<dim>::cell_iterator &cell,
           const typename Triangulation<dim>::face_iterator &face) const;
 
+  std::vector<types::global_dof_index>
+  get_dof_indices(
+    const typename DoFHandler<dim>::active_cell_iterator &cell) const;
+
+  static std::vector<unsigned int>
+  get_relevant_dof_indices(const FiniteElement<dim> &fe,
+                           const unsigned int        first_selected_component);
+
+
   const Mapping<dim>              &mapping;
   const DoFHandler<dim>           &dof_handler;
   const AffineConstraints<Number> &constraints;
@@ -533,8 +563,12 @@ private:
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
   std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
 
-  unsigned int bid_0;
-  unsigned int bid_1;
+  const unsigned int  bid_0;
+  const unsigned int  bid_1;
+  const FESystem<dim> fe_sub;
+
+  const std::vector<unsigned int> relevant_dof_indices;
+  const unsigned int              n_dofs_per_cell;
 
   Utilities::MPI::NoncontiguousPartitioner partitioner;
   Utilities::MPI::NoncontiguousPartitioner partitioner_cell;
@@ -561,15 +595,23 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const double                     rotate_pi,
   const unsigned int               bid_0,
   const unsigned int               bid_1,
-  const double                     sip_factor)
+  const double                     sip_factor,
+  const unsigned int               first_selected_component)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
   , quadrature(quadrature)
+  , bid_0(bid_0)
+  , bid_1(bid_1)
+  , fe_sub(dof_handler.get_fe().base_element(
+             dof_handler.get_fe()
+               .component_to_base_index(first_selected_component)
+               .first),
+           n_components)
+  , relevant_dof_indices(
+      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component))
+  , n_dofs_per_cell(relevant_dof_indices.size())
 {
-  this->bid_0 = bid_0;
-  this->bid_1 = bid_1;
-
   penalty_factor =
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
 
@@ -622,9 +664,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
             const auto indices =
               mortar_manager_cell->get_indices(get_rad(cell, face));
 
-            std::vector<types::global_dof_index> local_dofs(
-              dof_handler.get_fe().n_dofs_per_cell());
-            cell->get_dof_indices(local_dofs);
+            const auto local_dofs = this->get_dof_indices(cell);
 
             for (unsigned int ii = 0; ii < indices.size(); ++ii)
               {
@@ -733,7 +773,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   // finialize DoF indices
   dof_indices_ghost.resize(dof_indices.size());
   partitioner_cell.template export_to_ghosted_array<types::global_dof_index, 0>(
-    dof_indices, dof_indices_ghost, dof_handler.get_fe().n_dofs_per_cell());
+    dof_indices, dof_indices_ghost, n_dofs_per_cell);
 
   {
     auto locally_owned_dofs = constraints.get_locally_owned_indices();
@@ -781,18 +821,19 @@ Number
 CouplingOperator<dim, n_components, Number>::compute_penalty_parameter(
   const typename Triangulation<dim>::cell_iterator &cell) const
 {
-  const auto        &fe     = dof_handler.get_fe();
-  const unsigned int degree = fe.degree;
+  const unsigned int degree = dof_handler.get_fe().degree;
+
+  FE_Nothing<dim> fe_nothing;
 
   dealii::QGauss<dim>   quadrature(degree + 1);
   dealii::FEValues<dim> fe_values(mapping,
-                                  fe,
+                                  fe_nothing,
                                   quadrature,
                                   dealii::update_JxW_values);
 
   dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
   dealii::FEFaceValues<dim> fe_face_values(mapping,
-                                           fe,
+                                           fe_nothing,
                                            face_quadrature,
                                            dealii::update_JxW_values);
 
@@ -830,6 +871,40 @@ CouplingOperator<dim, n_components, Number>::get_rad(
 }
 
 template <int dim, int n_components, typename Number>
+std::vector<types::global_dof_index>
+CouplingOperator<dim, n_components, Number>::get_dof_indices(
+  const typename DoFHandler<dim>::active_cell_iterator &cell) const
+{
+  std::vector<types::global_dof_index> local_dofs_all(
+    dof_handler.get_fe().n_dofs_per_cell());
+  cell->get_dof_indices(local_dofs_all);
+
+  std::vector<types::global_dof_index> local_dofs(n_dofs_per_cell);
+
+  for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+    local_dofs[i] = local_dofs_all[relevant_dof_indices[i]];
+
+  return local_dofs;
+}
+
+template <int dim, int n_components, typename Number>
+std::vector<unsigned int>
+CouplingOperator<dim, n_components, Number>::get_relevant_dof_indices(
+  const FiniteElement<dim> &fe,
+  const unsigned int        first_selected_component)
+{
+  std::vector<unsigned int> result;
+
+  for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
+    if ((first_selected_component <= fe.system_to_component_index(i).first) &&
+        (fe.system_to_component_index(i).first <
+         first_selected_component + n_components))
+      result.push_back(i);
+
+  return result;
+}
+
+template <int dim, int n_components, typename Number>
 void
 CouplingOperator<dim, n_components, Number>::vmult_add(
   VectorType       &dst,
@@ -838,9 +913,7 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
   // 1) evaluate
   unsigned int ptr_q = 0;
 
-  FEPointIntegrator phi_m(mapping,
-                          dof_handler.get_fe(),
-                          update_values | update_gradients);
+  FEPointIntegrator phi_m(mapping, fe_sub, update_values | update_gradients);
 
   Vector<Number> buffer;
 
@@ -861,8 +934,12 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
                          ArrayView<const Point<dim, Number>>(
                            all_points_ref.data() + ptr_q, n_q_points));
 
-            buffer.reinit(cell->get_fe().n_dofs_per_cell());
-            cell->get_dof_values(src, buffer);
+            buffer.reinit(n_dofs_per_cell);
+
+            const auto local_dofs = this->get_dof_indices(cell);
+
+            for (unsigned int i = 0; i < local_dofs.size(); ++i)
+              buffer[i] = src[local_dofs[i]];
 
             phi_m.evaluate(buffer,
                            EvaluationFlags::values |
@@ -929,14 +1006,12 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
                 phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient, q);
               }
 
-            buffer.reinit(cell->get_fe().n_dofs_per_cell());
+            buffer.reinit(n_dofs_per_cell);
             phi_m.test_and_sum(buffer,
                                EvaluationFlags::values |
                                  EvaluationFlags::gradients);
 
-            std::vector<types::global_dof_index> local_dofs(
-              dof_handler.get_fe().n_dofs_per_cell());
-            cell->get_dof_indices(local_dofs);
+            const auto local_dofs = this->get_dof_indices(cell);
             constraints.distribute_local_to_global(buffer, local_dofs, dst);
 
             ptr_q += n_q_points;
@@ -952,9 +1027,7 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
 {
   unsigned int ptr_q = 0;
 
-  FEPointIntegrator phi_m(mapping,
-                          dof_handler.get_fe(),
-                          update_values | update_gradients);
+  FEPointIntegrator phi_m(mapping, fe_sub, update_values | update_gradients);
 
   Vector<Number>                                      buffer, diagonal_local;
   std::vector<typename FEPointIntegrator::value_type> all_value_m, all_value_p;
@@ -964,8 +1037,6 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
-            const unsigned int n_dofs_per_cell =
-              cell->get_fe().n_dofs_per_cell();
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_rad(cell, face));
 
@@ -1034,9 +1105,7 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
                 diagonal_local[i] = buffer[i];
               }
 
-            std::vector<types::global_dof_index> local_dofs(
-              dof_handler.get_fe().n_dofs_per_cell());
-            cell->get_dof_indices(local_dofs);
+            const auto local_dofs = this->get_dof_indices(cell);
             constraints.distribute_local_to_global(diagonal_local,
                                                    local_dofs,
                                                    diagonal);
@@ -1053,8 +1122,6 @@ CouplingOperator<dim, n_components, Number>::add_sparsity_pattern_entries(
   TrilinosWrappers::SparsityPattern &dsp) const
 {
   const auto constraints = &constraints_extended;
-
-  const unsigned int n_dofs_per_cell = dof_handler.get_fe().n_dofs_per_cell();
 
   for (unsigned int i = 0; i < dof_indices.size(); i += n_dofs_per_cell)
     {
@@ -1077,8 +1144,6 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
 {
   const auto constraints = &constraints_extended;
 
-  const unsigned int n_dofs_per_cell = dof_handler.get_fe().n_dofs_per_cell();
-
   std::vector<typename FEPointIntegrator::value_type> all_value_m(
     all_normals.size() * n_dofs_per_cell * 2);
   std::vector<typename FEPointIntegrator::value_type> all_value_p(
@@ -1086,9 +1151,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
 
   unsigned int ptr_q = 0;
 
-  FEPointIntegrator phi_m(mapping,
-                          dof_handler.get_fe(),
-                          update_values | update_gradients);
+  FEPointIntegrator phi_m(mapping, fe_sub, update_values | update_gradients);
   Vector<Number>    buffer;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1144,7 +1207,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                             all_value_m.size() * n_components),
     ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
                       all_value_p.size() * n_components),
-    dof_handler.get_fe().n_dofs_per_cell() * n_q_points * 2 * n_components);
+    n_dofs_per_cell * n_q_points * 2 * n_components);
 
 
   ptr_q                 = 0;
@@ -1224,7 +1287,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                                                q);
                           }
 
-                        buffer.reinit(cell->get_fe().n_dofs_per_cell());
+                        buffer.reinit(n_dofs_per_cell);
                         phi_m.test_and_sum(buffer,
                                            EvaluationFlags::values |
                                              EvaluationFlags::gradients);
