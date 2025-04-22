@@ -4147,13 +4147,13 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Rotor boundary ID # of the mortar matching interface");
-      
+
       prm.declare_entry(
         "stator boundary id",
         "2",
         Patterns::Integer(),
         "Stator boundary ID # of the mortar matching interface");
-      
+
       std::string default_entry_point = (dim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry("center of rotation",
                         default_entry_point,

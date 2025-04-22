@@ -43,8 +43,8 @@ test()
   unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
   unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
-  const unsigned int dim                  = 2;
-  const unsigned int mapping_degree       = 3;
+  const unsigned int dim            = 2;
+  const unsigned int mapping_degree = 3;
 
   Parameters::Mesh                       mesh_parameters;
   Parameters::Mortar<dim>                mortar_parameters;
