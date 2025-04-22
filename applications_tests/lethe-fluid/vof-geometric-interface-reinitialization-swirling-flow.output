@@ -15,25 +15,6 @@ VOF Barycenter
 ---------------
     time        x_vof        y_vof        vx_vof       vy_vof    
 0.000000e+00 5.000000e-01 7.499037e-01 8.028086e-01 3.883298e-16 
------------------------
-Signed Distance Solver
------------------------
-Initial volume Volume after redistanciation Remaining error on the volume 
-    7.0558e-02                   7.0558e-02                    5.2678e-12 
-Solving signed distance of layer 0
-Solving signed distance of layer 1
-Solving signed distance of layer 2
-Solving signed distance of layer 3
-Solving signed distance of layer 4
-Solving signed distance of layer 5
-Solving signed distance of layer 6
-Solving signed distance of layer 7
-Solving signed distance of layer 8
-Solving signed distance of layer 9
-Solving signed distance of layer 10
-Solving signed distance of layer 11
-Solving signed distance of layer 12
-Solving signed distance of layer 13
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.0024   Time step: 0.0024   CFL: 0.339811

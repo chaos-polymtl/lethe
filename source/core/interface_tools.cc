@@ -559,16 +559,18 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                         ref_face_center_point, dof_opposite_faces[j]);
                       Point<dim> x_n_real;
 
-                      double correction_norm = 1.0;
-                      int    newton_it       = 0;
+                      const double tol             = 1e-12;
+                      double       correction_norm = 1.0;
+                      int          newton_it       = 0;
+                      const int    newton_max_it   = 100;
 
                       // Check to constrain the solution in the face F_J
                       int outside_check = 0;
 
                       // Solve the minimization problem with Newton method
                       // using a numerical jacobian
-                      while (correction_norm > 1e-10 && outside_check < 3 &&
-                             newton_it < 100)
+                      while (correction_norm > tol && outside_check < 3 &&
+                             newton_it < newton_max_it)
                         {
                           /* Set stencil for numerical jacobian computation.
                            The entries of the vector are the following:
@@ -579,7 +581,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                     3
                           The entry 0 is the current evaluation point. */
 
-                          const double            perturbation = 0.01;
+                          const double perturbation =
+                            std::max(1e-6 * x_n_ref.norm(), 1e-8);
                           std::vector<Point<dim>> stencil_ref =
                             compute_numerical_jacobian_stencil(
                               x_n_ref, dof_opposite_faces[j], perturbation);
@@ -706,7 +709,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           bool check = false;
 
                           // Tolerance on the position for the outside check
-                          const double tol = 1e-12;
                           for (unsigned int k = 0; k < dim; ++k)
                             {
                               if (x_n_p1_ref[k] > 1.0 + tol ||
@@ -772,9 +774,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                         compute_distance(x_n_to_x_I_real,
                                          distance_value_at_x_n);
 
-                      // If the new distance is smaller than the previous,
-                      // update the value and flag the change
-                      if (distance(dof_indices[i]) > (approx_distance + 1e-8))
+                      /* If the new distance is smaller than the previous,
+                         update the value and flag the change.
+                         The tolerance needs to be higher than the one for the
+                         Newton method becaus we don't want the change flag to
+                         depend on the Newton method convergence.*/
+                      const double distance_tol = 1e-8;
+                      if (distance(dof_indices[i]) >
+                          (approx_distance + distance_tol))
                         {
                           change                   = true;
                           distance(dof_indices[i]) = approx_distance;
@@ -895,17 +902,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                cell_dof_values.begin(),
                                cell_dof_values.end());
 
-          /* Get cell size to initialize secant method. We use it to compute
-          the first derivative value in the secant method */
-          double cell_size;
-          if (dim == 2)
-            {
-              cell_size = std::sqrt(4. * cell->measure() / M_PI);
-            }
-          else if (dim == 3)
-            {
-              cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
-            }
+          /* Get an approximation of the cell size to initialize secant method.
+          The approximation corresponds to the diameter of the equivalent disk
+          (2D) or sphere (3D) in terms of area/volume. We use it to compute the
+           first derivative value in the secant method. */
+          const double cell_volume = cell->measure();
+          const double cell_size =
+            compute_cell_diameter<dim>(cell_volume, this->fe->degree);
 
           /* Secant method. The subscript nm1 (or n minus 1) stands for the
           previous secant iteration (it = n-1), the subscript n stands for
@@ -938,23 +941,27 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
           /* Check if there is enough volume to correct. If not, we don't
           correct.*/
-          if (inside_cell_volume_nm1 < 1e-10 * cell_size ||
-              inside_cell_volume_nm1 > (cell_size - 1e-10 * cell_size))
+          const double tol = 1e-12;
+          if (inside_cell_volume_nm1 < tol * cell_volume ||
+              inside_cell_volume_nm1 > (cell_volume - tol * cell_volume))
             {
               eta_n = 0.0;
               continue;
             }
 
           unsigned int secant_it     = 0;
+          unsigned int secant_max_it = 20;
           double       secant_update = 1.0;
-          while (abs(secant_update) > 1e-10 &&
-                 abs(delta_volume_nm1) > 1e-10 * initial_inside_cell_volume &&
-                 secant_it < 20)
+
+          // Secant method
+          while (abs(secant_update) > tol &&
+                 abs(delta_volume_nm1) > tol * initial_inside_cell_volume &&
+                 secant_it < secant_max_it)
             {
               // If the cell is almost full or empty, we stop correcting the
               // volume.
-              if (inside_cell_volume_nm1 < 1e-10 * cell_size ||
-                  inside_cell_volume_nm1 > (cell_size - 1e-10 * cell_size))
+              if (inside_cell_volume_nm1 < tol * cell_size ||
+                  inside_cell_volume_nm1 > (cell_size - tol * cell_size))
                 {
                   eta_n = 0.0;
                   break;
@@ -971,9 +978,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               delta_volume_n = targeted_cell_volume - inside_cell_volume_n;
 
               delta_volume_prime =
-                (delta_volume_n - delta_volume_nm1) / (eta_n - eta_nm1 + 1e-16);
+                (delta_volume_n - delta_volume_nm1) / (eta_n - eta_nm1 + tol);
 
-              secant_update = -delta_volume_n / (delta_volume_prime + 1e-16);
+              secant_update = -delta_volume_n / (delta_volume_prime + tol);
               eta_np1       = eta_n + secant_update;
 
               eta_nm1                = eta_n;
@@ -982,7 +989,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               delta_volume_nm1       = delta_volume_n;
             } // End secant method loop.
 
-          if (secant_it >= 20)
+          // If the secant method does not converge, do not correct.
+          if (secant_it >= secant_max_it)
             {
               eta_n = 0.0;
             }
@@ -1069,13 +1077,15 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   const double global_volume_0 = global_volume_nm1;
 
   // Initialize secant method it and update
+  const double tol           = 1e-12;
   unsigned int secant_it     = 0;
+  unsigned int secant_max_it = 20;
   double       secant_update = 1.0;
 
   // Secant method
-  while (abs(secant_update) > 1e-10 &&
-         abs(global_delta_volume_nm1) > 1e-10 * global_volume_0 &&
-         secant_it < 20)
+  while (abs(secant_update) > tol &&
+         abs(global_delta_volume_nm1) > tol * global_volume_0 &&
+         secant_it < secant_max_it)
     {
       secant_it += 1;
 
@@ -1090,11 +1100,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
       global_delta_volume_n = global_volume - global_volume_n;
 
       global_delta_volume_prime =
-        (global_delta_volume_n - global_delta_volume_nm1) /
-        (C_n - C_nm1 + 1e-16);
+        (global_delta_volume_n - global_delta_volume_nm1) / (C_n - C_nm1 + tol);
 
       secant_update =
-        -global_delta_volume_n / (global_delta_volume_prime + 1e-16);
+        -global_delta_volume_n / (global_delta_volume_prime + tol);
 
       C_np1 = C_n + secant_update;
       C_nm1 = C_n;
@@ -1105,7 +1114,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
     }
 
   // If the secant method does not converge, do not correct.
-  if (secant_it >= 20)
+  if (secant_it >= secant_max_it)
     C_n = 0.0;
 
   if (verbosity != Parameters::Verbosity::quiet)
@@ -1153,13 +1162,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
 template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
-  output_interface_reconstruction(const std::string  output_name,
-                                  const std::string  output_path,
+  output_interface_reconstruction(const std::string &output_name,
+                                  const std::string &output_path,
                                   const double       time,
                                   const unsigned int it)
 {
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  InterfaceReconstructionDataOutInterface<dim> reconstruction_data_out;
+  InterfaceReconstructionDataOut<dim> reconstruction_data_out;
 
   reconstruction_data_out.build_patches(interface_reconstruction_vertices);
 
@@ -1176,8 +1185,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::output_signed_distance(
-  const std::string  output_name,
-  const std::string  output_path,
+  const std::string &output_name,
+  const std::string &output_path,
   const double       time,
   const unsigned int it)
 {

@@ -320,14 +320,13 @@ namespace InterfaceTools
    *
    */
   template <int dim>
-  class InterfaceReconstructionDataOutInterface
-    : public dealii::DataOutInterface<0, dim>
+  class InterfaceReconstructionDataOut : public dealii::DataOutInterface<0, dim>
   {
   public:
     /**
      * @brief Default constructor.
      */
-    InterfaceReconstructionDataOutInterface();
+    InterfaceReconstructionDataOut();
 
     /**
      * @brief Build the patches of the interface reconstruction vertices for
@@ -365,13 +364,12 @@ namespace InterfaceTools
   };
 
   template <int dim>
-  InterfaceReconstructionDataOutInterface<
-    dim>::InterfaceReconstructionDataOutInterface()
+  InterfaceReconstructionDataOut<dim>::InterfaceReconstructionDataOut()
   {}
 
   template <int dim>
   void
-  InterfaceReconstructionDataOutInterface<dim>::build_patches(
+  InterfaceReconstructionDataOut<dim>::build_patches(
     const std::map<types::global_cell_index, std::vector<Point<dim>>>
       &interface_reconstruction_vertices)
   {
@@ -389,14 +387,14 @@ namespace InterfaceTools
 
   template <int dim>
   const std::vector<DataOutBase::Patch<0, dim>> &
-  InterfaceReconstructionDataOutInterface<dim>::get_patches() const
+  InterfaceReconstructionDataOut<dim>::get_patches() const
   {
     return patches;
   }
 
   template <int dim>
   std::vector<std::string>
-  InterfaceReconstructionDataOutInterface<dim>::get_dataset_names() const
+  InterfaceReconstructionDataOut<dim>::get_dataset_names() const
   {
     return dataset_names;
   }
@@ -505,8 +503,8 @@ namespace InterfaceTools
      *
      */
     void
-    output_interface_reconstruction(const std::string  output_name,
-                                    const std::string  output_path,
+    output_interface_reconstruction(const std::string &output_name,
+                                    const std::string &output_path,
                                     const double       time,
                                     const unsigned int it);
 
@@ -523,8 +521,8 @@ namespace InterfaceTools
      *
      */
     void
-    output_signed_distance(const std::string  output_name,
-                           const std::string  output_path,
+    output_signed_distance(const std::string &output_name,
+                           const std::string &output_path,
                            const double       time,
                            const unsigned int it);
 
