@@ -4,10 +4,12 @@
 #ifndef lethe_core_mortar_coupling_manager_h
 #define lethe_core_mortar_coupling_manager_h
 
+#include <core/parameters.h>
 #include <core/utilities.h>
 
 #include <deal.II/base/mpi_noncontiguous_partitioner.h>
 #include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
+#include <deal.II/base/quadrature.h>
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/lac/trilinos_precondition.h>
@@ -24,6 +26,7 @@ using namespace dealii;
 
 /**
  * @brief Base class for the mortar manager
+ *
  * @param n_subdivisions Number of cells at the interface between inner and outer domains
  * @param n_quadrature_points Number of quadrature points per cell
  * @param radius Radius at the interface between inner and outer domains
@@ -486,6 +489,25 @@ public:
                    const unsigned int               bid_1,
                    const double                     sip_factor = 1.0);
 
+  CouplingOperator(const Mapping<dim>              &mapping,
+                   const DoFHandler<dim>           &dof_handler,
+                   const AffineConstraints<Number> &constraints,
+                   const Quadrature<dim>           &quadrature,
+                   const Parameters::Mortar<dim>   &mortar_parameters,
+                   const Parameters::Mesh          &mesh_parameters);
+
+  void
+  init(const Mapping<dim>              &mapping,
+       const DoFHandler<dim>           &dof_handler,
+       const AffineConstraints<Number> &constraints,
+       const Quadrature<dim>            quadrature,
+       const unsigned int               n_subdivisions,
+       const double                     radius,
+       const double                     rotate_pi,
+       const unsigned int               bid_0,
+       const unsigned int               bid_1,
+       const double                     sip_factor);
+
   const AffineConstraints<Number> &
   get_affine_constraints() const;
 
@@ -566,6 +588,119 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   , dof_handler(dof_handler)
   , constraints(constraints)
   , quadrature(quadrature)
+{
+  init(mapping,
+       dof_handler,
+       constraints,
+       quadrature,
+       n_subdivisions,
+       radius,
+       rotate_pi,
+       bid_0,
+       bid_1,
+       sip_factor);
+}
+
+template <int dim, int n_components, typename Number>
+CouplingOperator<dim, n_components, Number>::CouplingOperator(
+  const Mapping<dim>              &mapping,
+  const DoFHandler<dim>           &dof_handler,
+  const AffineConstraints<Number> &constraints,
+  const Quadrature<dim>           &quadrature,
+  const Parameters::Mortar<dim>   &mortar_parameters,
+  const Parameters::Mesh          &mesh_parameters)
+  : mapping(mapping)
+  , dof_handler(dof_handler)
+  , constraints(constraints)
+  , quadrature(quadrature)
+{
+  unsigned int        n_subdivisions_active = 0;
+  std::vector<double> radius_vec;
+  const double        tolerance = 1e-8;
+
+  /* Check faces at the rotor-stator interface */
+  for (const auto &cell : dof_handler.get_triangulation().active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Looping through all the faces of the cell
+          for (const auto &face : cell->face_iterators())
+            {
+              // Check to see if the face is located at boundary
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      n_subdivisions_active++;
+                    }
+                }
+            }
+        }
+    }
+  
+  const unsigned int n_subdivisions =
+    Utilities::MPI::sum(n_subdivisions_active, dof_handler.get_triangulation().get_communicator());
+
+  /* Compute radius of rotor domain */
+  for (const auto &face : dof_handler.get_triangulation().active_face_iterators())
+    {
+      if (face->at_boundary())
+        {
+          if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
+            {
+              for (unsigned int vertex_index = 0;
+                   vertex_index < face->n_vertices();
+                   vertex_index++)
+                {
+                  auto v = face->vertex(vertex_index);
+                  radius_vec.emplace_back(
+                    hypot((v[0] - mortar_parameters.center_of_rotation[0]),
+                          (v[1] - mortar_parameters.center_of_rotation[1])));
+                }
+            }
+        }
+    }
+
+  auto diff = std::abs(*std::max_element(radius_vec.begin(), radius_vec.end()) -
+                       *std::min_element(radius_vec.begin(), radius_vec.end()));
+
+  AssertThrow(
+    diff < tolerance,
+    ExcMessage(
+      "The computed radius of the rotor mesh has a variation greater than the tolerance across the rotor domain, meaning that the prescribed center of rotation and the rotor geometry are not in accordance."));
+
+  double radius =
+    std::reduce(radius_vec.begin(), radius_vec.end()) / radius_vec.size();
+
+  std::cout << __LINE__ << std::endl;
+  std::cout << n_subdivisions << std::endl;
+
+  init(mapping,
+       dof_handler,
+       constraints,
+       quadrature,
+       n_subdivisions,
+       radius,
+       mortar_parameters.rotor_mesh->rotation_angle,
+       mortar_parameters.rotor_boundary_id,
+       mortar_parameters.stator_boundary_id,
+       mortar_parameters.sip_factor);
+}
+
+template <int dim, int n_components, typename Number>
+void
+CouplingOperator<dim, n_components, Number>::init(
+  const Mapping<dim>              &mapping,
+  const DoFHandler<dim>           &dof_handler,
+  const AffineConstraints<Number> &constraints,
+  const Quadrature<dim>            quadrature,
+  const unsigned int               n_subdivisions,
+  const double                     radius,
+  const double                     rotate_pi,
+  const unsigned int               bid_0,
+  const unsigned int               bid_1,
+  const double                     sip_factor)
 {
   this->bid_0 = bid_0;
   this->bid_1 = bid_1;
