@@ -5,6 +5,9 @@
  * @brief Mortar: Create points on intersected mesh and determine owners on both sides.
  */
 
+#include <deal.II/base/mpi_noncontiguous_partitioner.h>
+#include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -82,12 +85,68 @@ test()
                                                boundary_conditions,
                                                mortar_parameters);
 
+  unsigned int        n_subdivisions_active = 0;
+  std::vector<double> radius_vec;
+  const double        tolerance = 1e-8;
+
+  // Check faces at the rotor-stator interface
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Looping through all the faces of the cell
+          for (const auto &face : cell->face_iterators())
+            {
+              // Check to see if the face is located at boundary
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      n_subdivisions_active++;
+                    }
+                }
+            }
+        }
+    }
+
+  // Compute radius of rotor domain
+  for (const auto &face : triangulation.active_face_iterators())
+    {
+      if (face->at_boundary())
+        {
+          if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
+            {
+              for (unsigned int vertex_index = 0;
+                   vertex_index < face->n_vertices();
+                   vertex_index++)
+                {
+                  auto v = face->vertex(vertex_index);
+                  radius_vec.emplace_back(
+                    hypot((v[0] - mortar_parameters.center_of_rotation[0]),
+                          (v[1] - mortar_parameters.center_of_rotation[1])));
+                }
+            }
+        }
+    }
+  
+  // Total number of faces
+  const unsigned int n_subdivisions =
+    Utilities::MPI::sum(n_subdivisions_active, comm);
+
+  // Averaged radius value
+  double radius =
+    std::reduce(radius_vec.begin(), radius_vec.end()) / radius_vec.size();
+
+  // rotation angle in radians
+  const double rotate_pi =
+    2 * numbers::PI * mortar_parameters.rotor_mesh->rotation_angle / 360.0;
+
   // Mortar manager
-  const MortarManager<dim> mm(
-    4 * Utilities::pow(2, mesh_parameters.initial_refinement + 1),
-    n_quadrature_points,
-    radius,
-    mortar_parameters.rotor_mesh->rotation_angle);
+  const MortarManager<dim> mm(n_subdivisions,
+                              n_quadrature_points,
+                              radius,
+                              rotate_pi);
 
   const unsigned int n_points = mm.get_n_points();
 
@@ -138,7 +197,12 @@ test()
       if (processor_number == this_mpi_process)
         {
           deallog << "MPI=" << this_mpi_process << std::endl;
-          deallog << "# points: " << n_points << std::endl;
+          deallog << "# Total faces at interface: " << n_subdivisions
+                  << std::endl;
+          deallog << "# Current faces at interface: " << n_subdivisions_active
+                  << std::endl;
+          deallog << "Rotor radius: " << radius << std::endl;
+          deallog << "# Points: " << n_points << std::endl;
           deallog << "Local points: " << std::endl << is_local << std::endl;
           deallog << "Ghost points: " << std::endl << is_ghost << std::endl;
         }
