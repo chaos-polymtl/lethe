@@ -49,7 +49,7 @@ ParticleParticleContactForce<dim,
     typename dem_data_structures<dim>::adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
-    ParticleInteractionOutcomes<PropertiesIndex> &outcome)
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
   // Calculating the contact forces and heat transfer rates for local-local
   // adjacent particles.
@@ -57,7 +57,7 @@ ParticleParticleContactForce<dim,
        local_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::local_particle_particle>(
-        adjacent_particles_list, dt, outcome);
+        adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for local-ghost
@@ -66,7 +66,7 @@ ParticleParticleContactForce<dim,
        ghost_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::ghost_particle_particle>(
-        adjacent_particles_list, dt, outcome);
+        adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for local-local
@@ -76,7 +76,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, dt, outcome);
+        periodic_adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for local-ghost
@@ -86,7 +86,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_periodic_particle_particle>(
-        periodic_adjacent_particles_list, dt, outcome);
+        periodic_adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for ghost-local
@@ -96,7 +96,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, dt, outcome);
+        periodic_adjacent_particles_list, dt, contact_outcome);
     }
 }
 

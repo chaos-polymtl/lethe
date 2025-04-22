@@ -36,7 +36,7 @@ class ParticleParticleContactForceBase
 {
 public:
   /**
-   * @brief Calculate the contact forces and heat transfer rates using the contact pair information
+   * @brief Calculate the contact outcomes using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
    * @param local_adjacent_particles Container of the contact pair candidates
@@ -54,8 +54,7 @@ public:
    * candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
-   * @param outcome Interaction outcomes : torque, force, heat transfer
-   * rate applied to particles.
+   * @param contact_outcome Interaction outcomes.
    */
   virtual void
   calculate_particle_particle_contact(
@@ -70,7 +69,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
-    ParticleInteractionOutcomes<PropertiesIndex> &outcome) = 0;
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   void
   set_periodic_offset(const Tensor<1, dim> &periodic_offset)
@@ -110,7 +109,7 @@ public:
   {}
 
   /**
-   * @brief Calculate the contact forces and heat transfer rates using the contact pair information
+   * @brief Calculate the contact outcomes using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
    * @param local_adjacent_particles Container of the contact pair candidates
@@ -128,8 +127,7 @@ public:
    * candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
-   * @param[out] outcome Interaction outcomes : torque, force, heat transfer
-   * rate applied to particles.
+   * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
   calculate_particle_particle_contact(
@@ -144,7 +142,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
-    ParticleInteractionOutcomes<PropertiesIndex> &outcome) override;
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
 
 protected:
   /**
@@ -1666,8 +1664,7 @@ private:
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
    * particles
    * @param[in] dt DEM time step.
-   * @param[out] outcome Interaction outcomes : torque, force, heat transfer
-   * rate applied to particles.
+   * @param[out] contact_outcome Interaction outcomes.
    */
   template <ContactType contact_type>
   inline void
@@ -1675,7 +1672,7 @@ private:
     typename DEM::dem_data_structures<dim>::particle_contact_info
                                                  &adjacent_particles_list,
     const double                                  dt,
-    ParticleInteractionOutcomes<PropertiesIndex> &outcome)
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
   {
     // No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())
@@ -1696,9 +1693,9 @@ private:
     auto particle_one            = first_contact_info->second.particle_one;
     auto particle_one_properties = particle_one->get_properties();
 
-    types::particle_index particle_one_id     = particle_one->get_local_index();
-    Tensor<1, 3>         &particle_one_torque = outcome.torque[particle_one_id];
-    Tensor<1, 3>         &particle_one_force  = outcome.force[particle_one_id];
+    types::particle_index particle_one_id = particle_one->get_local_index();
+    Tensor<1, 3> &particle_one_torque = contact_outcome.torque[particle_one_id];
+    Tensor<1, 3> &particle_one_force  = contact_outcome.force[particle_one_id];
 
     // Fix particle one location for 2d and 3d
     Point<3> particle_one_location = get_location(particle_one);
@@ -1832,9 +1829,9 @@ private:
                   particle_two->get_local_index();
 
                 Tensor<1, 3> &particle_two_torque =
-                  outcome.torque[particle_two_id];
+                  contact_outcome.torque[particle_two_id];
                 Tensor<1, 3> &particle_two_force =
-                  outcome.force[particle_two_id];
+                  contact_outcome.force[particle_two_id];
 
                 this->apply_force_and_torque_on_local_particles(
                   normal_force,
@@ -1872,9 +1869,9 @@ private:
                   particle_two->get_local_index();
 
                 Tensor<1, 3> &particle_two_torque =
-                  outcome.torque[particle_two_id];
+                  contact_outcome.torque[particle_two_id];
                 Tensor<1, 3> &particle_two_force =
-                  outcome.force[particle_two_id];
+                  contact_outcome.force[particle_two_id];
 
                 this->apply_force_and_torque_on_single_local_particle(
                   normal_force,
@@ -1911,9 +1908,9 @@ private:
                 types::particle_index particle_two_id =
                   particle_two->get_local_index();
                 double &particle_one_heat_transfer_rate =
-                  outcome.heat_transfer_rate[particle_one_id];
+                  contact_outcome.heat_transfer_rate[particle_one_id];
                 double &particle_two_heat_transfer_rate =
-                  outcome.heat_transfer_rate[particle_two_id];
+                  contact_outcome.heat_transfer_rate[particle_two_id];
 
                 double thermal_conductance;
                 calculate_contact_thermal_conductance(

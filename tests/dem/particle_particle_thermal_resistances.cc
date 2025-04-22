@@ -115,13 +115,14 @@ test()
   pit_2->get_properties()[PropertiesIndex::specific_heat] = specific_heat;
 
   // Initializing variables
-  ParticleInteractionOutcomes<PropertiesIndex> outcome;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
   std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  outcome.resize_interaction_containers(
-    particle_handler.get_max_local_particle_index());
-  MOI.resize(outcome.force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -150,7 +151,7 @@ test()
     contact_manager.get_local_ghost_periodic_adjacent_particles(),
     contact_manager.get_ghost_local_periodic_adjacent_particles(),
     dt,
-    outcome);
+    contact_outcome);
 
   // Calculating additional parameters for thermal DEM
   auto     particle_one          = particle_handler.begin();
@@ -170,7 +171,8 @@ test()
   const double normal_overlap =
     (radius_one + radius_two) -
     particle_one_location.distance(particle_two_location);
-  const double normal_force_norm = outcome.force[particle_one->get_id()].norm();
+  const double normal_force_norm =
+    contact_outcome.force[particle_one->get_id()].norm();
   const double prandtl_gas =
     dynamic_viscosity_gas * specific_heat_gas / thermal_conductivity_gas;
   const double gas_parameter_m =

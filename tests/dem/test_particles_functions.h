@@ -22,6 +22,7 @@
 // Lethe
 #include <core/dem_properties.h>
 
+#include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_particle_contact_force.h>
 
 
@@ -150,6 +151,45 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
   properties.dynamic_viscosity_gas        = 1.e-5;
   properties.specific_heats_ratio_gas     = 1;
   properties.molecular_mean_free_path_gas = 68.e-9;
+}
+
+
+/**
+ * @brief Set the contact outcomes to 0 for each particle.
+ *
+ * @tparam dim Integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ * @param particle_handler Storage of particles and their accessor functions.
+ * @param contact_outcome Interaction outcomes.
+ */
+template <int dim, typename PropertiesIndex>
+void
+reinitialize_contact_outcomes(
+  Particles::ParticleHandler<dim>              &particle_handler,
+  ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
+{
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
+    {
+      // Getting id of particle as local variable
+      unsigned int particle_id = particle->get_id();
+
+      // Reinitializing contact outcomes of particles in the system
+      contact_outcome.force[particle_id][0] = 0;
+      contact_outcome.force[particle_id][1] = 0;
+      contact_outcome.force[particle_id][2] = 0;
+
+      contact_outcome.torque[particle_id][0] = 0;
+      contact_outcome.torque[particle_id][1] = 0;
+      contact_outcome.torque[particle_id][2] = 0;
+
+      if constexpr (std::is_same_v<PropertiesIndex,
+                                   DEM::DEMMPProperties::PropertiesIndex>)
+        {
+          contact_outcome.heat_transfer_rate[particle_id] = 0;
+        }
+    }
 }
 
 #endif // test_particles_functions_h

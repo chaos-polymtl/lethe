@@ -24,18 +24,19 @@ public:
   std::vector<double>       heat_transfer_rate;
 
   /**
-   * @brief Resize the containers of force, torque and heat_transfer_rate.
-   * @param particles_number
+   * @brief Resize the containers for particle-particle interaction outcomes.
+   * @param[in] number_of_particles Number of locally owned particles in the
+   * domain.
    */
   void
-  resize_interaction_containers(const unsigned int particles_number)
+  resize_interaction_containers(const unsigned int number_of_particles)
   {
-    force.resize(particles_number);
-    torque.resize(particles_number);
+    force.resize(number_of_particles);
+    torque.resize(number_of_particles);
     if constexpr (std::is_same_v<PropertiesIndex,
                                  DEM::DEMMPProperties::PropertiesIndex>)
       {
-        heat_transfer_rate.resize(particles_number);
+        heat_transfer_rate.resize(number_of_particles);
       }
   }
 };

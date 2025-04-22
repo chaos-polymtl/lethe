@@ -86,13 +86,14 @@ test()
   set_particle_properties<dim, PropertiesIndex>(
     pit2, type, particle_diameter, mass, v2, omega2);
 
-  ParticleInteractionOutcomes<PropertiesIndex> outcome;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
   std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  outcome.resize_interaction_containers(
-    particle_handler.get_max_local_particle_index());
-  MOI.resize(outcome.force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -120,14 +121,14 @@ test()
     contact_manager.get_local_ghost_periodic_adjacent_particles(),
     contact_manager.get_ghost_local_periodic_adjacent_particles(),
     dt,
-    outcome);
+    contact_outcome);
 
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force vector for particle 1 is: "
-          << outcome.force[particle->get_id()][0] << " "
-          << outcome.force[particle->get_id()][1] << " "
-          << outcome.force[particle->get_id()][2] << " N " << std::endl;
+          << contact_outcome.force[particle->get_id()][0] << " "
+          << contact_outcome.force[particle->get_id()][1] << " "
+          << contact_outcome.force[particle->get_id()][2] << " N " << std::endl;
 }
 
 int

@@ -46,39 +46,6 @@ struct full_contact_output
   std::vector<Tensor<1, 3>> omega_1;
 };
 
-
-/**
- * @brief Set the force and torque to 0 for each particle.
- *
- * @tparam dim Integer that denotes the number of spatial dimensions.
- * @param particle_handler Storage of particles and their accessor functions.
- * @param torque Vector of torques acting on each particle.
- * @param force Vector of forces acting on each particle.
- */
-template <int dim>
-void
-reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::vector<Tensor<1, 3>>       &torque,
-                   std::vector<Tensor<1, 3>>       &force)
-{
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
-    {
-      // Getting id of particle as local variable
-      unsigned int particle_id = particle->get_id();
-
-      // Reinitializing forces and torques of particles in the system
-      force[particle_id][0] = 0;
-      force[particle_id][1] = 0;
-      force[particle_id][2] = 0;
-
-      torque[particle_id][0] = 0;
-      torque[particle_id][1] = 0;
-      torque[particle_id][2] = 0;
-    }
-}
-
 /**
  * @brief Update the velocity tensors with the values from the PropertiesIndex.
  *
@@ -172,12 +139,13 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   set_particle_properties<dim, PropertiesIndex>(
     pit_1, p.type[1], p.diameter[1], p.mass[1], p.velocity[1], p.omega[1]);
 
-  ParticleInteractionOutcomes<PropertiesIndex> outcome;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
   std::vector<double>                          MOI;
   particle_handler.sort_particles_into_subdomains_and_cells();
-  outcome.resize_interaction_containers(
-    particle_handler.get_max_local_particle_index());
-  MOI.resize(outcome.force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -199,8 +167,8 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
   double             distance;
   Point<3>          &position_0 = particle_0->get_location();
   Point<3>          &position_1 = particle_1->get_location();
-  Tensor<1, 3>      &force_0    = outcome.force[particle_0->get_id()];
-  Tensor<1, 3>      &torque_0   = outcome.torque[particle_0->get_id()];
+  Tensor<1, 3>      &force_0    = contact_outcome.force[particle_0->get_id()];
+  Tensor<1, 3>      &torque_0   = contact_outcome.torque[particle_0->get_id()];
   Tensor<1, 3>       tangential_displacement{{0, 0, 0}};
   Tensor<1, 3>       velocity_0;
   Tensor<1, 3>       velocity_1;
@@ -220,8 +188,9 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
 
   for (unsigned int iteration = 0; iteration < max_iteration; ++iteration)
     {
-      // Reinitializing forces
-      reinitialize_force(particle_handler, outcome.torque, outcome.force);
+      // Reinitializing contact outcomes
+      reinitialize_contact_outcomes<dim, PropertiesIndex>(particle_handler,
+                                                          contact_outcome);
 
       contact_manager.update_local_particles_in_cells(particle_handler);
 
@@ -244,7 +213,7 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
         contact_manager.get_local_ghost_periodic_adjacent_particles(),
         contact_manager.get_ghost_local_periodic_adjacent_particles(),
         dt,
-        outcome);
+        contact_outcome);
 
       distance = position_0.distance(position_1);
 
@@ -309,8 +278,12 @@ simulate_full_contact(parallel::distributed::Triangulation<dim> &triangulation,
         }
 
       // Integration
-      integrator_object.integrate(
-        particle_handler, g, dt, outcome.torque, outcome.force, MOI);
+      integrator_object.integrate(particle_handler,
+                                  g,
+                                  dt,
+                                  contact_outcome.torque,
+                                  contact_outcome.force,
+                                  MOI);
 
       // Update contacts
       contact_manager.update_contacts();
