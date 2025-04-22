@@ -108,6 +108,15 @@ protected:
   define_dynamic_zero_constraints();
 
   /**
+   * @brief Create coupling operator
+   *
+   * This function is used in the context of rotor-stator configurations,
+   * so that coupling at the rotor-stator interface is added.
+   */
+  void
+  add_coupling();
+
+  /**
    * @brief Assemble the local matrix for a given cell.
    *
    * This function is used by the WorkStream class to assemble
