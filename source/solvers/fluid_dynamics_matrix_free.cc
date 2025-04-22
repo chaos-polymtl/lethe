@@ -2027,6 +2027,78 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 }
 
 template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
+  const DoFHandler<dim>           &temperature_dof_handler,
+  const VectorType                &temperature_present_solution,
+  const PhysicalPropertiesManager &physical_properties_manager)
+{
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    {
+      AssertThrow(false, ExcNotImplemented());
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
+    {
+      const unsigned int min_level = this->minlevel;
+      const unsigned int max_level = this->maxlevel;
+
+      this->temperature_dof_handlers.resize(min_level, max_level);
+
+      for (unsigned int l = min_level; l <= max_level; l++)
+        {
+          this->temperature_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->temperature_dof_handlers[l].distribute_dofs(
+            temperature_dof_handler.get_fe());
+        }
+
+      this->transfers_temperature.resize(min_level, max_level);
+
+      for (unsigned int l = min_level; l < max_level; l++)
+        {
+          this->transfers_temperature[l + 1].reinit(
+            this->temperature_dof_handlers[l + 1],
+            this->temperature_dof_handlers[l],
+            {},
+            {});
+        }
+
+      this->mg_transfer_gc_temperature =
+        std::make_shared<GCTransferType>(this->transfers_temperature);
+
+      this->mg_transfer_gc_temperature->build(
+        temperature_dof_handler, [&](const auto l, auto &vec) {
+          vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
+                     DoFTools::extract_locally_active_dofs(
+                       this->temperature_dof_handlers[l]),
+                     this->temperature_dof_handlers[l].get_mpi_communicator());
+        });
+
+      MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
+                                                          this->maxlevel);
+
+      this->mg_transfer_gc_temperature->interpolate_to_mg(
+        temperature_dof_handler,
+        mg_temperature_solution,
+        temperature_present_solution);
+
+      for (unsigned int l = min_level; l <= max_level; l++)
+        {
+          mg_temperature_solution[l].update_ghost_values();
+
+          this->mg_operators[l]->compute_buoyancy_term(
+            mg_temperature_solution[l],
+            this->temperature_dof_handlers[l],
+            physical_properties_manager);
+        }
+    }
+}
+
+template <int dim>
 FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
   SimulationParameters<dim> &nsparam)
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
@@ -2607,6 +2679,14 @@ template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::initialize_GMG()
 {
+  // Initialize everything related to heat transfer within the MG algorithm
+  if (this->multiphysics->get_active_physics().size() > 1)
+    dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
+      ->initialize_auxiliary_physics(
+        *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
+        this->temperature_present_solution,
+        this->simulation_parameters.physical_properties_manager);
+
   dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
     ->initialize(this->simulation_control,
                  this->flow_control,

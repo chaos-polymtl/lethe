@@ -219,6 +219,12 @@ public:
 
   /**
    * @brief Precompute buoyancy term for heat-transfer coupling.
+   *
+   * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
+   * @param[in] temperature_present_solution Present solution of the temperature
+   * as given by the multiphysics interface.
+   * @param[in] physical_properties_manager Properties manager to extract
+   * thermal expansion coefficient and the reference temperature.
    */
   void
   compute_buoyancy_term(
