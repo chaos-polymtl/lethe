@@ -1315,7 +1315,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       Tensor<1, dim, VectorizedArray<number>> source_value;
 
       // Evaluate source term function if enabled
-      if (this->forcing_function)
+      if (!this->buoyancy_term.empty())
+        source_value = this->buoyancy_term(cell, q);
+      else if (this->forcing_function)
         source_value = this->forcing_terms(cell, q);
 
       // Add to source term the dynamic flow control force (zero if not
@@ -1538,7 +1540,9 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           Tensor<1, dim, VectorizedArray<number>> source_value;
 
           // Evaluate source term function if enabled
-          if (this->forcing_function)
+          if (!this->buoyancy_term.empty())
+            source_value = this->buoyancy_term(cell, q);
+          else if (this->forcing_function)
             source_value = this->forcing_terms(cell, q);
 
           // Add to source term the dynamic flow control force (zero if not
