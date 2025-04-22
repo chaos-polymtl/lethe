@@ -4,6 +4,7 @@
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -467,6 +468,20 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
               "stabilization will lead to an unstable solver that is unable to converge");
         }
     }
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::add_coupling()
+{
+  std::shared_ptr<CouplingOperator<dim, 1, double>> coupling_operator =
+    std::make_shared<CouplingOperator<dim, 1, double>>(
+      *this->mapping,
+      this->dof_handler,
+      this->nonzero_constraints,
+      *this->cell_quadrature,
+      this->simulation_parameters.mortar,
+      this->simulation_parameters.mesh);
 }
 
 template <int dim>
@@ -1650,6 +1665,9 @@ FluidDynamicsMatrixBased<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
   this->update_multiphysics_time_average_solution();
+
+  if (this->simulation_parameters.mortar.enable)
+    add_coupling();
 
   while (this->simulation_control->integrate())
     {
