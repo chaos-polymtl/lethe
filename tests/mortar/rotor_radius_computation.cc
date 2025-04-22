@@ -40,8 +40,8 @@ test()
   unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
   unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
-  const unsigned int dim                  = 2;
-  const unsigned int mapping_degree       = 3;
+  const unsigned int dim            = 2;
+  const unsigned int mapping_degree = 3;
 
   Parameters::Mesh                       mesh_parameters;
   Parameters::Mortar<dim>                mortar_parameters;
@@ -90,46 +90,49 @@ test()
 
   // Check faces at the rotor-stator interface
   deallog << "Computed radius" << std::endl;
-  for (const auto &face :triangulation.active_face_iterators())
+  for (const auto &face : triangulation.active_face_iterators())
     {
       if (face->at_boundary())
         {
           if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
             {
               n_subdivisions++;
-              radius_vec.emplace_back(sqrt(
-                (face->center()[0] - mortar_parameters.center_of_rotation[0]) *
-                  (face->center()[0] -
-                   mortar_parameters.center_of_rotation[0]) +
-                (face->center()[1] - mortar_parameters.center_of_rotation[1]) *
-                  (face->center()[1] -
-                   mortar_parameters.center_of_rotation[1])));
-              deallog << sqrt(
-                (face->center()[0] - mortar_parameters.center_of_rotation[0]) *
-                  (face->center()[0] -
-                   mortar_parameters.center_of_rotation[0]) +
-                (face->center()[1] - mortar_parameters.center_of_rotation[1]) *
-                  (face->center()[1] -
-                   mortar_parameters.center_of_rotation[1])) << std::endl;
+              for (unsigned int vertex_index = 0;
+                   vertex_index < face->n_vertices();
+                   vertex_index++)
+                {
+                  auto v = face->vertex(vertex_index);
+                  radius_vec.emplace_back(sqrt(
+                    pow((v[0] - mortar_parameters.center_of_rotation[0]), 2) +
+                    pow((v[1] - mortar_parameters.center_of_rotation[1]), 2)));
+                  deallog << sqrt(pow((v[0] -
+                                       mortar_parameters.center_of_rotation[0]),
+                                      2) +
+                                  pow((v[1] -
+                                       mortar_parameters.center_of_rotation[1]),
+                                      2))
+                          << std::endl;
+                }
             }
         }
     }
 
   auto diff = std::abs(*std::max_element(radius_vec.begin(), radius_vec.end()) -
-  *std::min_element(radius_vec.begin(), radius_vec.end()));
+                       *std::min_element(radius_vec.begin(), radius_vec.end()));
 
   deallog << "difference " << diff << std::endl;
   deallog << "tolerance " << tolerance << std::endl;
 
-  AssertThrow(diff < tolerance,
+  AssertThrow(
+    diff < tolerance,
     ExcMessage(
       "The computed radius of the rotor mesh has a variation greater than the tolerance across the rotor domain, meaning that the prescribed center of rotation and the rotor geometry are not in accordance."));
 
   double radius_rotor =
     std::reduce(radius_vec.begin(), radius_vec.end()) / radius_vec.size();
-  
+
   deallog << "Final value " << radius_rotor << std::endl;
-  
+
   // Generate vtu file
   DataOut<dim>       data_out;
   MappingQ<dim, dim> mapping(mapping_degree);
