@@ -33,6 +33,9 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
     set initial angular velocity                       = 0.0, 0.0, 0.0
     set insertion maximum offset                       = 1.
     set insertion prn seed                             = 1
+    subsection initial temperature function
+        set Function expression = 0.
+    end
 
     # If method = list
     set list x                                         = 0.
@@ -45,6 +48,7 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
     set list omega y                                   = 0.
     set list omega z                                   = 0.
     set list diameters                                 = 0.
+    set list temperatures                              = 0.
 
     # If method = file
     set list of input files                            = particles.input
@@ -102,6 +106,8 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 
 * ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
+* ``initial temperature function`` defines in a subsection the initial temperature of particles (in °C) according to their position.
+
 .. note::
     Since the ``insertion info`` subsection is valid for all particle types, by using ``initial velocity`` or ``initial angular velocity`` the given conditions are applied to all particles, regardless of the type.
 
@@ -124,6 +130,8 @@ The ``plane`` insertion method inserts particles at the centroid of insertion ce
 
 * ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
+* ``initial temperature function`` defines in a subsection the initial temperature of particles (in °C) according to their position.
+
 --------------------
 List
 --------------------
@@ -145,6 +153,8 @@ The ``list`` insertion method insert particles at precis coordinates with specif
 
 * ``list diameters`` defines the diameters of each particles respectively following the same logic as the insertion coordinates.
 
+* ``list temperatures`` defines the temperatures of each particles respectively following the same logic as the insertion coordinates.
+
 ---------------------
 File
 ---------------------
@@ -152,9 +162,9 @@ The ``file`` insertion method inserts particles in a similar way to the ``list``
 
 .. code-block:: text
 
-    p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters;
-    0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
-    1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
+    p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters;   T;
+    0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2; 0.0;
+    1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2; 0.0;
 
 Each line is associated with a particle and its properties. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with any script. An other option is to use the python code ``extract-particles-properties-from-vtu.py`` in ``lethe/contrib/preprocessing/`` directory. This code extracts particle properties from the last vtu file from a given simulation.
 
