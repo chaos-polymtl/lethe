@@ -32,7 +32,7 @@ template = templateEnv.get_template(PRM_FILE)
 # Generation of different cases
 
 for poly_deg_u in poly_deg:
-    for poly_deg_p in  range(1, int(poly_deg_u)+1):
+    for poly_deg_p in  range(max(int(poly_deg_u-1),1), int(poly_deg_u)+1):
 
         case_folder_name = f'{CASE_PREFIX}' + 'degu_' + f'{poly_deg_u:.0f}' + '_degp_' + f'{poly_deg_p:.0f}'
 
