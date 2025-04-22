@@ -445,6 +445,14 @@ protected:
   virtual void
   update_solutions_for_multiphysics() override;
 
+
+  /**
+   * @brief  Provide present multiphysics solutions from the multiphysics
+   * interface to the fluid dynamics.
+   */
+  virtual void
+  update_solutions_for_fluid_dynamics() override;
+
   /**
    * @brief Calculate and store time derivatives of previous solutions according to
    * time-stepping scheme to use them in the operator.
@@ -585,6 +593,12 @@ protected:
    *
    */
   std::vector<TrilinosWrappers::MPI::Vector> multiphysics_previous_solutions;
+
+  /**
+   * @brief Vector storing the present temperature solution from the heat transfer solver.
+   *
+   */
+  VectorType temperature_present_solution;
 };
 
 #endif

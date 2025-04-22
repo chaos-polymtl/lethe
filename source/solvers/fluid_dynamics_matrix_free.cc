@@ -444,6 +444,24 @@ convert_vector_dealii_to_trilinos(
   out.import_elements(rwv, VectorOperation::insert);
 }
 
+/**
+ * @brief Helper function that allows to convert Trilinos vectors to deal.II vectors.
+ *
+ * @tparam number Abstract type for number across the class (i.e., double).
+ * @param out Destination LinearAlgebra::distributed::Vector<number> vector.
+ * @param in Source TrilinosWrappers::MPI::Vector vector.
+ */
+template <typename number>
+void
+convert_vector_trilinos_to_dealii(
+  LinearAlgebra::distributed::Vector<number> &out,
+  const TrilinosWrappers::MPI::Vector        &in)
+{
+  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+  rwv.reinit(in);
+  out.import_elements(rwv, VectorOperation::insert);
+}
+
 namespace dealii
 {
   /**
@@ -2101,6 +2119,15 @@ FluidDynamicsMatrixFree<dim>::solve()
               this->flow_control.get_beta());
         }
 
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          update_solutions_for_fluid_dynamics();
+          this->system_operator->compute_buoyancy_term(
+            temperature_present_solution,
+            *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
+            this->simulation_parameters.physical_properties_manager);
+        }
+
       this->iterate();
       this->postprocess(false);
       this->finish_time_step();
@@ -2731,6 +2758,40 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
 #endif
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
+{
+  TimerOutput::Scope t(this->computing_timer,
+                       "Update solutions for fluid dynamics");
+
+  // Get present solution and dof handler of the heat transfer
+  const auto &heat_solution =
+    *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+
+  const auto &heat_dof_handler =
+    *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+  // Copy solution to temporary vector
+  TrilinosWrappers::MPI::Vector temp_heat_solution;
+  temp_heat_solution.reinit(heat_dof_handler.locally_owned_dofs(),
+                            this->mpi_communicator);
+  temp_heat_solution = heat_solution;
+
+  // Initialize deal.II vector to store solution
+  this->temperature_present_solution.reinit(
+    heat_dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_active_dofs(heat_dof_handler),
+    this->mpi_communicator);
+
+  // Perform copy between two vector types
+  convert_vector_trilinos_to_dealii(this->temperature_present_solution,
+                                    temp_heat_solution);
+
+  // Update ghost values for deal.II vector
+  this->temperature_present_solution.update_ghost_values();
 }
 
 template <int dim>

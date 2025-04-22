@@ -315,6 +315,62 @@ NavierStokesOperatorBase<dim, number>::compute_forcing_term()
 }
 
 template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
+  const VectorType                &temperature_solution,
+  const DoFHandler<dim>           &temperature_dof_handler,
+  const PhysicalPropertiesManager &physical_properties_manager)
+{
+  const auto thermal_expansion_model =
+    physical_properties_manager.get_thermal_expansion();
+
+  const double reference_temperature =
+    physical_properties_manager.get_reference_temperature();
+
+  const unsigned int n_cells =
+    matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
+
+  FEValues<dim> fe_values(*(this->matrix_free.get_mapping_info().mapping),
+                          temperature_dof_handler.get_fe(),
+                          this->matrix_free.get_quadrature(),
+                          update_values);
+
+  buoyancy_term.reinit(n_cells, fe_values.n_quadrature_points);
+
+  std::vector<number> cell_temperature_solution(fe_values.n_quadrature_points);
+  std::vector<double> thermal_expansion(fe_values.n_quadrature_points);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      for (auto lane = 0u;
+           lane < matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          fe_values.reinit(
+            matrix_free.get_cell_iterator(cell, lane)
+              ->as_dof_handler_iterator(temperature_dof_handler));
+
+          fe_values.get_function_values(temperature_solution,
+                                        cell_temperature_solution);
+
+          thermal_expansion_model->vector_value({}, thermal_expansion);
+
+          for (const auto q : fe_values.quadrature_point_indices())
+            {
+              const auto scaling =
+                1 - thermal_expansion[q] *
+                      (cell_temperature_solution[q] - reference_temperature);
+
+              for (unsigned int c = 0; c < dim; ++c)
+                buoyancy_term[cell][q][c][lane] =
+                  forcing_terms[cell][q][c][lane] * scaling;
+            }
+        }
+    }
+}
+
+
+template <int dim, typename number>
 types::global_dof_index
 NavierStokesOperatorBase<dim, number>::m() const
 {
