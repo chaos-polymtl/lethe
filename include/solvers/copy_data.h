@@ -206,8 +206,12 @@ public:
   reallocate(const unsigned int new_n_q_points, const unsigned int new_n_dofs)
   {
     strong_residual.resize(new_n_q_points);
-    strong_jacobian.resize(new_n_q_points,
-                           std::vector<Tensor<1, dim>>(new_n_dofs));
+    strong_jacobian.resize(new_n_q_points);
+
+    for (unsigned int q = 0; q < new_n_q_points; q++)
+      {
+        strong_jacobian[q].resize(new_n_dofs);
+      }
 
     local_matrix = FullMatrix<double>(new_n_dofs);
     local_rhs.reinit(new_n_dofs);

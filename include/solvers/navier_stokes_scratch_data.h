@@ -1078,7 +1078,11 @@ public:
                    std::shared_ptr<Function<dim>> forcing_function,
                    Tensor<1, dim>                 beta_force,
                    const unsigned int             start,
-                   const FEValues<dim>           &reinited_fe_falues_to_append)
+                   const FEValues<dim>           &reinited_fe_falues_to_append,
+                   std::vector<double>           &M_0_x_q,
+                   std::vector<double>           &M_1_x_q,
+                   std::vector<Tensor<1, dim>>   &grad_M_0_x_q,
+                   std::vector<Tensor<1, dim>>   &grad_M_1_x_q)
   {
     const unsigned int append_n_q_points =
       reinited_fe_falues_to_append.get_quadrature().size();
@@ -1216,8 +1220,11 @@ public:
             }
         }
 
+    std::cout << "Append FEValues" << std::endl;
     for (unsigned int q = 0; q < append_n_q_points; ++q)
       {
+        std::cout << "q = " << q + start << std::endl;
+
         this->JxW[q + start] = reinited_fe_falues_to_append.JxW(q);
         for (unsigned int k = 0; k < this->fe_values.get_fe().n_dofs_per_cell();
              ++k)
@@ -1239,11 +1246,21 @@ public:
               reinited_fe_falues_to_append[pressure].value(k, q);
             this->grad_phi_p[q + start][k] =
               reinited_fe_falues_to_append[pressure].gradient(k, q);
+
+            std::cout << "k = " << k << std::endl;
+            std::cout << "this->phi_u[q + start][k] = "
+                      << this->phi_u[q + start][k] << std::endl;
+            std::cout << "this->phi_p[q + start][k] = "
+                      << this->phi_p[q + start][k] << std::endl;
+            std::cout << "this->grad_phi_p[q + start][k] = "
+                      << this->grad_phi_p[q + start][k] << std::endl;
           }
+
 
         // Enrichment dofs
         const unsigned int dof_start =
           this->fe_values.get_fe().n_dofs_per_cell();
+
         for (unsigned int k = 0; k < this->n_dofs - dof_start; ++k)
           {
             this->phi_u[q + start][k + dof_start]      = 0;
@@ -1252,11 +1269,140 @@ public:
             this->hess_phi_u[q + start][k + dof_start] = 0;
             for (int d = 0; d < dim; ++d)
               this->laplacian_phi_u[q + start][k + dof_start][d] = 0;
-
-            this->phi_p[q + start][k + dof_start]      = 0;
-            this->grad_phi_p[q + start][k + dof_start] = 0;
           }
+
+        this->phi_p[q + start][dof_start]      = M_0_x_q[q + start];
+        this->grad_phi_p[q + start][dof_start] = grad_M_0_x_q[q + start];
+
+        this->phi_p[q + start][dof_start + 1]      = M_1_x_q[q + start];
+        this->grad_phi_p[q + start][dof_start + 1] = grad_M_1_x_q[q + start];
+
+        std::cout << "phi_p[q + start][dof_start] = "
+                  << phi_p[q + start][dof_start] << std::endl;
+        std::cout << "phi_p[q + start][dof_start+1] = "
+                  << phi_p[q + start][dof_start + 1] << std::endl;
+        std::cout << "grad_phi_p[q + start][dof_start] = "
+                  << grad_phi_p[q + start][dof_start] << std::endl;
+        std::cout << "grad_phi_p[q + start][dof_start+1] = "
+                  << grad_phi_p[q + start][dof_start + 1] << std::endl;
       }
+  }
+
+  void
+  compute_enrichment_shape_functions(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                    inside_n_q_points,
+    const unsigned int                                    outside_n_q_points,
+    const FEValues<dim>         &reinited_inside_fe_values,
+    const FEValues<dim>         &reinited_outside_fe_values,
+    std::vector<double>         &M_0_x_q,
+    std::vector<double>         &M_1_x_q,
+    std::vector<Tensor<1, dim>> &grad_M_0_x_q,
+    std::vector<Tensor<1, dim>> &grad_M_1_x_q)
+  {
+    typename DoFHandler<dim>::active_cell_iterator cell_level_set(
+      &(dof_handler_level_set->get_triangulation()),
+      cell->level(),
+      cell->index(),
+      &(*(this->dof_handler_level_set)));
+
+      std::map<types::global_dof_index, Point<dim>> dof_support_points =
+        DoFTools::map_dofs_to_support_points(reinited_inside_fe_values.get_mapping(), *(this->dof_handler_level_set));
+
+      const unsigned int n_dofs_per_cell_level_set =
+        dof_handler_level_set->get_fe().n_dofs_per_cell();
+
+      std::vector<double> dof_values_level_set(n_dofs_per_cell_level_set);
+      std::vector<types::global_dof_index> dof_indices(n_dofs_per_cell_level_set);
+
+      cell_level_set->get_dof_values(*this->level_set,
+                                     dof_values_level_set.begin(),
+                                     dof_values_level_set.end());
+      cell_level_set->get_dof_indices(dof_indices);
+      for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+        {
+          std::cout << "j = " << j << std::endl;
+          std::cout << "dof_values_level_set[j] = " << dof_values_level_set[j]
+                    << std::endl;
+          std::cout << "dof_support_points[j] = "
+                    << dof_support_points.at(dof_indices[j]) << std::endl;
+        }
+      std::cout << "Inside" << std::endl;
+      for (unsigned int q = 0; q < inside_n_q_points; q++)
+        {
+          double         s_x_q_inside      = 0.0;
+          Tensor<1, dim> grad_s_x_q_inside = Tensor<1, dim>();
+
+          for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+            {
+              const double solution_J = dof_values_level_set[j];
+              std::cout << "solution_J = " << solution_J << std::endl;
+              if (solution_J > 0.0)
+                {
+                  s_x_q_inside += reinited_inside_fe_values[pressure].value(j, q);
+                  grad_s_x_q_inside +=
+                    reinited_inside_fe_values[pressure].gradient(j, q);
+                }
+            }
+          M_0_x_q[q] = 0.0;
+          M_1_x_q[q] = s_x_q_inside;
+
+          grad_M_0_x_q[q] = 0.0;
+          grad_M_1_x_q[q] = grad_s_x_q_inside;
+
+          std::cout << "q = " << q << std::endl;
+          std::cout << "x_q = " << reinited_inside_fe_values.quadrature_point(q)
+                    << std::endl;
+
+          std::cout << "M_0_x_q[q] = " << M_0_x_q[q] << std::endl;
+          std::cout << "M_1_x_q[q] = " << M_1_x_q[q] << std::endl;
+          std::cout << "grad_M_0_x_q[q] = " << grad_M_0_x_q[q] << std::endl;
+          std::cout << "grad_M_1_x_q[q] = " << grad_M_1_x_q[q] << std::endl;
+        }
+      std::cout << "Outside" << std::endl;
+      for (unsigned int q = 0; q < outside_n_q_points; q++)
+        {
+          double         s_x_q_outside      = 0.0;
+          Tensor<1, dim> grad_s_x_q_outside = Tensor<1, dim>();
+
+          for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+            {
+              const double solution_J = dof_values_level_set[j];
+              if (solution_J > 0.0)
+                {
+                  s_x_q_outside += reinited_outside_fe_values[pressure].value(j, q);
+                  grad_s_x_q_outside +=
+                    reinited_outside_fe_values[pressure].gradient(j, q);
+                }
+            }
+          M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q] =
+            1.0 - s_x_q_outside;
+          M_1_x_q[reinited_inside_fe_values.n_quadrature_points + q] = 0.0;
+
+          grad_M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q] =
+            -grad_s_x_q_outside;
+          grad_M_1_x_q[reinited_inside_fe_values.n_quadrature_points + q] = 0.0;
+
+          std::cout << "q = "
+                    << q + reinited_inside_fe_values.n_quadrature_points
+                    << std::endl;
+          std::cout
+            << "M_0_x_q[q] = "
+            << M_0_x_q[q + reinited_inside_fe_values.n_quadrature_points]
+            << std::endl;
+          std::cout
+            << "M_1_x_q[q] = "
+            << M_1_x_q[q + reinited_inside_fe_values.n_quadrature_points]
+            << std::endl;
+          std::cout
+            << "grad_M_0_x_q[q] = "
+            << grad_M_0_x_q[q + reinited_inside_fe_values.n_quadrature_points]
+            << std::endl;
+          std::cout
+            << "grad_M_1_x_q[q] = "
+            << grad_M_1_x_q[q + reinited_inside_fe_values.n_quadrature_points]
+            << std::endl;
+        }
   }
 
   template <typename VectorType>
@@ -1268,83 +1414,110 @@ public:
                      Tensor<1, dim>                 beta_force,
                      const double                   pressure_scaling_factor)
   {
-    // const NonMatching::LocationToLevelSet cell_location =
-    // mesh_classifier->location_to_level_set(cell);
+      // const NonMatching::LocationToLevelSet cell_location =
+      // mesh_classifier->location_to_level_set(cell);
 
-    // if (cell_location == NonMatching::LocationToLevelSet::intersected )
-    // {
-    //   std::cout << "Ahhhh"<< std::endl;
-    // }
-    // std::cout << "Ahhhh"<< sreinit_intd::endl;
+      // if (cell_location == NonMatching::LocationToLevelSet::intersected )
+      // {
+      //   std::cout << "Ahhhh"<< std::endl;
+      // }
+      // std::cout << "Ahhhh"<< sreinit_intd::endl;
 
-    // this->mesh_classifier->reclassify();
-
-
-    this->non_matching_fe_values->reinit(cell);
-    this->fe_values.reinit(cell);
-
-    // std::cout << "Hiiiii"<< std::endl;
-
-    unsigned int       new_n_q_points = 0;
-    const unsigned int new_n_dofs =
-      this->fe_values.get_fe().n_dofs_per_cell() + 2;
-
-    const std::optional<FEValues<dim>> &inside_fe_values =
-      this->non_matching_fe_values->get_inside_fe_values();
-
-    unsigned int inside_n_q_points = 0;
-
-    if (inside_fe_values)
-      inside_n_q_points = inside_fe_values->get_quadrature().size();
-
-    unsigned int outside_n_q_points = 0;
-
-    const std::optional<FEValues<dim>> &outside_fe_values =
-      this->non_matching_fe_values->get_outside_fe_values();
-
-    if (outside_fe_values)
-      outside_n_q_points = outside_fe_values->get_quadrature().size();
-
-    new_n_q_points = inside_n_q_points + outside_n_q_points;
-    // std::cout << "new_n_q_points = " << new_n_q_points << std::endl;
-
-    this->reallocate(new_n_q_points, new_n_dofs);
-
-    if (inside_fe_values)
-      append_fe_values(current_solution,
-                       previous_solutions,
-                       forcing_function,
-                       beta_force,
-                       0,
-                       *inside_fe_values);
-
-    if (outside_fe_values)
-      append_fe_values(current_solution,
-                       previous_solutions,
-                       forcing_function,
-                       beta_force,
-                       inside_n_q_points,
-                       *outside_fe_values);
+      // this->mesh_classifier->reclassify();
 
 
-    auto &fe = this->fe_values.get_fe();
-    for (const unsigned int k : fe_values.dof_indices())
-      {
-        components[k] = fe.system_to_component_index(k).first;
-      }
-    components[fe_values.get_fe().n_dofs_per_cell()]     = dim;
-    components[fe_values.get_fe().n_dofs_per_cell() + 1] = dim;
+      this->non_matching_fe_values->reinit(cell);
+      this->fe_values.reinit(cell);
+
+      // std::cout << "Hiiiii"<< std::endl;
+
+      unsigned int       new_n_q_points = 0;
+      const unsigned int new_n_dofs =
+        this->fe_values.get_fe().n_dofs_per_cell() + 2;
+
+      const std::optional<FEValues<dim>> &inside_fe_values =
+        this->non_matching_fe_values->get_inside_fe_values();
+
+      unsigned int inside_n_q_points = 0;
+
+      if (inside_fe_values)
+        inside_n_q_points = inside_fe_values->get_quadrature().size();
+
+      unsigned int outside_n_q_points = 0;
+
+      const std::optional<FEValues<dim>> &outside_fe_values =
+        this->non_matching_fe_values->get_outside_fe_values();
+
+      if (outside_fe_values)
+        outside_n_q_points = outside_fe_values->get_quadrature().size();
+
+      new_n_q_points = inside_n_q_points + outside_n_q_points;
+      // std::cout << "new_n_q_points = " << new_n_q_points << std::endl;
+
+      this->reallocate(new_n_q_points, new_n_dofs);
+
+      std::vector<double> M_0_x_q(inside_n_q_points + outside_n_q_points, 0.0);
+      std::vector<double> M_1_x_q(inside_n_q_points + outside_n_q_points, 0.0);
+
+      std::vector<Tensor<1, dim>> grad_M_0_x_q(inside_n_q_points +
+                                                 outside_n_q_points,
+                                               Tensor<1, dim>());
+      std::vector<Tensor<1, dim>> grad_M_1_x_q(inside_n_q_points +
+                                                 outside_n_q_points,
+                                               Tensor<1, dim>());
+
+      compute_enrichment_shape_functions(cell,
+                                         inside_n_q_points,
+                                         outside_n_q_points,
+                                         *inside_fe_values,
+                                         *outside_fe_values,
+                                         M_0_x_q,
+                                         M_1_x_q,
+                                         grad_M_0_x_q,
+                                         grad_M_1_x_q);
+      if (inside_fe_values)
+        append_fe_values(current_solution,
+                         previous_solutions,
+                         forcing_function,
+                         beta_force,
+                         0,
+                         *inside_fe_values,
+                         M_0_x_q,
+                         M_1_x_q,
+                         grad_M_0_x_q,
+                         grad_M_1_x_q);
+
+      if (outside_fe_values)
+        append_fe_values(current_solution,
+                         previous_solutions,
+                         forcing_function,
+                         beta_force,
+                         inside_n_q_points,
+                         *outside_fe_values,
+                         M_0_x_q,
+                         M_1_x_q,
+                         grad_M_0_x_q,
+                         grad_M_1_x_q);
 
 
-    double cell_measure =
-      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
-    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
+      auto &fe = this->fe_values.get_fe();
+      for (const unsigned int k : fe_values.dof_indices())
+        {
+          components[k] = fe.system_to_component_index(k).first;
+        }
+      components[fe_values.get_fe().n_dofs_per_cell()]     = dim;
+      components[fe_values.get_fe().n_dofs_per_cell() + 1] = dim;
 
-    this->pressure_scaling_factor = pressure_scaling_factor;
 
-    reinit_boundary_face_values(cell, current_solution);
+      double cell_measure =
+        compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
+      this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
 
-    return {new_n_q_points, new_n_dofs};
+      this->pressure_scaling_factor = pressure_scaling_factor;
+
+      reinit_boundary_face_values(cell, current_solution);
+
+      return {new_n_q_points, new_n_dofs};
   }
 
   // For auxiliary physics solution extrapolation
@@ -1362,14 +1535,15 @@ public:
   /// Values of the kinematic viscosity used in the SUPG and PSPG
   /// stabilizations.
   std::vector<double> kinematic_viscosity_for_stabilization;
-  /// Values of the dynamic viscosity used in the SUPG and PSPG stabilizations.
+  /// Values of the dynamic viscosity used in the SUPG and PSPG
+  /// stabilizations.
   std::vector<double>              dynamic_viscosity_for_stabilization;
   std::vector<double>              thermal_expansion;
   std::vector<double>              grad_kinematic_viscosity_shear_rate;
   std::vector<std::vector<double>> previous_density;
 
-  // Pressure scaling factor to facilitate different scales between velocity and
-  // pressure
+  // Pressure scaling factor to facilitate different scales between velocity
+  // and pressure
   double pressure_scaling_factor;
 
   // For VOF and CH simulations. Present properties for fluid 0 and 1.
@@ -1450,7 +1624,8 @@ public:
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<Tensor<1, dim>>      filtered_phase_gradient_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
-  // This is stored as a shared_ptr because it is only instantiated when needed
+  // This is stored as a shared_ptr because it is only instantiated when
+  // needed
   std::shared_ptr<FEValues<dim>>           fe_values_vof;
   std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
 
@@ -1469,7 +1644,8 @@ public:
   std::vector<double>              void_fraction_values;
   std::vector<std::vector<double>> previous_void_fraction_values;
   std::vector<Tensor<1, dim>>      void_fraction_gradient_values;
-  // This is stored as a shared_ptr because it is only instantiated when needed
+  // This is stored as a shared_ptr because it is only instantiated when
+  // needed
   std::shared_ptr<FEValues<dim>> fe_values_void_fraction;
 
   /**
@@ -1507,7 +1683,8 @@ public:
   std::vector<std::vector<double>>         previous_temperature_values;
   std::vector<Tensor<1, dim>>              temperature_gradients;
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
-  // This is stored as a shared_ptr because it is only instantiated when needed
+  // This is stored as a shared_ptr because it is only instantiated when
+  // needed
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
 
   /**
@@ -1523,7 +1700,8 @@ public:
   std::shared_ptr<CahnHilliardFilterBase>
     cahn_hilliard_filter; // Phase order fraction filter
 
-  // This is stored as a shared_ptr because it is only instantiated when needed
+  // This is stored as a shared_ptr because it is only instantiated when
+  // needed
   std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;
   FEValuesExtractors::Scalar     phase_order;
   FEValuesExtractors::Scalar     chemical_potential;

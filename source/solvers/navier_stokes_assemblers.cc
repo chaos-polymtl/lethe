@@ -15,6 +15,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  
+  std::cout << "Boooooooop" <<std::endl;
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;

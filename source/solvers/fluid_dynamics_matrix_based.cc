@@ -758,41 +758,95 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
 {
   if (!copy_data.cell_is_local)
     return;
-    
+
   if (this->simulation_parameters.fem_parameters.pressure_enrichment
         .level_set_type != Parameters::LevelSetType::none)
     {
-
       const unsigned int n_dofs = this->fe->n_dofs_per_cell();
+
+      // Enriched cell (intersected cell)
+      // std::cout<< "n_dofs = " << n_dofs << std::endl;
+      // std::cout<< "copy_data.local_matrix.n() = " <<
+      // copy_data.local_matrix.n() << std::endl;
 
       if (copy_data.local_matrix.n() != n_dofs)
         {
-          
           LAPACKFullMatrix<double> ns_bloc = LAPACKFullMatrix<double>(n_dofs);
-          
+          std::cout << "Local matrix = " << std::endl;
+          copy_data.local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
+
           ns_bloc.fill(copy_data.local_matrix, 0, 0, 0, 0);
-          
-          LAPACKFullMatrix<double> ns_enrichment_bloc =  LAPACKFullMatrix<double>(n_dofs, 2);
-          
+
+          LAPACKFullMatrix<double> ns_enrichment_bloc =
+            LAPACKFullMatrix<double>(n_dofs, 2);
+
           ns_enrichment_bloc.fill(copy_data.local_matrix, 0, 0, 0, n_dofs);
-          
-          LAPACKFullMatrix<double> enrichment_ns_bloc =  LAPACKFullMatrix<double>(2, n_dofs);
-          
+
+          LAPACKFullMatrix<double> enrichment_ns_bloc =
+            LAPACKFullMatrix<double>(2, n_dofs);
+
           enrichment_ns_bloc.fill(copy_data.local_matrix, 0, 0, n_dofs, 0);
-          
-          LAPACKFullMatrix<double> enrichment_enrichment_bloc =  LAPACKFullMatrix<double>(2, 2);
-          
-          enrichment_enrichment_bloc.fill(copy_data.local_matrix, 0, 0, n_dofs, n_dofs);
-            
+
+          LAPACKFullMatrix<double> enrichment_bloc =
+            LAPACKFullMatrix<double>(2, 2);
+
+          enrichment_bloc.fill(copy_data.local_matrix, 0, 0, n_dofs, n_dofs);
+
+          LAPACKFullMatrix<double> tmp_condensed_copy_data_local_matrix =
+            LAPACKFullMatrix<double>(ns_bloc);
+
+          std::cout << "Enrichment matrix = " << std::endl;
+
+          enrichment_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
+
+          // enrichment_bloc.invert();
+
+          LAPACKFullMatrix<double>
+            inverse_enrichment_bloc_x_enrichment_ns_bloc =
+              LAPACKFullMatrix<double>(2, n_dofs);
+
+          LAPACKFullMatrix<double>
+            ns_enrichment_bloc_x_inverse_enrichment_bloc_x_enrichment_ns_bloc =
+              LAPACKFullMatrix<double>(n_dofs, n_dofs);
+
+
+          enrichment_bloc.mmult(inverse_enrichment_bloc_x_enrichment_ns_bloc,
+                                enrichment_ns_bloc);
+
+          ns_enrichment_bloc.mmult(
+            ns_enrichment_bloc_x_inverse_enrichment_bloc_x_enrichment_ns_bloc,
+            inverse_enrichment_bloc_x_enrichment_ns_bloc);
+
+          tmp_condensed_copy_data_local_matrix.add(
+            -1.0,
+            ns_enrichment_bloc_x_inverse_enrichment_bloc_x_enrichment_ns_bloc);
+
+          FullMatrix<double> condensed_copy_data_local_matrix =
+            FullMatrix<double>(n_dofs, n_dofs);
+
+          condensed_copy_data_local_matrix =
+            tmp_condensed_copy_data_local_matrix;
+
+          const AffineConstraints<double> &constraints_used =
+            (!this->simulation_parameters.constrain_solid_domain.enable) ?
+              this->zero_constraints :
+              this->dynamic_zero_constraints;
+          constraints_used.distribute_local_to_global(
+            condensed_copy_data_local_matrix,
+            copy_data.local_dof_indices,
+            this->system_matrix);
         }
     }
-  const AffineConstraints<double> &constraints_used =
-    (!this->simulation_parameters.constrain_solid_domain.enable) ?
-      this->zero_constraints :
-      this->dynamic_zero_constraints;
-  constraints_used.distribute_local_to_global(copy_data.local_matrix,
-                                              copy_data.local_dof_indices,
-                                              this->system_matrix);
+  else
+    {
+      const AffineConstraints<double> &constraints_used =
+        (!this->simulation_parameters.constrain_solid_domain.enable) ?
+          this->zero_constraints :
+          this->dynamic_zero_constraints;
+      constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                                  copy_data.local_dof_indices,
+                                                  this->system_matrix);
+    }
 }
 
 
