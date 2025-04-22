@@ -53,7 +53,7 @@ In the current example, we choose the following analytical solution:
  
 The analytical solution is shown in the following figure:
 
-.. image:: Images/analytical_solution.png
+.. image:: images/analytical_solution.png
     :alt: The analytical solution: x-component of the velocity (upper-left), y-component of the velocity (upper-right), and pressure (bottom)
     :align: center
     :name: analytical_solution
@@ -210,7 +210,7 @@ Once the simplex simulations are completed, the script ``organize_output.py`` mu
 
   python3 organize_output.py
 
- After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single ``L2Error.dat`` file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.
+After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single ``L2Error.dat`` file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.
 
 -----------------------
 Results and Discussion
