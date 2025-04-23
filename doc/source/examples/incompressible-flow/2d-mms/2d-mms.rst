@@ -249,7 +249,7 @@ The following figure shows the variation of  :math:`|e_p|_2` with :math:`h`
 
 In both plots, the continuous lines correspond to the quadrilateral mesh, while the dashed lines represent the simplex mesh. It can be seen that the velocity converges to the order :math:`(k_v+1)` for a velocity shape function of degree :math:`k_v`, except for the case :math:`\{Q_3-Q_1\}`.
 
-As for the pressure, it converges at the second-order for the shape functions pairs :math:`\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2\}` and :math:`\in \{P_1-P_1, P_2-Q_1, P_2-P_2\}`, and to the third-order for combinations :math:`\in \{Q_3-Q_2, Q_3-Q_3\}`. 
+As for the pressure, it converges at the second-order for the shape functions pairs :math:`\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2\}` and :math:`\in \{P_1-P_1, P_2-P_1, P_2-P_2\}`, and to the third-order for combinations :math:`\in \{Q_3-Q_2, Q_3-Q_3\}`. 
 
 
 Finally, for the same degree of the velocity and pressure approximations and the same mesh resolution, the error is smaller for a quadrilateral mesh, for both the pressure and velocity fields.  
