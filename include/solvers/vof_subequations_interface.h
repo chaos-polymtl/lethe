@@ -330,9 +330,7 @@ public:
     const GlobalVectorType &vof_filtered_solution_vector,
     DoFHandler<dim>        *dof_handler_vof)
   {
-    // Clear all and reset validity map
-    this->vof_filtered_solution_vector.clear();
-    this->vof_solution_vector.clear();
+    // Reset validity map
     reset_subequations_solutions_validity();
 
     // Set solution values and DoFHandler
