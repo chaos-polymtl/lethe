@@ -2542,16 +2542,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
         this->nonzero_constraints,
         previous_reinitialized_solution_owned);
       this->previous_solutions[0] = previous_reinitialized_solution_owned;
-
-      this->pcout << std::boolalpha
-                  << "The phase_gradient_projection was solved: "
-                  << this->vof_subequations_interface->get_solution_validity(
-                       VOFSubequationsID::phase_gradient_projection)
-                  << std::endl;
-      this->pcout << std::boolalpha << "The curvature_projection was solved: "
-                  << this->vof_subequations_interface->get_solution_validity(
-                       VOFSubequationsID::curvature_projection)
-                  << std::endl;
     }
 
   // Apply filter to solution and set VOF information in the subequation

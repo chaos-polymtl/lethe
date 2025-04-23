@@ -214,13 +214,16 @@ public:
 
   /**
    * @brief Check and return a boolean indicating if the solution of the
-   * subequation corresponds to the set @p vof_filtered_solution_vector.
+   * subequation corresponds to the set @p vof_filtered_solution_vector and/or
+   * @p vof_solution_vector.
    *
    * @param[in] subequation_id Identifier associated with a specific
    * subequation.
    *
-   * @return @p true if the solution of the subequation corresponds to the set
-   * @p vof_filtered_solution_vector. Otherwise @p false.
+   * @return
+   *  - @p true if the solution of the subequation corresponds to the set
+   * @p vof_filtered_solution_vector and/or @p vof_solution_vector.
+   *  - Otherwise, @p false.
    */
   bool
   get_solution_validity(const VOFSubequationsID &subequation_id)
@@ -316,8 +319,11 @@ public:
    * @param[in] vof_filtered_solution_vector Filtered VOF solution vector
    * associated with the subequations to be solved.
    *
-   * @paramp[in] dof_handler_vof Pointer to the DoFHandler associated with the
-   * specified VOF solution.
+   * @param[in] dof_handler_vof Pointer to the DoFHandler associated with the
+   * specified VOF filtered solution.
+   *
+   * @note At the moment, the VOF filtered solution is only used in
+   * VOFPhaseGradientProjection.
    */
   void
   set_vof_filtered_solution_and_dof_handler(
@@ -341,7 +347,7 @@ public:
    * @param[in] vof_solution_vector VOF solution vector associated with the
    * subequations to be solved.
    *
-   * @note At the moment, this solution is only used in
+   * @note At the moment, the VOF unfiltered solution is only used in
    * VOFAlgebraicInterfaceReinitialization.
    */
   void
@@ -370,10 +376,12 @@ public:
   }
 
   /**
-   * @brief Check if subequations_solutions_validity has been reset.
+   * @brief Check if all booleans in subequations_solutions_validity have been
+   * reset to @p false.
    *
-   * @return @p true if all booleans in the map are set to @p false and @p false
-   * if at least one of them is set to @p true
+   * @return
+   * - @p true if all booleans in the map are set to @p false or;
+   * - @p false if at least one of the booleans is set to @p true
    */
   bool
   validity_map_has_been_reset()
@@ -391,10 +399,10 @@ private:
    * @brief Reset all boolean in the validity associated with active
    * subequations to @p false (default) or @p true if specified.
    *
-   * @param[in] reset_value Either @p true or @false (default).
+   * @param[in] reset_value Either @p true or @p false (default).
    *
-   * @note At the moment, reset_value is only set to @p true for the purpose of
-   * outputting the initial condition when user requests it.
+   * @remark At the moment, @p reset_value is only set to @p true for the
+   * purpose of outputting the initial condition when user requests it.
    */
   void
   reset_subequations_solutions_validity(const bool reset_value = false)
@@ -405,20 +413,21 @@ private:
       }
   }
 
-  // Parallel consol output object
+  /// Parallel consol output object
   const ConditionalOStream pcout;
 
-  // VOF DoFHandler associated with solved equations
+  /// VOF DoFHandler associated with solved equations
   DoFHandler<dim> *dof_handler_vof;
 
-  // Filtered VOF solution field associated with solved equations
+  /** Filtered VOF solution field associated with solved equations
+   * @note Used in the computation of VOF phase gradient projection */
   GlobalVectorType vof_filtered_solution_vector;
 
   /** VOF solution field associated with solved equations
-   * @note Used in algebraic reinitialization for debuging puposes */
+   * @note Serves as initial condition in algebraic reinitialization */
   GlobalVectorType vof_solution_vector;
 
-  // Data structure that stores all enabled subequations
+  /// Data structure that stores all enabled subequations
   std::vector<VOFSubequationsID> active_subequations;
 
   /** Subequations are stored within a map of shared pointer to ensure proper

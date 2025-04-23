@@ -51,8 +51,8 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
               this);
         }
     }
-  // Set all solutions as valid to attach solution to output when user request
-  // output of the initial condition
+  // Set all solutions as valid to be able to attach solution to output when
+  // user requests output of the initial condition
   reset_subequations_solutions_validity(true);
 }
 
