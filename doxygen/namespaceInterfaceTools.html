@@ -90,6 +90,8 @@ $(function() {
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">CellWiseFunction</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1InterfaceReconstructionDataOut.html">InterfaceReconstructionDataOut</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">SignedDistanceSolver</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -163,8 +165,8 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">fe_point_evaluation</td><td>FePointEvaluation</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Cell for which the volume is computed</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">cell_dof_values</td><td>Cell DOFs value of the level set field</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">corr</td><td>Correction to apply to the DOF values (constant for all DOFs). It can be used if we want the volume enclosed by the iso-level equal to the calue of the correction.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_dof_level_set_values</td><td>Cell DoF values of the level-set field</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">corr</td><td>Correction to apply to the DOF values (constant for all DoFs). It can be used if we want the volume enclosed by the iso-level equal to the value of the correction.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">n_quad_points</td><td>Number of quadrature points for the volume integration faces</td></tr>
   </table>
   </dd>
@@ -173,7 +175,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00008">8</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00142">InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;::set_active_cell()</a>.</p>
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00146">InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;::set_active_cell()</a>.</p>
 
 </div>
 </div>
@@ -241,6 +243,7 @@ template&lt;int dim, typename VectorType &gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Mapping of the domain</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DofHandler associated to the triangulation on which the volume is computed</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fe</td><td>Finite element</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">level_set_vector</td><td>Level-set vector</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">iso_level</td><td>Given level of the level-set field enclosing the volume of interest</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>MPI communicator</td></tr>
@@ -336,7 +339,7 @@ template&lt;int dim, typename VectorType &gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">iso_level</td><td>Given level of the level-set field defining the interface of interest</td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">interface_reconstruction_vertices</td><td>Cell-wise map of the reconstructed surface vertices. The map contains vectors storing the vertices of the reconstructed surface for each intersected volume cell (dim).</td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">interface_reconstruction_cells</td><td>Cell-wise map of the reconstructed surface cells. The map contains vectors storing the cell (dim-1) of the reconstructed surface for each intersected volume cell (dim).</td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">intersected_dofs</td><td>Set of DOFs that belong to intersected volume cell (dim). </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">intersected_dofs</td><td>Set of DoFs that belong to intersected volume cell (dim). </td></tr>
   </table>
   </dd>
 </dl>
