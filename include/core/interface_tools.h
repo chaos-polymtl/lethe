@@ -204,7 +204,7 @@ namespace InterfaceTools
    *
    * @param[in] cell Cell for which the volume is computed
    *
-   * @param[in] cell_dof_level_set_values Cell DOF values of the level-set field
+   * @param[in] cell_dof_level_set_values Cell DoF values of the level-set field
    *
    * @param[in] corr Correction to apply to the DOF values (constant for all
    * DoFs). It can be used if we want the volume enclosed by the iso-level equal
