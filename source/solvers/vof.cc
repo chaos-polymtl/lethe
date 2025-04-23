@@ -362,6 +362,35 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                  VOFSubequationsID::curvature_projection),
                                "curvature");
     }
+
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .geometric_interface_reinitialization.enable)
+    {
+      if ((simulation_control->get_step_number() %
+             simulation_parameters.multiphysics.vof_parameters
+               .regularization_method.frequency !=
+           0) ||
+          (simulation_control->get_step_number() == 0))
+        {
+          signed_distance_solver->setup_dofs();
+
+          compute_level_set_from_phase_fraction(this->present_solution,
+                                                this->level_set);
+
+          signed_distance_solver->set_level_set_from_background_mesh(
+            dof_handler, this->level_set);
+
+          signed_distance_solver->solve();
+        }
+      signed_distance_solver->attach_solution_to_output(data_out);
+
+      signed_distance_solver->output_interface_reconstruction(
+        "interface_reconstruction_" +
+          this->simulation_parameters.simulation_control.output_name,
+        this->simulation_parameters.simulation_control.output_folder,
+        simulation_control->get_current_time(),
+        simulation_control->get_step_number());
+    }
 }
 
 template <int dim>
@@ -806,6 +835,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       std::string volume_column_name;
       std::string mass_column_name;
 
+      std::string geometric_volume_column_name;
+
       // To display when verbose
       std::vector<std::string> dependent_column_names;
       dependent_column_names.reserve(n_fluids * 2 + 1);
@@ -829,6 +860,19 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             }
         }
 
+      // Compute geometric outside volume (fluid 0)
+      const double geometric_volume_outside =
+        InterfaceTools::compute_volume(*mapping,
+                                       dof_handler,
+                                       *fe,
+                                       this->present_solution,
+                                       0.5,
+                                       mpi_communicator);
+      // Compute geometric inside volume (fluid 1)
+      const double global_volume =
+        GridTools::volume(*this->triangulation, *this->mapping);
+      const double geometric_volume_inside =
+        global_volume - geometric_volume_outside;
 
       for (unsigned int i = 0; i < n_fluids; i++)
         {
@@ -868,6 +912,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 {
                   volume_column_name = "surface_" + fluid_id;
                   mass_column_name   = "mass_per_length_" + fluid_id;
+                  geometric_volume_column_name =
+                    "geometric_surface_" + fluid_id;
                 }
               else if constexpr (dim == 3)
                 {
@@ -880,6 +926,21 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                    this->volume_monitored);
               this->table_monitoring_vof.set_scientific(volume_column_name,
                                                         true);
+              // Add "geometric surface" or "geometric volume" column
+              if (fluid_id == "fluid_1")
+                {
+                  this->table_monitoring_vof.add_value(
+                    geometric_volume_column_name, geometric_volume_inside);
+                  this->table_monitoring_vof.set_scientific(
+                    geometric_volume_column_name, true);
+                }
+              else
+                {
+                  this->table_monitoring_vof.add_value(
+                    geometric_volume_column_name, geometric_volume_outside);
+                  this->table_monitoring_vof.set_scientific(
+                    geometric_volume_column_name, true);
+                }
 
               // Add "mass per length" or "mass" column
               this->table_monitoring_vof.add_value(mass_column_name,
@@ -899,9 +960,18 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   Parameters::Verbosity::verbose)
                 {
                   dependent_column_names.emplace_back(volume_column_name);
+                  dependent_column_names.emplace_back(
+                    geometric_volume_column_name);
+
                   dependent_column_names.emplace_back(mass_column_name);
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->volume_monitored);
+                  if (fluid_id == "fluid_1")
+                    volumes_masses_momentum_and_sharpening_threshold
+                      .emplace_back(geometric_volume_inside);
+                  else
+                    volumes_masses_momentum_and_sharpening_threshold
+                      .emplace_back(geometric_volume_outside);
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->mass_monitored);
                   for (unsigned int d = 0; d < dim; ++d)
@@ -1791,6 +1861,10 @@ VolumeOfFluid<dim>::setup_dofs()
                                  this->locally_relevant_dofs,
                                  mpi_communicator);
 
+  this->level_set.reinit(this->locally_owned_dofs,
+                         this->locally_relevant_dofs,
+                         mpi_communicator);
+
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
     {
@@ -1869,6 +1943,12 @@ VolumeOfFluid<dim>::setup_dofs()
   multiphysics->set_filtered_solution(PhysicsID::VOF, &this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::VOF,
                                        &this->previous_solutions);
+
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .geometric_interface_reinitialization.enable)
+    {
+      signed_distance_solver->setup_dofs();
+    }
 
 
   mass_matrix_phase_fraction.reinit(this->locally_owned_dofs,
@@ -2446,8 +2526,133 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
 template <int dim>
 void
+VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
+  const GlobalVectorType &solution,
+  GlobalVectorType       &level_set_solution)
+{
+  auto mpi_communicator = this->triangulation->get_communicator();
+
+  GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
+
+  const double tanh_thickness =
+    this->simulation_parameters.multiphysics.vof_parameters
+      .regularization_method.geometric_interface_reinitialization
+      .tanh_thickness;
+
+  for (auto p : this->locally_owned_dofs)
+    {
+      const double phase      = solution[p];
+      double       phase_sign = sgn(0.5 - phase);
+      level_set_owned[p] =
+        tanh_thickness *
+        std::atanh(phase_sign * std::min(abs(0.5 - phase) / 0.5, 1.0 - 1e-12));
+    }
+
+  this->nonzero_constraints.distribute(level_set_owned);
+
+  level_set_solution = level_set_owned;
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
+  const GlobalVectorType &level_set_solution,
+  GlobalVectorType       &phase_fraction_solution)
+{
+  auto mpi_communicator = this->triangulation->get_communicator();
+
+  GlobalVectorType solution_owned(this->locally_owned_dofs, mpi_communicator);
+
+  const double tanh_thickness =
+    this->simulation_parameters.multiphysics.vof_parameters
+      .regularization_method.geometric_interface_reinitialization
+      .tanh_thickness;
+
+  for (auto p : this->locally_owned_dofs)
+    {
+      const double signed_dist = level_set_solution[p];
+      solution_owned[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
+    }
+  this->nonzero_constraints.distribute(solution_owned);
+
+  phase_fraction_solution = solution_owned;
+}
+
+template <int dim>
+void
 VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
-{}
+{
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      announce_string(this->pcout, "VOF geometric interface reinitialization");
+      this->pcout << "In redistanciation of the previous solution ..."
+                  << std::endl;
+    }
+
+  auto mpi_communicator = this->triangulation->get_communicator();
+
+  signed_distance_solver->setup_dofs();
+
+  GlobalVectorType previous_level_set(locally_owned_dofs,
+                                      locally_relevant_dofs,
+                                      mpi_communicator);
+
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .frequency != 1)
+    {
+      compute_level_set_from_phase_fraction(this->previous_solutions[0],
+                                            previous_level_set);
+
+      signed_distance_solver->set_level_set_from_background_mesh(
+        dof_handler, previous_level_set);
+
+      signed_distance_solver->solve();
+
+      GlobalVectorType previous_level_set_owned(this->locally_owned_dofs,
+                                                mpi_communicator);
+
+      FETools::interpolate(signed_distance_solver->dof_handler,
+                           signed_distance_solver->get_signed_distance(),
+                           this->dof_handler,
+                           this->nonzero_constraints,
+                           previous_level_set_owned);
+
+
+      previous_level_set = previous_level_set_owned;
+
+      compute_phase_fraction_from_level_set(previous_level_set,
+                                            this->previous_solutions[0]);
+    }
+
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .verbosity != Parameters::Verbosity::quiet)
+    this->pcout << "In redistanciation of the present solution ..."
+                << std::endl;
+
+  compute_level_set_from_phase_fraction(this->present_solution,
+                                        this->level_set);
+
+  signed_distance_solver->set_level_set_from_background_mesh(dof_handler,
+                                                             this->level_set);
+
+  signed_distance_solver->solve();
+
+  GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
+
+  FETools::interpolate(signed_distance_solver->dof_handler,
+                       signed_distance_solver->get_signed_distance(),
+                       this->dof_handler,
+                       this->nonzero_constraints,
+                       level_set_owned);
+
+
+  this->level_set = level_set_owned;
+
+  compute_phase_fraction_from_level_set(this->level_set,
+                                        this->present_solution);
+}
+
 
 template class VolumeOfFluid<2>;
 template class VolumeOfFluid<3>;

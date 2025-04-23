@@ -43,10 +43,17 @@ public:
         p_simulation_parameters,
         ((p_simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
-         (p_simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.verbosity != Parameters::Verbosity::quiet)) ?
+         ((p_simulation_parameters.multiphysics.vof_parameters
+             .regularization_method.algebraic_interface_reinitialization
+             .enable) &&
+          (p_simulation_parameters.multiphysics.vof_parameters
+             .regularization_method.verbosity !=
+           Parameters::Verbosity::quiet))) ?
           Parameters::Verbosity::verbose :
-          Parameters::Verbosity::quiet,
+          Parameters::Verbosity::quiet, // Set to verbose if surface tension
+                                        // verbosity is enabled or if algebraic
+                                        // interface reinitialization is enabled
+                                        // and set to verbose
         p_pcout,
         p_triangulation,
         p_multiphysics_interface,

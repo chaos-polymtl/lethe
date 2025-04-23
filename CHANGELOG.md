@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-22
+
+## Added 
+
+- MINOR This PR completes the signed distance solver by filling the (almost) empty architecture of the SignedDistanceSolver implemented in [#1451] (https://github.com/chaos-polymtl/lethe/pull/1451). Its coupling in the VOF solver (geometric reinitialization method) is also completed. The implemented routines follow the one of the already existing vof_advection prototype. [#1497](https://github.com/chaos-polymtl/lethe/pull/1497)
+
 ## [Master] - 2025-04-17
 
 ### Added
