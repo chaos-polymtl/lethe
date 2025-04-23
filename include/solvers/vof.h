@@ -137,11 +137,12 @@ public:
       this->computing_timer.disable_output();
 
     // Initialize the interface object for subequations to solve
-    this->vof_subequations_interface = std::make_shared<VOFSubequationsInterface<dim>>(
-      this->simulation_parameters,
-      this->pcout,
-      this->triangulation,
-      this->simulation_control);
+    this->vof_subequations_interface =
+      std::make_shared<VOFSubequationsInterface<dim>>(
+        this->simulation_parameters,
+        this->pcout,
+        this->triangulation,
+        this->simulation_control);
 
     if (simulation_parameters.multiphysics.vof_parameters.regularization_method
           .geometric_interface_reinitialization.enable)

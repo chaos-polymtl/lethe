@@ -356,11 +356,12 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
         solution_names_new,
         projected_phase_fraction_gradient_component_interpretation);
 
-      data_out.add_data_vector(*this->vof_subequations_interface->get_dof_handler(
-                                 VOFSubequationsID::curvature_projection),
-                               *this->vof_subequations_interface->get_solution(
-                                 VOFSubequationsID::curvature_projection),
-                               "curvature");
+      data_out.add_data_vector(
+        *this->vof_subequations_interface->get_dof_handler(
+          VOFSubequationsID::curvature_projection),
+        *this->vof_subequations_interface->get_solution(
+          VOFSubequationsID::curvature_projection),
+        "curvature");
     }
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
@@ -1243,8 +1244,9 @@ VolumeOfFluid<dim>::modify_solution()
   if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
         .enable)
     {
-      this->vof_subequations_interface->set_vof_filtered_solution_and_dof_handler(
-        this->filtered_solution, &this->dof_handler);
+      this->vof_subequations_interface
+        ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
+                                                    &this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -2524,9 +2526,11 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
                          previous_filtered_solution);
 
       // Set VOF information in the VOF subequations interface
-      this->vof_subequations_interface->set_vof_filtered_solution_and_dof_handler(
-        previous_filtered_solution, &this->dof_handler);
-      this->vof_subequations_interface->set_vof_solution(this->previous_solutions[0]);
+      this->vof_subequations_interface
+        ->set_vof_filtered_solution_and_dof_handler(previous_filtered_solution,
+                                                    &this->dof_handler);
+      this->vof_subequations_interface->set_vof_solution(
+        this->previous_solutions[0]);
 
       // Solve phase gradient and curvature projections followed by algebraic
       // interface reinitialization steps
