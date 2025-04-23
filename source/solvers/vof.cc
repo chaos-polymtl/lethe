@@ -36,7 +36,7 @@ VolumeOfFluid<dim>::setup_assemblers()
     }
 
   // If the VOF solver uses DG, a different set of assemblers is used
-  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+  if (simulation_parameters.fem_parameters.VOF_uses_dg)
     {
       this->assemblers.emplace_back(
         std::make_shared<VOFAssemblerDGCore<dim>>());
@@ -2119,10 +2119,20 @@ VolumeOfFluid<dim>::setup_dofs()
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
-                                  dsp,
-                                  this->nonzero_constraints,
-                                  /*keep_constrained_dofs = */ true);
+  if (simulation_parameters.fem_parameters.VOF_uses_dg)
+    {
+      DoFTools::make_flux_sparsity_pattern(this->dof_handler,
+                                           dsp,
+                                           nonzero_constraints,
+                                           /*keep_constrained_dofs = */ true);
+    }
+  else
+    {
+      DoFTools::make_sparsity_pattern(this->dof_handler,
+                                      dsp,
+                                      nonzero_constraints,
+                                      /*keep_constrained_dofs = */ false);
+    }
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              this->locally_owned_dofs,
