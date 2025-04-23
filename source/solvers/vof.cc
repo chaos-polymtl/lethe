@@ -7,6 +7,8 @@
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <deal.II/meshworker/mesh_loop.h>
+
 #include <sys/stat.h>
 
 #include <cmath>
@@ -66,6 +68,16 @@ VolumeOfFluid<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
+  if (simulation_parameters.fem_parameters.VOF_uses_dg)
+    assemble_system_matrix_dg();
+  else
+    assemble_system_matrix_cg();
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::assemble_system_matrix_cg()
+{
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -88,6 +100,110 @@ VolumeOfFluid<dim>::assemble_system_matrix()
                                             this->cell_quadrature->size()));
 
   this->system_matrix.compress(VectorOperation::add);
+}
+
+
+template <int dim>
+void
+VolumeOfFluid<dim>::assemble_system_matrix_dg()
+{
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data =
+    VOFScratchData<dim>(this->simulation_control,
+                        this->simulation_parameters.physical_properties_manager,
+                        *this->fe,
+                        *this->cell_quadrature,
+                        *this->face_quadrature,
+                        *this->mapping,
+                        dof_handler_fluid->get_fe());
+
+  StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
+                                        this->cell_quadrature->size());
+
+  // We first wrap the assembly of the matrix within a cell_worker lambda
+  // function. This is only done for compatibility reasons with the MeshWorker
+  // paradigm and does not have any functional purpose.
+  const auto cell_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        VOFScratchData<dim>                                  &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      this->assemble_local_system_matrix(cell, scratch_data, copy_data);
+    };
+
+  const auto boundary_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        VOFScratchData<dim>                                  &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {};
+
+  const auto face_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        const unsigned int                                   &sub_face_no,
+        const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
+        const unsigned int                                   &neigh_face_no,
+        const unsigned int                                   &neigh_sub_face_no,
+        VOFScratchData<dim>                                  &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      scratch_data.reinit_internal_face(cell,
+                                        face_no,
+                                        sub_face_no,
+                                        neigh_cell,
+                                        neigh_face_no,
+                                        neigh_sub_face_no,
+                                        this->evaluation_point);
+
+      // Pad copy_data memory for the internal faces elementary matrices
+      // BB note : Array could be pre-allocated
+      copy_data.face_data.emplace_back();
+      auto &copy_data_face = copy_data.face_data.back();
+      copy_data_face.face_matrix.reinit(scratch_data.n_interface_dofs,
+                                        scratch_data.n_interface_dofs);
+      copy_data_face.joint_dof_indices =
+        scratch_data.fe_interface_values_vof.get_interface_dof_indices();
+
+      // Gather velocity information at the face to properly advect
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Get the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+      // Reinit the internal face velocity within the scratch data
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
+
+      this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
+    };
+
+  const auto copier = [&](const StabilizedDGMethodsCopyData &copy_data) {
+    this->copy_local_matrix_to_global_matrix(copy_data);
+
+    const AffineConstraints<double> &constraints_used = this->zero_constraints;
+
+    for (const auto &cdf : copy_data.face_data)
+      {
+        constraints_used.distribute_local_to_global(cdf.face_matrix,
+                                                    cdf.joint_dof_indices,
+                                                    system_matrix);
+      }
+  };
+
+  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
+                        this->dof_handler.end(),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        copy_data,
+                        MeshWorker::assemble_own_cells |
+                          MeshWorker::assemble_boundary_faces |
+                          MeshWorker::assemble_own_interior_faces_once |
+                          MeshWorker::assemble_ghost_faces_both,
+                        boundary_worker,
+                        face_worker);
 }
 
 

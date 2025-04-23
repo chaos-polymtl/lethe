@@ -475,10 +475,22 @@ private:
   }
 
   /**
-   *  @brief Assembles the matrix associated with the solver
+   *  @brief Assembles the matrix associated with the solver.
    */
   void
   assemble_system_matrix() override;
+
+  /**
+   *  @brief Assembles the matrix associated with the solver when CG elements are used.
+   */
+  void
+  assemble_system_matrix_cg();
+
+  /**
+   *  @brief Assembles the matrix associated with the solver when CG elements are used.
+   */
+  void
+  assemble_system_matrix_dg();
 
   /**
    * @brief Assemble the rhs associated with the solver
@@ -722,6 +734,49 @@ private:
    */
   void
   reinitialize_interface_with_geometric_method();
+
+  /**
+   * @brief Helper function to reinit the face velocity with the adequate solution.
+   * This prevents code duplication throughout the tracer. The function looks at
+   * the multiphysics interface to decide if the velocity is a block velocity or
+   * a regular velocity. Furthermore, it also checks if a time-averaged solution
+   * is required. Otherwise the code here would be copied four times.
+   *
+   * @param[in] velocity_cell the iterator to the cell where the velocity is to
+   * be reinitialized.
+   *
+   * @param[in] face_no the number of the face where the velocity is to be
+   * reinitialized.
+   *
+   * @param[in,out] scratch_data the scratch data to be used for the
+   * reinitialization.
+   */
+  inline void
+  reinit_face_velocity_with_adequate_solution(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const unsigned int                                   &face_no,
+    VOFScratchData<dim>                                  &scratch_data)
+  {
+    if (multiphysics->fluid_dynamics_is_block())
+      {
+        scratch_data.reinit_face_velocity(
+          velocity_cell,
+          face_no,
+          *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+          this->simulation_parameters.ale,
+          this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+      }
+    else
+      {
+        scratch_data.reinit_face_velocity(
+          velocity_cell,
+          face_no,
+          *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+          this->simulation_parameters.ale,
+          this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+      }
+  }
+
 
   GlobalVectorType nodal_phase_fraction_owned;
 
