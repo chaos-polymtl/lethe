@@ -481,13 +481,13 @@ private:
   assemble_system_matrix() override;
 
   /**
-   *  @brief Assembles the matrix associated with the solver when CG elements are used.
+   *  @brief Assemble the matrix associated with the solver when CG elements are used.
    */
   void
   assemble_system_matrix_cg();
 
   /**
-   *  @brief Assembles the matrix associated with the solver when CG elements are used.
+   *  @brief Assemble the matrix associated with the solver when DG elements are used.
    */
   void
   assemble_system_matrix_dg();
@@ -498,6 +498,17 @@ private:
   void
   assemble_system_rhs() override;
 
+  /**
+   *  @brief Assemble the rhs associated with the solver when CG elements are used.
+   */
+  void
+  assemble_system_rhs_cg();
+
+  /**
+   *  @brief Assemble the rhs associated with the solver when DG elements are used.
+   */
+  void
+  assemble_system_rhs_dg();
 
   /**
    * @brief Assemble the local matrix for a given cell.
