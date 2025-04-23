@@ -49,9 +49,6 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_multiphysics_interface Multiphysics interface object used to
-   * get information from physics.
-   *
    * @param[in,out] p_subequations_interface Subequations interface object used
    * to get information from other subequations and store information from the
    * current one.
@@ -63,12 +60,10 @@ public:
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                   &p_triangulation,
-    MultiphysicsInterface<dim>    *p_multiphysics_interface,
     VOFSubequationsInterface<dim> *p_subequations_interface)
     : PhysicsLinearSubequationsSolver(p_pcout)
     , subequation_id(p_subequation_id)
     , subequations_interface(p_subequations_interface)
-    , multiphysics_interface(p_multiphysics_interface)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , dof_handler(*triangulation)
@@ -80,7 +75,7 @@ public:
   /**
    * @brief Default destructor.
    */
-  ~VOFLinearSubequationsSolver() = default;
+  virtual ~VOFLinearSubequationsSolver() = default;
 
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
@@ -111,11 +106,16 @@ protected:
   void
   solve_linear_system_and_update_solution() override;
 
+  /**
+   * @brief Check if the solutions on which the subequation depends on are
+   * valid.
+   */
+  virtual void
+  check_dependencies_validity() = 0;
+
 
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> *subequations_interface;
-  MultiphysicsInterface<dim>
-    *multiphysics_interface; // to get VOF DoFHandler and solution
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;

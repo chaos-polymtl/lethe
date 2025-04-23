@@ -67,20 +67,12 @@ test()
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-  std::unique_ptr<MultiphysicsInterface<dim>> multiphysics_interface =
-    std::make_unique<MultiphysicsInterface<dim>>(solver_parameters,
-                                                 tria,
-                                                 simulation_control,
-                                                 pcout);
-
   // Phase fraction gradient and curvature L2 projection enabled
   {
-    VOFSubequationsInterface<dim> subequations_interface(
-      solver_parameters,
-      pcout,
-      tria,
-      simulation_control,
-      multiphysics_interface.get());
+    VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
+                                                         pcout,
+                                                         tria,
+                                                         simulation_control);
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();
@@ -98,12 +90,10 @@ test()
   solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
     false;
   {
-    VOFSubequationsInterface<dim> subequations_interface(
-      solver_parameters,
-      pcout,
-      tria,
-      simulation_control,
-      multiphysics_interface.get());
+    VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
+                                                         pcout,
+                                                         tria,
+                                                         simulation_control);
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();
@@ -123,12 +113,10 @@ test()
   solver_parameters.multiphysics.vof_parameters.regularization_method
     .algebraic_interface_reinitialization.enable = true;
   {
-    VOFSubequationsInterface<dim> subequations_interface(
-      solver_parameters,
-      pcout,
-      tria,
-      simulation_control,
-      multiphysics_interface.get());
+    VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
+                                                         pcout,
+                                                         tria,
+                                                         simulation_control);
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();

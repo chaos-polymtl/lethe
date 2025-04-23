@@ -168,16 +168,15 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
 {
   // Get VOF DoFHandler
   const DoFHandler<dim> *dof_handler_vof =
-    this->multiphysics_interface->get_dof_handler(PhysicsID::VOF);
+    this->subequations_interface->get_vof_dof_handler();
 
   // Interpolate VOF solution to algebraic interface reinitialization
-  VectorTools::interpolate_to_different_mesh(
-    *dof_handler_vof,
-    *this->multiphysics_interface->get_solution(PhysicsID::VOF),
-    this->dof_handler,
-    this->newton_update);
+  FETools::interpolate(*dof_handler_vof,
+                       *this->subequations_interface->get_vof_solution(),
+                       this->dof_handler,
+                       this->nonzero_constraints,
+                       this->newton_update);
 
-  this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
   this->previous_solution =
     this->present_solution; // We only have 1 previous solution (bdf1)
@@ -688,6 +687,9 @@ template <int dim>
 void
 VOFAlgebraicInterfaceReinitialization<dim>::solve()
 {
+  // Check if all required solutions are valid
+  check_dependencies_validity();
+
   // Compute time-step
   this->current_time_step = compute_time_step();
 
@@ -763,6 +765,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
   if (verbose)
     this->pcout << "The solver took: " << step - 1 << " reinitialization steps"
                 << std::endl;
+
+  this->subequations_interface->set_solution_valid(this->subequation_id);
 }
 
 template <int dim>
@@ -794,11 +798,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
   // Attach solution data to DataOut object
   data_out.attach_dof_handler(this->dof_handler);
   data_out.add_data_vector(this->present_solution, "reinit_phase_fraction");
-  data_out.add_data_vector(
-    *this->multiphysics_interface->get_dof_handler(PhysicsID::VOF),
-    *this->multiphysics_interface->get_solution(PhysicsID::VOF),
-    "vof_phase_fraction",
-    data_component_interpretation);
+  data_out.add_data_vector(*this->subequations_interface->get_vof_dof_handler(),
+                           *this->subequations_interface->get_vof_solution(),
+                           "vof_phase_fraction",
+                           data_component_interpretation);
   std::vector<std::string> vof_gradient_solution_names(dim,
                                                        "vof_phase_gradient");
   data_out.add_data_vector(*this->subequations_interface->get_dof_handler(
@@ -826,6 +829,27 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
                          step,
                          1, // group_files,
                          mpi_communicator);
+}
+
+
+template <int dim>
+void
+VOFAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity()
+{
+  AssertThrow(this->subequations_interface->get_solution_validity(
+                VOFSubequationsID::phase_gradient_projection),
+              PhaseGradientProjectionIsInvalid(
+                this->subequations_interface->get_subequation_string(
+                  VOFSubequationsID::phase_gradient_projection),
+                this->subequations_interface->get_subequation_string(
+                  this->subequation_id)));
+  AssertThrow(this->subequations_interface->get_solution_validity(
+                VOFSubequationsID::curvature_projection),
+              CurvatureProjectionIsInvalid(
+                this->subequations_interface->get_subequation_string(
+                  VOFSubequationsID::curvature_projection),
+                this->subequations_interface->get_subequation_string(
+                  this->subequation_id)));
 }
 
 template class VOFAlgebraicInterfaceReinitialization<2>;

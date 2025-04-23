@@ -6,6 +6,12 @@
 
 #include <solvers/vof_linear_subequations_solver.h>
 
+DeclException1(
+  SameFilteredVOFSolution,
+  std::string,
+  "A new VOF filtered solution has not been set. There is no need to solve the "
+    << arg1 << ".");
+
 /**
  * @brief VOF phase fraction gradient L2 projection solver.
  *
@@ -25,9 +31,6 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_multiphysics_interface Multiphysics interface object used to
-   * get information from physics.
-   *
    * @param[in,out] p_subequations_interface Subequations interface object used
    * to get information from other subequations and store information from the
    * current one.
@@ -37,7 +40,6 @@ public:
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                   &p_triangulation,
-    MultiphysicsInterface<dim>    *p_multiphysics_interface,
     VOFSubequationsInterface<dim> *p_subequations_interface)
     : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::phase_gradient_projection,
@@ -57,7 +59,6 @@ public:
                                         // and set to verbose
         p_pcout,
         p_triangulation,
-        p_multiphysics_interface,
         p_subequations_interface)
   {
     if (this->simulation_parameters.mesh.simplex)
@@ -95,6 +96,12 @@ private:
    */
   void
   assemble_system_matrix_and_rhs() override;
+
+  /**
+   * @brief Check if a new VOF filtered solution has been set.
+   */
+  void
+  check_dependencies_validity() override;
 };
 
 #endif

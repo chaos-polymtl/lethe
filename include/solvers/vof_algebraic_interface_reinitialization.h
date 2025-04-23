@@ -46,9 +46,6 @@ public:
    *
    * @param[in] p_simulation_control SimulationControl object.
    *
-   * @param[in] p_multiphysics_interface Multiphysics interface object used to
-   * get information from physics.
-   *
    * @param[in, out] p_subequations_interface Subequations interface object used
    * to get information from other subequations and store information from the
    * current one.
@@ -59,7 +56,6 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                              &p_triangulation,
     const std::shared_ptr<SimulationControl> &p_simulation_control,
-    MultiphysicsInterface<dim>               *p_multiphysics_interface,
     VOFSubequationsInterface<dim>            *p_subequations_interface)
     : PhysicsNonlinearSubequationsSolver<dim, GlobalVectorType>(
         p_simulation_parameters.vof_subequations_non_linear_solvers.at(
@@ -67,7 +63,6 @@ public:
         p_pcout)
     , subequation_id(VOFSubequationsID::algebraic_interface_reinitialization)
     , subequations_interface(p_subequations_interface)
-    , multiphysics_interface(p_multiphysics_interface)
     , simulation_parameters(p_simulation_parameters)
     , simulation_control(p_simulation_control)
     , triangulation(p_triangulation)
@@ -370,10 +365,15 @@ private:
       }
   }
 
+  /**
+   * @brief Check if the solutions on which the subequation depends on are
+   * valid.
+   */
+  void
+  check_dependencies_validity();
+
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> *subequations_interface;
-  MultiphysicsInterface<dim>
-    *multiphysics_interface; // To get VOF DoFHandler and solution
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
