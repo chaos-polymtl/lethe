@@ -38,7 +38,7 @@ def process_file(prm_name):
         z_positions = current_slice.points[:, 2]
         
         # We select only the solid cylinder geometry
-        circle_sfd = ((x_positions-pos_x)**2 + (y_positions-pos_y)**2 + (z_positions-pos_z)**2)**0.5 - radius - 0.001
+        circle_sfd = ((x_positions-pos_x)**2 + (y_positions-pos_y)**2 + (z_positions-pos_z)**2)**0.5 - radius
         current_slice["circle_sdf"] = circle_sfd
         current_slice_inside = current_slice.clip_scalar(scalars="circle_sdf",invert=True, value=0.0)
         
