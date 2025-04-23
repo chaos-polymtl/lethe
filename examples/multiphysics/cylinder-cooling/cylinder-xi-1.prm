@@ -179,21 +179,12 @@ subsection linear solver
     set relative residual     = 1e-4
     set minimum residual      = 1e-8
     set preconditioner        = amg
+    set max krylov vectors   = 1000
   end
   subsection heat transfer
     set max iters             = 5000
     set relative residual     = 1e-8
     set minimum residual      = 1e-9
+    set max krylov vectors   = 1000
   end
-end
-
-#---------------------------------------------------
-# Restart
-#---------------------------------------------------
-
-subsection restart
-  set checkpoint = true
-  set frequency  = 100
-  set filename   = restart
-  set restart    = false
 end

@@ -2,7 +2,7 @@
 Cooling of a cylinder
 ====================================
 
-This example simulates the cooling of a 2D solid cylinder in a flow at a Reynolds number of 20. The dimensionless number :math:`\beta` is modified to observe the effect of the thermal capacity ratio on the average temperature of the cylinder in time. Results are compared to those of Juncu [#juncu2004]_. This example illustrates the unsteady conjugate heat transfer capabilities of Lethe.
+This example simulates the cooling of a 2D solid cylinder in a flow at a Reynolds number of 20. The dimensionless number :math:`\beta` (defined below) is modified to observe the effect of the thermal capacity ratio on the average temperature of the cylinder in time. Results are compared to those of Juncu [#juncu2004]_. This example illustrates the unsteady conjugate heat transfer capabilities of Lethe.
 
 .. math::
 
@@ -34,14 +34,14 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -------------------------
 
-The geometry for the simulations is shown in the figure below. We consider a domain with length :math:`l=32\text{m}` and width :math:`L=16\text{m}`. The cylinder (in red) has a radius :math:`R=0.5\text{m}` and is positionned at :math:`x=8\text{m}` and :math:`y=0\text{m}`. The cylinder is initially set at a temperature of :math:`T_0=1^\circ C` and is cooled by a flow of water at a temperature of :math:`T_\infty=0^\circ C`. The flow is entering on the left of the domain and exiting on the right. A no slip boundary condition is set on the top and bottom walls of the domain. 
+The geometry for the simulations is shown in the figure below. We consider a domain with length :math:`l=32\text{m}` and height :math:`L=16\text{m}`. The cylinder (in red) has a radius :math:`R=0.5\text{m}` and is positionned at :math:`x=8\text{m}` and :math:`y=0\text{m}`. The cylinder is initially set at a temperature of :math:`T_0=1^\circ C` and is cooled by a flow of a fluid at a temperature of :math:`T_\infty=0^\circ C`. The flow is entering on the left of the domain and exiting on the right. A no slip boundary condition is set on the top and bottom walls of the domain. 
 
 .. image:: images/geometry.png
     :alt: problem_illustration
     :align: center
     :width: 800
 
-In this example, we launch three distinct simulations, each using a different :math:`\beta`. The specific heat is modified by changing the density of the solid cylinder. A :math:`\rho_{s}` of 0.1, 1 and 100 are used to get a :math:`\beta` of 0.01, 1 and 100. The conductivity of the fluid is set to 0.2 in order to obtain a Prandtl number of 5. The velocity at the entrance is set to :math:`U=20\text{m/s}` in order to obtain a Reynolds number of 20. Other parameters such as the viscosity of the fluid, the heat capacity of the fluid, the heat capacity of the solid and the density of the fluid are set to 1.
+In this example, we launch three distinct simulations, each using a different value of :math:`\beta`. The specific heat is modified by changing the density of the solid cylinder. A :math:`\rho_{s}` of 0.1, 1 and 100 are used to get a :math:`\beta` of 0.01, 1 and 100. The conductivity of the fluid is set to 0.2 in order to obtain a Prandtl number of 5. The velocity at the entrance is set to :math:`U=20\text{m/s}` in order to obtain a Reynolds number of 20. Other parameters such as the viscosity of the fluid, the heat capacity of the fluid, the heat capacity of the solid and the density of the fluid are set to 1.
 
 --------------
 Parameter File
@@ -182,7 +182,7 @@ Next, we define the physical properties for both the solid and the fluid. It is 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-We solve the Navier-Stokes and the enthalpy equation in time. In the simulation control subsection we therefore need to specify the time-stepping scheme, the simulation end time and other parameters related to the growth rate of the time step. A maximum CFL of 5 is set to limit the maximal time step. The parameters related to the output of the .vtu files are also specified in this subsection. 
+We solve the Navier-Stokes and the heat transfer equation in time. In the simulation control subsection we therefore need to specify the time-stepping scheme, the simulation end time and other parameters related to the growth rate of the time step. A maximum CFL of 5 is set to limit the maximal time step. The parameters related to the output of the .vtu files are also specified in this subsection. 
 
 .. code-block:: text
 
@@ -214,11 +214,11 @@ Call the lethe-fluid by invoking:
 
   mpirun -np 8 lethe-fluid cylinder-xi-1.prm
 
-to run the simulation using eight CPU cores. Feel free to use more.
+to run the simulation using eight CPU cores. Feel free to use more. 
 
 .. warning::
     Make sure to compile lethe in `Release` mode and
-    run in parallel using mpirun.
+    run in parallel using mpirun. The simulation using :math:`\beta=0.01` takes around 4 hours to run on 8 CPU cores. With :math:`\beta=1` and :math:`\beta=100`, the simulations can take up to 10h and 24h on 8 CPU cores. The end time of the simulations can be modified to reduce the computational time.
 
 to run the post-processing script:
 
