@@ -97,8 +97,16 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe = std::make_shared<FE_Q<dim>>(
-          simulation_parameters.fem_parameters.VOF_order);
+        if (simulation_parameters.fem_parameters.VOF_uses_dg)
+          {
+            fe = std::make_shared<FE_DGQ<dim>>(
+              simulation_parameters.fem_parameters.VOF_order);
+          }
+        else
+          {
+            fe = std::make_shared<FE_Q<dim>>(
+              simulation_parameters.fem_parameters.VOF_order);
+          }
         mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
@@ -164,18 +172,7 @@ public:
    * @brief VOF - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  ~VolumeOfFluid()
-  {}
-
-
-  /**
-   * @brief Call for the assembly of the matrix and the right-hand side.
-   *
-   * @deprecated This function is to be deprecated when the new assembly mechanism
-   * is integrated to this solver
-   */
-  void
-  assemble_matrix_and_rhs();
+  ~VolumeOfFluid() = default;
 
   /**
    * @brief Call for the assembly of the right-hand side
@@ -805,6 +802,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
+
+  // Face assemblers, used only for DG methods
+  std::shared_ptr<VOFAssemblerSIPG<dim>> inner_face_assembler;
 
   // Phase fraction filter
   std::shared_ptr<VolumeOfFluidFilterBase> filter;

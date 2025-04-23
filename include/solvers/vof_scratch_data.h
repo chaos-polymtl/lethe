@@ -4,20 +4,15 @@
 #ifndef lethe_vof_scratch_data_h
 #define lethe_vof_scratch_data_h
 
-#include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_scratch_data.h>
 
-#include <deal.II/base/quadrature.h>
-
 #include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_interface_values.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
@@ -68,6 +63,7 @@ public:
                  const PhysicalPropertiesManager          &properties_manager,
                  const FiniteElement<dim>                 &fe_vof,
                  const Quadrature<dim>                    &quadrature,
+                 const Quadrature<dim - 1>                &face_quadrature,
                  const Mapping<dim>                       &mapping,
                  const FiniteElement<dim>                 &fe_fd)
     : simulation_control(simulation_control)
@@ -78,7 +74,13 @@ public:
                     update_values | update_gradients |
                       update_quadrature_points | update_hessians |
                       update_JxW_values)
+    , fe_interface_values_vof(mapping,
+                              fe_vof,
+                              face_quadrature,
+                              update_values | update_quadrature_points |
+                                update_JxW_values | update_normal_vectors)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
+    , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
   {
     allocate();
   }
@@ -101,10 +103,19 @@ public:
                     update_values | update_gradients |
                       update_quadrature_points | update_hessians |
                       update_JxW_values)
+    , fe_interface_values_vof(sd.fe_interface_values_vof.get_mapping(),
+                              sd.fe_interface_values_vof.get_fe(),
+                              sd.fe_interface_values_vof.get_quadrature(),
+                              update_values | update_quadrature_points |
+                                update_JxW_values | update_normal_vectors)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values | update_gradients)
+    , fe_face_values_fd(sd.fe_face_values_fd.get_mapping(),
+                        sd.fe_face_values_fd.get_fe(),
+                        sd.fe_face_values_fd.get_quadrature(),
+                        update_values)
   {
     allocate();
   }
@@ -273,10 +284,11 @@ public:
   std::map<field, std::vector<double>> fields;
 
   // FEValues for the VOF problem
-  FEValues<dim> fe_values_vof;
-  unsigned int  n_dofs;
-  unsigned int  n_q_points;
-  double        cell_size;
+  FEValues<dim>          fe_values_vof;
+  FEInterfaceValues<dim> fe_interface_values_vof;
+  unsigned int           n_dofs;
+  unsigned int           n_q_points;
+  double                 cell_size;
 
   // Quadrature
   std::vector<double>     JxW;
@@ -290,6 +302,11 @@ public:
   std::vector<double>              phase_laplacians;
   std::vector<std::vector<double>> previous_phase_values;
 
+  // VOF values at the faces
+  std::vector<double> values_here;
+  std::vector<double> values_there;
+  std::vector<double> phase_value_jump;
+
   // Shape functions
   std::vector<std::vector<double>>         phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
@@ -300,7 +317,8 @@ public:
   /**
    * Scratch component for the Navier-Stokes component
    */
-  FEValues<dim> fe_values_fd;
+  FEValues<dim>     fe_values_fd;
+  FEFaceValues<dim> fe_face_values_fd;
 
   FEValuesExtractors::Vector velocities_fd;
   // This FEValues must be instantiated for the velocity
@@ -308,6 +326,9 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
   std::vector<double>                      velocity_divergences;
+
+  // Face velocity value for DG
+  std::vector<Tensor<1, dim>> face_velocity_values;
 };
 
 #endif

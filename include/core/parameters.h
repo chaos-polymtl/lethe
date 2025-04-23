@@ -1099,6 +1099,9 @@ namespace Parameters
     // Interpolation order vof model
     unsigned int VOF_order;
 
+    // Switch vof to DG formulation instead of CG
+    bool VOF_uses_dg;
+
     // Interpolation order Cahn-Hilliard
     unsigned int phase_cahn_hilliard_order;
     unsigned int potential_cahn_hilliard_order;

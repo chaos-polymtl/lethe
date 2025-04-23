@@ -7,6 +7,8 @@
 #include <solvers/copy_data.h>
 #include <solvers/vof_assemblers.h>
 
+#include <deal.II/fe/fe_interface_values.h>
+
 template <int dim>
 void
 VOFAssemblerCore<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
@@ -455,3 +457,162 @@ VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
 
 template class VOFAssemblerDCDDStabilization<2>;
 template class VOFAssemblerDCDDStabilization<3>;
+
+
+template <int dim>
+void
+VOFAssemblerDGCore<dim>::assemble_matrix(
+  const VOFScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto phi_phase_j = scratch_data.phi[q][j];
+
+              // Weak form of : u * grad(phi) =0
+              // Note that the advection term has been weakened for it to appear
+              // explicitly in the weak form as a boundary term.
+              local_matrix(i, j) +=
+                (-grad_phi_phase_i * velocity * phi_phase_j) * JxW;
+            }
+        }
+    } // end loop on quadrature points
+}
+
+
+template <int dim>
+void
+VOFAssemblerDGCore<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
+                                      StabilizedMethodsCopyData &copy_data)
+{
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Assembling local right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double         phase_value = scratch_data.present_phase_values[q];
+      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
+
+          // Weak form of : u * grad(phi) =0
+          // Note that the advection term has been weakened for it to appear
+          // explicitly in the weak form as a boundary term.
+          local_rhs(i) -= (-grad_phi_phase_i * velocity * phase_value) * JxW;
+        }
+    } // end loop on quadrature points
+}
+
+template class VOFAssemblerDGCore<2>;
+template class VOFAssemblerDGCore<3>;
+
+
+
+template <int dim>
+void
+VOFAssemblerSIPG<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
+                                       StabilizedDGMethodsCopyData &copy_data)
+{
+  const FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_vof;
+  const auto                   &q_points = fe_iv.get_quadrature_points();
+  auto                         &copy_data_face = copy_data.face_data.back();
+  const unsigned int            n_dofs = fe_iv.n_current_interface_dofs();
+
+
+  const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+  for (unsigned int q = 0; q < q_points.size(); ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        for (unsigned int j = 0; j < n_dofs; ++j)
+          {
+            copy_data_face.face_matrix(i, j) +=
+              fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+              * fe_iv.shape_value((velocity_dot_n > 0.),
+                                  j,
+                                  q) // phi_j^{upwind}
+              * velocity_dot_n       // (u . n)
+              * JxW[q];              // dx
+          }
+    }
+}
+
+template <int dim>
+void
+VOFAssemblerSIPG<dim>::assemble_rhs(const VOFScratchData<dim>   &scratch_data,
+                                    StabilizedDGMethodsCopyData &copy_data)
+{
+  const FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_vof;
+  const auto                   &q_points = fe_iv.get_quadrature_points();
+  const unsigned int            n_dofs   = fe_iv.n_current_interface_dofs();
+
+  auto &copy_data_face = copy_data.face_data.back();
+
+  const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+  for (unsigned int q = 0; q < q_points.size(); ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          // Assemble advection terms with upwinding
+          if (velocity_dot_n > 0)
+            {
+              copy_data_face.face_rhs(i) -=
+                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+                * scratch_data.values_here[q]    // \phi_i^{upwind}
+                * velocity_dot_n                 // (u . n)
+                * JxW[q];                        // dx
+            }
+          else
+            {
+              copy_data_face.face_rhs(i) -=
+                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+                * scratch_data.values_there[q]   // \phi_i^{upwind}
+                * velocity_dot_n                 // (u . n)
+                * JxW[q];                        // dx
+            }
+        }
+    }
+}
+
+template class VOFAssemblerSIPG<2>;
+template class VOFAssemblerSIPG<3>;

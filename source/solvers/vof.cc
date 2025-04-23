@@ -14,15 +14,6 @@
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_matrix_and_rhs()
-{
-  assemble_system_matrix();
-  assemble_system_rhs();
-}
-
-
-template <int dim>
-void
 VolumeOfFluid<dim>::assemble_rhs()
 {
   assemble_system_rhs();
@@ -42,17 +33,27 @@ VolumeOfFluid<dim>::setup_assemblers()
         std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
     }
 
-  // Core assembler
-  this->assemblers.emplace_back(std::make_shared<VOFAssemblerCore<dim>>(
-    this->simulation_control,
-    this->simulation_parameters.fem_parameters,
-    this->simulation_parameters.multiphysics.vof_parameters));
+  // If the VOF solver uses DG, a different set of assemblers is used
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<VOFAssemblerDGCore<dim>>());
+      this->inner_face_assembler = std::make_shared<VOFAssemblerSIPG<dim>>();
+    }
+  else
+    {
+      // Core assembler
+      this->assemblers.emplace_back(std::make_shared<VOFAssemblerCore<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.fem_parameters,
+        this->simulation_parameters.multiphysics.vof_parameters));
 
-  // DCDD shock-capturing assembler
-  if (this->simulation_parameters.stabilization.vof_dcdd_stabilization)
-    this->assemblers.emplace_back(
-      std::make_shared<VOFAssemblerDCDDStabilization<dim>>(
-        this->simulation_control));
+      // DCDD shock-capturing assembler
+      if (this->simulation_parameters.stabilization.vof_dcdd_stabilization)
+        this->assemblers.emplace_back(
+          std::make_shared<VOFAssemblerDCDDStabilization<dim>>(
+            this->simulation_control));
+    }
 }
 
 
@@ -73,6 +74,7 @@ VolumeOfFluid<dim>::assemble_system_matrix()
                         this->simulation_parameters.physical_properties_manager,
                         *this->fe,
                         *this->cell_quadrature,
+                        *this->face_quadrature,
                         *this->mapping,
                         dof_handler_fd->get_fe());
 
@@ -206,6 +208,7 @@ VolumeOfFluid<dim>::assemble_system_rhs()
                         this->simulation_parameters.physical_properties_manager,
                         *this->fe,
                         *this->cell_quadrature,
+                        *this->face_quadrature,
                         *this->mapping,
                         dof_handler_fd->get_fe());
 
