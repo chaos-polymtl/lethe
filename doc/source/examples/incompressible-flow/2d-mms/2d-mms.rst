@@ -8,7 +8,7 @@ This example illustrates the use of the Method of Manufactured Solutions (MMS) t
 Features
 ----------------------------------
 
-- Solvers: ``lethe-fluid`` with the velocity and pressure polynomial approximations :math:`\in \{Q_1, Q_2, Q3\}` and  :math:`\in \{P_1, P_2\}`
+- Solvers: ``lethe-fluid`` with the velocity and pressure polynomial approximations :math:`\in \{Q_1, Q_2, Q_3\}` and  :math:`\in \{P_1, P_2\}`
 - Steady-state problem
 - Introduction of a source term in the NS equations
 - Output of the :math:`L^2` norm of the `error relative to the chosen manufactured solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
