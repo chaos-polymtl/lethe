@@ -22,7 +22,6 @@
 
 #include <deal.II/base/table_handler.h>
 
-#include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_out.h>
 

@@ -33,6 +33,8 @@ add_library(lethe-dem
   particle_point_line_contact_force.cc
   particle_point_line_fine_search.cc
   particle_particle_heat_transfer.cc
+  particle_ray_tracing.cc
+  particle_ray_tracing_parameters.cc
   particle_wall_broad_search.cc
   particle_wall_contact_force.cc
   particle_wall_fine_search.cc
@@ -87,6 +89,8 @@ add_library(lethe-dem
   ../../include/dem/particle_point_line_broad_search.h
   ../../include/dem/particle_point_line_contact_force.h
   ../../include/dem/particle_point_line_fine_search.h
+  ../../include/dem/particle_ray_tracing.h
+  ../../include/dem/particle_ray_tracing_parameters.h
   ../../include/dem/particle_wall_broad_search.h
   ../../include/dem/particle_wall_contact_force.h
   ../../include/dem/particle_wall_dmt_force.h
