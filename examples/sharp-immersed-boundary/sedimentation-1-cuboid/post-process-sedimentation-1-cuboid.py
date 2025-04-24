@@ -37,12 +37,13 @@ Uc = np.sqrt(4./3. * g * B * np.abs(rho-rho_0)/rho_0 )
 tc = B / Uc 
 t_fact = 1/tc
 
-experimental_data = np.loadtxt("S18.dat",skiprows=1)
+
 mat=np.loadtxt("out/ib_force.00.dat",skiprows=1)
 t=mat[:,1]
 vy=np.abs(mat[:,15])
 
-plt.plot(experimental_data[:,0],experimental_data[:,1],'ks', mfc='none',label="Wang et al.")
+# experimental_data = np.loadtxt("S18.dat",skiprows=1)
+# plt.plot(experimental_data[:,0],experimental_data[:,1],'ks', mfc='none',label="Wang et al.")
 plt.plot(t*t_fact,vy,color=colors[0],lw=3, label="Lethe")
 
 plt.ylabel("Sedimentation velocity, $v_y$ [cm/s]")
