@@ -8,13 +8,14 @@
 
 template <int dim, typename PropertiesIndex>
 ParticleRayTracing<dim, PropertiesIndex>::ParticleRayTracing(
-  ParticleRayTracingParameters<dim> parameters)
+  DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , triangulation(this->mpi_communicator)
   , mapping(1)
+  , background_dh(triangulation)
   , photon_handler(triangulation, mapping, 1)
   , particle_handler(triangulation, mapping, PropertiesIndex::n_properties)
 {}
@@ -83,6 +84,7 @@ ParticleRayTracing<dim, PropertiesIndex>::find_locally_own_cells_with_particles(
             {
               local_and_ghost_cells_with_particles_and_neighbors.insert(
                 *main_cell_iterator);
+              continue;
             }
         }
     }

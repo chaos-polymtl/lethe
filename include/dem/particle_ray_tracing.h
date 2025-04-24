@@ -7,7 +7,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
-#include <dem/particle_ray_tracing_parameters.h>
+#include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -23,7 +23,7 @@ template <int dim, typename PropertiesIndex>
 class ParticleRayTracing
 {
 public:
-  ParticleRayTracing(ParticleRayTracingParameters<dim> parameters);
+  ParticleRayTracing(DEMSolverParameters<dim> dem_parameters);
 
   void
   find_locally_own_cells_with_particles(
@@ -34,7 +34,7 @@ public:
   /**
    * @brief The parameters of the DEM simulation.
    */
-  ParticleRayTracingParameters<dim> parameters;
+  DEMSolverParameters<dim> dem_parameters;
 
   /**
    * @brief The MPI communicator used for the parallel simulation.
@@ -67,6 +67,12 @@ public:
    * simulations.
    */
   MappingQGeneric<dim> mapping;
+
+  /**
+   * @brief The background degree of freedom handler uses for parallel grid
+   * processing.
+   */
+  DoFHandler<dim> background_dh;
 
   /**
    * @brief The particle handler that manages the photons.
