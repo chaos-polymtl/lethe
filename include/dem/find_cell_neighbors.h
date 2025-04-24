@@ -29,7 +29,7 @@ using namespace dealii;
  * number) of vectors (ghost adjacent cells of each local cell). First element
  * of each set shows the main cell itself
  */
-template <int dim,bool reciprocal = false>
+template <int dim, bool reciprocal = false>
 void
 find_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
