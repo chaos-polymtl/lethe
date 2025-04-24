@@ -25,16 +25,6 @@ ParticleRayTracing<dim, PropertiesIndex>::find_locally_own_cells_with_particles(
   typename DEM::dem_data_structures<dim>::cells_neighbor_list
     &cells_with_particle_and_neighbours)
 {
-  /* When we will compute the intersection with
-  // Get action manager
-  auto *action_manager = DEMActionManager::get_action_manager();
-
- // Get total (with repetition) neighbors list for floating mesh.
- if (action_manager->check_solid_objects_enabled())
-   {
-     find_full_cell_neighbors<dim>(triangulation, total_neighbor_list);
-   }
- */
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_local_neighbor_list;
   typename dem_data_structures<dim>::cells_neighbor_list
@@ -62,6 +52,7 @@ ParticleRayTracing<dim, PropertiesIndex>::find_locally_own_cells_with_particles(
             {
               local_and_ghost_cells_with_particles_and_neighbors.insert(
                 *main_cell_iterator);
+              continue;
             }
         }
     }
@@ -76,9 +67,11 @@ ParticleRayTracing<dim, PropertiesIndex>::find_locally_own_cells_with_particles(
         local_and_ghost_cells_with_particles_and_neighbors.find(
           *main_cell_iterator);
 
+      // Check if the cell is already in the set from the previous loop.
       if (candidates_container_it ==
           local_and_ghost_cells_with_particles_and_neighbors.end())
         continue;
+
       // Loop over the local neighboring cells.
       // The first iterator is the main_cell itself.
       for (auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
