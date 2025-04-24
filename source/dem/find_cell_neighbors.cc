@@ -366,7 +366,7 @@ get_periodic_neighbor_list(
 }
 
 template void
-find_cell_neighbors<2,false>(
+find_cell_neighbors<2, false>(
   const parallel::distributed::Triangulation<2> &triangulation,
   typename dem_data_structures<2>::cells_neighbor_list
     &cells_local_neighbor_list,
@@ -374,7 +374,7 @@ find_cell_neighbors<2,false>(
     &cells_ghost_neighbor_list);
 
 template void
-find_cell_neighbors<3,false>(
+find_cell_neighbors<3, false>(
   const parallel::distributed::Triangulation<3> &triangulation,
   typename dem_data_structures<3>::cells_neighbor_list
     &cells_local_neighbor_list,
@@ -382,7 +382,7 @@ find_cell_neighbors<3,false>(
     &cells_ghost_neighbor_list);
 
 template void
-find_cell_neighbors<2,true>(
+find_cell_neighbors<2, true>(
   const parallel::distributed::Triangulation<2> &triangulation,
   typename dem_data_structures<2>::cells_neighbor_list
     &cells_local_neighbor_list,
@@ -390,7 +390,7 @@ find_cell_neighbors<2,true>(
     &cells_ghost_neighbor_list);
 
 template void
-find_cell_neighbors<3,true>(
+find_cell_neighbors<3, true>(
   const parallel::distributed::Triangulation<3> &triangulation,
   typename dem_data_structures<3>::cells_neighbor_list
     &cells_local_neighbor_list,
