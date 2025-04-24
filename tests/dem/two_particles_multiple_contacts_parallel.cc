@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/fe/mapping_q.h>
@@ -19,33 +19,11 @@
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)
+#include <../tests/dem/test_particles_functions.h>
+
 #include <../tests/tests.h>
 
 using namespace dealii;
-
-template <int dim>
-void
-reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::vector<Tensor<1, 3>>       &torque,
-                   std::vector<Tensor<1, 3>>       &force)
-{
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
-    {
-      // Getting id of particle as local variable
-      unsigned int particle_id = particle->get_id();
-
-      // Reinitializing forces and torques of particles in the system
-      force[particle_id][0] = 0;
-      force[particle_id][1] = 0;
-      force[particle_id][2] = 0;
-
-      torque[particle_id][0] = 0;
-      torque[particle_id][1] = 0;
-      torque[particle_id][2] = 0;
-    }
-}
 
 template <int dim, typename PropertiesIndex>
 void
@@ -159,15 +137,14 @@ test()
 
 
   // Defining variables
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -175,8 +152,9 @@ test()
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
-      // Reinitializing forces
-      reinitialize_force(particle_handler, torque, force);
+      // Reinitializing contact outcomes
+      reinitialize_contact_outcomes<dim, PropertiesIndex>(particle_handler,
+                                                          contact_outcome);
 
       particle_handler.exchange_ghost_particles();
 
@@ -195,23 +173,27 @@ test()
 
       // Integration
       // Calling non-linear force
-      nonlinear_force_object.calculate_particle_particle_contact_force(
+      nonlinear_force_object.calculate_particle_particle_contact(
         contact_manager.get_local_adjacent_particles(),
         contact_manager.get_ghost_adjacent_particles(),
         contact_manager.get_local_local_periodic_adjacent_particles(),
         contact_manager.get_local_ghost_periodic_adjacent_particles(),
         contact_manager.get_ghost_local_periodic_adjacent_particles(),
         dt,
-        torque,
-        force);
+        contact_outcome);
 
       // Store force before integration for proc 1
       // TODO - Improve this in the future, this is not clean.
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 1)
-        step_force = force[0][1];
+        step_force = contact_outcome.force[0][1];
 
       // Integration
-      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+      integrator_object.integrate(particle_handler,
+                                  g,
+                                  dt,
+                                  contact_outcome.torque,
+                                  contact_outcome.force,
+                                  MOI);
 
       contact_manager.update_contacts();
 

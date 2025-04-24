@@ -112,18 +112,16 @@ test()
   pit_2->get_properties()[PropertiesIndex::specific_heat] = specific_heat;
 
   // Initializing variables
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
-  std::vector<double>       heat_transfer_rate;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
-  heat_transfer_rate.resize(force.size());
 
   contact_manager.update_local_particles_in_cells(particle_handler);
 
@@ -143,22 +141,20 @@ test()
       hertz_mindlin_limit_overlap,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
-  nonlinear_force_object
-    .calculate_particle_particle_contact_force_and_heat_transfer_rate(
-      contact_manager.get_local_adjacent_particles(),
-      contact_manager.get_ghost_adjacent_particles(),
-      contact_manager.get_local_local_periodic_adjacent_particles(),
-      contact_manager.get_local_ghost_periodic_adjacent_particles(),
-      contact_manager.get_ghost_local_periodic_adjacent_particles(),
-      dt,
-      torque,
-      force,
-      heat_transfer_rate);
+  nonlinear_force_object.calculate_particle_particle_contact(
+    contact_manager.get_local_adjacent_particles(),
+    contact_manager.get_ghost_adjacent_particles(),
+    contact_manager.get_local_local_periodic_adjacent_particles(),
+    contact_manager.get_local_ghost_periodic_adjacent_particles(),
+    contact_manager.get_ghost_local_periodic_adjacent_particles(),
+    dt,
+    contact_outcome);
 
   // Output
   auto particle_one = particle_handler.begin();
   deallog << "The heat transfer applied to particle one is "
-          << heat_transfer_rate[particle_one->get_id()] << " J/s." << std::endl;
+          << contact_outcome.heat_transfer_rate[particle_one->get_id()]
+          << " J/s." << std::endl;
 }
 
 int
