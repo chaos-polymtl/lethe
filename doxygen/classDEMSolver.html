@@ -206,10 +206,12 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a36fb23b9a16673dcffba51be907551f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cf7dcbb53406ddc78457dbd8d5886dd" id="r_a8cf7dcbb53406ddc78457dbd8d5886dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPVDHandler.html">PVDHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#a8cf7dcbb53406ddc78457dbd8d5886dd">particles_pvdhandler_force_chains</a></td></tr>
 <tr class="separator:a8cf7dcbb53406ddc78457dbd8d5886dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2efc63b682c79feb9b5889cc11dd3728" id="r_a2efc63b682c79feb9b5889cc11dd3728"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#a2efc63b682c79feb9b5889cc11dd3728">torque</a></td></tr>
-<tr class="separator:a2efc63b682c79feb9b5889cc11dd3728"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab71db15efa40b0077ad6661d4846b598" id="r_ab71db15efa40b0077ad6661d4846b598"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#ab71db15efa40b0077ad6661d4846b598">force</a></td></tr>
-<tr class="separator:ab71db15efa40b0077ad6661d4846b598"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34e11cda806a731cc2959d35722ddb01" id="r_a34e11cda806a731cc2959d35722ddb01"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#a34e11cda806a731cc2959d35722ddb01">contact_outcome</a></td></tr>
+<tr class="separator:a34e11cda806a731cc2959d35722ddb01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a934176f833d40c98217cef1d4f8ca639" id="r_a934176f833d40c98217cef1d4f8ca639"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#a934176f833d40c98217cef1d4f8ca639">torque</a> = contact_outcome.torque</td></tr>
+<tr class="separator:a934176f833d40c98217cef1d4f8ca639"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2013e0ea4a3b3c576f8fd456a8a176c" id="r_ac2013e0ea4a3b3c576f8fd456a8a176c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#ac2013e0ea4a3b3c576f8fd456a8a176c">force</a> = contact_outcome.force</td></tr>
+<tr class="separator:ac2013e0ea4a3b3c576f8fd456a8a176c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5b8541c47e1e846ffc747e972af90d7" id="r_aa5b8541c47e1e846ffc747e972af90d7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#aa5b8541c47e1e846ffc747e972af90d7">displacement</a></td></tr>
 <tr class="separator:aa5b8541c47e1e846ffc747e972af90d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1877a756f3858c74dd96052f954e385b" id="r_a1877a756f3858c74dd96052f954e385b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolver.html#a1877a756f3858c74dd96052f954e385b">MOI</a></td></tr>
@@ -873,7 +875,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Engine of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solver. Calls all the necessary functions to set parameters, solve the simulation, and finish the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00854">854</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00855">855</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="find__contact__detection__step_8cc_source.html#l00119">find_floating_mesh_mapping_step()</a>, <a class="el" href="read__checkpoint_8cc_source.html#l00019">read_checkpoint()</a>, <a class="el" href="read__mesh_8cc_source.html#l00016">read_mesh()</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="write__checkpoint_8cc_source.html#l00017">write_checkpoint()</a>, and <a class="el" href="output__force__torque__calculation_8cc_source.html#l00009">write_forces_torques_output_locally()</a>.</p>
 
@@ -996,7 +998,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The constraints for the background grid needed for the adaptive sparse. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00500">500</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00505">505</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1024,7 +1026,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The background degree of freedom handler uses for parallel grid processing. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00464">464</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00469">469</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1164,7 +1166,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The pointer to the contact detection function that checks if a contact search is required. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00512">512</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00517">517</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1192,7 +1194,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The storage of statistics about time and contact lists. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00474">474</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00479">479</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1224,6 +1226,34 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
+<a id="a34e11cda806a731cc2959d35722ddb01" name="a34e11cda806a731cc2959d35722ddb01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34e11cda806a731cc2959d35722ddb01">&#9670;&#160;</a></span>contact_outcome</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt;PropertiesIndex&gt; <a class="el" href="classDEMSolver.html">DEMSolver</a>&lt; dim, PropertiesIndex &gt;::contact_outcome</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Class object to store the vectors of force, torque and heat transfer rate applied to particles. </p>
+
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00396">396</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+
+</div>
+</div>
 <a id="aa5b8541c47e1e846ffc747e972af90d7" name="aa5b8541c47e1e846ffc747e972af90d7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa5b8541c47e1e846ffc747e972af90d7">&#9670;&#160;</a></span>displacement</h2>
 
@@ -1248,12 +1278,12 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The displacement tracking of particles for the dynamic contact detection. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00407">407</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00412">412</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
-<a id="ab71db15efa40b0077ad6661d4846b598" name="ab71db15efa40b0077ad6661d4846b598"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab71db15efa40b0077ad6661d4846b598">&#9670;&#160;</a></span>force</h2>
+<a id="ac2013e0ea4a3b3c576f8fd456a8a176c" name="ac2013e0ea4a3b3c576f8fd456a8a176c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2013e0ea4a3b3c576f8fd456a8a176c">&#9670;&#160;</a></span>force</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1264,7 +1294,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt; <a class="el" href="classDEMSolver.html">DEMSolver</a>&lt; dim, PropertiesIndex &gt;::force</td>
+          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt;&amp; <a class="el" href="classDEMSolver.html">DEMSolver</a>&lt; dim, PropertiesIndex &gt;::force = contact_outcome.force</td>
         </tr>
       </table>
   </td>
@@ -1276,7 +1306,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The vector of force of particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00401">401</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00406">406</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1304,7 +1334,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The boundary information of the forces. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00439">439</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00444">444</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1388,7 +1418,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The grid PVD handler. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00469">469</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00474">474</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1472,7 +1502,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The pointer to the function that checks if a load balancing is required. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00506">506</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00511">511</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1584,7 +1614,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The moment of inertia of particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00412">412</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00417">417</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1948,7 +1978,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The periodic boundaries cells information map. Only used with a simulation with periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00452">452</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00457">457</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -1976,7 +2006,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The periodic boundaries manipulator. Only used with a simulation with periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00458">458</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00463">463</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2067,7 +2097,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The container of the distribution objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00489">489</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00494">494</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2155,7 +2185,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The container of the solid surfaces. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00479">479</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00484">484</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2183,7 +2213,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The vector of vector of pairs of the mapping of the background mesh to the solid surface. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00419">419</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00424">424</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2211,7 +2241,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The container of the solid volumes. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00484">484</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00489">489</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2239,7 +2269,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The vector of vector of pairs of the mapping of the background mesh to the solid volume. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00426">426</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00431">431</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2267,7 +2297,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The object handling the adaptive sparse contacts (ASC). Only used with the ASC method. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00495">495</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00500">500</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2299,8 +2329,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
-<a id="a2efc63b682c79feb9b5889cc11dd3728" name="a2efc63b682c79feb9b5889cc11dd3728"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2efc63b682c79feb9b5889cc11dd3728">&#9670;&#160;</a></span>torque</h2>
+<a id="a934176f833d40c98217cef1d4f8ca639" name="a934176f833d40c98217cef1d4f8ca639"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a934176f833d40c98217cef1d4f8ca639">&#9670;&#160;</a></span>torque</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2311,7 +2341,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt; <a class="el" href="classDEMSolver.html">DEMSolver</a>&lt; dim, PropertiesIndex &gt;::torque</td>
+          <td class="memname">std::vector&lt;Tensor&lt;1, 3&gt; &gt;&amp; <a class="el" href="classDEMSolver.html">DEMSolver</a>&lt; dim, PropertiesIndex &gt;::torque = contact_outcome.torque</td>
         </tr>
       </table>
   </td>
@@ -2323,7 +2353,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The vector of torque of particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00396">396</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00401">401</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2351,7 +2381,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The torques boundary information. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00445">445</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00450">450</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>
@@ -2407,7 +2437,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The map of the point and normal vector of grid. Only used with grid motion. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00433">433</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8h_source.html#l00438">438</a> of file <a class="el" href="dem_8h_source.html">dem.h</a>.</p>
 
 </div>
 </div>

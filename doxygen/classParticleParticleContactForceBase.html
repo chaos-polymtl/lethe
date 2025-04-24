@@ -105,10 +105,8 @@ Inheritance diagram for ParticleParticleContactForceBase&lt; dim, PropertiesInde
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afc2a31f262b864ab42731440f3825205" id="r_afc2a31f262b864ab42731440f3825205"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#afc2a31f262b864ab42731440f3825205">calculate_particle_particle_contact_force_and_heat_transfer_rate</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_local_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_ghost_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_local_periodic_adjacent_particles, const double dt, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, std::vector&lt; double &gt; &amp;heat_transfer_rate)=0</td></tr>
-<tr class="separator:afc2a31f262b864ab42731440f3825205"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17d44a6f1c3185184d93665a831b1fd0" id="r_a17d44a6f1c3185184d93665a831b1fd0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a17d44a6f1c3185184d93665a831b1fd0">calculate_particle_particle_contact_force</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_local_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_ghost_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_local_periodic_adjacent_particles, const double dt, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force)=0</td></tr>
-<tr class="separator:a17d44a6f1c3185184d93665a831b1fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a379ccdb348e7bb8694470721d88290e8" id="r_a379ccdb348e7bb8694470721d88290e8"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a379ccdb348e7bb8694470721d88290e8">calculate_particle_particle_contact</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_local_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_ghost_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_local_periodic_adjacent_particles, const double dt, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome)=0</td></tr>
+<tr class="separator:a379ccdb348e7bb8694470721d88290e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ae253e94a721aa2dd3c9bd499465822" id="r_a8ae253e94a721aa2dd3c9bd499465822"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a8ae253e94a721aa2dd3c9bd499465822">set_periodic_offset</a> (const Tensor&lt; 1, dim &gt; &amp;<a class="el" href="classParticleParticleContactForceBase.html#af316b7cb9f4e2ccf1703956c16c1b2e6">periodic_offset</a>)</td></tr>
 <tr class="separator:a8ae253e94a721aa2dd3c9bd499465822"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -128,10 +126,10 @@ class ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;</div><p>Bas
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00034">34</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00035">35</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a17d44a6f1c3185184d93665a831b1fd0" name="a17d44a6f1c3185184d93665a831b1fd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17d44a6f1c3185184d93665a831b1fd0">&#9670;&#160;</a></span>calculate_particle_particle_contact_force()</h2>
+<a id="a379ccdb348e7bb8694470721d88290e8" name="a379ccdb348e7bb8694470721d88290e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a379ccdb348e7bb8694470721d88290e8">&#9670;&#160;</a></span>calculate_particle_particle_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -142,7 +140,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::calculate_particle_particle_contact_force </td>
+          <td class="memname">virtual void <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::calculate_particle_particle_contact </td>
           <td>(</td>
           <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
           <td class="paramname"><em>local_adjacent_particles</em>, </td>
@@ -180,14 +178,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>torque</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>force</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;&#160;</td>
+          <td class="paramname"><em>contact_outcome</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -202,7 +194,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Calculate the contact forces using the contact pair information obtained in the fine search and physical properties of particles. </p>
+<p>Calculate the contact outcomes using the contact pair information obtained in the fine search and physical properties of particles. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">local_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local particle-particle contact forces. </td></tr>
@@ -211,111 +203,12 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
     <tr><td class="paramname">local_ghost_periodic_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local-ghost periodic particle-particle contact forces. </td></tr>
     <tr><td class="paramname">ghost_local_periodic_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the ghost-local periodic particle-particle contact forces. </td></tr>
     <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
-    <tr><td class="paramname">torque</td><td>Torque acting on particles. </td></tr>
-    <tr><td class="paramname">force</td><td>Force acting on particles. </td></tr>
+    <tr><td class="paramname">contact_outcome</td><td>Interaction outcomes. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classParticleParticleContactForce.html#a7a380de9d1fe30265ff2bf52e0d5c1d6">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>, and <a class="el" href="classParticleParticleContactForce.html#a7a380de9d1fe30265ff2bf52e0d5c1d6">ParticleParticleContactForce&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;</a>.</p>
-
-</div>
-</div>
-<a id="afc2a31f262b864ab42731440f3825205" name="afc2a31f262b864ab42731440f3825205"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc2a31f262b864ab42731440f3825205">&#9670;&#160;</a></span>calculate_particle_particle_contact_force_and_heat_transfer_rate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename PropertiesIndex &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::calculate_particle_particle_contact_force_and_heat_transfer_rate </td>
-          <td>(</td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
-          <td class="paramname"><em>local_adjacent_particles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
-          <td class="paramname"><em>ghost_adjacent_particles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
-          <td class="paramname"><em>local_local_periodic_adjacent_particles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
-          <td class="paramname"><em>local_ghost_periodic_adjacent_particles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
-          <td class="paramname"><em>ghost_local_periodic_adjacent_particles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>dt</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>torque</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>force</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>heat_transfer_rate</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculate the contact forces and heat transfer rates using the contact pair information obtained in the fine search and physical properties of particles. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">local_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local particle-particle contact forces. </td></tr>
-    <tr><td class="paramname">ghost_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local-ghost particle-particle contact forces. </td></tr>
-    <tr><td class="paramname">local_local_periodic_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local periodic particle-particle contact forces. </td></tr>
-    <tr><td class="paramname">local_ghost_periodic_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local-ghost periodic particle-particle contact forces. </td></tr>
-    <tr><td class="paramname">ghost_local_periodic_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the ghost-local periodic particle-particle contact forces. </td></tr>
-    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
-    <tr><td class="paramname">torque</td><td>Torque acting on particles. </td></tr>
-    <tr><td class="paramname">force</td><td>Force acting on particles. </td></tr>
-    <tr><td class="paramname">heat_transfer_rate</td><td>Heat transfer rate applied to particles. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implemented in <a class="el" href="classParticleParticleContactForce.html#a8b8d08de80f8ae73eaf6bb9d3461bcac">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>, and <a class="el" href="classParticleParticleContactForce.html#a8b8d08de80f8ae73eaf6bb9d3461bcac">ParticleParticleContactForce&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classParticleParticleContactForce.html#a61c4a971844e85a904894453767cc632">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>, and <a class="el" href="classParticleParticleContactForce.html#a61c4a971844e85a904894453767cc632">ParticleParticleContactForce&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;</a>.</p>
 
 </div>
 </div>
@@ -345,9 +238,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00116">116</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00075">75</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00122">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offset</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00081">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offset</a>.</p>
 
 </div>
 </div>
@@ -374,7 +267,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00122">122</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00081">81</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>

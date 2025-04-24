@@ -15,12 +15,13 @@ var searchData=
   ['heat_5fflux_5ftable_12',['heat_flux_table',['../classHeatTransfer.html#a244afcf9527d44633437387de636fbd2',1,'HeatTransfer']]],
   ['heat_5ftransfer_13',['heat_transfer',['../structParameters_1_1Multiphysics.html#ac2f5a0a1073e4136350d14cfa1c059fb',1,'Parameters::Multiphysics']]],
   ['heat_5ftransfer_5fdcdd_5fstabilization_14',['heat_transfer_dcdd_stabilization',['../structParameters_1_1Stabilization.html#a7a7cc857727f157042cd8cb4dbf308e0',1,'Parameters::Stabilization']]],
-  ['heat_5ftransfer_5fsource_15',['heat_transfer_source',['../classSourceTerms_1_1SourceTerm.html#a20350da74b95a09838932a894ef15405',1,'SourceTerms::SourceTerm']]],
-  ['height_16',['height',['../classCone.html#a739dc61dfe0c8b42ab9f761ae8c0d25a',1,'Cone::height'],['../classCylindricalTube.html#ab927ca8d0deb63b0f2e7fabf19ae0917',1,'CylindricalTube::height'],['../classCylindricalHelix.html#ad510a10aaed5955ddbfe6cf552f09d88',1,'CylindricalHelix::height']]],
-  ['hess_5fphi_17',['hess_phi',['../classTracerScratchData.html#a290e8502ad8a79e3aa0c49154df1d43b',1,'TracerScratchData::hess_phi'],['../classVOFScratchData.html#a3c6d9fb37cbfc98f8c1ea33bd98ab8ee',1,'VOFScratchData::hess_phi']]],
-  ['hess_5fphi_5fphase_18',['hess_phi_phase',['../classCahnHilliardScratchData.html#a0ecb975c6b3fe625277d5ee06022bd47',1,'CahnHilliardScratchData']]],
-  ['hess_5fphi_5fpotential_19',['hess_phi_potential',['../classCahnHilliardScratchData.html#aadc251e41bfc5ed35eba9e076fdd48d5',1,'CahnHilliardScratchData']]],
-  ['hess_5fphi_5ft_20',['hess_phi_T',['../classHeatTransferScratchData.html#ae13fc302aa6530c26d795df0dba067a3',1,'HeatTransferScratchData']]],
-  ['hess_5fphi_5fu_21',['hess_phi_u',['../classNavierStokesScratchData.html#aa34d4aaa0898052080018672890aa933',1,'NavierStokesScratchData']]],
-  ['hole_5fradius_22',['hole_radius',['../classDeathStar.html#a871728bde6ff92de7ae7240cb11ea772',1,'DeathStar']]]
+  ['heat_5ftransfer_5frate_15',['heat_transfer_rate',['../classParticleInteractionOutcomes.html#a20510edc4683fa1b6d2f5dfbb1321dad',1,'ParticleInteractionOutcomes']]],
+  ['heat_5ftransfer_5fsource_16',['heat_transfer_source',['../classSourceTerms_1_1SourceTerm.html#a20350da74b95a09838932a894ef15405',1,'SourceTerms::SourceTerm']]],
+  ['height_17',['height',['../classCone.html#a739dc61dfe0c8b42ab9f761ae8c0d25a',1,'Cone::height'],['../classCylindricalTube.html#ab927ca8d0deb63b0f2e7fabf19ae0917',1,'CylindricalTube::height'],['../classCylindricalHelix.html#ad510a10aaed5955ddbfe6cf552f09d88',1,'CylindricalHelix::height']]],
+  ['hess_5fphi_18',['hess_phi',['../classTracerScratchData.html#a290e8502ad8a79e3aa0c49154df1d43b',1,'TracerScratchData::hess_phi'],['../classVOFScratchData.html#a3c6d9fb37cbfc98f8c1ea33bd98ab8ee',1,'VOFScratchData::hess_phi']]],
+  ['hess_5fphi_5fphase_19',['hess_phi_phase',['../classCahnHilliardScratchData.html#a0ecb975c6b3fe625277d5ee06022bd47',1,'CahnHilliardScratchData']]],
+  ['hess_5fphi_5fpotential_20',['hess_phi_potential',['../classCahnHilliardScratchData.html#aadc251e41bfc5ed35eba9e076fdd48d5',1,'CahnHilliardScratchData']]],
+  ['hess_5fphi_5ft_21',['hess_phi_T',['../classHeatTransferScratchData.html#ae13fc302aa6530c26d795df0dba067a3',1,'HeatTransferScratchData']]],
+  ['hess_5fphi_5fu_22',['hess_phi_u',['../classNavierStokesScratchData.html#aa34d4aaa0898052080018672890aa933',1,'NavierStokesScratchData']]],
+  ['hole_5fradius_23',['hole_radius',['../classDeathStar.html#a871728bde6ff92de7ae7240cb11ea772',1,'DeathStar']]]
 ];
