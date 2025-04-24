@@ -249,10 +249,11 @@ VolumeOfFluid<dim>::assemble_system_matrix_dg()
     };
 
   const auto boundary_worker =
-    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
-        const unsigned int                                   &face_no,
-        VOFScratchData<dim>                                  &scratch_data,
-        StabilizedDGMethodsCopyData                          &copy_data) {};
+    [&]([[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator
+                                                     &cell,
+        [[maybe_unused]] const unsigned int          &face_no,
+        [[maybe_unused]] VOFScratchData<dim>         &scratch_data,
+        [[maybe_unused]] StabilizedDGMethodsCopyData &copy_data) {};
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -494,10 +495,11 @@ VolumeOfFluid<dim>::assemble_system_rhs_dg()
     };
 
   const auto boundary_worker =
-    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
-        const unsigned int                                   &face_no,
-        VOFScratchData<dim>                                  &scratch_data,
-        StabilizedDGMethodsCopyData                          &copy_data) {};
+    [&]([[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator
+                                                     &cell,
+        [[maybe_unused]] const unsigned int          &face_no,
+        [[maybe_unused]] VOFScratchData<dim>         &scratch_data,
+        [[maybe_unused]] StabilizedDGMethodsCopyData &copy_data) {};
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
