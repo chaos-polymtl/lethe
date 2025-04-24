@@ -139,7 +139,7 @@ public:
    * @param[in] quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
-   * @param[in] kinematic_viscosity Kinematic viscosity.
+   * @param[in] properties_manager The physical properties manager (see physical_properties_manager.h)
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
@@ -157,7 +157,7 @@ public:
     const AffineConstraints<number>                     &constraints,
     const Quadrature<dim>                               &quadrature,
     const std::shared_ptr<Function<dim>>                 forcing_function,
-    const double                                         kinematic_viscosity,
+    const PhysicalPropertiesManager &properties_manager,
     const StabilizationType                              stabilization,
     const unsigned int                                   mg_level,
     const std::shared_ptr<SimulationControl>            &simulation_control,
@@ -177,7 +177,7 @@ public:
    * @param[in] quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
-   * @param[in] kinematic_viscosity Kinematic viscosity.
+   * @param[in] properties_manager The physical properties manager (see physical_properties_manager.h)
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
@@ -195,7 +195,7 @@ public:
     const AffineConstraints<number>                     &constraints,
     const Quadrature<dim>                               &quadrature,
     const std::shared_ptr<Function<dim>>                 forcing_function,
-    const double                                         kinematic_viscosity,
+    const PhysicalPropertiesManager &properties_manager,
     const StabilizationType                              stabilization,
     const unsigned int                                   mg_level,
     const std::shared_ptr<SimulationControl>            &simulation_control,

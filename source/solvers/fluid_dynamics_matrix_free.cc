@@ -856,8 +856,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             level_constraints[level],
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager
-              .get_kinematic_viscosity_scale(),
+            this->simulation_parameters.physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
             level,
             simulation_control,
@@ -1255,8 +1254,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             level_constraint,
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager
-              .get_kinematic_viscosity_scale(),
+            this->simulation_parameters.physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
@@ -2292,8 +2290,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->zero_constraints,
     *this->cell_quadrature,
     this->forcing_function,
-    this->simulation_parameters.physical_properties_manager
-      .get_kinematic_viscosity_scale(),
+    this->simulation_parameters.physical_properties_manager,
     this->simulation_parameters.stabilization.stabilization,
     mg_level,
     this->simulation_control,
