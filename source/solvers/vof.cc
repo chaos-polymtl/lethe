@@ -13,6 +13,122 @@
 
 #include <cmath>
 
+template <int dim>
+VolumeOfFluid<dim>::VolumeOfFluid(
+  MultiphysicsInterface<dim>      *multiphysics_interface,
+  const SimulationParameters<dim> &p_simulation_parameters,
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
+  std::shared_ptr<SimulationControl> p_simulation_control)
+  : AuxiliaryPhysics<dim, GlobalVectorType>(
+      p_simulation_parameters.non_linear_solver.at(PhysicsID::VOF))
+  , multiphysics(multiphysics_interface)
+  , computing_timer(p_triangulation->get_communicator(),
+                    this->pcout,
+                    TimerOutput::summary,
+                    TimerOutput::wall_times)
+  , simulation_parameters(p_simulation_parameters)
+  , triangulation(p_triangulation)
+  , simulation_control(p_simulation_control)
+  , dof_handler(*triangulation)
+  , sharpening_threshold(simulation_parameters.multiphysics.vof_parameters
+                           .regularization_method.sharpening.threshold)
+{
+  AssertThrow(
+    simulation_parameters.physical_properties_manager.get_number_of_fluids() ==
+      2,
+    InvalidNumberOfFluid(simulation_parameters.physical_properties_manager
+                           .get_number_of_fluids()));
+
+  AssertThrow(((simulation_parameters.fem_parameters.tracer_uses_dg &&
+                simulation_parameters.multiphysics.vof_parameters
+                    .regularization_method.regularization_method_type ==
+                  Parameters::RegularizationMethodType::none) ||
+               !simulation_parameters.fem_parameters.tracer_uses_dg),
+              UnsupportedRegularization());
+
+
+  if (simulation_parameters.mesh.simplex)
+    {
+      // for simplex meshes
+      fe = std::make_shared<FE_SimplexP<dim>>(
+        simulation_parameters.fem_parameters.VOF_order);
+      mapping         = std::make_shared<MappingFE<dim>>(*fe);
+      cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+      face_quadrature =
+        std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
+    }
+  else
+    {
+      // Usual case, for quad/hex meshes
+      if (simulation_parameters.fem_parameters.VOF_uses_dg)
+        {
+          fe = std::make_shared<FE_DGQ<dim>>(
+            simulation_parameters.fem_parameters.VOF_order);
+        }
+      else
+        {
+          fe = std::make_shared<FE_Q<dim>>(
+            simulation_parameters.fem_parameters.VOF_order);
+        }
+      // Mapping has to be at least Q1, but DGQ0 is allowed
+      mapping = std::make_shared<MappingQ<dim>>(std::max(fe->degree, uint(1)));
+      cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+      face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
+    }
+
+  // Allocate solution transfer
+  solution_transfer = std::make_shared<
+    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
+    dof_handler);
+
+  // Set size of previous solutions using BDF schemes information
+  previous_solutions.resize(maximum_number_of_previous_solutions());
+
+  // Prepare previous solutions transfer
+  previous_solutions_transfer.reserve(previous_solutions.size());
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions_transfer.emplace_back(
+        parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
+          this->dof_handler));
+    }
+
+  // Check the value of interface sharpness
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .sharpening.interface_sharpness < 1.0)
+    this->pcout
+      << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
+      << std::endl
+      << "The interface sharpness value should be set between 1 and 2"
+      << std::endl;
+
+
+  // Change the behavior of the timer for situations when you don't want
+  // outputs
+  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
+    this->computing_timer.disable_output();
+
+  // Initialize the interface object for subequations to solve
+  this->subequations =
+    std::make_shared<VOFSubequationsInterface<dim>>(this->simulation_parameters,
+                                                    this->pcout,
+                                                    this->triangulation,
+                                                    this->simulation_control,
+                                                    this->multiphysics);
+
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .geometric_interface_reinitialization.enable)
+    {
+      this->signed_distance_solver = std::make_shared<
+        InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
+        triangulation,
+        fe,
+        simulation_parameters.multiphysics.vof_parameters.regularization_method
+          .geometric_interface_reinitialization.max_reinitialization_distance,
+        0.0);
+    }
+}
+
 
 template <int dim>
 void
