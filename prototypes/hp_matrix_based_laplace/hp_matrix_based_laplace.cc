@@ -6,11 +6,15 @@
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/timer.h>
 
+#include <deal.II/distributed/grid_refinement.h>
+#include <deal.II/distributed/tria.h>
+
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/distributed/grid_refinement.h>
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_series.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
@@ -18,7 +22,10 @@
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
-#include <deal.II/distributed/tria.h>
+
+#include <deal.II/hp/fe_collection.h>
+#include <deal.II/hp/fe_values.h>
+#include <deal.II/hp/refinement.h>
 
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
@@ -30,16 +37,9 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_series.h>
-
-#include <deal.II/hp/fe_collection.h>
-#include <deal.II/hp/fe_values.h>
-#include <deal.II/hp/refinement.h>
-
-#include <deal.II/numerics/smoothness_estimator.h>
-#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/error_estimator.h>
+#include <deal.II/numerics/smoothness_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
 #include <fstream>
@@ -107,10 +107,12 @@ Settings::try_parse(const std::string &prm_filename)
                     "1",
                     Patterns::Integer(),
                     "Number of cycles <1 up to 9-dim >");
-  prm.declare_entry("geometry",
-                    "hyperball",
-                    Patterns::Selection("hyperball|hypercube|hyperrectangle|hypercube_with_hole"),
-                    "Geometry <hyperball|hypercube|hyperrectangle|hypercube_with_hole>");
+  prm.declare_entry(
+    "geometry",
+    "hyperball",
+    Patterns::Selection(
+      "hyperball|hypercube|hyperrectangle|hypercube_with_hole"),
+    "Geometry <hyperball|hypercube|hyperrectangle|hypercube_with_hole>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
@@ -305,8 +307,10 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::HPMatrixBasedPoissonProblem(
   , mpi_communicator(MPI_COMM_WORLD)
   , parameters(parameters)
 {
-  for (unsigned int degree = parameters.element_order; degree <= parameters.max_element_order; ++degree)
-    { 
+  for (unsigned int degree = parameters.element_order;
+       degree <= parameters.max_element_order;
+       ++degree)
+    {
       fe_collection.push_back(FE_Q<dim>(degree));
       quadrature_collection.push_back(QGauss<dim>(degree + 1));
       face_quadrature_collection.push_back(QGauss<dim - 1>(degree + 1));
@@ -362,21 +366,20 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
           break;
         }
       case Settings::hypercube_with_hole:
-      {
-        GridGenerator::subdivided_hyper_cube(triangulation, 4, -1., 1.);
-    
-        std::set<typename Triangulation<dim>::active_cell_iterator> cells_to_remove;
-        for (const auto &cell : triangulation.active_cell_iterators())
-          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell; ++v)
-            if (cell->vertex(v).square() < .1)
-              cells_to_remove.insert(cell);
-    
-        GridGenerator::create_triangulation_with_removed_cells(triangulation,
-                                                              cells_to_remove,
-                                                              triangulation);
-      }
+        {
+          GridGenerator::subdivided_hyper_cube(triangulation, 4, -1., 1.);
 
- 
+          std::set<typename Triangulation<dim>::active_cell_iterator>
+            cells_to_remove;
+          for (const auto &cell : triangulation.active_cell_iterators())
+            for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
+                 ++v)
+              if (cell->vertex(v).square() < .1)
+                cells_to_remove.insert(cell);
+
+          GridGenerator::create_triangulation_with_removed_cells(
+            triangulation, cells_to_remove, triangulation);
+        }
     }
 
   triangulation.refine_global(parameters.initial_refinement);
@@ -432,19 +435,18 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::assemble_rhs()
   system_rhs = 0;
 
   hp::FEValues<dim> hp_fe_values(fe_collection,
-                                  quadrature_collection,
-                                  update_values | update_gradients |
-                                    update_quadrature_points |
-                                    update_JxW_values);
+                                 quadrature_collection,
+                                 update_values | update_gradients |
+                                   update_quadrature_points |
+                                   update_JxW_values);
 
-  Vector<double>      cell_rhs;
-  SourceTerm<dim>     source_term;
+  Vector<double>  cell_rhs;
+  SourceTerm<dim> source_term;
 
   std::vector<types::global_dof_index> local_dof_indices;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
-
       if (cell->is_locally_owned())
         {
           const unsigned int dofs_per_cell = cell->get_fe().dofs_per_cell;
@@ -456,7 +458,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::assemble_rhs()
 
           const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
 
-          const unsigned int n_q_points = fe_values.n_quadrature_points;
+          const unsigned int  n_q_points = fe_values.n_quadrature_points;
           std::vector<double> source_term_values(n_q_points);
 
           std::vector<double>         newton_step_values(n_q_points);
@@ -510,10 +512,10 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::assemble_matrix()
   system_matrix = 0;
 
   hp::FEValues<dim> hp_fe_values(fe_collection,
-                                  quadrature_collection,
-                                  update_values | update_gradients |
-                                    update_quadrature_points |
-                                    update_JxW_values);
+                                 quadrature_collection,
+                                 update_values | update_gradients |
+                                   update_quadrature_points |
+                                   update_JxW_values);
 
   FullMatrix<double> cell_matrix;
 
@@ -533,10 +535,10 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::assemble_matrix()
 
           const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
 
-          const unsigned int n_q_points    = fe_values.n_quadrature_points;
-          
+          const unsigned int n_q_points = fe_values.n_quadrature_points;
+
           std::vector<double> newton_step_values(n_q_points);
-          
+
           fe_values.get_function_values(solution, newton_step_values);
 
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -574,7 +576,8 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::assemble_matrix()
 
 template <int dim, int fe_degree>
 double
-HPMatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
+HPMatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(
+  const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
 
@@ -602,13 +605,14 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(const double alpha
   local_evaluation_point = solution;
 
   hp::FEValues<dim> hp_fe_values(fe_collection,
-                          quadrature_collection,
-                          update_values | update_gradients | update_JxW_values |
-                            update_quadrature_points);
+                                 quadrature_collection,
+                                 update_values | update_gradients |
+                                   update_JxW_values |
+                                   update_quadrature_points);
 
 
-  Vector<double>      cell_residual;
-  SourceTerm<dim>     source_term;
+  Vector<double>  cell_residual;
+  SourceTerm<dim> source_term;
 
   std::vector<types::global_dof_index> local_dof_indices;
 
@@ -623,10 +627,10 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(const double alpha
           hp_fe_values.reinit(cell);
 
           const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
-          
-          
-          const unsigned int n_q_points    = fe_values.n_quadrature_points;
-          
+
+
+          const unsigned int n_q_points = fe_values.n_quadrature_points;
+
           std::vector<double> source_term_values(n_q_points);
 
           std::vector<double>         values(n_q_points);
@@ -705,8 +709,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
         }
       default:
         Assert(false,
-               ExcMessage(
-                 "This program supports only AMG preconditioner."));
+               ExcMessage("This program supports only AMG preconditioner."));
     }
 
   constraints.distribute(completely_distributed_solution);
@@ -787,7 +790,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::hp_refine()
     solution,
     estimated_error_per_cell);
 
-  Vector<float> smoothness_indicators(triangulation.n_active_cells());
+  Vector<float>          smoothness_indicators(triangulation.n_active_cells());
   FESeries::Fourier<dim> fourier =
     SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
   SmoothnessEstimator::Fourier::coefficient_decay(fourier,
@@ -795,18 +798,18 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::hp_refine()
                                                   solution,
                                                   smoothness_indicators);
 
-  parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(triangulation,
-                                                        estimated_error_per_cell,
-                                                        0.3,
-                                                        0.03);
+  parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
+    triangulation, estimated_error_per_cell, 0.3, 0.03);
 
-  hp::Refinement::p_adaptivity_from_relative_threshold(
-            dof_handler, smoothness_indicators, 0.2, 0.2);
+  hp::Refinement::p_adaptivity_from_relative_threshold(dof_handler,
+                                                       smoothness_indicators,
+                                                       0.2,
+                                                       0.2);
 
   hp::Refinement::choose_p_over_h(dof_handler);
 
   triangulation.prepare_coarsening_and_refinement();
-          hp::Refinement::limit_p_level_difference(dof_handler);
+  hp::Refinement::limit_p_level_difference(dof_handler);
 
   triangulation.execute_coarsening_and_refinement();
 }
@@ -845,9 +848,10 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::output_results(
   DataOutBase::VtkFlags flags;
   flags.compression_level = DataOutBase::CompressionLevel::best_speed;
   data_out.set_flags(flags);
-  
+
   const std::string filename =
-    (parameters.output_path + parameters.output_name + "-" + std::to_string(cycle) + ".vtu");
+    (parameters.output_path + parameters.output_name + "-" +
+     std::to_string(cycle) + ".vtu");
   data_out.write_vtu_in_parallel(filename, MPI_COMM_WORLD);
 }
 
@@ -955,7 +959,6 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::run()
 
       computing_timer.print_summary();
       computing_timer.reset();
-
     }
 }
 
