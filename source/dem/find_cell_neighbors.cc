@@ -390,7 +390,7 @@ find_cell_neighbors<2, true>(
     &cells_ghost_neighbor_list);
 
 template void
-find_cell_neighbors<3, true>(
+find_cell_neighbors<3>(
   const parallel::distributed::Triangulation<3> &triangulation,
   typename dem_data_structures<3>::cells_neighbor_list
     &cells_local_neighbor_list,
