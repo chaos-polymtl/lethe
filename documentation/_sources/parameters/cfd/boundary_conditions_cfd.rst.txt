@@ -10,7 +10,7 @@ This subsection defines the boundary conditions associated with fluid dynamics p
 * ``partial slip`` boundary condition simulates an intermediary between ``slip`` and ``noslip`` boundary conditions, in which the fluid feels an attenuated stress due to the walls. The attenuation is controlled by the  boundary layer thickness (m). The ``partial slip`` boundary condition introduces the "penalization factor" ``beta`` to the :math:`\mathbf{n}` normal vector of the boundary, and the ``boundary layer thickness`` (m) as a parameter to calculate the shear stress at the boundaries.
 * ``periodic`` boundary conditions, in which fluid exiting the domain will reenter on the opposite side. 
 * ``function`` where a Dirichlet boundary condition is set from an arbitrary function. These functions can be used to define all sorts of steady-state and transient velocity boundary conditions such as rotating walls. It is also possible to weakly impose a Dirichlet boundary condition. In this case, the type should be set to ``function weak``. This will result in Nitsche method being used to weakly impose the boundary condition instead of it being strongly imposed by overwriting the values of the degrees of freedom. The ``function weak`` boundary type should only be used in very specific cases where the problem is very stiff, for example when it is fully enclosed and a non-trivial velocity profile is imposed. It can also be used to impose an outbound dirichlet boundary condition.
-* ``outlet`` where a *do nothing* boundary condition, which is a zero traction, is imposed when the fluid is leaving the domain (:math:`\mathbf{u} \cdot \mathbf{n}>0`) and a penalization is imposed when the fluid is inbound. This is useful when turbulent structures or vortices are leaving the domain since it prevents the re-entry of the fluid. The boundary condition imposed is thus:
+* ``outlet`` where a *do nothing* boundary condition (equivalent to ``none``), which is a zero traction, is imposed when the fluid is leaving the domain (:math:`\mathbf{u} \cdot \mathbf{n}>0`) and a penalization is imposed when the fluid is inbound. This is useful when turbulent structures or vortices are leaving the domain since it prevents the re-entry of the fluid. The boundary condition imposed is thus:
 
 .. math::
 
@@ -22,9 +22,6 @@ or in Einstein notation:
     \nu \partial_i u_j n_j  - p n_i - \beta ( u_k n_k)_{-} u_i = 0
 
 where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` is :math:`\min (0,\mathbf{u}\cdot \mathbf{n})`. We refer the reader to the work of `Arndt et al 2015 <https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf>`_  for more detail.
-
-* Finally, Lethe also supports not imposing a boundary condition on an ID. Not imposing a boundary condition is equivalent to the *do nothing* boundary condition (``none``), which results in a zero net traction on a boundary. This, in fact, imposes :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0` where :math:`p` is the pressure, :math:`\mathcal{I}` is the identity tensor, :math:`\mathbf{\tau}` is the deviatoric stress tensor  and :math:`\Gamma` is the boundary. 
-
 
 .. code-block:: text
 
