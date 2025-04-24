@@ -5,7 +5,7 @@ Sedimentation of One Particle
 This example aims to numerically reproduce the results obtained by Wang `et al.` [#Wang2024]_ for the S18 experience. This experience measures the velocity of the sedimentation of a 2.0 cm cuboid particle in a container filled with a viscous fluid.
 
 .. note::
-    * This example is very similar to the sedimentation of one particle example (:doc:`../sedimentation-1-particle/sedimentation-1-particle`) but with a cuboid particle instead of a sphere. As such, the physical setup changes, but the parameters relating to the numerical resolution remain very similar.
+    This example is similar to the sedimentation of one particle example (:doc:`../sedimentation-1-particle/sedimentation-1-particle`) but with a cuboid particle instead of a sphere. As such, the physical setup changes, but the parameters relating to the numerical resolution remain very similar.
 
 .. warning:: 
     * This case is a computationally expensive example. It can take several hours to run on a desktop computer.
@@ -30,10 +30,10 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-The S18 experiment consists of the release of a cuboid particle made of stainless steel (:math:`\rho_p=0.00759 \frac{\text{kg}}{\text{cm}^{3}}`)  with sides of 2.0 cm dropped into a water tower of size 40x80x40 cm. In their experiment, the authors use a glycerin-water solution with varying concentrations to get different settling regimes. The relevent properties to the S18 case, as reported by the authors, are the fluid kinematic viscosity :math:`\nu_f=1.6827 \frac{\text{kg}}{\text{s cm}}` and the fluid density :math:`\rho_f=0.00124 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
+The S18 experiment consists of the release of a cuboid particle made of stainless steel (:math:`\rho_p=0.00759 \frac{\text{kg}}{\text{cm}^{3}}`)  with sides of 2.0 cm dropped into a water column of dimensions :math:`40 \times 80 \times 40\,\text{cm}`. In their experiment, the authors use a glycerin-water solution with varying concentrations to get different settling regimes. The relevant properties to the S18 case, as reported by the authors, are the fluid kinematic viscosity :math:`\nu_f=1.6827 \frac{\text{kg}}{\text{s cm}}` and the fluid density :math:`\rho_f=0.00124 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
 
 .. note:: 
-    You will note that we have transformed every length unit into centimeters. The reason is that the particle's size is very close to 1 cm. Representing the problem in this way helps the linear solver converge. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`. 
+    You will note that we have transformed every length unit into centimeters. The reason is that the particle's size is very close to :math:`1\,\text{cm}`. Representing the problem in this way improves the condition number of the linear system. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`.
     
 All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
@@ -56,12 +56,9 @@ Simulation Control
       set output path        = out/
     end
 
-* The ``time step`` is set to  0.0005. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computationnal time, one could use an adaptive time step/time scaling in order to increase the time step once the particle is sufficiently accelerated.
+* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computationnal time, one could use an adaptive time step/time scaling in order to increase the time step once the particle is sufficiently accelerated.
 
-* The ``time end`` is set to  0.6. This is approximately the sedimentation time of the particles as recorded in the article by Wang `et al.` [#Wang2024]_.
-
-.. note::
-    The ``time step`` 
+* The ``time end`` is set to  ``0.6``. This is approximately the sedimentation time of the particles as recorded in the article by Wang `et al.` [#Wang2024]_.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,7 +71,7 @@ Physical Properties
       end
     end
 
-* These values are obtained from the article by Wang `et al.` [#Wang2024]_ and further communications with the authors.
+These values are obtained from the article by Wang `et al.` [#Wang2024]_ and further communications with the authors.
 
 Mesh
 ~~~~~~
@@ -89,7 +86,7 @@ Mesh
 
 The domain is a rectangular box as such we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have orientated the y-direction with gravity. As such, we have the long side of the box along this axis.
 
-* The ``grid arguments`` is set to  ``1,2,1: 0,0,0 : 40,80,40 : true``. This section has 3 subsections. First ``1,2,1`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 40, 80, 40`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (40,80,40). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
+* The ``grid arguments`` is set to  ``1,2,1: 0,0,0 : 40,80,40 : true``. This section has 3 subsections. Firstly, ``1,2,1`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly, ``0,0,0 : 40, 80, 40`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (40,80,40). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
 
 * The ``initial refinement`` is set to 5. This will ensure to have a base mesh that is a bit smaller than the particle.
 
@@ -110,11 +107,11 @@ Mesh Adaptation
       set variable = velocity
     end
 
-* The ``fraction coarsening`` is set to 0.3. This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
+* The ``fraction coarsening`` is set to ``0.3``. This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
 
-* The ``fraction refinement`` is set to 0.05. The objective here is to refine elements that become close to the particle when it's moving. This will mostly refine elements around the particle that are not included in the refinement zone around the particle.
+* The ``fraction refinement`` is set to ``0.05``. The objective here is to refine elements that become close to the particle when it's moving. This will mostly refine elements around the particle that are not already included in the refinement zone around the particle.
 
-* The ``max refinement level`` is set to 8. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~10 elements per sides of the cuboid. This should be sufficient to get accurate results.
+* The ``max refinement level`` is set to ``8``. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~:math:`10` elements per sides of the cuboid. This should be sufficient to get accurate results.
 
 * The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
@@ -131,14 +128,12 @@ Boundary Conditions
     subsection bc 1
       set type = noslip
     end
-
     subsection bc 2
       set type = noslip
     end
     subsection bc 3
       set type = outlet
     end
-
     subsection bc 4
       set type = noslip
     end
@@ -147,10 +142,10 @@ Boundary Conditions
     end
   end
 
-Here we define the 5 ``no slip`` boundary for all the box walls and specify the boundary with ``id=3`` to an outlet representing the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
+Here we define the :math:`5` ``no slip`` boundary for all the box walls and specify the boundary with ``id=3`` to an outlet representing the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
-    The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
+    The boundary id of deal.II rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`, as described by the`GridGenerator documentation <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_.
 
 
 Initial Conditions
@@ -158,7 +153,6 @@ Initial Conditions
 .. code-block:: text
 
     subsection initial conditions
-      # Type of initial conditionChoices are <L2projection|viscous|nodal>.
       set type = nodal
       subsection uvwp
         set Function expression = 0; 0; 0; 0
@@ -217,19 +211,19 @@ IB Particles
       end
     end
 
-The following parameters are defined in the particle subsection. Since our particle is a cuboid, we will have to define a few more parameters than for a sphere.
+Since our particle is a cuboid, we will have to define a few more parameters than for a sphere.
 
-* ``type`` is set to ``superquadric``. In the experimental setup, the cuboid particle show a beveled edge, for wich the dimentions are not properly reported. As such, we use a superquadric shape to represent the cuboid particles with a rounded edge. Using such a shape also helps to diminish difficulties of modelling sharp edges. the shape arguments are set to ``1.;1.;1.;5;5;5``. The first three parameters are the half-lengths of the cuboid in the x, y and z directions. The last three parameters are the exponents of the superquadric shape. the higher the exponent, the sharper the edge. 
+* ``type`` is set to ``superquadric``. In the experimental setup, the cuboid particle has a beveled edge, for wich the dimentions are not properly reported. As such, we use a superquadric shape to represent the cuboid particles with a rounded edge. Using such a shape also helps to diminish difficulties of modelling sharp edges. The shape arguments are set to ``1.;1.;1.;5;5;5``. The first three parameters are the half-lengths of the cuboid in the x, y and z directions. The last three parameters are the exponents of the superquadric shape; the higher the exponent, the sharper the edge. 
 
-* ``position`` Function expression is set to 20;70;20. This is the initial position corresponds to the center of the drop tower.
+* ``position`` Function expression is set to ``20;70;20``. This is the initial position corresponds to the center of the drop tower.
 
-* ``velocity`` Function expression is set to 0;0;0. This is the initial velocity of the particle since it starts at rest.
+* ``velocity`` Function expression is set to ``0;0;0``. This is the initial velocity of the particle since it starts at rest.
 
-* ``density`` is set to 0.00759. This is the density of the particle as reported in the article by Wang `et al.` [#Wang2024]_.
+* ``density`` is set to ``0.00759``. This is the density of the particle as reported in the article by Wang `et al.` [#Wang2024]_.
 
-* ``volume`` is set to 8. This is the volume of the cuboid particle 2 cm x 2 cm x 2 cm = 8 cm³.
+* ``volume`` is set to ``8``. This is the volume of the cuboid particle :math:`2\,\text{cm} \times 2\,\text{cm} \times 2\,\text{cm} = 8\,\text{cm}^3`.
 
-* ``inertia`` is set to 0.04048;0;0;0;0.04048;0;0;0;0.04048. This is the inertia of the cuboid particle. The inertia of a cuboid particle is given by the following formula:
+* ``inertia`` is set to ``0.04048;0;0;0;0.04048;0;0;0;0.04048``. This is the inertia of the cuboid particle. The inertia of a cuboid particle is given by the following formula:
 
   .. math:: I = \frac{1}{12} m (a^2 + b^2)
 
@@ -275,7 +269,7 @@ We can also compare the results obtained for the velocity in time with the resul
 
 .. math:: t^* = \frac{a}{U_c}, \quad U_c = \sqrt{\frac{4 g a |\rho_p - \rho_f|}{3 \rho_f}}
 
-where :math:`a` is the length of the cuboid particle, :math:`g` is the gravity constant, :math:`\rho_p` is the density of the particle, and :math:`\rho_f` is the density of the fluid. Using this definition for time, we recover very similar results to the ones proposed by Wang `et al.` [#Wang2024]_. 
+where :math:`a` is the length of the cuboid particle, :math:`g` is the gravity constant, :math:`\rho_p` is the density of the particle, and :math:`\rho_f` is the density of the fluid. Using this definition for time, we recover results which are in excellent agreement with the experiments of Wang `et al.` [#Wang2024]_. 
 
 .. image:: images/velocity-comparison.png
     :alt: velocity_comparison

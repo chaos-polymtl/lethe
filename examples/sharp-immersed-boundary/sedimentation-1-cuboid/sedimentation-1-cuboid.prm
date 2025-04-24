@@ -69,14 +69,12 @@ subsection boundary conditions
   subsection bc 1
     set type = noslip
   end
-
   subsection bc 2
     set type = noslip
   end
   subsection bc 3
     set type = outlet
   end
-
   subsection bc 4
     set type = noslip
   end
@@ -156,7 +154,6 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0; 0
