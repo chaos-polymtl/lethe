@@ -51,6 +51,14 @@ DeclException1(
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the VOF physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
+DeclExceptionMsg(
+  UnsupportedRegularization,
+  "The VOF physics has been set to use DG and the DG implementation currently does not support any interface regularization mechanism.");
+
+DeclExceptionMsg(
+  UnsupportedInitialProjection,
+  "The VOF physics has been set to use DG and the DG implementation currently does not support defining an initial condition with a proejction.");
+
 template <int dim>
 class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
