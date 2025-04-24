@@ -11,6 +11,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+using namespace DEM;
+
 /**
  * @brief
  *
@@ -77,9 +79,21 @@ public:
   Particles::ParticleHandler<dim, dim> particle_handler;
 
   /**
-   * @brief The displacement direction of the photons.
+   * @brief The displacement tensor of a photons during a pseudo time-step.
    */
-  const Tensor<1, dim> photon_displacement_direction;
+  const Tensor<1, dim> photon_displacement_tensor;
+
+  // Container that shows the local/ghost neighbor cells of all local cells in
+  // the triangulation
+  // typename dem_data_structures<dim>::cells_total_neighbor_list
+  //  total_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_local_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_ghost_neighbor_list;
+
+  typename dem_data_structures<dim>::cell_set
+    local_and_ghost_cells_with_particles_and_neighbors;
 };
 
 

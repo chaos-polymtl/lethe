@@ -23,7 +23,6 @@
 
 #include <deal.II/base/table_handler.h>
 
-
 #include <deal.II/grid/grid_out.h>
 
 #include <sys/stat.h>
