@@ -345,7 +345,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
         }
       case Settings::hypercube:
         {
-          GridGenerator::hyper_cube(triangulation);
+          GridGenerator::subdivided_hyper_cube(triangulation, 1.0);
           break;
         }
       case Settings::hyperrectangle:
