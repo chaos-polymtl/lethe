@@ -14,7 +14,7 @@ using namespace dealii;
 
 DeclExceptionMsg(
   ValidityMapNotReset,
-  "The subequation validity map is not rest. Call "
+  "The subequation validity map is not reset. Call "
   "'set_vof_dof_handler_and_filtered_solution' before 'set_vof_solution'.");
 
 DeclException1(
