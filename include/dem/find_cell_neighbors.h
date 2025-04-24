@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020- 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_find_cell_neighbors_h
@@ -29,7 +29,7 @@ using namespace dealii;
  * number) of vectors (ghost adjacent cells of each local cell). First element
  * of each set shows the main cell itself
  */
-template <int dim>
+template <int dim,bool reciprocal = false>
 void
 find_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
