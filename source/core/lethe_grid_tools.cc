@@ -1740,30 +1740,30 @@ LetheGridTools::find_line_sphere_intersection(
   std::vector<Point<dim>> &intersection_points)
 {
   // Calculate the coefficients of the quadratic equation
-  double a = line_direction.norm_square();
-  double b = 2 * scalar_product(line_direction, line_start - sphere_center);
-  double c =
+  const double a = line_direction.norm_square();
+  const double b = 2 * scalar_product(line_direction, line_start - sphere_center);
+  const double c =
     (line_start - sphere_center).norm_square() - sphere_radius * sphere_radius;
 
   // Calculate the discriminant
-  double discriminant = b * b - 4 * a * c;
-  if (discriminant < 0)
+  const double discriminant = b * b - 4 * a * c;
+  if (discriminant < 0.)
     {
       // No intersection
       return;
     }
-  else if (discriminant == 0)
+  else if (discriminant == 0.)
     {
       // One intersection point
-      double t = -b / (2 * a);
+      const double t = -b / (2. * a);
       intersection_points.push_back(line_start + t * line_direction);
     }
   else
     {
       // Two intersection points
-      double sqrt_discriminant = std::sqrt(discriminant);
-      double t1               = (-b - sqrt_discriminant) / (2 * a);
-      double t2               = (-b + sqrt_discriminant) / (2 * a);
+      const double sqrt_discriminant = std::sqrt(discriminant);
+      const double t1               = (-b - sqrt_discriminant) / (2. * a);
+      const double t2               = (-b + sqrt_discriminant) / (2. * a);
 
       intersection_points.push_back(line_start + t1 * line_direction);
       intersection_points.push_back(line_start + t2 * line_direction);

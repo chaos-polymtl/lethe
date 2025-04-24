@@ -324,11 +324,11 @@ namespace LetheGridTools
    * reference is available at:
    * https://www.sciencedirect.com/science/article/pii/B978155860594750014X
    * 
-   * @param line_start The starting point of the line
-   * @param line_direction The direction of the line
-   * @param sphere_center The center of the sphere
-   * @param sphere_radius The radius of the sphere
-   * @param intersection_points A vector to store the intersection points
+   * @param[in] line_start The starting point of the line
+   * @param[in] line_direction The direction of the line
+   * @param[in] sphere_center The center of the sphere
+   * @param[in] sphere_radius The radius of the sphere
+   * @param[out] intersection_points A vector to store the intersection points
    */
   template <int dim>
   void
