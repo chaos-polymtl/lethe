@@ -39,11 +39,11 @@ VolumeOfFluid<dim>::VolumeOfFluid(
     InvalidNumberOfFluid(simulation_parameters.physical_properties_manager
                            .get_number_of_fluids()));
 
-  AssertThrow(((simulation_parameters.fem_parameters.tracer_uses_dg &&
+  AssertThrow(((simulation_parameters.fem_parameters.VOF_uses_dg &&
                 simulation_parameters.multiphysics.vof_parameters
                     .regularization_method.regularization_method_type ==
                   Parameters::RegularizationMethodType::none) ||
-               !simulation_parameters.fem_parameters.tracer_uses_dg),
+               !simulation_parameters.fem_parameters.VOF_uses_dg),
               UnsupportedRegularization());
 
 
