@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2025-04-24
 
+### Added
+
+- MINOR This PR Adds the find_line_sphere_intersection in lethe_grid_tools for use in the case of ray-particle intersection for the profilometry hackathon project. This function simply evaluates all intersection points between a line and a sphere. [#1511] (https://github.com/chaos-polymtl/lethe/pull/1511)
+
+## [Master] - 2025-04-24
+
 ### Changed
 
 - MAJOR The parameters of the function which calculates the contact force, torque and heat transfer rate between particles were changed. Parameters torque, force and heat_transfer_rate were replaced by a class object ParticleInteractionOutcomes where they are stored. A function to resize these containers is also implemented in the class. [#1504](https://github.com/chaos-polymtl/lethe/pull/1504) 

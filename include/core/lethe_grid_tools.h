@@ -323,7 +323,7 @@ namespace LetheGridTools
    * Eberly 2003 Chapter 11.3.2 - LINEAR COMPONENTS AND A SPHERE. The entire
    * reference is available at:
    * https://www.sciencedirect.com/science/article/pii/B978155860594750014X
-   * 
+   *
    * @param[in] line_start The starting point of the line
    * @param[in] line_direction The direction of the line
    * @param[in] sphere_center The center of the sphere
@@ -334,10 +334,10 @@ namespace LetheGridTools
    */
   template <int dim>
   std::vector<Point<dim>>
-  find_line_sphere_intersection(const Point<dim>        &line_start,
-                                const Tensor<1, dim>    &line_direction,
-                                const Point<dim>        &sphere_center,
-                                const double            &sphere_radius);
+  find_line_sphere_intersection(const Point<dim>     &line_start,
+                                const Tensor<1, dim> &line_direction,
+                                const Point<dim>     &sphere_center,
+                                const double         &sphere_radius);
 
 
   /**
