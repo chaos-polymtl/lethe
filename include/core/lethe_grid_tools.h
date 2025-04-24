@@ -328,15 +328,16 @@ namespace LetheGridTools
    * @param[in] line_direction The direction of the line
    * @param[in] sphere_center The center of the sphere
    * @param[in] sphere_radius The radius of the sphere
-   * @param[out] intersection_points A vector to store the intersection points
+   * @return A vector of points that are the intersection points between the line
+   * and the sphere. The vector can be empty if there is no intersection, or
+   * contain one or two points if there is an intersection.
    */
   template <int dim>
-  void
+  std::vector<Point<dim>>
   find_line_sphere_intersection(const Point<dim>        &line_start,
                                 const Tensor<1, dim>    &line_direction,
                                 const Point<dim>        &sphere_center,
-                                const double            &sphere_radius,
-                                std::vector<Point<dim>> &intersection_points);
+                                const double            &sphere_radius);
 
 
   /**
