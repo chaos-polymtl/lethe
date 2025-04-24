@@ -107,7 +107,9 @@ public:
             fe = std::make_shared<FE_Q<dim>>(
               simulation_parameters.fem_parameters.VOF_order);
           }
-        mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
+        // Mapping has to be at least Q1, but DGQ0 is allowed
+        mapping =
+          std::make_shared<MappingQ<dim>>(std::max(fe->degree, uint(1)));
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
@@ -770,21 +772,19 @@ private:
   {
     if (multiphysics->fluid_dynamics_is_block())
       {
-        scratch_data.reinit_face_velocity(
-          velocity_cell,
-          face_no,
-          *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-          this->simulation_parameters.ale,
-          this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+        scratch_data.reinit_face_velocity(velocity_cell,
+                                          face_no,
+                                          *multiphysics->get_block_solution(
+                                            PhysicsID::fluid_dynamics),
+                                          this->simulation_parameters.ale);
       }
     else
       {
-        scratch_data.reinit_face_velocity(
-          velocity_cell,
-          face_no,
-          *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-          this->simulation_parameters.ale,
-          this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+        scratch_data.reinit_face_velocity(velocity_cell,
+                                          face_no,
+                                          *multiphysics->get_solution(
+                                            PhysicsID::fluid_dynamics),
+                                          this->simulation_parameters.ale);
       }
   }
 
