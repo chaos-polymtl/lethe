@@ -79,7 +79,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const AffineConstraints<number>                     &constraints,
   const Quadrature<dim>                               &quadrature,
   const std::shared_ptr<Function<dim>>                 forcing_function,
-  const double                                         kinematic_viscosity,
+  const PhysicalPropertiesManager &properties_manager,
   const StabilizationType                              stabilization,
   const unsigned int                                   mg_level,
   const std::shared_ptr<SimulationControl>            &simulation_control,
@@ -94,7 +94,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                constraints,
                quadrature,
                forcing_function,
-               kinematic_viscosity,
+               properties_manager,
                stabilization,
                mg_level,
                simulation_control,
@@ -111,7 +111,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const AffineConstraints<number>                     &constraints,
   const Quadrature<dim>                               &quadrature,
   const std::shared_ptr<Function<dim>>                 forcing_function,
-  const double                                         kinematic_viscosity,
+  const PhysicalPropertiesManager &properties_manager,
   const StabilizationType                              stabilization,
   const unsigned int                                   mg_level,
   const std::shared_ptr<SimulationControl>            &simulation_control,
@@ -160,7 +160,9 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->forcing_function = forcing_function;
 
-  this->kinematic_viscosity = kinematic_viscosity;
+  const auto rheological_model = properties_manager.get_rheology();
+
+  this->kinematic_viscosity = rheological_model->get_kinematic_viscosity();
 
   if (stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
