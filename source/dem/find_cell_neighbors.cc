@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/find_cell_neighbors.h>
 
 using namespace DEM;
 
-template <int dim>
+template <int dim, bool reciprocal>
 void
 find_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -41,7 +41,8 @@ find_cell_neighbors(
           // The first element of each vector is the cell itself.
           local_neighbor_vector.push_back(cell);
 
-          total_cell_list.insert(cell);
+          if constexpr (!reciprocal)
+            total_cell_list.insert(cell);
 
           for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
             {
@@ -365,7 +366,7 @@ get_periodic_neighbor_list(
 }
 
 template void
-find_cell_neighbors<2>(
+find_cell_neighbors<2,false>(
   const parallel::distributed::Triangulation<2> &triangulation,
   typename dem_data_structures<2>::cells_neighbor_list
     &cells_local_neighbor_list,
@@ -373,7 +374,23 @@ find_cell_neighbors<2>(
     &cells_ghost_neighbor_list);
 
 template void
-find_cell_neighbors<3>(
+find_cell_neighbors<3,false>(
+  const parallel::distributed::Triangulation<3> &triangulation,
+  typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_neighbor_list);
+
+template void
+find_cell_neighbors<2,true>(
+  const parallel::distributed::Triangulation<2> &triangulation,
+  typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_neighbor_list);
+
+template void
+find_cell_neighbors<3,true>(
   const parallel::distributed::Triangulation<3> &triangulation,
   typename dem_data_structures<3>::cells_neighbor_list
     &cells_local_neighbor_list,
