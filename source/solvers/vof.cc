@@ -28,7 +28,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
                     TimerOutput::wall_times)
   , simulation_parameters(p_simulation_parameters)
   , triangulation(p_triangulation)
-  , simulation_control(p_simulation_control)
+  , simulation_control(std::move(p_simulation_control))
   , dof_handler(*triangulation)
   , sharpening_threshold(simulation_parameters.multiphysics.vof_parameters
                            .regularization_method.sharpening.threshold)
