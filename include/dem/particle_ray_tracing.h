@@ -87,10 +87,6 @@ public:
   // the triangulation
   // typename dem_data_structures<dim>::cells_total_neighbor_list
   //  total_neighbor_list;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_local_neighbor_list;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_ghost_neighbor_list;
 
   typename dem_data_structures<dim>::cell_set
     local_and_ghost_cells_with_particles_and_neighbors;
