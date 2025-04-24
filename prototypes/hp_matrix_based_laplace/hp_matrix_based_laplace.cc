@@ -10,9 +10,10 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/distributed/grid_refinement.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
@@ -793,7 +794,8 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::hp_refine()
                                                   dof_handler,
                                                   solution,
                                                   smoothness_indicators);
-  GridRefinement::refine_and_coarsen_fixed_number(triangulation,
+
+  parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(triangulation,
                                                         estimated_error_per_cell,
                                                         0.3,
                                                         0.03);
