@@ -208,4 +208,217 @@ subsection linear solver
     set verbosity                             = verbose
     set max krylov vectors                    = 1000
   end
+end# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method             = bdf2
+  set bdf startup method = multiple step bdf
+  set time step          = 0.0005 
+  set time end           = 0.6   
+  set output path        = out/
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1.6827 
+    set density             = 0.00124
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,2,1 : 0,0,0 : 40,80,40 : true
+  set initial refinement = 5
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set type = noslip
+  end
+  subsection bc 1
+    set type = noslip
+  end
+
+  subsection bc 2
+    set type = noslip
+  end
+  subsection bc 3
+    set type = outlet
+  end
+
+  subsection bc 4
+    set type = noslip
+  end
+  subsection bc 5
+    set type = noslip
+  end
+end
+
+#---------------------------------------------------
+# IB particles
+#---------------------------------------------------
+
+subsection particles
+  subsection extrapolation function
+    set length ratio  = 2
+    set stencil order = 3
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 3
+    set refine mesh inside radius factor  = 0.8
+    set refine mesh outside radius factor = 1.5
+  end
+
+  subsection DEM
+    set particle nonlinear tolerance      = 1e-2
+    set enable lubrication force          = false
+    set explicit contact impulsion        = true
+    set explicit position integration     = true
+    set contact search radius factor      = 1.2
+    subsection gravity
+      set Function expression = 0;-981;0
+    end
+  end
+
+  subsection particle info 0
+    set type             = superquadric
+    set shape arguments  = 1.;1.;1.;5;5;5
+    set layer thickening = 0
+    set integrate motion = true
+
+    subsection position
+      set Function expression = 20;70;20
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+
+    subsection physical properties
+      set density                 = 0.00759
+      set volume                  = 8
+      set inertia                 = 0.04048;0;0;0;0.04048;0;0;0;0.04048
+      set restitution coefficient = 0.2
+      set youngs modulus          = 1000000
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set fraction coarsening = 0.3
+  set fraction refinement = 0.05
+  set max number elements = 750000
+
+  set max refinement level = 8
+  set min refinement level = 4
+
+  set type = kelly
+  set variable = velocity
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity             = verbose
+    set tolerance             = 1e-5
+    set max iterations        = 10
+    set residual precision    = 5
+    set force rhs calculation = true
+    set reuse preconditioner  = true
+  end
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+subsection forces
+  set verbosity = verbose
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-11
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-20
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = verbose
+    set max krylov vectors                    = 1000
+  end
 end
