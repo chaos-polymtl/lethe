@@ -1729,3 +1729,58 @@ template double
 LetheGridTools::find_point_triangle_distance(
   const std::vector<Point<3>> &triangle,
   const Point<3>              &point);
+
+template <int dim>
+void
+LetheGridTools::find_line_sphere_intersection(
+  const Point<dim>        &line_start,
+  const Tensor<1, dim>    &line_direction,
+  const Point<dim>        &sphere_center,
+  const double            &sphere_radius,
+  std::vector<Point<dim>> &intersection_points)
+{
+  // Calculate the coefficients of the quadratic equation
+  double a = line_direction.norm_square();
+  double b = 2 * scalar_product(line_direction, line_start - sphere_center);
+  double c =
+    (line_start - sphere_center).norm_square() - sphere_radius * sphere_radius;
+
+  // Calculate the discriminant
+  double discriminant = b * b - 4 * a * c;
+  if (discriminant < 0)
+    {
+      // No intersection
+      return;
+    }
+  else if (discriminant == 0)
+    {
+      // One intersection point
+      double t = -b / (2 * a);
+      intersection_points.push_back(line_start + t * line_direction);
+    }
+  else
+    {
+      // Two intersection points
+      double sqrt_discriminant = std::sqrt(discriminant);
+      double t1               = (-b - sqrt_discriminant) / (2 * a);
+      double t2               = (-b + sqrt_discriminant) / (2 * a);
+
+      intersection_points.push_back(line_start + t1 * line_direction);
+      intersection_points.push_back(line_start + t2 * line_direction);
+    }
+}
+
+template void
+LetheGridTools::find_line_sphere_intersection(
+  const Point<2>        &line_start,
+  const Tensor<1, 2>    &line_direction,
+  const Point<2>        &sphere_center,
+  const double          &sphere_radius,
+  std::vector<Point<2>> &intersection_points);
+template void
+LetheGridTools::find_line_sphere_intersection(
+  const Point<3>        &line_start,
+  const Tensor<1, 3>    &line_direction,
+  const Point<3>        &sphere_center,
+  const double          &sphere_radius,
+  std::vector<Point<3>> &intersection_points);
