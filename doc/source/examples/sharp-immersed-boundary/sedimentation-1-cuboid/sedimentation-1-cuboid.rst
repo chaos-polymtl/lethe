@@ -1,8 +1,8 @@
 ==============================================================================
-Sedimentation of One Particle
+Sedimentation of One Cuboid Particle
 ==============================================================================
 
-This example aims to numerically reproduce the results obtained by Wang `et al.` [#Wang2024]_ for the S18 experience. This experience measures the velocity of the sedimentation of a 2.0 cm cuboid particle in a container filled with a viscous fluid.
+This example aims to simulate the S18 experiment of Wang `et al.` [#Wang2024]_. This experience measures the velocity of the sedimentation of a :math:`2\,\text{cm}` cuboid particle in a container filled with a glycerin-water solution.
 
 .. note::
     This example is similar to the sedimentation of one particle example (:doc:`../sedimentation-1-particle/sedimentation-1-particle`) but with a cuboid particle instead of a sphere. As such, the physical setup changes, but the parameters relating to the numerical resolution remain very similar.
@@ -146,20 +146,6 @@ Here we define the :math:`5` ``no slip`` boundary for all the box walls and spec
 
 .. note:: 
     The boundary id of deal.II rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`, as described by the`GridGenerator documentation <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_.
-
-
-Initial Conditions
-~~~~~~~~~~~~~~~~~~
-.. code-block:: text
-
-    subsection initial conditions
-      set type = nodal
-      subsection uvwp
-        set Function expression = 0; 0; 0; 0
-      end
-    end
-
-The initial condition for this case is simple to define. At the start of the simulation, we assume that the particle and the fluid are at rest. From there, we define a uniform velocity field and pressure field of 0 everywhere.
 
 
 IB Particles
