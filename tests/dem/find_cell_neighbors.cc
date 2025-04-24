@@ -44,6 +44,7 @@ test()
                                        cells_ghost_neighbor_list);
 
   // Output
+  deallog << "reciprocal = "<< reciprocal << std::endl;
   int i = 0;
   for (auto cell = triangulation.begin_active(); cell != triangulation.end();
        ++cell)
@@ -59,6 +60,7 @@ test()
 
       ++i;
     }
+  deallog << std::endl;
 }
 
 int
@@ -69,37 +71,6 @@ main(int argc, char **argv)
       initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       test<3, false>();
-    }
-  catch (std::exception &exc)
-    {
-      std::cerr << std::endl
-                << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      std::cerr << "Exception on processing: " << std::endl
-                << exc.what() << std::endl
-                << "Aborting!" << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      return 1;
-    }
-  catch (...)
-    {
-      std::cerr << std::endl
-                << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      std::cerr << "Unknown exception!" << std::endl
-                << "Aborting!" << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      return 1;
-    }
-
-  try
-    {
-      initlog();
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       test<3, true>();
     }
   catch (std::exception &exc)
