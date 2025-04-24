@@ -393,6 +393,11 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::setup_system()
 
   system_matrix.clear();
 
+  const unsigned int min_fe_index = parameters.element_order - 1;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      cell->set_active_fe_index(min_fe_index);
+
   dof_handler.distribute_dofs(fe_collection);
 
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
