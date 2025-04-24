@@ -35,6 +35,11 @@ ParticleRayTracing<dim, PropertiesIndex>::find_locally_own_cells_with_particles(
      find_full_cell_neighbors<dim>(triangulation, total_neighbor_list);
    }
  */
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_local_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_ghost_neighbor_list;
+
   find_cell_neighbors<dim>(triangulation,
                            cells_local_neighbor_list,
                            cells_ghost_neighbor_list);
@@ -58,7 +63,8 @@ ParticleRayTracing<dim, PropertiesIndex>::find_locally_own_cells_with_particles(
       if (particles_exist_in_main_cell)
         {
           // We add the main cell to the
-          local_and_ghost_cells_with_particles_and_neighbors.insert(*cell_neighbor_iterator);
+          local_and_ghost_cells_with_particles_and_neighbors.insert(
+            *cell_neighbor_iterator);
 
           // Going through neighbor cells of the main cell
           ++cell_neighbor_iterator;
@@ -71,8 +77,50 @@ ParticleRayTracing<dim, PropertiesIndex>::find_locally_own_cells_with_particles(
                 local_and_ghost_cells_with_particles_and_neighbors.find(
                   *cell_neighbor_iterator);
 
-              if (search_iterator == local_and_ghost_cells_with_particles_and_neighbors.end())
-                local_and_ghost_cells_with_particles_and_neighbors.insert(*cell_neighbor_iterator);
+              if (search_iterator ==
+                  local_and_ghost_cells_with_particles_and_neighbors.end())
+                local_and_ghost_cells_with_particles_and_neighbors.insert(
+                  *cell_neighbor_iterator);
+            }
+        }
+    }
+
+  // Loop over every vector in the local-cell -> local-neighbour-cell container
+  for (auto cell_neighbor_list_iterator = cells_ghost_neighbor_list.begin();
+       cell_neighbor_list_iterator != cells_ghost_neighbor_list.end();
+       ++cell_neighbor_list_iterator)
+    {
+      // The main cell
+      auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
+
+      // Particles in the main cell
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_main_cell =
+          particle_handler.particles_in_cell(*cell_neighbor_iterator);
+
+      const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
+
+      // Check to see if the main cell has any particles
+      if (particles_exist_in_main_cell)
+        {
+          // We don't add the main cell to the set like in the previous loop
+          // since we know it is already there.
+
+          // Going through neighbor cells of the main cell
+          ++cell_neighbor_iterator;
+          for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
+               ++cell_neighbor_iterator)
+            {
+              // We check if the neighbors cells are already in the set.
+              // if not, we add it.
+              auto search_iterator =
+                local_and_ghost_cells_with_particles_and_neighbors.find(
+                  *cell_neighbor_iterator);
+
+              if (search_iterator ==
+                  local_and_ghost_cells_with_particles_and_neighbors.end())
+                local_and_ghost_cells_with_particles_and_neighbors.insert(
+                  *cell_neighbor_iterator);
             }
         }
     }
