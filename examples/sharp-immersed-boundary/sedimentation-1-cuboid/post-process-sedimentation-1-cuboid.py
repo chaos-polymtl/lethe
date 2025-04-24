@@ -33,7 +33,7 @@ I= mass*B**2 / 6
 h0=80
 g=981
 
-Uc = np.sqrt(4./3. * g * B * (rho-rho_0)/rho_0 )
+Uc = np.sqrt(4./3. * g * B * np.abs(rho-rho_0)/rho_0 )
 tc = B / Uc 
 t_fact = 1/tc
 
@@ -43,5 +43,11 @@ t=mat[:,1]
 vy=np.abs(mat[:,15])
 
 plt.plot(experimental_data[:,0],experimental_data[:,1],'ks', mfc='none',label="Wang et al.")
-plt.plot(t*t_fact,vy)
+plt.plot(t*t_fact,vy,color=colors[0],lw=3, label="Lethe")
+
+plt.ylabel("Sedimentation velocity, $v_y$ [cm/s]")
+plt.xlabel("Dimensionless time, $t^*$ [-]")
+plt.legend()
+
+# plt.savefig("velocity-comparison.png", dpi=300)
 plt.show()
