@@ -2387,19 +2387,12 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
 
-      // Create a pointer to the current viscosity model
-      std::shared_ptr<RheologicalModel> viscosity_model =
-        this->simulation_parameters.physical_properties_manager.get_rheology();
+      const double viscosity_end =
+        this->simulation_parameters.physical_properties_manager.get_rheology()
+          ->get_kinematic_viscosity();
 
-      // Keep in memory the initial viscosity
-      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
-
-      // Set it to the initial condition viscosity
-      viscosity_model->set_kinematic_viscosity(
-        this->simulation_parameters.initial_condition->kinematic_viscosity);
-
-      // Set the kinematic viscosity in the system operator to be the
-      // temporary viscosity
+      // Set the kinematic viscosity in the system operator to be the temporary
+      // viscosity
       this->system_operator->set_kinematic_viscosity(
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale());
@@ -2439,10 +2432,6 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
       // Set the kinematic viscosity in the system operator to be the original
       // viscosity
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
-
-      // Reset kinematic viscosity to simulation parameters
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
       this->system_operator->set_kinematic_viscosity(viscosity_end);
 
       if ((this->simulation_parameters.linear_solver
@@ -2495,7 +2484,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
 
-      viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
+      this->system_operator->set_kinematic_viscosity(kinematic_viscosity);
 
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
@@ -2504,8 +2493,6 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
                       << "********* Solution for kinematic viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
-
-          viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
 
           // Set the kinematic viscosity in the system operator to be the
           // temporary viscosity
@@ -2550,7 +2537,6 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
             alpha_viscosity * (viscosity_end - kinematic_viscosity);
         }
       // Reset kinematic viscosity to simulation parameters
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
       this->system_operator->set_kinematic_viscosity(viscosity_end);
 
       if ((this->simulation_parameters.linear_solver

@@ -139,7 +139,8 @@ public:
    * @param[in] quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
-   * @param[in] properties_manager The physical properties manager (see physical_properties_manager.h)
+   * @param[in] properties_manager The physical properties manager (see
+   physical_properties_manager.h)
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
@@ -152,15 +153,15 @@ public:
 
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                                  &mapping,
-    const DoFHandler<dim>                               &dof_handler,
-    const AffineConstraints<number>                     &constraints,
-    const Quadrature<dim>                               &quadrature,
-    const std::shared_ptr<Function<dim>>                 forcing_function,
-    const PhysicalPropertiesManager &properties_manager,
-    const StabilizationType                              stabilization,
-    const unsigned int                                   mg_level,
-    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const Mapping<dim>                       &mapping,
+    const DoFHandler<dim>                    &dof_handler,
+    const AffineConstraints<number>          &constraints,
+    const Quadrature<dim>                    &quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const PhysicalPropertiesManager          &physical_properties_manager,
+    const StabilizationType                   stabilization,
+    const unsigned int                        mg_level,
+    const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual);
@@ -177,7 +178,8 @@ public:
    * @param[in] quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
-   * @param[in] properties_manager The physical properties manager (see physical_properties_manager.h)
+   * @param[in] properties_manager The physical properties manager (see
+   * physical_properties_manager.h)
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
@@ -190,15 +192,15 @@ public:
    */
   void
   reinit(
-    const Mapping<dim>                                  &mapping,
-    const DoFHandler<dim>                               &dof_handler,
-    const AffineConstraints<number>                     &constraints,
-    const Quadrature<dim>                               &quadrature,
-    const std::shared_ptr<Function<dim>>                 forcing_function,
-    const PhysicalPropertiesManager &properties_manager,
-    const StabilizationType                              stabilization,
-    const unsigned int                                   mg_level,
-    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const Mapping<dim>                       &mapping,
+    const DoFHandler<dim>                    &dof_handler,
+    const AffineConstraints<number>          &constraints,
+    const Quadrature<dim>                    &quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const PhysicalPropertiesManager          &physical_properties_manager,
+    const StabilizationType                   stabilization,
+    const unsigned int                        mg_level,
+    const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual);
@@ -404,7 +406,8 @@ public:
   void
   set_kinematic_viscosity(const double p_kinematic_viscosity)
   {
-    kinematic_viscosity = p_kinematic_viscosity;
+    properties_manager->get_rheology()->set_kinematic_viscosity(
+      p_kinematic_viscosity);
   }
 
 protected:
@@ -569,10 +572,10 @@ protected:
   Tensor<1, dim, VectorizedArray<number>> beta_force;
 
   /**
-   * @brief Kinematic viscosity needed for the operator.
+   * @brief Shared pointer to physical properties manager.
    *
    */
-  double kinematic_viscosity;
+  std::shared_ptr<PhysicalPropertiesManager> properties_manager;
 
 
   /**
