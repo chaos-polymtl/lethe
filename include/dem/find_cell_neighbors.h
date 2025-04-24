@@ -24,7 +24,7 @@ using namespace dealii;
  * @tparam dim An integer that denotes the dimension of the space in which
  * the problem is solved.
  * @tparam reciprocal An boolean that denotes if the cells_local_neighbor_list of
- * cell i and j contains cell j and i, respectively. 
+ * cell i and j contains cell j and i, respectively.
  *
  * @param triangulation Triangulation to access the information of the cells
  * @param cells_local_neighbor_list A vector (with size of the local cell

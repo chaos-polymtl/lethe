@@ -44,7 +44,7 @@ test()
                                        cells_ghost_neighbor_list);
 
   // Output
-  deallog << "reciprocal = "<< reciprocal << std::endl;
+  deallog << "reciprocal = " << reciprocal << std::endl;
   int i = 0;
   for (auto cell = triangulation.begin_active(); cell != triangulation.end();
        ++cell)
