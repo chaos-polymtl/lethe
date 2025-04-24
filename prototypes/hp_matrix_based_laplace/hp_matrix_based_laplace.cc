@@ -284,6 +284,7 @@ private:
   VectorType solution;
   VectorType newton_update;
   VectorType system_rhs;
+  VectorType residual_to_output;
 
   unsigned int       linear_iterations;
   ConditionalOStream pcout;
@@ -296,7 +297,7 @@ private:
 template <int dim, int fe_degree>
 HPMatrixBasedPoissonProblem<dim, fe_degree>::HPMatrixBasedPoissonProblem(
   const Settings &parameters)
-  : triangulation(MPI_COMM_WORLD)
+  : triangulation(MPI_COMM_WORLD, Triangulation<dim>::eliminate_unrefined_islands)
   , mapping(fe_degree)
   , dof_handler(triangulation)
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -679,6 +680,8 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(
   residual.compress(VectorOperation::add);
   residual.update_ghost_values();
 
+  residual_to_output = residual;
+
   return residual.l2_norm();
 }
 
@@ -852,6 +855,8 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::output_results(
     }
 
   data_out.add_data_vector(fe_degrees, "fe_degree");
+
+  data_out.add_data_vector(residual_to_output, "residual");
 
   data_out.build_patches();
 
