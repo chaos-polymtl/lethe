@@ -21,6 +21,11 @@ using namespace dealii;
  * 2 types of container are used for cell neighbors : local-local cells
  * and local-ghost cells.
  *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the problem is solved.
+ * @tparam reciprocal An boolean that denotes if the cells_local_neighbor_list of
+ * cell i and j contains cell j and i, respectively. 
+ *
  * @param triangulation Triangulation to access the information of the cells
  * @param cells_local_neighbor_list A vector (with size of the local cell
  * number) of vectors (local adjacent cells of each local cell). First element
