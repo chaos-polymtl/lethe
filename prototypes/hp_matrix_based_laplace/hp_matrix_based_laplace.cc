@@ -838,8 +838,13 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::output_results(
   // Output the finite element degree
   Vector<float> fe_degrees(triangulation.n_active_cells());
   for (const auto &cell : dof_handler.active_cell_iterators())
-    fe_degrees(cell->active_cell_index()) =
-      fe_collection[cell->active_fe_index()].degree;
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_degrees(cell->active_cell_index()) =
+            fe_collection[cell->active_fe_index()].degree;
+        }
+    }
 
   data_out.add_data_vector(fe_degrees, "fe_degree");
 
