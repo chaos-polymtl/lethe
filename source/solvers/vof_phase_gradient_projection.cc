@@ -12,7 +12,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   this->system_rhs    = 0;
 
   // Get VOF DoFHandler
-  const DoFHandler<dim> *dof_handler_vof =
+  const DoFHandler<dim> &dof_handler_vof =
     this->subequations_interface->get_vof_dof_handler();
 
   // Initialize FEValues for phase fraction gradient projection and VOF
@@ -23,7 +23,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
                                                       update_gradients |
                                                       update_JxW_values);
   FEValues<dim> fe_values_vof(*this->mapping,
-                              dof_handler_vof->get_fe(),
+                              dof_handler_vof.get_fe(),
                               *this->cell_quadrature,
                               update_gradients);
 
@@ -69,7 +69,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
             &(*this->triangulation),
             cell->level(),
             cell->index(),
-            dof_handler_vof);
+            &dof_handler_vof);
 
           // Reinitialize FEValues with corresponding cells
           fe_values_phase_gradient_projection.reinit(cell);
@@ -88,7 +88,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
 
           // Get VOF filtered phase fraction gradients
           fe_values_vof.get_function_gradients(
-            *this->subequations_interface->get_vof_filtered_solution(),
+            this->subequations_interface->get_vof_filtered_solution(),
             present_filtered_vof_phase_gradients);
 
           // Loop over quadrature points

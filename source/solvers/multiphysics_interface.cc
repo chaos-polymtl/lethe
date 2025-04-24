@@ -148,7 +148,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 }
 
 template <int dim>
-GlobalVectorType *
+const GlobalVectorType &
 MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
 {
   // Throw error if VOF is not enabled
@@ -161,12 +161,12 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
     (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_projected_phase_fraction_gradient_solution();
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+    .get_projected_phase_fraction_gradient_solution();
 }
 
 template <int dim>
-GlobalVectorType *
+const GlobalVectorType &
 MultiphysicsInterface<dim>::get_curvature_solution()
 {
   // Throw error if VOF is not enabled
@@ -179,12 +179,12 @@ MultiphysicsInterface<dim>::get_curvature_solution()
     (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_curvature_solution();
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+    .get_curvature_solution();
 }
 
 template <int dim>
-DoFHandler<dim> *
+const DoFHandler<dim> &
 MultiphysicsInterface<dim>::get_curvature_dof_handler()
 {
   // Throw error if VOF is not enabled
@@ -197,12 +197,12 @@ MultiphysicsInterface<dim>::get_curvature_dof_handler()
     (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_curvature_dof_handler();
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+    .get_curvature_dof_handler();
 }
 
 template <int dim>
-DoFHandler<dim> *
+const DoFHandler<dim> &
 MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
 {
   // Throw error if VOF is not enabled
@@ -215,8 +215,8 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
     (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_projected_phase_fraction_gradient_dof_handler();
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+    .get_projected_phase_fraction_gradient_dof_handler();
 }
 
 template <int dim>

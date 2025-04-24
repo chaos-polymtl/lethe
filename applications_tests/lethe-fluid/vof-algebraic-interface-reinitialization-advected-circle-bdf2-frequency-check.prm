@@ -1,6 +1,13 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# This application-test tests the algebraic interface reinitialization of
+# previous solutions for a BDF2 time integration scheme. A regularization
+# frequency higher than 1 is used to ensure that the mechanism for regularizing
+# previous solutions is used. The test simulates a circle advected to the left
+# at a constant velocity and the consol outputs tracks among other quantities
+# the barycenter position which can be analytically validated via postprocessing.
+
 # Listing of Parameters
 #----------------------
 

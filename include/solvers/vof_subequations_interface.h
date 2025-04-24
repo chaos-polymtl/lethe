@@ -149,7 +149,7 @@ public:
    *
    * @return Pointer to the DoFHandler of the specified subequation.
    */
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_dof_handler(const VOFSubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
@@ -157,19 +157,19 @@ public:
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
 
-    return this->subequations_dof_handler[subequation_id];
+    return *this->subequations_dof_handler[subequation_id];
   }
 
   /**
-   * @brief Get a pointer to the DoFHandler of the VOF auxiliary physics.
+   * @brief Get a reference to the DoFHandler of the VOF auxiliary physics.
    *
-   * @return Pointer to the DoFHandler of the VOF auxiliary physics associated
+   * @return Reference to the DoFHandler of the VOF auxiliary physics associated
    * to the set Filtered VOF solution field.
    */
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_vof_dof_handler()
   {
-    return this->dof_handler_vof;
+    return *this->dof_handler_vof;
   }
 
   /**
@@ -180,36 +180,36 @@ public:
    *
    * @return Pointer to the solution vector of the specified subequation.
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_solution(const VOFSubequationsID &subequation_id)
   {
     AssertThrow(this->get_solution_validity(subequation_id),
                 InvalidSubequationSolution(
                   this->get_subequation_string(subequation_id)));
 
-    return this->subequations_solutions[subequation_id];
+    return *this->subequations_solutions[subequation_id];
   }
 
   /**
-   * @brief Get a pointer to the set filtered phase fraction solution vector.
+   * @brief Get a reference to the set filtered phase fraction solution vector.
    *
-   * @return Pointer to the set filtered phase fraction solution vector.
+   * @return Reference to the set filtered phase fraction solution vector.
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_vof_filtered_solution()
   {
-    return &this->vof_filtered_solution_vector;
+    return this->vof_filtered_solution_vector;
   }
 
   /**
-   * @brief Get a pointer to the set phase fraction solution vector.
+   * @brief Get a reference to the set phase fraction solution vector.
    *
-   * @return Pointer to the set phase fraction solution vector.
+   * @return Reference to the set phase fraction solution vector.
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_vof_solution()
   {
-    return &this->vof_solution_vector;
+    return this->vof_solution_vector;
   }
 
   /**
@@ -395,19 +395,14 @@ public:
 private:
   /**
    * @brief Reset all boolean in the validity associated with active
-   * subequations to @p false (default) or @p true if specified.
-   *
-   * @param[in] reset_value Either @p true or @p false (default).
-   *
-   * @remark At the moment, @p reset_value is only set to @p true for the
-   * purpose of outputting the initial condition when user requests it.
+   * subequations to @p false.
    */
   void
-  reset_subequations_solutions_validity(const bool reset_value = false)
+  reset_subequations_solutions_validity()
   {
     for (const VOFSubequationsID &subequation_id : this->active_subequations)
       {
-        subequations_solutions_validity[subequation_id] = reset_value;
+        subequations_solutions_validity[subequation_id] = false;
       }
   }
 
@@ -415,7 +410,7 @@ private:
   const ConditionalOStream pcout;
 
   /// VOF DoFHandler associated with solved equations
-  DoFHandler<dim> *dof_handler_vof;
+  DoFHandler<dim> *dof_handler_vof = nullptr;
 
   /** Filtered VOF solution field associated with solved equations
    * @note Used in the computation of VOF phase gradient projection */

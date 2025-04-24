@@ -349,17 +349,17 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                                   "phase_fraction_gradient");
 
       data_out.add_data_vector(
-        *this->vof_subequations_interface->get_dof_handler(
+        this->vof_subequations_interface->get_dof_handler(
           VOFSubequationsID::phase_gradient_projection),
-        *this->vof_subequations_interface->get_solution(
+        this->vof_subequations_interface->get_solution(
           VOFSubequationsID::phase_gradient_projection),
         solution_names_new,
         projected_phase_fraction_gradient_component_interpretation);
 
       data_out.add_data_vector(
-        *this->vof_subequations_interface->get_dof_handler(
+        this->vof_subequations_interface->get_dof_handler(
           VOFSubequationsID::curvature_projection),
-        *this->vof_subequations_interface->get_solution(
+        this->vof_subequations_interface->get_solution(
           VOFSubequationsID::curvature_projection),
         "curvature");
     }
@@ -2093,6 +2093,24 @@ VolumeOfFluid<dim>::set_initial_conditions()
       this->mass_first_iteration = this->mass_monitored;
     }
 
+  // Solve initial phase fraction gradient and curvature projections if solution
+  // outputs are requested
+  if ((simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+         .enable &&
+       simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+         .output_vof_auxiliary_fields) ||
+      simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .algebraic_interface_reinitialization.enable)
+    {
+      this->vof_subequations_interface
+        ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
+                                                    &this->dof_handler);
+      this->vof_subequations_interface->solve_specific_subequation(
+        VOFSubequationsID::phase_gradient_projection);
+      this->vof_subequations_interface->solve_specific_subequation(
+        VOFSubequationsID::curvature_projection);
+    }
+
   // Reset algebraic interface reinitialization output directory;
   // if it does not exist, create it.
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
@@ -2538,9 +2556,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
       // Overwrite VOF previous solution with the reinitialized result
       FETools::interpolate(
-        *this->vof_subequations_interface->get_dof_handler(
+        this->vof_subequations_interface->get_dof_handler(
           VOFSubequationsID::algebraic_interface_reinitialization),
-        *this->vof_subequations_interface->get_solution(
+        this->vof_subequations_interface->get_solution(
           VOFSubequationsID::algebraic_interface_reinitialization),
         this->dof_handler,
         this->nonzero_constraints,
@@ -2561,9 +2579,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
   // Overwrite the VOF solution with the algebraic interface reinitialization
   FETools::interpolate(
-    *this->vof_subequations_interface->get_dof_handler(
+    this->vof_subequations_interface->get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),
-    *this->vof_subequations_interface->get_solution(
+    this->vof_subequations_interface->get_solution(
       VOFSubequationsID::algebraic_interface_reinitialization),
     this->dof_handler,
     this->nonzero_constraints,

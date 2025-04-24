@@ -413,28 +413,28 @@ public:
     return nonzero_constraints;
   }
 
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_projected_phase_fraction_gradient_dof_handler()
   {
     return this->vof_subequations_interface->get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
   }
 
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_curvature_dof_handler()
   {
     return this->vof_subequations_interface->get_dof_handler(
       VOFSubequationsID::curvature_projection);
   }
 
-  GlobalVectorType *
+  const GlobalVectorType &
   get_projected_phase_fraction_gradient_solution()
   {
     return this->vof_subequations_interface->get_solution(
       VOFSubequationsID::phase_gradient_projection);
   }
 
-  GlobalVectorType *
+  const GlobalVectorType &
   get_curvature_solution()
   {
     return this->vof_subequations_interface->get_solution(

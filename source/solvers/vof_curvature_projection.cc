@@ -12,7 +12,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
   this->system_rhs    = 0;
 
   // Get phase gradient L2 projection DoFHandler
-  const DoFHandler<dim> *dof_handler_phase_fraction_gradient =
+  const DoFHandler<dim> &dof_handler_phase_fraction_gradient =
     this->subequations_interface->get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
 
@@ -25,7 +25,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
                                                  update_JxW_values);
   FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
-    dof_handler_phase_fraction_gradient->get_fe(),
+    dof_handler_phase_fraction_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
 
@@ -69,10 +69,11 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
 
           // Get phase gradient projection cell iterator
           typename DoFHandler<dim>::active_cell_iterator
-            phase_gradient_projection_cell(&(*this->triangulation),
-                                           cell->level(),
-                                           cell->index(),
-                                           dof_handler_phase_fraction_gradient);
+            phase_gradient_projection_cell(
+              &(*this->triangulation),
+              cell->level(),
+              cell->index(),
+              &dof_handler_phase_fraction_gradient);
 
           // Reinitialize FEValues with corresponding cells
           fe_values_curvature_projection.reinit(cell);
@@ -93,7 +94,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
           // Get projected fraction gradient values
           fe_values_phase_gradient_projection[phase_fraction_gradients]
             .get_function_values(
-              *this->subequations_interface->get_solution(
+              this->subequations_interface->get_solution(
                 VOFSubequationsID::phase_gradient_projection),
               present_phase_gradient_projection_values);
 
