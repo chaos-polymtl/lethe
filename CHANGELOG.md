@@ -3,7 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2025-04-24
+
+## [Master] - 2024-04-24
+
+### Changed 
+
+- MINOR The find_cell_neighbors is now templated with a boolean so that neighboring cell vectors can be reciprocal, which means that vector i and j will contain cell j and i, respectively. [#1512](https://github.com/chaos-polymtl/lethe/pull/1512)
 
 ### Added
 
@@ -13,11 +18,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MAJOR The parameters of the function which calculates the contact force, torque and heat transfer rate between particles were changed. Parameters torque, force and heat_transfer_rate were replaced by a class object ParticleInteractionOutcomes where they are stored. A function to resize these containers is also implemented in the class. [#1504](https://github.com/chaos-polymtl/lethe/pull/1504) 
+- MAJOR The parameters of the function which calculates the contact force, torque and heat transfer rate between particles were changed. Parameters torque, force and heat_transfer_rate were replaced by a class object ParticleInteractionOutcomes where they are stored. A function to resize these containers is also implemented in the class. [#1504](https://github.com/chaos-polymtl/lethe/pull/1504)
 
 ## [Master] - 2024-04-22
 
-## Added 
+### Added 
 
 - MINOR This PR completes the signed distance solver by filling the (almost) empty architecture of the SignedDistanceSolver implemented in [#1451] (https://github.com/chaos-polymtl/lethe/pull/1451). Its coupling in the VOF solver (geometric reinitialization method) is also completed. The implemented routines follow the one of the already existing vof_advection prototype. [#1497](https://github.com/chaos-polymtl/lethe/pull/1497)
 

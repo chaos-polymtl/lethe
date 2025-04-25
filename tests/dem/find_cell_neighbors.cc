@@ -19,7 +19,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, bool reciprocal>
 void
 test()
 {
@@ -39,11 +39,12 @@ test()
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
 
-  find_cell_neighbors<dim>(triangulation,
-                           cells_local_neighbor_list,
-                           cells_ghost_neighbor_list);
+  find_cell_neighbors<dim, reciprocal>(triangulation,
+                                       cells_local_neighbor_list,
+                                       cells_ghost_neighbor_list);
 
   // Output
+  deallog << "reciprocal = " << reciprocal << std::endl;
   int i = 0;
   for (auto cell = triangulation.begin_active(); cell != triangulation.end();
        ++cell)
@@ -59,6 +60,7 @@ test()
 
       ++i;
     }
+  deallog << std::endl;
 }
 
 int
@@ -68,7 +70,8 @@ main(int argc, char **argv)
     {
       initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-      test<3>();
+      test<3, false>();
+      test<3, true>();
     }
   catch (std::exception &exc)
     {
