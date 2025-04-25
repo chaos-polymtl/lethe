@@ -143,6 +143,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1" id="r_a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">find_point_triangle_distance</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a0441112a1d2ecc434246a30f9ef098a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acceb6af30750ac5a8f8cdb85aace19f9" id="r_acceb6af30750ac5a8f8cdb85aace19f9"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:acceb6af30750ac5a8f8cdb85aace19f9"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Point&lt; dim &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#acceb6af30750ac5a8f8cdb85aace19f9">find_line_sphere_intersection</a> (const Point&lt; dim &gt; &amp;line_start, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;sphere_center, const double &amp;sphere_radius)</td></tr>
+<tr class="separator:acceb6af30750ac5a8f8cdb85aace19f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6" id="r_a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">find_point_line_distance</a> (const Point&lt; dim &gt; &amp;line_origin, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a90583db59423ee4e85fff79df1cb0bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -666,6 +669,62 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="acceb6af30750ac5a8f8cdb85aace19f9" name="acceb6af30750ac5a8f8cdb85aace19f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acceb6af30750ac5a8f8cdb85aace19f9">&#9670;&#160;</a></span>find_line_sphere_intersection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; Point&lt; dim &gt; &gt; LetheGridTools::find_line_sphere_intersection </td>
+          <td>(</td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>line_start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>line_direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sphere_center</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double &amp;&#160;</td>
+          <td class="paramname"><em>sphere_radius</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculates the intersection points between a line and a sphere. The full calculation is taken from Geometric Tools for Computer Graphics, Eberly 2003 Chapter 11.3.2 - LINEAR COMPONENTS AND A SPHERE. The entire reference is available at: <a href="https://www.sciencedirect.com/science/article/pii/B978155860594750014X">https://www.sciencedirect.com/science/article/pii/B978155860594750014X</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">line_start</td><td>The starting point of the line </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">line_direction</td><td>The direction of the line </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sphere_center</td><td>The center of the sphere </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sphere_radius</td><td>The radius of the sphere </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of points that are the intersection points between the line and the sphere. The vector can be empty if there is no intersection, or contain one or two points if there is an intersection. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01735">1735</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
+
+</div>
+</div>
 <a id="acc5be1ec2fa20ff0abc79d1dce2e295a" name="acc5be1ec2fa20ff0abc79d1dce2e295a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acc5be1ec2fa20ff0abc79d1dce2e295a">&#9670;&#160;</a></span>find_particle_triangle_projection()</h2>
 
@@ -778,7 +837,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <p>return distance </p>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00342">342</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00366">366</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
 
 </div>
 </div>
