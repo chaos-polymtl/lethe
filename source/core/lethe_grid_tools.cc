@@ -1729,3 +1729,59 @@ template double
 LetheGridTools::find_point_triangle_distance(
   const std::vector<Point<3>> &triangle,
   const Point<3>              &point);
+
+template <int dim>
+std::vector<Point<dim>>
+LetheGridTools::find_line_sphere_intersection(
+  const Point<dim>     &line_start,
+  const Tensor<1, dim> &line_direction,
+  const Point<dim>     &sphere_center,
+  const double         &sphere_radius)
+{
+  // Calculate the coefficients of the quadratic equation
+  const double a = line_direction.norm_square();
+  const double b =
+    2 * scalar_product(line_direction, line_start - sphere_center);
+  const double c =
+    (line_start - sphere_center).norm_square() - sphere_radius * sphere_radius;
+
+  // Initialize the vector to store intersection points
+  // Note: This vector will be empty if there are no intersection points
+  std::vector<Point<dim>> intersection_points;
+
+  // Calculate the discriminant
+  const double discriminant = b * b - 4 * a * c;
+  if (discriminant == 0.)
+    {
+      // One intersection point
+      const double t = -b / (2. * a);
+      intersection_points.push_back(line_start + t * line_direction);
+    }
+  else if (discriminant > 0.)
+    {
+      // Two intersection points
+      const double sqrt_discriminant = std::sqrt(discriminant);
+      const double t1                = (-b - sqrt_discriminant) / (2. * a);
+      const double t2                = (-b + sqrt_discriminant) / (2. * a);
+
+      intersection_points.push_back(line_start + t1 * line_direction);
+      intersection_points.push_back(line_start + t2 * line_direction);
+    }
+  // If the discriminant is negative, there are no intersection points therefore
+  // the vector remains empty
+
+  return intersection_points;
+}
+
+template std::vector<Point<2>>
+LetheGridTools::find_line_sphere_intersection(
+  const Point<2>     &line_start,
+  const Tensor<1, 2> &line_direction,
+  const Point<2>     &sphere_center,
+  const double       &sphere_radius);
+template std::vector<Point<3>>
+LetheGridTools::find_line_sphere_intersection(
+  const Point<3>     &line_start,
+  const Tensor<1, 3> &line_direction,
+  const Point<3>     &sphere_center,
+  const double       &sphere_radius);
