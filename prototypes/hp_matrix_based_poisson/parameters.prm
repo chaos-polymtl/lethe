@@ -21,7 +21,7 @@ set geometry = hypercube_with_hole
 
 # Global refinement 1st cycle
 
-set initial refinement = 2
+set initial refinement = 1
 
 # Number of cycles <1 up to 9-dim >
 
