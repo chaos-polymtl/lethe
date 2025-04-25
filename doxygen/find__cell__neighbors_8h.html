@@ -201,9 +201,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac057cdef00e6ae715e263d121edb262c" id="r_ac057cdef00e6ae715e263d121edb262c"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:ac057cdef00e6ae715e263d121edb262c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8h.html#ac057cdef00e6ae715e263d121edb262c">find_cell_neighbors</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
-<tr class="separator:ac057cdef00e6ae715e263d121edb262c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2064cf94247131a4fd1f67c836809cea" id="r_a2064cf94247131a4fd1f67c836809cea"><td class="memTemplParams" colspan="2">template&lt;int dim, bool reciprocal = false&gt; </td></tr>
+<tr class="memitem:a2064cf94247131a4fd1f67c836809cea"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8h.html#a2064cf94247131a4fd1f67c836809cea">find_cell_neighbors</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
+<tr class="separator:a2064cf94247131a4fd1f67c836809cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8872920808863e1a9411be12d8bed703" id="r_a8872920808863e1a9411be12d8bed703"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a8872920808863e1a9411be12d8bed703"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8h.html#a8872920808863e1a9411be12d8bed703">find_cell_periodic_neighbors</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_neighbor_list &amp;cells_local_periodic_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_neighbor_list &amp;cells_ghost_periodic_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_neighbor_list &amp;cells_ghost_local_periodic_neighbor_list)</td></tr>
 <tr class="separator:a8872920808863e1a9411be12d8bed703"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -215,13 +215,13 @@ Functions</h2></td></tr>
 <tr class="separator:a205710c4af5149093e241fcbda097096"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ac057cdef00e6ae715e263d121edb262c" name="ac057cdef00e6ae715e263d121edb262c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac057cdef00e6ae715e263d121edb262c">&#9670;&#160;</a></span>find_cell_neighbors()</h2>
+<a id="a2064cf94247131a4fd1f67c836809cea" name="a2064cf94247131a4fd1f67c836809cea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2064cf94247131a4fd1f67c836809cea">&#9670;&#160;</a></span>find_cell_neighbors()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, bool reciprocal = false&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void find_cell_neighbors </td>
@@ -250,6 +250,13 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Finds the neighbor list (without repetition) of all the active cells in the triangulation. It gets the vertices of the cells to get lists of the neighbor for each cells. There is some check to prevent repetition of a cell in a list (up to 8 vertices can have the same cell in common in 3D). 2 types of container are used for cell neighbors : local-local cells and local-ghost cells. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the dimension of the space in which the problem is solved. </td></tr>
+    <tr><td class="paramname">reciprocal</td><td>An boolean that denotes if the cells_local_neighbor_list of cell i and j contains cell j and i, respectively.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the information of the cells </td></tr>
@@ -321,7 +328,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00103">103</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00104">104</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
 
 </div>
 </div>
@@ -362,7 +369,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00280">280</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00281">281</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
 
 </div>
 </div>
@@ -425,7 +432,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00325">325</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00326">326</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
 
 </div>
 </div>
