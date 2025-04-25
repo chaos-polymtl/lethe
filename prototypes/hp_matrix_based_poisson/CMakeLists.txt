@@ -1,2 +1,2 @@
-add_executable(hp_matrix_based_laplace hp_matrix_based_laplace.cc)
-deal_ii_setup_target(hp_matrix_based_laplace)
+add_executable(hp_matrix_based_poisson hp_matrix_based_poisson.cc)
+deal_ii_setup_target(hp_matrix_based_poisson)

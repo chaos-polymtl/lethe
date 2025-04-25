@@ -41,6 +41,7 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/smoothness_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+#include <deal.II/distributed/cell_weights.h>
 
 #include <fstream>
 #include <iostream>
@@ -270,6 +271,7 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
 
+  hp::MappingCollection<dim> mapping_collection;
   hp::FECollection<dim>     fe_collection;
   hp::QCollection<dim>      quadrature_collection;
   hp::QCollection<dim - 1>  face_quadrature_collection;
@@ -277,6 +279,7 @@ private:
   AffineConstraints<double> constraints;
   MatrixType                system_matrix;
   SparsityPattern           sparsity_pattern;
+  std::unique_ptr<parallel::CellWeights<dim>> cell_weights;
 
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
@@ -297,7 +300,7 @@ private:
 template <int dim, int fe_degree>
 HPMatrixBasedPoissonProblem<dim, fe_degree>::HPMatrixBasedPoissonProblem(
   const Settings &parameters)
-  : triangulation(MPI_COMM_WORLD, Triangulation<dim>::eliminate_unrefined_islands)
+  : triangulation(MPI_COMM_WORLD)
   , mapping(fe_degree)
   , dof_handler(triangulation)
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -316,6 +319,22 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::HPMatrixBasedPoissonProblem(
       quadrature_collection.push_back(QGauss<dim>(degree + 1));
       face_quadrature_collection.push_back(QGauss<dim - 1>(degree + 1));
     }
+
+  cell_weights = std::make_unique<parallel::CellWeights<dim>>(
+    dof_handler,
+    parallel::CellWeights<dim>::ndofs_weighting(
+      {1, 1}));
+
+  const unsigned int min_fe_index = parameters.element_order;
+  triangulation.signals.post_p4est_refinement.connect(
+    [&, min_fe_index]() {
+      const parallel::distributed::TemporarilyMatchRefineFlags<dim>
+        refine_modifier(triangulation);
+      hp::Refinement::limit_p_level_difference(dof_handler,
+                                                parameters.element_order,
+                                                /*contains=*/min_fe_index);
+    },
+    boost::signals2::at_front);
 }
 
 
@@ -383,6 +402,11 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
         }
     }
 
+  const unsigned int min_fe_index = parameters.element_order;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      cell->set_active_fe_index(min_fe_index);
+
   triangulation.refine_global(parameters.initial_refinement);
 }
 
@@ -393,11 +417,6 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::setup_system()
   TimerOutput::Scope t(computing_timer, "setup system");
 
   system_matrix.clear();
-
-  const unsigned int min_fe_index = parameters.element_order - 1;
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    if (cell->is_locally_owned())
-      cell->set_active_fe_index(min_fe_index);
 
   dof_handler.distribute_dofs(fe_collection);
 
@@ -418,6 +437,9 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::setup_system()
                                            Functions::ZeroFunction<dim>(),
                                            constraints);
   constraints.close();
+
+  constraints.make_consistent_in_parallel(
+    locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
@@ -790,6 +812,8 @@ template <int dim, int fe_degree>
 void
 HPMatrixBasedPoissonProblem<dim, fe_degree>::hp_refine()
 {
+  TimerOutput::Scope t(computing_timer, "hp refinement");
+
   Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
   KellyErrorEstimator<dim>::estimate(
     dof_handler,
@@ -799,7 +823,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::hp_refine()
     estimated_error_per_cell);
 
   Vector<float>          smoothness_indicators(triangulation.n_active_cells());
-  FESeries::Fourier<dim> fourier =
+  FESeries::Fourier<dim, dim> fourier =
     SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
   SmoothnessEstimator::Fourier::coefficient_decay(fourier,
                                                   dof_handler,
@@ -969,7 +993,6 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::run()
           output_results(cycle);
         }
 
-      // Calculate the error for the hp refinement and refine the cells
       hp_refine();
 
       computing_timer.print_summary();

@@ -1,0 +1,3 @@
+add_executable(hp_matrix_based_advection_diffusion hp_matrix_based_advection_diffusion.cc)
+
+deal_ii_setup_target(hp_matrix_based_advection_diffusion)
