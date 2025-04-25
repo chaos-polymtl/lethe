@@ -698,6 +698,20 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
+   * of the kinematic viscosity.
+   *
+   */
+  Table<2, VectorizedArray<number>> kinematic_viscosity_vector;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the kinematic viscosity gradient.
+   *
+   */
+  Table<2, VectorizedArray<number>> kinematic_viscosity_gradient;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
    * of the face penalization term effective_beta_face
    *
    */
