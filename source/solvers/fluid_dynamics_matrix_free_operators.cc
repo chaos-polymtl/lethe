@@ -832,6 +832,23 @@ NavierStokesOperatorBase<dim, number>::
       // Get previously calculated element size needed for tau
       const auto h = integrator.read_cell_data(this->get_element_size());
 
+      // Create fields container.
+      // The purpose is being compatible with the data structure in
+      // rheological model std::map<field, Tensor<1, dim,
+      // VectorizedArray<number>>> fields; fields.insert(
+      //   std::pair<field, Tensor<1, dim,
+      //   VectorizedArray<number>>>(field::shear_rate,
+      //                                         integrator.n_q_points));
+      // set_field_vector(field::shear_rate, shear_rate_at_q,
+      // fields);
+
+      // Current problem: How to fill up the
+      // grad_kinematic_viscosity_shear_rate container to use
+      // .vector_jacobian()
+
+      // Matrix based vicosity gradient calculator:
+      // this->properties_manager.get_rheology().vector_jacobian();
+
       for (const auto q : integrator.quadrature_point_indices())
         {
           nonlinear_previous_values(cell, q)   = integrator.get_value(q);
@@ -862,10 +879,14 @@ NavierStokesOperatorBase<dim, number>::
       if (this->properties_manager->is_non_newtonian())
         {
           typename FECellIntegrator::gradient_type shear_rate;
+          typename FECellIntegrator::value_type    grad_shear_rate;
           for (const auto q : integrator.quadrature_point_indices())
             {
               typename FECellIntegrator::gradient_type gradient =
                 integrator.get_gradient(q);
+
+              typename FECellIntegrator::hessian_type hessian =
+                integrator.get_hessian(q);
 
               // Calculate shear rate
               for (unsigned int i = 0; i < dim; ++i)
@@ -892,76 +913,50 @@ NavierStokesOperatorBase<dim, number>::
               // 1. Grad shear rate
               // 2. grad_kinematic_viscosity_shear_rate
 
-              // Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>
-              // velocity_gradient = nonlinear_previous_gradient(cell, q);
-
-              // double val = velocity_gradient[0][0];
-
               // TODO find a way to compare with a minimum to avoid 0;
               // VectorizedArray<number> min_shear_rate_magnitude = 1e-12;
               // shear_rate_magnitude = shear_rate_magnitude >
               // min_shear_rate_magnitude ? shear_rate_magnitude :
               // min_shear_rate_magnitude;
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  if constexpr (dim == 2)
+                    {
+                      for (unsigned int k = 0; k < dim; ++k)
+                        {
+                          grad_shear_rate[d] +=
+                            VectorizedArray<number>(2.) *
+                            (gradient[k][k] * hessian[k][d][k]) /
+                            shear_rate_magnitude;
+                        }
+                      grad_shear_rate[d] +=
+                        (gradient[0][1] + gradient[1][0]) *
+                        (hessian[0][d][1] + hessian[1][d][0]) /
+                        shear_rate_magnitude;
+                    }
+                  else
+                    {
+                      for (unsigned int k = 0; k < dim; ++k)
+                        {
+                          grad_shear_rate[d] +=
+                            VectorizedArray<number>(2.) *
+                              (gradient[k][k] * hessian[k][d][k]) /
+                              shear_rate_magnitude +
+                            (gradient[(k + 1) % dim][(k + 2) % dim] +
+                             gradient[(k + 2) % dim][(k + 1) % dim]) *
+                              (hessian[(k + 1) % dim][d][(k + 2) % dim] +
+                               hessian[(k + 2) % dim][d][(k + 1) % dim]) /
+                              shear_rate_magnitude;
+                        }
+                    }
+                }
 
-              // Calculates an approximation of the shear rate magnitude
-              // gradient using the derived form, since it does not change with
-              // rheological models typename FECellIntegrator::gradient_type
-              // gradient grad_shear_rate; for (unsigned int d = 0; d < dim;
-              // ++d)
-              //   {
-              //     if (dim == 2)
-              //       {
-              //         for (unsigned int k = 0; k < dim; ++k)
-              //           {
-              //             grad_shear_rate[d] +=
-              //               2 * (nonlinear_previous_gradient(cell)[k][k] *
-              //               velocity_hessians[k][d][k]) /
-              //               shear_rate_magnitude;
-              //           }
-              //         grad_shear_rate[d] +=
-              //           (nonlinear_previous_gradient(cell)[0][1] +
-              //           nonlinear_previous_gradient(cell)[1][0]) *
-              //           (velocity_hessians[0][d][1] +
-              //           velocity_hessians[1][d][0]) / shear_rate_magnitude;
-              //       }
-              // else
-              //   {
-              //     for (unsigned int k = 0; k < dim; ++k)
-              //       {
-              //         grad_shear_rate[d] +=
-              //           2 * (velocity_gradient[k][k] *
-              //           velocity_hessians[k][d][k]) /
-              //             shear_rate_magnitude +
-              //           (velocity_gradient[(k + 1) % dim][(k + 2) % dim] +
-              //            velocity_gradient[(k + 2) % dim][(k + 1) % dim]) *
-              //             (velocity_hessians[(k + 1) % dim][d][(k + 2) % dim]
-              //             +
-              //              velocity_hessians[(k + 2) % dim][d][(k + 1) %
-              //              dim]) /
-              //             shear_rate_magnitude;
-              //       }
-              //   }
-
-              // Create fields container.
-              // The purpose is being compatible with the data structure in
-              // rheological model std::map<field, Tensor<1, dim,
-              // VectorizedArray<number>>> fields; fields.insert(
-              //   std::pair<field, Tensor<1, dim,
-              //   VectorizedArray<number>>>(field::shear_rate,
-              //                                         integrator.n_q_points));
-              // set_field_vector(field::shear_rate, shear_rate_at_q, fields);
-
-              // Current problem: How to fill up the
-              // grad_kinematic_viscosity_shear_rate container to use
-              // .vector_jacobian()
-
-
-
-              // Matrix based vicosity gradient calculator:
-              // this->properties_manager.get_rheology().vector_jacobian();
-
-              // kinematic_viscosity_gradient =
-              //   gradient_shear_rate * grad_kinematic_viscosity_shear_rate;
+              // Calculate it using the grad kinematic viscosity shear rate and
+              // the grad shear rate. The former is calculated outside of the
+              // loop.
+              kinematic_viscosity_gradient(cell, q) = 0.0;
+              //   gradient_shear_rate *
+              //   grad_kinematic_viscosity_shear_rate;
             }
         }
     }
