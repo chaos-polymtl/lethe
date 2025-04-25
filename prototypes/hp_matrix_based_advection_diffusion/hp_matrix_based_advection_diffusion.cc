@@ -13,11 +13,11 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_series.h>
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
@@ -26,6 +26,8 @@
 #include <deal.II/hp/fe_collection.h>
 #include <deal.II/hp/fe_values.h>
 #include <deal.II/hp/refinement.h>
+#include <deal.II/distributed/grid_refinement.h>
+#include <deal.II/distributed/tria.h>
 
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
@@ -38,19 +40,12 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-#include <deal.II/multigrid/mg_coarse.h>
-#include <deal.II/multigrid/mg_constrained_dofs.h>
-#include <deal.II/multigrid/mg_matrix.h>
-#include <deal.II/multigrid/mg_smoother.h>
-#include <deal.II/multigrid/mg_tools.h>
-#include <deal.II/multigrid/mg_transfer.h>
-#include <deal.II/multigrid/multigrid.h>
-
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/smoothness_estimator.h>
+#include <deal.II/numerics/error_estimator.h>
 
 #include <fstream>
 #include <iostream>
@@ -404,10 +399,10 @@ BoundaryValues<dim>::value_list(const std::vector<Point<dim>> &points,
 // −ϵ∆u + w · ∇u = f using Newton's method, the matrix-based
 // approach and different test problems.
 template <int dim, int fe_degree>
-class HPMatrixBasedAdvectionDiffusion
+class MatrixBasedAdvectionDiffusion
 {
 public:
-  HPMatrixBasedAdvectionDiffusion(const Settings &parameters);
+  MatrixBasedAdvectionDiffusion(const Settings &parameters);
 
   void
   run();
@@ -432,6 +427,9 @@ private:
   compute_update();
 
   void
+  hp_refine();
+
+  void
   solve();
 
   double
@@ -453,8 +451,6 @@ private:
   hp::QCollection<dim>      quadrature_collection;
   hp::QCollection<dim - 1>  face_quadrature_collection;
 
-
-  FE_Q<dim>                 fe;
   DoFHandler<dim>           dof_handler;
   AffineConstraints<double> constraints;
   MatrixType                system_matrix;
@@ -476,10 +472,14 @@ private:
 };
 
 template <int dim, int fe_degree>
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::HPMatrixBasedAdvectionDiffusion(
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::MatrixBasedAdvectionDiffusion(
   const Settings &parameters)
   : triangulation(MPI_COMM_WORLD,
-                  Triangulation<dim>::limit_level_difference_at_vertices)
+                  Triangulation<dim>::limit_level_difference_at_vertices,
+                  (parameters.preconditioner == Settings::amg) ?
+                    parallel::distributed::Triangulation<dim>::default_setting :
+                    parallel::distributed::Triangulation<
+                      dim>::construct_multigrid_hierarchy)
   , mapping(fe_degree)
   , dof_handler(triangulation)
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -490,17 +490,18 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::HPMatrixBasedAdvectionDiffusion
   , mpi_communicator(MPI_COMM_WORLD)
   , parameters(parameters)
 {
-  for (unsigned int degree = parameters.element_order; degree <= parameters.max_element_order; ++degree){
-    fe_collection.push_back(FE_Q<dim>(degree));
-    quadrature_collection.push_back(QGauss<dim>(degree + 1));
-    face_quadrature_collection.push_back(QGauss<dim - 1>(degree + 1));
+    for (unsigned int degree = 1; degree <= 4; ++degree)
+    {
+      fe_collection.push_back(FE_Q<dim>(degree));
+      quadrature_collection.push_back(QGauss<dim>(degree + 1));
+      face_quadrature_collection.push_back(QGauss<dim - 1>(degree + 1));
   }
 }
 
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
 {
   TimerOutput::Scope t(computing_timer, "make grid");
 
@@ -559,11 +560,6 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
         }
     }
 
-  const unsigned int min_fe_index = parameters.element_order;
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    if (cell->is_locally_owned())
-      cell->set_active_fe_index(min_fe_index);
-
   triangulation.refine_global(parameters.initial_refinement);
 }
 
@@ -571,7 +567,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
 {
   TimerOutput::Scope t(computing_timer, "setup system");
 
@@ -753,6 +749,9 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
 
   constraints.close();
 
+  constraints.make_consistent_in_parallel(
+    locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
   SparsityTools::distribute_sparsity_pattern(dsp,
@@ -760,6 +759,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                              mpi_communicator,
                                              locally_relevant_dofs);
   constraints.condense(dsp);
+  // sparsity_pattern.copy_from(dsp);
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
                        dsp,
@@ -768,41 +768,42 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 {
   TimerOutput::Scope t(computing_timer, "assemble right hand side");
 
-  // const QGauss<dim> quadrature_formula(fe.degree + 1);
-
   system_rhs = 0;
-  hp::FEValues<dim> fe_values(fe,
+  hp::FEValues<dim> hp_fe_values(fe_collection,
                           quadrature_collection,
                           update_values | update_gradients | update_hessians |
                             update_JxW_values | update_quadrature_points);
 
-  // const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  // const unsigned int n_q_points    = fe_values.n_quadrature_points;
-
-  Vector<double>      cell_rhs(dofs_per_cell);
+  Vector<double>      cell_rhs;
   SourceTerm<dim>     source_term;
-  std::vector<double> source_term_values(n_q_points);
 
-  std::vector<double>         newton_step_values(n_q_points);
-  std::vector<Tensor<1, dim>> newton_step_gradients(n_q_points);
-  std::vector<double>         newton_step_laplacians(n_q_points);
-
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices;
 
   AdvectionField<dim>         advection_field(parameters.problem_type);
-  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
+          const unsigned int dofs_per_cell = cell->get_fe().dofs_per_cell;
+          cell_rhs.reinit(dofs_per_cell);
           cell_rhs = 0.0;
 
-          fe_values.reinit(cell);
+          hp_fe_values.reinit(cell);
+
+          const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
+
+          const unsigned int n_q_points = fe_values.n_quadrature_points;
+
+          std::vector<double> source_term_values(n_q_points);
+          std::vector<double> newton_step_values(n_q_points);
+          std::vector<Tensor<1, dim>> newton_step_gradients(n_q_points);
+          std::vector<double> newton_step_laplacians(n_q_points);
+          std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
           if (parameters.source_term == Settings::mms)
             source_term.value_list(fe_values.get_quadrature_points(),
@@ -874,7 +875,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
                     }
                 }
             }
-
+          local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
           constraints.distribute_local_to_global(cell_rhs,
                                                  local_dof_indices,
@@ -887,38 +888,46 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 {
   TimerOutput::Scope t(computing_timer, "assemble matrix");
 
-  const QGauss<dim> quadrature_formula(fe.degree + 1);
+  // const QGauss<dim> quadrature_formula(fe.degree + 1);
 
   system_matrix = 0;
 
-  FEValues<dim> fe_values(fe,
-                          quadrature_formula,
+  hp::FEValues<dim> hp_fe_values(fe_collection,
+                          quadrature_collection,
                           update_values | update_gradients | update_hessians |
                             update_JxW_values | update_quadrature_points);
 
-  const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  const unsigned int n_q_points    = fe_values.n_quadrature_points;
+  // const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
+  // const unsigned int n_q_points    = fe_values.n_quadrature_points;
 
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  FullMatrix<double> cell_matrix;
 
-  std::vector<double> newton_step_values(n_q_points);
+  // std::vector<double> newton_step_values(n_q_points);
 
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices;
 
   AdvectionField<dim>         advection_field(parameters.problem_type);
-  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
+  // std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
+          const unsigned int dofs_per_cell = cell->get_fe().dofs_per_cell;
+          cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
           cell_matrix = 0.0;
 
-          fe_values.reinit(cell);
+          hp_fe_values.reinit(cell);
+
+          const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
+
+          const unsigned int n_q_points = fe_values.n_quadrature_points;
+          std::vector<double> newton_step_values(n_q_points);
+          std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
           fe_values.get_function_values(solution, newton_step_values);
 
@@ -986,7 +995,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                     }
                 }
             }
-
+          local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
           constraints.distribute_local_to_global(cell_matrix,
                                                  local_dof_indices,
@@ -999,7 +1008,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
 template <int dim, int fe_degree>
 double
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
   const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
@@ -1027,36 +1036,47 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
   local_evaluation_point = solution;
 
-  const QGauss<dim> quadrature_formula(fe.degree + 1);
+  // const QGauss<dim> quadrature_formula(fe.degree + 1);
 
-  FEValues<dim> fe_values(fe,
-                          quadrature_formula,
+  hp::FEValues<dim> hp_fe_values(fe_collection,
+                          quadrature_collection,
                           update_values | update_gradients | update_hessians |
                             update_JxW_values | update_quadrature_points);
 
-  const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  const unsigned int n_q_points    = fe_values.n_quadrature_points;
+  // const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
+  // const unsigned int n_q_points    = fe_values.n_quadrature_points;
 
-  Vector<double>      cell_residual(dofs_per_cell);
+  Vector<double>      cell_residual;
   SourceTerm<dim>     source_term;
-  std::vector<double> source_term_values(n_q_points);
+  // std::vector<double> source_term_values(n_q_points);
 
-  std::vector<double>         values(n_q_points);
-  std::vector<Tensor<1, dim>> gradients(n_q_points);
-  std::vector<double>         laplacians(n_q_points);
+  // std::vector<double>         values(n_q_points);
+  // std::vector<Tensor<1, dim>> gradients(n_q_points);
+  // std::vector<double>         laplacians(n_q_points);
 
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices;
 
   AdvectionField<dim>         advection_field(parameters.problem_type);
-  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
+  // std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
+          const unsigned int dofs_per_cell = cell->get_fe().dofs_per_cell;
+          cell_residual.reinit(dofs_per_cell);
           cell_residual = 0.0;
+          
+          hp_fe_values.reinit(cell);
 
-          fe_values.reinit(cell);
+          const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
+
+          const unsigned int n_q_points = fe_values.n_quadrature_points;
+          std::vector<double>         source_term_values(n_q_points);
+          std::vector<double>         values(n_q_points);
+          std::vector<Tensor<1, dim>> gradients(n_q_points);
+          std::vector<double>         laplacians(n_q_points);
+          std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
           if (parameters.source_term == Settings::mms)
             source_term.value_list(fe_values.get_quadrature_points(),
@@ -1124,7 +1144,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
                     }
                 }
             }
-
+          local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
           constraints.distribute_local_to_global(cell_residual,
                                                  local_dof_indices,
@@ -1140,14 +1160,14 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
 {
   TimerOutput::Scope t(computing_timer, "compute update");
 
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     locally_owned_dofs, mpi_communicator);
 
-  SolverControl solver_control(200, 1.e-8 * system_rhs.l2_norm(), true, true);
+  SolverControl solver_control(1000, 1.e-4 * system_rhs.l2_norm(), true, true);
   TrilinosWrappers::SolverGMRES gmres(solver_control);
 
   switch (parameters.preconditioner)
@@ -1200,7 +1220,45 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::solve()
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
+{
+  TimerOutput::Scope t(computing_timer, "hp refinement");
+
+  Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
+  KellyErrorEstimator<dim>::estimate(
+    dof_handler,
+    face_quadrature_collection,
+    std::map<types::boundary_id, const Function<dim> *>(),
+    solution,
+    estimated_error_per_cell);
+
+  Vector<float>          smoothness_indicators(triangulation.n_active_cells());
+  FESeries::Fourier<dim, dim> fourier =
+    SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
+  SmoothnessEstimator::Fourier::coefficient_decay(fourier,
+                                                  dof_handler,
+                                                  solution,
+                                                  smoothness_indicators);
+
+  parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
+    triangulation, estimated_error_per_cell, 0.3, 0.03);
+
+  hp::Refinement::p_adaptivity_from_relative_threshold(dof_handler,
+                                                       smoothness_indicators,
+                                                       0.2,
+                                                       0.2);
+
+  hp::Refinement::choose_p_over_h(dof_handler);
+
+  triangulation.prepare_coarsening_and_refinement();
+  hp::Refinement::limit_p_level_difference(dof_handler);
+
+  triangulation.execute_coarsening_and_refinement();
+}
+
+template <int dim, int fe_degree>
+void
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
@@ -1258,19 +1316,19 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::solve()
 
 template <int dim, int fe_degree>
 double
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
 {
   solution.update_ghost_values();
 
   Vector<float> norm_per_cell(triangulation.n_active_cells());
 
-  VectorTools::integrate_difference(mapping,
-                                    dof_handler,
-                                    solution,
-                                    Functions::ZeroFunction<dim>(),
-                                    norm_per_cell,
-                                    QGauss<dim>(fe.degree + 1),
-                                    VectorTools::H1_seminorm);
+  // VectorTools::integrate_difference(mapping,
+  //                                   dof_handler,
+  //                                   solution,
+  //                                   Functions::ZeroFunction<dim>(),
+  //                                   norm_per_cell,
+  //                                   QGauss<dim>(2),
+  //                                   VectorTools::H1_seminorm);
 
   return VectorTools::compute_global_error(triangulation,
                                            norm_per_cell,
@@ -1279,20 +1337,20 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
 
 template <int dim, int fe_degree>
 double
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
 {
   solution.update_ghost_values();
 
   Vector<float> error_per_cell(triangulation.n_active_cells());
 
-  VectorTools::integrate_difference(mapping,
-                                    dof_handler,
-                                    solution,
-                                    AnalyticalSolution<dim>(
-                                      parameters.peclet_number),
-                                    error_per_cell,
-                                    QGauss<dim>(fe.degree + 1),
-                                    VectorTools::L2_norm);
+  // VectorTools::integrate_difference(mapping,
+  //                                   dof_handler,
+  //                                   solution,
+  //                                   AnalyticalSolution<dim>(
+  //                                     parameters.peclet_number),
+  //                                   error_per_cell,
+  //                                   QGauss<dim>(fe.degree + 1),
+  //                                   VectorTools::L2_norm);
 
   return VectorTools::compute_global_error(triangulation,
                                            error_per_cell,
@@ -1301,7 +1359,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::output_results(
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::output_results(
   const unsigned int cycle) const
 {
   if (triangulation.n_global_active_cells() > 1e6)
@@ -1320,7 +1378,20 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::output_results(
     }
   data_out.add_data_vector(subdomain, "subdomain");
 
-  data_out.build_patches(mapping, fe.degree, DataOut<dim>::curved_inner_cells);
+  // Output the finite element degree
+  Vector<float> fe_degrees(triangulation.n_active_cells());
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_degrees(cell->active_cell_index()) =
+            fe_collection[cell->active_fe_index()].degree;
+        }
+    }
+
+  data_out.add_data_vector(fe_degrees, "fe_degree");
+
+  data_out.build_patches();
 
   DataOutBase::VtkFlags flags;
   flags.compression_level = DataOutBase::CompressionLevel::best_speed;
@@ -1352,7 +1423,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::output_results(
 
 template <int dim, int fe_degree>
 void
-HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
+MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
 {
   {
     const unsigned int n_ranks =
@@ -1371,7 +1442,7 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       Utilities::System::get_current_vectorization_level() +
       "), VECTORIZATION_LEVEL=" +
       std::to_string(DEAL_II_COMPILER_VECTORIZATION_LEVEL);
-    std::string SOL_header     = "Finite element space: " + fe.get_name();
+    std::string SOL_header     = "Finite element space: ";// + fe.get_name();
     std::string PRECOND_header = "";
     if (parameters.preconditioner == Settings::amg)
       PRECOND_header = "Preconditioner: AMG";
@@ -1448,10 +1519,6 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
         {
           make_grid();
         }
-      else
-        {
-          triangulation.refine_global(1);
-        }
 
       Timer timer;
 
@@ -1462,7 +1529,6 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
             << " cells" << std::endl;
       pcout << "   DoFHandler:    " << dof_handler.n_dofs() << " DoFs"
             << std::endl;
-      pcout << std::endl;
 
       pcout << "Solve using Newton's method..." << std::endl;
       solve();
@@ -1489,6 +1555,8 @@ HPMatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
         {
           pcout << "  L2 norm: " << compute_l2_error() << std::endl;
         }
+
+      hp_refine();
 
       computing_timer.print_summary();
       computing_timer.reset();
@@ -1520,7 +1588,7 @@ main(int argc, char *argv[])
                 {
                   case 1:
                     {
-                      HPMatrixBasedAdvectionDiffusion<2, 1>
+                      MatrixBasedAdvectionDiffusion<2, 1>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
@@ -1528,7 +1596,7 @@ main(int argc, char *argv[])
                     }
                   case 2:
                     {
-                      HPMatrixBasedAdvectionDiffusion<2, 2>
+                      MatrixBasedAdvectionDiffusion<2, 2>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
@@ -1536,7 +1604,7 @@ main(int argc, char *argv[])
                     }
                   case 3:
                     {
-                      HPMatrixBasedAdvectionDiffusion<2, 3>
+                      MatrixBasedAdvectionDiffusion<2, 3>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
@@ -1552,7 +1620,7 @@ main(int argc, char *argv[])
                 {
                   case 1:
                     {
-                      HPMatrixBasedAdvectionDiffusion<3, 1>
+                      MatrixBasedAdvectionDiffusion<3, 1>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
@@ -1560,7 +1628,7 @@ main(int argc, char *argv[])
                     }
                   case 2:
                     {
-                      HPMatrixBasedAdvectionDiffusion<3, 2>
+                      MatrixBasedAdvectionDiffusion<3, 2>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
@@ -1568,7 +1636,7 @@ main(int argc, char *argv[])
                     }
                   case 3:
                     {
-                      HPMatrixBasedAdvectionDiffusion<3, 3>
+                      MatrixBasedAdvectionDiffusion<3, 3>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
