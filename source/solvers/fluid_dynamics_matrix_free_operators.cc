@@ -946,34 +946,18 @@ NavierStokesOperatorBase<dim, number>::
                 }
             }
 
-
-          // Create fields container.
-          // The purpose is being compatible with the data structure in
-          // rheological model std::map<field, Tensor<1, dim,
-          // VectorizedArray<number>>> fields; fields.insert(
-          //   std::pair<field, Tensor<1, dim,
-          //   VectorizedArray<number>>>(field::shear_rate,
-          //                                         integrator.n_q_points));
-          // set_field_vector(field::shear_rate, shear_rate_at_q,
-          // fields);
-
-          // Current problem: How to fill up the
-          // grad_kinematic_viscosity_shear_rate container to use
-          // .vector_jacobian()
-
-          // Matrix based vicosity gradient calculator:
-          // this->properties_manager.get_rheology().vector_jacobian();
+          // Get information from physical properties class
           std::map<field, std::vector<double>> fields;
 
           fields.insert(
             std::pair<field, std::vector<double>>(field::shear_rate,
                                                   integrator.n_q_points));
-
+          
           std::vector<double> temp_shear_rate_magnitude(integrator.n_q_points);
 
           for (const auto q : integrator.quadrature_point_indices())
             {
-              temp_shear_rate_magnitude[q] = shear_rate_magnitude[q];
+              temp_shear_rate_magnitude[q] = shear_rate_magnitude[0]; // This is odd
             }
 
           set_field_vector(field::shear_rate,
