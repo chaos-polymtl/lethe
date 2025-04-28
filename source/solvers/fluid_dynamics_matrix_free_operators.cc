@@ -995,7 +995,7 @@ NavierStokesOperatorBase<dim, number>::
               // Calculate it using the grad kinematic viscosity shear rate and
               // the grad shear rate.
               kinematic_viscosity_gradient(cell, q) =
-                grad_shear_rate[q] *
+                grad_shear_rate *
                 VectorizedArray<number>(grad_kinematic_viscosity_shear_rate[q]);
 
               kinematic_viscosity_vector(cell, q) =
