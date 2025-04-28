@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The find_cell_neighbors is now templated with a boolean so that neighboring cell vectors can be reciprocal, which means that vector i and j will contain cell j and i, respectively. [#1512](https://github.com/chaos-polymtl/lethe/pull/1512)
 
+## [Master] - 2025-04-25
+
+### Fixed
+
+- MINOR The Jacobian of the non-Newtonian GLS assembler has an error in the advection term. This has been fixed. [#1513] (https://github.com/chaos-polymtl/lethe/pull/1513)
+
+## [Master] - 2025-04-24
+
 ### Added
 
 - MINOR This PR Adds the find_line_sphere_intersection in lethe_grid_tools for use in the case of ray-particle intersection for the profilometry hackathon project. This function simply evaluates all intersection points between a line and a sphere. [#1511] (https://github.com/chaos-polymtl/lethe/pull/1511)
