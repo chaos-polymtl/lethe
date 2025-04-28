@@ -11,6 +11,7 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::allocate()
 {
+  std::cout << "Allocate" << std::endl;
   // Initialize size of arrays
   this->n_q_points = fe_values.get_quadrature().size();
   this->n_dofs     = fe_values.get_fe().n_dofs_per_cell();
@@ -381,6 +382,8 @@ NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points,
   this->n_q_points = new_n_q_points;
   this->n_dofs     = new_n_dofs;
 
+  std::cout << "ScratchData n_dofs = " << this->n_dofs << std::endl;
+  
   // Initialize arrays related to quadrature
   this->JxW.resize(n_q_points);
 

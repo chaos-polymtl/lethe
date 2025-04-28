@@ -622,6 +622,9 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
 
           copy_data.reallocate(new_n_q_points, new_n_dofs);
           // std::cout << "Boooooop" << std::endl;
+          std::cout << "FluidDynamics after reinit_intersected n_dofs = " << scratch_data.n_dofs << std::endl;
+          
+          
         }
       else
         {
@@ -637,6 +640,8 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
             this->forcing_function,
             this->flow_control.get_beta(),
             this->simulation_parameters.stabilization.pressure_scaling_factor);
+            
+            std::cout << "FluidDynamics after reinit n_dofs = " << scratch_data.n_dofs << std::endl;
         }
     }
   else
@@ -736,6 +741,8 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   copy_data.reset();
 
 
+  std::cout << "FluidDynamics before assembler n_dofs = " << scratch_data.n_dofs << std::endl;
+  
   if (this->simulation_parameters.physical_properties_manager
           .get_number_of_solids() < 1 ||
       cell->material_id() == 0)
@@ -747,6 +754,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     }
 
 
+    
 
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
@@ -765,7 +773,7 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
       const unsigned int n_dofs = this->fe->n_dofs_per_cell();
 
       // Enriched cell (intersected cell)
-      // std::cout<< "n_dofs = " << n_dofs << std::endl;
+      std::cout<< "Copy n_dofs = " << n_dofs << std::endl;
       // std::cout<< "copy_data.local_matrix.n() = " <<
       // copy_data.local_matrix.n() << std::endl;
 

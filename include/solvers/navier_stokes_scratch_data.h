@@ -192,12 +192,12 @@ public:
                            sd.cahn_hilliard_filter);
     if (sd.gather_pressure_enrichment)
       {
-        // std::cout <<"Boop" << std::endl;
+        std::cout <<"Boop" << std::endl;
         enable_pressure_enrichment(*sd.dof_handler_level_set,
                                    *sd.level_set,
                                    *sd.mesh_classifier,
                                    *sd.fe_collection);
-        // std::cout <<"Bip" << std::endl;
+        std::cout <<"Bip" << std::endl;
       }
     gather_hessian = sd.gather_hessian;
   }
@@ -1339,6 +1339,8 @@ public:
               std::cout << "solution_J = " << solution_J << std::endl;
               if (solution_J > 0.0)
                 {
+                  std::cout << "reinited_inside_fe_values[pressure].value(j, q) = " << reinited_inside_fe_values[pressure].value(j, q) << std::endl;
+                  
                   s_x_q_inside += reinited_inside_fe_values[pressure].value(j, q);
                   grad_s_x_q_inside +=
                     reinited_inside_fe_values[pressure].gradient(j, q);
@@ -1353,7 +1355,7 @@ public:
           std::cout << "q = " << q << std::endl;
           std::cout << "x_q = " << reinited_inside_fe_values.quadrature_point(q)
                     << std::endl;
-
+          
           std::cout << "M_0_x_q[q] = " << M_0_x_q[q] << std::endl;
           std::cout << "M_1_x_q[q] = " << M_1_x_q[q] << std::endl;
           std::cout << "grad_M_0_x_q[q] = " << grad_M_0_x_q[q] << std::endl;
@@ -1370,6 +1372,8 @@ public:
               const double solution_J = dof_values_level_set[j];
               if (solution_J > 0.0)
                 {
+                  std::cout << "reinited_outside_fe_values[pressure].value(j, q) = " << reinited_outside_fe_values[pressure].value(j, q) << std::endl;
+                  
                   s_x_q_outside += reinited_outside_fe_values[pressure].value(j, q);
                   grad_s_x_q_outside +=
                     reinited_outside_fe_values[pressure].gradient(j, q);
@@ -1419,7 +1423,7 @@ public:
 
       // if (cell_location == NonMatching::LocationToLevelSet::intersected )
       // {
-      //   std::cout << "Ahhhh"<< std::endl;
+        std::cout << "Ahhhh"<< std::endl;
       // }
       // std::cout << "Ahhhh"<< sreinit_intd::endl;
 
@@ -1452,7 +1456,7 @@ public:
         outside_n_q_points = outside_fe_values->get_quadrature().size();
 
       new_n_q_points = inside_n_q_points + outside_n_q_points;
-      // std::cout << "new_n_q_points = " << new_n_q_points << std::endl;
+      std::cout << "new_n_q_points = " << new_n_q_points << std::endl;
 
       this->reallocate(new_n_q_points, new_n_dofs);
 
@@ -1515,8 +1519,10 @@ public:
 
       this->pressure_scaling_factor = pressure_scaling_factor;
 
-      reinit_boundary_face_values(cell, current_solution);
-
+      // reinit_boundary_face_values(cell, current_solution);
+      
+      std::cout << "reinit_intersected end n_dofs = " << this->n_dofs << std::endl;
+      
       return {new_n_q_points, new_n_dofs};
   }
 

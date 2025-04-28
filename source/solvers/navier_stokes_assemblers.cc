@@ -44,9 +44,13 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Pressure scaling factor
   const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
+  std::cout << "n_q_points = " << n_q_points << std::endl;
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      std::cout << "q =" << q  << std::endl;
+      
       // Gather into local variables the relevant fields
       const double          kinematic_viscosity = viscosity_vector[q];
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
@@ -92,25 +96,41 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
+      
+      std::cout << "n_dofs = " << n_dofs << std::endl;
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
+          
           const auto &phi_u_j           = scratch_data.phi_u[q][j];
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
           const auto &grad_phi_p_j =
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
-
+        
+          std::cout << "j =" << j  << std::endl;
+          
+          std::cout << "phi_u_j =" << phi_u_j  << std::endl;
+          std::cout << "grad_phi_u_j =" << grad_phi_u_j  << std::endl;
+          std::cout << "laplacian_phi_u_j =" << laplacian_phi_u_j  << std::endl;
+          std::cout << "grad_phi_p_j =" << grad_phi_p_j  << std::endl;
+          
+          
+          
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
              grad_phi_p_j - kinematic_viscosity * laplacian_phi_u_j +
              mass_source * phi_u_j);
-
+             
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
+          
+          std::cout << "strong_jacobian_vec[q][j] =" << strong_jacobian_vec[q][j]  << std::endl;
+          std::cout << "grad_phi_u_j_x_velocity[j] =" << grad_phi_u_j_x_velocity[j]   << std::endl;
+          std::cout << "velocity_gradient_x_phi_u_j[j] =" << velocity_gradient_x_phi_u_j[j]  << std::endl;
+          
         }
-
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -123,12 +143,24 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &phi_p_i      = scratch_data.phi_p[q][i];
           const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
-
+          std::cout << "i =" << i  << std::endl;
+          std::cout << "component_i =" << component_i  << std::endl;
+          
+          std::cout << "phi_u_i =" << phi_u_i  << std::endl;
+          std::cout << "grad_phi_u_i =" << grad_phi_u_i  << std::endl;
+          std::cout << "div_phi_u_i =" << div_phi_u_i  << std::endl;
+          std::cout << "phi_p_i =" << phi_p_i  << std::endl;
+          std::cout << "grad_phi_p_i =" << grad_phi_p_i  << std::endl;
+          
           // Store these temporary products in auxiliary variables for speed
           const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
           const auto strong_residual_x_grad_phi_u_i =
             strong_residual * grad_phi_u_i;
-
+            
+          std::cout << "grad_phi_u_i_x_velocity =" << grad_phi_u_i_x_velocity  << std::endl;
+          
+          std::cout << "strong_residual_x_grad_phi_u_i =" << strong_residual_x_grad_phi_u_i  << std::endl;
+          
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const unsigned int component_j = scratch_data.components[j];
@@ -142,23 +174,49 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
               double local_matrix_ij =
                 component_j == dim ? -div_phi_u_i * phi_p_j : 0;
+                
+              std::cout << "j =" << j  << std::endl;
+              
+              std::cout << "component_j =" << component_j  << std::endl;
+              
+              std::cout << "phi_u_j =" << phi_u_j  << std::endl;
+              std::cout << "phi_p_j =" << phi_p_j  << std::endl;
+              
+              std::cout << "strong_jac =" << strong_jac  << std::endl;
+              std::cout << "local_matrix_ij =" << local_matrix_ij  << std::endl;
+              
               if (component_i == dim)
                 {
+                  std::cout << "component_i == dim" << std::endl;
+                  
                   const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
 
                   local_matrix_ij += phi_p_i * div_phi_u_j;
 
                   // PSPG GLS term
                   local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  
+                  std::cout << "div_phi_u_j =" << div_phi_u_j  << std::endl;
+                  std::cout << "phi_p_i * div_phi_u_j =" << phi_p_i * div_phi_u_j  << std::endl;
+                  
+                  std::cout << "tau * (strong_jac * grad_phi_p_i) =" << tau * (strong_jac * grad_phi_p_i)  << std::endl;
+                  
                 }
 
               if (component_i < dim && component_j < dim)
                 {
+                  std::cout << "component_i < dim && component_j < dim" << std::endl;
+                  
                   const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-
+                  
+                  std::cout << "grad_phi_u_j =" << grad_phi_u_j  << std::endl;
+                  
+                  
                   local_matrix_ij += velocity_gradient_x_phi_u_j[j] * phi_u_i +
                                      grad_phi_u_j_x_velocity[j] * phi_u_i;
-
+                  
+                  std::cout << "velocity_gradient_x_phi_u_j[j] * phi_u_i + grad_phi_u_j_x_velocity[j] * phi_u_i = " << velocity_gradient_x_phi_u_j[j] * phi_u_i + grad_phi_u_j_x_velocity[j] * phi_u_i  << std::endl;
+                  
                   if (component_i == component_j)
                     {
                       local_matrix_ij +=
