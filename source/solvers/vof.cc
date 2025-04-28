@@ -1484,10 +1484,10 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
 
 template <int dim>
 void
-VolumeOfFluid<dim>::smooth_phase_fraction()
+VolumeOfFluid<dim>::smooth_phase_fraction(GlobalVectorType &solution)
 {
-  assemble_projection_phase_fraction(present_solution);
-  solve_projection_phase_fraction(present_solution);
+  assemble_projection_phase_fraction(solution);
+  solve_projection_phase_fraction(solution);
 }
 
 
@@ -2071,7 +2071,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->present_solution = this->newton_update;
 
   if (simulation_parameters.initial_condition->enable_projection_step)
-    smooth_phase_fraction();
+    smooth_phase_fraction(this->present_solution);
 
   apply_phase_filter();
 
@@ -2527,9 +2527,10 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 template <int dim>
 void
 VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
-  const GlobalVectorType &solution,
+  GlobalVectorType &solution,
   GlobalVectorType       &level_set_solution)
 {
+  
   auto mpi_communicator = this->triangulation->get_communicator();
 
   GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
@@ -2538,14 +2539,20 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
     this->simulation_parameters.multiphysics.vof_parameters
       .regularization_method.geometric_interface_reinitialization
       .tanh_thickness;
-
+  
+  const double d_max = this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.geometric_interface_reinitialization
+            .max_reinitialization_distance;
+                
   for (auto p : this->locally_owned_dofs)
     {
       const double phase      = solution[p];
       double       phase_sign = sgn(0.5 - phase);
-      level_set_owned[p] =
-        tanh_thickness *
-        std::atanh(phase_sign * std::min(abs(0.5 - phase) / 0.5, 1.0 - 1e-12));
+      // level_set_owned[p] =
+        // tanh_thickness *
+        // std::atanh(phase_sign * std::min(abs(0.5 - phase) / 0.5, 1.0 - 1e-12));
+      // level_set_owned[p] = (2.0*phase-1.0)*d_max;
+      level_set_owned[p] = (-2.0*phase+1.0);
     }
 
   this->nonzero_constraints.distribute(level_set_owned);
@@ -2567,15 +2574,35 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
     this->simulation_parameters.multiphysics.vof_parameters
       .regularization_method.geometric_interface_reinitialization
       .tanh_thickness;
-
+    
+  const double d_max_inv = 1.0/this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.geometric_interface_reinitialization
+            .max_reinitialization_distance;
+  const double d_max = this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.geometric_interface_reinitialization
+            .max_reinitialization_distance;
+  const double d_ref = 2.0;
+  const double ratio = 0.99;
+          
   for (auto p : this->locally_owned_dofs)
     {
-      const double signed_dist = level_set_solution[p];
-      solution_owned[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
+      const double signed_dist = level_set_solution[p]*d_ref/d_max;
+      // const double tanh_approx = Utilities::fixed_power<3>(signed_dist)*(-ratio/(Utilities::fixed_power<3>(d_ref)*Utilities::fixed_power<3>(ratio) - Utilities::fixed_power<3>(d_ref)*ratio) + std::tanh(d_ref*ratio)/(Utilities::fixed_power<3>(d_ref)*Utilities::fixed_power<3>(ratio) - Utilities::fixed_power<3>(d_ref)*ratio)) + signed_dist*(Utilities::fixed_power<3>(ratio)/(d_ref*Utilities::fixed_power<3>(ratio) - d_ref*ratio) - std::tanh(d_ref*ratio)/(d_ref*Utilities::fixed_power<3>(ratio) - d_ref*ratio));
+      double tanh_approx;
+      if (signed_dist < 0.0)
+        tanh_approx = 4.0*signed_dist/d_ref +6.0*Utilities::fixed_power<2>(signed_dist/d_ref) + 4.0*Utilities::fixed_power<3>(signed_dist/d_ref) + Utilities::fixed_power<4>(signed_dist/d_ref); // 4*x/d_ref + 6*x**2/d_ref**2 + 4*x**3/d_ref**3 + x**4/d_ref**4
+      else
+        tanh_approx = 4.0*signed_dist/d_ref -6.0*Utilities::fixed_power<2>(signed_dist/d_ref) + 4.0*Utilities::fixed_power<3>(signed_dist/d_ref) - Utilities::fixed_power<4>(signed_dist/d_ref); // 4*x/d_ref - 6*x**2/d_ref**2 + 4*x**3/d_ref**3 - x**4/d_ref**4
+      
+      solution_owned[p] = 0.5 - 0.5 * tanh_approx;
+      // solution_owned[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
+      
+      // solution_owned[p] = 0.5*(signed_dist*d_max_inv+1.0);
     }
   this->nonzero_constraints.distribute(solution_owned);
 
   phase_fraction_solution = solution_owned;
+  
 }
 
 template <int dim>
@@ -2601,6 +2628,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .frequency != 1)
     {
+      
       compute_level_set_from_phase_fraction(this->previous_solutions[0],
                                             previous_level_set);
 
@@ -2623,12 +2651,15 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
       compute_phase_fraction_from_level_set(previous_level_set,
                                             this->previous_solutions[0]);
+      smooth_phase_fraction(this->previous_solutions[0]);
+      
     }
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .verbosity != Parameters::Verbosity::quiet)
     this->pcout << "In redistanciation of the present solution ..."
                 << std::endl;
+
 
   compute_level_set_from_phase_fraction(this->present_solution,
                                         this->level_set);
@@ -2651,6 +2682,8 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
   compute_phase_fraction_from_level_set(this->level_set,
                                         this->present_solution);
+  smooth_phase_fraction(this->present_solution);
+
 }
 
 
