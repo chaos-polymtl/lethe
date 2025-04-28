@@ -8,7 +8,7 @@ This example illustrates the use of the Method of Manufactured Solutions (MMS) t
 Features
 ----------------------------------
 
-- Solvers: ``lethe-fluid`` with the velocity and pressure polynomial approximations :math:`\in \{Q_1, Q_2, Q3\}` and  :math:`\in \{P_1, P_2\}`
+- Solvers: ``lethe-fluid`` with the velocity and pressure polynomial approximations :math:`\in \{Q_1, Q_2, Q_3\}` and  :math:`\in \{P_1, P_2\}`
 - Steady-state problem
 - Introduction of a source term in the NS equations
 - Output of the :math:`L^2` norm of the `error relative to the chosen manufactured solution <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution>`_
@@ -25,7 +25,7 @@ grouped in the ``mms_simplex`` folder.
 - Base case parameter file in each folder: ``mms_quad/mms_2d_steady.prm`` and ``mms_simplex/mms_2d_steady.prm``
 - Python script to compute the source terms for the analytical solution used in this example: ``mms_source_term.py``
 - Files to generate the parameter files at the different conditions: ``mms_quad/generate_cases.py`` and ``mms_simplex/generate_cases.py``
-- Files to run the different simulations: ``mms_quad/launch_cases.py`` and ``mms_simplex/launch_cases.py``
+- Files to run the different simulations: ``mms_quad/launch_cases.py`` and ``mms_simplex/launch_cases.py`` or ``mms_quad/launch_cases.sh`` and ``mms_simplex/launch_cases.sh`` 
 - File to reorganize the output of the triangular mesh in a similar manner to the quadrilateral case: ``mms_simplex/organize_output.py``. After running the code, a directory ``mms_simplex/initial_output`` is created where the initial simulations output is stored
 - Python script that plots the error: ``plot_error.py``
 
@@ -53,7 +53,7 @@ In the current example, we choose the following analytical solution:
  
 The analytical solution is shown in the following figure:
 
-.. image:: Images/analytical_solution.png
+.. image:: images/analytical_solution.png
     :alt: The analytical solution: x-component of the velocity (upper-left), y-component of the velocity (upper-right), and pressure (bottom)
     :align: center
     :name: analytical_solution
@@ -168,15 +168,16 @@ The nonlinear solver's tolerance is set to :math:`10^{-10}` since the errors on 
 Linear Solver
 ~~~~~~~~~~~~~
 
-The only modification made in the linear solver section is the use of AMG preconditioner to accelerate the simulations. 
+The only modification made in the linear solver section is the use of AMG preconditioner with a high fill-level to accelerate the simulations. 
 
 .. code-block:: text
 
   subsection linear solver
     subsection fluid dynamics
       # Set type of preconditioner for the iterative solver
-      set preconditioner = amg
-      set verbosity      = verbose
+      set preconditioner              = amg
+      set amg preconditioner ilu fill = 3
+      set verbosity                   = verbose
     end
   end
 
@@ -184,12 +185,32 @@ The only modification made in the linear solver section is the use of AMG precon
 Running the Simulations
 -----------------------
 
-The simulations are launched by first running the ``generate_cases.py``, then ``launch_cases.py`` scripts. The first script generates the folders and parameter files for the different configurations simulated,
-while the second one launches the simulations. The run time for the mesh with quadrilateral cells is around 6 minutes on 8 processors, while the mesh with triangular cells runs in about 4 minutes.
+The simulations are launched by first running a python script to generate the simulation cases in either the ``mms_quad`` or ``mms_simplex`` folder:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 generate_cases.py
+
+Launching the simulation can be done using a bash script and specifying the number of processors. The following call launches the simulation using 8 cores:
+
+.. code-block:: text
+  :class: copy-button
+
+  bash launch_cases.sh 8
+
+The run time for the mesh with quadrilateral cells is around 6 minutes on 8 processors, while the mesh with triangular cells runs in about 4 minutes.
 
 As mentioned in section :ref:`Mesh_section`, for the quadrilateral mesh, for each combination of velocity and pressure polynomial approximations, the mesh is refined automatically in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions containing the corresponding parameter file is created. Within each folder, the results corresponding to the different mesh resolutions are stored in a single ``L2Error.dat``. This is not the case for the simplex mesh, where a parameter file and an output file are created within a separate folder for each combination of velocity and pressure approximations and mesh resolution.
 
-Once the simulations are completed, the script ``organize_output.py`` must be run to rearrange the results for a triangular mesh into a folder structure similar to that obtained for the quadrilateral mesh. After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single ``L2Error.dat`` file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.
+Once the simplex simulations are completed, the script ``organize_output.py`` must be run to rearrange the results for a triangular mesh into a folder structure similar to that obtained for the quadrilateral mesh:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 organize_output.py
+
+After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single ``L2Error.dat`` file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script ``plot_error.py``, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.
 
 -----------------------
 Results and Discussion
@@ -212,7 +233,7 @@ where the number of cells :math:`n_{cells}` is retrieved from the ``L2Error.dat`
 
 The following figure shows the variation of  :math:`|e_{\mathbf u}|_2` with :math:`h`
 
-.. image:: Images/order_of_convergence_velocity.png
+.. image:: images/order_of_convergence_velocity.png
     :alt: :math:`|e_{\mathbf u}|_2`
     :align: center
     :name: Velocity_convergence
@@ -220,15 +241,16 @@ The following figure shows the variation of  :math:`|e_{\mathbf u}|_2` with :mat
 
 The following figure shows the variation of  :math:`|e_p|_2` with :math:`h`
 
-.. image:: Images/order_of_convergence_pressure.png
+.. image:: images/order_of_convergence_pressure.png
     :alt: :math:`|e_{p}|_2`
     :align: center
     :name: Pressure_convergence
     :width: 600
 
-In both plots, the continuous lines correspond to the quadrilateral mesh, while the dashed lines represent the simplex mesh. It can be seen that the velocity converges to the order :math:`(k_v+1)` for a velocity shape function of degree :math:`k_v`, except for the case :math:`\{Q_3-Q_1\}`.
+In both plots, the continuous lines correspond to the quadrilateral mesh, while the dashed lines represent the simplex mesh. It can be seen that the velocity converges to the order :math:`(k_v+1)` for a velocity shape function of degree :math:`k_v`.`
 
-As for the pressure, it converges at the second-order for the shape functions pairs :math:`\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2, Q_3-Q_1\}` and :math:`\in \{P_1-P_1, P_2-Q_1, P_2-P_2\}`, and to the third-order for combinations :math:`\in \{Q_3-Q_2, Q_3-Q_3\}`. It can also be seen that the error for the pressure increases with an increasing pressure approximation degree, except for :math:`\{Q_3-Q_1\}` and :math:`\{Q_3-Q_2\}` for the quad mesh.
+As for the pressure, it converges at the second-order for the shape functions pairs :math:`\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2\}` and :math:`\in \{P_1-P_1, P_2-P_1, P_2-P_2\}`, and to the third-order for combinations :math:`\in \{Q_3-Q_2, Q_3-Q_3\}`. 
+
 
 Finally, for the same degree of the velocity and pressure approximations and the same mesh resolution, the error is smaller for a quadrilateral mesh, for both the pressure and velocity fields.  
 
