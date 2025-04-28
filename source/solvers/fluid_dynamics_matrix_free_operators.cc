@@ -801,6 +801,8 @@ NavierStokesOperatorBase<dim, number>::
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
   kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
   kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
+  previous_shear_rate.reinit(n_cells, integrator.n_q_points);
+  previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -882,6 +884,9 @@ NavierStokesOperatorBase<dim, number>::
                     }
                 }
 
+              // Store shear rate in the previous_shear_rate
+              this->previous_shear_rate[cell][q] = shear_rate;
+
               // Calculate shear rate magnitude
               for (unsigned int i = 0; i < dim; ++i)
                 {
@@ -891,7 +896,12 @@ NavierStokesOperatorBase<dim, number>::
                         shear_rate[i][j] * shear_rate[j][i];
                     }
                 }
+
               shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
+
+              // Store shear rate magnitude in the previous_shear_rate
+              this->previous_shear_rate_magnitude[cell][q] =
+                shear_rate_magnitude;
 
               // Get kinematic viscosity gradient which consists of two things:
               // 1. Grad shear rate
@@ -1869,15 +1879,14 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
 
 /**
  * The expressions calculated in this cell integral are:
- * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu)
- * (Weak form Jacobian), plus three additional terms in the case of SUPG-PSPG
+ * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,(∇δu +
+ * ∇δuT)) + (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT)) (Weak
+ * form Jacobian), plus three additional terms in the case of SUPG-PSPG
  * stabilization:
- * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
- * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2),
- * plus two additional terms in the case of full gls stabilization:
- * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
- * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
+ * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - (∇ν)(∇δu + ∇δuT))τ·∇q (PSPG Jacobian)
+ * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - (∇ν)(∇δu + ∇δuT))τu·∇v (SUPG Jacobian
+ * Part 1)
+ * \+ (∂t u +(u·∇)u + ∇p - (∇ν)(∇u + ∇uT) - f )τδu·∇v (SUPG Jacobian Part 2),
  */
 template <int dim, typename number>
 void
@@ -1895,9 +1904,6 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
   // To identify whether the problem is transient or steady
   bool transient =
     (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
-
-  const double kinematic_viscosity =
-    this->properties_manager->get_rheology()->get_kinematic_viscosity();
 
   // Vector for BDF coefficients
   const Vector<double> *bdf_coefs;
@@ -1941,21 +1947,40 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         previous_time_derivatives =
           this->time_derivatives_previous_solutions(cell, q);
 
+      // Gather previous values of the shear_rate and shear_rate_magnitude
+      auto previous_shear_rate = this->previous_shear_rate(cell, q);
+      auto previous_shear_rate_magnitude =
+        this->previous_shear_rate_magnitude(cell, q);
+
+      // Get kinematic viscosity from rheology model
+      const auto kinematic_viscosity =
+        this->kinematic_viscosity_vector[cell][q];
+      const auto kinematic_viscosity_gradient =
+        this->kinematic_viscosity_gradient[cell][q];
+
       // Get stabilization parameter
       const auto tau = this->stabilization_parameter[cell][q];
 
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
-          // ν(∇v,∇δu)
-          // gradient_result[i] = kinematic_viscosity[q] * gradient[i];
           // -(∇·v,δp)
-          gradient_result[i][i] += -value[dim];
+          gradient_result[i][i] = -value[dim];
           // +(q,∇δu)
           value_result[dim] += gradient[i][i];
 
           for (unsigned int k = 0; k < dim; ++k)
             {
+              // ν(∇v,(∇δu + ∇δuT))
+              gradient_result[i][k] +=
+                kinematic_viscosity * (gradient[i][k] + gradient[k][i]);
+
+              // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
+              gradient_result[i][k] +=
+                0.5 / previous_shear_rate_magnitude *
+                kinematic_viscosity_gradient * previous_shear_rate[i][k] *
+                (gradient[i][k] + gradient[k][i]) * previous_shear_rate[i][k];
+
               // +(v,(u·∇)δu + (δu·∇)u)
               value_result[i] += gradient[i][k] * previous_values[k] +
                                  previous_gradient[i][k] * value[k];
@@ -2045,13 +2070,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form),
- * plus two additional terms in the case of SUPG-PSPG stabilization:
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term),
- * plus two additional terms in the case of full gls stabilization:
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
- * \+ (∇·u)τ'(∇·v) (LSIC term).
+ * (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,(∇u + ∇uT)) - (v,f) (Weak
+ * form), plus two additional terms in the case of SUPG-PSPG stabilization:
+ * \+ (∂t u +(u·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τ∇·q (PSPG term)
+ * \+ (∂t u +(u·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τu·∇v (SUPG term),
  */
 template <int dim, typename number>
 void
@@ -2119,7 +2141,6 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
 
           // Get stabilization parameter
           const auto tau = this->stabilization_parameter[cell][q];
-
 
           // Get kinematic viscosity from rheology model
           const auto kinematic_viscosity =

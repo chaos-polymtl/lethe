@@ -712,6 +712,21 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
+   * of the shear_rate.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
+    previous_shear_rate;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the shear_rate_magnitude.
+   *
+   */
+  Table<2, VectorizedArray<number>> previous_shear_rate_magnitude;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
    * of the face penalization term effective_beta_face
    *
    */

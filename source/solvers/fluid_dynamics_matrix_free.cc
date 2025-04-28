@@ -1925,8 +1925,13 @@ void
 MFNavierStokesPreconditionGMG<dim>::create_level_operator(
   const unsigned int level)
 {
-  this->mg_operators[level] =
-    std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
+    this->mg_operators[level] = std::make_shared<
+      NavierStokesNonNewtonianStabilizedOperator<dim, MGNumber>>();
+  else
+    this->mg_operators[level] =
+      std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
 }
 
 template <int dim>
@@ -2109,16 +2114,16 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
 
-  AssertThrow(
-    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
-    ExcMessage(
-      "Non-Newtonian fluids are not supported by the matrix free application."));
-
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
 
-  system_operator =
-    std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
+    system_operator = std::make_shared<
+      NavierStokesNonNewtonianStabilizedOperator<dim, double>>();
+  else
+    system_operator =
+      std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 
   if (!this->simulation_parameters.source_term.enable)
     {
