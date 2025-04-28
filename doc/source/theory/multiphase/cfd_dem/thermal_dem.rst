@@ -8,10 +8,13 @@ The heat transfer mechanisms considered here are:
    -  Conduction between particles through the contact surface (microcontacts and macrocontacts)
    - Conduction through the interstitial fluid (microgap and macrogap between particles)
 
-* The temperature is uniform within each particle.
-* The temperature of each particle changes slowly enough that thermal disturbances do not propagate beyond immediate neighbors.
-* Convection and radiation are neglected.
-* The interstitial fluid is a stagnant gas (usually air), through which conduction occurs for contacting particles.
+The solid microcontacts and gas-filled microgaps allow to take into account the roughness of the particles. Instead of being considered smooth, the particles can have microscopic asperities on their surfaces, which affect conduction.
+
+Hypotheses:
+   * The temperature is uniform within each particle.
+   * The temperature of each particle changes slowly enough that thermal disturbances do not propagate beyond immediate neighbors.
+   * Convection and radiation are neglected.
+   * The interstitial fluid is a stagnant gas (usually air), through which conduction occurs for contacting particles.
 
 
 Using Batchelor and O'Brien's model [#Batchelor1977]_ for thermal DEM:
@@ -42,12 +45,12 @@ Where:
 * :math:`R_c` resistance of the solid layers of the particles [#Beaulieu2020]_
 * :math:`R_G` resistance of the interstitial gas macrogap [#Bahrami2006]_
 
-.. .. figure:: Schematic_resistances.png
-..    :width: 100%
-..    :alt: Schematic of thermal resistances
-..    :align: center
+.. figure:: images/thermal_resistances.png
+    :width: 800
+    :align: center
+    :alt: particle-particle_thermal-resistances
 
-..    Schematic of the heat transfer between two particles in contact [#Beaulieu2020]_.
+    Modeling Heat transfer between two particles in contact. [#Beaulieu2020]_
 
 ~~~~~~~~~~~~~~~~~~~~
 Thermal Resistances
