@@ -708,7 +708,8 @@ protected:
    * of the kinematic viscosity gradient.
    *
    */
-  Table<2, VectorizedArray<number>> kinematic_viscosity_gradient;
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    kinematic_viscosity_gradient;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
