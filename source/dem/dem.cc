@@ -1040,7 +1040,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
           integrate_temperature<dim, PropertiesIndex>(
             particle_handler,
             simulation_control->get_time_step(),
-            outcome.heat_transfer_rate,
+            contact_outcome.heat_transfer_rate,
             std::vector<double>(force.size()));
         }
 

@@ -113,9 +113,7 @@ main(int argc, char *argv[])
                 false,
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\". As of January 2025, "
-                  "the lethe-particles application requires the uses of  "
-                  "\"solver type = dem\", which is the default value."));
+                  "Lethe found a value different than \"dem\" or \"dem_mp\"."));
             }
         }
 
