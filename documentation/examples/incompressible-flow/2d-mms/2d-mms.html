@@ -443,7 +443,7 @@
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Solvers: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> with the velocity and pressure polynomial approximations <span class="math notranslate nohighlight">\(\in \{Q_1, Q_2, Q3\}\)</span> and  <span class="math notranslate nohighlight">\(\in \{P_1, P_2\}\)</span></p></li>
+<li><p>Solvers: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> with the velocity and pressure polynomial approximations <span class="math notranslate nohighlight">\(\in \{Q_1, Q_2, Q_3\}\)</span> and  <span class="math notranslate nohighlight">\(\in \{P_1, P_2\}\)</span></p></li>
 <li><p>Steady-state problem</p></li>
 <li><p>Introduction of a source term in the NS equations</p></li>
 <li><p>Output of the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution">error relative to the chosen manufactured solution</a></p></li>
@@ -458,7 +458,7 @@ grouped in the <code class="docutils literal notranslate"><span class="pre">mms_
 <li><p>Base case parameter file in each folder: <code class="docutils literal notranslate"><span class="pre">mms_quad/mms_2d_steady.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">mms_simplex/mms_2d_steady.prm</span></code></p></li>
 <li><p>Python script to compute the source terms for the analytical solution used in this example: <code class="docutils literal notranslate"><span class="pre">mms_source_term.py</span></code></p></li>
 <li><p>Files to generate the parameter files at the different conditions: <code class="docutils literal notranslate"><span class="pre">mms_quad/generate_cases.py</span></code> and <code class="docutils literal notranslate"><span class="pre">mms_simplex/generate_cases.py</span></code></p></li>
-<li><p>Files to run the different simulations: <code class="docutils literal notranslate"><span class="pre">mms_quad/launch_cases.py</span></code> and <code class="docutils literal notranslate"><span class="pre">mms_simplex/launch_cases.py</span></code></p></li>
+<li><p>Files to run the different simulations: <code class="docutils literal notranslate"><span class="pre">mms_quad/launch_cases.py</span></code> and <code class="docutils literal notranslate"><span class="pre">mms_simplex/launch_cases.py</span></code> or <code class="docutils literal notranslate"><span class="pre">mms_quad/launch_cases.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">mms_simplex/launch_cases.sh</span></code></p></li>
 <li><p>File to reorganize the output of the triangular mesh in a similar manner to the quadrilateral case: <code class="docutils literal notranslate"><span class="pre">mms_simplex/organize_output.py</span></code>. After running the code, a directory <code class="docutils literal notranslate"><span class="pre">mms_simplex/initial_output</span></code> is created where the initial simulations output is stored</p></li>
 <li><p>Python script that plots the error: <code class="docutils literal notranslate"><span class="pre">plot_error.py</span></code></p></li>
 </ul>
@@ -571,12 +571,13 @@ end
 </section>
 <section id="linear-solver">
 <h3>Linear Solver<a class="headerlink" href="#linear-solver" title="Link to this heading">#</a></h3>
-<p>The only modification made in the linear solver section is the use of AMG preconditioner to accelerate the simulations.</p>
+<p>The only modification made in the linear solver section is the use of AMG preconditioner with a high fill-level to accelerate the simulations.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection linear solver
   subsection fluid dynamics
     # Set type of preconditioner for the iterative solver
-    set preconditioner = amg
-    set verbosity      = verbose
+    set preconditioner              = amg
+    set amg preconditioner ilu fill = 3
+    set verbosity                   = verbose
   end
 end
 </pre></div>
@@ -585,10 +586,21 @@ end
 </section>
 <section id="running-the-simulations">
 <h2>Running the Simulations<a class="headerlink" href="#running-the-simulations" title="Link to this heading">#</a></h2>
-<p>The simulations are launched by first running the <code class="docutils literal notranslate"><span class="pre">generate_cases.py</span></code>, then <code class="docutils literal notranslate"><span class="pre">launch_cases.py</span></code> scripts. The first script generates the folders and parameter files for the different configurations simulated,
-while the second one launches the simulations. The run time for the mesh with quadrilateral cells is around 6 minutes on 8 processors, while the mesh with triangular cells runs in about 4 minutes.</p>
+<p>The simulations are launched by first running a python script to generate the simulation cases in either the <code class="docutils literal notranslate"><span class="pre">mms_quad</span></code> or <code class="docutils literal notranslate"><span class="pre">mms_simplex</span></code> folder:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 generate_cases.py
+</pre></div>
+</div>
+<p>Launching the simulation can be done using a bash script and specifying the number of processors. The following call launches the simulation using 8 cores:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>bash launch_cases.sh 8
+</pre></div>
+</div>
+<p>The run time for the mesh with quadrilateral cells is around 6 minutes on 8 processors, while the mesh with triangular cells runs in about 4 minutes.</p>
 <p>As mentioned in section <a class="reference internal" href="#mesh-section"><span class="std std-ref">Mesh</span></a>, for the quadrilateral mesh, for each combination of velocity and pressure polynomial approximations, the mesh is refined automatically in a successive manner. Therefore, one folder for each combination of velocity and pressure shape functions containing the corresponding parameter file is created. Within each folder, the results corresponding to the different mesh resolutions are stored in a single <code class="docutils literal notranslate"><span class="pre">L2Error.dat</span></code>. This is not the case for the simplex mesh, where a parameter file and an output file are created within a separate folder for each combination of velocity and pressure approximations and mesh resolution.</p>
-<p>Once the simulations are completed, the script <code class="docutils literal notranslate"><span class="pre">organize_output.py</span></code> must be run to rearrange the results for a triangular mesh into a folder structure similar to that obtained for the quadrilateral mesh. After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single <code class="docutils literal notranslate"><span class="pre">L2Error.dat</span></code> file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script <code class="docutils literal notranslate"><span class="pre">plot_error.py</span></code>, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.</p>
+<p>Once the simplex simulations are completed, the script <code class="docutils literal notranslate"><span class="pre">organize_output.py</span></code> must be run to rearrange the results for a triangular mesh into a folder structure similar to that obtained for the quadrilateral mesh:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 organize_output.py
+</pre></div>
+</div>
+<p>After running this script for the simplex mesh, folders are created for each combination of velocity and pressure polynomial approximations. Within each folder, the error is reorganized in a single <code class="docutils literal notranslate"><span class="pre">L2Error.dat</span></code> file, following the same structure as the one for the quadrilateral mesh, and containing the errors for the different mesh resolutions. The results can then be post-processed using the python script <code class="docutils literal notranslate"><span class="pre">plot_error.py</span></code>, which plots the error relative to the manufactured solution for the different mesh resolutions and polynomial approximation degrees.</p>
 </section>
 <section id="results-and-discussion">
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
@@ -612,8 +624,8 @@ h_{simplex} &amp;= \frac{l_\Omega}{\sqrt{(n_{cells}/8)}}*0.5\end{split}\]</div>
 <a class="reference internal image-reference" href="../../../_images/order_of_convergence_velocity.png" id="velocity-convergence"><img alt=":math:`|e_{\mathbf u}|_2`" class="align-center" id="velocity-convergence" src="../../../_images/order_of_convergence_velocity.png" style="width: 600px;" /></a>
 <p>The following figure shows the variation of  <span class="math notranslate nohighlight">\(|e_p|_2\)</span> with <span class="math notranslate nohighlight">\(h\)</span></p>
 <a class="reference internal image-reference" href="../../../_images/order_of_convergence_pressure.png" id="pressure-convergence"><img alt=":math:`|e_{p}|_2`" class="align-center" id="pressure-convergence" src="../../../_images/order_of_convergence_pressure.png" style="width: 600px;" /></a>
-<p>In both plots, the continuous lines correspond to the quadrilateral mesh, while the dashed lines represent the simplex mesh. It can be seen that the velocity converges to the order <span class="math notranslate nohighlight">\((k_v+1)\)</span> for a velocity shape function of degree <span class="math notranslate nohighlight">\(k_v\)</span>, except for the case <span class="math notranslate nohighlight">\(\{Q_3-Q_1\}\)</span>.</p>
-<p>As for the pressure, it converges at the second-order for the shape functions pairs <span class="math notranslate nohighlight">\(\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2, Q_3-Q_1\}\)</span> and <span class="math notranslate nohighlight">\(\in \{P_1-P_1, P_2-Q_1, P_2-P_2\}\)</span>, and to the third-order for combinations <span class="math notranslate nohighlight">\(\in \{Q_3-Q_2, Q_3-Q_3\}\)</span>. It can also be seen that the error for the pressure increases with an increasing pressure approximation degree, except for <span class="math notranslate nohighlight">\(\{Q_3-Q_1\}\)</span> and <span class="math notranslate nohighlight">\(\{Q_3-Q_2\}\)</span> for the quad mesh.</p>
+<p>In both plots, the continuous lines correspond to the quadrilateral mesh, while the dashed lines represent the simplex mesh. It can be seen that the velocity converges to the order <span class="math notranslate nohighlight">\((k_v+1)\)</span> for a velocity shape function of degree <span class="math notranslate nohighlight">\(k_v\)</span>.`</p>
+<p>As for the pressure, it converges at the second-order for the shape functions pairs <span class="math notranslate nohighlight">\(\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2\}\)</span> and <span class="math notranslate nohighlight">\(\in \{P_1-P_1, P_2-P_1, P_2-P_2\}\)</span>, and to the third-order for combinations <span class="math notranslate nohighlight">\(\in \{Q_3-Q_2, Q_3-Q_3\}\)</span>.</p>
 <p>Finally, for the same degree of the velocity and pressure approximations and the same mesh resolution, the error is smaller for a quadrilateral mesh, for both the pressure and velocity fields.</p>
 </section>
 <section id="possibilities-for-extension">
