@@ -94,7 +94,6 @@ Visualization<dim, PropertiesIndex>::print_xyz(
 {
   const bool is_dem_mp =
     std::is_same_v<PropertiesIndex, DEM::DEMMPProperties::PropertiesIndex>;
-  // pcout << "id, type, dp, x, y, z " << std::endl;
   pcout << "id, type, dp, x, y, z";
   if constexpr (is_dem_mp)
     {
