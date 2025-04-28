@@ -582,7 +582,7 @@ private:
    * @brief Carries out the smoothing phase fraction with a projection step (to avoid a staircase interface).
    */
   void
-  smooth_phase_fraction();
+  smooth_phase_fraction(GlobalVectorType &solution);
 
   /**
    * @brief Assembles the matrix and rhs for calculation of a smooth phase fraction using a projection.
@@ -628,7 +628,7 @@ private:
    * @param[out] level_set_solution Level-set solution field
    */
   void
-  compute_level_set_from_phase_fraction(const GlobalVectorType &solution,
+  compute_level_set_from_phase_fraction(GlobalVectorType &solution,
                                         GlobalVectorType &level_set_solution);
 
   /**

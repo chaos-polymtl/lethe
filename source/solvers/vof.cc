@@ -1843,10 +1843,10 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
 
 template <int dim>
 void
-VolumeOfFluid<dim>::smooth_phase_fraction()
+VolumeOfFluid<dim>::smooth_phase_fraction(GlobalVectorType &solution)
 {
-  assemble_projection_phase_fraction(present_solution);
-  solve_projection_phase_fraction(present_solution);
+  assemble_projection_phase_fraction(solution);
+  solve_projection_phase_fraction(solution);
 }
 
 
@@ -2442,7 +2442,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->present_solution = this->newton_update;
 
   if (simulation_parameters.initial_condition->enable_projection_step)
-    smooth_phase_fraction();
+    smooth_phase_fraction(this->present_solution);
 
   apply_phase_filter(this->present_solution, this->filtered_solution);
 
@@ -2959,9 +2959,10 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 template <int dim>
 void
 VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
-  const GlobalVectorType &solution,
+  GlobalVectorType &solution,
   GlobalVectorType       &level_set_solution)
 {
+  
   auto mpi_communicator = this->triangulation->get_communicator();
 
   GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
@@ -2996,6 +2997,7 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
   this->nonzero_constraints.distribute(solution_owned);
 
   phase_fraction_solution = solution_owned;
+  
 }
 
 template <int dim>
@@ -3040,6 +3042,8 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
       compute_phase_fraction_from_level_set(previous_level_set,
                                             this->previous_solutions[0]);
+      smooth_phase_fraction(this->previous_solutions[0]);
+      
     }
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
@@ -3065,6 +3069,8 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
   compute_phase_fraction_from_level_set(this->level_set,
                                         this->present_solution);
+  smooth_phase_fraction(this->present_solution);
+
 }
 
 
