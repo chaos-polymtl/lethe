@@ -4164,6 +4164,10 @@ namespace Parameters
                         "1.",
                         Patterns::Double(),
                         "Penalty factor for mortar elements");
+      prm.declare_entry("oversampling factor",
+                        "1",
+                        Patterns::Integer(),
+                        "Oversampling factor for quadrature points");
     }
     prm.leave_subsection();
   };
@@ -4186,6 +4190,8 @@ namespace Parameters
         value_string_to_tensor<dim>(prm.get("center of rotation"));
 
       this->sip_factor = prm.get_double("penalty factor");
+
+      this->oversampling_factor = prm.get_integer("oversampling factor");
     }
     prm.leave_subsection();
   }
