@@ -807,7 +807,7 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
 
           enrichment_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
 
-          enrichment_bloc.invert();
+          // enrichment_bloc.invert();
 
           LAPACKFullMatrix<double>
             inverse_enrichment_bloc_x_enrichment_ns_bloc =
