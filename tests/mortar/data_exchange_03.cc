@@ -85,58 +85,61 @@ test()
                                                boundary_conditions,
                                                mortar_parameters);
 
-  unsigned int        n_subdivisions_active = 0;
-  std::vector<double> radius_vec;
-  const double        tolerance = 1e-8;
+  // Number of subdivisions per process
+  unsigned int n_subdivisions_local = 0;
+  // Number of vertices at the boundary per process
+  unsigned int n_vertices_local = 0;
+  // Tolerance for rotor radius computation
+  const double tolerance = 1e-8;
+  // Min and max values for rotor radius computation
+  double radius_min = 1e12;
+  double radius_max = 1e-12;
 
-  // Check faces at the rotor-stator interface
+  // Check number of faces and vertices at the rotor-stator interface
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
-          // Looping through all the faces of the cell
           for (const auto &face : cell->face_iterators())
             {
-              // Check to see if the face is located at boundary
               if (face->at_boundary())
                 {
                   if (face->boundary_id() ==
                       mortar_parameters.rotor_boundary_id)
                     {
-                      n_subdivisions_active++;
+                      n_subdivisions_local++;
+                      for (unsigned int vertex_index = 0;
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
+                        {
+                          n_vertices_local++;
+                          auto   v = face->vertex(vertex_index);
+                          double radius_current =
+                            v.distance(mortar_parameters.center_of_rotation);
+                          radius_min = std::min(radius_min, radius_current);
+                          radius_max = std::max(radius_max, radius_current);
+                        }
                     }
                 }
             }
         }
     }
 
-  // Compute radius of rotor domain
-  for (const auto &face : triangulation.active_face_iterators())
-    {
-      if (face->at_boundary())
-        {
-          if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
-            {
-              for (unsigned int vertex_index = 0;
-                   vertex_index < face->n_vertices();
-                   vertex_index++)
-                {
-                  auto v = face->vertex(vertex_index);
-                  radius_vec.emplace_back(
-                    hypot((v[0] - mortar_parameters.center_of_rotation[0]),
-                          (v[1] - mortar_parameters.center_of_rotation[1])));
-                }
-            }
-        }
-    }
-  
   // Total number of faces
   const unsigned int n_subdivisions =
-    Utilities::MPI::sum(n_subdivisions_active, comm);
+    Utilities::MPI::sum(n_subdivisions_local, comm);
 
-  // Averaged radius value
-  double radius =
-    std::reduce(radius_vec.begin(), radius_vec.end()) / radius_vec.size();
+  // Min and max values over all processes
+  radius_min = Utilities::MPI::min(radius_min, comm);
+  radius_max = Utilities::MPI::max(radius_max, comm);
+
+  AssertThrow(
+    std::abs(radius_max - radius_min) < tolerance,
+    ExcMessage(
+      "The computed radius of the rotor mesh has a variation greater than the tolerance across the rotor domain, meaning that the prescribed center of rotation and the rotor geometry are not in accordance."));
+
+  // Final radius value
+  const double radius = radius_min;
 
   // rotation angle in radians
   const double rotate_pi =
@@ -199,7 +202,7 @@ test()
           deallog << "MPI=" << this_mpi_process << std::endl;
           deallog << "# Total faces at interface: " << n_subdivisions
                   << std::endl;
-          deallog << "# Current faces at interface: " << n_subdivisions_active
+          deallog << "# Current faces at interface: " << n_subdivisions_local
                   << std::endl;
           deallog << "Rotor radius: " << radius << std::endl;
           deallog << "# Points: " << n_points << std::endl;

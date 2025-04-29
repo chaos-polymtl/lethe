@@ -83,34 +83,61 @@ test()
                                                boundary_conditions,
                                                mortar_parameters);
 
-  unsigned int        n_subdivisions = 0;
-  std::vector<double> radius_vec;
-  const double        tolerance = 1e-8;
+  // Number of subdivisions per process
+  unsigned int n_subdivisions_local = 0;
+  // Number of vertices at the boundary per process
+  unsigned int n_vertices_local = 0;
+  // Tolerance for rotor radius computation
+  const double tolerance = 1e-8;
+  // Min and max values for rotor radius computation
+  double radius_min = 1e12;
+  double radius_max = 1e-12;
 
-  /* Check faces at the rotor-stator interface and compute radius of rotor
-   * domain */
-  for (const auto &face : triangulation.active_face_iterators())
+  // Check number of faces and vertices at the rotor-stator interface
+  for (const auto &cell : triangulation.active_cell_iterators())
     {
-      if (face->at_boundary())
+      if (cell->is_locally_owned())
         {
-          if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
+          for (const auto &face : cell->face_iterators())
             {
-              n_subdivisions++;
-              for (unsigned int vertex_index = 0;
-                   vertex_index < face->n_vertices();
-                   vertex_index++)
+              if (face->at_boundary())
                 {
-                  auto v = face->vertex(vertex_index);
-                  radius_vec.emplace_back(sqrt(
-                    pow((v[0] - mortar_parameters.center_of_rotation[0]), 2) +
-                    pow((v[1] - mortar_parameters.center_of_rotation[1]), 2)));
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      n_subdivisions_local++;
+                      for (unsigned int vertex_index = 0;
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
+                        {
+                          n_vertices_local++;
+                          auto   v = face->vertex(vertex_index);
+                          double radius_current =
+                            v.distance(mortar_parameters.center_of_rotation);
+                          radius_min = std::min(radius_min, radius_current);
+                          radius_max = std::max(radius_max, radius_current);
+                        }
+                    }
                 }
             }
         }
     }
 
-  double radius =
-    std::reduce(radius_vec.begin(), radius_vec.end()) / radius_vec.size();
+  // Total number of faces
+  const unsigned int n_subdivisions =
+    Utilities::MPI::sum(n_subdivisions_local, comm);
+
+  // Min and max values over all processes
+  radius_min = Utilities::MPI::min(radius_min, comm);
+  radius_max = Utilities::MPI::max(radius_max, comm);
+
+  AssertThrow(
+    std::abs(radius_max - radius_min) < tolerance,
+    ExcMessage(
+      "The computed radius of the rotor mesh has a variation greater than the tolerance across the rotor domain, meaning that the prescribed center of rotation and the rotor geometry are not in accordance."));
+
+  // Final radius value
+  const double radius = radius_min;
 
   deallog << "Faces at rotor-stator interface : " << n_subdivisions
           << std::endl;
