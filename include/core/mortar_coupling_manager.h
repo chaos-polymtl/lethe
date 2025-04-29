@@ -799,7 +799,7 @@ CouplingOperator<dim, n_components, Number>::init(
             all_normals.insert(all_normals.end(),
                                normals.begin(),
                                normals.end());
-            std::cout << __LINE__ << std::endl;
+
             // points (also convert real to unit coordinates)
             if (false)
               {
@@ -841,7 +841,7 @@ CouplingOperator<dim, n_components, Number>::init(
                     AssertThrow(false, ExcNotImplemented());
                   }
               }
-              std::cout << __LINE__ << std::endl;
+
             // penalty parmeter
             const Number penalty_parameter = compute_penalty_parameter(cell);
 
@@ -850,13 +850,13 @@ CouplingOperator<dim, n_components, Number>::init(
                  ++i)
               all_penalty_parameter.emplace_back(penalty_parameter);
           }
-          std::cout << __LINE__ << std::endl;
+
   // setup communication
   partitioner.reinit(is_local, is_ghost, dof_handler.get_mpi_communicator());
   partitioner_cell.reinit(is_local_cell,
                           is_ghost_cell,
                           dof_handler.get_mpi_communicator());
-  std::cout << __LINE__ << std::endl;
+
   // finalized penalty parameters
   std::vector<Number> all_penalty_parameter_ghost(all_penalty_parameter.size());
   partitioner.template export_to_ghosted_array<Number, 1>(
@@ -864,7 +864,7 @@ CouplingOperator<dim, n_components, Number>::init(
   for (unsigned int i = 0; i < all_penalty_parameter.size(); ++i)
     all_penalty_parameter[i] =
       std::min(all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
-      std::cout << __LINE__ << std::endl;
+
   // finialize DoF indices
   dof_indices_ghost.resize(dof_indices.size());
   partitioner_cell.template export_to_ghosted_array<types::global_dof_index, 0>(
@@ -874,7 +874,6 @@ CouplingOperator<dim, n_components, Number>::init(
     auto locally_owned_dofs = constraints.get_locally_owned_indices();
     auto constraints_to_make_consistent = constraints.get_local_lines();
 
-    std::cout << __LINE__ << std::endl;
     for (unsigned int i = 0; i < dof_indices.size(); ++i)
       {
         constraints_to_make_consistent.add_index(dof_indices[i]);
