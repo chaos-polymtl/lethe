@@ -1319,14 +1319,20 @@ public:
                                      dof_values_level_set.begin(),
                                      dof_values_level_set.end());
       cell_level_set->get_dof_indices(dof_indices);
-      for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+
+      // Get pressure dof index (local) based on the FE_system
+      std::vector<unsigned int> pressure_dof_index;
+      pressure_dof_index.reserve(n_dofs_per_cell_level_set);
+      for (unsigned int j = 0; j < fe_values.get_fe().n_dofs_per_cell(); j++)
         {
-          std::cout << "j = " << j << std::endl;
-          std::cout << "dof_values_level_set[j] = " << dof_values_level_set[j]
-                    << std::endl;
-          std::cout << "dof_support_points[j] = "
-                    << dof_support_points.at(dof_indices[j]) << std::endl;
+          if (this->components[j] == this->pressure.component)
+            {
+              pressure_dof_index.emplace_back(j);
+              std::cout << "pressure_dof_index is j = " << j << std::endl;
+            }
         }
+      
+      
       std::cout << "Inside" << std::endl;
       for (unsigned int q = 0; q < inside_n_q_points; q++)
         {
@@ -1335,15 +1341,16 @@ public:
 
           for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
             {
+              std::cout << "reinited_inside_fe_values.shape_value(j, q) = " << reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q) << std::endl;
               const double solution_J = dof_values_level_set[j];
               std::cout << "solution_J = " << solution_J << std::endl;
               if (solution_J > 0.0)
                 {
-                  std::cout << "reinited_inside_fe_values[pressure].value(j, q) = " << reinited_inside_fe_values[pressure].value(j, q) << std::endl;
                   
-                  s_x_q_inside += reinited_inside_fe_values[pressure].value(j, q);
+                  
+                  s_x_q_inside += reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q);
                   grad_s_x_q_inside +=
-                    reinited_inside_fe_values[pressure].gradient(j, q);
+                    reinited_inside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
                 }
             }
           M_0_x_q[q] = 0.0;
@@ -1369,14 +1376,15 @@ public:
 
           for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
             {
+              std::cout << "reinited_outside_fe_values.value(j, q) = " << reinited_outside_fe_values[this->pressure].value(pressure_dof_index[j], q) << std::endl;
+              
               const double solution_J = dof_values_level_set[j];
               if (solution_J > 0.0)
                 {
-                  std::cout << "reinited_outside_fe_values[pressure].value(j, q) = " << reinited_outside_fe_values[pressure].value(j, q) << std::endl;
-                  
-                  s_x_q_outside += reinited_outside_fe_values[pressure].value(j, q);
+
+                  s_x_q_outside += reinited_outside_fe_values[this->pressure].value(pressure_dof_index[j], q);
                   grad_s_x_q_outside +=
-                    reinited_outside_fe_values[pressure].gradient(j, q);
+                    reinited_outside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
                 }
             }
           M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q] =
@@ -1460,6 +1468,14 @@ public:
 
       this->reallocate(new_n_q_points, new_n_dofs);
 
+      auto &fe = this->fe_values.get_fe();
+      for (const unsigned int k : fe_values.dof_indices())
+        {
+          components[k] = fe.system_to_component_index(k).first;
+        }
+      components[fe_values.get_fe().n_dofs_per_cell()]     = dim;
+      components[fe_values.get_fe().n_dofs_per_cell() + 1] = dim;
+      
       std::vector<double> M_0_x_q(inside_n_q_points + outside_n_q_points, 0.0);
       std::vector<double> M_1_x_q(inside_n_q_points + outside_n_q_points, 0.0);
 
@@ -1504,13 +1520,7 @@ public:
                          grad_M_1_x_q);
 
 
-      auto &fe = this->fe_values.get_fe();
-      for (const unsigned int k : fe_values.dof_indices())
-        {
-          components[k] = fe.system_to_component_index(k).first;
-        }
-      components[fe_values.get_fe().n_dofs_per_cell()]     = dim;
-      components[fe_values.get_fe().n_dofs_per_cell() + 1] = dim;
+
 
 
       double cell_measure =
