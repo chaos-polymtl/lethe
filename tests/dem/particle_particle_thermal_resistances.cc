@@ -210,8 +210,9 @@ test()
 
   const double resistance_solid_macrogap =
     calculate_solid_macrogap_resistance(radius_one,
-                                        radius_two,
                                         thermal_conductivity_one,
+                                        contact_radius_squared) +
+    calculate_solid_macrogap_resistance(radius_two,
                                         thermal_conductivity_two,
                                         contact_radius_squared);
 

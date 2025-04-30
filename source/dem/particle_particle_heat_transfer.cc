@@ -51,25 +51,17 @@ calculate_microcontact_resistance(const double equivalent_surface_slope,
 }
 
 double
-calculate_solid_macrogap_resistance(const double radius_one,
-                                    const double radius_two,
-                                    const double thermal_conductivity_one,
-                                    const double thermal_conductivity_two,
+calculate_solid_macrogap_resistance(const double radius,
+                                    const double thermal_conductivity,
                                     const double contact_radius_squared)
 {
-  // resistance_i = characteristic length parallel to heat flux /
+  // resistance = characteristic length parallel to heat flux /
   // (thermal_conductivity
   // * characteristic area perpendicular to the heat flux)
-  const double resistance_one =
-    0.25 * M_PI * radius_one /
-    (M_PI * (radius_one * radius_one - contact_radius_squared) *
-     thermal_conductivity_one);
-  const double resistance_two =
-    0.25 * M_PI * radius_two /
-    (M_PI * (radius_two * radius_two - contact_radius_squared) *
-     thermal_conductivity_two);
 
-  return resistance_one + resistance_two;
+  return 0.25 * M_PI * radius /
+         (M_PI * (radius * radius - contact_radius_squared) *
+          thermal_conductivity);
 }
 
 double
@@ -176,8 +168,9 @@ calculate_contact_thermal_conductance(
 
   const double resistance_solid_macrogap =
     calculate_solid_macrogap_resistance(radius_one,
-                                        radius_two,
                                         thermal_conductivity_one,
+                                        contact_radius_squared) +
+    calculate_solid_macrogap_resistance(radius_two,
                                         thermal_conductivity_two,
                                         contact_radius_squared);
 
