@@ -2045,6 +2045,23 @@ FluidDynamicsMatrixFree<dim>::~FluidDynamicsMatrixFree()
 
 template <int dim>
 void
+FluidDynamicsMatrixFree<dim>::add_coupling(const bool enable)
+{
+  if(!enable)
+    return;
+  
+  std::shared_ptr<CouplingOperator<dim, dim + 1, double>> coupling_operator =
+    std::make_shared<CouplingOperator<dim, dim + 1, double>>(
+      *this->mapping,
+      this->dof_handler,
+      this->nonzero_constraints,
+      *this->cell_quadrature,
+      this->simulation_parameters.mortar,
+      this->simulation_parameters.mesh);
+}
+
+template <int dim>
+void
 FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
@@ -2075,6 +2092,9 @@ FluidDynamicsMatrixFree<dim>::solve()
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     this->update_multiphysics_time_average_solution();
+
+  //Mortar element method
+  add_coupling(this->simulation_parameters.mortar.enable);
 
   while (this->simulation_control->integrate())
     {
