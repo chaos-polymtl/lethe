@@ -4,6 +4,7 @@
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -2048,12 +2049,21 @@ FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
-  read_mesh_and_manifolds(
-    *this->triangulation,
-    this->simulation_parameters.mesh,
-    this->simulation_parameters.manifolds_parameters,
-    this->simulation_parameters.restart_parameters.restart,
-    this->simulation_parameters.boundary_conditions);
+  if(this->simulation_parameters.mortar.enable)
+    read_mesh_and_manifolds_for_stator_and_rotor(
+      *this->triangulation,
+      this->simulation_parameters.mesh,
+      this->simulation_parameters.manifolds_parameters,
+      this->simulation_parameters.restart_parameters.restart,
+      this->simulation_parameters.boundary_conditions,
+      this->simulation_parameters.mortar);
+  else
+    read_mesh_and_manifolds(
+      *this->triangulation,
+      this->simulation_parameters.mesh,
+      this->simulation_parameters.manifolds_parameters,
+      this->simulation_parameters.restart_parameters.restart,
+      this->simulation_parameters.boundary_conditions);
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 
