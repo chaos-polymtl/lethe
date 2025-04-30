@@ -365,11 +365,11 @@ private:
   static Quadrature<dim>
   construct_quadrature(const Quadrature<dim> &quad)
   {
-    const double oversamling_factor = 2.0; // make parameter
+    const double oversampling_factor = 2.0; // make parameter
 
     for (unsigned int i = 1; i <= 10; ++i)
       if (quad == QGauss<dim>(i))
-        return QGauss<dim>(i * oversamling_factor);
+        return QGauss<dim>(i * oversampling_factor);
 
     AssertThrow(false, ExcNotImplemented());
 
