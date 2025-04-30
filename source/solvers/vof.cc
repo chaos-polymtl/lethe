@@ -2651,7 +2651,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
       compute_phase_fraction_from_level_set(previous_level_set,
                                             this->previous_solutions[0]);
-      smooth_phase_fraction(this->previous_solutions[0]);
+      // smooth_phase_fraction(this->previous_solutions[0]);
       
     }
 
@@ -2682,7 +2682,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
   compute_phase_fraction_from_level_set(this->level_set,
                                         this->present_solution);
-  smooth_phase_fraction(this->present_solution);
+  // smooth_phase_fraction(this->present_solution);
 
 }
 
