@@ -526,7 +526,8 @@ public:
 
 private:
   Quadrature<dim>
-  construct_quadrature(const Quadrature<dim> &quad, const unsigned int oversampling_factor);
+  construct_quadrature(const Quadrature<dim> &quad,
+                       const unsigned int     oversampling_factor);
 
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
@@ -665,11 +666,9 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
 
   // Min and max values over all processes
   radius_min =
-    Utilities::MPI::min(radius_min,
-                        dof_handler.get_mpi_communicator());
+    Utilities::MPI::min(radius_min, dof_handler.get_mpi_communicator());
   radius_max =
-    Utilities::MPI::max(radius_max,
-                        dof_handler.get_mpi_communicator());
+    Utilities::MPI::max(radius_max, dof_handler.get_mpi_communicator());
 
   AssertThrow(
     std::abs(radius_max - radius_min) < tolerance,
@@ -954,7 +953,9 @@ CouplingOperator<dim, n_components, Number>::compute_penalty_parameter(
 
 template <int dim, int n_components, typename Number>
 Quadrature<dim>
-CouplingOperator<dim, n_components, Number>::construct_quadrature(const Quadrature<dim> &quad, const unsigned int oversampling_factor)
+CouplingOperator<dim, n_components, Number>::construct_quadrature(
+  const Quadrature<dim> &quad,
+  const unsigned int     oversampling_factor)
 {
   for (unsigned int i = 1; i <= 10; ++i)
     if (quad == QGauss<dim>(i))

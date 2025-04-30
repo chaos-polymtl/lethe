@@ -395,7 +395,7 @@ namespace LetheGridTools
 
   /**
    * @brief Rotate the mapping according to the rotation angle in a rotor-stator configuration
-   * 
+   *
    * @param[in] dof_handler DofHandler of the triangulation
    * @param[in] mapping Current mapping
    * @param[in] radius Radius or the rotor domain which is going to be rotated
@@ -404,9 +404,9 @@ namespace LetheGridTools
   template <int dim>
   void
   rotate_mapping(const DoFHandler<dim> &dof_handler,
-                 const MappingQ<dim> &mapping,
-                 const double radius,
-                 const double rotation_angle);
+                 const MappingQ<dim>   &mapping,
+                 const double           radius,
+                 const double           rotation_angle);
 
   /**
    * @brief

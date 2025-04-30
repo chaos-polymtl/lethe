@@ -474,9 +474,9 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::add_coupling(const bool enable)
 {
-  if(!enable)
+  if (!enable)
     return;
-    
+
   std::shared_ptr<CouplingOperator<dim, dim + 1, double>> coupling_operator =
     std::make_shared<CouplingOperator<dim, dim + 1, double>>(
       *this->mapping,

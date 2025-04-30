@@ -2047,9 +2047,9 @@ template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::add_coupling(const bool enable)
 {
-  if(!enable)
+  if (!enable)
     return;
-  
+
   std::shared_ptr<CouplingOperator<dim, dim + 1, double>> coupling_operator =
     std::make_shared<CouplingOperator<dim, dim + 1, double>>(
       *this->mapping,
@@ -2066,7 +2066,7 @@ FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
-  if(this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar.enable)
     read_mesh_and_manifolds_for_stator_and_rotor(
       *this->triangulation,
       this->simulation_parameters.mesh,
@@ -2093,7 +2093,7 @@ FluidDynamicsMatrixFree<dim>::solve()
   if (this->multiphysics->get_active_physics().size() > 1)
     this->update_multiphysics_time_average_solution();
 
-  //Mortar element method
+  // Mortar element method
   add_coupling(this->simulation_parameters.mortar.enable);
 
   while (this->simulation_control->integrate())

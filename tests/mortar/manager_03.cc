@@ -139,7 +139,7 @@ test()
 
   // Final radius value
   const double radius = radius_min;
-  
+
   deallog << "Faces at rotor-stator interface : " << n_subdivisions
           << std::endl;
   deallog << "Rotor radius : " << radius << std::endl;
