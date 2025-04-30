@@ -1,6 +1,7 @@
 add_subdirectory(chorin_navier_stokes)
 add_subdirectory(direct_gls_navier_stokes)
 add_subdirectory(direct_steady_navier_stokes)
+add_subdirectory(helmholtz_wave_propagation)
 add_subdirectory(kokkos_poisson)
 add_subdirectory(kokkos_stokes)
 add_subdirectory(matrix_based_non_linear_poisson)
