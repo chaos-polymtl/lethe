@@ -525,6 +525,9 @@ public:
     TrilinosWrappers::SparseMatrix &system_matrix) const;
 
 private:
+  Quadrature<dim>
+  construct_quadrature(const Quadrature<dim> &quad, const unsigned int oversampling_factor);
+
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
 
@@ -679,7 +682,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   init(mapping,
        dof_handler,
        constraints,
-       quadrature,
+       construct_quadrature(quadrature, mortar_parameters.oversampling_factor),
        n_subdivisions,
        radius,
        mortar_parameters.rotor_mesh->rotation_angle,
@@ -947,6 +950,19 @@ CouplingOperator<dim, n_components, Number>::compute_penalty_parameter(
     }
 
   return surface_area / volume;
+}
+
+template <int dim, int n_components, typename Number>
+Quadrature<dim>
+CouplingOperator<dim, n_components, Number>::construct_quadrature(const Quadrature<dim> &quad, const unsigned int oversampling_factor)
+{
+  for (unsigned int i = 1; i <= 10; ++i)
+    if (quad == QGauss<dim>(i))
+      return QGauss<dim>(i * oversampling_factor);
+
+  AssertThrow(false, ExcNotImplemented());
+
+  return quad;
 }
 
 template <int dim, int n_components, typename Number>
