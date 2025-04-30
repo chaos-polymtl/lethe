@@ -472,8 +472,11 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
 
 template <int dim>
 void
-FluidDynamicsMatrixBased<dim>::add_coupling()
+FluidDynamicsMatrixBased<dim>::add_coupling(const bool enable)
 {
+  if(!enable)
+    return;
+    
   std::shared_ptr<CouplingOperator<dim, dim + 1, double>> coupling_operator =
     std::make_shared<CouplingOperator<dim, dim + 1, double>>(
       *this->mapping,
@@ -1665,9 +1668,7 @@ FluidDynamicsMatrixBased<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
   this->update_multiphysics_time_average_solution();
-
-  if (this->simulation_parameters.mortar.enable)
-    add_coupling();
+  add_coupling(this->simulation_parameters.mortar.enable);
 
   while (this->simulation_control->integrate())
     {

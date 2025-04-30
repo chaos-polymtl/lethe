@@ -114,7 +114,7 @@ protected:
    * so that coupling at the rotor-stator interface is added.
    */
   void
-  add_coupling();
+  add_coupling(const bool enable);
 
   /**
    * @brief Assemble the local matrix for a given cell.
