@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-30
+
+### Added
+
+- MAJOR Multiphysic DEM simulations can now be launched with solver type dem_mp to follow the evolution of the temperature of the particles. The temperature is also added in the properties printed by application tests for the solver type dem_mp. [#1514] (https://github.com/chaos-polymtl/lethe/pull/1514)
 
 ## [Master] - 2024-04-24
 
