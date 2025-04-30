@@ -69,21 +69,17 @@ calculate_microcontact_resistance(const double equivalent_surface_slope,
                                   const double maximum_pressure);
 
 /**
- * @brief Calculate the solid macrogap thermal resistance between two particles.
+ * @brief Calculate the solid macrogap thermal resistance for one particle.
  *
- * @param[in] radius_one Radius of particle one.
- * @param[in] radius_two Radius of particle two.
- * @param[in] thermal_conductivity_one Thermal conductivity of particle one.
- * @param[in] thermal_conductivity_two Thermal conductivity of particle two.
+ * @param[in] radius Radius of the particle.
+ * @param[in] thermal_conductivity Thermal conductivity of the particle.
  * @param[in] contact_radius_squared Squared contact radius of the two
  * particles.
- * @return Solid macrogap thermal resistance between the two particles.
+ * @return Solid macrogap thermal resistance for one particle.
  */
 double
-calculate_solid_macrogap_resistance(const double radius_one,
-                                    const double radius_two,
-                                    const double thermal_conductivity_one,
-                                    const double thermal_conductivity_two,
+calculate_solid_macrogap_resistance(const double radius,
+                                    const double thermal_conductivity,
                                     const double contact_radius_squared);
 
 /**
