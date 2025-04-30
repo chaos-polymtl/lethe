@@ -952,12 +952,17 @@ NavierStokesOperatorBase<dim, number>::
           fields.insert(
             std::pair<field, std::vector<double>>(field::shear_rate,
                                                   integrator.n_q_points));
-          
+
+          // Store the shear rate magnitude in the appropriate data structured
+          // needed for the set field vector function
           std::vector<double> temp_shear_rate_magnitude(integrator.n_q_points);
 
           for (const auto q : integrator.quadrature_point_indices())
             {
-              temp_shear_rate_magnitude[q] = shear_rate_magnitude[0]; // This is odd
+              for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+                {
+                  temp_shear_rate_magnitude[q] = shear_rate_magnitude[v];
+                }
             }
 
           set_field_vector(field::shear_rate,
