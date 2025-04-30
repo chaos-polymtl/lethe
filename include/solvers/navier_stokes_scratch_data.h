@@ -1220,10 +1220,10 @@ public:
             }
         }
 
-    std::cout << "Append FEValues" << std::endl;
+    // std::cout << "Append FEValues" << std::endl;
     for (unsigned int q = 0; q < append_n_q_points; ++q)
       {
-        std::cout << "q = " << q + start << std::endl;
+        // std::cout << "q = " << q + start << std::endl;
 
         this->JxW[q + start] = reinited_fe_falues_to_append.JxW(q);
         for (unsigned int k = 0; k < this->fe_values.get_fe().n_dofs_per_cell();
@@ -1247,13 +1247,13 @@ public:
             this->grad_phi_p[q + start][k] =
               reinited_fe_falues_to_append[pressure].gradient(k, q);
 
-            std::cout << "k = " << k << std::endl;
-            std::cout << "this->phi_u[q + start][k] = "
-                      << this->phi_u[q + start][k] << std::endl;
-            std::cout << "this->phi_p[q + start][k] = "
-                      << this->phi_p[q + start][k] << std::endl;
-            std::cout << "this->grad_phi_p[q + start][k] = "
-                      << this->grad_phi_p[q + start][k] << std::endl;
+            // std::cout << "k = " << k << std::endl;
+            // std::cout << "this->phi_u[q + start][k] = "
+            //           << this->phi_u[q + start][k] << std::endl;
+            // std::cout << "this->phi_p[q + start][k] = "
+            //           << this->phi_p[q + start][k] << std::endl;
+            // std::cout << "this->grad_phi_p[q + start][k] = "
+            //           << this->grad_phi_p[q + start][k] << std::endl;
           }
 
 
@@ -1328,12 +1328,12 @@ public:
           if (this->components[j] == this->pressure.component)
             {
               pressure_dof_index.emplace_back(j);
-              std::cout << "pressure_dof_index is j = " << j << std::endl;
+              // std::cout << "pressure_dof_index is j = " << j << std::endl;
             }
         }
       
       
-      std::cout << "Inside" << std::endl;
+      // std::cout << "Inside" << std::endl;
       for (unsigned int q = 0; q < inside_n_q_points; q++)
         {
           double         s_x_q_inside      = 0.0;
@@ -1368,7 +1368,7 @@ public:
           std::cout << "grad_M_0_x_q[q] = " << grad_M_0_x_q[q] << std::endl;
           std::cout << "grad_M_1_x_q[q] = " << grad_M_1_x_q[q] << std::endl;
         }
-      std::cout << "Outside" << std::endl;
+      // std::cout << "Outside" << std::endl;
       for (unsigned int q = 0; q < outside_n_q_points; q++)
         {
           double         s_x_q_outside      = 0.0;
@@ -1431,7 +1431,7 @@ public:
 
       // if (cell_location == NonMatching::LocationToLevelSet::intersected )
       // {
-        std::cout << "Ahhhh"<< std::endl;
+        // std::cout << "Ahhhh"<< std::endl;
       // }
       // std::cout << "Ahhhh"<< sreinit_intd::endl;
 
@@ -1464,7 +1464,7 @@ public:
         outside_n_q_points = outside_fe_values->get_quadrature().size();
 
       new_n_q_points = inside_n_q_points + outside_n_q_points;
-      std::cout << "new_n_q_points = " << new_n_q_points << std::endl;
+      // std::cout << "new_n_q_points = " << new_n_q_points << std::endl;
 
       this->reallocate(new_n_q_points, new_n_dofs);
 
@@ -1531,7 +1531,7 @@ public:
 
       // reinit_boundary_face_values(cell, current_solution);
       
-      std::cout << "reinit_intersected end n_dofs = " << this->n_dofs << std::endl;
+      // std::cout << "reinit_intersected end n_dofs = " << this->n_dofs << std::endl;
       
       return {new_n_q_points, new_n_dofs};
   }

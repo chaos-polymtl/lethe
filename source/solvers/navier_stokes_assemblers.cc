@@ -16,7 +16,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   
-  std::cout << "Boooooooop" <<std::endl;
+  // std::cout << "Boooooooop" <<std::endl;
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;
@@ -44,12 +44,12 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Pressure scaling factor
   const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
-  std::cout << "n_q_points = " << n_q_points << std::endl;
+  // std::cout << "n_q_points = " << n_q_points << std::endl;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      std::cout << "q =" << q  << std::endl;
+      // std::cout << "q =" << q  << std::endl;
       
       // Gather into local variables the relevant fields
       const double          kinematic_viscosity = viscosity_vector[q];
@@ -72,6 +72,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
+      // std::cout << "JxW = " << JxW << std::endl;
+      
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -84,11 +86,12 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
             u_mag, viscosity_for_stabilization_vector[q], h) :
           calculate_navier_stokes_gls_tau_transient(
             u_mag, viscosity_for_stabilization_vector[q], h, sdt);
-
+      // std::cout << "tau = " << tau << std::endl;
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
+      // std::cout << "strong_residual = " << strong_residual << std::endl;
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -97,7 +100,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
       
-      std::cout << "n_dofs = " << n_dofs << std::endl;
+      // std::cout << "n_dofs = " << n_dofs << std::endl;
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           
@@ -108,13 +111,13 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_p_j =
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
         
-          std::cout << "j =" << j  << std::endl;
-          
-          std::cout << "phi_u_j =" << phi_u_j  << std::endl;
-          std::cout << "grad_phi_u_j =" << grad_phi_u_j  << std::endl;
-          std::cout << "laplacian_phi_u_j =" << laplacian_phi_u_j  << std::endl;
-          std::cout << "grad_phi_p_j =" << grad_phi_p_j  << std::endl;
-          
+          // std::cout << "j =" << j  << std::endl;
+          // 
+          // std::cout << "phi_u_j =" << phi_u_j  << std::endl;
+          // std::cout << "grad_phi_u_j =" << grad_phi_u_j  << std::endl;
+          // std::cout << "laplacian_phi_u_j =" << laplacian_phi_u_j  << std::endl;
+          // std::cout << "grad_phi_p_j =" << grad_phi_p_j  << std::endl;
+          // 
           
           
           strong_jacobian_vec[q][j] +=
@@ -126,9 +129,9 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
           
-          std::cout << "strong_jacobian_vec[q][j] =" << strong_jacobian_vec[q][j]  << std::endl;
-          std::cout << "grad_phi_u_j_x_velocity[j] =" << grad_phi_u_j_x_velocity[j]   << std::endl;
-          std::cout << "velocity_gradient_x_phi_u_j[j] =" << velocity_gradient_x_phi_u_j[j]  << std::endl;
+          // std::cout << "strong_jacobian_vec[q][j] =" << strong_jacobian_vec[q][j]  << std::endl;
+          // std::cout << "grad_phi_u_j_x_velocity[j] =" << grad_phi_u_j_x_velocity[j]   << std::endl;
+          // std::cout << "velocity_gradient_x_phi_u_j[j] =" << velocity_gradient_x_phi_u_j[j]  << std::endl;
           
         }
 
@@ -143,23 +146,23 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &phi_p_i      = scratch_data.phi_p[q][i];
           const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
-          std::cout << "i =" << i  << std::endl;
-          std::cout << "component_i =" << component_i  << std::endl;
-          
-          std::cout << "phi_u_i =" << phi_u_i  << std::endl;
-          std::cout << "grad_phi_u_i =" << grad_phi_u_i  << std::endl;
-          std::cout << "div_phi_u_i =" << div_phi_u_i  << std::endl;
-          std::cout << "phi_p_i =" << phi_p_i  << std::endl;
-          std::cout << "grad_phi_p_i =" << grad_phi_p_i  << std::endl;
+          // std::cout << "i =" << i  << std::endl;
+          // std::cout << "component_i =" << component_i  << std::endl;
+          // 
+          // std::cout << "phi_u_i =" << phi_u_i  << std::endl;
+          // std::cout << "grad_phi_u_i =" << grad_phi_u_i  << std::endl;
+          // std::cout << "div_phi_u_i =" << div_phi_u_i  << std::endl;
+          // std::cout << "phi_p_i =" << phi_p_i  << std::endl;
+          // std::cout << "grad_phi_p_i =" << grad_phi_p_i  << std::endl;
           
           // Store these temporary products in auxiliary variables for speed
           const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
           const auto strong_residual_x_grad_phi_u_i =
             strong_residual * grad_phi_u_i;
             
-          std::cout << "grad_phi_u_i_x_velocity =" << grad_phi_u_i_x_velocity  << std::endl;
+          // std::cout << "grad_phi_u_i_x_velocity =" << grad_phi_u_i_x_velocity  << std::endl;
           
-          std::cout << "strong_residual_x_grad_phi_u_i =" << strong_residual_x_grad_phi_u_i  << std::endl;
+          // std::cout << "strong_residual_x_grad_phi_u_i =" << strong_residual_x_grad_phi_u_i  << std::endl;
           
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
@@ -175,19 +178,19 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
               double local_matrix_ij =
                 component_j == dim ? -div_phi_u_i * phi_p_j : 0;
                 
-              std::cout << "j =" << j  << std::endl;
-              
-              std::cout << "component_j =" << component_j  << std::endl;
-              
-              std::cout << "phi_u_j =" << phi_u_j  << std::endl;
-              std::cout << "phi_p_j =" << phi_p_j  << std::endl;
-              
-              std::cout << "strong_jac =" << strong_jac  << std::endl;
-              std::cout << "local_matrix_ij =" << local_matrix_ij  << std::endl;
+              // std::cout << "j =" << j  << std::endl;
+              // 
+              // std::cout << "component_j =" << component_j  << std::endl;
+              // 
+              // std::cout << "phi_u_j =" << phi_u_j  << std::endl;
+              // std::cout << "phi_p_j =" << phi_p_j  << std::endl;
+              // 
+              // std::cout << "strong_jac =" << strong_jac  << std::endl;
+              // std::cout << "local_matrix_ij =" << local_matrix_ij  << std::endl;
               
               if (component_i == dim)
                 {
-                  std::cout << "component_i == dim" << std::endl;
+                  // std::cout << "component_i == dim" << std::endl;
                   
                   const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
 
@@ -196,26 +199,26 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
                   // PSPG GLS term
                   local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
                   
-                  std::cout << "div_phi_u_j =" << div_phi_u_j  << std::endl;
-                  std::cout << "phi_p_i * div_phi_u_j =" << phi_p_i * div_phi_u_j  << std::endl;
-                  
-                  std::cout << "tau * (strong_jac * grad_phi_p_i) =" << tau * (strong_jac * grad_phi_p_i)  << std::endl;
+                  // std::cout << "div_phi_u_j =" << div_phi_u_j  << std::endl;
+                  // std::cout << "phi_p_i * div_phi_u_j =" << phi_p_i * div_phi_u_j  << std::endl;
+                  // 
+                  // std::cout << "tau * (strong_jac * grad_phi_p_i) =" << tau * (strong_jac * grad_phi_p_i)  << std::endl;
                   
                 }
 
               if (component_i < dim && component_j < dim)
                 {
-                  std::cout << "component_i < dim && component_j < dim" << std::endl;
+                  // std::cout << "component_i < dim && component_j < dim" << std::endl;
                   
                   const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
                   
-                  std::cout << "grad_phi_u_j =" << grad_phi_u_j  << std::endl;
+                  // std::cout << "grad_phi_u_j =" << grad_phi_u_j  << std::endl;
                   
                   
                   local_matrix_ij += velocity_gradient_x_phi_u_j[j] * phi_u_i +
                                      grad_phi_u_j_x_velocity[j] * phi_u_i;
                   
-                  std::cout << "velocity_gradient_x_phi_u_j[j] * phi_u_i + grad_phi_u_j_x_velocity[j] * phi_u_i = " << velocity_gradient_x_phi_u_j[j] * phi_u_i + grad_phi_u_j_x_velocity[j] * phi_u_i  << std::endl;
+                  // std::cout << "velocity_gradient_x_phi_u_j[j] * phi_u_i + grad_phi_u_j_x_velocity[j] * phi_u_i = " << velocity_gradient_x_phi_u_j[j] * phi_u_i + grad_phi_u_j_x_velocity[j] * phi_u_i  << std::endl;
                   
                   if (component_i == component_j)
                     {

@@ -382,7 +382,7 @@ NavierStokesScratchData<dim>::reallocate(const unsigned int new_n_q_points,
   this->n_q_points = new_n_q_points;
   this->n_dofs     = new_n_dofs;
 
-  std::cout << "ScratchData n_dofs = " << this->n_dofs << std::endl;
+  // std::cout << "ScratchData n_dofs = " << this->n_dofs << std::endl;
   
   // Initialize arrays related to quadrature
   this->JxW.resize(n_q_points);
