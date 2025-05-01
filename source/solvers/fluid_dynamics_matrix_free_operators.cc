@@ -1952,6 +1952,16 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       // Get stabilization parameter
       const auto tau = this->stabilization_parameter[cell][q];
 
+      // Calculate shear rate per component
+      typename FECellIntegrator::gradient_type shear_rate;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int j = 0; j < dim; ++j)
+            {
+              shear_rate[i][j] = gradient[i][j] + gradient[j][i];
+            }
+        }
+
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
@@ -1964,13 +1974,13 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
             {
               // ν(∇v,(∇δu + ∇δuT))
               gradient_result[i][k] +=
-                kinematic_viscosity * (gradient[i][k] + gradient[k][i]);
+                kinematic_viscosity * shear_rate[i][k];
 
               // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
               gradient_result[i][k] +=
                 0.5 / previous_shear_rate_magnitude *
                 kinematic_viscosity_gradient[i] * previous_shear_rate[i][k] *
-                (gradient[i][k] + gradient[k][i]) * previous_shear_rate[i][k];
+                shear_rate[i][k] * previous_shear_rate[i][k];
 
               // +(v,(u·∇)δu + (δu·∇)u)
               value_result[i] += gradient[i][k] * previous_values[k] +
@@ -1989,8 +1999,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
               // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
                 tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
-                       kinematic_viscosity_gradient[i] *
-                         (gradient[i][k] + gradient[k][i]) +
+                       kinematic_viscosity_gradient[i] * shear_rate[i][k] +
                        gradient[i][k] * previous_values[k] +
                        previous_gradient[i][k] * value[k]);
             }
@@ -2015,8 +2024,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
                     (gradient[i][l] * previous_values[l] +
                      previous_gradient[i][l] * value[l] -
                      kinematic_viscosity * hessian_diagonal[i][l] -
-                     kinematic_viscosity_gradient[i] *
-                       (gradient[i][l] + gradient[l][i]));
+                     kinematic_viscosity_gradient[i] * shear_rate[i][l]);
                 }
               // +(∇δp)τ(u·∇)v
               gradient_result[i][k] +=
