@@ -2555,7 +2555,7 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
       level_set_owned[p] = (-2.0*phase+1.0);
     }
 
-  this->nonzero_constraints.distribute(level_set_owned);
+  // this->nonzero_constraints.distribute(level_set_owned);
 
   level_set_solution = level_set_owned;
 }
