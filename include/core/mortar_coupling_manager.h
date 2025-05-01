@@ -489,13 +489,37 @@ public:
                    const unsigned int               bid_1,
                    const double                     sip_factor = 1.0);
 
+  /**
+   * @brief Constructor of the class
+   * 
+   * @param[in] mapping Mapping of the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] constraints Object with the constrains according to DoFs
+   * @param[in] quadrature Required for local operations on cells
+   * @param[in] mortar_parameters The information about the mortar method control, including
+   * the rotor mesh parameters
+   */
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
                    const AffineConstraints<Number> &constraints,
                    const Quadrature<dim>           &quadrature,
-                   const Parameters::Mortar<dim>   &mortar_parameters,
-                   const Parameters::Mesh          &mesh_parameters);
+                   const Parameters::Mortar<dim>   &mortar_parameters);
 
+  /**
+   * @brief Initialize the coupling operator
+   * 
+   * @param[in] mapping Mapping of the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] constraints Object with the constrains according to DoFs
+   * @param[in] quadrature Required for local operations on cells
+   * @param[in] n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @param[in] radius Radius at the interface between inner and outer domains
+   * @param[in] rotate_pi Rotation angle for the inner domain
+   * @param[in] bid_0 Boundary ID of the inner domain (rotor)
+   * @param[in] bid_1 Boundary ID of the outer domain (stator)
+   * @param[in] sip_factor Penalty factor (akin to symmetric interior penalty factor in SIPG)
+   */
   void
   init(const Mapping<dim>              &mapping,
        const DoFHandler<dim>           &dof_handler,
