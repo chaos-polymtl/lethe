@@ -385,15 +385,6 @@ public:
   ~FluidDynamicsMatrixFree();
 
   /**
-   * @brief Create coupling operator
-   *
-   * This function is used in the context of rotor-stator configurations,
-   * so that coupling at the rotor-stator interface is added.
-   */
-  void
-  add_coupling(const bool enable);
-
-  /**
    * @brief Solve the problem defined by simulation parameters by iterating
    * through time or through the mesh refinements.
    */
