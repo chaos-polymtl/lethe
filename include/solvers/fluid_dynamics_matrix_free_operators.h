@@ -705,6 +705,13 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
+   * of the gradient of the kinematic viscosity w.r.t shear rate.
+   *
+   */
+  Table<2, VectorizedArray<number>> grad_kinematic_viscosity_shear_rate;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
    * of the kinematic viscosity gradient.
    *
    */

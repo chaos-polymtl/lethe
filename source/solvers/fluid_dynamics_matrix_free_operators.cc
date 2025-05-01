@@ -800,6 +800,7 @@ NavierStokesOperatorBase<dim, number>::
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
   kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
+  grad_kinematic_viscosity_shear_rate.reinit(n_cells, integrator.n_q_points);
   kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
   previous_shear_rate.reinit(n_cells, integrator.n_q_points);
   previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
@@ -964,10 +965,12 @@ NavierStokesOperatorBase<dim, number>::
                            temp_shear_rate_magnitude,
                            fields);
 
-          std::vector<double> grad_kinematic_viscosity_shear_rate(
+          std::vector<double> temp_grad_kinematic_viscosity_shear_rate(
             integrator.n_q_points);
           this->properties_manager->get_rheology()->vector_jacobian(
-            fields, field::shear_rate, grad_kinematic_viscosity_shear_rate);
+            fields,
+            field::shear_rate,
+            temp_grad_kinematic_viscosity_shear_rate);
 
           std::vector<double> temp_kinematic_viscosity_vector(
             integrator.n_q_points);
@@ -976,11 +979,15 @@ NavierStokesOperatorBase<dim, number>::
 
           for (const auto q : integrator.quadrature_point_indices())
             {
+              grad_kinematic_viscosity_shear_rate(cell, q) =
+                temp_grad_kinematic_viscosity_shear_rate[q];
+
               // Calculate it using the grad kinematic viscosity shear rate and
               // the grad shear rate.
               kinematic_viscosity_gradient(cell, q) =
                 grad_shear_rate *
-                VectorizedArray<number>(grad_kinematic_viscosity_shear_rate[q]);
+                VectorizedArray<number>(
+                  temp_grad_kinematic_viscosity_shear_rate[q]);
 
               kinematic_viscosity_vector(cell, q) =
                 VectorizedArray<number>(temp_kinematic_viscosity_vector[q]);
@@ -1947,6 +1954,8 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         this->kinematic_viscosity_vector[cell][q];
       const auto kinematic_viscosity_gradient =
         this->kinematic_viscosity_gradient[cell][q];
+      const auto grad_kinematic_viscosity_shear_rate =
+        this->grad_kinematic_viscosity_shear_rate[cell][q];
 
       // Get stabilization parameter
       const auto tau = this->stabilization_parameter[cell][q];
@@ -1975,10 +1984,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
               gradient_result[i][k] += kinematic_viscosity * shear_rate[i][k];
 
               // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
-              gradient_result[i][k] +=
-                0.5 / previous_shear_rate_magnitude *
-                kinematic_viscosity_gradient[i] * previous_shear_rate[i][k] *
-                shear_rate[i][k] * previous_shear_rate[i][k];
+              gradient_result[i][k] += 0.5 / previous_shear_rate_magnitude *
+                                       grad_kinematic_viscosity_shear_rate *
+                                       previous_shear_rate[i][k] *
+                                       shear_rate[i][k] *
+                                       previous_shear_rate[i][k];
 
               // +(v,(u·∇)δu + (δu·∇)u)
               value_result[i] += gradient[i][k] * previous_values[k] +
