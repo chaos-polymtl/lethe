@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-05-01
+
+### Added
+
+- MINOR Some of the functions related to the mortar coupling have been refactored, and new functionalities have been added. For instance, the matrix-based solver is able to read 'gmsh' files, and the matrix-free solver is able to read data from the mortar subsection. A new coupling operator has been added. [#1514] (https://github.com/chaos-polymtl/lethe/pull/1515)
+
 ## [Master] - 2024-04-30
 
 ### Added
