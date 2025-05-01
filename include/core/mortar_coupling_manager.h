@@ -157,7 +157,8 @@ public:
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
    * @param[in] rad Angular coordinate of cell center
-   * @param[out] points Coordinate of quadrature points of the cell
+   *
+   * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
   get_points(const double rad) const
@@ -216,6 +217,12 @@ public:
       }
   }
 
+  /**
+   * @brief Returns the coordinates of the quadrature points at the interface
+   * @param[in] rad Angular coordinate of cell center
+   *
+   * @return points Coordinate of quadrature points of the cell
+   */
   std::vector<Point<1>>
   get_points_ref(const double rad) const
   {
@@ -478,9 +485,8 @@ public:
 
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
-  /** 
+  /**
    * @brief Constructor of the class
-   * 
    * @param[in] mapping Mapping of the domain
    * @param[in] dof_handler DoFHandler associated to the triangulation
    * @param[in] constraints Object with the constrains according to DoFs
@@ -491,7 +497,8 @@ public:
    * @param[in] rotate_pi Rotation angle for the inner domain
    * @param[in] bid_0 Boundary ID of the inner domain (rotor)
    * @param[in] bid_1 Boundary ID of the outer domain (stator)
-   * @param[in] sip_factor Penalty factor (akin to symmetric interior penalty factor in SIPG)
+   * @param[in] sip_factor Penalty factor (akin to symmetric interior penalty
+   * factor in SIPG)
    */
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
@@ -506,13 +513,12 @@ public:
 
   /**
    * @brief Constructor of the class
-   * 
    * @param[in] mapping Mapping of the domain
    * @param[in] dof_handler DoFHandler associated to the triangulation
    * @param[in] constraints Object with the constrains according to DoFs
    * @param[in] quadrature Required for local operations on cells
-   * @param[in] mortar_parameters The information about the mortar method control, including
-   * the rotor mesh parameters
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
    */
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
@@ -522,7 +528,6 @@ public:
 
   /**
    * @brief Initialize the coupling operator
-   * 
    * @param[in] mapping Mapping of the domain
    * @param[in] dof_handler DoFHandler associated to the triangulation
    * @param[in] constraints Object with the constrains according to DoFs
@@ -533,7 +538,8 @@ public:
    * @param[in] rotate_pi Rotation angle for the inner domain
    * @param[in] bid_0 Boundary ID of the inner domain (rotor)
    * @param[in] bid_1 Boundary ID of the outer domain (stator)
-   * @param[in] sip_factor Penalty factor (akin to symmetric interior penalty factor in SIPG)
+   * @param[in] sip_factor Penalty factor (akin to symmetric interior penalty
+   * factor in SIPG)
    */
   void
   init(const Mapping<dim>              &mapping,
@@ -566,9 +572,9 @@ public:
 private:
   /**
    * @brief Construct oversampled quadrature
-   * 
-   * @param[in] quad Current quadrature for local cell operations
-   * @param[in] oversampling_factor Factor used to increase number of quadrature points
+   * @param[in, out] quad Quadrature for local cell operations
+   * @param[in] oversampling_factor Factor used to increase number of quadrature
+   * points
    */
   Quadrature<dim>
   construct_quadrature(const Quadrature<dim> &quad,
@@ -576,24 +582,24 @@ private:
 
   /**
    * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
-   * 
    * @param[in] dof_handler DoFHandler associated to the triangulation
-   * @param[in] mortar_parameters The information about the mortar method control, including
-   * the rotor mesh parameters
-   * 
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
+   *
    * @return n_subdivisions Number of cells at the interface between inner
    * and outer domains
    * @return radius Radius at the interface between inner and outer domains
    */
   std::pair<unsigned int, double>
-  compute_n_subdivisions_and_radius(const DoFHandler<dim> &dof_handler,
-                                    const Parameters::Mortar<dim> &mortar_parameters);           
+  compute_n_subdivisions_and_radius(
+    const DoFHandler<dim>         &dof_handler,
+    const Parameters::Mortar<dim> &mortar_parameters);
 
   /**
    * @brief Compute penalty factor used in weak imposition of coupling at the rotor-stator interface
-   * 
    * @param[in] degree Polynomail degree of the FE approximation
-   * @param[in] factor Penalty factor (akin to symmetric interior penalty factor in SIPG)
+   * @param[in] factor Penalty factor (akin to symmetric interior penalty factor
+   * in SIPG)
    */
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
@@ -602,6 +608,11 @@ private:
   compute_penalty_parameter(
     const typename Triangulation<dim>::cell_iterator &cell) const;
 
+  /**
+   * @brief Returns radius of point with reference to origin
+   * @param[in] cell Cell iterator
+   * @param[in] face Face iterator
+   */
   double
   get_rad(const typename Triangulation<dim>::cell_iterator &cell,
           const typename Triangulation<dim>::face_iterator &face) const;
@@ -683,8 +694,8 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   , constraints(constraints)
   , quadrature(quadrature)
 {
-  
-  const auto [n_subdivisions, radius] = compute_n_subdivisions_and_radius(dof_handler, mortar_parameters);
+  const auto [n_subdivisions, radius] =
+    compute_n_subdivisions_and_radius(dof_handler, mortar_parameters);
 
   init(mapping,
        dof_handler,
@@ -975,8 +986,9 @@ CouplingOperator<dim, n_components, Number>::construct_quadrature(
 }
 template <int dim, int n_components, typename Number>
 std::pair<unsigned int, double>
-CouplingOperator<dim, n_components, Number>::compute_n_subdivisions_and_radius(const DoFHandler<dim> &dof_handler,
-                                  const Parameters::Mortar<dim> &mortar_parameters)
+CouplingOperator<dim, n_components, Number>::compute_n_subdivisions_and_radius(
+  const DoFHandler<dim>         &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters)
 {
   // Number of subdivisions per process
   unsigned int n_subdivisions_local = 0;
@@ -990,7 +1002,7 @@ CouplingOperator<dim, n_components, Number>::compute_n_subdivisions_and_radius(c
 
   // Check number of faces and vertices at the rotor-stator interface
   for (const auto &cell :
-      dof_handler.get_triangulation().active_cell_iterators())
+       dof_handler.get_triangulation().active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1003,8 +1015,8 @@ CouplingOperator<dim, n_components, Number>::compute_n_subdivisions_and_radius(c
                     {
                       n_subdivisions_local++;
                       for (unsigned int vertex_index = 0;
-                          vertex_index < face->n_vertices();
-                          vertex_index++)
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
                         {
                           n_vertices_local++;
                           auto   v = face->vertex(vertex_index);

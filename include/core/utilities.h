@@ -808,7 +808,8 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
 /**
  * @brief Converts point to radius
  * @param[in] point Point in cartesian coordinates (x-y plane)
- * @param[in] center_of_rotation Reference point
+ *
+ * @return radius Distance from point to origin
  */
 template <int dim>
 inline double
@@ -820,6 +821,10 @@ point_to_rad(const Point<dim> &point)
 
 /**
  * @brief Converts radius to point (in the x-y plane)
+ * @param[in] radius Radial distance
+ * @param[in] rad Angle (in radians)
+ *
+ * @return point Point cartesian coordinates
  */
 template <int dim>
 inline Point<dim>
