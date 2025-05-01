@@ -478,6 +478,21 @@ public:
 
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
+  /** 
+   * @brief Constructor of the class
+   * 
+   * @param[in] mapping Mapping of the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] constraints Object with the constrains according to DoFs
+   * @param[in] quadrature Required for local operations on cells
+   * @param[in] n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @param[in] radius Radius at the interface between inner and outer domains
+   * @param[in] rotate_pi Rotation angle for the inner domain
+   * @param[in] bid_0 Boundary ID of the inner domain (rotor)
+   * @param[in] bid_1 Boundary ID of the outer domain (stator)
+   * @param[in] sip_factor Penalty factor (akin to symmetric interior penalty factor in SIPG)
+   */
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
                    const AffineConstraints<Number> &constraints,
@@ -549,10 +564,37 @@ public:
     TrilinosWrappers::SparseMatrix &system_matrix) const;
 
 private:
+  /**
+   * @brief Construct oversampled quadrature
+   * 
+   * @param[in] quad Current quadrature for local cell operations
+   * @param[in] oversampling_factor Factor used to increase number of quadrature points
+   */
   Quadrature<dim>
   construct_quadrature(const Quadrature<dim> &quad,
                        const unsigned int     oversampling_factor);
 
+  /**
+   * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+   * 
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] mortar_parameters The information about the mortar method control, including
+   * the rotor mesh parameters
+   * 
+   * @return n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @return radius Radius at the interface between inner and outer domains
+   */
+  std::pair<unsigned int, double>
+  compute_n_subdivisions_and_radius(const DoFHandler<dim> &dof_handler,
+                                    const Parameters::Mortar<dim> &mortar_parameters);           
+
+  /**
+   * @brief Compute penalty factor used in weak imposition of coupling at the rotor-stator interface
+   * 
+   * @param[in] degree Polynomail degree of the FE approximation
+   * @param[in] factor Penalty factor (akin to symmetric interior penalty factor in SIPG)
+   */
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
 
@@ -635,72 +677,14 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<Number> &constraints,
   const Quadrature<dim>           &quadrature,
-  const Parameters::Mortar<dim>   &mortar_parameters,
-  const Parameters::Mesh          &mesh_parameters)
+  const Parameters::Mortar<dim>   &mortar_parameters)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
   , quadrature(quadrature)
 {
-  // Number of subdivisions per process
-  unsigned int n_subdivisions_local = 0;
-  // Number of vertices at the boundary per process
-  unsigned int n_vertices_local = 0;
-  // Tolerance for rotor radius computation
-  const double tolerance = 1e-8;
-  // Min and max values for rotor radius computation
-  double radius_min = 1e12;
-  double radius_max = 1e-12;
-
-  // Check number of faces and vertices at the rotor-stator interface
-  for (const auto &cell :
-       dof_handler.get_triangulation().active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          for (const auto &face : cell->face_iterators())
-            {
-              if (face->at_boundary())
-                {
-                  if (face->boundary_id() ==
-                      mortar_parameters.rotor_boundary_id)
-                    {
-                      n_subdivisions_local++;
-                      for (unsigned int vertex_index = 0;
-                           vertex_index < face->n_vertices();
-                           vertex_index++)
-                        {
-                          n_vertices_local++;
-                          auto   v = face->vertex(vertex_index);
-                          double radius_current =
-                            v.distance(mortar_parameters.center_of_rotation);
-                          radius_min = std::min(radius_min, radius_current);
-                          radius_max = std::max(radius_max, radius_current);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-  // Total number of faces
-  const unsigned int n_subdivisions =
-    Utilities::MPI::sum(n_subdivisions_local,
-                        dof_handler.get_mpi_communicator());
-
-  // Min and max values over all processes
-  radius_min =
-    Utilities::MPI::min(radius_min, dof_handler.get_mpi_communicator());
-  radius_max =
-    Utilities::MPI::max(radius_max, dof_handler.get_mpi_communicator());
-
-  AssertThrow(
-    std::abs(radius_max - radius_min) < tolerance,
-    ExcMessage(
-      "The computed radius of the rotor mesh has a variation greater than the tolerance across the rotor domain, meaning that the prescribed center of rotation and the rotor geometry are not in accordance."));
-
-  // Final radius value
-  const double radius = radius_min;
+  
+  const auto [n_subdivisions, radius] = compute_n_subdivisions_and_radius(dof_handler, mortar_parameters);
 
   init(mapping,
        dof_handler,
@@ -988,6 +972,73 @@ CouplingOperator<dim, n_components, Number>::construct_quadrature(
   AssertThrow(false, ExcNotImplemented());
 
   return quad;
+}
+template <int dim, int n_components, typename Number>
+std::pair<unsigned int, double>
+CouplingOperator<dim, n_components, Number>::compute_n_subdivisions_and_radius(const DoFHandler<dim> &dof_handler,
+                                  const Parameters::Mortar<dim> &mortar_parameters)
+{
+  // Number of subdivisions per process
+  unsigned int n_subdivisions_local = 0;
+  // Number of vertices at the boundary per process
+  unsigned int n_vertices_local = 0;
+  // Tolerance for rotor radius computation
+  const double tolerance = 1e-8;
+  // Min and max values for rotor radius computation
+  double radius_min = 1e12;
+  double radius_max = 1e-12;
+
+  // Check number of faces and vertices at the rotor-stator interface
+  for (const auto &cell :
+      dof_handler.get_triangulation().active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (const auto &face : cell->face_iterators())
+            {
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      n_subdivisions_local++;
+                      for (unsigned int vertex_index = 0;
+                          vertex_index < face->n_vertices();
+                          vertex_index++)
+                        {
+                          n_vertices_local++;
+                          auto   v = face->vertex(vertex_index);
+                          double radius_current =
+                            v.distance(mortar_parameters.center_of_rotation);
+                          radius_min = std::min(radius_min, radius_current);
+                          radius_max = std::max(radius_max, radius_current);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  // Total number of faces
+  const unsigned int n_subdivisions =
+    Utilities::MPI::sum(n_subdivisions_local,
+                        dof_handler.get_mpi_communicator());
+
+  // Min and max values over all processes
+  radius_min =
+    Utilities::MPI::min(radius_min, dof_handler.get_mpi_communicator());
+  radius_max =
+    Utilities::MPI::max(radius_max, dof_handler.get_mpi_communicator());
+
+  AssertThrow(
+    std::abs(radius_max - radius_min) < tolerance,
+    ExcMessage(
+      "The computed radius of the rotor mesh has a variation greater than the tolerance across the rotor domain, meaning that the prescribed center of rotation and the rotor geometry are not in accordance."));
+
+  // Final radius value
+  const double radius = radius_min;
+
+  return {n_subdivisions, radius};
 }
 
 template <int dim, int n_components, typename Number>
