@@ -897,7 +897,8 @@ NavierStokesOperatorBase<dim, number>::
                     }
                 }
 
-              shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
+              shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),
+                                              VectorizedArray<number>(1e-12));
 
               // Store shear rate magnitude in the previous_shear_rate
               this->previous_shear_rate_magnitude[cell][q] =
@@ -906,12 +907,6 @@ NavierStokesOperatorBase<dim, number>::
               // Get kinematic viscosity gradient which consists of two things:
               // 1. Grad shear rate
               // 2. grad_kinematic_viscosity_shear_rate
-
-              // TODO find a way to compare with a minimum to avoid 0;
-              // VectorizedArray<number> min_shear_rate_magnitude = 1e-12;
-              // shear_rate_magnitude = shear_rate_magnitude >
-              // min_shear_rate_magnitude ? shear_rate_magnitude :
-              // min_shear_rate_magnitude;
               for (unsigned int d = 0; d < dim; ++d)
                 {
                   if constexpr (dim == 2)
@@ -1943,6 +1938,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       auto previous_shear_rate_magnitude =
         this->previous_shear_rate_magnitude(cell, q);
 
+      // previous_shear_rate_magnitude =
+      //   std::max(previous_shear_rate_magnitude,
+      //   VectorizedArray<number>(1e-3));
+
       // Get kinematic viscosity from rheology model
       const auto kinematic_viscosity =
         this->kinematic_viscosity_vector[cell][q];
@@ -1973,8 +1972,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
           for (unsigned int k = 0; k < dim; ++k)
             {
               // ν(∇v,(∇δu + ∇δuT))
-              gradient_result[i][k] +=
-                kinematic_viscosity * shear_rate[i][k];
+              gradient_result[i][k] += kinematic_viscosity * shear_rate[i][k];
 
               // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
               gradient_result[i][k] +=
@@ -2231,7 +2229,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                       gradient_result[i][k] +=
                         -tau * value[k] *
                         (kinematic_viscosity * hessian_diagonal[i][l] +
-                         kinematic_viscosity_gradient[i] * shear_rate[i][k]);
+                         kinematic_viscosity_gradient[i] * shear_rate[i][l]);
 
                       // + ((u·∇)u)τ(u·∇)v
                       gradient_result[i][k] +=
