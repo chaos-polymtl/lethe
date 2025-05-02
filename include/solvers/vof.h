@@ -53,11 +53,11 @@ DeclException1(
 
 DeclExceptionMsg(
   UnsupportedRegularization,
-  "The VOF physics has been set to use DG and the DG implementation currently does not support any interface regularization mechanism.");
+  "The VOF physics has been set to use DG and the latter implementation currently does not support any interface regularization mechanism.");
 
 DeclExceptionMsg(
   UnsupportedInitialProjection,
-  "The VOF physics has been set to use DG and the DG implementation currently does not support defining an initial condition with a proejction.");
+  "The VOF physics has been set to use DG and the latter implementation currently does not support defining an initial condition with a projection.");
 
 template <int dim>
 class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>
@@ -652,7 +652,7 @@ private:
 
   /**
    * @brief Helper function to reinit the face velocity with the adequate solution.
-   * This prevents code duplication throughout the tracer. The function looks at
+   * This prevents code duplication throughout the VOF class. The function looks at
    * the multiphysics interface to decide if the velocity is a block velocity or
    * a regular velocity. Furthermore, it also checks if a time-averaged solution
    * is required. Otherwise the code here would be copied four times.

@@ -51,7 +51,7 @@ public:
  * @brief Base class for assembler objects of physics and subequations that require a face assembly.
  * This type of assembler is generally used for DG equations.
  *
- * @tparam ScratchDataType Type of scratch data object used for linear system
+ * @tparam ScratchDataType Type of scratch data object used for face
  * assembly.
  *
  * @tparam CopyDataType Type of copy data object used for transferring from
@@ -63,7 +63,7 @@ class PhysicsFaceAssemblerBase
 public:
   /**
    * @brief Interface for the call to matrix assembly
-   * @param[in]  scratch_data Scratch data containing the Tracer
+   * @param[in]  scratch_data Scratch data containing the physical solver
    * information. It is important to note that the scratch data has to have been
    * re-inited before calling for matrix assembly.
    * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
@@ -77,7 +77,7 @@ public:
 
   /**
    * @brief Interface for the call to rhs
-   * @param[in]  scratch_data Scratch data containing the Tracer
+   * @param[in]  scratch_data Scratch data containing the physical solver
    * information. It is important to note that the scratch data has to have been
    * re-inited before calling for matrix assembly.
    * @param[in,out] copy_data Destination where the local_rhs and local_matrix
