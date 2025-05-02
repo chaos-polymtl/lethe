@@ -56,7 +56,7 @@ Simulation Control
       set output path        = out/
     end
 
-* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computationnal time, one could use an adaptive time step/time scaling in order to increase the time step once the particle is sufficiently accelerated.
+* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computationnal time, one could use an adaptive time step/time scaling in order to increase the time step once the particle has sufficiently accelerated.
 
 * The ``time end`` is set to  ``0.6``. This is approximately the sedimentation time of the particles as recorded in the article by Wang `et al.` [#Wang2024]_.
 
@@ -107,11 +107,11 @@ Mesh Adaptation
       set variable = velocity
     end
 
-* The ``fraction coarsening`` is set to ``0.3``. This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
+* The ``fraction coarsening`` is set to ``0.3``.The results are shown in the animation below.  This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
 
 * The ``fraction refinement`` is set to ``0.05``. The objective here is to refine elements that become close to the particle when it's moving. This will mostly refine elements around the particle that are not already included in the refinement zone around the particle.
 
-* The ``max refinement level`` is set to ``8``. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~:math:`10` elements per sides of the cuboid. This should be sufficient to get accurate results.
+* The ``max refinement level`` is set to ``8``. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~ :math:`10` elements per sides of the cuboid. This should be sufficient to get accurate results.
 
 * The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
@@ -145,7 +145,7 @@ Boundary Conditions
 Here we define the :math:`5` ``no slip`` boundary for all the box walls and specify the boundary with ``id=3`` to an outlet representing the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
-    The boundary id of deal.II rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`, as described by the`GridGenerator documentation <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_.
+    The boundary id of deal.II rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`, as described by the `GridGenerator documentation <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_.
 
 
 IB Particles
@@ -199,7 +199,7 @@ IB Particles
 
 Since our particle is a cuboid, we will have to define a few more parameters than for a sphere.
 
-* ``type`` is set to ``superquadric``. In the experimental setup, the cuboid particle has a beveled edge, for wich the dimentions are not properly reported. As such, we use a superquadric shape to represent the cuboid particles with a rounded edge. Using such a shape also helps to diminish difficulties of modelling sharp edges. The shape arguments are set to ``1.;1.;1.;5;5;5``. The first three parameters are the half-lengths of the cuboid in the x, y and z directions. The last three parameters are the exponents of the superquadric shape; the higher the exponent, the sharper the edge. 
+* ``type`` is set to ``superquadric``. In the experimental setup, the cuboid particle has a beveled edge, for which the dimentions are not properly reported in the paper of reference. In order to represent this cuboid shape, we make use of a superquadric. The rounded edges will therefore give a rough approximation of the beveled geometry and help reduce difficulties of modelling with sharp edges. The shape arguments are set to ``1.;1.;1.;5;5;5``. The first three parameters are the half-lengths of the cuboid in the x, y and z directions. The last three parameters are the exponents of the superquadric shape; the higher the exponent, the sharper the edge. 
 
 * ``position`` Function expression is set to ``20;70;20``. This is the initial position corresponds to the center of the drop tower.
 
@@ -213,7 +213,7 @@ Since our particle is a cuboid, we will have to define a few more parameters tha
 
   .. math:: I = \frac{1}{12} m (a^2 + b^2)
 
-  where :math:`m` is the mass of the particle, and :math:`a` and :math:`b` are the lengths of the cuboid particle in the x and y directions respectively.
+  where :math:`m` is the mass of the particle, and :math:`a` and :math:`b` are the lengths of the cuboid particle in the the orthogonal directions.
 
 -----------------------
 Running the Simulation
@@ -245,13 +245,16 @@ Results
 
 In this section, we will briefly show some results of this simulation.
 
-First, we look at a slice of the velocity profile during the acceleration phase.
+First, we can look at a slice of the velocity profile during the simulation. The results are shown on the left of the animation below. The animation shows two other initial orientations, corresponding to the S17 and S16 cases of Wang `et al.` [#Wang2024]_. We can see that the orientation has an impact on the trajectory and velocity profile.
 
-.. image:: images/flow-field-acceleration.png
-    :alt: flow_field_acceleration
-    :align: center
+..
+  This is only a template for the animation, will update with the correct url when the video is available. For now I've added the video in the images folder for any curious out there.
 
-We can also compare the results obtained for the velocity in time with the results proposed by the article of Wang `et al.` [#Wang2024]_. They chose to represent the velocity as a function of a dimentionless settling time :math:`t^*`, defined as:
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/Js73OUr08rM" frameborder="0" allowfullscreen></iframe>
+
+We can also compare the results obtained for the velocity in time with the results proposed by the article of Wang `et al.` [#Wang2024]_, which are stored in the ``S18.dat`` file. They chose to represent the velocity as a function of a dimentionless settling time :math:`t^*`, defined as:
 
 .. math:: t^* = \frac{a}{U_c}, \quad U_c = \sqrt{\frac{4 g a |\rho_p - \rho_f|}{3 \rho_f}}
 
