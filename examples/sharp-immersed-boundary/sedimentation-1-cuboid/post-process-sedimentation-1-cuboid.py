@@ -30,7 +30,6 @@ rho = 0.00759
 rho_0= 0.00124
 mass = vol * rho
 I= mass*B**2 / 6
-h0=80
 g=981
 
 Uc = np.sqrt(4./3. * g * B * np.abs(rho-rho_0)/rho_0 )
