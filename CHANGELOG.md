@@ -33,7 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR Adds an experimental prototype that uses the DG method to solve the VOF equation. At the present stage, this prototype is compatibel with surface tension, but does not support any of the redistanciation mechanism and the smoothing of the initial condition. Furthermore, it does not yield satisfactory results when BDF2 is used as a time integration scheme. This feature is thus very experimental. [#1510](https://github.com/chaos-polymtl/lethe/pull/1510) 
+- MAJOR Adds an experimental prototype that uses the DG method to solve the VOF equation. At the present stage, this prototype is compatible with surface tension, but does not support any of the redistanciation mechanism nor the smoothing of the initial condition. Furthermore, it does not yield satisfactory results when BDF2 is used as a time integration scheme. This feature is thus very experimental. [#1510](https://github.com/chaos-polymtl/lethe/pull/1510) 
 
 ## [Master] - 2025-04-24
 
