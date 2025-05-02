@@ -1225,6 +1225,7 @@ HelmholtzProblem<dim>::make_grid()
                    ((face->center()[0] < -0.5*transducer_length) || 
                     (face->center()[0] > 0.5*transducer_length)))
             face->set_boundary_id(31);
+            // face->set_boundary_id(0); // Sound Hard
           else if (face->at_boundary())
             face->set_boundary_id(0);
         }
@@ -1249,6 +1250,7 @@ HelmholtzProblem<dim>::make_grid()
                    ((face->center()[0] < -0.5*transducer_length) || 
                     (face->center()[0] > 0.5*transducer_length)))
             face->set_boundary_id(31);
+            // face->set_boundary_id(0); // Sound Hard
           else if (face->at_boundary())
             face->set_boundary_id(0);
         }
@@ -1267,7 +1269,8 @@ HelmholtzProblem<dim>::make_grid()
         {
           // Set front and back faces to impedance 
           if (face->at_boundary() && ((face->boundary_id() == 0) || (face->boundary_id() == 1)))
-            face->set_boundary_id(0);
+            face->set_boundary_id(31);
+            // face->set_boundary_id(0); // Sound Hard
           // Set top boundary to transducer
           else if (face->at_boundary() && (face->boundary_id() == 3))
             face->set_boundary_id(22);
@@ -1289,7 +1292,8 @@ HelmholtzProblem<dim>::make_grid()
         {
           // Set front and back faces to impedance 
           if (face->at_boundary() && ((face->boundary_id() == 0) || (face->boundary_id() == 1)))
-            face->set_boundary_id(0);
+            face->set_boundary_id(31);
+            // face->set_boundary_id(0); // Sound Hard
           // Set bottom boundary to transducer
           else if (face->at_boundary() && (face->boundary_id() == 2))
             face->set_boundary_id(23);
@@ -1953,6 +1957,13 @@ HelmholtzProblem<dim>::output_results() const
   ComputeVelocityPhase<dim> velocity_phase(parameters);
   data_out.add_data_vector(solution, velocity_phase);
 
+  // Add material_id as cell data for easy visualization
+  data_out.attach_triangulation(triangulation);
+  Vector<float> material_ids(triangulation.n_active_cells());
+  for (const auto &cell : triangulation.active_cell_iterators())
+    material_ids[cell->active_cell_index()] = cell->material_id();
+  data_out.add_data_vector(material_ids, "material_id");
+
   data_out.build_patches();
 
   std::ofstream output(parameters.output_path + parameters.output_name + ".vtk");
@@ -1979,6 +1990,14 @@ HelmholtzProblem<dim>::output_results() const
     data_out_time_harmonic.add_data_vector(solution, time_harmonic_pressure);
     data_out_time_harmonic.add_data_vector(solution, time_harmonic_velocity);
     data_out_time_harmonic.add_data_vector(solution, fluid_displacement);
+
+    // Add material_id as cell data for easy visualization
+    data_out_time_harmonic.attach_triangulation(triangulation);
+    Vector<float> material_ids(triangulation.n_active_cells());
+    for (const auto &cell : triangulation.active_cell_iterators())
+      material_ids[cell->active_cell_index()] = cell->material_id();
+    data_out_time_harmonic.add_data_vector(material_ids, "material_id");
+  
     data_out_time_harmonic.build_patches();
     
     std::string filename = parameters.output_name + Utilities::int_to_string(timestep, 3) + ".vtu";
