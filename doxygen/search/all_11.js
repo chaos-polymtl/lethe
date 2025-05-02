@@ -311,7 +311,7 @@ var searchData=
   ['pic_308',['pic',['../classNavierStokesScratchData.html#a9e58737ebcfc6340e1a42f53056c7a2d',1,'NavierStokesScratchData']]],
   ['picard_309',['picard',['../structParameters_1_1NonLinearSolver.html#a5bd5867af15f5377ea3dfaf7ec0b762dae24fa5f1901c2c38540e9adef2e3b0a1',1,'Parameters::NonLinearSolver']]],
   ['pitch_310',['pitch',['../classCylindricalHelix.html#a9e915209058f5c0823b1f882caab45cd',1,'CylindricalHelix']]],
-  ['plane_311',['plane',['../classPlane.html',1,'Plane&lt; dim &gt;'],['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4babb302c9b5204d593ba3657055842a5fb',1,'Parameters::Lagrangian::InsertionInfo::plane'],['../classPlane.html#a044673be757c5d21dd50a93f1a54f336',1,'Plane::Plane()']]],
+  ['plane_311',['plane',['../classPlane.html',1,'Plane&lt; dim &gt;'],['../classPlane.html#a044673be757c5d21dd50a93f1a54f336',1,'Plane::Plane()'],['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4babb302c9b5204d593ba3657055842a5fb',1,'Parameters::Lagrangian::InsertionInfo::plane']]],
   ['plane_5fcells_5ffor_5finsertion_312',['plane_cells_for_insertion',['../classInsertionPlane.html#a56d358ecf9a2ef3faf86a85bac1fee32',1,'InsertionPlane']]],
   ['pmass_5fpreconditioner_313',['pmass_preconditioner',['../classBlockSchurPreconditioner.html#ac49fb77cb8b93c901e85dc48c76c6479',1,'BlockSchurPreconditioner']]],
   ['pmat_5fpreconditioner_314',['pmat_preconditioner',['../classBlockDiagPreconditioner.html#a8ed8f235ec2f1ac3845aa55e58af203e',1,'BlockDiagPreconditioner']]],

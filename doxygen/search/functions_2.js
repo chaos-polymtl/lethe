@@ -314,7 +314,7 @@ var searchData=
   ['copydata_311',['CopyData',['../classCopyData.html#abd5bc538e7505074f8c46f2b24f4f97c',1,'CopyData']]],
   ['cos_312',['cos',['../classRBFShape.html#a04207b53660131c73d4ee717bad82c33',1,'RBFShape']]],
   ['cosinus_5fderivative_313',['cosinus_derivative',['../classRBFShape.html#a904c73520b5051319725c4b9daf87711',1,'RBFShape']]],
-  ['couplingoperator_314',['CouplingOperator',['../classCouplingOperator.html#ad3cec069dc2523800a00751fba73bd8c',1,'CouplingOperator']]],
+  ['couplingoperator_314',['CouplingOperator',['../classCouplingOperator.html#a23d80ba9102c885e68a3d737003cb468',1,'CouplingOperator']]],
   ['create_5fbool_5fdof_5fmask_315',['create_bool_dof_mask',['../fluid__dynamics__matrix__free__operators_8cc.html#a3b586bfd310632eb0c877a0042cae50f',1,'fluid_dynamics_matrix_free_operators.cc']]],
   ['create_5fgmg_316',['create_gmg',['../classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96',1,'FluidDynamicsVANSMatrixFree::create_GMG()'],['../classFluidDynamicsMatrixFree.html#aa3eb3958aca07db73e8f6a4df2ddd6a8',1,'FluidDynamicsMatrixFree::create_GMG()']]],
   ['create_5flevel_5foperator_317',['create_level_operator',['../classMFNavierStokesVANSPreconditionGMG.html#a5e0afa1f8d6c5027f489ff988648fa62',1,'MFNavierStokesVANSPreconditionGMG::create_level_operator()'],['../classMFNavierStokesPreconditionGMGBase.html#af7665874c6bc00f8bd9dc52337439f26',1,'MFNavierStokesPreconditionGMGBase::create_level_operator()'],['../classMFNavierStokesPreconditionGMG.html#a7fcd5a378fe4e97a9319ac3b5474ec10',1,'MFNavierStokesPreconditionGMG::create_level_operator()']]],
