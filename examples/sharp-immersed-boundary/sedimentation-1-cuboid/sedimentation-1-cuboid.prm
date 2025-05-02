@@ -24,7 +24,7 @@ end
 
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity = 1.6827 
+    set kinematic viscosity = 1.07 
     set density             = 0.00124
   end
 end
