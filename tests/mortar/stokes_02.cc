@@ -48,12 +48,12 @@ run(const std::string formulation)
   const unsigned int n_global_refinements = 3;
   const double       radius               = 0.75;
   const double       outer_radius         = 1.0;
-  const double       rotate               = 3.0;
+  const double       rotate               = 0.0;
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
-  const double       sip_factor           = 10.0;
+  const double       sip_factor           = 100.0;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
