@@ -1330,9 +1330,7 @@ public:
   GeneralStokesOperatorDG(const MappingQ<dim>             &mapping,
                           const DoFHandler<dim>           &dof_handler,
                           const AffineConstraints<Number> &constraints,
-                          const Quadrature<dim>           &quadrature,
-                          const double                     delta_1_scaling)
-    : delta_1_scaling(delta_1_scaling)
+                          const Quadrature<dim>           &quadrature)
   {
     reinit(mapping, dof_handler, constraints, quadrature);
   }
@@ -1600,7 +1598,7 @@ public:
         dsp.reinit(dof_handler.locally_owned_dofs(),
                    dof_handler.get_communicator());
 
-        DoFTools::make_sparsity_pattern(dof_handler, dsp, *constraints);
+        DoFTools::make_flux_sparsity_pattern(dof_handler, dsp, *constraints);
 
         // apply coupling terms
         if (coupling_operator_v)
@@ -1806,16 +1804,6 @@ private:
     phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-    const auto cell = phi_u.get_current_cell_index();
-
-    VectorizedArrayType delta_1;
-    for (unsigned int v = 0;
-         v < this->matrix_free.n_active_entries_per_cell_batch(cell);
-         ++v)
-      delta_1[v] =
-        delta_1_scaling *
-        this->matrix_free.get_cell_iterator(cell, v)->minimum_vertex_distance();
-
     for (unsigned int q = 0; q < phi_u.n_q_points; ++q)
       {
         typename FECellIntegratorP::value_type    p_value_result    = {};
@@ -1823,8 +1811,7 @@ private:
         typename FECellIntegratorU::value_type    u_value_result    = {};
         typename FECellIntegratorU::gradient_type u_gradient_result = {};
 
-        const auto p_value    = phi_p.get_value(q);
-        const auto p_gradient = phi_p.get_gradient(q);
+        const auto p_value = phi_p.get_value(q);
 
         const auto u_gradient = phi_u.get_gradient(q);
 
@@ -1847,10 +1834,6 @@ private:
         // c)     (q, div(u))
         for (unsigned int d = 0; d < dim; ++d)
           p_value_result -= u_gradient[d][d];
-
-        // d) δ_1 (∇q, ∇p)
-        if (delta_1_scaling != 0.0)
-          p_gradient_result = -delta_1 * p_gradient;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
@@ -1891,16 +1874,20 @@ private:
 
     phi_m.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-
-    for (unsigned int i = 0; i < phi_m.dofs_per_cell; ++i)
-      phi_m.begin_dof_values()[i] = 0.0;
-    for (unsigned int i = 0; i < phi_p.dofs_per_cell; ++i)
-      phi_p.begin_dof_values()[i] = 0.0;
   }
 
   void
   local_apply_boundary_cell(FEFaceIntegratorU &phi) const
   {
+    if ((phi.boundary_id() == 0 || phi.boundary_id() == 5))
+      {
+        const VectorizedArrayType zero = 0.0;
+
+        for (unsigned int i = 0; i < phi.dofs_per_cell; ++i)
+          phi.begin_dof_values()[i] = zero;
+        return;
+      }
+
     phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
     const auto sigma = phi.read_cell_data(penalty_parameters) * panalty_factor;
@@ -1916,9 +1903,6 @@ private:
       }
 
     phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-
-    for (unsigned int i = 0; i < phi.dofs_per_cell; ++i)
-      phi.begin_dof_values()[i] = 0.0;
   }
 
   void
@@ -1987,6 +1971,4 @@ private:
   VectorizedArrayType                panalty_factor;
 
   std::shared_ptr<CouplingOperator<dim, dim, Number>> coupling_operator_v;
-
-  const double delta_1_scaling;
 };
