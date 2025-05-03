@@ -1670,7 +1670,7 @@ private:
         const auto u_gradient = phi_u.get_gradient(q);
 
         // a)     (ε(v), 2νε(u))
-        if (true)
+        if (false)
           {
             symm_scalar_product_add(u_gradient_result,
                                     u_gradient,
