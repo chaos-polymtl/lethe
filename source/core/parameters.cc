@@ -1552,7 +1552,7 @@ namespace Parameters
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
 
       prm.declare_entry(
-        "VOF uses dg",
+        "VOF uses DG",
         "false",
         Patterns::Bool(),
         "Switch VOF to Discontinuous Galerkin (DG) formulation");

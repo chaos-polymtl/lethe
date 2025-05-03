@@ -193,7 +193,7 @@ public:
   }
 
 
-  /** @brief Reinitializes the content of the scratch for the internal faces. This is only used for the DG assemblers.
+  /** @brief Reinitialize the content of the scratch for the internal faces. This is only used for the DG assemblers.
    *
    * @param[in] cell The cell over which the assembly is being carried.
    *
@@ -217,7 +217,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int                                   &face_no,
     const unsigned int                                   &sub_face_no,
-    const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
+    const typename DoFHandler<dim>::active_cell_iterator &neighbor_cell,
     const unsigned int                                   &neigh_face_no,
     const unsigned int                                   &neigh_sub_face_no,
     const VectorType                                     &current_solution)
@@ -327,15 +327,14 @@ public:
   }
 
 
-  /** @brief Reinitializes the content of the scratch regarding the velocity for internal/boundary faces.
+  /** @brief Reinitialize the content of the scratch regarding the velocity for internal/boundary faces.
    *  The velocity is inherently assumed to have been solved using a CG scheme.
    *
    * @param[in] cell The cell over which the assembly is being carried.
    *
-   * @param[in] face The face index associated with the cell
+   * @param[in] face_no The face index associated with the cell
    *
-   * @param[in] velocity_solution The present value of the solution.
-   * there are any).
+   * @param[in] velocity_solution The present value of the velocity solution.
    */
   template <typename VectorType>
   void
