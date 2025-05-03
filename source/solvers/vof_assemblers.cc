@@ -473,7 +473,7 @@ VOFAssemblerDGCore<dim>::assemble_matrix(
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
 
-  // assembling local matrix and right hand side
+  // assembling local matrix
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields

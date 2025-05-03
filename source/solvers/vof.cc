@@ -283,9 +283,7 @@ VolumeOfFluid<dim>::assemble_system_matrix_dg()
       copy_data_face.joint_dof_indices =
         scratch_data.fe_interface_values_vof.get_interface_dof_indices();
 
-      // Gather velocity information at the face to properly advect
-      const DoFHandler<dim> *dof_handler_fluid =
-        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Gather velocity information at the face to advect properly
       // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
@@ -474,7 +472,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_rhs_dg()
 {
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data =
@@ -484,7 +482,7 @@ VolumeOfFluid<dim>::assemble_system_rhs_dg()
                         *this->cell_quadrature,
                         *this->face_quadrature,
                         *this->mapping,
-                        dof_handler_fd->get_fe());
+                        dof_handler_fluid->get_fe());
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
                                         this->cell_quadrature->size());
@@ -528,8 +526,8 @@ VolumeOfFluid<dim>::assemble_system_rhs_dg()
       scratch_data.fe_interface_values_vof.get_interface_dof_indices();
     copy_data_face.face_rhs.reinit(scratch_data.n_interface_dofs);
 
-    // Gather velocity information at the face to properly advect
-    // First gather the dof handler for the fluid dynamics
+    // Gather velocity information at the face to advect properly.
+    // First gather the dof handler for the fluid dynamics.
     const DoFHandler<dim> *dof_handler_fluid =
       multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
     // Get the cell that corresponds to the fluid dynamics
