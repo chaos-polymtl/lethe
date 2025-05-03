@@ -1319,6 +1319,8 @@ class GeneralStokesOperatorDG : public Subscriptor
 public:
   using FECellIntegratorU =
     FEEvaluation<dim, -1, 0, dim, Number, VectorizedArrayType>;
+  using FEFaceIntegratorU =
+    FEFaceEvaluation<dim, -1, 0, dim, Number, VectorizedArrayType>;
   using FECellIntegratorP =
     FEEvaluation<dim, -1, 0, 1, Number, VectorizedArrayType>;
 
@@ -1344,6 +1346,10 @@ public:
     typename MatrixFree<dim, Number, VectorizedArrayType>::AdditionalData data;
     data.mapping_update_flags =
       update_quadrature_points | update_gradients | update_values;
+    data.mapping_update_flags_inner_faces =
+      update_values | update_gradients | update_JxW_values;
+    data.mapping_update_flags_boundary_faces =
+      update_values | update_gradients | update_JxW_values;
 
     matrix_free.reinit(mapping, dof_handler, constraints, quadrature, data);
 
@@ -1425,8 +1431,12 @@ public:
   {
     src.update_ghost_values();
 
-    matrix_free.cell_loop(
+    matrix_free.loop(
       &GeneralStokesOperatorDG<dim, Number, VectorizedArrayType>::do_vmult_cell,
+      &GeneralStokesOperatorDG<dim, Number, VectorizedArrayType>::
+        local_apply_face,
+      &GeneralStokesOperatorDG<dim, Number, VectorizedArrayType>::
+        local_apply_boundary,
       this,
       dst,
       src,
@@ -1642,6 +1652,45 @@ private:
   }
 
   void
+  local_apply_face(
+    const MatrixFree<dim, Number, VectorizedArrayType> &data,
+    VectorType                                         &dst,
+    const VectorType                                   &src,
+    const std::pair<unsigned int, unsigned int>        &face_range) const
+  {
+    FEFaceIntegratorU phi_m(data, true);
+    FEFaceIntegratorU phi_p(data, false);
+
+    for (unsigned int face = face_range.first; face < face_range.second; ++face)
+      {
+        phi_m.reinit(face);
+        phi_p.reinit(face);
+        phi_m.read_dof_values(src);
+        phi_p.read_dof_values(src);
+        local_apply_face_cell(phi_m, phi_p);
+        phi_m.distribute_local_to_global(dst);
+        phi_p.distribute_local_to_global(dst);
+      }
+  }
+
+  void
+  local_apply_boundary(
+    const MatrixFree<dim, Number, VectorizedArrayType> &data,
+    VectorType                                         &dst,
+    const VectorType                                   &src,
+    const std::pair<unsigned int, unsigned int>        &face_range) const
+  {
+    FEFaceIntegratorU phi(data, true);
+    for (unsigned int face = face_range.first; face < face_range.second; ++face)
+      {
+        phi.reinit(face);
+        phi.read_dof_values(src);
+        local_apply_boundary_cell(phi);
+        phi.distribute_local_to_global(dst);
+      }
+  }
+
+  void
   do_vmult_cell_single(FECellIntegratorU &phi_u, FECellIntegratorP &phi_p) const
   {
     phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -1702,6 +1751,23 @@ private:
 
     phi_u.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+  }
+
+  void
+  local_apply_face_cell(FEFaceIntegratorU &phi_m,
+                        FEFaceIntegratorU &phi_p) const
+  {
+    for (unsigned int i = 0; i < phi_m.dofs_per_cell; ++i)
+      phi_m.begin_dof_values()[i] = 0.0;
+    for (unsigned int i = 0; i < phi_p.dofs_per_cell; ++i)
+      phi_p.begin_dof_values()[i] = 0.0;
+  }
+
+  void
+  local_apply_boundary_cell(FEFaceIntegratorU &phi) const
+  {
+    for (unsigned int i = 0; i < phi.dofs_per_cell; ++i)
+      phi.begin_dof_values()[i] = 0.0;
   }
 
   MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
