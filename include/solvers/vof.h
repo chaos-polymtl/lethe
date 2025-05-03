@@ -652,10 +652,10 @@ private:
 
   /**
    * @brief Helper function to reinit the face velocity with the adequate solution.
-   * This prevents code duplication throughout the VOF class. The function looks at
-   * the multiphysics interface to decide if the velocity is a block velocity or
-   * a regular velocity. Furthermore, it also checks if a time-averaged solution
-   * is required. Otherwise, the code here would be copied four times.
+   * This prevents code duplication throughout the VOF class. The function looks
+   * at the multiphysics interface to decide if the velocity is a block velocity
+   * or a regular velocity. Furthermore, it also checks if a time-averaged
+   * solution is required. Otherwise, the code here would be copied four times.
    *
    * @param[in] velocity_cell the iterator of the cell where the velocity is to
    * be reinitialized.
