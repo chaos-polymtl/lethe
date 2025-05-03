@@ -514,7 +514,7 @@ VOFAssemblerDGCore<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
   // Copy data elements
   auto &local_rhs = copy_data.local_rhs;
 
-  // Assembling local right hand side
+  // Assembling local right-hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
@@ -528,7 +528,7 @@ VOFAssemblerDGCore<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
         {
           const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
 
-          // Weak form of : u * grad(phi) =0
+          // Linearized weak form of the strong problem u * grad(phi) =0
           // Note that the advection term has been weakened for it to appear
           // explicitly in the weak form as a boundary term.
           local_rhs(i) -= (-grad_phi_phase_i * velocity * phase_value) * JxW;
