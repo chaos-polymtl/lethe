@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief StokesOperator: test on rotated hypercube-cylinder geometry.
+ * @brief GeneralStokesOperator: test on rotated hypercube-cylinder geometry.
  */
 
 #include <deal.II/base/conditional_ostream.h>

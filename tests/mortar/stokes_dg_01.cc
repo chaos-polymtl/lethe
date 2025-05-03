@@ -125,7 +125,7 @@ main(int argc, char **argv)
     }
   constraints.close();
 
-  StokesOperator<dim, double> op(
+  GeneralStokesOperatorDG<dim, double> op(
     mapping, dof_handler, constraints, quadrature, delta_1_scaling);
 
   if (grid == "hyper_cube_with_cylindrical_hole")
