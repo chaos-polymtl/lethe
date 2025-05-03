@@ -24,7 +24,7 @@ using VOFAssemblerBase =
 
 /**
  * @brief A pure virtual class that serves as an interface for all
- * of the assemblers for the VOF solver on internal faces.
+ * the assemblers for the VOF solver on internal faces.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  *
@@ -200,9 +200,9 @@ public:
 
 
 /**
- * @brief Class that assembles the core (cells) of the Tracer equation for DG elements.
+ * @brief Class that assembles the core (cells) of the VOF equation for DG elements.
  * This class assembles the weak form of:
- * \f$\mathbf{u} \cdot \nabla phi = 0 \f$
+ * \f$\mathbf{u} \cdot \nabla \phi = 0 \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -216,7 +216,7 @@ public:
   {}
 
   /**
-   * @brief Assembles the matrix
+   * @brief Assemble the matrix
    * @param[in] scratch_data (see base class)
    * @param[in,out] copy_data (see base class)
    */
@@ -226,7 +226,7 @@ public:
 
 
   /**
-   * @brief Assembles the rhs
+   * @brief Assemble the rhs
    * @param[in] scratch_data (see base class)
    * @param[in,out] copy_data (see base class)
    */
@@ -237,9 +237,9 @@ public:
 
 
 /**
- * @brief Assembles the symmetric interior penalty (SIPG) method (or
+ * @brief Assembles the symmetric interior penalty Galerkin (SIPG) method (or
  * Nitsche's method) for internal faces. This assembler is only required
- * when solving the Tracer equation using a discontinuous Galerkin
+ * when solving the VOF equation using a discontinuous Galerkin
  * discretization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -254,12 +254,12 @@ public:
   {}
 
   /**
-   * @brief Interface for the call to matrix assembly
-   * @param[in]  scratch_data Scratch data containing the Tracer
+   * @brief Interface to call the matrix assembly
+   * @param[in]  scratch_data Scratch data containing the VOF
    * information. It is important to note that the scratch data has to have been
    * re-inited before calling for matrix assembly.
    * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
-   * should be copied
+   * should be copied.
    */
   virtual void
   assemble_matrix(const VOFScratchData<dim>   &scratch_data,
@@ -268,11 +268,11 @@ public:
 
   /**
    * @brief Interface for the call to rhs
-   * @param[in]  scratch_data Scratch data containing the Tracer
+   * @param[in]  scratch_data Scratch data containing the VOF
    * information. It is important to note that the scratch data has to have been
    * re-inited before calling for matrix assembly.
    * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
-   * should be copied
+   * should be copied.
    */
   virtual void
   assemble_rhs(const VOFScratchData<dim>   &scratch_data,
