@@ -1354,6 +1354,10 @@ public:
     matrix_free.reinit(mapping, dof_handler, constraints, quadrature, data);
 
     valid_system = false;
+
+    comute_penalty_parameters();
+
+    panalty_factor = compute_pentaly_factor(dof_handler.get_fe().degree, 1.0);
   }
 
   /**
@@ -1379,28 +1383,6 @@ public:
       bid_1,
       sip_factor,
       0);
-
-    const bool is_p_disc = matrix_free.get_dof_handler()
-                             .get_fe()
-                             .base_element(matrix_free.get_dof_handler()
-                                             .get_fe()
-                                             .component_to_base_index(dim)
-                                             .first)
-                             .n_dofs_per_vertex() == 0;
-
-    if (is_p_disc == false)
-      coupling_operator_p = std::make_shared<CouplingOperator<dim, 1, Number>>(
-        *matrix_free.get_mapping_info().mapping,
-        matrix_free.get_dof_handler(),
-        matrix_free.get_affine_constraints(),
-        matrix_free.get_quadrature(),
-        n_subdivisions,
-        radius,
-        rotate_pi,
-        bid_0,
-        bid_1,
-        sip_factor,
-        dim);
   }
 
   virtual types::global_dof_index
@@ -1445,9 +1427,6 @@ public:
     // apply coupling terms
     if (coupling_operator_v)
       coupling_operator_v->vmult_add(dst, src);
-
-    if (coupling_operator_p)
-      coupling_operator_p->vmult_add(dst, src);
 
     src.zero_out_ghost_values();
   }
@@ -1500,18 +1479,88 @@ public:
       do_vmult_cell_single(phi_0, phi_1);
     };
 
+    MatrixFreeTools::internal::
+      ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
+        data_face;
+
+    data_face.dof_numbers               = {0, 0};
+    data_face.quad_numbers              = {0, 0};
+    data_face.n_components              = {dim, dim};
+    data_face.first_selected_components = {0, 0};
+    data_face.batch_type                = {1, 2};
+
+    data_face.op_create =
+      [&](const std::pair<unsigned int, unsigned int> &range) {
+        std::vector<
+          std::unique_ptr<FEEvaluationData<dim, VectorizedArray<Number>, true>>>
+          phi;
+
+        phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
+          matrix_free, range, true, 0, 0, 0));
+
+        phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
+          matrix_free, range, false, 0, 0, 0));
+
+        return phi;
+      };
+
+    data_face.op_reinit = [](auto &phi, const unsigned batch) {
+      static_cast<FEFaceIntegratorU &>(*phi[0]).reinit(batch);
+      static_cast<FEFaceIntegratorU &>(*phi[1]).reinit(batch);
+    };
+
+    data_face.op_compute = [&](auto &phi) {
+      auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
+      auto &phi_1 = static_cast<FEFaceIntegratorU &>(*phi[1]);
+
+      local_apply_face_cell(phi_0, phi_1);
+    };
+
+    MatrixFreeTools::internal::
+      ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
+        data_boundary;
+
+    data_boundary.dof_numbers               = {0};
+    data_boundary.quad_numbers              = {0};
+    data_boundary.n_components              = {dim};
+    data_boundary.first_selected_components = {0};
+    data_boundary.batch_type                = {1};
+
+    data_boundary.op_create =
+      [&](const std::pair<unsigned int, unsigned int> &range) {
+        std::vector<
+          std::unique_ptr<FEEvaluationData<dim, VectorizedArray<Number>, true>>>
+          phi;
+
+        phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
+          matrix_free, range, true, 0, 0, 0));
+
+        return phi;
+      };
+
+    data_boundary.op_reinit = [](auto &phi, const unsigned batch) {
+      static_cast<FEFaceIntegratorU &>(*phi[0]).reinit(batch);
+    };
+
+    data_boundary.op_compute = [&](auto &phi) {
+      auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
+
+      local_apply_boundary_cell(phi_0);
+    };
+
     std::vector<VectorType *> diagonal_global_components(1);
     diagonal_global_components[0] = &diagonal;
 
-    MatrixFreeTools::internal::compute_diagonal(
-      matrix_free, data_cell, {}, {}, diagonal, diagonal_global_components);
+    MatrixFreeTools::internal::compute_diagonal(matrix_free,
+                                                data_cell,
+                                                data_face,
+                                                data_boundary,
+                                                diagonal,
+                                                diagonal_global_components);
 
     // add coupling terms
     if (coupling_operator_v)
       coupling_operator_v->add_diagonal_entries(diagonal);
-
-    if (coupling_operator_p)
-      coupling_operator_p->add_diagonal_entries(diagonal);
 
     for (auto &i : diagonal)
       i = (i != 0.0) ? (1.0 / i) : 1.0;
@@ -1539,12 +1588,6 @@ public:
         affine_constraints_tmp.copy_from(
           coupling_operator_v->get_affine_constraints());
 
-        if (coupling_operator_p)
-          affine_constraints_tmp.merge(
-            coupling_operator_p->get_affine_constraints(),
-            AffineConstraints<Number>::MergeConflictBehavior::left_object_wins,
-            true);
-
         affine_constraints_tmp.close();
       }
 
@@ -1562,9 +1605,6 @@ public:
         // apply coupling terms
         if (coupling_operator_v)
           coupling_operator_v->add_sparsity_pattern_entries(dsp);
-
-        if (coupling_operator_p)
-          coupling_operator_p->add_sparsity_pattern_entries(dsp);
 
         dsp.compress();
 
@@ -1612,15 +1652,85 @@ public:
           do_vmult_cell_single(phi_0, phi_1);
         };
 
-        MatrixFreeTools::internal::compute_matrix(
-          matrix_free, *constraints, data_cell, {}, {}, system_matrix);
+        MatrixFreeTools::internal::
+          ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
+            data_face;
+
+        data_face.dof_numbers               = {0, 0};
+        data_face.quad_numbers              = {0, 0};
+        data_face.n_components              = {dim, dim};
+        data_face.first_selected_components = {0, 0};
+        data_face.batch_type                = {1, 2};
+
+        data_face.op_create =
+          [&](const std::pair<unsigned int, unsigned int> &range) {
+            std::vector<std::unique_ptr<
+              FEEvaluationData<dim, VectorizedArray<Number>, true>>>
+              phi;
+
+            phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
+              matrix_free, range, true, 0, 0, 0));
+
+            phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
+              matrix_free, range, false, 0, 0, 0));
+
+            return phi;
+          };
+
+        data_face.op_reinit = [](auto &phi, const unsigned batch) {
+          static_cast<FEFaceIntegratorU &>(*phi[0]).reinit(batch);
+          static_cast<FEFaceIntegratorU &>(*phi[1]).reinit(batch);
+        };
+
+        data_face.op_compute = [&](auto &phi) {
+          auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
+          auto &phi_1 = static_cast<FEFaceIntegratorU &>(*phi[1]);
+
+          local_apply_face_cell(phi_0, phi_1);
+        };
+
+        MatrixFreeTools::internal::
+          ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
+            data_boundary;
+
+        data_boundary.dof_numbers               = {0};
+        data_boundary.quad_numbers              = {0};
+        data_boundary.n_components              = {dim};
+        data_boundary.first_selected_components = {0};
+        data_boundary.batch_type                = {1};
+
+        data_boundary.op_create =
+          [&](const std::pair<unsigned int, unsigned int> &range) {
+            std::vector<std::unique_ptr<
+              FEEvaluationData<dim, VectorizedArray<Number>, true>>>
+              phi;
+
+            phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
+              matrix_free, range, true, 0, 0, 0));
+
+            return phi;
+          };
+
+        data_boundary.op_reinit = [](auto &phi, const unsigned batch) {
+          static_cast<FEFaceIntegratorU &>(*phi[0]).reinit(batch);
+        };
+
+        data_boundary.op_compute = [&](auto &phi) {
+          auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
+
+          local_apply_boundary_cell(phi_0);
+        };
+
+        MatrixFreeTools::internal::compute_matrix(matrix_free,
+                                                  *constraints,
+                                                  data_cell,
+                                                  data_face,
+                                                  data_boundary,
+                                                  system_matrix);
 
         // apply coupling terms
         if (coupling_operator_v)
           coupling_operator_v->add_system_matrix_entries(system_matrix);
-
-        if (coupling_operator_p)
-          coupling_operator_p->add_system_matrix_entries(system_matrix);
 
         system_matrix.compress(VectorOperation::add);
 
@@ -1757,6 +1867,31 @@ private:
   local_apply_face_cell(FEFaceIntegratorU &phi_m,
                         FEFaceIntegratorU &phi_p) const
   {
+    phi_m.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+    const auto sigma = std::max(phi_m.read_cell_data(penalty_parameters),
+                                phi_p.read_cell_data(penalty_parameters)) *
+                       panalty_factor;
+
+    for (const auto q : phi_m.quadrature_point_indices())
+      {
+        const auto average_value =
+          (phi_m.get_value(q) - phi_p.get_value(q)) * 0.5;
+        const auto average_valgrad =
+          average_value * 2. * sigma -
+          (phi_m.get_normal_derivative(q) + phi_p.get_normal_derivative(q)) *
+            0.5;
+
+        phi_m.submit_normal_derivative(-average_value, q);
+        phi_p.submit_normal_derivative(-average_value, q);
+        phi_m.submit_value(average_valgrad, q);
+        phi_p.submit_value(-average_valgrad, q);
+      }
+
+    phi_m.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+
     for (unsigned int i = 0; i < phi_m.dofs_per_cell; ++i)
       phi_m.begin_dof_values()[i] = 0.0;
     for (unsigned int i = 0; i < phi_p.dofs_per_cell; ++i)
@@ -1766,16 +1901,92 @@ private:
   void
   local_apply_boundary_cell(FEFaceIntegratorU &phi) const
   {
+    phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+    const auto sigma = phi.read_cell_data(penalty_parameters) * panalty_factor;
+
+    for (const auto q : phi.quadrature_point_indices())
+      {
+        const auto average_value = phi.get_value(q);
+        const auto average_valgrad =
+          average_value * sigma * 2.0 - phi.get_normal_derivative(q);
+
+        phi.submit_normal_derivative(-average_value, q);
+        phi.submit_value(average_valgrad, q);
+      }
+
+    phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+
     for (unsigned int i = 0; i < phi.dofs_per_cell; ++i)
       phi.begin_dof_values()[i] = 0.0;
+  }
+
+  void
+  comute_penalty_parameters()
+  {
+    const unsigned int n_cells =
+      matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
+    penalty_parameters.resize(n_cells);
+
+    const auto &mapping = *matrix_free.get_mapping_info().mapping;
+    const auto &fe      = matrix_free.get_dof_handler().get_fe();
+
+    FEValues<dim> fe_values(mapping,
+                            fe,
+                            matrix_free.get_quadrature(),
+                            update_JxW_values);
+
+    FEFaceValues<dim> fe_face_values(mapping,
+                                     fe,
+                                     matrix_free.get_face_quadrature(),
+                                     update_JxW_values);
+
+    for (unsigned int cell = 0; cell < n_cells; ++cell)
+      for (unsigned int v = 0;
+           v < matrix_free.n_active_entries_per_cell_batch(cell);
+           ++v)
+        {
+          const auto dealii_cell = matrix_free.get_cell_iterator(cell, v);
+          fe_values.reinit(dealii_cell);
+
+          // compute cell volume
+          Number volume = 0.0;
+          for (const auto q : fe_values.quadrature_point_indices())
+            volume += fe_values.JxW(q);
+
+          // compute surface area
+          Number surface_area = 0.0;
+          for (const auto f : dealii_cell->face_indices())
+            {
+              fe_face_values.reinit(dealii_cell, f);
+
+              const Number factor = (dealii_cell->at_boundary(f) &&
+                                     !dealii_cell->has_periodic_neighbor(f)) ?
+                                      1. :
+                                      0.5;
+
+              for (const auto q : fe_face_values.quadrature_point_indices())
+                surface_area += fe_face_values.JxW(q) * factor;
+            }
+
+          penalty_parameters[cell][v] = surface_area / volume;
+        }
+  }
+
+  Number
+  compute_pentaly_factor(const unsigned int degree, const Number factor) const
+  {
+    return factor * (degree + 1.0) * (degree + 1.0);
   }
 
   MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
   mutable TrilinosWrappers::SparseMatrix       system_matrix;
   mutable bool                                 valid_system;
 
+  AlignedVector<VectorizedArrayType> penalty_parameters;
+  VectorizedArrayType                panalty_factor;
+
   std::shared_ptr<CouplingOperator<dim, dim, Number>> coupling_operator_v;
-  std::shared_ptr<CouplingOperator<dim, 1, Number>>   coupling_operator_p;
 
   const double delta_1_scaling;
 };
