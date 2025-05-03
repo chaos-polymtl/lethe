@@ -201,12 +201,12 @@ public:
    *
    * @param[in] sub_face_no The subface index associated with the face
    *
-   * @param[in] neigh_cell The neighboring cell
+   * @param[in] neighbor_cell The neighboring cell
    *
-   * @param[in] neigh_face_no The face index associated with the neighboring
+   * @param[in] neighbor_face_no The face index associated with the neighboring
    * cell
    *
-   * @param[in] neigh_sub_face_no The subface index associated with the
+   * @param[in] neighbor_sub_face_no The subface index associated with the
    * neighboring cell
    *
    * @param[in] current_solution The present value of the solution.
@@ -218,12 +218,16 @@ public:
     const unsigned int                                   &face_no,
     const unsigned int                                   &sub_face_no,
     const typename DoFHandler<dim>::active_cell_iterator &neighbor_cell,
-    const unsigned int                                   &neigh_face_no,
-    const unsigned int                                   &neigh_sub_face_no,
+    const unsigned int                                   &neighbor_face_no,
+    const unsigned int                                   &neighbor_sub_face_no,
     const VectorType                                     &current_solution)
   {
-    fe_interface_values_vof.reinit(
-      cell, face_no, sub_face_no, neigh_cell, neigh_face_no, neigh_sub_face_no);
+    fe_interface_values_vof.reinit(cell,
+                                   face_no,
+                                   sub_face_no,
+                                   neighbor_cell,
+                                   neighbor_face_no,
+                                   neighbor_sub_face_no);
     face_quadrature_points = fe_interface_values_vof.get_quadrature_points();
 
     n_interface_dofs = fe_interface_values_vof.n_current_interface_dofs();
