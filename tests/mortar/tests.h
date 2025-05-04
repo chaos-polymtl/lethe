@@ -1607,6 +1607,7 @@ public:
 
         data_boundary.op_reinit = [](auto &phi, const unsigned batch) {
           static_cast<FEFaceIntegratorU &>(*phi[0]).reinit(batch);
+          static_cast<FEFaceIntegratorP &>(*phi[1]).reinit(batch);
         };
 
         data_boundary.op_compute = [&](auto &phi) {
@@ -1720,29 +1721,19 @@ private:
         typename FECellIntegratorU::value_type    u_value_result    = {};
         typename FECellIntegratorU::gradient_type u_gradient_result = {};
 
-        const auto p_value = phi_p.get_value(q);
-
+        const auto p_value    = phi_p.get_value(q);
+        const auto u_value    = phi_u.get_value(q);
         const auto u_gradient = phi_u.get_gradient(q);
 
-        // a)     (ε(v), 2νε(u))
-        if (false)
-          {
-            symm_scalar_product_add(u_gradient_result,
-                                    u_gradient,
-                                    VectorizedArrayType(2.0));
-          }
-        else
-          {
-            u_gradient_result = u_gradient;
-          }
+        // a)     (∇v, ∇u)
+        u_gradient_result = u_gradient;
 
         // b)   - (div(v), p)
         for (unsigned int d = 0; d < dim; ++d)
           u_gradient_result[d][d] -= p_value;
 
-        // c)     (q, div(u))
-        for (unsigned int d = 0; d < dim; ++d)
-          p_value_result -= u_gradient[d][d];
+        // c)   - (∇q, u)
+        p_gradient_result = -u_value;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
@@ -1763,6 +1754,8 @@ private:
   {
     phi_u_m.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi_u_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p_m.evaluate(EvaluationFlags::values);
+    phi_p_p.evaluate(EvaluationFlags::values);
 
     const auto sigma = std::max(phi_u_m.read_cell_data(penalty_parameters),
                                 phi_u_p.read_cell_data(penalty_parameters)) *
@@ -1772,26 +1765,30 @@ private:
       {
         const auto average_value =
           (phi_u_m.get_value(q) - phi_u_p.get_value(q)) * 0.5;
+        const auto average_normal_value_u =
+          average_value * phi_u_m.normal_vector(q);
+        const auto average_value_p =
+          (phi_p_m.get_value(q) - phi_p_p.get_value(q)) * 0.5;
         const auto avg_normal_gradient = (phi_u_m.get_normal_derivative(q) +
                                           phi_u_p.get_normal_derivative(q)) *
                                          0.5;
 
-        const auto average_valgrad =
-          average_value * 2. * sigma - avg_normal_gradient;
+        const auto average_valgrad = average_value * 2. * sigma -
+                                     avg_normal_gradient +
+                                     average_value_p * phi_u_m.normal_vector(q);
 
         phi_u_m.submit_normal_derivative(-average_value, q);
         phi_u_p.submit_normal_derivative(-average_value, q);
         phi_u_m.submit_value(average_valgrad, q);
         phi_u_p.submit_value(-average_valgrad, q);
+        phi_p_m.submit_value(average_normal_value_u, q);
+        phi_p_p.submit_value(-average_normal_value_u, q);
       }
 
     phi_u_m.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi_u_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-
-    for (unsigned int i = 0; i < phi_p_m.dofs_per_cell; ++i) // TODO
-      phi_p_m.begin_dof_values()[i] = 0.0;
-    for (unsigned int i = 0; i < phi_p_p.dofs_per_cell; ++i) // TODO
-      phi_p_p.begin_dof_values()[i] = 0.0;
+    phi_p_m.integrate(EvaluationFlags::values);
+    phi_p_p.integrate(EvaluationFlags::values);
   }
 
   void
@@ -1808,24 +1805,29 @@ private:
       }
 
     phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p.evaluate(EvaluationFlags::values);
 
     const auto sigma =
       phi_u.read_cell_data(penalty_parameters) * panalty_factor;
 
     for (const auto q : phi_u.quadrature_point_indices())
       {
-        const auto average_value = phi_u.get_value(q);
-        const auto average_valgrad =
-          average_value * sigma * 2.0 - phi_u.get_normal_derivative(q);
+        const auto average_value = phi_u.get_value(q) * 0.0;
+        const auto average_normal_value_u =
+          average_value * phi_u.normal_vector(q);
+        const auto average_value_p = phi_p.get_value(q);
+
+        const auto average_valgrad = average_value * sigma * 2.0 -
+                                     phi_u.get_normal_derivative(q) +
+                                     average_value_p * phi_u.normal_vector(q);
 
         phi_u.submit_normal_derivative(-average_value, q);
         phi_u.submit_value(average_valgrad, q);
+        phi_p.submit_value(average_normal_value_u, q);
       }
 
     phi_u.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-
-    for (unsigned int i = 0; i < phi_p.dofs_per_cell; ++i) // TODO
-      phi_p.begin_dof_values()[i] = 0.0;
+    phi_p.integrate(EvaluationFlags::values);
   }
 
   void

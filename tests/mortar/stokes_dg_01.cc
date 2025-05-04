@@ -84,6 +84,40 @@ main(int argc, char **argv)
   const IndexSet            locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
+
+  if (true)
+    {
+      unsigned int min_index = numbers::invalid_unsigned_int;
+
+      std::vector<types::global_dof_index> dof_indices;
+
+      // Loop over the cells to identify the min index
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              const auto &fe = cell->get_fe();
+
+              dof_indices.resize(fe.n_dofs_per_cell());
+              cell->get_dof_indices(dof_indices);
+
+              for (unsigned int i = 0; i < dof_indices.size(); ++i)
+                if (fe.system_to_component_index(i).first == dim)
+                  min_index = std::min(min_index, dof_indices[i]);
+            }
+        }
+
+      // Necessary to find the min across all cores.
+      min_index =
+        Utilities::MPI::min(min_index, dof_handler.get_communicator());
+
+      if (locally_relevant_dofs.is_element(min_index))
+        constraints.add_line(min_index);
+
+      std::cout << min_index << std::endl;
+    }
+
+
   constraints.close();
 
   GeneralStokesOperatorDG<dim, double> op(mapping,
