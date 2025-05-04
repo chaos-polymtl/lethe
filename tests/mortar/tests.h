@@ -1323,6 +1323,8 @@ public:
     FEFaceEvaluation<dim, -1, 0, dim, Number, VectorizedArrayType>;
   using FECellIntegratorP =
     FEEvaluation<dim, -1, 0, 1, Number, VectorizedArrayType>;
+  using FEFaceIntegratorP =
+    FEFaceEvaluation<dim, -1, 0, 1, Number, VectorizedArrayType>;
 
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
@@ -1484,11 +1486,11 @@ public:
       ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
         data_face;
 
-    data_face.dof_numbers               = {0, 0};
-    data_face.quad_numbers              = {0, 0};
-    data_face.n_components              = {dim, dim};
-    data_face.first_selected_components = {0, 0};
-    data_face.batch_type                = {1, 2};
+    data_face.dof_numbers               = {0, 0, 0, 0};
+    data_face.quad_numbers              = {0, 0, 0, 0};
+    data_face.n_components              = {dim, dim, 1, 1};
+    data_face.first_selected_components = {0, 0, dim, dim};
+    data_face.batch_type                = {1, 2, 1, 2};
 
     data_face.op_create =
       [&](const std::pair<unsigned int, unsigned int> &range) {
@@ -1502,30 +1504,40 @@ public:
         phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
           matrix_free, range, false, 0, 0, 0));
 
+        phi.emplace_back(std::make_unique<FEFaceIntegratorP>(
+          matrix_free, range, true, 0, 0, dim));
+
+        phi.emplace_back(std::make_unique<FEFaceIntegratorP>(
+          matrix_free, range, false, 0, 0, dim));
+
         return phi;
       };
 
     data_face.op_reinit = [](auto &phi, const unsigned batch) {
       static_cast<FEFaceIntegratorU &>(*phi[0]).reinit(batch);
       static_cast<FEFaceIntegratorU &>(*phi[1]).reinit(batch);
+      static_cast<FEFaceIntegratorP &>(*phi[2]).reinit(batch);
+      static_cast<FEFaceIntegratorP &>(*phi[3]).reinit(batch);
     };
 
     data_face.op_compute = [&](auto &phi) {
       auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
       auto &phi_1 = static_cast<FEFaceIntegratorU &>(*phi[1]);
+      auto &phi_2 = static_cast<FEFaceIntegratorP &>(*phi[2]);
+      auto &phi_3 = static_cast<FEFaceIntegratorP &>(*phi[3]);
 
-      local_apply_face_cell(phi_0, phi_1);
+      local_apply_face_cell(phi_0, phi_1, phi_2, phi_3);
     };
 
     MatrixFreeTools::internal::
       ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
         data_boundary;
 
-    data_boundary.dof_numbers               = {0};
-    data_boundary.quad_numbers              = {0};
-    data_boundary.n_components              = {dim};
-    data_boundary.first_selected_components = {0};
-    data_boundary.batch_type                = {1};
+    data_boundary.dof_numbers               = {0, 0};
+    data_boundary.quad_numbers              = {0, 0};
+    data_boundary.n_components              = {dim, 1};
+    data_boundary.first_selected_components = {0, dim};
+    data_boundary.batch_type                = {1, 1};
 
     data_boundary.op_create =
       [&](const std::pair<unsigned int, unsigned int> &range) {
@@ -1535,6 +1547,8 @@ public:
 
         phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
           matrix_free, range, true, 0, 0, 0));
+        phi.emplace_back(std::make_unique<FEFaceIntegratorP>(
+          matrix_free, range, true, 0, 0, dim));
 
         return phi;
       };
@@ -1545,8 +1559,9 @@ public:
 
     data_boundary.op_compute = [&](auto &phi) {
       auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
+      auto &phi_1 = static_cast<FEFaceIntegratorP &>(*phi[1]);
 
-      local_apply_boundary_cell(phi_0);
+      local_apply_boundary_cell(phi_0, phi_1);
     };
 
     std::vector<VectorType *> diagonal_global_components(1);
@@ -1657,11 +1672,11 @@ public:
           ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
             data_face;
 
-        data_face.dof_numbers               = {0, 0};
-        data_face.quad_numbers              = {0, 0};
-        data_face.n_components              = {dim, dim};
-        data_face.first_selected_components = {0, 0};
-        data_face.batch_type                = {1, 2};
+        data_face.dof_numbers               = {0, 0, 0, 0};
+        data_face.quad_numbers              = {0, 0, 0, 0};
+        data_face.n_components              = {dim, dim, 1, 1};
+        data_face.first_selected_components = {0, 0, dim, dim};
+        data_face.batch_type                = {1, 2, 1, 2};
 
         data_face.op_create =
           [&](const std::pair<unsigned int, unsigned int> &range) {
@@ -1675,30 +1690,40 @@ public:
             phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
               matrix_free, range, false, 0, 0, 0));
 
+            phi.emplace_back(std::make_unique<FEFaceIntegratorP>(
+              matrix_free, range, true, 0, 0, dim));
+
+            phi.emplace_back(std::make_unique<FEFaceIntegratorP>(
+              matrix_free, range, false, 0, 0, dim));
+
             return phi;
           };
 
         data_face.op_reinit = [](auto &phi, const unsigned batch) {
           static_cast<FEFaceIntegratorU &>(*phi[0]).reinit(batch);
           static_cast<FEFaceIntegratorU &>(*phi[1]).reinit(batch);
+          static_cast<FEFaceIntegratorP &>(*phi[2]).reinit(batch);
+          static_cast<FEFaceIntegratorP &>(*phi[3]).reinit(batch);
         };
 
         data_face.op_compute = [&](auto &phi) {
           auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
           auto &phi_1 = static_cast<FEFaceIntegratorU &>(*phi[1]);
+          auto &phi_2 = static_cast<FEFaceIntegratorP &>(*phi[2]);
+          auto &phi_3 = static_cast<FEFaceIntegratorP &>(*phi[3]);
 
-          local_apply_face_cell(phi_0, phi_1);
+          local_apply_face_cell(phi_0, phi_1, phi_2, phi_3);
         };
 
         MatrixFreeTools::internal::
           ComputeMatrixScratchData<dim, VectorizedArray<Number>, true>
             data_boundary;
 
-        data_boundary.dof_numbers               = {0};
-        data_boundary.quad_numbers              = {0};
-        data_boundary.n_components              = {dim};
-        data_boundary.first_selected_components = {0};
-        data_boundary.batch_type                = {1};
+        data_boundary.dof_numbers               = {0, 0};
+        data_boundary.quad_numbers              = {0, 0};
+        data_boundary.n_components              = {dim, 1};
+        data_boundary.first_selected_components = {0, dim};
+        data_boundary.batch_type                = {1, 1};
 
         data_boundary.op_create =
           [&](const std::pair<unsigned int, unsigned int> &range) {
@@ -1708,6 +1733,8 @@ public:
 
             phi.emplace_back(std::make_unique<FEFaceIntegratorU>(
               matrix_free, range, true, 0, 0, 0));
+            phi.emplace_back(std::make_unique<FEFaceIntegratorP>(
+              matrix_free, range, true, 0, 0, dim));
 
             return phi;
           };
@@ -1718,8 +1745,9 @@ public:
 
         data_boundary.op_compute = [&](auto &phi) {
           auto &phi_0 = static_cast<FEFaceIntegratorU &>(*phi[0]);
+          auto &phi_1 = static_cast<FEFaceIntegratorP &>(*phi[1]);
 
-          local_apply_boundary_cell(phi_0);
+          local_apply_boundary_cell(phi_0, phi_1);
         };
 
         MatrixFreeTools::internal::compute_matrix(matrix_free,
@@ -1769,18 +1797,26 @@ private:
     const VectorType                                   &src,
     const std::pair<unsigned int, unsigned int>        &face_range) const
   {
-    FEFaceIntegratorU phi_m(data, true);
-    FEFaceIntegratorU phi_p(data, false);
+    FEFaceIntegratorU phi_u_m(data, face_range, true, 0, 0, 0);
+    FEFaceIntegratorU phi_u_p(data, face_range, false, 0, 0, 0);
+    FEFaceIntegratorP phi_p_m(data, face_range, true, 0, 0, dim);
+    FEFaceIntegratorP phi_p_p(data, face_range, false, 0, 0, dim);
 
     for (unsigned int face = face_range.first; face < face_range.second; ++face)
       {
-        phi_m.reinit(face);
-        phi_p.reinit(face);
-        phi_m.read_dof_values(src);
-        phi_p.read_dof_values(src);
-        local_apply_face_cell(phi_m, phi_p);
-        phi_m.distribute_local_to_global(dst);
-        phi_p.distribute_local_to_global(dst);
+        phi_u_m.reinit(face);
+        phi_u_p.reinit(face);
+        phi_p_m.reinit(face);
+        phi_p_p.reinit(face);
+        phi_u_m.read_dof_values(src);
+        phi_u_p.read_dof_values(src);
+        phi_p_m.read_dof_values(src);
+        phi_p_p.read_dof_values(src);
+        local_apply_face_cell(phi_u_m, phi_u_p, phi_p_m, phi_p_p);
+        phi_u_m.distribute_local_to_global(dst);
+        phi_u_p.distribute_local_to_global(dst);
+        phi_p_m.distribute_local_to_global(dst);
+        phi_p_p.distribute_local_to_global(dst);
       }
   }
 
@@ -1791,13 +1827,17 @@ private:
     const VectorType                                   &src,
     const std::pair<unsigned int, unsigned int>        &face_range) const
   {
-    FEFaceIntegratorU phi(data, true);
+    FEFaceIntegratorU phi_u(data, face_range, true, 0, 0, 0);
+    FEFaceIntegratorP phi_p(data, face_range, true, 0, 0, dim);
     for (unsigned int face = face_range.first; face < face_range.second; ++face)
       {
-        phi.reinit(face);
-        phi.read_dof_values(src);
-        local_apply_boundary_cell(phi);
-        phi.distribute_local_to_global(dst);
+        phi_u.reinit(face);
+        phi_p.reinit(face);
+        phi_u.read_dof_values(src);
+        phi_p.read_dof_values(src);
+        local_apply_boundary_cell(phi_u, phi_p);
+        phi_u.distribute_local_to_global(dst);
+        phi_p.distribute_local_to_global(dst);
       }
   }
 
@@ -1850,64 +1890,76 @@ private:
   }
 
   void
-  local_apply_face_cell(FEFaceIntegratorU &phi_m,
-                        FEFaceIntegratorU &phi_p) const
+  local_apply_face_cell(FEFaceIntegratorU &phi_u_m,
+                        FEFaceIntegratorU &phi_u_p,
+                        FEFaceIntegratorP &phi_p_m,
+                        FEFaceIntegratorP &phi_p_p) const
   {
-    phi_m.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
-    phi_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u_m.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-    const auto sigma = std::max(phi_m.read_cell_data(penalty_parameters),
-                                phi_p.read_cell_data(penalty_parameters)) *
+    const auto sigma = std::max(phi_u_m.read_cell_data(penalty_parameters),
+                                phi_u_p.read_cell_data(penalty_parameters)) *
                        panalty_factor;
 
-    for (const auto q : phi_m.quadrature_point_indices())
+    for (const auto q : phi_u_m.quadrature_point_indices())
       {
         const auto average_value =
-          (phi_m.get_value(q) - phi_p.get_value(q)) * 0.5;
-        const auto avg_normal_gradient =
-          (phi_m.get_normal_derivative(q) + phi_p.get_normal_derivative(q)) *
-          0.5;
+          (phi_u_m.get_value(q) - phi_u_p.get_value(q)) * 0.5;
+        const auto avg_normal_gradient = (phi_u_m.get_normal_derivative(q) +
+                                          phi_u_p.get_normal_derivative(q)) *
+                                         0.5;
 
         const auto average_valgrad =
           average_value * 2. * sigma - avg_normal_gradient;
 
-        phi_m.submit_normal_derivative(-average_value, q);
-        phi_p.submit_normal_derivative(-average_value, q);
-        phi_m.submit_value(average_valgrad, q);
-        phi_p.submit_value(-average_valgrad, q);
+        phi_u_m.submit_normal_derivative(-average_value, q);
+        phi_u_p.submit_normal_derivative(-average_value, q);
+        phi_u_m.submit_value(average_valgrad, q);
+        phi_u_p.submit_value(-average_valgrad, q);
       }
 
-    phi_m.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-    phi_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u_m.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u_p.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+    for (unsigned int i = 0; i < phi_p_m.dofs_per_cell; ++i) // TODO
+      phi_p_m.begin_dof_values()[i] = 0.0;
+    for (unsigned int i = 0; i < phi_p_p.dofs_per_cell; ++i) // TODO
+      phi_p_p.begin_dof_values()[i] = 0.0;
   }
 
   void
-  local_apply_boundary_cell(FEFaceIntegratorU &phi) const
+  local_apply_boundary_cell(FEFaceIntegratorU &phi_u,
+                            FEFaceIntegratorP &phi_p) const
   {
-    if (coupling_bids.find(phi.boundary_id()) != coupling_bids.end())
+    if (coupling_bids.find(phi_u.boundary_id()) != coupling_bids.end())
       {
-        const VectorizedArrayType zero = 0.0;
-
-        for (unsigned int i = 0; i < phi.dofs_per_cell; ++i)
-          phi.begin_dof_values()[i] = zero;
+        for (unsigned int i = 0; i < phi_u.dofs_per_cell; ++i)
+          phi_u.begin_dof_values()[i] = 0.0;
+        for (unsigned int i = 0; i < phi_p.dofs_per_cell; ++i)
+          phi_p.begin_dof_values()[i] = 0.0;
         return;
       }
 
-    phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-    const auto sigma = phi.read_cell_data(penalty_parameters) * panalty_factor;
+    const auto sigma =
+      phi_u.read_cell_data(penalty_parameters) * panalty_factor;
 
-    for (const auto q : phi.quadrature_point_indices())
+    for (const auto q : phi_u.quadrature_point_indices())
       {
-        const auto average_value = phi.get_value(q);
+        const auto average_value = phi_u.get_value(q);
         const auto average_valgrad =
-          average_value * sigma * 2.0 - phi.get_normal_derivative(q);
+          average_value * sigma * 2.0 - phi_u.get_normal_derivative(q);
 
-        phi.submit_normal_derivative(-average_value, q);
-        phi.submit_value(average_valgrad, q);
+        phi_u.submit_normal_derivative(-average_value, q);
+        phi_u.submit_value(average_valgrad, q);
       }
 
-    phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_u.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+    for (unsigned int i = 0; i < phi_p.dofs_per_cell; ++i) // TODO
+      phi_p.begin_dof_values()[i] = 0.0;
   }
 
   void
