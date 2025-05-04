@@ -1922,7 +1922,7 @@ private:
             // - (jump(v), avg(∇u) n)
             u_value_jump_result -= u_gradient_avg * normal;
 
-            // + (jump(v), avg(u))
+            // + (jump(v), jump(u))
             u_value_jump_result += sigma * u_value_jump;
           }
 

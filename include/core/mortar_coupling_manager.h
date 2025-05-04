@@ -506,7 +506,7 @@ public:
                    const unsigned int               bid_1,
                    const double                     sip_factor = 1.0,
                    const unsigned int first_selected_component = 0,
-  const double penalty_factor_grad = 1.0);
+                   const double       penalty_factor_grad      = 1.0);
 
   const AffineConstraints<Number> &
   get_affine_constraints() const;
@@ -599,7 +599,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const unsigned int               bid_1,
   const double                     sip_factor,
   const unsigned int               first_selected_component,
-  const double penalty_factor_grad)
+  const double                     penalty_factor_grad)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
@@ -1006,8 +1006,12 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
 
                 const double sigma = penalty_parameter * penalty_factor;
 
-                phi_m.submit_gradient(outer(-jump_value * 0.5, normal) * penalty_factor_grad, q);
-                phi_m.submit_value(jump_value * sigma - avg_normal_gradient * penalty_factor_grad, q);
+                phi_m.submit_gradient(outer(-jump_value * 0.5, normal) *
+                                        penalty_factor_grad,
+                                      q);
+                phi_m.submit_value(jump_value * sigma -
+                                     avg_normal_gradient * penalty_factor_grad,
+                                   q);
               }
 
             buffer.reinit(n_dofs_per_cell);
@@ -1097,8 +1101,11 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
 
                     const double sigma = penalty_parameter * penalty_factor;
 
-                    phi_m.submit_gradient(-outer(jump_value, normal) * penalty_factor_grad, q);
-                    phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient * penalty_factor_grad,
+                    phi_m.submit_gradient(-outer(jump_value, normal) *
+                                            penalty_factor_grad,
+                                          q);
+                    phi_m.submit_value(jump_value * sigma * 2.0 -
+                                         avg_gradient * penalty_factor_grad,
                                        q);
                   }
 
@@ -1284,10 +1291,12 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                             const double sigma =
                               penalty_parameter * penalty_factor;
 
-                            phi_m.submit_gradient(-outer(jump_value, normal) * penalty_factor_grad,
+                            phi_m.submit_gradient(-outer(jump_value, normal) *
+                                                    penalty_factor_grad,
                                                   q);
                             phi_m.submit_value(jump_value * sigma * 2.0 -
-                                                 avg_gradient * penalty_factor_grad,
+                                                 avg_gradient *
+                                                   penalty_factor_grad,
                                                q);
                           }
 
