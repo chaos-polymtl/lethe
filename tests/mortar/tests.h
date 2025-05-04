@@ -1401,7 +1401,8 @@ public:
         bid_0,
         bid_1,
         sip_factor_p,
-        dim);
+        dim,
+        1.0);
 
     coupling_bids.insert(bid_0);
     coupling_bids.insert(bid_1);
@@ -1781,13 +1782,13 @@ private:
         if (true /*Velocity divergence term*/)
           {
             // - (∇q, u)
-            p_gradient_result -= u_value;
+            p_gradient_result -= u_value * vel_div_sign;
           }
         else
           {
             // + (q, div(u))
             for (unsigned int d = 0; d < dim; ++d)
-              p_value_result += u_gradient[d][d];
+              p_value_result += u_gradient[d][d] * vel_div_sign;
           }
 
         phi_p.submit_value(p_value_result, q);
@@ -1857,7 +1858,7 @@ private:
         if (true /*Velocity divergence term*/)
           {
             // + (jump(q), avg(u) n)
-            p_value_jump_result += u_value_avg * normal;
+            p_value_jump_result += u_value_avg * normal * vel_div_sign;
           }
         else
           {
@@ -1938,7 +1939,7 @@ private:
         if (true /*Velocity divergence term*/)
           {
             // + (jump(q), avg(u) n)
-            p_value_jump_result += u_value_avg * normal;
+            p_value_jump_result += u_value_avg * normal * vel_div_sign;
           }
         else
           {
@@ -2011,6 +2012,8 @@ private:
   {
     return factor * (degree + 1.0) * (degree + 1.0);
   }
+
+  const double vel_div_sign = +1.0;
 
   mutable double sip_factor;
 

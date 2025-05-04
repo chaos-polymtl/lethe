@@ -505,7 +505,8 @@ public:
                    const unsigned int               bid_0,
                    const unsigned int               bid_1,
                    const double                     sip_factor = 1.0,
-                   const unsigned int first_selected_component = 0);
+                   const unsigned int first_selected_component = 0,
+  const double penalty_factor_grad = 1.0);
 
   const AffineConstraints<Number> &
   get_affine_constraints() const;
@@ -559,6 +560,7 @@ private:
     all_intersections;
 
   Number penalty_factor;
+  Number penalty_factor_grad;
 
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
   std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
@@ -596,7 +598,8 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const unsigned int               bid_0,
   const unsigned int               bid_1,
   const double                     sip_factor,
-  const unsigned int               first_selected_component)
+  const unsigned int               first_selected_component,
+  const double penalty_factor_grad)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
@@ -614,6 +617,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
 {
   penalty_factor =
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
+  this->penalty_factor_grad = penalty_factor_grad;
 
   mortar_manager_q = std::make_shared<MortarManager<dim>>(
     n_subdivisions, quadrature.get_tensor_basis()[0].size(), radius, rotate_pi);
@@ -1002,8 +1006,8 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
 
                 const double sigma = penalty_parameter * penalty_factor;
 
-                phi_m.submit_gradient(outer(-jump_value * 0.5, normal), q);
-                phi_m.submit_value(jump_value * sigma - avg_normal_gradient, q);
+                phi_m.submit_gradient(outer(-jump_value * 0.5, normal) * penalty_factor_grad, q);
+                phi_m.submit_value(jump_value * sigma - avg_normal_gradient * penalty_factor_grad, q);
               }
 
             buffer.reinit(n_dofs_per_cell);
@@ -1093,8 +1097,8 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
 
                     const double sigma = penalty_parameter * penalty_factor;
 
-                    phi_m.submit_gradient(-outer(jump_value, normal), q);
-                    phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient,
+                    phi_m.submit_gradient(-outer(jump_value, normal) * penalty_factor_grad, q);
+                    phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient * penalty_factor_grad,
                                        q);
                   }
 
@@ -1280,10 +1284,10 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                             const double sigma =
                               penalty_parameter * penalty_factor;
 
-                            phi_m.submit_gradient(-outer(jump_value, normal),
+                            phi_m.submit_gradient(-outer(jump_value, normal) * penalty_factor_grad,
                                                   q);
                             phi_m.submit_value(jump_value * sigma * 2.0 -
-                                                 avg_gradient,
+                                                 avg_gradient * penalty_factor_grad,
                                                q);
                           }
 
