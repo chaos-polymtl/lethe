@@ -996,14 +996,14 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
                 const auto penalty_parameter = all_penalty_parameter[q_index];
                 const auto normal            = all_normals[q_index];
 
-                const auto jump_value = (value_m - value_p) * 0.5 * JxW;
-                const auto avg_gradient =
+                const auto jump_value = (value_m - value_p) * JxW;
+                const auto avg_normal_gradient =
                   (normal_gradient_m + normal_gradient_p) * 0.5 * JxW;
 
                 const double sigma = penalty_parameter * penalty_factor;
 
-                phi_m.submit_gradient(-outer(jump_value, normal), q);
-                phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient, q);
+                phi_m.submit_gradient(outer(-jump_value * 0.5, normal), q);
+                phi_m.submit_value(jump_value * sigma - avg_normal_gradient, q);
               }
 
             buffer.reinit(n_dofs_per_cell);

@@ -1864,10 +1864,12 @@ private:
       {
         const auto average_value =
           (phi_m.get_value(q) - phi_p.get_value(q)) * 0.5;
-        const auto average_valgrad =
-          average_value * 2. * sigma -
+        const auto avg_normal_gradient =
           (phi_m.get_normal_derivative(q) + phi_p.get_normal_derivative(q)) *
-            0.5;
+          0.5;
+
+        const auto average_valgrad =
+          average_value * 2. * sigma - avg_normal_gradient;
 
         phi_m.submit_normal_derivative(-average_value, q);
         phi_p.submit_normal_derivative(-average_value, q);
