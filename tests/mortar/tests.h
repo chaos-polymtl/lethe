@@ -1772,26 +1772,50 @@ private:
 
     for (const auto q : phi_u_m.quadrature_point_indices())
       {
-        const auto average_value =
-          (phi_u_m.get_value(q) - phi_u_p.get_value(q)) * 0.5;
-        const auto average_normal_value_u =
-          average_value * phi_u_m.normal_vector(q);
-        const auto average_value_p =
-          (phi_p_m.get_value(q) - phi_p_p.get_value(q)) * 0.5;
-        const auto avg_normal_gradient = (phi_u_m.get_normal_derivative(q) +
-                                          phi_u_p.get_normal_derivative(q)) *
-                                         0.5;
+        const auto u_value_avg =
+          (phi_u_m.get_value(q) + phi_u_p.get_value(q)) * 0.5;
+        const auto u_value_jump = phi_u_m.get_value(q) - phi_u_p.get_value(q);
+        const auto u_gradient_avg =
+          (phi_u_m.get_gradient(q) + phi_u_p.get_gradient(q)) * 0.5;
+        const auto p_value_avg =
+          (phi_p_m.get_value(q) + phi_p_p.get_value(q)) * 0.5;
+        const auto normal = phi_u_m.normal_vector(q);
 
-        const auto average_valgrad = average_value * 2. * sigma -
-                                     avg_normal_gradient +
-                                     average_value_p * phi_u_m.normal_vector(q);
+        typename FECellIntegratorU::value_type u_normal_gradient_avg_result =
+          {};
+        typename FECellIntegratorU::value_type u_value_jump_result = {};
+        typename FECellIntegratorP::value_type p_value_jump_result = {};
 
-        phi_u_m.submit_normal_derivative(-average_value, q);
-        phi_u_p.submit_normal_derivative(-average_value, q);
-        phi_u_m.submit_value(average_valgrad, q);
-        phi_u_p.submit_value(-average_valgrad, q);
-        phi_p_m.submit_value(average_normal_value_u, q);
-        phi_p_p.submit_value(-average_normal_value_u, q);
+        if (true /*Laplace term*/)
+          {
+            // - (n avg(∇v), jump(u))
+            u_normal_gradient_avg_result -= u_value_jump;
+
+            // - (jump(v), avg(∇u) n)
+            u_value_jump_result -= u_gradient_avg * normal;
+
+            // + (jump(v), avg(u))
+            u_value_jump_result += sigma * u_value_jump;
+          }
+
+        if (true /*Pressure gradient term*/)
+          {
+            // + (jump(v), avg(p) n)
+            u_value_jump_result += p_value_avg * normal;
+          }
+
+        if (true /*Velocity divergence term*/)
+          {
+            // + (jump(q), avg(u) n)
+            p_value_jump_result += u_value_avg * normal;
+          }
+
+        phi_u_m.submit_normal_derivative(u_normal_gradient_avg_result * 0.5, q);
+        phi_u_p.submit_normal_derivative(u_normal_gradient_avg_result * 0.5, q);
+        phi_u_m.submit_value(u_value_jump_result, q);
+        phi_u_p.submit_value(-u_value_jump_result, q);
+        phi_p_m.submit_value(p_value_jump_result, q);
+        phi_p_p.submit_value(-p_value_jump_result, q);
       }
 
     phi_u_m.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -1801,42 +1825,71 @@ private:
   }
 
   void
-  local_apply_boundary_cell(FEFaceIntegratorU &phi_u,
-                            FEFaceIntegratorP &phi_p) const
+  local_apply_boundary_cell(FEFaceIntegratorU &phi_u_m,
+                            FEFaceIntegratorP &phi_p_m) const
   {
-    if (coupling_bids.find(phi_u.boundary_id()) != coupling_bids.end())
+    if (coupling_bids.find(phi_u_m.boundary_id()) != coupling_bids.end())
       {
-        for (unsigned int i = 0; i < phi_u.dofs_per_cell; ++i)
-          phi_u.begin_dof_values()[i] = 0.0;
-        for (unsigned int i = 0; i < phi_p.dofs_per_cell; ++i)
-          phi_p.begin_dof_values()[i] = 0.0;
+        for (unsigned int i = 0; i < phi_u_m.dofs_per_cell; ++i)
+          phi_u_m.begin_dof_values()[i] = 0.0;
+        for (unsigned int i = 0; i < phi_p_m.dofs_per_cell; ++i)
+          phi_p_m.begin_dof_values()[i] = 0.0;
         return;
       }
 
-    phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
-    phi_p.evaluate(EvaluationFlags::values);
+    phi_u_m.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p_m.evaluate(EvaluationFlags::values);
 
     const auto sigma =
-      phi_u.read_cell_data(penalty_parameters) * panalty_factor;
+      phi_u_m.read_cell_data(penalty_parameters) * panalty_factor;
 
-    for (const auto q : phi_u.quadrature_point_indices())
+    for (const auto q : phi_u_m.quadrature_point_indices())
       {
-        const auto average_value = phi_u.get_value(q) * 0.0;
-        const auto average_normal_value_u =
-          average_value * phi_u.normal_vector(q);
-        const auto average_value_p = phi_p.get_value(q);
+        const auto u_value_avg =
+          (phi_u_m.get_value(q) - phi_u_m.get_value(q)) * 0.5;
+        const auto u_value_jump = phi_u_m.get_value(q) + phi_u_m.get_value(q);
+        const auto u_gradient_avg =
+          (phi_u_m.get_gradient(q) + phi_u_m.get_gradient(q)) * 0.5;
+        const auto p_value_avg =
+          (phi_p_m.get_value(q) + phi_p_m.get_value(q)) * 0.5;
+        const auto normal = phi_u_m.normal_vector(q);
 
-        const auto average_valgrad = average_value * sigma * 2.0 -
-                                     phi_u.get_normal_derivative(q) +
-                                     average_value_p * phi_u.normal_vector(q);
+        typename FECellIntegratorU::value_type u_normal_gradient_avg_result =
+          {};
+        typename FECellIntegratorU::value_type u_value_jump_result = {};
+        typename FECellIntegratorP::value_type p_value_jump_result = {};
 
-        phi_u.submit_normal_derivative(-average_value, q);
-        phi_u.submit_value(average_valgrad, q);
-        phi_p.submit_value(average_normal_value_u, q);
+        if (true /*Laplace term*/)
+          {
+            // - (n avg(∇v), jump(u))
+            u_normal_gradient_avg_result -= u_value_jump;
+
+            // - (jump(v), avg(∇u) n)
+            u_value_jump_result -= u_gradient_avg * normal;
+
+            // + (jump(v), avg(u))
+            u_value_jump_result += sigma * u_value_jump;
+          }
+
+        if (true /*Pressure gradient term*/)
+          {
+            // + (jump(v), avg(p) n)
+            u_value_jump_result += p_value_avg * normal;
+          }
+
+        if (true /*Velocity divergence term*/)
+          {
+            // + (jump(q), avg(u) n)
+            p_value_jump_result += u_value_avg * normal;
+          }
+
+        phi_u_m.submit_normal_derivative(u_normal_gradient_avg_result * 0.5, q);
+        phi_u_m.submit_value(u_value_jump_result, q);
+        phi_p_m.submit_value(p_value_jump_result, q);
       }
 
-    phi_u.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-    phi_p.integrate(EvaluationFlags::values);
+    phi_u_m.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+    phi_p_m.integrate(EvaluationFlags::values);
   }
 
   void

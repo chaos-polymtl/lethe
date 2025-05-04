@@ -85,7 +85,7 @@ main(int argc, char **argv)
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
 
-  if (true)
+  if (true /*TODO: better solution!*/)
     {
       unsigned int min_index = numbers::invalid_unsigned_int;
 
