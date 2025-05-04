@@ -1722,6 +1722,7 @@ private:
         typename FECellIntegratorU::gradient_type u_gradient_result = {};
 
         const auto p_value    = phi_p.get_value(q);
+        const auto p_gradient = phi_p.get_gradient(q);
         const auto u_value    = phi_u.get_value(q);
         const auto u_gradient = phi_u.get_gradient(q);
 
@@ -1737,11 +1738,22 @@ private:
             for (unsigned int d = 0; d < dim; ++d)
               u_gradient_result[d][d] -= p_value;
           }
+        else
+          {
+            // + (v, ∇p)
+            u_value_result += p_gradient;
+          }
 
         if (true /*Velocity divergence term*/)
           {
             // - (∇q, u)
             p_gradient_result -= u_value;
+          }
+        else
+          {
+            // + (q, div(u))
+            for (unsigned int d = 0; d < dim; ++d)
+              p_value_result += u_gradient[d][d];
           }
 
         phi_p.submit_value(p_value_result, q);
@@ -1803,11 +1815,19 @@ private:
             // + (jump(v), avg(p) n)
             u_value_jump_result += p_value_avg * normal;
           }
+        else
+          {
+            // nothing to do
+          }
 
         if (true /*Velocity divergence term*/)
           {
             // + (jump(q), avg(u) n)
             p_value_jump_result += u_value_avg * normal;
+          }
+        else
+          {
+            // nothing to do
           }
 
         phi_u_m.submit_normal_derivative(u_normal_gradient_avg_result * 0.5, q);
@@ -1876,11 +1896,19 @@ private:
             // + (jump(v), avg(p) n)
             u_value_jump_result += p_value_avg * normal;
           }
+        else
+          {
+            // nothing to do
+          }
 
         if (true /*Velocity divergence term*/)
           {
             // + (jump(q), avg(u) n)
             p_value_jump_result += u_value_avg * normal;
+          }
+        else
+          {
+            // nothing to do
           }
 
         phi_u_m.submit_normal_derivative(u_normal_gradient_avg_result * 0.5, q);
