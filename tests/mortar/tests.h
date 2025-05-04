@@ -1381,6 +1381,9 @@ public:
       bid_1,
       sip_factor,
       0);
+
+    coupling_bids.insert(bid_0);
+    coupling_bids.insert(bid_1);
   }
 
   virtual types::global_dof_index
@@ -1879,7 +1882,7 @@ private:
   void
   local_apply_boundary_cell(FEFaceIntegratorU &phi) const
   {
-    if ((phi.boundary_id() == 0 || phi.boundary_id() == 5))
+    if (coupling_bids.find(phi.boundary_id()) != coupling_bids.end())
       {
         const VectorizedArrayType zero = 0.0;
 
@@ -1971,4 +1974,6 @@ private:
   VectorizedArrayType                panalty_factor;
 
   std::shared_ptr<CouplingOperator<dim, dim, Number>> coupling_operator_v;
+
+  std::set<unsigned int> coupling_bids;
 };
