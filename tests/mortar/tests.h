@@ -1332,16 +1332,18 @@ public:
   GeneralStokesOperatorDG(const MappingQ<dim>             &mapping,
                           const DoFHandler<dim>           &dof_handler,
                           const AffineConstraints<Number> &constraints,
-                          const Quadrature<dim>           &quadrature)
+                          const Quadrature<dim>           &quadrature,
+                          const double                     sip_factor = 1.0)
   {
-    reinit(mapping, dof_handler, constraints, quadrature);
+    reinit(mapping, dof_handler, constraints, quadrature, sip_factor);
   }
 
   void
   reinit(const Mapping<dim>              &mapping,
          const DoFHandler<dim>           &dof_handler,
          const AffineConstraints<Number> &constraints,
-         const Quadrature<dim>           &quadrature)
+         const Quadrature<dim>           &quadrature,
+         const double                     sip_factor = 1.0)
   {
     typename MatrixFree<dim, Number, VectorizedArrayType>::AdditionalData data;
     data.mapping_update_flags =
@@ -1355,9 +1357,12 @@ public:
 
     valid_system = false;
 
+    this->sip_factor = sip_factor;
+
     comute_penalty_parameters();
 
-    panalty_factor = compute_pentaly_factor(dof_handler.get_fe().degree, 1.0);
+    panalty_factor =
+      compute_pentaly_factor(dof_handler.get_fe().degree, sip_factor);
   }
 
   /**
@@ -1369,7 +1374,7 @@ public:
                const double       rotate_pi,
                const unsigned int bid_0,
                const unsigned int bid_1,
-               const double       sip_factor = 1.0)
+               const double       sip_factor_p = 0.0)
   {
     coupling_operator_v = std::make_shared<CouplingOperator<dim, dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
@@ -1977,6 +1982,8 @@ private:
   {
     return factor * (degree + 1.0) * (degree + 1.0);
   }
+
+  mutable double sip_factor;
 
   MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
   mutable TrilinosWrappers::SparseMatrix       system_matrix;
