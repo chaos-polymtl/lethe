@@ -1725,15 +1725,24 @@ private:
         const auto u_value    = phi_u.get_value(q);
         const auto u_gradient = phi_u.get_gradient(q);
 
-        // a)     (∇v, ∇u)
-        u_gradient_result = u_gradient;
+        if (true /*Laplace term*/)
+          {
+            // (∇v, ∇u)
+            u_gradient_result += u_gradient;
+          }
 
-        // b)   - (div(v), p)
-        for (unsigned int d = 0; d < dim; ++d)
-          u_gradient_result[d][d] -= p_value;
+        if (true /*Pressure gradient term*/)
+          {
+            // - (div(v), p)
+            for (unsigned int d = 0; d < dim; ++d)
+              u_gradient_result[d][d] -= p_value;
+          }
 
-        // c)   - (∇q, u)
-        p_gradient_result = -u_value;
+        if (true /*Velocity divergence term*/)
+          {
+            // - (∇q, u)
+            p_gradient_result -= u_value;
+          }
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
