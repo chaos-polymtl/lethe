@@ -1389,6 +1389,20 @@ public:
       sip_factor,
       0);
 
+    if (sip_factor_p != 0.0)
+      coupling_operator_p = std::make_shared<CouplingOperator<dim, 1, Number>>(
+        *matrix_free.get_mapping_info().mapping,
+        matrix_free.get_dof_handler(),
+        matrix_free.get_affine_constraints(),
+        matrix_free.get_quadrature(),
+        n_subdivisions,
+        radius,
+        rotate_pi,
+        bid_0,
+        bid_1,
+        sip_factor_p,
+        dim);
+
     coupling_bids.insert(bid_0);
     coupling_bids.insert(bid_1);
   }
@@ -1436,6 +1450,9 @@ public:
     if (coupling_operator_v)
       coupling_operator_v->vmult_add(dst, src);
 
+    if (coupling_operator_p)
+      coupling_operator_p->vmult_add(dst, src);
+
     src.zero_out_ghost_values();
   }
 
@@ -1475,6 +1492,12 @@ public:
         affine_constraints_tmp.copy_from(
           coupling_operator_v->get_affine_constraints());
 
+        if (coupling_operator_p)
+          affine_constraints_tmp.merge(
+            coupling_operator_p->get_affine_constraints(),
+            AffineConstraints<Number>::MergeConflictBehavior::left_object_wins,
+            true);
+
         affine_constraints_tmp.close();
       }
 
@@ -1492,6 +1515,9 @@ public:
         // apply coupling terms
         if (coupling_operator_v)
           coupling_operator_v->add_sparsity_pattern_entries(dsp);
+
+        if (coupling_operator_p)
+          coupling_operator_p->add_sparsity_pattern_entries(dsp);
 
         dsp.compress();
 
@@ -1632,6 +1658,9 @@ public:
         // apply coupling terms
         if (coupling_operator_v)
           coupling_operator_v->add_system_matrix_entries(system_matrix);
+
+        if (coupling_operator_p)
+          coupling_operator_p->add_system_matrix_entries(system_matrix);
 
         system_matrix.compress(VectorOperation::add);
 
@@ -1993,6 +2022,7 @@ private:
   VectorizedArrayType                panalty_factor;
 
   std::shared_ptr<CouplingOperator<dim, dim, Number>> coupling_operator_v;
+  std::shared_ptr<CouplingOperator<dim, 1, Number>>   coupling_operator_p;
 
   std::set<unsigned int> coupling_bids;
 };
