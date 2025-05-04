@@ -124,7 +124,7 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step() << std::endl;
     }
-  if (true)
+  if (false)
     {
       // 1) with preconditioner: inverse diagonal
       DiagonalMatrix<LinearAlgebra::distributed::Vector<double>> preconditioner;
