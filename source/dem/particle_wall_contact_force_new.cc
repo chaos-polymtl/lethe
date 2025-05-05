@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/parameters_lagrangian.h>
-
 #include <dem/particle_wall_contact_force_new.h>
 
 using namespace DEM;
@@ -16,11 +14,13 @@ ParticleWallContactForce<dim,
                          PropertiesIndex,
                          contact_model,
                          rolling_friction_model>::
-  ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters)
+  ParticleWallContactForce(
+    const DEMSolverParameters<dim>        &dem_parameters,
+    const std::vector<types::boundary_id> &boundary_index)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
 {
-  set_effective_properties(dem_parameters);
+  set_effective_properties(dem_parameters, boundary_index);
 }
 
 template <int dim,
@@ -38,11 +38,6 @@ ParticleWallContactForce<dim,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
-  ParticleWallContactForce<dim, PropertiesIndex>::force_on_walls =
-    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
-  ParticleWallContactForce<dim, PropertiesIndex>::torque_on_walls =
-    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
-
   // Looping over particle_wall_pairs_in_contact, which means looping over
   // all the active particles with iterator
   // particle_wall_pairs_in_contact_iterator
@@ -56,8 +51,8 @@ ParticleWallContactForce<dim,
       for (auto &&contact_info :
            pairs_in_contact_content | boost::adaptors::map_values)
         {
-          // Defining total force of the contact, properties of particle as
-          // local parameters
+          // Defining contact forces and properties of particle as
+          // local variables
           auto particle            = contact_info.particle;
           auto particle_properties = particle->get_properties();
 
@@ -87,6 +82,7 @@ ParticleWallContactForce<dim,
           double normal_overlap =
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
+          std::cout << "normal overlap = " << normal_overlap << std::endl;
 
           // Get the threshold distance for contact force, this is useful
           // for non-contact cohesive force models such as the DMT.
@@ -95,6 +91,8 @@ ParticleWallContactForce<dim,
 
           if (normal_overlap > force_calculation_threshold_distance)
             {
+              contact_info.normal_overlap = normal_overlap;
+
               // Update all the information
               this->update_contact_information(contact_info,
                                                particle_location_3d,
@@ -127,7 +125,7 @@ ParticleWallContactForce<dim,
             }
           else
             {
-              contact_information.normal_overlap = 0.;
+              contact_info.normal_overlap = 0.;
               contact_info.tangential_displacement.clear();
               contact_info.rolling_resistance_spring_torque.clear();
             }
@@ -286,7 +284,7 @@ ParticleWallContactForce<dim,
                             rolling_resistance_torque,
                             particle_torque,
                             particle_force,
-                            point_on_boundary,
+                            projection_point,
                             contact_info.boundary_id);
                         }
                       else
