@@ -29,10 +29,11 @@
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
-#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)
+#include <../tests/dem/test_particles_functions.h>
+
 #include <../tests/tests.h>
 
 using namespace dealii;
@@ -55,6 +56,7 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining general simulation parameters
+  set_default_dem_parameters(1, dem_parameters);
   Tensor<1, dim> g{{0, 0, 0}};
   double         dt                                                  = 0.000001;
   double         particle_diameter                                   = 0.001;
@@ -122,11 +124,11 @@ test()
   pit1->get_properties()[PropertiesIndex::omega_z] = 0;
   pit1->get_properties()[PropertiesIndex::mass]    = 1;
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
-  torque.push_back(Tensor<1, dim>({0, 0, 0}));
-  force.push_back(Tensor<1, dim>({0, 0, 0}));
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
+  std::vector<Tensor<1, 3>>                   &force  = contact_outcome.force;
+  std::vector<Tensor<1, 3>>                   &torque = contact_outcome.torque;
+  contact_outcome.resize_interaction_containers(1);
+  std::vector<double> MOI;
   MOI.push_back(1);
   double step_force;
 
@@ -152,8 +154,12 @@ test()
   // Particle-Wall fine search
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
     particle_wall_contact_information;
-  ParticleWallNonLinearForce<dim, PropertiesIndex> particle_wall_force_object(
-    dem_parameters);
+  ParticleWallContactForce<
+    dim,
+    PropertiesIndex,
+    Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    particle_wall_force_object(dem_parameters);
   VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
   double                                         distance;
   double                                         time = 0.0;
@@ -208,7 +214,7 @@ test()
             }
 
           particle_wall_force_object.calculate_particle_wall_contact_force(
-            particle_wall_contact_information, dt, torque, force);
+            particle_wall_contact_information, dt, contact_outcome);
 
           // Storing force before integration
           step_force = force[0][0];

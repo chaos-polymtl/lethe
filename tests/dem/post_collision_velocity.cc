@@ -8,12 +8,12 @@
 
 #include <core/dem_properties.h>
 
+#include <../tests/dem/test_particles_functions.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
-#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
 
 #include <deal.II/base/parameter_handler.h>
@@ -54,6 +54,7 @@ test(double coefficient_of_restitution)
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining general simulation parameters
+  set_default_dem_parameters(1, dem_parameters);
   Tensor<1, dim> g{{0, 0, 0}};
   double         dt                           = 0.00000001;
   double         particle_diameter            = 0.002;
@@ -122,14 +123,14 @@ test(double coefficient_of_restitution)
     M_PI * particle_diameter * particle_diameter * particle_diameter / 6;
 
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -154,8 +155,12 @@ test(double coefficient_of_restitution)
   // P-W fine search
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
     particle_wall_contact_information;
-  ParticleWallNonLinearForce<dim, PropertiesIndex> particle_wall_force_object(
-    dem_parameters);
+  ParticleWallContactForce<
+    dim,
+    PropertiesIndex,
+    Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    particle_wall_force_object(dem_parameters);
   VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
 
   auto particle1 = particle_handler.begin();
@@ -167,8 +172,13 @@ test(double coefficient_of_restitution)
                                      particle_wall_contact_information);
 
       particle_wall_force_object.calculate_particle_wall_contact_force(
-        particle_wall_contact_information, dt, torque, force);
-      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+        particle_wall_contact_information, dt, contact_outcome);
+      integrator_object.integrate(particle_handler,
+                                  g,
+                                  dt,
+                                  contact_outcome.torque,
+                                  contact_outcome.force,
+                                  MOI);
     }
 
   deallog << "Coefficient of restitution is " << coefficient_of_restitution
