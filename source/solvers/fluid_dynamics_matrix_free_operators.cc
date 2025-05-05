@@ -865,7 +865,7 @@ NavierStokesOperatorBase<dim, number>::
       if (this->properties_manager->is_non_newtonian())
         {
           typename FECellIntegrator::gradient_type shear_rate;
-          typename FECellIntegrator::value_type    grad_shear_rate;
+          typename FECellIntegrator::value_type    grad_shear_rate = {};
           VectorizedArray<number>                  shear_rate_magnitude;
 
           for (const auto q : integrator.quadrature_point_indices())
@@ -889,14 +889,7 @@ NavierStokesOperatorBase<dim, number>::
               this->previous_shear_rate[cell][q] = shear_rate;
 
               // Calculate shear rate magnitude
-              for (unsigned int i = 0; i < dim; ++i)
-                {
-                  for (unsigned int j = 0; j < dim; ++j)
-                    {
-                      shear_rate_magnitude +=
-                        shear_rate[i][j] * shear_rate[j][i];
-                    }
-                }
+              shear_rate_magnitude = shear_rate * shear_rate;
 
               shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),
                                               VectorizedArray<number>(1e-12));
@@ -910,6 +903,7 @@ NavierStokesOperatorBase<dim, number>::
               // 2. grad_kinematic_viscosity_shear_rate
               for (unsigned int d = 0; d < dim; ++d)
                 {
+                  grad_shear_rate[d] = 0.;
                   if constexpr (dim == 2)
                     {
                       for (unsigned int k = 0; k < dim; ++k)
