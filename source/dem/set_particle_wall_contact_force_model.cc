@@ -4,6 +4,7 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 
 using namespace dealii;
+using namespace Parameters::Lagrangian;
 
 template <int dim, typename PropertiesIndex>
 std::shared_ptr<ParticleWallContactForce<dim, PropertiesIndex>>
@@ -14,36 +15,31 @@ set_particle_wall_contact_force_model(
   std::shared_ptr<ParticleWallContactForce<dim, PropertiesIndex>>
     particle_wall_contact_force_object;
 
-
   std::vector<types::boundary_id> boundary_index =
     triangulation.get_boundary_ids();
   if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters<
-        dim>::ParticleWallContactForceModel::linear)
+      ParticleWallContactForceModel::linear)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallLinearForce<dim, PropertiesIndex>>(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters<
-             dim>::ParticleWallContactForceModel::nonlinear)
+           ParticleWallContactForceModel::nonlinear)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallNonLinearForce<dim, PropertiesIndex>>(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters<
-             dim>::ParticleWallContactForceModel::JKR)
+           ParticleWallContactForceModel::JKR)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallJKRForce<dim, PropertiesIndex>>(
           dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters<
-             dim>::ParticleWallContactForceModel::DMT)
+           ParticleWallContactForceModel::DMT)
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallDMTForce<dim, PropertiesIndex>>(
