@@ -25,10 +25,12 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_wall_broad_search.h>
+#include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
-#include <dem/particle_wall_linear_force.h>
 
 // Tests (with common definitions)
+#include <../tests/dem/test_particles_functions.h>
+
 #include <../tests/tests.h>
 
 using namespace dealii;
@@ -51,6 +53,7 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining general simulation parameters
+  set_default_dem_parameters(1, dem_parameters);
   Tensor<1, dim> g{{0, 0, -9.81}};
   double         dt                                                  = 0.00001;
   double         particle_diameter                                   = 0.005;
@@ -117,14 +120,14 @@ test()
   pit1->get_properties()[PropertiesIndex::omega_z] = 0;
   pit1->get_properties()[PropertiesIndex::mass]    = 1;
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -158,14 +161,19 @@ test()
                                  particle_wall_contact_information);
 
   // Calling linear force
-  ParticleWallLinearForce<dim, PropertiesIndex> force_object(dem_parameters);
+  ParticleWallContactForce<
+    dim,
+    PropertiesIndex,
+    Parameters::Lagrangian::ParticleWallContactForceModel::linear,
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    force_object(dem_parameters);
   force_object.calculate_particle_wall_contact_force(
-    particle_wall_contact_information, dt, torque, force);
+    particle_wall_contact_information, dt, contact_outcome);
 
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force acting on particle 1 is: "
-          << force[particle->get_id()][0] << " N " << std::endl;
+          << contact_outcome.force[particle->get_id()][0] << " N " << std::endl;
 }
 
 int
