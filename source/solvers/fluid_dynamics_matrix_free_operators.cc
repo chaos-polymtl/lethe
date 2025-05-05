@@ -934,6 +934,25 @@ NavierStokesOperatorBase<dim, number>::
                         }
                     }
                 }
+
+              // Alternative code for grad shear rate
+              //  ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui)(∂d∂iuj + ∂d∂jui)
+              // for (unsigned int d = 0; d < dim; ++d)
+              //   {
+              //     auto grad_shear_rate_d = VectorizedArray<number>(0.0);
+              //     for (unsigned int i = 0; i < dim; ++i)
+              //       {
+              //         for (unsigned int j = 0; j < dim; ++j)
+              //           {
+              //             auto dGamma_ij_dd =
+              //               hessian[d][i][j] + hessian[d][j][i];
+              //             grad_shear_rate_d += shear_rate[i][j] *
+              //             dGamma_ij_dd;
+              //           }
+              //       }
+              //     grad_shear_rate[d] = // 1.0;
+              //       (0.5 / shear_rate_magnitude) * grad_shear_rate_d;
+              //   }
             }
 
           // Get information from physical properties class
@@ -943,8 +962,8 @@ NavierStokesOperatorBase<dim, number>::
             std::pair<field, std::vector<double>>(field::shear_rate,
                                                   integrator.n_q_points));
 
-          // Store the shear rate magnitude in the appropriate data structured
-          // needed for the set field vector function
+          // Store the shear rate magnitude in the appropriate data
+          // structure needed for the set field vector function
           std::vector<double> temp_shear_rate_magnitude(integrator.n_q_points);
 
           for (const auto q : integrator.quadrature_point_indices())
@@ -976,8 +995,8 @@ NavierStokesOperatorBase<dim, number>::
               grad_kinematic_viscosity_shear_rate(cell, q) =
                 temp_grad_kinematic_viscosity_shear_rate[q];
 
-              // Calculate it using the grad kinematic viscosity shear rate and
-              // the grad shear rate.
+              // Calculate it using the grad kinematic viscosity shear rate
+              // and the grad shear rate.
               kinematic_viscosity_gradient(cell, q) =
                 grad_shear_rate *
                 VectorizedArray<number>(
@@ -985,6 +1004,20 @@ NavierStokesOperatorBase<dim, number>::
 
               kinematic_viscosity_vector(cell, q) =
                 VectorizedArray<number>(temp_kinematic_viscosity_vector[q]);
+
+              // Recalculate stabilization parameter using kinematic
+              // viscosity vector
+              VectorizedArray<number> u_mag_squared = 1e-12;
+              for (unsigned int k = 0; k < dim; ++k)
+                u_mag_squared +=
+                  Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+
+              stabilization_parameter(cell, q) =
+                1. /
+                std::sqrt(
+                  Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
+                  9. * Utilities::fixed_power<2>(
+                         4. * temp_kinematic_viscosity_vector[q] / (h * h)));
             }
         }
     }
@@ -1872,8 +1905,8 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
  * Jacobian)
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu - (∇ν)(∇δu + ∇δuT))τu·∇v (SUPG
  * Jacobian Part 1)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - (∇ν)((∇u + ∇uT) - f )τδu·∇v (SUPG Jacobian Part
- * 2),
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - (∇ν)((∇u + ∇uT) - f )τδu·∇v (SUPG Jacobian
+ * Part 2),
  */
 template <int dim, typename number>
 void
