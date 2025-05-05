@@ -37,11 +37,10 @@ no_rolling_torque()
  */
 template <typename PropertiesIndex>
 inline Tensor<1, 3>
-constant_rolling_torque(
-  const double                   particle_radius,
-  const ArrayView<const double> &particle_properties,
-  const double                   effective_rolling_friction_coefficient,
-  const double                   normal_force_norm)
+constant_rolling_torque(const double                   particle_radius,
+                        const ArrayView<const double> &particle_properties,
+                        const double effective_rolling_friction_coefficient,
+                        const double normal_force_norm)
 
 {
   // Getting the angular velocity of the particle
@@ -87,12 +86,11 @@ constant_rolling_torque(
 
 template <typename PropertiesIndex>
 inline Tensor<1, 3>
-viscous_rolling_torque(
-  const double                   particle_radius,
-  const ArrayView<const double> &particle_properties,
-  const double                   effective_rolling_friction_coefficient,
-  const double                   normal_force_norm,
-  const Tensor<1, 3>            &normal_unit_vector)
+viscous_rolling_torque(const double                   particle_radius,
+                       const ArrayView<const double> &particle_properties,
+                       const double effective_rolling_friction_coefficient,
+                       const double normal_force_norm,
+                       const Tensor<1, 3> &normal_unit_vector)
 
 {
   // Getting the angular velocity of particle
@@ -145,17 +143,16 @@ viscous_rolling_torque(
 
 template <int dim, typename PropertiesIndex>
 inline Tensor<1, 3>
-epsd_rolling_torque(
-  const double                   particle_radius,
-  const ArrayView<const double> &particle_properties,
-  const double                   effective_rolling_friction_coefficient,
-  const double                   effective_rolling_viscous_damping_coefficient,
-  const double                   f_coefficient,
-  const double                   normal_force_norm,
-  const double                   dt,
-  const double                   normal_spring_constant,
-  const Tensor<1, 3>            &normal_unit_vector,
-  Tensor<1, 3>                  &cumulative_rolling_resistance_spring_torque)
+epsd_rolling_torque(const double                   particle_radius,
+                    const ArrayView<const double> &particle_properties,
+                    const double effective_rolling_friction_coefficient,
+                    const double effective_rolling_viscous_damping_coefficient,
+                    const double f_coefficient,
+                    const double normal_force_norm,
+                    const double dt,
+                    const double normal_spring_constant,
+                    const Tensor<1, 3> &normal_unit_vector,
+                    Tensor<1, 3> &cumulative_rolling_resistance_spring_torque)
 
 {
   // Useful value used more than once:

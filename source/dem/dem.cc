@@ -520,8 +520,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
     contact_manager.get_particle_wall_in_contact(),
     simulation_control->get_time_step(),
-    torque,
-    force);
+    contact_outcome);
 
   if (parameters.forces_torques.calculate_force_torque)
     {
@@ -537,20 +536,18 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
-        torque,
-        force);
+        contact_outcome);
     }
 
   // Particle-solid objects contact force
   if (action_manager->check_solid_objects_enabled()) // until refactor
     {
       particle_wall_contact_force_object
-        ->calculate_particle_floating_wall_contact_force(
+        ->calculate_particle_solid_object_contact_force(
           contact_manager.get_particle_floating_mesh_in_contact(),
           simulation_control->get_time_step(),
-          torque,
-          force,
-          solid_surfaces);
+          solid_surfaces,
+          contact_outcome);
     }
 
   particle_point_line_contact_force_object
