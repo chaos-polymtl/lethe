@@ -62,13 +62,36 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                             &p_triangulation,
-    const std::shared_ptr<SimulationControl> &p_simulation_control);
+                                              p_triangulation,
+    const std::shared_ptr<SimulationControl> &p_simulation_control)
+    : pcout(p_pcout)
+  {
+    initialize_subequations(p_simulation_parameters,
+                            p_triangulation,
+                            p_simulation_control);
+  }
 
   /**
    * @brief Default destructor.
    */
   ~VOFSubequationsInterface() = default;
+
+  /**
+   * @brief Initialize subequations necessary for the simulation and reset
+   * subeqaution validation map.
+   *
+   * @param[in] p_simulation_parameters Simulation parameters.
+   *
+   * @param[in] p_triangulation Distributed mesh information.
+   *
+   * @param[in] p_simulation_control SimulationControl object.
+   */
+  void
+  initialize_subequations(
+    const SimulationParameters<dim> &p_simulation_parameters,
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                              p_triangulation,
+    const std::shared_ptr<SimulationControl> &p_simulation_control);
 
   /**
    * @brief Setup the DofHandler and the degree of freedom associated with the
@@ -142,12 +165,12 @@ public:
   }
 
   /**
-   * @brief Get a pointer to the DoFHandler of a specific subequation.
+   * @brief Get a reference to the DoFHandler of a specific subequation.
    *
    * @param[in] subequation_id Identifier associated with a specific
    * subequation.
    *
-   * @return Pointer to the DoFHandler of the specified subequation.
+   * @return Reference to the DoFHandler of the specified subequation.
    */
   const DoFHandler<dim> &
   get_dof_handler(const VOFSubequationsID &subequation_id)
@@ -169,16 +192,16 @@ public:
   const DoFHandler<dim> &
   get_vof_dof_handler()
   {
-    return *this->dof_handler_vof;
+    return this->dof_handler_vof->get();
   }
 
   /**
-   * @brief Get a pointer to the solution vector of a specific subequation.
+   * @brief Get a reference to the solution vector of a specific subequation.
    *
    * @param[in] subequation_id Identifier associated with a specific
    * subequation.
    *
-   * @return Pointer to the solution vector of the specified subequation.
+   * @return Reference to the solution vector of the specified subequation.
    */
   const GlobalVectorType &
   get_solution(const VOFSubequationsID &subequation_id)
@@ -191,9 +214,9 @@ public:
   }
 
   /**
-   * @brief Get a reference to the set filtered phase fraction solution vector.
+   * @brief Get a reference to the filtered phase fraction solution vector.
    *
-   * @return Reference to the set filtered phase fraction solution vector.
+   * @return Reference to the filtered phase fraction solution vector.
    */
   const GlobalVectorType &
   get_vof_filtered_solution()
@@ -202,9 +225,9 @@ public:
   }
 
   /**
-   * @brief Get a reference to the set phase fraction solution vector.
+   * @brief Get a reference to the phase fraction solution vector.
    *
-   * @return Reference to the set phase fraction solution vector.
+   * @return Reference to the phase fraction solution vector.
    */
   const GlobalVectorType &
   get_vof_solution()
@@ -214,15 +237,19 @@ public:
 
   /**
    * @brief Check and return a boolean indicating if the solution of the
-   * subequation corresponds to the set @p vof_filtered_solution_vector and/or
-   * @p vof_solution_vector.
+   * subequation has been solved for the corresponding @p dof_handler_vof,
+   * @p vof_filtered_solution_vector and/or @p vof_solution_vector previously set
+   * with
+   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler
+   * and VOFSubequationsInterface<dim>::set_vof_solution.
    *
    * @param[in] subequation_id Identifier associated with a specific
    * subequation.
    *
    * @return
    *  - @p true if the solution of the subequation corresponds to the set
-   * @p vof_filtered_solution_vector and/or @p vof_solution_vector.
+   * @p dof_handler_vof, @p vof_filtered_solution_vector and/or
+   * @p vof_solution_vector.
    *  - Otherwise, @p false.
    */
   bool
@@ -316,10 +343,10 @@ public:
    * @brief Set a new VOF filtered solution vector and DoFHandler for the
    * subequations to be solved and reset their validity.
    *
-   * @param[in] vof_filtered_solution_vector Filtered VOF solution vector
-   * associated with the subequations to be solved.
+   * @param[in] vof_filtered_solution_vector Reference to the filtered VOF
+   * solution vector associated with the subequations to be solved.
    *
-   * @param[in] dof_handler_vof Pointer to the DoFHandler associated with the
+   * @param[in] dof_handler_vof Reference to the DoFHandler associated with the
    * specified VOF filtered solution.
    *
    * @note At the moment, the VOF filtered solution is only used in
@@ -328,14 +355,14 @@ public:
   void
   set_vof_filtered_solution_and_dof_handler(
     const GlobalVectorType &vof_filtered_solution_vector,
-    DoFHandler<dim>        *dof_handler_vof)
+    const DoFHandler<dim>  &dof_handler_vof)
   {
     // Reset validity map
     reset_subequations_solutions_validity();
 
     // Set solution values and DoFHandler
     this->vof_filtered_solution_vector = vof_filtered_solution_vector;
-    this->dof_handler_vof              = dof_handler_vof;
+    this->dof_handler_vof              = std::cref(dof_handler_vof);
   }
 
   /**
@@ -410,7 +437,8 @@ private:
   const ConditionalOStream pcout;
 
   /// VOF DoFHandler associated with solved equations
-  DoFHandler<dim> *dof_handler_vof = nullptr;
+  std::optional<std::reference_wrapper<const DoFHandler<dim>>> dof_handler_vof;
+  // DoFHandler<dim> *dof_handler_vof = nullptr;
 
   /** Filtered VOF solution field associated with solved equations
    * @note Used in the computation of VOF phase gradient projection */
@@ -434,8 +462,41 @@ private:
   /// Present solutions map
   std::map<VOFSubequationsID, GlobalVectorType *> subequations_solutions;
 
-  /** Booleans indicating if the subequation has been solved with the set VOF
-   * solution vector */
+  /**
+   * Booleans indicating if the subequation has been solved with the set VOF
+   * solution vector
+   *
+   * During initialization (VOFSubequationsInterface<dim>::initialize), all
+   * boolean are set to @p false.
+   *
+   * We start by setting a VOF filtered solution and DOFHandler
+   * (VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler),
+   * and then start solving equations making sure that dependencies are met
+   * (VOFPhaseGradientProjection<dim>::check_dependencies_validity,
+   * VOFCurvatureProjection<dim>::check_dependencies_validity, and
+   * VOFAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity).
+   * For instance, to solve the curvature projection subequation, the phase
+   * gradient projection subequation has to be solved before as the solution is
+   * used in the subequation.
+   *
+   * A subequation in the validity map is to @p true only when it is solved and
+   * remains that way until a new VOF filtered solution and DOFHandler are set.
+   *
+   * This validation mechanism allows, to check if:
+   * - A new VOF filtered/unfiltered solution has been set;
+   * - All dependencies of the subequation have been solved;
+   * - The current solution of the subequation is valid and avoid unnecessarily
+   * solving it once more.
+   *
+   * @note
+   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler
+   * also resets the validity map values to @p false.
+   *
+   * @note VOFAlgebraicInterfaceReinitialization also requires a VOF unfiltered
+   * solution. The solution is set by calling
+   * VOFSubequationsInterface<dim>::set_vof_solution, right after
+   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler.
+   */
   std::map<VOFSubequationsID, bool> subequations_solutions_validity;
 };
 

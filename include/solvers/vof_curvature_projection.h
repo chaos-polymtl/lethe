@@ -32,8 +32,8 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                  &p_triangulation,
-    VOFSubequationsInterface<dim> *p_subequations_interface)
+                                   p_triangulation,
+    VOFSubequationsInterface<dim> &p_subequations_interface)
     : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::curvature_projection,
         p_simulation_parameters,

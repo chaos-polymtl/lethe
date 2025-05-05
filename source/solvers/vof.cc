@@ -1246,7 +1246,7 @@ VolumeOfFluid<dim>::modify_solution()
     {
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
-                                                    &this->dof_handler);
+                                                    this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -2104,7 +2104,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
     {
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
-                                                    &this->dof_handler);
+                                                    this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -2546,7 +2546,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
       // Set VOF information in the VOF subequations interface
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(previous_filtered_solution,
-                                                    &this->dof_handler);
+                                                    this->dof_handler);
       this->vof_subequations_interface->set_vof_solution(
         this->previous_solutions[0]);
 
@@ -2570,7 +2570,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
   // interface
   apply_phase_filter(this->present_solution, this->filtered_solution);
   this->vof_subequations_interface->set_vof_filtered_solution_and_dof_handler(
-    this->filtered_solution, &this->dof_handler);
+    this->filtered_solution, this->dof_handler);
   this->vof_subequations_interface->set_vof_solution(this->present_solution);
 
   // Solve phase gradient and curvature projections followed by algebraic

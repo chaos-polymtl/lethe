@@ -59,8 +59,8 @@ public:
     const Parameters::Verbosity     &p_subequation_verbosity,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                  &p_triangulation,
-    VOFSubequationsInterface<dim> *p_subequations_interface)
+                                   p_triangulation,
+    VOFSubequationsInterface<dim> &p_subequations_interface)
     : PhysicsLinearSubequationsSolver(p_pcout)
     , subequation_id(p_subequation_id)
     , subequations_interface(p_subequations_interface)
@@ -115,7 +115,8 @@ protected:
 
 
   const VOFSubequationsID        subequation_id;
-  VOFSubequationsInterface<dim> *subequations_interface;
+  VOFSubequationsInterface<dim> &subequations_interface;
+  // std::shared_ptr<VOFSubequationsInterface<dim>> subequations_interface;
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;

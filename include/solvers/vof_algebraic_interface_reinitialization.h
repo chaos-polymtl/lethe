@@ -54,9 +54,9 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                             &p_triangulation,
+                                              p_triangulation,
     const std::shared_ptr<SimulationControl> &p_simulation_control,
-    VOFSubequationsInterface<dim>            *p_subequations_interface)
+    VOFSubequationsInterface<dim>            &p_subequations_interface)
     : PhysicsNonlinearSubequationsSolver<dim, GlobalVectorType>(
         p_simulation_parameters.vof_subequations_non_linear_solvers.at(
           VOFSubequationsID::algebraic_interface_reinitialization),
@@ -366,14 +366,14 @@ private:
   }
 
   /**
-   * @brief Check if the solutions on which the subequation depends on are
-   * valid.
+   * @brief Check if the phase gradient and curvature L2 projections have been
+   * solved.
    */
   void
   check_dependencies_validity();
 
   const VOFSubequationsID        subequation_id;
-  VOFSubequationsInterface<dim> *subequations_interface;
+  VOFSubequationsInterface<dim> &subequations_interface;
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;

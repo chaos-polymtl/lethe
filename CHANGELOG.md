@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-05-05
 
-## Fixed
+### Fixed
 
 - MINOR The solution preceding the algebraic interface reinitialization time-step is now also regularized using the same process to ensure consistency in the time integration scheme. This is done by replacing the relevant previous solution with the reinitialized previous solution. A new application-test (`vof-algebraic-interface-reinitialization-advected-circle-bdf2-frequency-check`) has been added to test this implementation. Also, a new validity map has been added to the VOFSubequationInterface. This ensures that subequations are solved using the correct VOF solution and in the right order. Subequations dependency checks are also made before solving each subequation. [#1507](https://github.com/chaos-polymtl/lethe/pull/1507)
 

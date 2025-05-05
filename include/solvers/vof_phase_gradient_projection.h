@@ -9,8 +9,23 @@
 DeclException1(
   SameFilteredVOFSolution,
   std::string,
-  "A new VOF filtered solution has not been set. There is no need to solve the "
-    << arg1 << ".");
+  "A new VOF filtered phase fraction solution has not been set. There is no need "
+  "to again solve the "
+    << arg1
+    << ". If you wish to solve the subequation for a new filtered phase "
+       "fraction field, please set a new VOF filtered solution field with "
+       "VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler() "
+       "before solving the subequation.");
+
+DeclException1(
+  NoFilteredVOFSolution,
+  std::string,
+  "No VOF filtered phase fraction solution has been set. A valid VOF filtered "
+  "phase fraction solution is required to solve the "
+    << arg1
+    << ". Please set a new VOF filtered phase fraction solution field with "
+       "VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler() "
+       "before solving the subequation.");
 
 /**
  * @brief VOF phase fraction gradient L2 projection solver.
@@ -39,8 +54,8 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                  &p_triangulation,
-    VOFSubequationsInterface<dim> *p_subequations_interface)
+                                   p_triangulation,
+    VOFSubequationsInterface<dim> &p_subequations_interface)
     : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::phase_gradient_projection,
         p_simulation_parameters,

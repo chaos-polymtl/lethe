@@ -77,7 +77,7 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
   if (this->subequation_verbosity != Parameters::Verbosity::quiet)
     {
       std::string subequation_string =
-        this->subequations_interface->get_subequation_string(
+        this->subequations_interface.get_subequation_string(
           this->subequation_id);
       this->pcout << "   Number of " << subequation_string
                   << " degrees of freedom: " << this->dof_handler.n_dofs()
@@ -85,10 +85,10 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
     }
 
   // Provide DoFHandler and solutions to the subequations interface
-  this->subequations_interface->set_dof_handler(this->subequation_id,
-                                                &this->dof_handler);
-  this->subequations_interface->set_solution(this->subequation_id,
-                                             &this->present_solution);
+  this->subequations_interface.set_dof_handler(this->subequation_id,
+                                               &this->dof_handler);
+  this->subequations_interface.set_solution(this->subequation_id,
+                                            &this->present_solution);
 }
 
 
@@ -107,7 +107,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
   if (verbose)
     {
       std::string subequation_string =
-        this->subequations_interface->get_subequation_string(
+        this->subequations_interface.get_subequation_string(
           this->subequation_id);
 
       this->pcout << "  -Solving " << subequation_string << ":" << std::endl;
@@ -184,7 +184,7 @@ VOFLinearSubequationsSolver<dim>::solve()
   check_dependencies_validity();
   assemble_system_matrix_and_rhs();
   solve_linear_system_and_update_solution();
-  this->subequations_interface->set_solution_valid(this->subequation_id);
+  this->subequations_interface.set_solution_valid(this->subequation_id);
 }
 
 

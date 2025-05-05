@@ -52,13 +52,6 @@ test()
   physical_properties.number_of_fluids = 2;
   solver_parameters.physical_properties_manager.initialize(physical_properties);
 
-  // VOF is required when enabling surface_tension_force
-  solver_parameters.multiphysics.VOF = true;
-
-  // To test with the phase fraction gradient and the curvature L2 projection
-  solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
-    true;
-
   std::shared_ptr<SimulationControl> simulation_control =
     std::make_shared<SimulationControlTransient>(
       solver_parameters.simulation_control);
@@ -67,12 +60,24 @@ test()
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
+  // Construct VOF subequtions interface object
+  VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
+                                                       pcout,
+                                                       tria,
+                                                       simulation_control);
+
   // Phase fraction gradient and curvature L2 projection enabled
   {
-    VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
-                                                         pcout,
-                                                         tria,
-                                                         simulation_control);
+    // VOF is required when enabling surface_tension_force
+    solver_parameters.multiphysics.VOF = true;
+
+    // To test with the phase fraction gradient and the curvature L2 projection
+    solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
+      true;
+
+    subequations_interface.initialize_subequations(solver_parameters,
+                                                   tria,
+                                                   simulation_control);
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();
@@ -87,13 +92,13 @@ test()
   }
 
   // Disable phase fraction gradient and curvature L2 projection
-  solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
-    false;
   {
-    VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
-                                                         pcout,
-                                                         tria,
-                                                         simulation_control);
+    solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
+      false;
+
+    subequations_interface.initialize_subequations(solver_parameters,
+                                                   tria,
+                                                   simulation_control);
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();
@@ -113,10 +118,9 @@ test()
   solver_parameters.multiphysics.vof_parameters.regularization_method
     .algebraic_interface_reinitialization.enable = true;
   {
-    VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
-                                                         pcout,
-                                                         tria,
-                                                         simulation_control);
+    subequations_interface.initialize_subequations(solver_parameters,
+                                                   tria,
+                                                   simulation_control);
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();

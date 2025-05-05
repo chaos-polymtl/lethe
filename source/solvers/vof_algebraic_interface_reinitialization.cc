@@ -64,7 +64,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::setup_dofs()
   if (this->subequation_verbosity != Parameters::Verbosity::quiet)
     {
       std::string subequation_string =
-        this->subequations_interface->get_subequation_string(
+        this->subequations_interface.get_subequation_string(
           this->subequation_id);
       this->pcout << "   Number of " << subequation_string
                   << " degrees of freedom: " << this->dof_handler.n_dofs()
@@ -72,10 +72,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::setup_dofs()
     }
 
   // Provide DoFHandler and solutions to the subequations interface
-  this->subequations_interface->set_dof_handler(this->subequation_id,
-                                                &this->dof_handler);
-  this->subequations_interface->set_solution(this->subequation_id,
-                                             &this->present_solution);
+  this->subequations_interface.set_dof_handler(this->subequation_id,
+                                               &this->dof_handler);
+  this->subequations_interface.set_solution(this->subequation_id,
+                                            &this->present_solution);
 }
 
 
@@ -168,11 +168,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
 {
   // Get VOF DoFHandler
   const DoFHandler<dim> &dof_handler_vof =
-    this->subequations_interface->get_vof_dof_handler();
+    this->subequations_interface.get_vof_dof_handler();
 
   // Interpolate VOF solution to algebraic interface reinitialization
   FETools::interpolate(dof_handler_vof,
-                       this->subequations_interface->get_vof_solution(),
+                       this->subequations_interface.get_vof_solution(),
                        this->dof_handler,
                        this->nonzero_constraints,
                        this->newton_update);
@@ -203,10 +203,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
 
   // Get projected VOF phase gradient and curvature DoFHandler
   const DoFHandler<dim> &dof_handler_vof_phase_fraction_gradient =
-    this->subequations_interface->get_dof_handler(
+    this->subequations_interface.get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
   const DoFHandler<dim> &dof_handler_curvature =
-    this->subequations_interface->get_dof_handler(
+    this->subequations_interface.get_dof_handler(
       VOFSubequationsID::curvature_projection);
 
   // Initialize FEValues for algebraic interface reinitialization, VOF
@@ -258,7 +258,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   // Compute diffusivity coefficient with the smallest cell size
   const double h_min = identify_minimum_cell_size(
     *this->mapping,
-    this->subequations_interface->get_dof_handler(
+    this->subequations_interface.get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),
     *this->cell_quadrature,
     this->triangulation->get_communicator());
@@ -307,11 +307,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
             this->evaluation_point, present_phase_fraction_values);
           fe_values_phase_gradient_projection[phase_fraction_gradients]
             .get_function_values(
-              this->subequations_interface->get_solution(
+              this->subequations_interface.get_solution(
                 VOFSubequationsID::phase_gradient_projection),
               present_phase_gradient_projection_values);
           fe_values_curvature_projection.get_function_values(
-            this->subequations_interface->get_solution(
+            this->subequations_interface.get_solution(
               VOFSubequationsID::curvature_projection),
             present_curvature_values);
           fe_values_algebraic_reinitialization.get_function_gradients(
@@ -398,10 +398,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   // Get projected phase gradient, curvature and reinitialized phase gradient
   // DoFHandler
   const DoFHandler<dim> &dof_handler_vof_phase_fraction_gradient =
-    this->subequations_interface->get_dof_handler(
+    this->subequations_interface.get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
   const DoFHandler<dim> &dof_handler_curvature =
-    this->subequations_interface->get_dof_handler(
+    this->subequations_interface.get_dof_handler(
       VOFSubequationsID::curvature_projection);
 
   // Initialize FEValues for algebraic interface reinitialization, VOF phase
@@ -454,7 +454,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   // Compute diffusivity coefficient with the smallest cell size
   const double h_min = identify_minimum_cell_size(
     *this->mapping,
-    this->subequations_interface->get_dof_handler(
+    this->subequations_interface.get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),
     *this->cell_quadrature,
     this->triangulation->get_communicator());
@@ -503,11 +503,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
             this->previous_solution, previous_phase_fraction_values);
           fe_values_vof_phase_gradient_projection[phase_fraction_gradients]
             .get_function_values(
-              this->subequations_interface->get_solution(
+              this->subequations_interface.get_solution(
                 VOFSubequationsID::phase_gradient_projection),
               present_vof_phase_gradient_projection_values);
           fe_values_curvature_projection.get_function_values(
-            this->subequations_interface->get_solution(
+            this->subequations_interface.get_solution(
               VOFSubequationsID::curvature_projection),
             present_curvature_values);
           fe_values_algebraic_reinitialization.get_function_gradients(
@@ -709,7 +709,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
         .at(VOFSubequationsID::algebraic_interface_reinitialization)
         .verbosity != Parameters::Verbosity::quiet);
   std::string subequation_string =
-    this->subequations_interface->get_subequation_string(this->subequation_id);
+    this->subequations_interface.get_subequation_string(this->subequation_id);
 
   if (verbose)
     {
@@ -766,7 +766,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
     this->pcout << "The solver took: " << step - 1 << " reinitialization steps"
                 << std::endl;
 
-  this->subequations_interface->set_solution_valid(this->subequation_id);
+  this->subequations_interface.set_solution_valid(this->subequation_id);
 }
 
 template <int dim>
@@ -798,21 +798,21 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
   // Attach solution data to DataOut object
   data_out.attach_dof_handler(this->dof_handler);
   data_out.add_data_vector(this->present_solution, "reinit_phase_fraction");
-  data_out.add_data_vector(this->subequations_interface->get_vof_dof_handler(),
-                           this->subequations_interface->get_vof_solution(),
+  data_out.add_data_vector(this->subequations_interface.get_vof_dof_handler(),
+                           this->subequations_interface.get_vof_solution(),
                            "vof_phase_fraction",
                            data_component_interpretation);
   std::vector<std::string> vof_gradient_solution_names(dim,
                                                        "vof_phase_gradient");
-  data_out.add_data_vector(this->subequations_interface->get_dof_handler(
+  data_out.add_data_vector(this->subequations_interface.get_dof_handler(
                              VOFSubequationsID::phase_gradient_projection),
-                           this->subequations_interface->get_solution(
+                           this->subequations_interface.get_solution(
                              VOFSubequationsID::phase_gradient_projection),
                            vof_gradient_solution_names,
                            vector_data_component_interpretation);
-  data_out.add_data_vector(this->subequations_interface->get_dof_handler(
+  data_out.add_data_vector(this->subequations_interface.get_dof_handler(
                              VOFSubequationsID::curvature_projection),
-                           this->subequations_interface->get_solution(
+                           this->subequations_interface.get_solution(
                              VOFSubequationsID::curvature_projection),
                            "vof_curvature",
                            data_component_interpretation);
@@ -836,19 +836,19 @@ template <int dim>
 void
 VOFAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity()
 {
-  AssertThrow(this->subequations_interface->get_solution_validity(
+  AssertThrow(this->subequations_interface.get_solution_validity(
                 VOFSubequationsID::phase_gradient_projection),
               PhaseGradientProjectionIsInvalid(
-                this->subequations_interface->get_subequation_string(
+                this->subequations_interface.get_subequation_string(
                   VOFSubequationsID::phase_gradient_projection),
-                this->subequations_interface->get_subequation_string(
+                this->subequations_interface.get_subequation_string(
                   this->subequation_id)));
-  AssertThrow(this->subequations_interface->get_solution_validity(
+  AssertThrow(this->subequations_interface.get_solution_validity(
                 VOFSubequationsID::curvature_projection),
               CurvatureProjectionIsInvalid(
-                this->subequations_interface->get_subequation_string(
+                this->subequations_interface.get_subequation_string(
                   VOFSubequationsID::curvature_projection),
-                this->subequations_interface->get_subequation_string(
+                this->subequations_interface.get_subequation_string(
                   this->subequation_id)));
 }
 

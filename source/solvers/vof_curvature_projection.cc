@@ -13,7 +13,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
 
   // Get phase gradient L2 projection DoFHandler
   const DoFHandler<dim> &dof_handler_phase_fraction_gradient =
-    this->subequations_interface->get_dof_handler(
+    this->subequations_interface.get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
 
   // Initialize FEValues for curvature and phase fraction gradient projection
@@ -94,7 +94,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
           // Get projected fraction gradient values
           fe_values_phase_gradient_projection[phase_fraction_gradients]
             .get_function_values(
-              this->subequations_interface->get_solution(
+              this->subequations_interface.get_solution(
                 VOFSubequationsID::phase_gradient_projection),
               present_phase_gradient_projection_values);
 
@@ -154,12 +154,12 @@ template <int dim>
 void
 VOFCurvatureProjection<dim>::check_dependencies_validity()
 {
-  AssertThrow(this->subequations_interface->get_solution_validity(
+  AssertThrow(this->subequations_interface.get_solution_validity(
                 VOFSubequationsID::phase_gradient_projection),
               PhaseGradientProjectionIsInvalid(
-                this->subequations_interface->get_subequation_string(
+                this->subequations_interface.get_subequation_string(
                   VOFSubequationsID::phase_gradient_projection),
-                this->subequations_interface->get_subequation_string(
+                this->subequations_interface.get_subequation_string(
                   this->subequation_id)));
 }
 
