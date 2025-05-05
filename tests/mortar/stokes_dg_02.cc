@@ -48,12 +48,12 @@ main(int argc, char **argv)
   const unsigned int fe_degree            = 3;
   const unsigned int mapping_degree       = 3;
   const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 3;
+  const unsigned int n_global_refinements = 2;
   const double       radius               = 0.75;
   const double       outer_radius         = 1.0;
   const double       rotate               = 3.0;
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
-  const bool         rotate_triangulation = true;
+  const bool         rotate_triangulation = false;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
   const double       sip_factor           = 1.0;
@@ -68,19 +68,21 @@ main(int argc, char **argv)
 
   parallel::distributed::Triangulation<dim> tria(comm);
   if (grid == "hyper_cube_with_cylindrical_hole")
-    hyper_cube_with_cylindrical_hole(radius,
-                                     outer_radius,
-                                     rotate_triangulation ? rotate_pi : 0.0,
-                                     tria);
+    {
+      hyper_cube_with_cylindrical_hole(radius, outer_radius, 0.0, tria);
+    }
   else if (grid == "hyper_cube")
     GridGenerator::hyper_cube(tria, -outer_radius, +outer_radius);
   else if (grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
-    hyper_cube_with_cylindrical_hole_with_tolerance(radius,
-                                                    outer_radius,
-                                                    0.0,
-                                                    tria);
+    {
+      hyper_cube_with_cylindrical_hole_with_tolerance(radius,
+                                                      outer_radius,
+                                                      0.0,
+                                                      tria);
+    }
   else
     AssertThrow(false, ExcNotImplemented());
+
   tria.refine_global(n_global_refinements);
 
   MappingQCache<dim> mapping(mapping_degree);
@@ -108,6 +110,50 @@ main(int argc, char **argv)
   const IndexSet            locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
+
+  if (true /*TODO: better solution!*/)
+    {
+      std::set<unsigned int> min_index;
+
+      std::vector<types::global_dof_index> dof_indices;
+
+      FEValues<dim> fe_values(mapping,
+                              fe,
+                              fe.get_unit_support_points(),
+                              update_quadrature_points);
+
+      // Loop over the cells to identify the min index
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              fe_values.reinit(cell);
+
+              const auto &fe = cell->get_fe();
+
+              dof_indices.resize(fe.n_dofs_per_cell());
+              cell->get_dof_indices(dof_indices);
+
+              for (unsigned int i = 0; i < dof_indices.size(); ++i)
+                if (fe.system_to_component_index(i).first == dim)
+                  if (fe_values.quadrature_point(i).distance(
+                        Point<dim>{-outer_radius, -outer_radius}) < 1.e-7)
+                    {
+                      std::cout << fe_values.quadrature_point(i) << " -> "
+                                << dof_indices[i] << std::endl;
+                      min_index.insert(dof_indices[i]);
+                    }
+            }
+        }
+
+      // TODO: communicate
+
+
+      for (const auto &i : min_index)
+        if (locally_relevant_dofs.is_element(i))
+          constraints.add_line(i);
+    }
+
   constraints.close();
 
   GeneralStokesOperatorDG<dim, double> op(
@@ -218,13 +264,29 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step();
     }
+  if (false)
+    {
+      // 3) with preconditioner: direct solver
+      TrilinosWrappers::SolverDirect preconditioner;
+      const auto                    &matrix = op.get_system_matrix();
+      std::cout << matrix.frobenius_norm() << std::endl;
+      // matrix.print(std::cout);
+      // return 0;
+      preconditioner.initialize(matrix);
+      solution = 0.0;
+      solver.solve(op, solution, rhs, preconditioner);
+      pcout << reduction_control.last_step();
+    }
   if (true)
     {
       // 3) with preconditioner: direct solver
       TrilinosWrappers::SolverDirect preconditioner;
-      preconditioner.initialize(op.get_system_matrix());
-      solution = 0.0;
-      solver.solve(op, solution, rhs, preconditioner);
+      const auto                    &matrix = op.get_system_matrix();
+      std::cout << matrix.frobenius_norm() << std::endl;
+      // matrix.print(std::cout);
+      // return 0;
+      preconditioner.initialize(matrix);
+      preconditioner.vmult(solution, rhs);
       pcout << reduction_control.last_step();
     }
 

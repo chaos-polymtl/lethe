@@ -16,7 +16,9 @@ using namespace dealii;
  */
 template <int dim>
 void
-hyper_shell_with_hyper_shell(const double radius, Triangulation<dim> &tria)
+hyper_shell_with_hyper_shell(const double        radius,
+                             Triangulation<dim> &tria,
+                             const double        tolerance = 0.0)
 {
   const double r1_i = radius * 0.25;
   const double r1_o = radius * 0.5;
@@ -49,7 +51,7 @@ hyper_shell_with_hyper_shell(const double radius, Triangulation<dim> &tria)
 
   // create unique triangulation
   GridGenerator::merge_triangulations(
-    circle_one, circle_two, tria, 0, true, true);
+    circle_one, circle_two, tria, tolerance, true, true);
   // store manifolds in merged triangulation
   tria.set_manifold(0,
                     SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) :
@@ -76,6 +78,7 @@ hyper_cube_with_cylindrical_hole(const double        radius,
   // outer domain triangulation
   GridGenerator::hyper_cube_with_cylindrical_hole(
     tria_1, radius, outer_radius, 5.0, 1.0, true);
+
   // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
@@ -87,9 +90,9 @@ hyper_cube_with_cylindrical_hole(const double        radius,
   // create unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
   // store manifolds in merged triangulation
-  tria.set_manifold(0, tria_0.get_manifold(0));
+  tria.set_manifold(0, SphericalManifold<dim>(Point<dim>()));
   tria.set_manifold(1, tria_0.get_manifold(1));
-  tria.set_manifold(2, tria_1.get_manifold(0));
+  tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));
 }
 
 /**
@@ -113,6 +116,7 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
   // outer domain triangulation
   GridGenerator::hyper_cube_with_cylindrical_hole(
     tria_1, radius, outer_radius, 5.0, 1.0, true);
+
   // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
@@ -124,9 +128,9 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
   // crete unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 1e-9, true, false);
   // store manifolds in merged triangulaiton
-  tria.set_manifold(0, tria_0.get_manifold(0));
+  tria.set_manifold(0, SphericalManifold<dim>(Point<dim>()));
   tria.set_manifold(1, tria_0.get_manifold(1));
-  tria.set_manifold(2, tria_1.get_manifold(0));
+  tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));
 }
 
 /**
@@ -540,7 +544,15 @@ public:
                const unsigned int bid_1,
                const double       sip_factor = 1.0)
   {
-    coupling_operator_v = std::make_shared<CouplingOperator<dim, dim, Number>>(
+    const bool is_p_disc = matrix_free.get_dof_handler()
+                             .get_fe()
+                             .base_element(matrix_free.get_dof_handler()
+                                             .get_fe()
+                                             .component_to_base_index(dim)
+                                             .first)
+                             .n_dofs_per_vertex() == 0;
+
+    coupling_operator = std::make_shared<CouplingOperatorStokes<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
@@ -551,29 +563,8 @@ public:
       bid_0,
       bid_1,
       sip_factor,
-      0);
-
-    const bool is_p_disc = matrix_free.get_dof_handler()
-                             .get_fe()
-                             .base_element(matrix_free.get_dof_handler()
-                                             .get_fe()
-                                             .component_to_base_index(dim)
-                                             .first)
-                             .n_dofs_per_vertex() == 0;
-
-    if (is_p_disc == false)
-      coupling_operator_p = std::make_shared<CouplingOperator<dim, 1, Number>>(
-        *matrix_free.get_mapping_info().mapping,
-        matrix_free.get_dof_handler(),
-        matrix_free.get_affine_constraints(),
-        matrix_free.get_quadrature(),
-        n_subdivisions,
-        radius,
-        rotate_pi,
-        bid_0,
-        bid_1,
-        sip_factor,
-        dim);
+      !is_p_disc,
+      false);
   }
 
   virtual types::global_dof_index
@@ -612,11 +603,8 @@ public:
       true);
 
     // apply coupling terms
-    if (coupling_operator_v)
-      coupling_operator_v->vmult_add(dst, src);
-
-    if (coupling_operator_p)
-      coupling_operator_p->vmult_add(dst, src);
+    if (coupling_operator)
+      coupling_operator->vmult_add(dst, src);
 
     src.zero_out_ghost_values();
   }
@@ -676,11 +664,8 @@ public:
       matrix_free, data_cell, {}, {}, diagonal, diagonal_global_components);
 
     // add coupling terms
-    if (coupling_operator_v)
-      coupling_operator_v->add_diagonal_entries(diagonal);
-
-    if (coupling_operator_p)
-      coupling_operator_p->add_diagonal_entries(diagonal);
+    if (coupling_operator)
+      coupling_operator->add_diagonal_entries(diagonal);
 
     for (auto &i : diagonal)
       i = (i != 0.0) ? (1.0 / i) : 1.0;
@@ -703,16 +688,10 @@ public:
 
     AffineConstraints<Number> affine_constraints_tmp;
 
-    if (coupling_operator_v)
+    if (coupling_operator)
       {
         affine_constraints_tmp.copy_from(
-          coupling_operator_v->get_affine_constraints());
-
-        if (coupling_operator_p)
-          affine_constraints_tmp.merge(
-            coupling_operator_p->get_affine_constraints(),
-            AffineConstraints<Number>::MergeConflictBehavior::left_object_wins,
-            true);
+          coupling_operator->get_affine_constraints());
 
         affine_constraints_tmp.close();
       }
@@ -729,11 +708,8 @@ public:
         DoFTools::make_sparsity_pattern(dof_handler, dsp, *constraints);
 
         // apply coupling terms
-        if (coupling_operator_v)
-          coupling_operator_v->add_sparsity_pattern_entries(dsp);
-
-        if (coupling_operator_p)
-          coupling_operator_p->add_sparsity_pattern_entries(dsp);
+        if (coupling_operator)
+          coupling_operator->add_sparsity_pattern_entries(dsp);
 
         dsp.compress();
 
@@ -785,11 +761,8 @@ public:
           matrix_free, *constraints, data_cell, {}, {}, system_matrix);
 
         // apply coupling terms
-        if (coupling_operator_v)
-          coupling_operator_v->add_system_matrix_entries(system_matrix);
-
-        if (coupling_operator_p)
-          coupling_operator_p->add_system_matrix_entries(system_matrix);
+        if (coupling_operator)
+          coupling_operator->add_system_matrix_entries(system_matrix);
 
         system_matrix.compress(VectorOperation::add);
 
@@ -849,7 +822,7 @@ private:
         const auto u_gradient = phi_u.get_gradient(q);
 
         // a)     (ε(v), 2νε(u))
-        if (true)
+        if (false)
           {
             symm_scalar_product_add(u_gradient_result,
                                     u_gradient,
@@ -866,11 +839,11 @@ private:
 
         // c)     (q, div(u))
         for (unsigned int d = 0; d < dim; ++d)
-          p_value_result -= u_gradient[d][d];
+          p_value_result += u_gradient[d][d];
 
         // d) δ_1 (∇q, ∇p)
         if (delta_1_scaling != 0.0)
-          p_gradient_result = -delta_1 * p_gradient;
+          p_gradient_result = delta_1 * p_gradient;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
@@ -887,8 +860,7 @@ private:
   mutable TrilinosWrappers::SparseMatrix       system_matrix;
   mutable bool                                 valid_system;
 
-  std::shared_ptr<CouplingOperator<dim, dim, Number>> coupling_operator_v;
-  std::shared_ptr<CouplingOperator<dim, 1, Number>>   coupling_operator_p;
+  std::shared_ptr<CouplingOperatorStokes<dim, Number>> coupling_operator;
 
   const double delta_1_scaling;
 };
@@ -1376,7 +1348,9 @@ public:
                const unsigned int bid_1,
                const double       sip_factor_p = 0.0)
   {
-    coupling_operator_v = std::make_shared<CouplingOperator<dim, dim, Number>>(
+    (void)sip_factor_p;
+
+    coupling_operator = std::make_shared<CouplingOperatorStokes<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
@@ -1386,26 +1360,12 @@ public:
       rotate_pi,
       bid_0,
       bid_1,
-      sip_factor,
-      0);
-
-    if (sip_factor_p != 0.0)
-      coupling_operator_p = std::make_shared<CouplingOperator<dim, 1, Number>>(
-        *matrix_free.get_mapping_info().mapping,
-        matrix_free.get_dof_handler(),
-        matrix_free.get_affine_constraints(),
-        matrix_free.get_quadrature(),
-        n_subdivisions,
-        radius,
-        rotate_pi,
-        bid_0,
-        bid_1,
-        sip_factor_p,
-        dim,
-        1.0);
+      sip_factor);
 
     coupling_bids.insert(bid_0);
     coupling_bids.insert(bid_1);
+
+    comute_penalty_parameters();
   }
 
   virtual types::global_dof_index
@@ -1448,11 +1408,8 @@ public:
       true);
 
     // apply coupling terms
-    if (coupling_operator_v)
-      coupling_operator_v->vmult_add(dst, src);
-
-    if (coupling_operator_p)
-      coupling_operator_p->vmult_add(dst, src);
+    if (coupling_operator)
+      coupling_operator->vmult_add(dst, src);
 
     src.zero_out_ghost_values();
   }
@@ -1488,17 +1445,10 @@ public:
 
     AffineConstraints<Number> affine_constraints_tmp;
 
-    if (coupling_operator_v)
+    if (coupling_operator)
       {
         affine_constraints_tmp.copy_from(
-          coupling_operator_v->get_affine_constraints());
-
-        if (coupling_operator_p)
-          affine_constraints_tmp.merge(
-            coupling_operator_p->get_affine_constraints(),
-            AffineConstraints<Number>::MergeConflictBehavior::left_object_wins,
-            true);
-
+          coupling_operator->get_affine_constraints());
         affine_constraints_tmp.close();
       }
 
@@ -1514,11 +1464,8 @@ public:
         DoFTools::make_flux_sparsity_pattern(dof_handler, dsp, *constraints);
 
         // apply coupling terms
-        if (coupling_operator_v)
-          coupling_operator_v->add_sparsity_pattern_entries(dsp);
-
-        if (coupling_operator_p)
-          coupling_operator_p->add_sparsity_pattern_entries(dsp);
+        if (coupling_operator)
+          coupling_operator->add_sparsity_pattern_entries(dsp);
 
         dsp.compress();
 
@@ -1657,11 +1604,8 @@ public:
                                                   system_matrix);
 
         // apply coupling terms
-        if (coupling_operator_v)
-          coupling_operator_v->add_system_matrix_entries(system_matrix);
-
-        if (coupling_operator_p)
-          coupling_operator_p->add_system_matrix_entries(system_matrix);
+        if (coupling_operator)
+          coupling_operator->add_system_matrix_entries(system_matrix);
 
         system_matrix.compress(VectorOperation::add);
 
@@ -1817,6 +1761,16 @@ private:
                                 phi_u_p.read_cell_data(penalty_parameters)) *
                        panalty_factor;
 
+    VectorizedArrayType mask = 1.0;
+
+    const unsigned int face = phi_u_m.get_current_cell_index();
+    for (unsigned int v = 0;
+         v < matrix_free.n_active_entries_per_face_batch(face);
+         ++v)
+      if (matrix_free.get_face_iterator(face, v, true).first->material_id() !=
+          matrix_free.get_face_iterator(face, v, false).first->material_id())
+        mask[v] = 0.0;
+
     for (const auto q : phi_u_m.quadrature_point_indices())
       {
         const auto u_value_avg =
@@ -1841,7 +1795,7 @@ private:
             // - (jump(v), avg(∇u) n)
             u_value_jump_result -= u_gradient_avg * normal;
 
-            // + (jump(v), avg(u))
+            // + (jump(v), σ jump(u))
             u_value_jump_result += sigma * u_value_jump;
           }
 
@@ -1922,7 +1876,7 @@ private:
             // - (jump(v), avg(∇u) n)
             u_value_jump_result -= u_gradient_avg * normal;
 
-            // + (jump(v), jump(u))
+            // + (jump(v), σ jump(u))
             u_value_jump_result += sigma * u_value_jump;
           }
 
@@ -1994,10 +1948,13 @@ private:
             {
               fe_face_values.reinit(dealii_cell, f);
 
-              const Number factor = (dealii_cell->at_boundary(f) &&
-                                     !dealii_cell->has_periodic_neighbor(f)) ?
-                                      1. :
-                                      0.5;
+              const Number factor =
+                (dealii_cell->at_boundary(f) &&
+                 !dealii_cell->has_periodic_neighbor(f) &&
+                 (coupling_bids.find(dealii_cell->face(f)->boundary_id()) ==
+                  coupling_bids.end())) ?
+                  1. :
+                  0.5;
 
               for (const auto q : fe_face_values.quadrature_point_indices())
                 surface_area += fe_face_values.JxW(q) * factor;
@@ -2024,8 +1981,7 @@ private:
   AlignedVector<VectorizedArrayType> penalty_parameters;
   VectorizedArrayType                panalty_factor;
 
-  std::shared_ptr<CouplingOperator<dim, dim, Number>> coupling_operator_v;
-  std::shared_ptr<CouplingOperator<dim, 1, Number>>   coupling_operator_p;
+  std::shared_ptr<CouplingOperatorStokes<dim, Number>> coupling_operator;
 
   std::set<unsigned int> coupling_bids;
 };

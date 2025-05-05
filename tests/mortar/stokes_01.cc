@@ -46,7 +46,7 @@ main(int argc, char **argv)
   const unsigned int fe_degree            = 3;
   const unsigned int mapping_degree       = 3;
   const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 3;
+  const unsigned int n_global_refinements = 2;
   const double       radius               = 0.75;
   const double       outer_radius         = 1.0;
   const double       rotate               = 3.0;
