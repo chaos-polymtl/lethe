@@ -438,7 +438,6 @@ private:
 
   /// VOF DoFHandler associated with solved equations
   std::optional<std::reference_wrapper<const DoFHandler<dim>>> dof_handler_vof;
-  // DoFHandler<dim> *dof_handler_vof = nullptr;
 
   /** Filtered VOF solution field associated with solved equations
    * @note Used in the computation of VOF phase gradient projection */
@@ -466,8 +465,9 @@ private:
    * Booleans indicating if the subequation has been solved with the set VOF
    * solution vector
    *
-   * During initialization (VOFSubequationsInterface<dim>::initialize), all
-   * boolean are set to @p false.
+   * During initialization
+   * (VOFSubequationsInterface<dim>::initialize_subequations),
+   * all boolean are set to @p false.
    *
    * We start by setting a VOF filtered solution and DOFHandler
    * (VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler),
