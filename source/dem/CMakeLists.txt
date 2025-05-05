@@ -94,6 +94,7 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_jkr_force.h
   ../../include/dem/particle_wall_linear_force.h
   ../../include/dem/particle_wall_nonlinear_force.h
+  ../../include/dem/particle_wall_rolling_resistance_torque.h
   ../../include/dem/periodic_boundaries_manipulator.h
   ../../include/dem/read_checkpoint.h
   ../../include/dem/read_mesh.h
