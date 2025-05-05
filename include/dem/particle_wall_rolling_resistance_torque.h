@@ -10,7 +10,7 @@
  */
 
 inline Tensor<1, 3>
-no_rolling_resistance_torque()
+no_rolling_torque()
 {
   // No rolling resistance torque model. When this model is use, the rolling
   // friction is zero.
@@ -37,7 +37,7 @@ no_rolling_resistance_torque()
  */
 template <typename PropertiesIndex>
 inline Tensor<1, 3>
-constant_rolling_resistance_torque(
+constant_rolling_torque(
   const double                   particle_radius,
   const ArrayView<const double> &particle_properties,
   const double                   effective_rolling_friction_coefficient,
@@ -87,7 +87,7 @@ constant_rolling_resistance_torque(
 
 template <typename PropertiesIndex>
 inline Tensor<1, 3>
-viscous_rolling_resistance_torque(
+viscous_rolling_torque(
   const double                   particle_radius,
   const ArrayView<const double> &particle_properties,
   const double                   effective_rolling_friction_coefficient,
@@ -145,7 +145,7 @@ viscous_rolling_resistance_torque(
 
 template <int dim, typename PropertiesIndex>
 inline Tensor<1, 3>
-epsd_rolling_resistance_torque(
+epsd_rolling_torque(
   const double                   particle_radius,
   const ArrayView<const double> &particle_properties,
   const double                   effective_rolling_friction_coefficient,
@@ -159,7 +159,7 @@ epsd_rolling_resistance_torque(
 
 {
   // Useful value used more than once:
-  // mu_r * R_e
+  // mu_r * R
   const double mu_r_times_R =
     effective_rolling_friction_coefficient * particle_radius;
 
@@ -194,7 +194,7 @@ epsd_rolling_resistance_torque(
   cumulative_rolling_resistance_spring_torque -= K_r * delta_theta;
 
   // Limiting spring torque
-  const double M_r_max = mu_r_times_R_e * normal_force_norm;
+  const double M_r_max = mu_r_times_R * normal_force_norm;
 
   const double rolling_resistance_spring_torque_norm =
     cumulative_rolling_resistance_spring_torque.norm();
