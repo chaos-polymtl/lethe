@@ -15,7 +15,7 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    enum ParticleParticleContactForceModel
+    enum class ParticleParticleContactForceModel
     {
       linear,
       hertz_mindlin_limit_force,
@@ -25,7 +25,7 @@ namespace Parameters
       DMT
     };
 
-    enum ParticleWallContactForceModel
+    enum class ParticleWallContactForceModel
     {
       linear,
       nonlinear,
