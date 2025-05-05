@@ -2001,13 +2001,13 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       VectorizedArray<number> temp_scalar_product = VectorizedArray<number>(0.);
 
       for (unsigned int i = 0; i < dim; ++i)
-      {
-        for (unsigned int k = 0; k < dim; ++k)
+        {
+          for (unsigned int k = 0; k < dim; ++k)
             {
-              temp_scalar_product =+ shear_rate[i][k] * 
-                  previous_shear_rate[i][k];
+              temp_scalar_product +=
+                shear_rate[i][k] * previous_shear_rate[i][k];
             }
-      }
+        }
 
 
       for (unsigned int i = 0; i < dim; ++i)
@@ -2037,71 +2037,79 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
             value_result[i] += (*bdf_coefs)[0] * value[i];
         }
 
-      // PSPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      if (true)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          // PSPG Jacobian
+          for (unsigned int i = 0; i < dim; ++i)
             {
-              // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
-                       kinematic_viscosity_gradient[i] * shear_rate[i][k] +
-                       gradient[i][k] * previous_values[k] +
-                       previous_gradient[i][k] * value[k]);
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
+                  gradient_result[dim][i] +=
+                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
+                           kinematic_viscosity_gradient[i] * shear_rate[i][k] +
+                           gradient[i][k] * previous_values[k] +
+                           previous_gradient[i][k] * value[k]);
+                }
+              // +(∂t δu)·τ∇q
+              if (transient)
+                gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
             }
-          // +(∂t δu)·τ∇q
-          if (transient)
-            gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
+          // (∇δp)τ·∇q
+          gradient_result[dim] += tau * gradient[dim];
         }
-      // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
 
       // SUPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      if (false)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (unsigned int i = 0; i < dim; ++i)
             {
-              // Part 1
-              for (unsigned int l = 0; l < dim; ++l)
+              for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // +((u·∇)δu + (δu·∇)u - ν∆δu  - (∇ν)(∇δu + ∇δuT))τ(u·∇)v
+                  // Part 1
+                  for (unsigned int l = 0; l < dim; ++l)
+                    {
+                      // +((u·∇)δu + (δu·∇)u - ν∆δu  - (∇ν)(∇δu + ∇δuT))τ(u·∇)v
+                      gradient_result[i][k] +=
+                        tau * previous_values[k] *
+                        (gradient[i][l] * previous_values[l] +
+                         previous_gradient[i][l] * value[l] -
+                         kinematic_viscosity * hessian_diagonal[i][l] -
+                         kinematic_viscosity_gradient[i] * shear_rate[i][l]);
+                    }
+                  // +(∇δp)τ(u·∇)v
                   gradient_result[i][k] +=
-                    tau * previous_values[k] *
-                    (gradient[i][l] * previous_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     kinematic_viscosity * hessian_diagonal[i][l] -
-                     kinematic_viscosity_gradient[i] * shear_rate[i][l]);
-                }
-              // +(∇δp)τ(u·∇)v
-              gradient_result[i][k] +=
-                tau * previous_values[k] * (gradient[dim][i]);
+                    tau * previous_values[k] * (gradient[dim][i]);
 
-              // +(∂t δu)τ(u·∇)v
-              if (transient)
-                gradient_result[i][k] +=
-                  tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
+                  // +(∂t δu)τ(u·∇)v
+                  if (transient)
+                    gradient_result[i][k] +=
+                      tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
 
 
-              // Part 2
-              for (unsigned int l = 0; l < dim; ++l)
-                {
-                  // +((u·∇)u - ν∆u - (∇ν)((∇u + ∇uT))τ(δu·∇)v
+                  // Part 2
+                  for (unsigned int l = 0; l < dim; ++l)
+                    {
+                      // +((u·∇)u - ν∆u - (∇ν)((∇u + ∇uT))τ(δu·∇)v
+                      gradient_result[i][k] +=
+                        tau * value[k] *
+                        (previous_gradient[i][l] * previous_values[l] -
+                         kinematic_viscosity * previous_hessian_diagonal[i][l] -
+                         kinematic_viscosity_gradient[i] *
+                           previous_shear_rate[i][l]);
+                    }
+                  // +(∇p - f)τ(δu·∇)v
                   gradient_result[i][k] +=
                     tau * value[k] *
-                    (previous_gradient[i][l] * previous_values[l] -
-                     kinematic_viscosity * previous_hessian_diagonal[i][l] -
-                     kinematic_viscosity_gradient[i] *
-                       previous_shear_rate[i][l]);
-                }
-              // +(∇p - f)τ(δu·∇)v
-              gradient_result[i][k] +=
-                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
+                    (previous_gradient[dim][i] - source_value[i]);
 
-              // +(∂t u)τ(δu·∇)v
-              if (transient)
-                gradient_result[i][k] += tau * value[k] *
-                                         ((*bdf_coefs)[0] * previous_values[i] +
-                                          previous_time_derivatives[i]);
+                  // +(∂t u)τ(δu·∇)v
+                  if (transient)
+                    gradient_result[i][k] +=
+                      tau * value[k] *
+                      ((*bdf_coefs)[0] * previous_values[i] +
+                       previous_time_derivatives[i]);
+                }
             }
         }
 
@@ -2245,53 +2253,63 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
             }
 
           // PSPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          if (true)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (unsigned int i = 0; i < dim; ++i)
                 {
-                  // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u·∇)u)·τ∇q
-                  gradient_result[dim][i] +=
-                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
-                           kinematic_viscosity_gradient[i] * shear_rate[i][k] +
-                           gradient[i][k] * value[k]);
-                }
-              // +(-f)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
+                  for (unsigned int k = 0; k < dim; ++k)
+                    {
+                      // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u·∇)u)·τ∇q
+                      gradient_result[dim][i] +=
+                        tau *
+                        (-kinematic_viscosity * hessian_diagonal[i][k] -
+                         kinematic_viscosity_gradient[k] * shear_rate[k][i] +
+                         gradient[i][k] * value[k]);
+                    }
+                  // +(-f)·τ∇q
+                  gradient_result[dim][i] += tau * (-source_value[i]);
 
-              // +(∂t u)·τ∇q
-              if (transient)
-                gradient_result[dim][i] += tau * ((*bdf_coefs)[0] * value[i] +
-                                                  previous_time_derivatives[i]);
+                  // +(∂t u)·τ∇q
+                  if (transient)
+                    gradient_result[dim][i] +=
+                      tau * ((*bdf_coefs)[0] * value[i] +
+                             previous_time_derivatives[i]);
+                }
+              // +(∇p)τ∇·q
+              gradient_result[dim] += tau * gradient[dim];
             }
-          // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
 
           // SUPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          if (false)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (unsigned int i = 0; i < dim; ++i)
                 {
-                  for (unsigned int l = 0; l < dim; ++l)
+                  for (unsigned int k = 0; k < dim; ++k)
                     {
-                      // (-ν∆u - (∇ν)((∇u + ∇uT)))τ(u·∇)v
-                      gradient_result[i][k] +=
-                        -tau * value[k] *
-                        (kinematic_viscosity * hessian_diagonal[i][l] +
-                         kinematic_viscosity_gradient[i] * shear_rate[i][l]);
+                      for (unsigned int l = 0; l < dim; ++l)
+                        {
+                          // (-ν∆u - (∇ν)((∇u + ∇uT)))τ(u·∇)v
+                          gradient_result[i][k] +=
+                            -tau * value[k] *
+                            (kinematic_viscosity * hessian_diagonal[i][l]
+                             //*kinematic_viscosity_gradient[l] *
+                             // shear_rate[l][i]);
+                            );
 
-                      // + ((u·∇)u)τ(u·∇)v
+                          // + ((u·∇)u)τ(u·∇)v
+                          gradient_result[i][k] +=
+                            tau * value[k] * gradient[i][l] * value[l];
+                        }
+                      // + (∇p - f)τ(u·∇)v
                       gradient_result[i][k] +=
-                        tau * value[k] * gradient[i][l] * value[l];
+                        tau * value[k] * (gradient[dim][i] - source_value[i]);
+
+                      // + (∂t u)τ(u·∇)v
+                      if (transient)
+                        gradient_result[i][k] += tau * value[k] *
+                                                 ((*bdf_coefs)[0] * value[i] +
+                                                  previous_time_derivatives[i]);
                     }
-                  // + (∇p - f)τ(u·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] * (gradient[dim][i] - source_value[i]);
-
-                  // + (∂t u)τ(u·∇)v
-                  if (transient)
-                    gradient_result[i][k] += tau * value[k] *
-                                             ((*bdf_coefs)[0] * value[i] +
-                                              previous_time_derivatives[i]);
                 }
             }
 

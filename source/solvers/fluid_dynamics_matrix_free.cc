@@ -2880,7 +2880,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->present_solution);
-    this->system_operator->get_system_matrix().print(std::cout);
+  // this->system_operator->get_system_matrix().print(std::cout);
   this->computing_timer.leave_subsection("Evaluate non linear term and tau");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
