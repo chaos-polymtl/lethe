@@ -1215,6 +1215,7 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_preconditioner()
 {
+  system_matrix.print(std::cout);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
     setup_ILU();
