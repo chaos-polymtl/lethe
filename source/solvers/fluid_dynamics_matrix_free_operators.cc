@@ -1998,6 +1998,18 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         }
 
       // Weak form Jacobian
+      VectorizedArray<number> temp_scalar_product = VectorizedArray<number>(0.);
+
+      for (unsigned int i = 0; i < dim; ++i)
+      {
+        for (unsigned int k = 0; k < dim; ++k)
+            {
+              temp_scalar_product =+ shear_rate[i][k] * 
+                  previous_shear_rate[i][k];
+            }
+      }
+
+
       for (unsigned int i = 0; i < dim; ++i)
         {
           // -(∇·v,δp)
@@ -2013,8 +2025,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
               // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
               gradient_result[i][k] += 0.5 / previous_shear_rate_magnitude *
                                        grad_kinematic_viscosity_shear_rate *
-                                       previous_shear_rate[i][k] *
-                                       shear_rate[i][k] *
+                                       temp_scalar_product *
                                        previous_shear_rate[i][k];
 
               // +(v,(u·∇)δu + (δu·∇)u)
