@@ -71,6 +71,18 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
+
+  /**
+   * @brief Return the force applied to the walls.
+   */
+  virtual std::map<types::boundary_id, Tensor<1, 3>>
+  get_force() = 0;
+
+  /**
+   * @brief Return the torque applied to the walls.
+   */
+  virtual std::map<types::boundary_id, Tensor<1, 3>>
+  get_torque() = 0;
 };
 
 /**
@@ -129,6 +141,24 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
+
+  /**
+   * @brief Return the force applied to the walls.
+   */
+  std::map<types::boundary_id, Tensor<1, 3>>
+  get_force() override
+  {
+    return this->force_on_walls;
+  }
+
+  /**
+   * @brief Return the torque applied to the walls.
+   */
+  std::map<types::boundary_id, Tensor<1, 3>>
+  get_torque() override
+  {
+    return this->torque_on_walls;
+  }
 
 protected:
   /**
@@ -288,18 +318,6 @@ protected:
     contact_info.normal_relative_velocity = normal_relative_velocity_value;
     contact_info.tangential_displacement  = modified_tangential_displacement;
     contact_info.tangential_relative_velocity = tangential_relative_velocity;
-  }
-
-  std::map<types::boundary_id, Tensor<1, 3>>
-  get_force()
-  {
-    return force_on_walls;
-  }
-
-  std::map<types::boundary_id, Tensor<1, 3>>
-  get_torque()
-  {
-    return torque_on_walls;
   }
 
   /**
