@@ -953,57 +953,39 @@ NavierStokesOperatorBase<dim, number>::
               //     grad_shear_rate[d] = // 1.0;
               //       (0.5 / shear_rate_magnitude) * grad_shear_rate_d;
               //   }
-            }
 
-          // Get information from physical properties class
-          std::map<field, std::vector<double>> fields;
 
-          fields.insert(
-            std::pair<field, std::vector<double>>(field::shear_rate,
-                                                  integrator.n_q_points));
 
-          // Store the shear rate magnitude in the appropriate data
-          // structure needed for the set field vector function
-          std::vector<double> temp_shear_rate_magnitude(integrator.n_q_points);
+              // Store the shear rate magnitude in the appropriate data
+              // structure needed for the set field vector function
+              std::vector<double> temp_shear_rate_magnitude(
+                integrator.n_q_points);
 
-          for (const auto q : integrator.quadrature_point_indices())
-            {
+              VectorizedArray<number> viscosity;
+              VectorizedArray<number> grad_viscosity_shear_rate;
+
+
               for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
                 {
-                  temp_shear_rate_magnitude[q] = shear_rate_magnitude[v];
+                  // Get information from physical properties class
+                  std::map<field, double> fields;
+                  fields[field::shear_rate] = shear_rate_magnitude[v];
+
+                  viscosity[v] =
+                    this->properties_manager->get_rheology()->value(fields);
+
+                  grad_viscosity_shear_rate[v] =
+                    this->properties_manager->get_rheology()->jacobian(
+                      fields, field::shear_rate);
                 }
-            }
 
-          set_field_vector(field::shear_rate,
-                           temp_shear_rate_magnitude,
-                           fields);
-
-          std::vector<double> temp_grad_kinematic_viscosity_shear_rate(
-            integrator.n_q_points);
-          this->properties_manager->get_rheology()->vector_jacobian(
-            fields,
-            field::shear_rate,
-            temp_grad_kinematic_viscosity_shear_rate);
-
-          std::vector<double> temp_kinematic_viscosity_vector(
-            integrator.n_q_points);
-          this->properties_manager->get_rheology()->vector_value(
-            fields, temp_kinematic_viscosity_vector);
-
-          for (const auto q : integrator.quadrature_point_indices())
-            {
               grad_kinematic_viscosity_shear_rate(cell, q) =
-                temp_grad_kinematic_viscosity_shear_rate[q];
+                grad_viscosity_shear_rate;
 
-              // Calculate it using the grad kinematic viscosity shear rate
-              // and the grad shear rate.
               kinematic_viscosity_gradient(cell, q) =
-                grad_shear_rate *
-                VectorizedArray<number>(
-                  temp_grad_kinematic_viscosity_shear_rate[q]);
+                grad_shear_rate * grad_viscosity_shear_rate;
 
-              kinematic_viscosity_vector(cell, q) =
-                VectorizedArray<number>(temp_kinematic_viscosity_vector[q]);
+              kinematic_viscosity_vector(cell, q) = viscosity;
 
               // Recalculate stabilization parameter using kinematic
               // viscosity vector
@@ -1016,8 +998,7 @@ NavierStokesOperatorBase<dim, number>::
                 1. /
                 std::sqrt(
                   Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
-                  9. * Utilities::fixed_power<2>(
-                         4. * temp_kinematic_viscosity_vector[q] / (h * h)));
+                  9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
             }
         }
     }
