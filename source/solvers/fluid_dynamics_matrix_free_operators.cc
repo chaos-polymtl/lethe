@@ -1977,7 +1977,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         }
 
       // SUPG Jacobian
-      if (false)
+      if (true)
         {
           for (unsigned int i = 0; i < dim; ++i)
             {
@@ -2197,7 +2197,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
             }
 
           // SUPG term
-          if (false)
+          if (true)
             {
               for (unsigned int i = 0; i < dim; ++i)
                 {
@@ -2207,11 +2207,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                         {
                           // (-ν∆u - (∇ν)((∇u + ∇uT)))τ(u·∇)v
                           gradient_result[i][k] +=
-                            -tau * value[k] *
-                            (kinematic_viscosity * hessian_diagonal[i][l]
-                             //*kinematic_viscosity_gradient[l] *
-                             // shear_rate[l][i]);
-                            );
+                            tau * value[k] *
+                            (-kinematic_viscosity * hessian_diagonal[i][l] -
+                             kinematic_viscosity_gradient[l] *
+                             shear_rate[l][i]);
 
                           // + ((u·∇)u)τ(u·∇)v
                           gradient_result[i][k] +=
