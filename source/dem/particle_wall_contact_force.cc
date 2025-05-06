@@ -55,8 +55,9 @@ ParticleWallContactForce<dim,
           auto particle            = contact_info.particle;
           auto particle_properties = particle->get_properties();
 
-          Point<3>     point_on_boundary = contact_info.point_on_boundary;
-          Tensor<1, 3> normal_vector     = contact_info.normal_vector;
+          Point<3> point_on_boundary = contact_info.point_on_boundary;
+          // Normal vector from the wall to the particle
+          Tensor<1, 3> normal_vector = contact_info.normal_vector;
           Tensor<1, 3> normal_force;
           Tensor<1, 3> tangential_force;
           Tensor<1, 3> tangential_torque;
@@ -65,8 +66,8 @@ ParticleWallContactForce<dim,
           // Getting particle 3d location
           Point<3> particle_location_3d = get_location(particle);
 
-          // Defining a tensor which connects the center of particle to the
-          // point_on_boundary
+          // Defining a tensor which connects the point_on_boundary to the
+          // center of particle
           Tensor<1, 3> point_to_particle_vector =
             particle_location_3d - point_on_boundary;
 

@@ -71,7 +71,7 @@ constant_rolling_torque(const double                   particle_radius,
  * The model works as follows: (particle i, wall j)
  * M_r = - mu_r * R_i * |F_n| * |V_omega| * omega_hat
  * omega_hat = omega_i / |omega_i|
- * V_omega = omega_i × (R_p * n_ij)
+ * V_omega = omega_i × (R_p * n_ji)
  *
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
