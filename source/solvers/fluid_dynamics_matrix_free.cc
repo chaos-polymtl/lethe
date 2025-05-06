@@ -2194,10 +2194,12 @@ FluidDynamicsMatrixFree<dim>::solve()
       if (this->multiphysics->get_active_physics().size() > 1)
         {
           update_solutions_for_fluid_dynamics();
-          this->system_operator->compute_buoyancy_term(
-            temperature_present_solution,
-            *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
-            this->simulation_parameters.physical_properties_manager);
+
+          if (this->simulation_parameters.multiphysics.buoyancy_force)
+            this->system_operator->compute_buoyancy_term(
+              temperature_present_solution,
+              *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
+              this->simulation_parameters.physical_properties_manager);
         }
 
       this->iterate();
@@ -2680,7 +2682,7 @@ void
 FluidDynamicsMatrixFree<dim>::initialize_GMG()
 {
   // Initialize everything related to heat transfer within the MG algorithm
-  if (this->multiphysics->get_active_physics().size() > 1)
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
     dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
       ->initialize_auxiliary_physics(
         *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
