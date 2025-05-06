@@ -39,13 +39,13 @@ class ParticleWallContactForceBase
 {
 public:
   /**
-   * @brief Calculate the contact outcomes using the contact pair information
-   * obtained in the fine search and physical properties of particles.
+   * @brief Calculate the contact outcomes for particle-wall contacts 
+   * using the contact pair information and physical properties.
    *
-   * @param particle_wall_pairs_in_contact Required information for the calculation of the
-   * particle-wall contact force.
-   * @param dt DEM time step.
-   * @param contact_outcome Interaction outcomes.
+   * @param[in] particle_wall_pairs_in_contact Required information for the 
+   * calculation of the particle-wall contact force.
+   * @param[in] dt DEM time step.
+   * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
   calculate_particle_wall_contact_force(
@@ -55,13 +55,13 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   /**
-   * @brief Calculate the contact outcomes using the contact pair information
-   * obtained in the fine search and physical properties.
+   * @brief Calculate the contact outcomes for particle-solid objects contacts
+   * using the contact pair information and physical properties.
    *
-   * @param particle_floating_mesh_in_contact A container that stores the information
-   * of particle-floating mesh contact
-   * @param dt DEM time step.
-   * @param solids Floating solids
+   * @param[in] particle_floating_mesh_in_contact A container that stores the 
+   * information of particle-floating mesh contact.
+   * @param[in] dt DEM time step.
+   * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
@@ -109,12 +109,12 @@ public:
   {}
 
   /**
-   * @brief Calculate the contact outcomes using the contact pair information
-   * obtained in the fine search and physical properties.
+   * @brief Calculate the contact outcomes for particle-wall contacts 
+   * using the contact pair information and physical properties.
    *
-   * @param particle_wall_pairs_in_contact Required information for the calculation of the
-   * particle-wall contact force.
-   * @param dt DEM time step.
+   * @param[in] particle_wall_pairs_in_contact Required information for the 
+   * calculation of the particle-wall contact force.
+   * @param[in] dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
@@ -125,13 +125,13 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
 
   /**
-   * @brief Calculate the contact outcomes using the contact pair information
-   * obtained in the fine search and physical properties.
+   * @brief Calculate the contact outcomes for particle-solid objects contacts
+   * using the contact pair information and physical properties.
    *
-   * @param particle_floating_mesh_in_contact A container that stores the information
-   * of particle-floating mesh contact
-   * @param dt DEM time step.
-   * @param solids Floating solids
+   * @param[in] particle_floating_mesh_in_contact A container that stores the information
+   * of particle-floating mesh contact.
+   * @param[in] dt DEM time step.
+   * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
@@ -178,7 +178,7 @@ protected:
     // i is the particle, j is the wall.
     // There is a minus sign in front of the normal_vector to respect the
     // convention i -> j
-    Tensor<1,3>        normal_vector = -contact_info.normal_vector;
+    Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
     const unsigned int boundary_id   = contact_info.boundary_id;
 
     Tensor<1, 3> particle_velocity;
@@ -238,7 +238,7 @@ protected:
     // two different vectors (pairs_in_contact and contact_pair_candidates):
     // tangential_displacement of the particles which were already in contact
     // (pairs_in_contact) needs to be modified using its history, while the
-    // tangential_displacements of new particles are equal to zero
+    // tangential_displacements of new particles are equal to zero.
     Tensor<1, 3> modified_tangential_displacement =
       contact_info.tangential_displacement + tangential_relative_velocity * dt;
 
@@ -251,12 +251,12 @@ protected:
   /**
    * @brief Update the contact pair information for particle-solid object contacts.
    *
-   * @param contact_info Contact information of a particle-wall pair.
-   * @param particle_properties Properties of particle in contact.
-   * @param dt DEM time step.
-   * @param cut_cell_translational_velocity Translational velocity of the cut cell.
-   * @param cut_cell_rotational_veclocity Rotational veclocity of the cut cell.
-   * @param center_of_rotation_particle_distance Distance between the particle and
+   * @param[in,out] contact_info Contact information of a particle-wall pair.
+   * @param[in] particle_properties Properties of particle.
+   * @param[in] dt DEM time step.
+   * @param[in] cut_cell_translational_velocity Translational velocity of the cut cell.
+   * @param[in] cut_cell_rotational_velocity Rotational veclocity of the cut cell.
+   * @param[in] center_of_rotation_particle_distance Distance between the particle and
    * the center of rotation of the floating mesh.
    */
   void
@@ -323,8 +323,8 @@ protected:
   /**
    * @brief This function is used to find the projection of vector_a on
    * vector_b
-   * @param vector_a A vector which is going to be projected on vector_b
-   * @param vector_b The projection vector of vector_a
+   * @param[in] vector_a A vector which is going to be projected on vector_b
+   * @param[in] vector_b The projection vector of vector_a
    * @return The projection of vector_a on vector_b
    */
   inline Tensor<1, 3>
@@ -337,15 +337,15 @@ protected:
   }
 
   /**
-   * @brief Calculate the total force and total torque on each boundary.
+   * @brief Calculate and apply the total force and total torque on a boundary.
    *
-   * @param boundary_id Id of the boundary.
-   * @param add_force Contact force applied to the wall.
-   * @param point_contact Contact point on the wall.
+   * @param[in] boundary_id Id of the boundary.
+   * @param[in] add_force Contact force applied to the wall.
+   * @param[in] point_contact Contact point on the wall.
    */
   void
   calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
-                                         Tensor<1, 3>       add_force,
+                                         const Tensor<1, 3> add_force,
                                          const Point<3>     point_contact)
   {
     if (calculate_force_torque_on_boundary)
@@ -362,8 +362,8 @@ protected:
   }
 
   /**
-   * @brief Initialize a map of vectors to zero with the member class boundary index which has the keys as information.
-   *
+   * @brief Initialize a map of vectors to zero with the member class boundary 
+   * index which has the keys as information.
    */
   std::map<unsigned int, Tensor<1, 3>>
   initialize()
@@ -377,8 +377,8 @@ protected:
   }
 
   /**
-   * @brief This function sums all the forces and torques on the wall from all the
-   * MPI processes.
+   * @brief This function sums all the forces and torques on the wall from all 
+   * the MPI processes.
    */
   void
   mpi_correction_over_calculation_of_forces_and_torques()
@@ -395,7 +395,8 @@ protected:
   /**
    * @brief Get the 3d location of the particle.
    *
-   * @param particle The particle to get the location from.
+   * @param[in] particle The particle to get the location from.
+   * @return 3d location of particle.
    */
   inline Point<3>
   get_location(const Particles::ParticleIterator<dim> &particle) &
@@ -1218,6 +1219,7 @@ private:
   }
 
   // Members of the class
+
   std::unordered_map<unsigned int, Tensor<1, 3>>
                                            boundary_translational_velocity_map;
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
@@ -1225,8 +1227,6 @@ private:
   std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
 
   unsigned int n_particle_types;
-
-  // Effective properties
   std::vector<double> effective_youngs_modulus;
   std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
@@ -1239,7 +1239,6 @@ private:
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
   std::map<unsigned int, Tensor<1, 3>> torque_on_walls;
-
   bool                            calculate_force_torque_on_boundary;
   Point<3>                        center_mass_container;
   std::vector<types::boundary_id> boundary_index;

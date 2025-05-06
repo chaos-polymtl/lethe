@@ -40,52 +40,46 @@ ParticleWallContactForce<dim,
 {
   this->force_on_walls  = this->initialize();
   this->torque_on_walls = this->initialize();
-  // Looping over particle_wall_pairs_in_contact, which means looping over
-  // all the active particles with iterator
-  // particle_wall_pairs_in_contact_iterator
+
+  // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
        particle_wall_pairs_in_contact | boost::adaptors::map_values)
     {
-      // Now an iterator (particle_wall_contact_info_iterator) on each
-      // element of the particle_wall_pairs_in_contact vector is defined.
-      // This iterator iterates over a map which contains the required
-      // information for calculation of the contact force for each particle
+      // Iterating over a map which contains the required information for
+      // calculation of the contact force for each particle
       for (auto &&contact_info :
            pairs_in_contact_content | boost::adaptors::map_values)
         {
-          // Defining contact forces and properties of particle as
-          // local variables
+          // Defining local variables which will be used within the contact
+          // calculation
           auto particle            = contact_info.particle;
           auto particle_properties = particle->get_properties();
 
+          Point<3>     point_on_boundary = contact_info.point_on_boundary;
           Tensor<1, 3> normal_vector     = contact_info.normal_vector;
-          Point<3>         point_on_boundary = contact_info.point_on_boundary;
           Tensor<1, 3> normal_force;
           Tensor<1, 3> tangential_force;
           Tensor<1, 3> tangential_torque;
           Tensor<1, 3> rolling_resistance_torque;
 
-          // Get particle 3d location
+          // Getting particle 3d location
           Point<3> particle_location_3d = get_location(particle);
 
-          // A vector (point_to_particle_vector) is defined which connects
-          // the center of particle to the point_on_boundary. This vector
-          // will then be projected on the normal vector of the boundary to
-          // obtain the particle-wall distance
+          // Defining a tensor which connects the center of particle to the
+          // point_on_boundary
           Tensor<1, 3> point_to_particle_vector =
             particle_location_3d - point_on_boundary;
 
-          // Finding the projected vector on the normal vector of the
-          // boundary. Here we have used the private function
-          // find_projection. Using this projected vector, the particle-wall
-          // distance is calculated
+          // Finding the projected vector on the normal vector of the boundary
           Tensor<1, 3> projected_vector =
             this->find_projection(point_to_particle_vector, normal_vector);
+
+          // Calculating the particle-wall distance using the projected vector
           double normal_overlap =
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          // Get the threshold distance for contact force, this is useful
+          // Getting the threshold distance for contact force, this is useful
           // for non-contact cohesive force models such as the DMT.
           const double force_calculation_threshold_distance =
             get_force_calculation_threshold_distance();
@@ -94,13 +88,13 @@ ParticleWallContactForce<dim,
             {
               contact_info.normal_overlap = normal_overlap;
 
-              // Update all the information
+              // Updating contact information
               this->update_contact_information(contact_info,
                                                particle_location_3d,
                                                particle_properties,
                                                dt);
 
-              // Calculating the contact force
+              // Calculating contact force and torque
               this->calculate_contact(contact_info,
                                       dt,
                                       particle_properties,
@@ -109,7 +103,7 @@ ParticleWallContactForce<dim,
                                       tangential_torque,
                                       rolling_resistance_torque);
 
-              // Apply the calculated forces and torques on the particle
+              // Applying the calculated forces and torques on the particle
               types::particle_index particle_id = particle->get_local_index();
               Tensor<1, 3>         &particle_torque =
                 contact_outcome.torque[particle_id];
@@ -153,6 +147,7 @@ ParticleWallContactForce<dim,
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
 
+  // Iterating over the solid objects
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
@@ -191,8 +186,7 @@ ParticleWallContactForce<dim,
                   triangle[vertex] = cut_cell->vertex(vertex);
                 }
 
-              // Call find_particle_triangle_projection to get the
-              // projection of particles on the triangle
+              // Getting the projection of particles on the triangle
               // (floating mesh cell)
               auto particle_triangle_information = LetheGridTools::
                 find_particle_triangle_projection<dim, PropertiesIndex>(
@@ -212,8 +206,8 @@ ParticleWallContactForce<dim,
                   // If particle passes the distance check
                   if (pass_distance_check[particle_counter])
                     {
-                      // Define the total force of contact, properties of
-                      // particle as local parameters
+                      // Defining local variables which will be used within the
+                      // contact calculation
                       auto &particle            = contact_info.particle;
                       auto  particle_properties = particle->get_properties();
                       Tensor<1, 3> normal_force;
@@ -250,6 +244,7 @@ ParticleWallContactForce<dim,
 
                           contact_info.boundary_id = solid_counter;
 
+                          // Updating contact information
                           this
                             ->update_particle_solid_object_contact_information(
                               contact_info,
@@ -260,7 +255,7 @@ ParticleWallContactForce<dim,
                               center_of_rotation.distance(
                                 particle_location_3d));
 
-                          // Calculating the contact force
+                          // Calculating contact force and torque
                           this->calculate_contact(contact_info,
                                                   dt,
                                                   particle_properties,
@@ -269,7 +264,7 @@ ParticleWallContactForce<dim,
                                                   tangential_torque,
                                                   rolling_resistance_torque);
 
-                          // Apply the calculated forces and torques on the
+                          // Applying the calculated forces and torques on the
                           // particle
                           types::particle_index particle_id =
                             particle->get_local_index();

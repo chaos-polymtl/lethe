@@ -1,25 +1,23 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_wall_rolling_resistance_torque_h
 #define lethe_particle_wall_rolling_resistance_torque_h
 
 /**
- * @brief No rolling resistance torque model. No calculation is being done with
+ * @brief No rolling resistance torque. No calculation is being done with
  * this model.
  */
 
 inline Tensor<1, 3>
 no_rolling_torque()
 {
-  // No rolling resistance torque model. When this model is use, the rolling
-  // friction is zero.
   Tensor<1, 3> rolling_resistance_torque({0.0, 0.0, 0.0});
   return rolling_resistance_torque;
 }
 
 /**
- * @brief Calculation of the constant rolling resistance torque model using the
+ * @brief Calculation of the constant rolling resistance torque using the
  * information obtained from the fine search and physical properties.
  *
  * The model works as follows: (particle i, wall j)
@@ -34,6 +32,7 @@ no_rolling_torque()
  * coefficient
  * @param[in] normal_force_norm Norm of the normal force.
  *
+ * @return rolling_resistance_torque with constant resistance
  */
 template <typename PropertiesIndex>
 inline Tensor<1, 3>
@@ -66,7 +65,7 @@ constant_rolling_torque(const double                   particle_radius,
 }
 
 /**
- * @brief Calculation of the viscous rolling resistance torque model using the
+ * @brief Calculation of the viscous rolling resistance torque using the
  * information obtained from the fine search and physical properties.
  *
  * The model works as follows: (particle i, wall j)
@@ -82,6 +81,8 @@ constant_rolling_torque(const double                   particle_radius,
  * coefficient
  * @param[in] normal_force_norm Norm of the normal force.
  * @param[in] normal_unit_vector Normal unit vector.
+ *
+ * @return rolling_resistance_torque with viscous resistance
  */
 
 template <typename PropertiesIndex>
@@ -119,7 +120,8 @@ viscous_rolling_torque(const double                   particle_radius,
 }
 
 /**
- * @brief
+ * @brief Calculation of the EPSD rolling resistance torque using the
+ * information obtained from the fine search and physical properties.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the problem is solved.
@@ -139,6 +141,8 @@ viscous_rolling_torque(const double                   particle_radius,
  * contact.
  * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
  * rolling resistance torque for the EPSD rolling resistance model.
+ *
+ * @return rolling_resistance_torque with EPSD resistance
  */
 
 template <int dim, typename PropertiesIndex>
