@@ -352,10 +352,10 @@ protected:
       {
         mpi_correction_over_calculation_of_forces_and_torques();
 
-        force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
+        this->force_on_walls[boundary_id] = this->force_on_walls[boundary_id] - add_force;
 
-        torque_on_walls[boundary_id] =
-          torque_on_walls[boundary_id] -
+        this->torque_on_walls[boundary_id] =
+          this->torque_on_walls[boundary_id] -
           cross_product_3d(point_contact - center_mass_container, add_force);
       }
   }
