@@ -121,7 +121,7 @@ subsection DEM boundary conditions
   set number of boundary conditions = 2
 
   subsection boundary condition 0
-    set type = fixed_wall
+    set type        = fixed_wall
     set boundary id = 0
   end
 

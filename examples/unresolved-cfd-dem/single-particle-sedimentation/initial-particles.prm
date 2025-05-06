@@ -71,4 +71,3 @@ subsection mesh
   set grid type      = subdivided_hyper_rectangle
   set grid arguments = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:false
 end
-
