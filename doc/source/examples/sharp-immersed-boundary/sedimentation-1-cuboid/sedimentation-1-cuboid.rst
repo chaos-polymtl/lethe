@@ -245,7 +245,7 @@ Results
 
 In this section, we will briefly show some results of this simulation.
 
-First, we can look at a slice of the velocity profile during the simulation. The results are shown on the left of the animation below. The animation shows two other initial orientations, corresponding to the S17 and S16 cases of Wang `et al.` [#Wang2024]_. We can see that the orientation has an impact on the trajectory and velocity profile.
+First, we can look at a slice of the velocity profile during the simulation. The results are shown on the left of the animation below. The animation shows two other initial orientations, corresponding to the S17 and S16 cases of Wang `et al.` [#Wang2024]_. We observe that the starting orientation has an impact on the particle's trajectory and velocity profile.
 
 .. raw:: html
 
