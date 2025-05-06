@@ -49,14 +49,18 @@ public:
    * simulation. This is used to extrapolate velocity solutions in time
    * for transient simulation.
    *
-   * @param fe_vof The FESystem used to solve the VOF equations
+   * @param properties_manager Manager to calculate the physical properties.
    *
-   * @param quadrature The quadrature to use for the assembly
+   * @param fe_vof The FESystem used to solve the VOF equations.
+   *
+   * @param quadrature The quadrature to use for the assembly within the cells.
+   *
+   * @param face_quadrature The quadrature to use for the assembly on faces.
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes
-   * equations are solved
+   * equations are solved.
    *
-   * @param fe_fd The FESystem used to solve the Fluid Dynamics equations
+   * @param fe_fd The FESystem used to solve the Fluid Dynamics equations.
    *
    */
   VOFScratchData(const std::shared_ptr<SimulationControl> &simulation_control,
