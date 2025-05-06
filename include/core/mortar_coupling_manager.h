@@ -590,6 +590,9 @@ public:
   add_sparsity_pattern_entries(TrilinosWrappers::SparsityPattern &dsp) const;
 
   void
+  add_sparsity_pattern_entries(DynamicSparsityPattern &dsp) const;
+
+  void
   add_system_matrix_entries(
     TrilinosWrappers::SparseMatrix &system_matrix) const;
 
@@ -915,6 +918,8 @@ CouplingOperator<dim, n_components, Number>::init(
                  ++i)
               all_penalty_parameter.emplace_back(penalty_parameter);
           }
+
+  // To discuss, blows up on a single core or outside of MF framework???
 
   // setup communication
   partitioner.reinit(is_local, is_ghost, dof_handler.get_mpi_communicator());
@@ -1301,6 +1306,27 @@ template <int dim, int n_components, typename Number>
 void
 CouplingOperator<dim, n_components, Number>::add_sparsity_pattern_entries(
   TrilinosWrappers::SparsityPattern &dsp) const
+{
+  const auto constraints = &constraints_extended;
+
+  for (unsigned int i = 0; i < dof_indices.size(); i += n_dofs_per_cell)
+    {
+      std::vector<types::global_dof_index> a(dof_indices.begin() + i,
+                                             dof_indices.begin() + i +
+                                               n_dofs_per_cell);
+      std::vector<types::global_dof_index> b(dof_indices_ghost.begin() + i,
+                                             dof_indices_ghost.begin() + i +
+                                               n_dofs_per_cell);
+
+      constraints->add_entries_local_to_global(a, b, dsp);
+      constraints->add_entries_local_to_global(b, a, dsp);
+    }
+}
+
+template <int dim, int n_components, typename Number>
+void
+CouplingOperator<dim, n_components, Number>::add_sparsity_pattern_entries(
+  dealii::DynamicSparsityPattern &dsp) const
 {
   const auto constraints = &constraints_extended;
 
