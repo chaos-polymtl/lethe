@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -562,13 +562,15 @@ VOFAssemblerSIPG<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
       for (unsigned int i = 0; i < n_dofs; ++i)
         for (unsigned int j = 0; j < n_dofs; ++j)
           {
+            // Assembles symetric interior penalty method
+            // There is no penalty coefficient here since the VOF equation
+            // does not have diffusivity. The only flux that remain
+            // is the upwinded advective flux.
+            // ( [[φ]] ,u·n φ_upwind )
             copy_data_face.face_matrix(i, j) +=
-              fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-              * fe_iv.shape_value((velocity_dot_n > 0.),
-                                  j,
-                                  q) // phi_j^{upwind}
-              * velocity_dot_n       // (u . n)
-              * JxW[q];              // dx
+              fe_iv.jump_in_shape_values(i, q) *
+              fe_iv.shape_value((velocity_dot_n > 0.), j, q) * velocity_dot_n *
+              JxW[q];
           }
     }
 }
@@ -594,6 +596,8 @@ VOFAssemblerSIPG<dim>::assemble_rhs(const VOFScratchData<dim>   &scratch_data,
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           // Assemble advection terms with upwinding
+          // If velocity_dot_n (u·n) > 0, then the upwind term needs to come
+          // from here. Otherwise, it needs to come from there.
           if (velocity_dot_n > 0)
             {
               copy_data_face.face_rhs(i) -=
