@@ -247,12 +247,9 @@ In this section, we will briefly show some results of this simulation.
 
 First, we can look at a slice of the velocity profile during the simulation. The results are shown on the left of the animation below. The animation shows two other initial orientations, corresponding to the S17 and S16 cases of Wang `et al.` [#Wang2024]_. We can see that the orientation has an impact on the trajectory and velocity profile.
 
-..
-  This is only a template for the animation, will update with the correct url when the video is available. For now I've added the video in the images folder for any curious out there.
-
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/Js73OUr08rM" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://youtu.be/JkuSbaswFao" frameborder="0" allowfullscreen></iframe>
 
 We can also compare the results obtained for the velocity in time with the results proposed by the article of Wang `et al.` [#Wang2024]_, which are stored in the ``S18.dat`` file. They chose to represent the velocity as a function of a dimentionless settling time :math:`t^*`, defined as:
 
