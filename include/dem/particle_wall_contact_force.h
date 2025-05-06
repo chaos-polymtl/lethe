@@ -39,10 +39,10 @@ class ParticleWallContactForceBase
 {
 public:
   /**
-   * @brief Calculate the contact outcomes for particle-wall contacts 
+   * @brief Calculate the contact outcomes for particle-wall contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_wall_pairs_in_contact Required information for the 
+   * @param[in] particle_wall_pairs_in_contact Required information for the
    * calculation of the particle-wall contact force.
    * @param[in] dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
@@ -58,7 +58,7 @@ public:
    * @brief Calculate the contact outcomes for particle-solid objects contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_floating_mesh_in_contact A container that stores the 
+   * @param[in] particle_floating_mesh_in_contact A container that stores the
    * information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
@@ -109,10 +109,10 @@ public:
   {}
 
   /**
-   * @brief Calculate the contact outcomes for particle-wall contacts 
+   * @brief Calculate the contact outcomes for particle-wall contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_wall_pairs_in_contact Required information for the 
+   * @param[in] particle_wall_pairs_in_contact Required information for the
    * calculation of the particle-wall contact force.
    * @param[in] dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
@@ -128,8 +128,8 @@ public:
    * @brief Calculate the contact outcomes for particle-solid objects contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_floating_mesh_in_contact A container that stores the information
-   * of particle-floating mesh contact.
+   * @param[in] particle_floating_mesh_in_contact A container that stores the
+   * information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
@@ -254,10 +254,12 @@ protected:
    * @param[in,out] contact_info Contact information of a particle-wall pair.
    * @param[in] particle_properties Properties of particle.
    * @param[in] dt DEM time step.
-   * @param[in] cut_cell_translational_velocity Translational velocity of the cut cell.
-   * @param[in] cut_cell_rotational_velocity Rotational veclocity of the cut cell.
-   * @param[in] center_of_rotation_particle_distance Distance between the particle and
-   * the center of rotation of the floating mesh.
+   * @param[in] cut_cell_translational_velocity Translational velocity of the
+   * cut cell.
+   * @param[in] cut_cell_rotational_velocity Rotational veclocity of the cut
+   * cell.
+   * @param[in] center_of_rotation_particle_distance Distance between the
+   * particle and the center of rotation of the floating mesh.
    */
   void
   update_particle_solid_object_contact_information(
@@ -362,7 +364,7 @@ protected:
   }
 
   /**
-   * @brief Initialize a map of vectors to zero with the member class boundary 
+   * @brief Initialize a map of vectors to zero with the member class boundary
    * index which has the keys as information.
    */
   std::map<unsigned int, Tensor<1, 3>>
@@ -377,7 +379,7 @@ protected:
   }
 
   /**
-   * @brief This function sums all the forces and torques on the wall from all 
+   * @brief This function sums all the forces and torques on the wall from all
    * the MPI processes.
    */
   void
@@ -562,12 +564,11 @@ private:
    * coefficient
    * @param[in] f_coeff Model parameter for the EPSD model.
    * @param[in] dt DEM time step.
-   * @param[in] normal_spring_constant normal contact stiffness constant.
+   * @param[in] normal_spring_constant Normal contact stiffness constant.
    * @param[in] normal_force_norm Norm of the normal force.
-   * @param[in] normal_unit_vector Normal unit vector between particles in
-   * contact.
+   * @param[in] normal_unit_vector Normal unit vector.
    * @param[in,out] cumulative_rolling_resistance_spring_torque Cumulative
-   * spring rolling resistance torque applied between particle one and two.
+   * spring rolling resistance torque.
    *
    * @return Rolling resistance torque.
    *
@@ -717,7 +718,7 @@ private:
 
     // Calculation torque caused by tangential force
     // We add the minus sign here since the tangential_force is applied on the
-    // particle is in the opposite direction
+    // particle in the opposite direction
     tangential_torque =
       cross_product_3d((particle_radius * normal_vector), -tangential_force);
 
@@ -1226,7 +1227,7 @@ private:
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
   std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
 
-  unsigned int n_particle_types;
+  unsigned int        n_particle_types;
   std::vector<double> effective_youngs_modulus;
   std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
@@ -1239,12 +1240,12 @@ private:
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
   std::map<unsigned int, Tensor<1, 3>> torque_on_walls;
-  bool                            calculate_force_torque_on_boundary;
-  Point<3>                        center_mass_container;
-  std::vector<types::boundary_id> boundary_index;
-  const unsigned int              vertices_per_triangle = 3;
-  const double                    dmt_cut_off_threshold;
-  const double                    f_coefficient_epsd;
+  bool                                 calculate_force_torque_on_boundary;
+  Point<3>                             center_mass_container;
+  std::vector<types::boundary_id>      boundary_index;
+  const unsigned int                   vertices_per_triangle = 3;
+  const double                         dmt_cut_off_threshold;
+  const double                         f_coefficient_epsd;
 };
 
 #endif
