@@ -803,10 +803,10 @@ private:
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
     // Calculation of normal force using spring and dashpot normal forces
-    const double normal_force_value =
-      normal_spring_constant * contact_info.normal_overlap +
-      normal_damping_constant * contact_info.normal_relative_velocity;
-    normal_force = normal_force_value * normal_vector;
+    normal_force =
+      (normal_spring_constant * contact_info.normal_overlap +
+       normal_damping_constant * contact_info.normal_relative_velocity) *
+      normal_vector;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
@@ -816,7 +816,7 @@ private:
       tangential_spring_constant * contact_info.tangential_displacement +
       damping_tangential_force;
 
-    const double coulomb_threshold = friction_coeff * normal_force_value;
+    const double coulomb_threshold = friction_coeff * normal_force.norm();
 
     // Check for gross sliding
     const double tangential_force_norm = tangential_force.norm();
