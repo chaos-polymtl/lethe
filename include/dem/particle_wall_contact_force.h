@@ -352,7 +352,8 @@ protected:
       {
         mpi_correction_over_calculation_of_forces_and_torques();
 
-        this->force_on_walls[boundary_id] = this->force_on_walls[boundary_id] - add_force;
+        this->force_on_walls[boundary_id] =
+          this->force_on_walls[boundary_id] - add_force;
 
         this->torque_on_walls[boundary_id] =
           this->torque_on_walls[boundary_id] -

@@ -295,8 +295,8 @@ ParticleWallContactForce<dim,
                           contact_info.rolling_resistance_spring_torque.clear();
                         }
                     }
+                  particle_counter++;
                 }
-              particle_counter++;
             }
         }
     }
