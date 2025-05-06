@@ -93,14 +93,12 @@ ParticleWallContactForce<dim,
           if (normal_overlap > force_calculation_threshold_distance)
             {
               contact_info.normal_overlap = normal_overlap;
-              std::cout << "overlap > 0 : " << normal_overlap << std::endl;
 
               // Update all the information
               this->update_contact_information(contact_info,
                                                particle_location_3d,
                                                particle_properties,
                                                dt);
-              std::cout << "tandisp_after_update: " << contact_info.tangential_displacement << std::endl;
 
               // Calculating the contact force
               this->calculate_contact(contact_info,
@@ -110,11 +108,6 @@ ParticleWallContactForce<dim,
                                       tangential_force,
                                       tangential_torque,
                                       rolling_resistance_torque);
-              std::cout << "tandisp_after_calc:" << contact_info.tangential_displacement << std::endl;
-              std::cout << "normal force: " << normal_force << std::endl;
-              std::cout << "tangential force: " << tangential_force << std::endl;
-              std::cout << "tangential torque: " << tangential_torque << std::endl;
-              std::cout << "rolling torque: " << tangential_force << std::endl;
 
               // Apply the calculated forces and torques on the particle
               types::particle_index particle_id = particle->get_local_index();

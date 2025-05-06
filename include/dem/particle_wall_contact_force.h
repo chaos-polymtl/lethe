@@ -1116,7 +1116,7 @@ private:
     effective_surface_energy.resize(n_particle_types);
     effective_hamaker_constant.resize(n_particle_types);
 
-    // Intialize wall properties
+    // Intialize wall variables
     this->calculate_force_torque_on_boundary =
       dem_parameters.forces_torques.calculate_force_torque;
     this->center_mass_container =
@@ -1124,6 +1124,14 @@ private:
     this->boundary_index  = boundary_index;
     this->force_on_walls  = this->initialize();
     this->torque_on_walls = this->initialize();
+    this->boundary_translational_velocity_map =
+      dem_parameters.boundary_conditions.boundary_translational_velocity;
+    this->boundary_rotational_speed_map =
+      dem_parameters.boundary_conditions.boundary_rotational_speed;
+    this->boundary_rotational_vector =
+      dem_parameters.boundary_conditions.boundary_rotational_vector;
+    this->point_on_rotation_vector =
+      dem_parameters.boundary_conditions.point_on_rotation_axis;
 
     // Wall properties
     const double wall_youngs_modulus = properties.youngs_modulus_wall;
