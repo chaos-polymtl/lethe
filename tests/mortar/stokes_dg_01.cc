@@ -9,6 +9,8 @@
 
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/fe/fe_dgp.h>
+#include <deal.II/fe/fe_dgq.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_q.h>
@@ -53,51 +55,27 @@ main(int argc, char **argv)
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
-  const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
-  const double       delta_1_scaling      = 0.0001;
-  const double       sip_factor           = 10.0;
+  const std::string  grid                 = "hyper_cube";
+  const double       sip_factor           = 1.0;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
 
-  FESystem<dim> fe(FE_Q<dim>(fe_degree), dim + 1);
+  FESystem<dim> fe(FE_DGQ<dim>(fe_degree), dim, FE_DGQ<dim>(fe_degree - 1), 1);
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
   parallel::distributed::Triangulation<dim> tria(comm);
-  if (grid == "hyper_cube_with_cylindrical_hole")
-    hyper_cube_with_cylindrical_hole(radius,
-                                     outer_radius,
-                                     rotate_triangulation ? rotate_pi : 0.0,
-                                     tria);
-  else if (grid == "hyper_cube")
+  if (grid == "hyper_cube")
     GridGenerator::hyper_cube(tria, -outer_radius, +outer_radius);
-  else if (grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
-    hyper_cube_with_cylindrical_hole_with_tolerance(radius,
-                                                    outer_radius,
-                                                    0.0,
-                                                    tria);
   else
     AssertThrow(false, ExcNotImplemented());
+
   tria.refine_global(n_global_refinements);
 
   MappingQCache<dim> mapping(mapping_degree);
 
-  if (grid != "hyper_cube_with_cylindrical_hole" || rotate_triangulation)
-    mapping.initialize(mapping_q, tria);
-  else
-    mapping.initialize(
-      mapping_q,
-      tria,
-      [&](const auto &cell, const auto &point) {
-        if (cell->center().norm() > radius)
-          return point;
-
-        return static_cast<Point<dim>>(
-          Physics::Transformations::Rotations::rotation_matrix_2d(rotate_pi) *
-          point);
-      },
-      false);
+  mapping.initialize(mapping_q, tria);
 
   DoFHandler<dim> dof_handler(tria);
   dof_handler.distribute_dofs(fe);
@@ -107,34 +85,45 @@ main(int argc, char **argv)
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
 
-  if (grid == "hyper_cube" ||
-      grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
+  if (true /*TODO: better solution!*/)
     {
-      DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
+      unsigned int min_index = numbers::invalid_unsigned_int;
+
+      std::vector<types::global_dof_index> dof_indices;
+
+      // Loop over the cells to identify the min index
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              const auto &fe = cell->get_fe();
+
+              dof_indices.resize(fe.n_dofs_per_cell());
+              cell->get_dof_indices(dof_indices);
+
+              for (unsigned int i = 0; i < dof_indices.size(); ++i)
+                if (fe.system_to_component_index(i).first == dim)
+                  min_index = std::min(min_index, dof_indices[i]);
+            }
+        }
+
+      // Necessary to find the min across all cores.
+      min_index =
+        Utilities::MPI::min(min_index, dof_handler.get_communicator());
+
+      if (locally_relevant_dofs.is_element(min_index))
+        constraints.add_line(min_index);
+
+      std::cout << min_index << std::endl;
     }
-  else if (grid == "hyper_cube_with_cylindrical_hole")
-    {
-      DoFTools::make_zero_boundary_constraints(dof_handler, 1, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 4, constraints);
-    }
-  else
-    {
-      AssertThrow(false, ExcNotImplemented());
-    }
+
+
   constraints.close();
 
-  StokesOperator<dim, double> op(
-    mapping, dof_handler, constraints, quadrature, delta_1_scaling);
-
-  if (grid == "hyper_cube_with_cylindrical_hole")
-    op.add_coupling(4 * Utilities::pow(2, n_global_refinements + 1),
-                    radius,
-                    rotate_pi,
-                    0,
-                    5,
-                    sip_factor);
+  GeneralStokesOperatorDG<dim, double> op(mapping,
+                                          dof_handler,
+                                          constraints,
+                                          quadrature);
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
   op.initialize_dof_vector(rhs);
@@ -200,44 +189,6 @@ main(int argc, char **argv)
 
       VectorTools::create_right_hand_side(
         mapping, dof_handler, quadrature, *rhs_func, rhs, constraints);
-
-      FEValues<dim>              fe_values(mapping,
-                              fe,
-                              quadrature,
-                              update_values | update_gradients |
-                                update_JxW_values | update_quadrature_points);
-      FEValuesViews::Vector<dim> velocities(fe_values, 0);
-      FEValuesViews::Scalar<dim> pressure(fe_values, dim);
-
-      for (const auto &cell : dof_handler.active_cell_iterators())
-        if (cell->is_locally_owned())
-          {
-            fe_values.reinit(cell);
-
-            const double delta_1 =
-              delta_1_scaling * cell->minimum_vertex_distance();
-
-            Vector<double> rhs_local(fe.n_dofs_per_cell());
-            std::vector<types::global_dof_index> indices(fe.n_dofs_per_cell());
-
-            cell->get_dof_indices(indices);
-
-            for (const unsigned int q : fe_values.quadrature_point_indices())
-              {
-                const auto JxW   = fe_values.JxW(q);
-                const auto point = fe_values.quadrature_point(q);
-
-                Tensor<1, dim> source;
-                for (unsigned int d = 0; d < dim; ++d)
-                  source[d] = rhs_func->value(point, d);
-
-                for (const unsigned int i : fe_values.dof_indices())
-                  rhs_local(i) +=
-                    delta_1 * source * pressure.gradient(i, q) * JxW;
-              }
-
-            constraints.distribute_local_to_global(rhs_local, indices, rhs);
-          }
     }
 
   rhs.compress(VectorOperation::add);
