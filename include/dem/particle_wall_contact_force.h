@@ -178,7 +178,7 @@ protected:
     // i is the particle, j is the wall.
     // There is a minus sign in front of the normal_vector to respect the
     // convention i -> j
-    auto               normal_vector = -contact_info.normal_vector;
+    Tensor<1,3>        normal_vector = -contact_info.normal_vector;
     const unsigned int boundary_id   = contact_info.boundary_id;
 
     Tensor<1, 3> particle_velocity;
@@ -371,7 +371,7 @@ protected:
     std::map<unsigned int, Tensor<1, 3>> map;
     for (const auto &it : boundary_index)
       {
-        map[it] = 0;
+        map[it] = 0.;
       }
     return map;
   }
