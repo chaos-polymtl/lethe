@@ -38,6 +38,8 @@ ParticleWallContactForce<dim,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
+  this->force_on_walls  = this->initialize();
+  this->torque_on_walls = this->initialize();
   // Looping over particle_wall_pairs_in_contact, which means looping over
   // all the active particles with iterator
   // particle_wall_pairs_in_contact_iterator
