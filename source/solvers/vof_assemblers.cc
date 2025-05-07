@@ -506,7 +506,7 @@ void
 VOFAssemblerDGCore<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
