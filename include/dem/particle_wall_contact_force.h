@@ -261,7 +261,7 @@ protected:
    * @param[in] center_of_rotation_particle_distance Distance between the
    * particle and the center of rotation of the floating mesh.
    */
-  void
+  inline void
   update_particle_solid_object_contact_information(
     particle_wall_contact_info<dim> &contact_info,
     Tensor<1, 3>                    &tangential_relative_velocity,
@@ -339,7 +339,7 @@ protected:
    * @param[in] add_force Contact force applied to the wall.
    * @param[in] point_contact Contact point on the wall.
    */
-  void
+  inline void
   calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
                                          const Tensor<1, 3> add_force,
                                          const Point<3>     point_contact)
@@ -361,7 +361,7 @@ protected:
    * @brief Initialize a map of vectors to zero with the member class boundary
    * index which has the keys as information.
    */
-  std::map<unsigned int, Tensor<1, 3>>
+  inline std::map<unsigned int, Tensor<1, 3>>
   initialize()
   {
     std::map<unsigned int, Tensor<1, 3>> map;
@@ -376,7 +376,7 @@ protected:
    * @brief This function sums all the forces and torques on the wall from all
    * the MPI processes.
    */
-  void
+  inline void
   mpi_correction_over_calculation_of_forces_and_torques()
   {
     for (const auto &it : boundary_index)
@@ -517,7 +517,7 @@ protected:
                              this->effective_surface_energy.end()));
 
         // Return the critical delta_0. We put a minus sign in front of since a
-        // positive overlap means that particles are in contact.
+        // positive overlap means that there is contact.
         return -std::sqrt(
           max_effective_hamaker_constant /
           (12. * M_PI * min_effective_surface_energy * dmt_cut_off_threshold));
@@ -547,7 +547,7 @@ private:
                          Tensor<1, 3>       &particle_torque,
                          Tensor<1, 3>       &particle_force,
                          const Point<3>     &point_on_boundary,
-                         int                 boundary_id = 0)
+                         const int           boundary_id = 0)
   {
     // Calculating total force
     Tensor<1, 3> total_force = normal_force + tangential_force;
@@ -574,7 +574,6 @@ private:
    * @param[in] rolling_friction_coeff Effective rolling friction coefficient.
    * @param[in] rolling_viscous_damping_coeff Effective rolling viscous damping
    * coefficient
-   * @param[in] f_coeff Model parameter for the EPSD model.
    * @param[in] dt DEM time step.
    * @param[in] normal_spring_constant Normal contact stiffness constant.
    * @param[in] normal_force_norm Norm of the normal force.
@@ -629,7 +628,7 @@ private:
           particle_properties,
           rolling_friction_coeff,
           rolling_viscous_damping_coeff,
-          f_coefficient_epsd,
+          this->f_coefficient_epsd,
           normal_force_norm,
           dt,
           normal_spring_constant,
@@ -667,9 +666,9 @@ private:
                            Tensor<1, 3> &rolling_resistance_torque)
   {
     // i is the particle, j is the wall.
-    // we need to put a minus sign infront of the normal_vector to respect the
-    // convention (i -> j)
-    Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
+    // there is a minus sign in front of the normal_vector to respect the
+    // convention (i -> j), the forces are thus calculated on the wall
+    const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
     const unsigned int particle_type =
       particle_properties[PropertiesIndex::type];
     const double particle_radius =
@@ -781,8 +780,8 @@ private:
     Tensor<1, 3>                    &rolling_resistance_torque)
   {
     // i is the particle, j is the wall.
-    // we need to put a minus sign infront of the normal_vector to respect the
-    // convention (i -> j)
+    // there is a minus sign in front of the normal_vector to respect the
+    // convention (i -> j), the forces are thus calculated on the wall
     const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
     const double       particle_radius =
       particle_properties[PropertiesIndex::dp] * 0.5;
@@ -908,10 +907,10 @@ private:
                         Tensor<1, 3> &rolling_resistance_torque)
   {
     // i is the particle, j is the wall.
-    // we need to put a minus sign infront of the normal_vector to respect the
-    // convention (i -> j)
-    Tensor<1, 3> normal_vector = -contact_info.normal_vector;
-    const double particle_radius =
+    // there is a minus sign in front of the normal_vector to respect the
+    // convention (i -> j), the forces are thus calculated on the wall
+    const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
+    const double       particle_radius =
       0.5 * particle_properties[PropertiesIndex::dp];
     const unsigned int particle_type =
       particle_properties[PropertiesIndex::type];
@@ -1074,10 +1073,10 @@ private:
     constexpr double M_2PI = 2. * M_PI;
 
     // i is the particle, j is the wall.
-    // we need to put a minus sign infront of the normal_vector to respect the
-    // convention (i -> j)
-    Tensor<1, 3> normal_vector = -contact_info.normal_vector;
-    const double particle_radius =
+    // there is a minus sign in front of the normal_vector to respect the
+    // convention (i -> j), the forces are thus calculated on the wall
+    const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
+    const double       particle_radius =
       0.5 * particle_properties[PropertiesIndex::dp];
     const unsigned int particle_type =
       particle_properties[PropertiesIndex::type];
@@ -1154,7 +1153,7 @@ private:
     effective_surface_energy.resize(n_particle_types);
     effective_hamaker_constant.resize(n_particle_types);
 
-    // Intialize wall variables
+    // Intialize wall variables and boundary conditions
     this->calculate_force_torque_on_boundary =
       dem_parameters.forces_torques.calculate_force_torque;
     this->center_mass_container =
@@ -1257,12 +1256,6 @@ private:
 
   // Members of the class
 
-  std::unordered_map<unsigned int, Tensor<1, 3>>
-                                           boundary_translational_velocity_map;
-  std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
-  std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
-  std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
-
   unsigned int        n_particle_types;
   std::vector<double> effective_youngs_modulus;
   std::vector<double> effective_shear_modulus;
@@ -1273,15 +1266,20 @@ private:
   std::vector<double> effective_surface_energy;
   std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
+  const double        dmt_cut_off_threshold;
+  const double        f_coefficient_epsd;
 
-  std::map<unsigned int, Tensor<1, 3>> force_on_walls;
-  std::map<unsigned int, Tensor<1, 3>> torque_on_walls;
-  bool                                 calculate_force_torque_on_boundary;
-  Point<3>                             center_mass_container;
-  std::vector<types::boundary_id>      boundary_index;
-  const unsigned int                   vertices_per_triangle = 3;
-  const double                         dmt_cut_off_threshold;
-  const double                         f_coefficient_epsd;
+  std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
+  std::unordered_map<unsigned int, Tensor<1, 3>>
+    boundary_translational_velocity_map;
+  std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
+  std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
+  std::map<unsigned int, Tensor<1, 3>>           force_on_walls;
+  std::map<unsigned int, Tensor<1, 3>>           torque_on_walls;
+  std::vector<types::boundary_id>                boundary_index;
+  const unsigned int                             vertices_per_triangle = 3;
+  Point<3>                                       center_mass_container;
+  bool calculate_force_torque_on_boundary;
 };
 
 #endif

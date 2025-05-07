@@ -52,10 +52,9 @@ ParticleWallContactForce<dim,
         {
           // Defining local variables which will be used within the contact
           // calculation
-          auto particle            = contact_info.particle;
-          auto particle_properties = particle->get_properties();
-
-          Point<3> point_on_boundary = contact_info.point_on_boundary;
+          auto     particle            = contact_info.particle;
+          auto     particle_properties = particle->get_properties();
+          Point<3> point_on_boundary   = contact_info.point_on_boundary;
           // Normal vector from the wall to the particle
           Tensor<1, 3> normal_vector = contact_info.normal_vector;
           Tensor<1, 3> normal_force;
