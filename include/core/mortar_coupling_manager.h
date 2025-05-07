@@ -29,10 +29,10 @@ using namespace dealii;
 /**
  * @brief Base class for the mortar manager
  *
- * @param n_subdivisions Number of cells at the interface between inner and outer domains
- * @param n_quadrature_points Number of quadrature points per cell
- * @param radius Radius at the interface between inner and outer domains
- * @param rotate_pi Rotation angle for the inner domain
+ * @tparam n_subdivisions Number of cells at the interface between inner and outer domains
+ * @tparam n_quadrature_points Number of quadrature points per cell
+ * @tparam radius Radius at the interface between inner and outer domains
+ * @tparam rotate_pi Rotation angle for the inner domain
  */
 template <int dim>
 class MortarManager
@@ -398,8 +398,14 @@ private:
   QGauss<1>          quadrature;
 };
 
-
-
+/**
+ * @brief Compute inner product
+ *
+ * @param[in] grad Rank-1 tensor
+ * @param[in] normal Rank-1 tensor
+ *
+ * @return Rank-0 tensor
+ */
 template <int dim, typename Number>
 Number
 contract(const Tensor<1, dim, Number> &grad,
@@ -408,6 +414,14 @@ contract(const Tensor<1, dim, Number> &grad,
   return grad * normal;
 }
 
+/**
+ * @brief Compute inner product
+ *
+ * @param[in] grad Rank-2 tensor
+ * @param[in] normal Rank-1 tensor
+ *
+ * @return Rank-1 tensor
+ */
 template <int dim, typename Number>
 Tensor<1, dim, Number>
 contract(const Tensor<2, dim, Number> &grad,
@@ -416,6 +430,14 @@ contract(const Tensor<2, dim, Number> &grad,
   return grad * normal;
 }
 
+/**
+ * @brief Compute inner product
+ *
+ * @param[in] grad Rank-2 tensor for n_components
+ * @param[in] normal Rank-1 tensor
+ *
+ * @return Rank-1 tensor
+ */
 template <int n_components, int dim, typename Number>
 Tensor<1, n_components, Number>
 contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
@@ -429,6 +451,14 @@ contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
   return result;
 }
 
+/**
+ * @brief Compute outer product
+ *
+ * @param[in] value Rank-0 tensor
+ * @param[in] normal Rank-1 tensor
+ *
+ * @return Rank-1 tensor
+ */
 template <int dim, typename Number>
 Tensor<1, dim, Number>
 outer(const Number &value, const Tensor<1, dim, Number> &normal)
@@ -436,6 +466,14 @@ outer(const Number &value, const Tensor<1, dim, Number> &normal)
   return value * normal;
 }
 
+/**
+ * @brief Compute outer product
+ *
+ * @param[in] value Rank-1 tensor
+ * @param[in] normal Rank-1 tensor
+ *
+ * @return Rank-2 tensor
+ */
 template <int dim, typename Number>
 Tensor<2, dim, Number>
 outer(const Tensor<1, dim, Number> &value, const Tensor<1, dim, Number> &normal)
@@ -448,6 +486,14 @@ outer(const Tensor<1, dim, Number> &value, const Tensor<1, dim, Number> &normal)
   return result;
 }
 
+/**
+ * @brief Compute outer product
+ *
+ * @param[in] value Rank-1 tensor for n_components
+ * @param[in] normal Rank-1 tensor
+ *
+ * @return Rank-2 tensor for n_components
+ */
 template <int n_components, int dim, typename Number>
 Tensor<1, n_components, Tensor<1, dim, Number>>
 outer(const Tensor<1, n_components, Number> &value,
@@ -497,6 +543,14 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
       }
 }
 
+/**
+ * @brief Base class for the coupling operator
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam n_components Number of vector components in the PDE to be solved
+ * (e.g., n_components = dim + 1 for Navier-Stokes equations)
+ * @tparam Number Abstract type for number accross the class (e.g., double)
+ */
 template <int dim, int n_components, typename Number>
 class CouplingOperator
 {
@@ -577,21 +631,48 @@ public:
        const unsigned int               bid_1,
        const double                     sip_factor);
 
+
+  /**
+   * @brief Return object containing problem constraints
+   *
+   * @return AffineConstraints
+   */
   const AffineConstraints<Number> &
   get_affine_constraints() const;
 
+  /**
+   * @brief Add matrix-vector multiplication
+   *
+   * @param[in, out] dst Destination vector holding the result
+   * @param[in] src Input source vector
+   */
   void
   vmult_add(VectorType &dst, const VectorType &src) const;
 
+  /**
+   * @brief Add mortar coupling terms in diagonal entries
+   *
+   * @param[in, out] diagonal Matrix diagonal
+   */
   void
   add_diagonal_entries(VectorType &diagonal) const;
 
+  /**
+   * @brief Add mortar coupling terms in the sparsity pattern
+   *
+   * @param[in, out] dsp Dynamic Sparsity Pattern object
+   */
   void
   add_sparsity_pattern_entries(TrilinosWrappers::SparsityPattern &dsp) const;
 
   void
   add_sparsity_pattern_entries(DynamicSparsityPattern &dsp) const;
 
+  /**
+   * @brief Add mortar coupling terms in the system matrix
+   *
+   * @param[in, out] system_matrix System matrix
+   */
   void
   add_system_matrix_entries(
     TrilinosWrappers::SparseMatrix &system_matrix) const;
@@ -616,6 +697,11 @@ private:
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
 
+  /**
+   * @brief Compute penalty parameter in a cell
+   * @param[in] cell Cell iterator
+   * @return Penalty parameter
+   */
   Number
   compute_penalty_parameter(
     const typename Triangulation<dim>::cell_iterator &cell) const;
@@ -918,8 +1004,6 @@ CouplingOperator<dim, n_components, Number>::init(
                  ++i)
               all_penalty_parameter.emplace_back(penalty_parameter);
           }
-
-  // To discuss, blows up on a single core or outside of MF framework???
 
   // setup communication
   partitioner.reinit(is_local, is_ghost, dof_handler.get_mpi_communicator());
