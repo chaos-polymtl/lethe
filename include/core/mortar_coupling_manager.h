@@ -677,6 +677,9 @@ public:
   add_system_matrix_entries(
     TrilinosWrappers::SparseMatrix &system_matrix) const;
 
+  void
+  add_system_matrix_entries(SparseMatrix<double> &system_matrix) const;
+
 private:
   /**
    * @brief Construct oversampled quadrature
@@ -1432,6 +1435,202 @@ template <int dim, int n_components, typename Number>
 void
 CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
   TrilinosWrappers::SparseMatrix &system_matrix) const
+{
+  const auto constraints = &constraints_extended;
+
+  std::vector<typename FEPointIntegrator::value_type> all_value_m(
+    all_normals.size() * n_dofs_per_cell * 2);
+  std::vector<typename FEPointIntegrator::value_type> all_value_p(
+    all_normals.size() * n_dofs_per_cell * 2);
+
+  unsigned int ptr_q = 0;
+
+  FEPointIntegrator phi_m(mapping, fe_sub, update_values | update_gradients);
+  Vector<Number>    buffer;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto &face : cell->face_iterators())
+        if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
+          {
+            const unsigned int n_q_points =
+              mortar_manager_q->get_n_points(get_rad(cell, face));
+
+            phi_m.reinit(cell,
+                         ArrayView<const Point<dim, Number>>(
+                           all_points_ref.data() + ptr_q, n_q_points));
+
+            buffer.reinit(n_dofs_per_cell);
+
+            for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+              {
+                for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
+                  buffer[j] = static_cast<Number>(i == j);
+
+                phi_m.evaluate(buffer,
+                               EvaluationFlags::values |
+                                 EvaluationFlags::gradients);
+
+                for (const auto q : phi_m.quadrature_point_indices())
+                  {
+                    const unsigned int q_index = ptr_q + q;
+
+                    AssertIndexRange(q_index, all_normals.size());
+                    AssertIndexRange(q_index * 2 + 1, all_value_m.size());
+
+                    const auto normal  = all_normals[q_index];
+                    const auto value_m = phi_m.get_value(q);
+                    const auto gradient_m =
+                      contract(phi_m.get_gradient(q), normal);
+
+                    all_value_m[(q_index * n_dofs_per_cell + i) * 2 + 0] =
+                      value_m;
+                    all_value_m[(q_index * n_dofs_per_cell + i) * 2 + 1] =
+                      gradient_m;
+                  }
+              }
+
+            ptr_q += n_q_points;
+          }
+
+  const unsigned n_q_points =
+    Utilities::pow(quadrature.get_tensor_basis()[0].size(), dim - 1);
+
+  partitioner_cell.template export_to_ghosted_array<Number, 0>(
+    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
+                            all_value_m.size() * n_components),
+    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
+                      all_value_p.size() * n_components),
+    n_dofs_per_cell * n_q_points * 2 * n_components);
+
+
+  ptr_q                 = 0;
+  unsigned int ptr_dofs = 0;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto &face : cell->face_iterators())
+        if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
+          {
+            const unsigned int n_sub_cells =
+              mortar_manager_cell->get_n_points(get_rad(cell, face));
+
+            for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
+              {
+                const unsigned int n_q_points =
+                  mortar_manager_q->get_n_points(get_rad(cell, face)) /
+                  n_sub_cells;
+
+                phi_m.reinit(cell,
+                             ArrayView<const Point<dim, Number>>(
+                               all_points_ref.data() + ptr_q, n_q_points));
+
+                for (unsigned int bb = 0; bb < 2; ++bb)
+                  {
+                    FullMatrix<Number> cell_matrix(n_dofs_per_cell,
+                                                   n_dofs_per_cell);
+
+                    for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+                      {
+                        for (const auto q : phi_m.quadrature_point_indices())
+                          {
+                            const unsigned int q_index = ptr_q + q;
+
+                            const auto value_m =
+                              (bb == 0) ?
+                                all_value_m[(q_index * n_dofs_per_cell + i) *
+                                              2 +
+                                            0] :
+                                typename FEPointIntegrator::value_type();
+                            const auto value_p =
+                              (bb == 1) ?
+                                all_value_p[(q_index * n_dofs_per_cell + i) *
+                                              2 +
+                                            0] :
+                                typename FEPointIntegrator::value_type();
+                            const auto normal_gradient_m =
+                              (bb == 0) ?
+                                all_value_m[(q_index * n_dofs_per_cell + i) *
+                                              2 +
+                                            1] :
+                                typename FEPointIntegrator::value_type();
+                            const auto normal_gradient_p =
+                              (bb == 1) ?
+                                all_value_p[(q_index * n_dofs_per_cell + i) *
+                                              2 +
+                                            1] :
+                                typename FEPointIntegrator::value_type();
+                            const auto JxW = all_weights[q_index];
+                            const auto penalty_parameter =
+                              all_penalty_parameter[q_index];
+                            const auto normal = all_normals[q_index];
+
+                            const auto jump_value =
+                              (value_m - value_p) * 0.5 * JxW;
+                            const auto avg_gradient =
+                              (normal_gradient_m + normal_gradient_p) * 0.5 *
+                              JxW;
+
+                            const double sigma =
+                              penalty_parameter * penalty_factor;
+
+                            phi_m.submit_gradient(-outer(jump_value, normal) *
+                                                    penalty_factor_grad,
+                                                  q);
+                            phi_m.submit_value(jump_value * sigma * 2.0 -
+                                                 avg_gradient *
+                                                   penalty_factor_grad,
+                                               q);
+                          }
+
+                        buffer.reinit(n_dofs_per_cell);
+                        phi_m.test_and_sum(buffer,
+                                           EvaluationFlags::values |
+                                             EvaluationFlags::gradients);
+
+                        for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
+                          cell_matrix[j][i] = buffer[j];
+                      }
+
+
+                    std::vector<types::global_dof_index> a(
+                      dof_indices.begin() + ptr_dofs,
+                      dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
+
+                    if (bb == 0)
+                      {
+                        constraints->distribute_local_to_global(cell_matrix,
+                                                                a,
+                                                                system_matrix);
+                      }
+                    else
+                      {
+                        std::vector<types::global_dof_index> b(
+                          dof_indices_ghost.begin() + ptr_dofs,
+                          dof_indices_ghost.begin() + ptr_dofs +
+                            n_dofs_per_cell);
+
+                        constraints->distribute_local_to_global(cell_matrix,
+                                                                a,
+                                                                b,
+                                                                system_matrix);
+                      }
+                  }
+
+                ptr_dofs += n_dofs_per_cell;
+
+                ptr_q += n_q_points;
+              }
+          }
+
+  AssertDimension(ptr_q, all_normals.size());
+  AssertDimension(ptr_dofs, dof_indices.size());
+}
+
+template <int dim, int n_components, typename Number>
+void
+CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
+  dealii::SparseMatrix<double> &system_matrix) const
 {
   const auto constraints = &constraints_extended;
 
