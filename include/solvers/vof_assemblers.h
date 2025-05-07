@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_assemblers_h
@@ -21,6 +21,18 @@
 template <int dim>
 using VOFAssemblerBase =
   PhysicsAssemblerBase<VOFScratchData<dim>, StabilizedMethodsCopyData>;
+
+/**
+ * @brief A pure virtual class that serves as an interface for all
+ * the assemblers for the VOF solver on internal faces.
+ *
+ * @tparam dim Integer that denotes the number of spatial dimensions.
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+using VOFFaceAssemblerBase =
+  PhysicsFaceAssemblerBase<VOFScratchData<dim>, StabilizedDGMethodsCopyData>;
 
 
 /**
@@ -185,5 +197,87 @@ public:
 
   const std::shared_ptr<SimulationControl> simulation_control;
 };
+
+
+/**
+ * @brief Class that assembles the core (cells) of the VOF equation for DG elements.
+ * This class assembles the weak form of:
+ * \f$\mathbf{u} \cdot \nabla \phi = 0 \f$
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class VOFAssemblerDGCore : public VOFAssemblerBase<dim>
+{
+public:
+  VOFAssemblerDGCore()
+  {}
+
+  /**
+   * @brief Assemble the matrix
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const VOFScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
+
+
+  /**
+   * @brief Assemble the rhs
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const VOFScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
+};
+
+
+/**
+ * @brief Assembles the symmetric interior penalty Galerkin (SIPG) method (or
+ * Nitsche's method) for internal faces. This assembler is only required
+ * when solving the VOF equation using a discontinuous Galerkin
+ * discretization.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class VOFAssemblerSIPG : public VOFFaceAssemblerBase<dim>
+{
+public:
+  VOFAssemblerSIPG()
+  {}
+
+  /**
+   * @brief Interface to call the matrix assembly
+   * @param[in]  scratch_data Scratch data containing the VOF
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied.
+   */
+  virtual void
+  assemble_matrix(const VOFScratchData<dim>   &scratch_data,
+                  StabilizedDGMethodsCopyData &copy_data) override;
+
+
+  /**
+   * @brief Interface for the call to rhs
+   * @param[in]  scratch_data Scratch data containing the VOF
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied.
+   */
+  virtual void
+  assemble_rhs(const VOFScratchData<dim>   &scratch_data,
+               StabilizedDGMethodsCopyData &copy_data) override;
+};
+
 
 #endif

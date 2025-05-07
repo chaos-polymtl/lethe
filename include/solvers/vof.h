@@ -51,6 +51,14 @@ DeclException1(
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the VOF physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
+DeclExceptionMsg(
+  UnsupportedRegularization,
+  "The VOF physics has been set to use DG and the latter implementation currently does not support any interface regularization mechanism.");
+
+DeclExceptionMsg(
+  UnsupportedInitialProjection,
+  "The VOF physics has been set to use DG and the latter implementation currently does not support defining an initial condition with a projection.");
+
 template <int dim>
 class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
@@ -62,120 +70,13 @@ public:
                 const SimulationParameters<dim> &p_simulation_parameters,
                 std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                    p_triangulation,
-                std::shared_ptr<SimulationControl> p_simulation_control)
-    : AuxiliaryPhysics<dim, GlobalVectorType>(
-        p_simulation_parameters.non_linear_solver.at(PhysicsID::VOF))
-    , multiphysics(multiphysics_interface)
-    , computing_timer(p_triangulation->get_communicator(),
-                      this->pcout,
-                      TimerOutput::summary,
-                      TimerOutput::wall_times)
-    , simulation_parameters(p_simulation_parameters)
-    , triangulation(p_triangulation)
-    , simulation_control(p_simulation_control)
-    , dof_handler(*triangulation)
-    , sharpening_threshold(simulation_parameters.multiphysics.vof_parameters
-                             .regularization_method.sharpening.threshold)
-  {
-    AssertThrow(simulation_parameters.physical_properties_manager
-                    .get_number_of_fluids() == 2,
-                InvalidNumberOfFluid(
-                  simulation_parameters.physical_properties_manager
-                    .get_number_of_fluids()));
-
-
-    if (simulation_parameters.mesh.simplex)
-      {
-        // for simplex meshes
-        fe = std::make_shared<FE_SimplexP<dim>>(
-          simulation_parameters.fem_parameters.VOF_order);
-        mapping         = std::make_shared<MappingFE<dim>>(*fe);
-        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
-        face_quadrature =
-          std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
-      }
-    else
-      {
-        // Usual case, for quad/hex meshes
-        fe = std::make_shared<FE_Q<dim>>(
-          simulation_parameters.fem_parameters.VOF_order);
-        mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
-        cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
-        face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
-      }
-
-    // Allocate solution transfer
-    solution_transfer = std::make_shared<
-      parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-      dof_handler);
-
-    // Set size of previous solutions using BDF schemes information
-    previous_solutions.resize(maximum_number_of_previous_solutions());
-
-    // Prepare previous solutions transfer
-    previous_solutions_transfer.reserve(previous_solutions.size());
-    for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-      {
-        previous_solutions_transfer.emplace_back(
-          parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
-            this->dof_handler));
-      }
-
-    // Check the value of interface sharpness
-    if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-          .sharpening.interface_sharpness < 1.0)
-      this->pcout
-        << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
-        << std::endl
-        << "The interface sharpness value should be set between 1 and 2"
-        << std::endl;
-
-
-    // Change the behavior of the timer for situations when you don't want
-    // outputs
-    if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-      this->computing_timer.disable_output();
-
-    // Initialize the interface object for subequations to solve
-    this->vof_subequations_interface =
-      std::make_shared<VOFSubequationsInterface<dim>>(
-        this->simulation_parameters,
-        this->pcout,
-        this->triangulation,
-        this->simulation_control);
-
-    if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-          .geometric_interface_reinitialization.enable)
-      {
-        this->signed_distance_solver = std::make_shared<
-          InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
-          triangulation,
-          fe,
-          simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.geometric_interface_reinitialization
-            .max_reinitialization_distance,
-          0.0,
-          simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.verbosity);
-      }
-  }
+                std::shared_ptr<SimulationControl> p_simulation_control);
 
   /**
    * @brief VOF - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  ~VolumeOfFluid()
-  {}
-
-
-  /**
-   * @brief Call for the assembly of the matrix and the right-hand side.
-   *
-   * @deprecated This function is to be deprecated when the new assembly mechanism
-   * is integrated to this solver
-   */
-  void
-  assemble_matrix_and_rhs();
+  ~VolumeOfFluid() = default;
 
   /**
    * @brief Call for the assembly of the right-hand side
@@ -478,10 +379,22 @@ private:
   }
 
   /**
-   *  @brief Assembles the matrix associated with the solver
+   *  @brief Assembles the matrix associated with the solver.
    */
   void
   assemble_system_matrix() override;
+
+  /**
+   *  @brief Assemble the matrix associated with the solver when CG elements are used.
+   */
+  void
+  assemble_system_matrix_cg();
+
+  /**
+   *  @brief Assemble the matrix associated with the solver when DG elements are used.
+   */
+  void
+  assemble_system_matrix_dg();
 
   /**
    * @brief Assemble the rhs associated with the solver
@@ -489,6 +402,17 @@ private:
   void
   assemble_system_rhs() override;
 
+  /**
+   *  @brief Assemble the rhs associated with the solver when CG elements are used.
+   */
+  void
+  assemble_system_rhs_cg();
+
+  /**
+   *  @brief Assemble the rhs associated with the solver when DG elements are used.
+   */
+  void
+  assemble_system_rhs_dg();
 
   /**
    * @brief Assemble the local matrix for a given cell.
@@ -726,6 +650,47 @@ private:
   void
   reinitialize_interface_with_geometric_method();
 
+  /**
+   * @brief Helper function to reinit the face velocity with the adequate solution.
+   * This prevents code duplication throughout the VOF class. The function looks
+   * at the multiphysics interface to decide if the velocity is a block velocity
+   * or a regular velocity. Furthermore, it also checks if a time-averaged
+   * solution is required. Otherwise, the code here would be copied four times.
+   *
+   * @param[in] velocity_cell the iterator of the cell where the velocity is to
+   * be reinitialized.
+   *
+   * @param[in] face_no the face index where the velocity is to be
+   * reinitialized.
+   *
+   * @param[in,out] scratch_data the scratch data to be used for the
+   * reinitialization.
+   */
+  inline void
+  reinit_face_velocity_with_adequate_solution(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const unsigned int                                   &face_no,
+    VOFScratchData<dim>                                  &scratch_data)
+  {
+    if (multiphysics->fluid_dynamics_is_block())
+      {
+        scratch_data.reinit_face_velocity(velocity_cell,
+                                          face_no,
+                                          *multiphysics->get_block_solution(
+                                            PhysicsID::fluid_dynamics),
+                                          this->simulation_parameters.ale);
+      }
+    else
+      {
+        scratch_data.reinit_face_velocity(velocity_cell,
+                                          face_no,
+                                          *multiphysics->get_solution(
+                                            PhysicsID::fluid_dynamics),
+                                          this->simulation_parameters.ale);
+      }
+  }
+
+
   GlobalVectorType nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *multiphysics;
@@ -764,7 +729,6 @@ private:
   /// Level-set field obtained from the phase fraction field using a tanh-based
   /// transformation
   GlobalVectorType level_set;
-
 
   // Previous solutions vectors
   std::vector<GlobalVectorType> previous_solutions;
@@ -805,6 +769,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
+
+  // Face assemblers, used only for DG methods
+  std::shared_ptr<VOFAssemblerSIPG<dim>> inner_face_assembler;
 
   // Phase fraction filter
   std::shared_ptr<VolumeOfFluidFilterBase> filter;
