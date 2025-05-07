@@ -1948,9 +1948,8 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       auto previous_shear_rate_magnitude =
         this->previous_shear_rate_magnitude(cell, q);
 
-      // previous_shear_rate_magnitude =
-      //   std::max(previous_shear_rate_magnitude,
-      //   VectorizedArray<number>(1e-3));
+      previous_shear_rate_magnitude =
+        std::max(previous_shear_rate_magnitude, VectorizedArray<number>(1e-3));
 
       // Get kinematic viscosity from rheology model
       const auto kinematic_viscosity =
@@ -1983,11 +1982,12 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
           for (unsigned int k = 0; k < dim; ++k)
             {
               shear_rate_previous_product +=
-                shear_rate[i][k] * previous_shear_rate[i][k];
+                shear_rate[i][k] * previous_shear_rate[k][i];
             }
         }
 
       // Weak form Jacobian
+      value_result[dim] = VectorizedArray<number>(0.);
       for (unsigned int i = 0; i < dim; ++i)
         {
           // -(∇·v,δp)
@@ -1996,14 +1996,13 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
           value_result[dim] += gradient[i][i];
           // ν(∇v,(∇δu + ∇δuT))
           gradient_result[i] += kinematic_viscosity * shear_rate[i];
-          // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
-          gradient_result[i] += 0.5 / previous_shear_rate_magnitude *
-                                grad_kinematic_viscosity_shear_rate *
-                                shear_rate_previous_product *
-                                previous_shear_rate[i];
-
           for (unsigned int k = 0; k < dim; ++k)
             {
+              // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
+              gradient_result[i][k] += 0.5 / previous_shear_rate_magnitude *
+                                       grad_kinematic_viscosity_shear_rate *
+                                       shear_rate_previous_product *
+                                       previous_shear_rate[i][k];
               // +(v,(u·∇)δu + (δu·∇)u)
               value_result[i] += gradient[i][k] * previous_values[k] +
                                  previous_gradient[i][k] * value[k];
