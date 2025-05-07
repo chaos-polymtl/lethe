@@ -1786,34 +1786,3 @@ LetheGridTools::find_line_sphere_intersection(
   const Tensor<1, 3> &line_direction,
   const Point<3>     &sphere_center,
   const double       &sphere_radius);
-
-template <int dim>
-void
-LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
-                               const MappingQ<dim>   &mapping,
-                               const double           radius,
-                               const double           rotation_angle)
-{
-  // mapping cache object
-  MappingQCache<dim> mapping_cache(mapping.get_degree());
-
-  mapping_cache.initialize(
-    mapping,
-    dof_handler.get_triangulation(),
-    [&](const auto &cell, const auto &point) {
-      if (cell->center().norm() > radius)
-        return point;
-
-      return static_cast<Point<dim>>(
-        Physics::Transformations::Rotations::rotation_matrix_2d(
-          rotation_angle) *
-        point);
-    },
-    false);
-}
-
-template void
-LetheGridTools::rotate_mapping(const DoFHandler<2> &dof_handler,
-                               const MappingQ<2>   &mapping,
-                               const double         radius,
-                               const double         rotation_angle);
