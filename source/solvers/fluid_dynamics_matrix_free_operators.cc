@@ -954,16 +954,11 @@ NavierStokesOperatorBase<dim, number>::
               //       (0.5 / shear_rate_magnitude) * grad_shear_rate_d;
               //   }
 
-
-
               // Store the shear rate magnitude in the appropriate data
               // structure needed for the set field vector function
-              std::vector<double> temp_shear_rate_magnitude(
-                integrator.n_q_points);
 
               VectorizedArray<number> viscosity;
               VectorizedArray<number> grad_viscosity_shear_rate;
-
 
               for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
                 {
@@ -1978,37 +1973,37 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
             }
         }
 
-      // Weak form Jacobian
-      VectorizedArray<number> temp_scalar_product = VectorizedArray<number>(0.);
+      // Precompute double contraction between shear rate and previous shear
+      // rate
+      VectorizedArray<number> shear_rate_previous_product =
+        VectorizedArray<number>(0.);
 
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)
             {
-              temp_scalar_product +=
+              shear_rate_previous_product +=
                 shear_rate[i][k] * previous_shear_rate[i][k];
             }
         }
 
-
+      // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           // -(∇·v,δp)
           gradient_result[i][i] = -value[dim];
           // +(q,∇δu)
           value_result[dim] += gradient[i][i];
+          // ν(∇v,(∇δu + ∇δuT))
+          gradient_result[i] += kinematic_viscosity * shear_rate[i];
+          // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
+          gradient_result[i] += 0.5 / previous_shear_rate_magnitude *
+                                grad_kinematic_viscosity_shear_rate *
+                                shear_rate_previous_product *
+                                previous_shear_rate[i];
 
           for (unsigned int k = 0; k < dim; ++k)
             {
-              // ν(∇v,(∇δu + ∇δuT))
-              gradient_result[i][k] += kinematic_viscosity * shear_rate[i][k];
-
-              // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
-              gradient_result[i][k] += 0.5 / previous_shear_rate_magnitude *
-                                       grad_kinematic_viscosity_shear_rate *
-                                       temp_scalar_product *
-                                       previous_shear_rate[i][k];
-
               // +(v,(u·∇)δu + (δu·∇)u)
               value_result[i] += gradient[i][k] * previous_values[k] +
                                  previous_gradient[i][k] * value[k];
@@ -2018,30 +2013,27 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
             value_result[i] += (*bdf_coefs)[0] * value[i];
         }
 
-      if (true)
+      // PSPG Jacobian
+      for (unsigned int i = 0; i < dim; ++i)
         {
-          // PSPG Jacobian
-          for (unsigned int i = 0; i < dim; ++i)
+          for (unsigned int k = 0; k < dim; ++k)
             {
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
-                  gradient_result[dim][i] +=
-                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
-                           kinematic_viscosity_gradient[i] * shear_rate[i][k] +
-                           gradient[i][k] * previous_values[k] +
-                           previous_gradient[i][k] * value[k]);
-                }
-              // +(∂t δu)·τ∇q
-              if (transient)
-                gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
+              // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
+              gradient_result[dim][i] +=
+                tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
+                       kinematic_viscosity_gradient[k] * shear_rate[k][i] +
+                       gradient[i][k] * previous_values[k] +
+                       previous_gradient[i][k] * value[k]);
             }
-          // (∇δp)τ·∇q
-          gradient_result[dim] += tau * gradient[dim];
+          // +(∂t δu)·τ∇q
+          if (transient)
+            gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
         }
+      // (∇δp)τ·∇q
+      gradient_result[dim] += tau * gradient[dim];
 
       // SUPG Jacobian
-      if (true)
+      if (false)
         {
           for (unsigned int i = 0; i < dim; ++i)
             {
@@ -2125,9 +2117,6 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
     const std::pair<unsigned int, unsigned int> &range) const
 {
   FECellIntegrator integrator(matrix_free);
-
-  // const double kinematic_viscosity =
-  //   this->properties_manager->get_rheology()->get_kinematic_viscosity();
 
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
@@ -2234,34 +2223,29 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
             }
 
           // PSPG term
-          if (true)
+          for (unsigned int i = 0; i < dim; ++i)
             {
-              for (unsigned int i = 0; i < dim; ++i)
+              for (unsigned int k = 0; k < dim; ++k)
                 {
-                  for (unsigned int k = 0; k < dim; ++k)
-                    {
-                      // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u·∇)u)·τ∇q
-                      gradient_result[dim][i] +=
-                        tau *
-                        (-kinematic_viscosity * hessian_diagonal[i][k] -
-                         kinematic_viscosity_gradient[k] * shear_rate[k][i] +
-                         gradient[i][k] * value[k]);
-                    }
-                  // +(-f)·τ∇q
-                  gradient_result[dim][i] += tau * (-source_value[i]);
-
-                  // +(∂t u)·τ∇q
-                  if (transient)
-                    gradient_result[dim][i] +=
-                      tau * ((*bdf_coefs)[0] * value[i] +
-                             previous_time_derivatives[i]);
+                  // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u·∇)u)·τ∇q
+                  gradient_result[dim][i] +=
+                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
+                           kinematic_viscosity_gradient[k] * shear_rate[k][i] +
+                           gradient[i][k] * value[k]);
                 }
-              // +(∇p)τ∇·q
-              gradient_result[dim] += tau * gradient[dim];
+              // +(-f)·τ∇q
+              gradient_result[dim][i] += tau * (-source_value[i]);
+
+              // +(∂t u)·τ∇q
+              if (transient)
+                gradient_result[dim][i] += tau * ((*bdf_coefs)[0] * value[i] +
+                                                  previous_time_derivatives[i]);
             }
+          // +(∇p)τ∇·q
+          gradient_result[dim] += tau * gradient[dim];
 
           // SUPG term
-          if (true)
+          if (false)
             {
               for (unsigned int i = 0; i < dim; ++i)
                 {
@@ -2274,7 +2258,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                             tau * value[k] *
                             (-kinematic_viscosity * hessian_diagonal[i][l] -
                              kinematic_viscosity_gradient[l] *
-                             shear_rate[l][i]);
+                               shear_rate[l][i]);
 
                           // + ((u·∇)u)τ(u·∇)v
                           gradient_result[i][k] +=
