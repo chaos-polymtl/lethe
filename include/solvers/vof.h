@@ -660,7 +660,7 @@ private:
    * @param[in] velocity_cell the iterator of the cell where the velocity is to
    * be reinitialized.
    *
-   * @param[in] face_no the face indexe where the velocity is to be
+   * @param[in] face_no the face index where the velocity is to be
    * reinitialized.
    *
    * @param[in,out] scratch_data the scratch data to be used for the
