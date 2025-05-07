@@ -7,8 +7,6 @@ This example aims to simulate the S18 experiment of Wang `et al.` [#Wang2024]_. 
 .. note::
     This example is similar to the sedimentation of one particle example (:doc:`../sedimentation-1-particle/sedimentation-1-particle`) but with a cuboid particle instead of a sphere. As such, the physical setup changes, but the parameters relating to the numerical resolution remain very similar.
 
-.. warning:: 
-    * This case is a computationally expensive example. It can take several hours to run on a desktop computer.
 
 ----------------------------------
 Features
@@ -56,7 +54,7 @@ Simulation Control
       set output path        = out/
     end
 
-* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computationnal time, one could use an adaptive time step/time scaling in order to increase the time step once the particle has sufficiently accelerated.
+* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, one could use an adaptive time step/time scaling to increase the time step once the particle has sufficiently accelerated.
 
 * The ``time end`` is set to  ``0.6``. This is approximately the sedimentation time of the particles as recorded in the article by Wang `et al.` [#Wang2024]_.
 
@@ -84,11 +82,11 @@ Mesh
       set initial refinement = 5
     end
 
-The domain is a rectangular box as such we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have orientated the y-direction with gravity. As such, we have the long side of the box along this axis.
+The domain is a rectangular box and as such we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have orientated the y-direction with gravity. As such, we have the long side of the box along this axis.
 
-* The ``grid arguments`` is set to  ``1,2,1: 0,0,0 : 40,80,40 : true``. This section has 3 subsections. Firstly, ``1,2,1`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly, ``0,0,0 : 40, 80, 40`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (40,80,40). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
+* The ``grid arguments`` are set to  ``1,2,1: 0,0,0 : 40,80,40 : true``. This section has 3 subsections. Firstly, ``1,2,1`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly, ``0,0,0 : 40, 80, 40`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (40,80,40). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
 
-* The ``initial refinement`` is set to 5. This will ensure to have a base mesh that is a bit smaller than the particle.
+* The ``initial refinement`` is set to 5. This will ensure to have a base mesh that is a bit finer than the particle.
 
 
 Mesh Adaptation
@@ -262,7 +260,9 @@ where :math:`a` is the length of the cuboid particle, :math:`g` is the gravity c
     :align: center
 
 Note that, as reported in the article, the figure represents the absolute value of the sedimentation velocity.
-
+.. warning::
+    * The exact volume and bevel geometry of the cube used in the original work by Wang `et al.` are not described. For this reason, we simplified the shape to a regular cuboid and assumed the volume and moment of inertia of a cube in the above. This simplification may be a source of discrepancy between their measurements and our simulations.
+    
 
 ---------------
 Reference
