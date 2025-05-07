@@ -1,5 +1,5 @@
 ====================================
-Cooling of a cylinder
+Cooling of a Cylinder
 ====================================
 
 This example simulates the cooling of a 2D solid cylinder in a flow at a Reynolds number of 20. The dimensionless number :math:`\beta` (defined below) is modified to observe the effect of the thermal capacity ratio on the average temperature of the cylinder in time. Results are compared to those of Juncu [#juncu2004]_. This example illustrates the unsteady conjugate heat transfer capabilities of Lethe.
@@ -34,14 +34,14 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -------------------------
 
-The geometry for the simulations is shown in the figure below. We consider a domain with length :math:`l=32\text{m}` and height :math:`L=16\text{m}`. The cylinder (in red) has a radius :math:`R=0.5\text{m}` and is positionned at :math:`x=8\text{m}` and :math:`y=0\text{m}`. The cylinder is initially set at a temperature of :math:`T_0=1^\circ C` and is cooled by a flow of a fluid at a temperature of :math:`T_\infty=0^\circ C`. The flow is entering on the left of the domain and exiting on the right. A no slip boundary condition is set on the top and bottom walls of the domain. 
+The geometry for the simulations is shown in the figure below. We consider a domain of length :math:`l = 32\,\text{m}` and height :math:`L = 16\,\text{m}`. A cylinder (shown in red) of radius :math:`R = 0.5\,\text{m}` is positioned at :math:`x = 8\,\text{m}` and :math:`y = 0\,\text{m}`. The cylinder is initially set at a temperature of :math:`T_0 = 1^\circ\text{C}` and is cooled by a fluid flowing at a temperature of :math:`T_\infty = 0^\circ\text{C}`. The flow enters from the left and exits to the right. No-slip boundary conditions are applied on the top and bottom walls of the domain.
 
 .. image:: images/geometry.png
     :alt: problem_illustration
     :align: center
     :width: 800
 
-In this example, we launch three distinct simulations, each using a different value of :math:`\beta`. The specific heat is modified by changing the density of the solid cylinder. A :math:`\rho_{s}` of 0.1, 1 and 100 are used to get a :math:`\beta` of 0.01, 1 and 100. The conductivity of the fluid is set to 0.2 in order to obtain a Prandtl number of 5. The velocity at the entrance is set to :math:`U=20\text{m/s}` in order to obtain a Reynolds number of 20. Other parameters such as the viscosity of the fluid, the heat capacity of the fluid, the heat capacity of the solid and the density of the fluid are set to 1.
+In this example, we launch three distinct simulations, each using a different value of :math:`\beta`. The specific heat is modified by changing the density of the solid cylinder. Values of :math:`\rho_{s}` of :math:`0.1`, :math:`1` and :math:`100` are used to get values of :math:`\beta` of :math:`0.1`, :math:`1` and :math:`100`, respectively. The conductivity of the fluid is set to :math:`0.2` in order to obtain a Prandtl number of :math:`5`. The velocity at the entrance is set to :math:`U = 20\,\text{m/s}` in order to obtain a Reynolds number of :math:`20`. Other parameters such as the viscosity of the fluid, the heat capacity of the fluid, the heat capacity of the solid and the density of the fluid are set to :math:`1`.
 
 --------------
 Parameter File
@@ -76,7 +76,7 @@ Conjugated heat transfer simulations require meshes in which the fluid and the s
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The next step is establishing the boundary conditions for the fluid flow. We specify an inlet velocity of 20 (id = 3) in order to obtain a Reynolds number of 20. A slip boundary condition is set on the outer walls of the domain (id = 4) and an outlet boundary conditions is set for the right boundary (id = 5). The ids of the boundaries are written in the second column of the ``cylinder.msh`` file in the ``$PhysicalNames`` section.
+The next step is establishing the boundary conditions for the fluid flow. We specify an inlet velocity of :math:`20` (``id = 3``) in order to obtain a Reynolds number of :math:`20`. A slip boundary condition is set on the outer walls of the domain (``id = 5``) and an outlet boundary conditions is set for the right boundary (``id = 4``). The ids of the boundaries are written in the second column of the ``cylinder.msh`` file in the ``$PhysicalNames`` section.
 
 .. code-block:: text
 
@@ -111,7 +111,7 @@ The next step is establishing the boundary conditions for the fluid flow. We spe
 Boundary Conditions Heat Transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On the heat transfer side, we apply a constant temperature of 0 at the inlet (id = 3) to impose the cold temperature of the fluid. We explicitly specify ``noflux`` boundary conditions on the domain limits (id = 4) and on the outlet.
+On the heat transfer side, we apply a constant temperature of 0 at the inlet (``id = 3``) to impose the cold temperature of the fluid. We explicitly specify ``noflux`` boundary conditions on the domain limits (``id = 5``) and on the outlet (``id = 4``). A ``noflux`` boundary condition at the outlet does not prevent energy from leaving the domain, because the energy is carried away by the convective flow exiting the domain. Instead, it ensures the boundary does not act as a source or sink of energy. 
 
 .. code-block:: text
 
@@ -140,7 +140,7 @@ On the heat transfer side, we apply a constant temperature of 0 at the inlet (id
 Initial conditions
 ~~~~~~~~~~~~~~~~~~~~
 
-The initial velocity is set to 20 in the x direction and 0 in the y and z directions. To specify the initial temperature throughout the domain, we use a conditional statement. If the node is inside the cylinder, the initial temperature is set to 1. Anywhere else, the initial temperature is set to 0.
+The initial velocity is set to :math:`20` in the x direction and :math:`0` in the y and z directions. To specify the initial temperature throughout the domain, we use a conditional statement. If the node is inside the cylinder, the initial temperature is set to :math:`1`. Anywhere else, the initial temperature is set to :math:`0`.
 
 .. code-block:: text
 
@@ -159,7 +159,7 @@ The initial velocity is set to 20 in the x direction and 0 in the y and z direct
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-Next, we define the physical properties for both the solid and the fluid. It is important to explicitly indicate the number of solids, otherwise, the solid region will not be detected by Lethe. The thermal conductivity is set so the Prandtl number is equal to 5. All the other physical properties are set to 1. 
+Next, we define the physical properties for both the solid and the fluid. It is important to explicitly indicate the number of solids, otherwise, the solid region will not be detected by Lethe. The thermal conductivity is set so the Prandtl number is equal to :math:`5`. All the other physical properties are set to :math:`1`. 
 
 .. code-block:: text
 
@@ -201,7 +201,7 @@ We solve the Navier-Stokes and the heat transfer equation in time. In the simula
     end
 
 .. warning::
-    The output frequency is set to 10 iterations but can be modified to reduce the amount of .vtu files generated. We use this output frequency to reproduce a smooth curve that can be compared with the results of Juncu [#juncu2004]_. Using a higher output frequency can reduce the number of files generated. ``set output control = time`` could also be used to reduce the number of .vtu files generated.
+    The output frequency is set to ``10`` iterations but can be modified to reduce the amount of .vtu files generated. We use this output frequency to reproduce a smooth curve that can be compared with the results of Juncu [#juncu2004]_. Using a higher output frequency can reduce the number of files generated. ``set output control = time`` could also be used to reduce the number of .vtu files generated.
 
 -----------------------
 Running the Simulation
@@ -218,7 +218,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 
 .. warning::
     Make sure to compile lethe in `Release` mode and
-    run in parallel using mpirun. The simulation using :math:`\beta=0.01` takes around 4 hours to run on 8 CPU cores. With :math:`\beta=1` and :math:`\beta=100`, the simulations can take up to 10h and 24h on 8 CPU cores. The end time of the simulations can be modified to reduce the computational time.
+    run in parallel using mpirun. The simulation using :math:`\beta=0.01` takes around :math:`4` hours to run on 8 CPU cores. With :math:`\beta=1` and :math:`\beta=100`, the simulations can take up to :math:`10\,\text{h}` and :math:`24\,\text{h}` on 8 CPU cores. The end time of the simulations can be modified to reduce the computational time.
 
 to run the post-processing script:
 
@@ -228,9 +228,9 @@ to run the post-processing script:
   python3 post-process-avg-temperature.py
 
 .. warning::
-    make sure the simulations using the parameter files cylinder-xi-0_01.prm, cylinder-xi-1.prm and cylinder-xi-100.prm were launched before calling the script.
+    Make sure the simulations using the parameter files ``cylinder-xi-0_01.prm``, ``cylinder-xi-1.prm`` and ``cylinder-xi-100.prm`` were launched before calling the script.
 
-to vizualise the results:
+To vizualise the results:
 
 .. code-block:: text
   :class: copy-button
