@@ -26,68 +26,18 @@ struct particle_particle_contact_info
   Tensor<1, 3>                     rolling_resistance_spring_torque;
 };
 
+/**
+ * @brief Handle the information related to the calculation of the
+ * particle-wall contact forces.
+ */
 template <int dim>
-class particle_wall_contact_info
+struct particle_wall_contact_info
 {
-public:
-  /**
-   * @brief Construct the particle_wall_contact_info using the particle
-   * iterator, the normal vector of the wall, a point on that boundary and the
-   * boundary id. This is the commonly used constructor since it houses all the
-   * information required to perform the contact calculation.
-   *
-   * @param particle The iterator to the particle in contact with the wall.
-   * @param normal_vector The outward pointing normal vector on the wall.
-   * @param point_on_boundary A point that lies on the face.
-   * @param boundary_id The boundary id. This id corresponds to the number
-   * attributed to the boundary condition.
-   *
-   * TODO: This should be a struct and normal_overlap, normal_relative_velocity
-   * and tangential_relative_velocity should be removed and be calculated on the
-   * fly as done for pp forces with particle_particle_contact_info
-   */
-  particle_wall_contact_info(const Particles::ParticleIterator<dim> &particle,
-                             const Tensor<1, 3>       &normal_vector,
-                             const Point<3>           &point_on_boundary,
-                             const types::boundary_id &boundary_id)
-    : particle(particle)
-    , normal_vector(normal_vector)
-    , point_on_boundary(point_on_boundary)
-    , boundary_id(boundary_id)
-    , normal_overlap(0)
-    , normal_relative_velocity(0)
-    , tangential_displacement({0, 0, 0})
-    , tangential_relative_velocity({0, 0, 0})
-    , rolling_resistance_spring_torque({0, 0, 0})
-  {}
-
-  /**
-   * @brief Construct the particle_wall_contact_info using only the
-   * particle_iterator. This constructor is only used at one location right now
-   * when using floating mesh. It should be deprecated in a nearby future.
-   *
-   * @param particle The iterator to the particle in contact with the wall
-   *
-   */
-  particle_wall_contact_info(const Particles::ParticleIterator<dim> &particle)
-    : particle(particle)
-    , normal_vector({0, 0, 0})
-    , point_on_boundary({0, 0, 0})
-    , boundary_id(0)
-    , normal_overlap(0)
-    , normal_relative_velocity(0)
-    , tangential_displacement({0, 0, 0})
-    , tangential_relative_velocity({0, 0, 0})
-  {}
-
   Particles::ParticleIterator<dim> particle;
   Tensor<1, 3>                     normal_vector;
   Point<3>                         point_on_boundary;
   types::boundary_id               boundary_id;
-  double                           normal_overlap;
-  double                           normal_relative_velocity;
   Tensor<1, 3>                     tangential_displacement;
-  Tensor<1, 3>                     tangential_relative_velocity;
   Tensor<1, 3>                     rolling_resistance_spring_torque;
 };
 

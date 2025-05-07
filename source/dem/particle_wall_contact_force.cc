@@ -62,6 +62,8 @@ ParticleWallContactForce<dim,
           Tensor<1, 3> tangential_force;
           Tensor<1, 3> tangential_torque;
           Tensor<1, 3> rolling_resistance_torque;
+          double       normal_relative_velocity_value;
+          Tensor<1, 3> tangential_relative_velocity;
 
           // Getting particle 3d location
           Point<3> particle_location_3d = get_location(particle);
@@ -87,22 +89,30 @@ ParticleWallContactForce<dim,
 
           if (normal_overlap > force_calculation_threshold_distance)
             {
-              contact_info.normal_overlap = normal_overlap;
-
+              std::cout << "overlap > 0 :" << normal_overlap << std::endl;
               // Updating contact information
               this->update_contact_information(contact_info,
+                                               tangential_relative_velocity,
+                                               normal_relative_velocity_value,
                                                particle_location_3d,
                                                particle_properties,
                                                dt);
+              std::cout << "tandisp_after_update: "
+                        << contact_info.tangential_displacement << std::endl;
 
               // Calculating contact force and torque
               this->calculate_contact(contact_info,
+                                      tangential_relative_velocity,
+                                      normal_relative_velocity_value,
+                                      normal_overlap,
                                       dt,
                                       particle_properties,
                                       normal_force,
                                       tangential_force,
                                       tangential_torque,
                                       rolling_resistance_torque);
+              std::cout << "tandisp_after_calc: "
+                        << contact_info.tangential_displacement << std::endl;
 
               // Applying the calculated forces and torques on the particle
               types::particle_index particle_id = particle->get_local_index();
@@ -121,7 +131,6 @@ ParticleWallContactForce<dim,
             }
           else
             {
-              contact_info.normal_overlap = 0.;
               contact_info.tangential_displacement.clear();
               contact_info.rolling_resistance_spring_torque.clear();
             }
@@ -215,6 +224,8 @@ ParticleWallContactForce<dim,
                       Tensor<1, 3> tangential_force;
                       Tensor<1, 3> tangential_torque;
                       Tensor<1, 3> rolling_resistance_torque;
+                      double       normal_relative_velocity_value;
+                      Tensor<1, 3> tangential_relative_velocity;
 
                       const Point<3> &projection_point =
                         projection_points[particle_counter];
@@ -237,7 +248,6 @@ ParticleWallContactForce<dim,
 
                       if (normal_overlap > force_calculation_threshold_distance)
                         {
-                          contact_info.normal_overlap = normal_overlap;
                           contact_info.normal_vector =
                             normal_vectors[particle_counter];
 
@@ -249,6 +259,8 @@ ParticleWallContactForce<dim,
                           this
                             ->update_particle_solid_object_contact_information(
                               contact_info,
+                              tangential_relative_velocity,
+                              normal_relative_velocity_value,
                               particle_properties,
                               dt,
                               translational_velocity,
@@ -257,13 +269,17 @@ ParticleWallContactForce<dim,
                                 particle_location_3d));
 
                           // Calculating contact force and torque
-                          this->calculate_contact(contact_info,
-                                                  dt,
-                                                  particle_properties,
-                                                  normal_force,
-                                                  tangential_force,
-                                                  tangential_torque,
-                                                  rolling_resistance_torque);
+                          this->calculate_contact(
+                            contact_info,
+                            tangential_relative_velocity,
+                            normal_relative_velocity_value,
+                            normal_overlap,
+                            dt,
+                            particle_properties,
+                            normal_force,
+                            tangential_force,
+                            tangential_torque,
+                            rolling_resistance_torque);
 
                           // Applying the calculated forces and torques on the
                           // particle
@@ -286,7 +302,6 @@ ParticleWallContactForce<dim,
                         }
                       else
                         {
-                          contact_info.normal_overlap = 0;
                           contact_info.tangential_displacement.clear();
                           contact_info.rolling_resistance_spring_torque.clear();
                         }
