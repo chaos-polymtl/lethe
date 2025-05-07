@@ -791,12 +791,12 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               // parameter tau. Our experience has shown that does not alter the
               // number of newton iteration for convergence, but greatly
               // simplifies assembly.
-              if (SUPG)
-                {
-                  local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
-                }
+              // if (SUPG)
+              //   {
+              //     local_matrix_ij +=
+              //       tau * (strong_jac * grad_phi_u_i_x_velocity +
+              //              strong_residual_x_grad_phi_u_i * phi_u_j);
+              //   }
               local_matrix_ij *= JxW;
               local_matrix(i, j) += local_matrix_ij;
             }
@@ -927,11 +927,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
           local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
-          if (SUPG)
-            {
-              local_rhs_i +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
-            }
+          // if (SUPG)
+          //   {
+          //     local_rhs_i +=
+          //       -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+          //   }
           local_rhs(i) += local_rhs_i;
         }
     }
