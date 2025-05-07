@@ -28,7 +28,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-The S18 experiment consists of the release of a cuboid particle made of stainless steel (:math:`\rho_p=0.00759 \frac{\text{kg}}{\text{cm}^{3}}`)  with sides of 2.0 cm dropped into a water column of dimensions :math:`40 \times 80 \times 40\,\text{cm}`. In their experiment, the authors use a glycerin-water solution with varying concentrations to get different settling regimes. The relevant properties to the S18 case, as reported by the authors, are the fluid kinematic viscosity :math:`\nu_f=1.6827 \frac{\text{kg}}{\text{s cm}}` and the fluid density :math:`\rho_f=0.00124 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
+The S18 experiment consists of the release of a cuboid particle made of stainless steel (:math:`\rho_p=0.00759 \frac{\text{kg}}{\text{cm}^{3}}`)  with sides of 2.0 cm dropped into a water column of dimensions :math:`40 \times 80 \times 40\,\text{cm}`. In their experiment, the authors use a glycerin-water solution with varying concentrations to get different settling regimes. The relevant properties to the S18 case, as reported by the authors, are the fluid kinematic viscosity :math:`\nu_f=1.07 \frac{\text{kg}}{\text{s cm}}` and the fluid density :math:`\rho_f=0.00124 \frac{\text{kg}}{\text{cm}^{3}}` leading to a particle Reynolds number of :math:`Re_p \approx 300`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
 
 .. note:: 
     You will note that we have transformed every length unit into centimeters. The reason is that the particle's size is very close to :math:`1\,\text{cm}`. Representing the problem in this way improves the condition number of the linear system. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`.
@@ -64,7 +64,7 @@ Physical Properties
 
     subsection physical properties
       subsection fluid 0
-        set kinematic viscosity = 1.6827
+        set kinematic viscosity = 1.07
         set density             = 0.00124
       end
     end
@@ -109,7 +109,7 @@ Mesh Adaptation
 
 * The ``fraction refinement`` is set to ``0.05``. The objective here is to refine elements that become close to the particle when it's moving. This will mostly refine elements around the particle that are not already included in the refinement zone around the particle.
 
-* The ``max refinement level`` is set to ``8``. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~ :math:`10` elements per sides of the cuboid. This should be sufficient to get accurate results.
+* The ``max refinement level`` is set to ``8``. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~ :math:`10` elements per sides of the cuboid. An initial mesh sensitivity study showed this resulted in close to mesh independent results sufficient for demonstration purposes, although a more refined mesh would be required for a rigorous study
 
 * The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
@@ -195,6 +195,17 @@ IB Particles
       end
     end
 
+A few important new parameters have been added in this example to accelerate the simulation compared to the single-sphere sedimentation example. Notably, the following have been set differently ``explicit contact impulsion = true``, ``explicit position integration = true``, and ``enable lubrication force = false``.
+
+The ``explicit contact impulsion`` accelerates the nonlinear resolution of the flow in iterations where the particle contacts the bottom of the container. This simply evaluates the contact impulsion at the first Newton iteration and assumes that it remains constant (a generally good approximation).
+
+The ``explicit position integration`` is the real tricky one. This is also a parameter that is used to accelerate the nonlinear resolution of the coupled CFD-DEM system, and to speed up each iteration. However, this one affects all iterations. It means that the particle position is defined based on the velocity of the previous time step and the fluid force of the previous time step (using the results of the first dem iteration). This significantly accelerates the iteration as it avoids having to do the full DEM calculation at each iteration and the cut cell mapping associated with it. However, this can affect the stability of the scheme as the velocity is still evaluated implicitly. Here, its use is justified since the particle is significantly denser than the fluid, meaning the explicit evaluation of the particle dynamics is much more stable.
+
+.. warning::
+    * ``explicit position integration`` should not be used for a case where that particle density is close to the fluid density, as is the case for the sphere sedimentation case.
+
+Finally, the ``enable lubrication force`` is set to false as the subgrid model use to calculate the lubrication force is only valid in the case of spheres. This means it would be wrong in the case of a cuboid. This means that the fluid force applied on the particle when it get very close to the bottom of the container is not well approximated, only refining the mesh can improve the modelisation of this phase of this sedimentation case.
+
 Since our particle is a cuboid, we will have to define a few more parameters than for a sphere.
 
 * ``type`` is set to ``superquadric``. In the experimental setup, the cuboid particle has a beveled edge, for which the dimentions are not properly reported in the paper of reference. In order to represent this cuboid shape, we make use of a superquadric. The rounded edges will therefore give a rough approximation of the beveled geometry and help reduce difficulties of modelling with sharp edges. The shape arguments are set to ``1.;1.;1.;5;5;5``. The first three parameters are the half-lengths of the cuboid in the x, y and z directions. The last three parameters are the exponents of the superquadric shape; the higher the exponent, the sharper the edge. 
@@ -209,9 +220,9 @@ Since our particle is a cuboid, we will have to define a few more parameters tha
 
 * ``inertia`` is set to ``0.04048;0;0;0;0.04048;0;0;0;0.04048``. This is the inertia of the cuboid particle. The inertia of a cuboid particle is given by the following formula:
 
-  .. math:: I = \frac{1}{12} m (a^2 + b^2)
+  .. math:: I_{ij} = \frac{1}{6} m a^2
 
-  where :math:`m` is the mass of the particle, and :math:`a` and :math:`b` are the lengths of the cuboid particle in the the orthogonal directions.
+  where :math:`m` is the mass of the particle, and :math:`a` is the side length of the cube.
 
 -----------------------
 Running the Simulation
@@ -228,7 +239,7 @@ to run the simulation using sixteen CPU cores.
 
 .. warning:: 
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
-    This simulation takes :math:`\sim \, 3` hours on :math:`16` processes.
+    This simulation takes :math:`\sim \, 4` hours on :math:`16` processes.
 
 The post-processing script ``post-process-sedimentation-1-cuboid.py`` can be used to compare the results obtained with the ones proposed by Wang `et al.` [#Wang2024]_. The script can be run using the following command:
 
@@ -260,6 +271,7 @@ where :math:`a` is the length of the cuboid particle, :math:`g` is the gravity c
     :align: center
 
 Note that, as reported in the article, the figure represents the absolute value of the sedimentation velocity.
+
 .. warning::
     * The exact volume and bevel geometry of the cube used in the original work by Wang `et al.` are not described. For this reason, we simplified the shape to a regular cuboid and assumed the volume and moment of inertia of a cube in the above. This simplification may be a source of discrepancy between their measurements and our simulations.
     
