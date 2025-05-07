@@ -39,7 +39,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = iteration 
+  set type = iteration
 end
 
 #---------------------------------------------------

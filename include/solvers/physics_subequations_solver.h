@@ -52,7 +52,7 @@ public:
   /**
    * @brief Default destructor.
    */
-  ~PhysicsLinearSubequationsSolver() = default;
+  virtual ~PhysicsLinearSubequationsSolver() = default;
 
 protected:
   /**
@@ -95,6 +95,11 @@ public:
     : PhysicsSolver<VectorType>(non_linear_solver_parameters)
     , pcout(pcout)
   {}
+
+  /**
+   * @brief Default destructor.
+   */
+  virtual ~PhysicsNonlinearSubequationsSolver() = default;
 
   /**
    * @brief Setup preconditioner.

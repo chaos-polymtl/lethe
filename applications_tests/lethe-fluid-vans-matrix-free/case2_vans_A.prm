@@ -65,7 +65,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number                = 4
   set fix pressure constant = true
 
   subsection bc 0

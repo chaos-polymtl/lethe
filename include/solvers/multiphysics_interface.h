@@ -534,25 +534,25 @@ public:
   /**
    * @brief Request the present solution of the projected phase fraction gradient (PFG)
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_projected_phase_fraction_gradient_solution();
 
   /**
    * @brief Request the present solution of the curvature
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_curvature_solution();
 
   /**
    * @brief Request the projected curvature DOF handler
    */
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_curvature_dof_handler();
 
   /**
    * @brief Request the projected phase fraction gradient (pfg) DOF handler
    */
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_projected_phase_fraction_gradient_dof_handler();
 
   /**

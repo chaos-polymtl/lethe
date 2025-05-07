@@ -1550,6 +1550,12 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
+
+      prm.declare_entry(
+        "VOF uses dg",
+        "false",
+        Patterns::Bool(),
+        "Switch VOF to Discontinuous Galerkin (DG) formulation");
     }
     prm.leave_subsection();
   }
@@ -1566,6 +1572,7 @@ namespace Parameters
       tracer_order              = prm.get_integer("tracer order");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
       VOF_order                 = prm.get_integer("VOF order");
+      VOF_uses_dg               = prm.get_bool("VOF uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");

@@ -4,20 +4,15 @@
 #ifndef lethe_vof_scratch_data_h
 #define lethe_vof_scratch_data_h
 
-#include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_scratch_data.h>
 
-#include <deal.II/base/quadrature.h>
-
 #include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_interface_values.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
@@ -54,20 +49,25 @@ public:
    * simulation. This is used to extrapolate velocity solutions in time
    * for transient simulation.
    *
-   * @param fe_vof The FESystem used to solve the VOF equations
+   * @param properties_manager Manager to calculate the physical properties.
    *
-   * @param quadrature The quadrature to use for the assembly
+   * @param fe_vof The FESystem used to solve the VOF equations.
+   *
+   * @param quadrature The quadrature to use for the assembly within the cells.
+   *
+   * @param face_quadrature The quadrature to use for the assembly on faces.
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes
-   * equations are solved
+   * equations are solved.
    *
-   * @param fe_fd The FESystem used to solve the Fluid Dynamics equations
+   * @param fe_fd The FESystem used to solve the Fluid Dynamics equations.
    *
    */
   VOFScratchData(const std::shared_ptr<SimulationControl> &simulation_control,
                  const PhysicalPropertiesManager          &properties_manager,
                  const FiniteElement<dim>                 &fe_vof,
                  const Quadrature<dim>                    &quadrature,
+                 const Quadrature<dim - 1>                &face_quadrature,
                  const Mapping<dim>                       &mapping,
                  const FiniteElement<dim>                 &fe_fd)
     : simulation_control(simulation_control)
@@ -78,7 +78,13 @@ public:
                     update_values | update_gradients |
                       update_quadrature_points | update_hessians |
                       update_JxW_values)
+    , fe_interface_values_vof(mapping,
+                              fe_vof,
+                              face_quadrature,
+                              update_values | update_quadrature_points |
+                                update_JxW_values | update_normal_vectors)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
+    , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
   {
     allocate();
   }
@@ -101,10 +107,19 @@ public:
                     update_values | update_gradients |
                       update_quadrature_points | update_hessians |
                       update_JxW_values)
+    , fe_interface_values_vof(sd.fe_interface_values_vof.get_mapping(),
+                              sd.fe_interface_values_vof.get_fe(),
+                              sd.fe_interface_values_vof.get_quadrature(),
+                              update_values | update_quadrature_points |
+                                update_JxW_values | update_normal_vectors)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values | update_gradients)
+    , fe_face_values_fd(sd.fe_face_values_fd.get_mapping(),
+                        sd.fe_face_values_fd.get_fe(),
+                        sd.fe_face_values_fd.get_quadrature(),
+                        update_values)
   {
     allocate();
   }
@@ -179,6 +194,60 @@ public:
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
       }
+  }
+
+
+  /** @brief Reinitialize the content of the scratch for the internal faces. This is only used for the DG assemblers.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   *
+   * @param[in] face_no The face index associated with the cell
+   *
+   * @param[in] sub_face_no The subface index associated with the face
+   *
+   * @param[in] neighbor_cell The neighboring cell
+   *
+   * @param[in] neighbor_face_no The face index associated with the neighboring
+   * cell
+   *
+   * @param[in] neighbor_sub_face_no The subface index associated with the
+   * neighboring cell
+   *
+   * @param[in] current_solution The present value of the solution.
+   */
+  template <typename VectorType>
+  void
+  reinit_internal_face(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                   &face_no,
+    const unsigned int                                   &sub_face_no,
+    const typename DoFHandler<dim>::active_cell_iterator &neighbor_cell,
+    const unsigned int                                   &neighbor_face_no,
+    const unsigned int                                   &neighbor_sub_face_no,
+    const VectorType                                     &current_solution)
+  {
+    fe_interface_values_vof.reinit(cell,
+                                   face_no,
+                                   sub_face_no,
+                                   neighbor_cell,
+                                   neighbor_face_no,
+                                   neighbor_sub_face_no);
+    face_quadrature_points = fe_interface_values_vof.get_quadrature_points();
+
+    n_interface_dofs = fe_interface_values_vof.n_current_interface_dofs();
+
+    // BB TODO : Preallocate memory here
+    values_here.resize(face_quadrature_points.size());
+    values_there.resize(face_quadrature_points.size());
+    phase_value_jump.resize(face_quadrature_points.size());
+
+    fe_interface_values_vof.get_fe_face_values(0).get_function_values(
+      current_solution, values_here);
+    fe_interface_values_vof.get_fe_face_values(1).get_function_values(
+      current_solution, values_there);
+
+    fe_interface_values_vof.get_jump_in_function_values(current_solution,
+                                                        phase_value_jump);
   }
 
   /** @brief Reinitialize the velocity, calculated by the Fluid Dynamics
@@ -265,6 +334,53 @@ public:
       }
   }
 
+
+  /** @brief Reinitialize the content of the scratch regarding the velocity for internal/boundary faces.
+   *  The velocity is inherently assumed to have been solved using a CG scheme.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   *
+   * @param[in] face_no The face index associated with the cell
+   *
+   * @param[in] velocity_solution The present value of the velocity solution.
+   */
+  template <typename VectorType>
+  void
+  reinit_face_velocity(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const unsigned int                                   &face_no,
+    const VectorType                                     &velocity_solution,
+    const Parameters::ALE<dim>                           &ale)
+  {
+    fe_face_values_fd.reinit(velocity_cell, face_no);
+
+    // BB note : Array could be pre-allocated
+    face_velocity_values.resize(face_quadrature_points.size());
+
+    fe_face_values_fd[velocities_fd].get_function_values(velocity_solution,
+                                                         face_velocity_values);
+
+    if (!ale.enabled())
+      return;
+
+    // ALE enabled, so extract the ALE velocity and subtract it from the
+    // velocity obtained from the fluid dynamics
+    Tensor<1, dim>                                  velocity_ale;
+    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+      ale.velocity;
+    Vector<double> velocity_ale_vector(dim);
+
+    for (unsigned int q = 0; q < face_quadrature_points.size(); ++q)
+      {
+        velocity_ale_function->vector_value(face_quadrature_points[q],
+                                            velocity_ale_vector);
+        for (unsigned int d = 0; d < dim; ++d)
+          velocity_ale[d] = velocity_ale_vector[d];
+
+        face_velocity_values[q] -= velocity_ale;
+      }
+  }
+
   // For velocity solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;
 
@@ -273,14 +389,17 @@ public:
   std::map<field, std::vector<double>> fields;
 
   // FEValues for the VOF problem
-  FEValues<dim> fe_values_vof;
-  unsigned int  n_dofs;
-  unsigned int  n_q_points;
-  double        cell_size;
+  FEValues<dim>          fe_values_vof;
+  FEInterfaceValues<dim> fe_interface_values_vof;
+  unsigned int           n_dofs;
+  unsigned int           n_interface_dofs;
+  unsigned int           n_q_points;
+  double                 cell_size;
 
   // Quadrature
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
+  std::vector<Point<dim>> face_quadrature_points;
 
   // VOF values
   std::vector<double>         present_phase_values;
@@ -289,6 +408,11 @@ public:
 
   std::vector<double>              phase_laplacians;
   std::vector<std::vector<double>> previous_phase_values;
+
+  // VOF values at the faces
+  std::vector<double> values_here;
+  std::vector<double> values_there;
+  std::vector<double> phase_value_jump;
 
   // Shape functions
   std::vector<std::vector<double>>         phi;
@@ -300,7 +424,8 @@ public:
   /**
    * Scratch component for the Navier-Stokes component
    */
-  FEValues<dim> fe_values_fd;
+  FEValues<dim>     fe_values_fd;
+  FEFaceValues<dim> fe_face_values_fd;
 
   FEValuesExtractors::Vector velocities_fd;
   // This FEValues must be instantiated for the velocity
@@ -308,6 +433,9 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
   std::vector<double>                      velocity_divergences;
+
+  // Face velocity value for DG
+  std::vector<Tensor<1, dim>> face_velocity_values;
 };
 
 #endif

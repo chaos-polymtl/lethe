@@ -147,4 +147,3 @@ subsection linear solver
     set verbosity                             = verbose
   end
 end
-
