@@ -31,7 +31,7 @@ var searchData=
   ['initial_5ftime_5fstep_28',['initial_time_step',['../classSimulationControl.html#a3e05bb11139f31bf28cbce8a3a435cf6',1,'SimulationControl']]],
   ['initial_5fvel_29',['initial_vel',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#ac81cd3315761db3ac5878325254dca1b',1,'Parameters::Lagrangian::InsertionInfo']]],
   ['inlet_5fboundary_5fid_30',['inlet_boundary_id',['../structParameters_1_1PostProcessing.html#ae2551d81581291954da5b54d2feccce1',1,'Parameters::PostProcessing']]],
-  ['inner_5fface_5fassembler_31',['inner_face_assembler',['../classTracer.html#abefd11428a340613811b3f1ee78cf4e4',1,'Tracer']]],
+  ['inner_5fface_5fassembler_31',['inner_face_assembler',['../classTracer.html#abefd11428a340613811b3f1ee78cf4e4',1,'Tracer::inner_face_assembler'],['../classVolumeOfFluid.html#ae02828b46ae35cb79bcab9a91b1ff97f',1,'VolumeOfFluid::inner_face_assembler']]],
   ['inserted_5fthis_5fstep_32',['inserted_this_step',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#a0e1b506eff95f1ba9dc88da300195768',1,'Parameters::Lagrangian::InsertionInfo::inserted_this_step'],['../classInsertion.html#a01163ffcd1355a03ae5c1257cec57aff',1,'Insertion::inserted_this_step']]],
   ['inserted_5fthis_5fstep_5fthis_5fproc_33',['inserted_this_step_this_proc',['../classInsertion.html#a377cf98cd6e196db680fefd500189fe2',1,'Insertion']]],
   ['insertion_5fbox_5fpoint_5f1_34',['insertion_box_point_1',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#a23f7ec069d3d356b180217757b22c171',1,'Parameters::Lagrangian::InsertionInfo']]],
