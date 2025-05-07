@@ -56,6 +56,7 @@ public:
   {
     // generate merged grid
     hyper_shell_with_hyper_shell(radius, tria);
+    // global mesh refinement
     tria.refine_global(n_global_refinements);
   }
 
@@ -69,35 +70,30 @@ public:
     constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
     DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
     DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
-    // DoFTools::make_zero_boundary_constraints(dof_handler, 1, constraints);
-    // DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
 
-
-
+    // create coupling operator
     coupling = std::make_shared<CouplingOperator<dim, 1, double>>(
       mapping,
       dof_handler,
       constraints,
       quadrature,
-      4 * Utilities::pow(2, n_global_refinements + 1),
+      6 * Utilities::pow(2, n_global_refinements),
       0.5 * radius,
       0,
       1,
       2);
 
-
-
+    // create sparsity pattern
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
     DoFTools::make_sparsity_pattern(dof_handler,
                                     dsp,
                                     constraints,
                                     /*keep_constrained_dofs = */ true);
 
+    // add coupling entries in sparsity pattern
     coupling->add_sparsity_pattern_entries(dsp);
 
     constraints.close();
-
-
     sparsity_pattern.copy_from(dsp);
 
     system_matrix.reinit(sparsity_pattern);
@@ -148,13 +144,16 @@ public:
         constraints.distribute_local_to_global(
           cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
       }
+
+    // add coupling entries in stiffness matrix
+    coupling->add_system_matrix_entries(system_matrix);
   }
 
   void
   solve()
   {
-    SolverControl            solver_control(1000, 1e-6 * system_rhs.l2_norm());
-    SolverCG<Vector<double>> solver(solver_control);
+    ReductionControl            reduction_control(10000, 1e-20, 1e-6);
+    SolverGMRES<Vector<double>> solver(reduction_control);
 
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
     preconditioner.initialize(system_matrix, 1.2);
@@ -162,6 +161,8 @@ public:
     solver.solve(system_matrix, solution, system_rhs, preconditioner);
 
     constraints.distribute(solution);
+
+    std::cout << reduction_control.last_step() << std::endl;
   }
 
   void
@@ -177,8 +178,6 @@ public:
     data_out.add_data_vector(solution, "solution");
 
     Vector<double> ranks(tria.n_active_cells());
-    // ranks = Utilities::MPI::this_mpi_process();
-    // data_out.add_data_vector(ranks, "ranks");
     data_out.build_patches(mapping,
                            fe_degree + 1,
                            DataOut<dim>::CurvedCellRegion::curved_inner_cells);
