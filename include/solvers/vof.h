@@ -39,7 +39,6 @@
 
 #include <map>
 
-
 DeclException1(
   InvalidNumberOfFluid,
   int,
@@ -51,7 +50,6 @@ DeclException1(
   types::boundary_id,
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the VOF physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
-
 
 template <int dim>
 class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>
@@ -139,12 +137,12 @@ public:
       this->computing_timer.disable_output();
 
     // Initialize the interface object for subequations to solve
-    this->subequations = std::make_shared<VOFSubequationsInterface<dim>>(
-      this->simulation_parameters,
-      this->pcout,
-      this->triangulation,
-      this->simulation_control,
-      this->multiphysics);
+    this->vof_subequations_interface =
+      std::make_shared<VOFSubequationsInterface<dim>>(
+        this->simulation_parameters,
+        this->pcout,
+        this->triangulation,
+        this->simulation_control);
 
     if (simulation_parameters.multiphysics.vof_parameters.regularization_method
           .geometric_interface_reinitialization.enable)
@@ -240,9 +238,9 @@ public:
   /**
    * @brief Calculates the barycenter of the fluid and its velocity
    *
-   * @param solution VOF solution
+   * @param[in] solution VOF solution
    *
-   * @param solution Fluid dynamics solution
+   * @param[in] current_solution_fd Fluid dynamics solution
    *
    */
   template <typename VectorType>
@@ -415,31 +413,31 @@ public:
     return nonzero_constraints;
   }
 
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_projected_phase_fraction_gradient_dof_handler()
   {
-    return this->subequations->get_dof_handler(
+    return this->vof_subequations_interface->get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
   }
 
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_curvature_dof_handler()
   {
-    return this->subequations->get_dof_handler(
+    return this->vof_subequations_interface->get_dof_handler(
       VOFSubequationsID::curvature_projection);
   }
 
-  GlobalVectorType *
+  const GlobalVectorType &
   get_projected_phase_fraction_gradient_solution()
   {
-    return this->subequations->get_solution(
+    return this->vof_subequations_interface->get_solution(
       VOFSubequationsID::phase_gradient_projection);
   }
 
-  GlobalVectorType *
+  const GlobalVectorType &
   get_curvature_solution()
   {
-    return this->subequations->get_solution(
+    return this->vof_subequations_interface->get_solution(
       VOFSubequationsID::curvature_projection);
   }
   /**
@@ -678,9 +676,16 @@ private:
 
   /**
    * @brief Apply filter on phase fraction values.
+   *
+   * @param[in] original_solution VOF solution vector to which the filter is to
+   * be applied.
+   *
+   * @param[out] filtered_solution Solution vector with filtered phase fraction
+   * values.
    */
   void
-  apply_phase_filter();
+  apply_phase_filter(const GlobalVectorType &original_solution,
+                     GlobalVectorType       &filtered_solution);
 
   /**
    * @brief Reinitialize the interface between fluids using the algebraic
@@ -778,8 +783,9 @@ private:
   GlobalVectorType               complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
-  // For projected phase fraction gradient (pfg) and curvature
-  std::shared_ptr<VOFSubequationsInterface<dim>> subequations;
+  // For projected phase fraction gradient (pfg), projected curvature, and
+  // algebraic interface reinitialization
+  std::shared_ptr<VOFSubequationsInterface<dim>> vof_subequations_interface;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 

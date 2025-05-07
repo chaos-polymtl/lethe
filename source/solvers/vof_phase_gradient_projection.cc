@@ -12,8 +12,8 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   this->system_rhs    = 0;
 
   // Get VOF DoFHandler
-  const DoFHandler<dim> *dof_handler_vof =
-    this->multiphysics_interface->get_dof_handler(PhysicsID::VOF);
+  const DoFHandler<dim> &dof_handler_vof =
+    this->subequations_interface.get_vof_dof_handler();
 
   // Initialize FEValues for phase fraction gradient projection and VOF
   FEValues<dim> fe_values_phase_gradient_projection(*this->mapping,
@@ -23,7 +23,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
                                                       update_gradients |
                                                       update_JxW_values);
   FEValues<dim> fe_values_vof(*this->mapping,
-                              dof_handler_vof->get_fe(),
+                              dof_handler_vof.get_fe(),
                               *this->cell_quadrature,
                               update_gradients);
 
@@ -56,7 +56,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
       .surface_tension_force.phase_fraction_gradient_diffusion_factor;
 
   // Loop over phase gradient projection cells
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -69,7 +69,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
             &(*this->triangulation),
             cell->level(),
             cell->index(),
-            dof_handler_vof);
+            &dof_handler_vof);
 
           // Reinitialize FEValues with corresponding cells
           fe_values_phase_gradient_projection.reinit(cell);
@@ -88,8 +88,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
 
           // Get VOF filtered phase fraction gradients
           fe_values_vof.get_function_gradients(
-            *this->multiphysics_interface->get_filtered_solution(
-              PhysicsID::VOF),
+            this->subequations_interface.get_vof_filtered_solution(),
             present_filtered_vof_phase_gradients);
 
           // Loop over quadrature points
@@ -136,6 +135,20 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
     }
   this->system_matrix.compress(VectorOperation::add);
   this->system_rhs.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+VOFPhaseGradientProjection<dim>::check_dependencies_validity()
+{
+  AssertThrow(
+    this->subequations_interface.get_vof_filtered_solution().size() > 0,
+    NoFilteredVOFSolution(this->subequations_interface.get_subequation_string(
+      this->subequation_id)));
+  AssertThrow(this->subequations_interface.validity_map_has_been_reset(),
+              SameFilteredVOFSolution(
+                this->subequations_interface.get_subequation_string(
+                  this->subequation_id)));
 }
 
 
