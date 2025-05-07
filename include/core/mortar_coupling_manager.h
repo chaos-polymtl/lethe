@@ -80,12 +80,13 @@ public:
 
   /**
    * @brief Returns the number of quadrature points at each inner/outer cell matching pair
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angle between cell center and x-axis (in
+   * radians)
    */
   unsigned int
-  get_n_points(const double &rad) const
+  get_n_points(const double &angle_cell_center) const
   {
-    (void)rad;
+    (void)angle_cell_center;
 
     if (this->is_mesh_aligned()) // aligned
       {
@@ -99,13 +100,14 @@ public:
 
   /**
    * @brief Returns the indices of all quadrature points at both sides of the interface
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angle between cell center and x-axis (in
+   * radians)
    */
   std::vector<unsigned int>
-  get_indices(const double &rad) const
+  get_indices(const double &angle_cell_center) const
   {
     // mesh alignment type and cell index
-    const auto [type, id] = get_config(rad);
+    const auto [type, id] = get_config(angle_cell_center);
 
     if (type == 0) // aligned
       {
@@ -158,15 +160,16 @@ public:
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angle between cell center and x-axis (in
+   * radians)
    *
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
-  get_points(const double rad) const
+  get_points(const double angle_cell_center) const
   {
     // mesh alignment type and cell index
-    const auto [type, id] = get_config(rad);
+    const auto [type, id] = get_config(angle_cell_center);
     // angle variation within each cell
     const double delta = 2 * numbers::PI / n_subdivisions;
 
@@ -176,7 +179,8 @@ public:
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
           points.emplace_back(
-            rad_to_point<dim>(radius, (id + quadrature.point(q)[0]) * delta));
+            radius_to_point<dim>(radius,
+                                 (id + quadrature.point(q)[0]) * delta));
 
         return points;
       }
@@ -206,14 +210,12 @@ public:
         std::vector<Point<dim>> points;
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(rad_to_point<dim>(radius,
-                                                rad_0 + quadrature.point(q)[0] *
-                                                          (rad_1 - rad_0)));
+          points.emplace_back(radius_to_point<dim>(
+            radius, rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0)));
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(rad_to_point<dim>(radius,
-                                                rad_1 + quadrature.point(q)[0] *
-                                                          (rad_2 - rad_1)));
+          points.emplace_back(radius_to_point<dim>(
+            radius, rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1)));
 
         return points;
       }
@@ -221,14 +223,15 @@ public:
 
   /**
    * @brief Returns the coordinates of the quadrature points at the interface
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angle between cell center and x-axis (in
+   * radians)
    *
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<1>>
-  get_points_ref(const double rad) const
+  get_points_ref(const double angle_cell_center) const
   {
-    const auto [type, id] = get_config(rad);
+    const auto [type, id] = get_config(angle_cell_center);
 
     const double delta = 2 * numbers::PI / n_subdivisions;
 
@@ -275,15 +278,16 @@ public:
 
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angle between cell center and x-axis (in
+   * radians)
    *
    * @return points Angular weights of quadrature points of the cell
    */
   std::vector<double>
-  get_weights(const double &rad) const
+  get_weights(const double &angle_cell_center) const
   {
     // mesh alignment type and cell index
-    const auto [type, id] = get_config(rad);
+    const auto [type, id] = get_config(angle_cell_center);
     // angle variation within each cell
     const double delta = 2 * numbers::PI / n_subdivisions;
 
@@ -329,15 +333,16 @@ public:
 
   /**
    * @brief Returns the normal vector for the quadrature points
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angle between cell center and x-axis (in
+   * radians)
    *
    * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
-  get_normals(const double &rad) const
+  get_normals(const double &angle_cell_center) const
   {
     // Coordinates of cell quadrature points
-    const auto points = get_points(rad);
+    const auto points = get_points(angle_cell_center);
 
     std::vector<Tensor<1, dim, double>> result;
 
@@ -350,7 +355,8 @@ public:
 private:
   /**
    * @brief Returns the mesh alignement type and cell index
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angle between cell center and x-axis (in
+   * radians)
    *
    * @return type Cell configuration type at the interface
    * type = 0: mesh aligned
@@ -359,7 +365,7 @@ private:
    * @return id Index of the cell in which lies the rotated cell center
    */
   std::pair<unsigned int, unsigned int>
-  get_config(const double &rad) const
+  get_config(const double &angle_cell_center) const
   {
     // alignment tolerance
     const double tolerance = 1e-8;
@@ -368,9 +374,10 @@ private:
     // minimum rotation angle
     double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
     // point position in the cell
-    const double segment = (rad - delta / 2) / delta;
+    const double segment = (angle_cell_center - delta / 2) / delta;
     // point position after rotation
-    const double segment_rot = (rad - delta / 2 - rot_min) / delta;
+    const double segment_rot =
+      (angle_cell_center - delta / 2 - rot_min) / delta;
 
     if (this->is_mesh_aligned())
       {
@@ -710,13 +717,14 @@ private:
     const typename Triangulation<dim>::cell_iterator &cell) const;
 
   /**
-   * @brief Returns radius of point with reference to origin
+   * @brief Returns angle of a point (cell center) in radians
    * @param[in] cell Cell iterator
    * @param[in] face Face iterator
    */
   double
-  get_rad(const typename Triangulation<dim>::cell_iterator &cell,
-          const typename Triangulation<dim>::face_iterator &face) const;
+  get_angle_cell_center(
+    const typename Triangulation<dim>::cell_iterator &cell,
+    const typename Triangulation<dim>::face_iterator &face) const;
 
   std::vector<types::global_dof_index>
   get_dof_indices(
@@ -891,7 +899,7 @@ CouplingOperator<dim, n_components, Number>::init(
 
             // indices
             const auto indices_q =
-              mortar_manager_q->get_indices(get_rad(cell, face));
+              mortar_manager_q->get_indices(get_angle_cell_center(cell, face));
             for (unsigned int ii = 0; ii < indices_q.size(); ++ii)
               {
                 unsigned int i = indices_q[ii];
@@ -913,8 +921,8 @@ CouplingOperator<dim, n_components, Number>::init(
               }
 
             // indices of cells/DoFs on them
-            const auto indices =
-              mortar_manager_cell->get_indices(get_rad(cell, face));
+            const auto indices = mortar_manager_cell->get_indices(
+              get_angle_cell_center(cell, face));
 
             const auto local_dofs = this->get_dof_indices(cell);
 
@@ -943,13 +951,14 @@ CouplingOperator<dim, n_components, Number>::init(
 
             // weights
             const auto weights =
-              mortar_manager_q->get_weights(get_rad(cell, face));
+              mortar_manager_q->get_weights(get_angle_cell_center(cell, face));
             all_weights.insert(all_weights.end(),
                                weights.begin(),
                                weights.end());
 
             // normals
-            auto normals = mortar_manager_q->get_normals(get_rad(cell, face));
+            auto normals =
+              mortar_manager_q->get_normals(get_angle_cell_center(cell, face));
             if (face->boundary_id() == bid_0)
               for (auto &normal : normals)
                 normal *= -1.0;
@@ -960,8 +969,8 @@ CouplingOperator<dim, n_components, Number>::init(
             // points (also convert real to unit coordinates)
             if (false)
               {
-                const auto points =
-                  mortar_manager_q->get_points(get_rad(cell, face));
+                const auto points = mortar_manager_q->get_points(
+                  get_angle_cell_center(cell, face));
                 std::vector<Point<dim, Number>> points_ref(points.size());
                 mapping.transform_points_real_to_unit_cell(cell,
                                                            points,
@@ -972,8 +981,8 @@ CouplingOperator<dim, n_components, Number>::init(
               }
             else
               {
-                auto points =
-                  mortar_manager_q->get_points_ref(get_rad(cell, face));
+                auto points = mortar_manager_q->get_points_ref(
+                  get_angle_cell_center(cell, face));
 
                 const bool flip =
                   (face->vertex(0)[0] * face->vertex(1)[1] -
@@ -1002,8 +1011,8 @@ CouplingOperator<dim, n_components, Number>::init(
             // penalty parmeter
             const Number penalty_parameter = compute_penalty_parameter(cell);
 
-            for (unsigned int i = 0;
-                 i < mortar_manager_q->get_n_points(get_rad(cell, face));
+            for (unsigned int i = 0; i < mortar_manager_q->get_n_points(
+                                           get_angle_cell_center(cell, face));
                  ++i)
               all_penalty_parameter.emplace_back(penalty_parameter);
           }
@@ -1124,14 +1133,14 @@ CouplingOperator<dim, n_components, Number>::construct_quadrature(
 
 template <int dim, int n_components, typename Number>
 double
-CouplingOperator<dim, n_components, Number>::get_rad(
+CouplingOperator<dim, n_components, Number>::get_angle_cell_center(
   const typename Triangulation<dim>::cell_iterator &cell,
   const typename Triangulation<dim>::face_iterator &face) const
 {
   if (false)
-    return point_to_rad(face->center());
+    return point_to_angle(face->center());
   else
-    return point_to_rad(mapping.transform_unit_to_real_cell(
+    return point_to_angle(mapping.transform_unit_to_real_cell(
       cell,
       MappingQ1<dim>().transform_real_to_unit_cell(cell, face->center())));
 }
@@ -1194,7 +1203,7 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             phi_m.reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -1244,7 +1253,7 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             phi_m.reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -1308,7 +1317,7 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             phi_m.reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -1454,7 +1463,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             phi_m.reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -1512,13 +1521,14 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
-            const unsigned int n_sub_cells =
-              mortar_manager_cell->get_n_points(get_rad(cell, face));
+            const unsigned int n_sub_cells = mortar_manager_cell->get_n_points(
+              get_angle_cell_center(cell, face));
 
             for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
               {
                 const unsigned int n_q_points =
-                  mortar_manager_q->get_n_points(get_rad(cell, face)) /
+                  mortar_manager_q->get_n_points(
+                    get_angle_cell_center(cell, face)) /
                   n_sub_cells;
 
                 phi_m.reinit(cell,
@@ -1650,7 +1660,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             phi_m.reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -1708,13 +1718,14 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
           {
-            const unsigned int n_sub_cells =
-              mortar_manager_cell->get_n_points(get_rad(cell, face));
+            const unsigned int n_sub_cells = mortar_manager_cell->get_n_points(
+              get_angle_cell_center(cell, face));
 
             for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
               {
                 const unsigned int n_q_points =
-                  mortar_manager_q->get_n_points(get_rad(cell, face)) /
+                  mortar_manager_q->get_n_points(
+                    get_angle_cell_center(cell, face)) /
                   n_sub_cells;
 
                 phi_m.reinit(cell,

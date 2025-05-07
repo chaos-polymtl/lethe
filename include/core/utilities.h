@@ -806,34 +806,34 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const std::string        &file_name);
 
 /**
- * @brief Converts point to radius
+ * @brief Converts point in cartesian coordinates to angle (in radians)
  * @param[in] point Point in cartesian coordinates (x-y plane)
  *
- * @return radius Distance from point to origin
+ * @return angle Angle between point and x-axis
  */
 template <int dim>
 inline double
-point_to_rad(const Point<dim> &point)
+point_to_angle(const Point<dim> &point)
 {
   return std::fmod(std::atan2(point[1], point[0]) + 2 * numbers::PI,
                    2 * numbers::PI);
 }
 
 /**
- * @brief Converts radius to point (in the x-y plane)
+ * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
  * @param[in] radius Radial distance
- * @param[in] rad Angle (in radians)
+ * @param[in] angle Angle (in radians)
  *
  * @return point Point cartesian coordinates
  */
 template <int dim>
 inline Point<dim>
-rad_to_point(const double radius, const double rad)
+radius_to_point(const double radius, const double angle)
 {
   Point<dim> point;
 
-  point[0] = radius * std::cos(rad);
-  point[1] = radius * std::sin(rad);
+  point[0] = radius * std::cos(angle);
+  point[1] = radius * std::sin(angle);
 
   return point;
 }
