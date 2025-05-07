@@ -726,6 +726,10 @@ private:
   TrilinosWrappers::SparseMatrix system_matrix;
   GlobalVectorType               filtered_solution;
 
+  /// Level-set field obtained from the phase fraction field using a tanh-based
+  /// transformation
+  GlobalVectorType level_set;
+
   // Previous solutions vectors
   std::vector<GlobalVectorType> previous_solutions;
 
