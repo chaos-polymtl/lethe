@@ -71,18 +71,6 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
-
-  /**
-   * @brief Return the force applied to the walls.
-   */
-  virtual std::map<types::boundary_id, Tensor<1, 3>>
-  get_force() = 0;
-
-  /**
-   * @brief Return the torque applied to the walls.
-   */
-  virtual std::map<types::boundary_id, Tensor<1, 3>>
-  get_torque() = 0;
 };
 
 /**
@@ -141,24 +129,6 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
-
-  /**
-   * @brief Return the force applied to the walls.
-   */
-  std::map<types::boundary_id, Tensor<1, 3>>
-  get_force() override
-  {
-    return this->force_on_walls;
-  }
-
-  /**
-   * @brief Return the torque applied to the walls.
-   */
-  std::map<types::boundary_id, Tensor<1, 3>>
-  get_torque() override
-  {
-    return this->torque_on_walls;
-  }
 
 protected:
   /**
@@ -333,62 +303,6 @@ protected:
   }
 
   /**
-   * @brief Calculate and apply the total force and total torque on a boundary.
-   *
-   * @param[in] boundary_id Id of the boundary.
-   * @param[in] add_force Contact force applied to the wall.
-   * @param[in] point_contact Contact point on the wall.
-   */
-  inline void
-  calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
-                                         const Tensor<1, 3> add_force,
-                                         const Point<3>     point_contact)
-  {
-    if (calculate_force_torque_on_boundary)
-      {
-        mpi_correction_over_calculation_of_forces_and_torques();
-
-        this->force_on_walls[boundary_id] =
-          this->force_on_walls[boundary_id] - add_force;
-
-        this->torque_on_walls[boundary_id] =
-          this->torque_on_walls[boundary_id] -
-          cross_product_3d(point_contact - center_mass_container, add_force);
-      }
-  }
-
-  /**
-   * @brief Initialize a map of vectors to zero with the member class boundary
-   * index which has the keys as information.
-   */
-  inline std::map<unsigned int, Tensor<1, 3>>
-  initialize()
-  {
-    std::map<unsigned int, Tensor<1, 3>> map;
-    for (const auto &it : boundary_index)
-      {
-        map[it] = 0.;
-      }
-    return map;
-  }
-
-  /**
-   * @brief This function sums all the forces and torques on the wall from all
-   * the MPI processes.
-   */
-  inline void
-  mpi_correction_over_calculation_of_forces_and_torques()
-  {
-    for (const auto &it : boundary_index)
-      {
-        force_on_walls[it] =
-          Utilities::MPI::sum(force_on_walls[it], MPI_COMM_WORLD);
-        torque_on_walls[it] =
-          Utilities::MPI::sum(torque_on_walls[it], MPI_COMM_WORLD);
-      }
-  }
-
-  /**
    * @brief Get the 3d location of the particle.
    *
    * @param[in] particle The particle to get the location from.
@@ -528,7 +442,7 @@ protected:
 private:
   /**
    * @brief Apply the calculated force and torque on the
-   * particle and the wall in contact.
+   * particle in contact.
    *
    * @param[in] normal_force Contact normal force.
    * @param[in] tangential_force Contact tangential force.
@@ -551,11 +465,6 @@ private:
   {
     // Calculating total force
     Tensor<1, 3> total_force = normal_force + tangential_force;
-
-    // Updating force and torque on wall
-    calculate_force_and_torque_on_boundary(boundary_id,
-                                           total_force,
-                                           point_on_boundary);
 
     // Updating force and torque on particle in the particle handler
     // Since the force was calculated on the wall, we use -= operator
@@ -1154,13 +1063,9 @@ private:
     effective_hamaker_constant.resize(n_particle_types);
 
     // Intialize wall variables and boundary conditions
-    this->calculate_force_torque_on_boundary =
-      dem_parameters.forces_torques.calculate_force_torque;
     this->center_mass_container =
       dem_parameters.forces_torques.point_center_mass;
     this->boundary_index  = boundary_index;
-    this->force_on_walls  = this->initialize();
-    this->torque_on_walls = this->initialize();
     this->boundary_translational_velocity_map =
       dem_parameters.boundary_conditions.boundary_translational_velocity;
     this->boundary_rotational_speed_map =
@@ -1274,12 +1179,9 @@ private:
     boundary_translational_velocity_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
   std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
-  std::map<unsigned int, Tensor<1, 3>>           force_on_walls;
-  std::map<unsigned int, Tensor<1, 3>>           torque_on_walls;
   std::vector<types::boundary_id>                boundary_index;
   const unsigned int                             vertices_per_triangle = 3;
   Point<3>                                       center_mass_container;
-  bool calculate_force_torque_on_boundary;
 };
 
 #endif
