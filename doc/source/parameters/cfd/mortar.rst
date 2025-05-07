@@ -35,7 +35,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 
 * The ``center of rotation`` is the reference point for the prescribed rotation at the rotor domain.
 
-* The ``penalty factor`` is used for the weakly imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) [#larson2013]_.
+* The ``penalty factor`` is used for the weak imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) [#larson2013]_.
 
 * The ``oversampling factor`` is used to increase the number of quadrature points. This feature is used to better approximate the weak imposition of the interface coupling.
 
