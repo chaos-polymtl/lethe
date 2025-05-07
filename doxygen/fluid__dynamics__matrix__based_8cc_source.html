@@ -605,16 +605,16 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.vof_parameters</div>
 <div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>            .surface_tension_force.enable)</div>
 <div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>        {</div>
-<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *projected_phase_fraction_gradient_dof_handler =</div>
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;projected_phase_fraction_gradient_dof_handler =</div>
 <div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>            this-&gt;multiphysics</div>
 <div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>              -&gt;get_projected_phase_fraction_gradient_dof_handler();</div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *curvature_dof_handler =</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;curvature_dof_handler =</div>
 <div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>            this-&gt;multiphysics-&gt;get_curvature_dof_handler();</div>
 <div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>          scratch_data.enable_projected_phase_fraction_gradient(</div>
-<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>            projected_phase_fraction_gradient_dof_handler-&gt;get_fe(),</div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>            projected_phase_fraction_gradient_dof_handler.get_fe(),</div>
 <div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>            *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>            *this-&gt;mapping);</div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>          scratch_data.enable_curvature(curvature_dof_handler-&gt;get_fe(),</div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>          scratch_data.enable_curvature(curvature_dof_handler.get_fe(),</div>
 <div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>                                        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>                                        *this-&gt;mapping);</div>
 <div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>        }</div>
@@ -692,7 +692,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.vof_parameters</div>
 <div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>            .surface_tension_force.enable)</div>
 <div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        {</div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *projected_phase_fraction_gradient_dof_handler =</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;projected_phase_fraction_gradient_dof_handler =</div>
 <div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>            this-&gt;multiphysics</div>
 <div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>              -&gt;get_projected_phase_fraction_gradient_dof_handler();</div>
 <div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span> </div>
@@ -701,24 +701,24 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>              &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>              cell-&gt;level(),</div>
 <div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>              cell-&gt;index(),</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>              projected_phase_fraction_gradient_dof_handler);</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>              &amp;projected_phase_fraction_gradient_dof_handler);</div>
 <div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span> </div>
 <div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>          scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#a0e506238dac667b6c23647eb1b237120">reinit_projected_phase_fraction_gradient</a>(</div>
 <div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>            projected_phase_fraction_gradient_cell,</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>            *this-&gt;multiphysics</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>               -&gt;get_projected_phase_fraction_gradient_solution());</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>            this-&gt;multiphysics</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>              -&gt;get_projected_phase_fraction_gradient_solution());</div>
 <div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span> </div>
 <div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span> </div>
 <div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span> </div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *curvature_dof_handler =</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;curvature_dof_handler =</div>
 <div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>            this-&gt;multiphysics-&gt;get_curvature_dof_handler();</div>
 <div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>          <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator curvature_cell(</div>
 <div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>            &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>            cell-&gt;level(),</div>
 <div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>            cell-&gt;index(),</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>            curvature_dof_handler);</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>            &amp;curvature_dof_handler);</div>
 <div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>          scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#ada4d466d38ae48bee70c5b562e4a74af">reinit_curvature</a>(</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>            curvature_cell, *this-&gt;multiphysics-&gt;get_curvature_solution());</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>            curvature_cell, this-&gt;multiphysics-&gt;get_curvature_solution());</div>
 <div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>        }</div>
 <div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>    }</div>
 <div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.cahn_hilliard)</div>
@@ -823,17 +823,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.vof_parameters</div>
 <div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>            .surface_tension_force.enable)</div>
 <div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>        {</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *projected_phase_fraction_gradient_dof_handler =</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;projected_phase_fraction_gradient_dof_handler =</div>
 <div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>            this-&gt;multiphysics</div>
 <div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>              -&gt;get_projected_phase_fraction_gradient_dof_handler();</div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *curvature_dof_handler =</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;curvature_dof_handler =</div>
 <div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>            this-&gt;multiphysics-&gt;get_curvature_dof_handler();</div>
 <div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span> </div>
 <div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>          scratch_data.enable_projected_phase_fraction_gradient(</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>            projected_phase_fraction_gradient_dof_handler-&gt;get_fe(),</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>            projected_phase_fraction_gradient_dof_handler.get_fe(),</div>
 <div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>            *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>            *this-&gt;mapping);</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>          scratch_data.enable_curvature(curvature_dof_handler-&gt;get_fe(),</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>          scratch_data.enable_curvature(curvature_dof_handler.get_fe(),</div>
 <div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>                                        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>                                        *this-&gt;mapping);</div>
 <div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>        }</div>
@@ -916,7 +916,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.vof_parameters</div>
 <div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>            .surface_tension_force.enable)</div>
 <div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        {</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *projected_phase_fraction_gradient_dof_handler =</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;projected_phase_fraction_gradient_dof_handler =</div>
 <div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>            this-&gt;multiphysics</div>
 <div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>              -&gt;get_projected_phase_fraction_gradient_dof_handler();</div>
 <div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>          <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator</div>
@@ -924,21 +924,21 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>              &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>              cell-&gt;level(),</div>
 <div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>              cell-&gt;index(),</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>              projected_phase_fraction_gradient_dof_handler);</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>              &amp;projected_phase_fraction_gradient_dof_handler);</div>
 <div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>          scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#a0e506238dac667b6c23647eb1b237120">reinit_projected_phase_fraction_gradient</a>(</div>
 <div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>            projected_phase_fraction_gradient_cell,</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>            *this-&gt;multiphysics</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>               -&gt;get_projected_phase_fraction_gradient_solution());</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>            this-&gt;multiphysics</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>              -&gt;get_projected_phase_fraction_gradient_solution());</div>
 <div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; *curvature_dof_handler =</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>          <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;curvature_dof_handler =</div>
 <div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>            this-&gt;multiphysics-&gt;get_curvature_dof_handler();</div>
 <div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>          <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator curvature_cell(</div>
 <div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>            &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>            cell-&gt;level(),</div>
 <div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>            cell-&gt;index(),</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>            curvature_dof_handler);</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>            &amp;curvature_dof_handler);</div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>          scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#ada4d466d38ae48bee70c5b562e4a74af">reinit_curvature</a>(</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>            curvature_cell, *this-&gt;multiphysics-&gt;get_curvature_solution());</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>            curvature_cell, this-&gt;multiphysics-&gt;get_curvature_solution());</div>
 <div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        }</div>
 <div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    }</div>
 <div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.cahn_hilliard)</div>
