@@ -57,32 +57,25 @@ test()
 
   // Defining general simulation parameters
   set_default_dem_parameters(1, dem_parameters);
+  auto          &properties = dem_parameters.lagrangian_physical_properties;
   Tensor<1, dim> g{{0, 0, 0}};
-  double         dt                                                  = 0.000001;
-  double         particle_diameter                                   = 0.001;
-  unsigned int   rotating_wall_maximum_number                        = 6;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
-    200000000000;
-  dem_parameters.lagrangian_physical_properties.youngs_modulus_wall =
-    200000000000;
-  dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[0] = 0.3;
-  dem_parameters.lagrangian_physical_properties.poisson_ratio_wall        = 0.3;
-  dem_parameters.lagrangian_physical_properties
-    .restitution_coefficient_particle[0] = 0.5;
-  dem_parameters.lagrangian_physical_properties.restitution_coefficient_wall =
-    0.5;
-  dem_parameters.lagrangian_physical_properties
-    .friction_coefficient_particle[0]                                     = 0.3;
-  dem_parameters.lagrangian_physical_properties.friction_coefficient_wall = 0.3;
-  dem_parameters.lagrangian_physical_properties
-    .rolling_friction_coefficient_particle[0] = 0.1;
-  dem_parameters.lagrangian_physical_properties
-    .rolling_viscous_damping_coefficient_particle[0]                  = 0.1;
-  dem_parameters.lagrangian_physical_properties.rolling_friction_wall = 0.1;
-  dem_parameters.lagrangian_physical_properties.rolling_viscous_damping_wall =
-    0.1;
-  dem_parameters.lagrangian_physical_properties.density_particle[0] = 7850;
+  double         dt                                          = 0.000001;
+  double         particle_diameter                           = 0.001;
+  unsigned int   rotating_wall_maximum_number                = 6;
+  properties.particle_type_number                            = 1;
+  properties.youngs_modulus_particle[0]                      = 200000000000;
+  properties.youngs_modulus_wall                             = 200000000000;
+  properties.poisson_ratio_particle[0]                       = 0.3;
+  properties.poisson_ratio_wall                              = 0.3;
+  properties.restitution_coefficient_particle[0]             = 0.5;
+  properties.restitution_coefficient_wall                    = 0.5;
+  properties.friction_coefficient_particle[0]                = 0.3;
+  properties.friction_coefficient_wall                       = 0.3;
+  properties.rolling_friction_coefficient_particle[0]        = 0.1;
+  properties.rolling_viscous_damping_coefficient_particle[0] = 0.1;
+  properties.rolling_friction_wall                           = 0.1;
+  properties.rolling_viscous_damping_wall                    = 0.1;
+  properties.density_particle[0]                             = 7850;
   dem_parameters.model_parameters.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
@@ -106,23 +99,19 @@ test()
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
+
   // Inserting one particle in contact with wall
-  Point<dim>               position1 = {-0.999, 0, 0};
-  int                      id        = 0;
-  Particles::Particle<dim> particle1(position1, position1, id);
-  typename Triangulation<dim>::active_cell_iterator particle_cell =
-    GridTools::find_active_cell_around_point(tr, particle1.get_location());
+  Point<dim>                       position1 = {-0.999, 0, 0};
+  int                              id1       = 0;
+  Tensor<1, dim>                   v1{{-1., 0, 0}};
+  Tensor<1, dim>                   omega1{{0, 0, 0}};
+  const double                     mass = 1;
+  const int                        type = 0;
   Particles::ParticleIterator<dim> pit1 =
-    particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[PropertiesIndex::type]    = 0;
-  pit1->get_properties()[PropertiesIndex::dp]      = particle_diameter;
-  pit1->get_properties()[PropertiesIndex::v_x]     = -1.0;
-  pit1->get_properties()[PropertiesIndex::v_y]     = 0;
-  pit1->get_properties()[PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[PropertiesIndex::omega_x] = 0;
-  pit1->get_properties()[PropertiesIndex::omega_y] = 0;
-  pit1->get_properties()[PropertiesIndex::omega_z] = 0;
-  pit1->get_properties()[PropertiesIndex::mass]    = 1;
+    construct_particle_iterator<dim>(particle_handler, tr, position1, id1);
+
+  set_particle_properties<dim, PropertiesIndex>(
+    pit1, type, particle_diameter, mass, v1, omega1);
 
   ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
   std::vector<Tensor<1, 3>>                   &force  = contact_outcome.force;
@@ -193,41 +182,16 @@ test()
           auto particle_wall_contact_information_iterator =
             particle_wall_pairs_in_contact_iterator->begin();
 
-          particle_wall_contact_information_iterator->second
-            .tangential_displacement[0] = 0.0;
-          particle_wall_contact_information_iterator->second
-            .tangential_displacement[1] = 0.0;
-
-          if (dim == 3)
-            {
-              particle_wall_contact_information_iterator->second
-                .tangential_displacement[2] = 0.0;
-            }
-          particle_wall_contact_information_iterator->second
-            .tangential_relative_velocity[0] = 0.0;
-          particle_wall_contact_information_iterator->second
-            .tangential_relative_velocity[1] = 0.0;
-          if (dim == 3)
-            {
-              particle_wall_contact_information_iterator->second
-                .tangential_relative_velocity[2] = 0.0;
-            }
-
           particle_wall_force_object.calculate_particle_wall_contact_force(
             particle_wall_contact_information, dt, contact_outcome);
 
           // Storing force before integration
           step_force = force[0][0];
 
-
           integrator_object.integrate(
             particle_handler, g, dt, torque, force, MOI);
 
-
-          deallog
-            << " "
-            << particle_wall_contact_information_iterator->second.normal_overlap
-            << " " << step_force << std::endl;
+          deallog << " " << step_force << std::endl;
         }
 
       time += dt;
