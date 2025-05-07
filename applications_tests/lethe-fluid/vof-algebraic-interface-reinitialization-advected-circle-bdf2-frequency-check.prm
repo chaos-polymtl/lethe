@@ -5,7 +5,7 @@
 # previous solutions for a BDF2 time integration scheme. A regularization
 # frequency higher than 1 is used to ensure that the mechanism for regularizing
 # previous solutions is used. The test simulates a circle advected to the left
-# at a constant velocity and the consol outputs tracks among other quantities
+# at a constant velocity and the terminal outputs track among other quantities
 # the barycenter position which can be analytically validated via postprocessing.
 
 # Listing of Parameters
@@ -21,7 +21,6 @@ subsection simulation control
   set method           = bdf2
   set time end         = 15
   set time step        = 1
-  set output name      = vof-algebraic-interface-reinitialization-advected-circle-bdf2-frequency-check
   set output frequency = 0
 end
 

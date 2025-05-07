@@ -116,7 +116,6 @@ protected:
 
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> &subequations_interface;
-  // std::shared_ptr<VOFSubequationsInterface<dim>> subequations_interface;
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;

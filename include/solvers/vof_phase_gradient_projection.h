@@ -10,7 +10,7 @@ DeclException1(
   SameFilteredVOFSolution,
   std::string,
   "A new VOF filtered phase fraction solution has not been set. There is no need "
-  "to again solve the "
+  "to solve once more the following equation: "
     << arg1
     << ". If you wish to solve the subequation for a new filtered phase "
        "fraction field, please set a new VOF filtered solution field with "

@@ -463,7 +463,9 @@ private:
 
   /**
    * Booleans indicating if the subequation has been solved with the set VOF
-   * solution vector
+   * filtered and unfiltered solution vectors set respectively with
+   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler
+   * and VOFSubequationsInterface<dim>::set_vof_solution.
    *
    * During initialization
    * (VOFSubequationsInterface<dim>::initialize_subequations),
@@ -476,11 +478,13 @@ private:
    * VOFCurvatureProjection<dim>::check_dependencies_validity, and
    * VOFAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity).
    * For instance, to solve the curvature projection subequation, the phase
-   * gradient projection subequation has to be solved before as the solution is
-   * used in the subequation.
+   * gradient projection subequation has to be solved before as the projected
+   * phase gradient is used in the curvature projection subequation.
    *
    * A subequation in the validity map is to @p true only when it is solved and
-   * remains that way until a new VOF filtered solution and DOFHandler are set.
+   * it remains valid until a new VOF filtered solution and/or DOFHandler are
+   * set through
+   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler.
    *
    * This validation mechanism allows, to check if:
    * - A new VOF filtered/unfiltered solution has been set;
