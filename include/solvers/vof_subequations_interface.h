@@ -6,8 +6,6 @@
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_subequations_solver.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
 #include <solvers/vof_subequations.h>
 
 using namespace dealii;
@@ -305,11 +303,12 @@ public:
    * @param[in] subequation_id Identifier associated with a specific
    * subequation.
    *
-   * @param[in] dof_handler Pointer to the DoFHandler of a specific subequation.
+   * @param[in] dof_handler Shared pointer to the DoFHandler of a specific
+   * subequation.
    */
   void
-  set_dof_handler(const VOFSubequationsID &subequation_id,
-                  DoFHandler<dim>         *dof_handler)
+  set_dof_handler(const VOFSubequationsID         &subequation_id,
+                  std::shared_ptr<DoFHandler<dim>> dof_handler)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -325,12 +324,12 @@ public:
    * @param[in] subequation_id Identifier associated with a specific
    * subequation.
    *
-   * @param[in] solution_vector Pointer to the solution vector of a specific
-   * subequation.
+   * @param[in] solution_vector Shared pointer to the solution vector of a
+   * specific subequation.
    */
   void
-  set_solution(const VOFSubequationsID &subequation_id,
-               GlobalVectorType        *solution_vector)
+  set_solution(const VOFSubequationsID          &subequation_id,
+               std::shared_ptr<GlobalVectorType> solution_vector)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -456,10 +455,12 @@ private:
     subequations;
 
   /// Map of DoFHandler of subequations
-  std::map<VOFSubequationsID, DoFHandler<dim> *> subequations_dof_handler;
+  std::map<VOFSubequationsID, std::shared_ptr<DoFHandler<dim>>>
+    subequations_dof_handler;
 
   /// Present solutions map
-  std::map<VOFSubequationsID, GlobalVectorType *> subequations_solutions;
+  std::map<VOFSubequationsID, std::shared_ptr<GlobalVectorType>>
+    subequations_solutions;
 
   /**
    * Booleans indicating if the subequation has been solved with the set VOF

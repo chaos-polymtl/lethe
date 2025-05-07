@@ -66,11 +66,14 @@ public:
     , subequations_interface(p_subequations_interface)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , dof_handler(*triangulation)
+    , dof_handler(std::make_shared<DoFHandler<dim>>(*this->triangulation))
     , linear_solver_verbosity(
         p_simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity)
     , subequation_verbosity(p_subequation_verbosity)
-  {}
+  {
+    // Ensure that the shared pointer is properly allocated
+    this->present_solution = std::make_shared<GlobalVectorType>();
+  }
 
   /**
    * @brief Default destructor.
@@ -122,7 +125,7 @@ protected:
 
   // Core elements
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  DoFHandler<dim>                                              dof_handler;
+  std::shared_ptr<DoFHandler<dim>>                             dof_handler;
   std::shared_ptr<FiniteElement<dim>>                          fe;
 
   // Mapping and Quadrature
@@ -133,7 +136,7 @@ protected:
   IndexSet                                           locally_owned_dofs;
   IndexSet                                           locally_relevant_dofs;
   GlobalVectorType                                   evaluation_point;
-  GlobalVectorType                                   present_solution;
+  std::shared_ptr<GlobalVectorType>                  present_solution;
   GlobalVectorType                                   system_rhs;
   AffineConstraints<double>                          constraints;
   TrilinosWrappers::SparseMatrix                     system_matrix;

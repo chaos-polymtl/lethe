@@ -66,7 +66,7 @@ public:
     , simulation_parameters(p_simulation_parameters)
     , simulation_control(p_simulation_control)
     , triangulation(p_triangulation)
-    , dof_handler(*this->triangulation)
+    , dof_handler(std::make_shared<DoFHandler<dim>>(*this->triangulation))
     , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
                               .regularization_method.verbosity)
   {
@@ -88,6 +88,9 @@ public:
         this->cell_quadrature =
           std::make_shared<QGauss<dim>>(this->fe->degree + 1);
       }
+
+    // Ensure that the shared pointer is properly allocated
+    this->present_solution = std::make_shared<GlobalVectorType>();
   }
 
   /**
@@ -157,7 +160,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return this->present_solution;
+    return *this->present_solution;
   }
 
   /**
@@ -255,7 +258,7 @@ private:
     // Get the minimum cell size
     const double h_min =
       identify_minimum_cell_size(*this->mapping,
-                                 this->dof_handler,
+                                 *this->dof_handler,
                                  *this->cell_quadrature,
                                  this->triangulation->get_communicator());
 
@@ -390,7 +393,7 @@ private:
 
   // Core elements
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  DoFHandler<dim>                                              dof_handler;
+  std::shared_ptr<DoFHandler<dim>>                             dof_handler;
   std::shared_ptr<FiniteElement<dim>>                          fe;
 
   // Mapping and Quadrature
@@ -398,18 +401,18 @@ private:
   std::shared_ptr<Quadrature<dim>> cell_quadrature;
 
   // Solution storage
-  IndexSet                       locally_owned_dofs;
-  IndexSet                       locally_relevant_dofs;
-  GlobalVectorType               evaluation_point;
-  GlobalVectorType               local_evaluation_point;
-  GlobalVectorType               previous_local_evaluation_point;
-  GlobalVectorType               newton_update;
-  GlobalVectorType               present_solution;
-  GlobalVectorType               previous_solution; // Only used with bdf1
-  GlobalVectorType               system_rhs;
-  AffineConstraints<double>      zero_constraints;
-  AffineConstraints<double>      nonzero_constraints;
-  TrilinosWrappers::SparseMatrix system_matrix;
+  IndexSet                          locally_owned_dofs;
+  IndexSet                          locally_relevant_dofs;
+  GlobalVectorType                  evaluation_point;
+  GlobalVectorType                  local_evaluation_point;
+  GlobalVectorType                  previous_local_evaluation_point;
+  GlobalVectorType                  newton_update;
+  std::shared_ptr<GlobalVectorType> present_solution;
+  GlobalVectorType                  previous_solution; // Only used with bdf1
+  GlobalVectorType                  system_rhs;
+  AffineConstraints<double>         zero_constraints;
+  AffineConstraints<double>         nonzero_constraints;
+  TrilinosWrappers::SparseMatrix    system_matrix;
 
   // Verbosity
   const Parameters::Verbosity subequation_verbosity;

@@ -56,7 +56,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
       .surface_tension_force.phase_fraction_gradient_diffusion_factor;
 
   // Loop over phase gradient projection cells
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
