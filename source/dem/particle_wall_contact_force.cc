@@ -38,9 +38,6 @@ ParticleWallContactForce<dim,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
-  this->force_on_walls  = this->initialize();
-  this->torque_on_walls = this->initialize();
-
   // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
        particle_wall_pairs_in_contact | boost::adaptors::map_values)
