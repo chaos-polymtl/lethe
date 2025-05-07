@@ -175,7 +175,7 @@ protected:
   inline void
   update_contact_information(particle_wall_contact_info<dim> &contact_info,
                              Tensor<1, 3>   &tangential_relative_velocity,
-                             double          normal_relative_velocity_value,
+                             double         &normal_relative_velocity_value,
                              const Point<3> &particle_location,
                              const ArrayView<const double> &particle_properties,
                              const double                   dt)
@@ -265,7 +265,7 @@ protected:
   update_particle_solid_object_contact_information(
     particle_wall_contact_info<dim> &contact_info,
     Tensor<1, 3>                    &tangential_relative_velocity,
-    double                           normal_relative_velocity_value,
+    double                          &normal_relative_velocity_value,
     const ArrayView<const double>   &particle_properties,
     const double                     dt,
     const Tensor<1, 3>              &cut_cell_translational_velocity,
@@ -808,8 +808,6 @@ private:
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
     const double model_parameter_st =
       8.0 * shear_modulus * radius_times_overlap_sqrt;
-    std::cout << "sqrt(r*delta), sn, st: " << radius_times_overlap_sqrt << " "
-              << model_parameter_sn << " " << model_parameter_st << std::endl;
 
     // Calculation of normal and tangential spring and dashpot constants
     // using particle and wall properties
@@ -822,8 +820,6 @@ private:
       1.8257 * beta *
       sqrt(model_parameter_sn * particle_properties[PropertiesIndex::mass]);
 
-    std::cout << "normal sg cst, normal dp const: " << normal_spring_constant << " "
-      << normal_damping_constant << std::endl;
     // There is a minus sign since the tangential force is applied in the
     // opposite direction of the tangential_displacement
     const double tangential_spring_constant =
@@ -832,14 +828,10 @@ private:
     const double tangential_damping_constant =
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
-    std::cout << "tangential sg cst, tangential dp const: " << tangential_spring_constant << " "
-      << tangential_damping_constant << std::endl;
     // Calculation of normal force using spring and dashpot normal forces
     normal_force = (normal_spring_constant * normal_overlap +
                     normal_damping_constant * normal_relative_velocity_value) *
                    normal_vector;
-
-    std::cout << "normal force: " << normal_force << std::endl;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
@@ -848,8 +840,6 @@ private:
     tangential_force =
       tangential_spring_constant * contact_info.tangential_displacement +
       damping_tangential_force;
-    std::cout << "tangential dp force, tangential force: " << damping_tangential_force << " "
-      << tangential_force << std::endl;
 
     const double coulomb_threshold = friction_coeff * normal_force.norm();
 
