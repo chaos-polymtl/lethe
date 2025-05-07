@@ -165,13 +165,18 @@ protected:
    * @brief Update the contact pair information for contact force calculations.
    *
    * @param[in,out] contact_info Contact information of a particle-wall pair.
+   * @param[out] tangential_relative_velocity Tangential relative velocity.
+   * @param[out] normal_relative_velocity_value Normal relative contact
+   * velocity value.
    * @param[in] particle_location Location of particle in 3d.
    * @param[in] particle_properties Properties of particle.
    * @param[in] dt DEM time step.
    */
   inline void
   update_contact_information(particle_wall_contact_info<dim> &contact_info,
-                             const Point<3>                  &particle_location,
+                             Tensor<1, 3>   &tangential_relative_velocity,
+                             double          normal_relative_velocity_value,
+                             const Point<3> &particle_location,
                              const ArrayView<const double> &particle_properties,
                              const double                   dt)
   {
@@ -223,14 +228,12 @@ protected:
                        vector_to_rotating_axis);
 
     // Calculating normal relative velocity
-    double normal_relative_velocity_value =
-      contact_relative_velocity * normal_vector;
-    Tensor<1, 3> normal_relative_velocity =
-      normal_relative_velocity_value * normal_vector;
+    normal_relative_velocity_value = contact_relative_velocity * normal_vector;
 
     // Calculating tangential relative velocity
-    Tensor<1, 3> tangential_relative_velocity =
-      contact_relative_velocity - normal_relative_velocity;
+    tangential_relative_velocity =
+      contact_relative_velocity -
+      (normal_relative_velocity_value * normal_vector);
 
     // Calculating new tangential_displacement
     // Since this value is history-dependent it needs the value at previous
@@ -239,19 +242,16 @@ protected:
     // tangential_displacement of the particles which were already in contact
     // (pairs_in_contact) needs to be modified using its history, while the
     // tangential_displacements of new particles are equal to zero.
-    Tensor<1, 3> modified_tangential_displacement =
-      contact_info.tangential_displacement + tangential_relative_velocity * dt;
-
-    // Updating the contact_info container based on the new calculated values
-    contact_info.normal_relative_velocity = normal_relative_velocity_value;
-    contact_info.tangential_displacement  = modified_tangential_displacement;
-    contact_info.tangential_relative_velocity = tangential_relative_velocity;
+    contact_info.tangential_displacement += tangential_relative_velocity * dt;
   }
 
   /**
    * @brief Update the contact pair information for particle-solid object contacts.
    *
    * @param[in,out] contact_info Contact information of a particle-wall pair.
+   * @param[out] tangential_relative_velocity Tangential relative velocity.
+   * @param[out] normal_relative_velocity_value Normal relative contact
+   * velocity value.
    * @param[in] particle_properties Properties of particle.
    * @param[in] dt DEM time step.
    * @param[in] cut_cell_translational_velocity Translational velocity of the
@@ -264,6 +264,8 @@ protected:
   void
   update_particle_solid_object_contact_information(
     particle_wall_contact_info<dim> &contact_info,
+    Tensor<1, 3>                    &tangential_relative_velocity,
+    double                           normal_relative_velocity_value,
     const ArrayView<const double>   &particle_properties,
     const double                     dt,
     const Tensor<1, 3>              &cut_cell_translational_velocity,
@@ -302,24 +304,16 @@ protected:
                        normal_vector);
 
     // Calculation of normal relative velocity
-    double normal_relative_velocity_value =
-      contact_relative_velocity * normal_vector;
-    Tensor<1, 3> normal_relative_velocity =
-      normal_relative_velocity_value * normal_vector;
+    normal_relative_velocity_value = contact_relative_velocity * normal_vector;
 
     // Calculation of tangential relative velocity
-    Tensor<1, 3> tangential_relative_velocity =
-      contact_relative_velocity - normal_relative_velocity;
+    tangential_relative_velocity =
+      contact_relative_velocity -
+      normal_relative_velocity_value * normal_vector;
 
     // Calculate the new tangential_displacement, since this value is
     // history-dependent, it needs the value at previous time-step
-    Tensor<1, 3> modified_tangential_displacement =
-      contact_info.tangential_displacement + tangential_relative_velocity * dt;
-
-    // Updating the contact_info container based on the new calculated values
-    contact_info.normal_relative_velocity = normal_relative_velocity_value;
-    contact_info.tangential_displacement  = modified_tangential_displacement;
-    contact_info.tangential_relative_velocity = tangential_relative_velocity;
+    contact_info.tangential_displacement += tangential_relative_velocity * dt;
   }
 
   /**
@@ -414,9 +408,12 @@ protected:
    * @brief Calculate the particle-wall contact force and torque
    * according to the contact model.
    *
-   * @param[in,out] contact_info A container that contains the required
+   * @param[in,out] contact_info A container with the required
    * information for calculation of the contact force for a particle-wall pair
    * in contact.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative velocity value.
+   * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_properties Properties of particle.
    * @param[out] normal_force Contact normal force.
@@ -426,18 +423,24 @@ protected:
    */
   inline void
   calculate_contact(particle_wall_contact_info<dim> &contact_info,
-                    const double                     dt,
-                    const ArrayView<const double>   &particle_properties,
-                    Tensor<1, 3>                    &normal_force,
-                    Tensor<1, 3>                    &tangential_force,
-                    Tensor<1, 3>                    &tangential_torque,
-                    Tensor<1, 3>                    &rolling_resistance_torque)
+                    const Tensor<1, 3> &tangential_relative_velocity,
+                    const double        normal_relative_velocity_value,
+                    const double        normal_overlap,
+                    const double        dt,
+                    const ArrayView<const double> &particle_properties,
+                    Tensor<1, 3>                  &normal_force,
+                    Tensor<1, 3>                  &tangential_force,
+                    Tensor<1, 3>                  &tangential_torque,
+                    Tensor<1, 3>                  &rolling_resistance_torque)
   {
     using namespace Parameters::Lagrangian;
 
     if constexpr (contact_model == ParticleWallContactForceModel::linear)
       {
         calculate_linear_contact(contact_info,
+                                 tangential_relative_velocity,
+                                 normal_relative_velocity_value,
+                                 normal_overlap,
                                  dt,
                                  particle_properties,
                                  normal_force,
@@ -449,6 +452,9 @@ protected:
     if constexpr (contact_model == ParticleWallContactForceModel::nonlinear)
       {
         calculate_nonlinear_contact(contact_info,
+                                    tangential_relative_velocity,
+                                    normal_relative_velocity_value,
+                                    normal_overlap,
                                     dt,
                                     particle_properties,
                                     normal_force,
@@ -460,6 +466,9 @@ protected:
     if constexpr (contact_model == ParticleWallContactForceModel::JKR)
       {
         calculate_JKR_contact(contact_info,
+                              tangential_relative_velocity,
+                              normal_relative_velocity_value,
+                              normal_overlap,
                               dt,
                               particle_properties,
                               normal_force,
@@ -471,6 +480,9 @@ protected:
     if constexpr (contact_model == ParticleWallContactForceModel::DMT)
       {
         calculate_DMT_contact(contact_info,
+                              tangential_relative_velocity,
+                              normal_relative_velocity_value,
+                              normal_overlap,
                               dt,
                               particle_properties,
                               normal_force,
@@ -632,6 +644,9 @@ private:
    *
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall pair.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative velocity value.
+   * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_properties Properties of particle.
    * @param[out] normal_force Contact normal force.
@@ -641,11 +656,14 @@ private:
    */
   inline void
   calculate_linear_contact(particle_wall_contact_info<dim> &contact_info,
-                           const double                     dt,
-                           const ArrayView<const double>   &particle_properties,
-                           Tensor<1, 3>                    &normal_force,
-                           Tensor<1, 3>                    &tangential_force,
-                           Tensor<1, 3>                    &tangential_torque,
+                           const Tensor<1, 3> &tangential_relative_velocity,
+                           const double        normal_relative_velocity_value,
+                           const double        normal_overlap,
+                           const double        dt,
+                           const ArrayView<const double> &particle_properties,
+                           Tensor<1, 3>                  &normal_force,
+                           Tensor<1, 3>                  &tangential_force,
+                           Tensor<1, 3>                  &tangential_torque,
                            Tensor<1, 3> &rolling_resistance_torque)
   {
     // i is the particle, j is the wall.
@@ -693,15 +711,14 @@ private:
       normal_damping_constant * 0.6324555320336759; // sqrt(0.4)
 
     // Calculation of normal force using spring and dashpot normal forces
-    normal_force =
-      (normal_spring_constant * contact_info.normal_overlap +
-       normal_damping_constant * contact_info.normal_relative_velocity) *
-      normal_vector;
+    normal_force = (normal_spring_constant * normal_overlap +
+                    normal_damping_constant * normal_relative_velocity_value) *
+                   normal_vector;
 
     // Calculation of tangential force
     tangential_force =
       (tangential_spring_constant * contact_info.tangential_displacement +
-       tangential_damping_constant * contact_info.tangential_relative_velocity);
+       tangential_damping_constant * tangential_relative_velocity);
 
     const double coulomb_threshold = friction_coeff * normal_force.norm();
     // Check for gross sliding
@@ -730,7 +747,7 @@ private:
       dt,
       normal_spring_constant,
       normal_force.norm(),
-      contact_info.normal_vector, // or use normal_vector ?
+      contact_info.normal_vector,
       contact_info.rolling_resistance_spring_torque);
   }
 
@@ -740,6 +757,9 @@ private:
    *
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall pair.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative velocity value.
+   * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_properties Properties of particle.
    * @param[out] normal_force Contact normal force.
@@ -750,6 +770,9 @@ private:
   inline void
   calculate_nonlinear_contact(
     particle_wall_contact_info<dim> &contact_info,
+    const Tensor<1, 3>              &tangential_relative_velocity,
+    const double                     normal_relative_velocity_value,
+    const double                     normal_overlap,
     const double                     dt,
     const ArrayView<const double>   &particle_properties,
     Tensor<1, 3>                    &normal_force,
@@ -780,11 +803,13 @@ private:
     // These values are used to consider non-linear relation of the contact
     // force to the normal overlap
     const double radius_times_overlap_sqrt =
-      sqrt(particle_radius * contact_info.normal_overlap);
+      sqrt(particle_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
     const double model_parameter_st =
       8.0 * shear_modulus * radius_times_overlap_sqrt;
+    std::cout << "sqrt(r*delta), sn, st: " << radius_times_overlap_sqrt << " "
+              << model_parameter_sn << " " << model_parameter_st << std::endl;
 
     // Calculation of normal and tangential spring and dashpot constants
     // using particle and wall properties
@@ -797,6 +822,8 @@ private:
       1.8257 * beta *
       sqrt(model_parameter_sn * particle_properties[PropertiesIndex::mass]);
 
+    std::cout << "normal sg cst, normal dp const: " << normal_spring_constant << " "
+      << normal_damping_constant << std::endl;
     // There is a minus sign since the tangential force is applied in the
     // opposite direction of the tangential_displacement
     const double tangential_spring_constant =
@@ -805,19 +832,24 @@ private:
     const double tangential_damping_constant =
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
+    std::cout << "tangential sg cst, tangential dp const: " << tangential_spring_constant << " "
+      << tangential_damping_constant << std::endl;
     // Calculation of normal force using spring and dashpot normal forces
-    normal_force =
-      (normal_spring_constant * contact_info.normal_overlap +
-       normal_damping_constant * contact_info.normal_relative_velocity) *
-      normal_vector;
+    normal_force = (normal_spring_constant * normal_overlap +
+                    normal_damping_constant * normal_relative_velocity_value) *
+                   normal_vector;
+
+    std::cout << "normal force: " << normal_force << std::endl;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
     const Tensor<1, 3> damping_tangential_force =
-      tangential_damping_constant * contact_info.tangential_relative_velocity;
+      tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
       tangential_spring_constant * contact_info.tangential_displacement +
       damping_tangential_force;
+    std::cout << "tangential dp force, tangential force: " << damping_tangential_force << " "
+      << tangential_force << std::endl;
 
     const double coulomb_threshold = friction_coeff * normal_force.norm();
 
@@ -863,6 +895,9 @@ private:
    *
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall pair.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative velocity value.
+   * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_properties Properties of particle.
    * @param[out] normal_force Contact normal force.
@@ -872,11 +907,14 @@ private:
    */
   inline void
   calculate_JKR_contact(particle_wall_contact_info<dim> &contact_info,
-                        const double                     dt,
-                        const ArrayView<const double>   &particle_properties,
-                        Tensor<1, 3>                    &normal_force,
-                        Tensor<1, 3>                    &tangential_force,
-                        Tensor<1, 3>                    &tangential_torque,
+                        const Tensor<1, 3> &tangential_relative_velocity,
+                        const double        normal_relative_velocity_value,
+                        const double        normal_overlap,
+                        const double        dt,
+                        const ArrayView<const double> &particle_properties,
+                        Tensor<1, 3>                  &normal_force,
+                        Tensor<1, 3>                  &tangential_force,
+                        Tensor<1, 3>                  &tangential_torque,
                         Tensor<1, 3> &rolling_resistance_torque)
   {
     // i is the particle, j is the wall.
@@ -903,7 +941,7 @@ private:
     // These values are used to consider non-linear relation of the contact
     // force to the normal overlap
     const double radius_times_overlap_sqrt =
-      sqrt(particle_radius * contact_info.normal_overlap);
+      sqrt(particle_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
     const double model_parameter_st =
@@ -912,10 +950,10 @@ private:
     // Calculation of the contact patch radius (a) using the analytical solution
     // described in the theory guide.
     const double c0 =
-      Utilities::fixed_power<2>(particle_radius * contact_info.normal_overlap);
+      Utilities::fixed_power<2>(particle_radius * normal_overlap);
     const double c1 = -2. * Utilities::fixed_power<2>(particle_radius) * M_PI *
                       surface_energy / youngs_modulus;
-    const double c2 = -2. * contact_info.normal_overlap * particle_radius;
+    const double c2 = -2. * normal_overlap * particle_radius;
     const double P  = -Utilities::fixed_power<2>(c2) / 12. - c0;
     const double Q  = -Utilities::fixed_power<3>(c2) / 108. + c0 * c2 / 3. -
                      Utilities::fixed_power<2>(c1) * 0.125;
@@ -955,7 +993,7 @@ private:
         (3. * particle_radius) -
       std::sqrt(8. * M_PI * surface_energy * youngs_modulus *
                 Utilities::fixed_power<3>(a)) +
-      normal_damping_constant * contact_info.normal_relative_velocity;
+      normal_damping_constant * normal_relative_velocity_value;
 
     // Calculation of normal force using the normal_force_norm and the
     // normal vector.
@@ -963,7 +1001,7 @@ private:
 
     // Calculation of tangential forces.
     Tensor<1, 3> damping_tangential_force =
-      tangential_damping_constant * contact_info.tangential_relative_velocity;
+      tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
       tangential_spring_constant * contact_info.tangential_displacement +
       damping_tangential_force;
@@ -1021,6 +1059,9 @@ private:
    *
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative velocity value.
+   * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_properties Properties of particle.
    * @param[out] normal_force Contact normal force.
@@ -1030,11 +1071,14 @@ private:
    */
   inline void
   calculate_DMT_contact(particle_wall_contact_info<dim> &contact_info,
-                        const double                     dt,
-                        const ArrayView<const double>   &particle_properties,
-                        Tensor<1, 3>                    &normal_force,
-                        Tensor<1, 3>                    &tangential_force,
-                        Tensor<1, 3>                    &tangential_torque,
+                        const Tensor<1, 3> &tangential_relative_velocity,
+                        const double        normal_relative_velocity_value,
+                        const double        normal_overlap,
+                        const double        dt,
+                        const ArrayView<const double> &particle_properties,
+                        Tensor<1, 3>                  &normal_force,
+                        Tensor<1, 3>                  &tangential_force,
+                        Tensor<1, 3>                  &tangential_torque,
                         Tensor<1, 3> &rolling_resistance_torque)
   {
     constexpr double M_2PI = 2. * M_PI;
@@ -1061,11 +1105,14 @@ private:
     double cohesive_term;
 
     // Contact particle-wall + constant cohesive force.
-    if (contact_info.normal_overlap > 0.)
+    if (normal_overlap > 0.)
       {
         cohesive_term = -F_po;
 
         calculate_nonlinear_contact(contact_info,
+                                    tangential_relative_velocity,
+                                    normal_relative_velocity_value,
+                                    normal_overlap,
                                     dt,
                                     particle_properties,
                                     normal_force,
@@ -1074,7 +1121,7 @@ private:
                                     rolling_resistance_torque);
       }
     // No contact, but still in the constant zone for the cohesive force.
-    else if (contact_info.normal_overlap > delta_0)
+    else if (normal_overlap > delta_0)
       {
         cohesive_term = -F_po;
         contact_info.tangential_displacement.clear();
@@ -1083,9 +1130,8 @@ private:
     // No contact. The cohesive force is not constant. It needs to be computed.
     else
       {
-        cohesive_term =
-          -hamaker_constant * particle_radius /
-          (6. * Utilities::fixed_power<2>(contact_info.normal_overlap));
+        cohesive_term = -hamaker_constant * particle_radius /
+                        (6. * Utilities::fixed_power<2>(normal_overlap));
         contact_info.tangential_displacement.clear();
         contact_info.rolling_resistance_spring_torque.clear();
       }
