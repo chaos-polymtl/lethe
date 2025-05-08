@@ -89,9 +89,7 @@ class ParticleWallContactForce
   : public ParticleWallContactForceBase<dim, PropertiesIndex>
 {
 public:
-  ParticleWallContactForce(
-    const DEMSolverParameters<dim>        &dem_parameters,
-    const std::vector<types::boundary_id> &boundary_index = {});
+  ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters);
 
   virtual ~ParticleWallContactForce()
   {}
@@ -450,8 +448,6 @@ private:
    * @param[in] rolling_resistance_torque Contact rolling resistance torque.
    * @param[in,out] particle_torque Torque acting on particle.
    * @param[in,out] particle_force Force acting on particle.
-   * @param[in] point_on_boundary Contact point on the wall
-   * @param[in] boundary_id ID of the boundary
    */
   inline void
   apply_force_and_torque(const Tensor<1, 3> &normal_force,
@@ -459,9 +455,7 @@ private:
                          const Tensor<1, 3> &tangential_torque,
                          const Tensor<1, 3> &rolling_resistance_torque,
                          Tensor<1, 3>       &particle_torque,
-                         Tensor<1, 3>       &particle_force,
-                         const Point<3>     &point_on_boundary,
-                         const int           boundary_id = 0)
+                         Tensor<1, 3>       &particle_force)
   {
     // Calculating total force
     Tensor<1, 3> total_force = normal_force + tangential_force;
@@ -1042,12 +1036,9 @@ private:
    * calculation.
    *
    * @param[in] dem_parameters DEM parameters declared in the .prm file.
-   * @param[in] boundary_index Index of boundary ids.
    */
   void
-  set_effective_properties(
-    const DEMSolverParameters<dim>        &dem_parameters,
-    const std::vector<types::boundary_id> &boundary_index)
+  set_effective_properties(const DEMSolverParameters<dim> &dem_parameters)
   {
     auto properties = dem_parameters.lagrangian_physical_properties;
 
@@ -1065,7 +1056,6 @@ private:
     // Intialize wall variables and boundary conditions
     this->center_mass_container =
       dem_parameters.forces_torques.point_center_mass;
-    this->boundary_index = boundary_index;
     this->boundary_translational_velocity_map =
       dem_parameters.boundary_conditions.boundary_translational_velocity;
     this->boundary_rotational_speed_map =
@@ -1179,7 +1169,6 @@ private:
     boundary_translational_velocity_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
   std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
-  std::vector<types::boundary_id>                boundary_index;
   const unsigned int                             vertices_per_triangle = 3;
   Point<3>                                       center_mass_container;
 };

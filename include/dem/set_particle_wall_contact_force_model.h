@@ -18,15 +18,13 @@
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param[in] dem_parameters DEM parameters.
- * @param[in] triangulation Triangulation
  *
  * @return Pointer to the particle-wall contact force object.
  */
 template <int dim, typename PropertiesIndex>
 std::shared_ptr<ParticleWallContactForceBase<dim, PropertiesIndex>>
 set_particle_wall_contact_force_model(
-  const DEMSolverParameters<dim>                  &dem_parameters,
-  const parallel::distributed::Triangulation<dim> &triangulation);
+  const DEMSolverParameters<dim> &dem_parameters);
 
 /**
  *  @brief Set the rolling resistance model for the particle-wall contact
@@ -38,7 +36,6 @@ set_particle_wall_contact_force_model(
  * model.
  *
  * @param[in] dem_parameters DEM parameters.
- * @param[in] boundary_index Index of boundary ids.
  * @param[out] particle_wall_contact_force_object Pointer to the particle-
  * wall contact force object.
  */
@@ -48,8 +45,7 @@ template <int dim,
             particle_wall_contact_force_model>
 void
 set_rolling_resistance_model(
-  const DEMSolverParameters<dim>       &dem_parameters,
-  const std::vector<types::boundary_id> boundary_index,
+  const DEMSolverParameters<dim> &dem_parameters,
   std::shared_ptr<ParticleWallContactForceBase<dim, PropertiesIndex>>
     &particle_wall_contact_force_object);
 

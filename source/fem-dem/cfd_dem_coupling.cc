@@ -230,8 +230,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   particle_wall_contact_force_object = set_particle_wall_contact_force_model<
     dim,
     DEM::CFDDEMProperties::PropertiesIndex>(
-    this->cfd_dem_simulation_parameters.dem_parameters,
-    *parallel_triangulation);
+    this->cfd_dem_simulation_parameters.dem_parameters);
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob diameter
