@@ -4,7 +4,6 @@
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
-#include <core/mortar_coupling_manager.h>
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
