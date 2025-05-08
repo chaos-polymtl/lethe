@@ -2594,6 +2594,9 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
+  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
+    this->evaluation_point);
+
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
 
