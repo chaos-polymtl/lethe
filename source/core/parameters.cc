@@ -4154,16 +4154,27 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Rotor boundary ID # of the mortar matching interface");
+
       prm.declare_entry(
         "stator boundary id",
         "2",
         Patterns::Integer(),
         "Stator boundary ID # of the mortar matching interface");
+
       std::string default_entry_point = (dim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry("center of rotation",
                         default_entry_point,
                         Patterns::List(Patterns::Double()),
                         "Center of rotation coordinates of rotor domain");
+
+      prm.declare_entry("penalty factor",
+                        "1.",
+                        Patterns::Double(),
+                        "Penalty factor for mortar elements");
+      prm.declare_entry("oversampling factor",
+                        "1",
+                        Patterns::Integer(),
+                        "Oversampling factor for quadrature points");
     }
     prm.leave_subsection();
   };
@@ -4184,6 +4195,10 @@ namespace Parameters
 
       this->center_of_rotation =
         value_string_to_tensor<dim>(prm.get("center of rotation"));
+
+      this->sip_factor = prm.get_double("penalty factor");
+
+      this->oversampling_factor = prm.get_integer("oversampling factor");
     }
     prm.leave_subsection();
   }

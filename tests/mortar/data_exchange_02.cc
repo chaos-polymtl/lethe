@@ -97,7 +97,7 @@ main(int argc, char *argv[])
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
-            const auto indices = mm.get_indices(point_to_rad(face->center()));
+            const auto indices = mm.get_indices(point_to_angle(face->center()));
 
             std::vector<types::global_dof_index> local_dofs(
               fe.n_dofs_per_cell());

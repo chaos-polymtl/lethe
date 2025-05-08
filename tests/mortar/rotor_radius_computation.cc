@@ -2,11 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test reads two mesh input parameters and merges
- * them in a unique triangulation. The goal is to test the steps on the
- * function read_mesh_and_manifolds only related to reading and merging two
- * distinct triangulations.
- * Based on the test mortar/plot_01.cc
+ * @brief This test checks the computation of the radius of the rotor-stator interface,
+ * which is part of the CouplingOperator constructor
  */
 
 #include <deal.II/distributed/tria.h>
@@ -74,6 +71,7 @@ test()
   mortar_parameters.rotor_mesh->simplex        = false;
   mortar_parameters.stator_boundary_id         = 4;
   mortar_parameters.rotor_boundary_id          = 5; // after shifting
+  mortar_parameters.center_of_rotation         = Point<2>();
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
@@ -86,6 +84,62 @@ test()
                                                boundary_conditions,
                                                mortar_parameters);
 
+  // Number of subdivisions per process
+  unsigned int n_subdivisions_local = 0;
+  // Number of vertices at the boundary per process
+  unsigned int n_vertices_local = 0;
+  // Tolerance for rotor radius computation
+  const double tolerance = 1e-8;
+  // Min and max values for rotor radius computation
+  double radius_min = 1e12;
+  double radius_max = 1e-12;
+
+  // Check number of faces and vertices at the rotor-stator interface
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (const auto &face : cell->face_iterators())
+            {
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      n_subdivisions_local++;
+                      for (unsigned int vertex_index = 0;
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
+                        {
+                          n_vertices_local++;
+                          auto   v = face->vertex(vertex_index);
+                          double radius_current =
+                            v.distance(mortar_parameters.center_of_rotation);
+                          radius_min = std::min(radius_min, radius_current);
+                          radius_max = std::max(radius_max, radius_current);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  // Total number of faces
+  const unsigned int n_subdivisions =
+    Utilities::MPI::sum(n_subdivisions_local, comm);
+
+  // Min and max values over all processes
+  radius_min = Utilities::MPI::min(radius_min, comm);
+  radius_max = Utilities::MPI::max(radius_max, comm);
+
+  AssertThrow(
+    std::abs(radius_max - radius_min) < tolerance,
+    ExcMessage(
+      "The computed radius of the rotor mesh has a variation greater than the tolerance across the rotor domain, meaning that the prescribed center of rotation and the rotor geometry are not in accordance."));
+
+  // Final radius value
+  const double radius = radius_min;
+
   // Print information
   for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
        ++processor_number)
@@ -94,13 +148,14 @@ test()
       if (processor_number == this_mpi_process)
         {
           deallog << "MPI=" << this_mpi_process << std::endl;
-          deallog << "Number of active cells : "
-                  << triangulation.n_active_cells() << std::endl;
-          deallog << "Number of vertices : " << triangulation.n_vertices()
+          deallog << "# Current vertices at interface: " << n_vertices_local
                   << std::endl;
-
-          for (const auto &face : triangulation.active_face_iterators())
-            deallog << "Cell center : " << face->center() << std::endl;
+          deallog << "Radius tolerance: " << tolerance << std::endl;
+          deallog << "Radius value: " << radius << std::endl;
+          deallog << "# Total faces at interface: " << n_subdivisions
+                  << std::endl;
+          deallog << "# Current faces at interface: " << n_subdivisions_local
+                  << std::endl;
         }
       MPI_Barrier(comm);
     }
@@ -121,23 +176,6 @@ test()
                          mapping_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
   data_out.write_vtu_in_parallel("out.vtu", comm);
-
-  // Plot boundary IDs
-  DataPostprocessors::BoundaryIds<dim> boundary_ids;
-  DataOutFaces<dim>                    data_out_faces;
-  FE_Q<dim>                            dummy_fe(1);
-
-  DoFHandler<dim> dummy_dof_handler(triangulation);
-  dummy_dof_handler.distribute_dofs(dummy_fe);
-
-  Vector<double> dummy_solution(dummy_dof_handler.n_dofs());
-
-  data_out_faces.attach_dof_handler(dummy_dof_handler);
-  data_out_faces.add_data_vector(dummy_solution, boundary_ids);
-  data_out_faces.build_patches();
-
-  std::ofstream out("boundary_ids.vtu");
-  data_out_faces.write_vtu(out);
 }
 
 int

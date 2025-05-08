@@ -1,0 +1,7 @@
+
+DEAL::MPI=0
+DEAL::# Current vertices at interface: 64
+DEAL::Radius tolerance: 1.00000e-08
+DEAL::Radius value: 1.00000
+DEAL::# Total faces at interface: 32
+DEAL::# Current faces at interface: 32

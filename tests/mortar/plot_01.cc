@@ -128,7 +128,7 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices = mm.get_indices(point_to_rad(face->center()));
+            const auto indices = mm.get_indices(point_to_angle(face->center()));
 
             for (const auto i : indices)
               {
@@ -165,10 +165,10 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices = mm.get_indices(point_to_rad(face->center()));
+            const auto indices = mm.get_indices(point_to_angle(face->center()));
 
             // get points
-            const auto points = mm.get_points(point_to_rad(face->center()));
+            const auto points = mm.get_points(point_to_angle(face->center()));
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {

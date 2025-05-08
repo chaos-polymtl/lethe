@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The solution preceding the algebraic interface reinitialization time-step is now also regularized using the same process to ensure consistency in the time integration scheme. This is done by replacing the relevant previous solution with the reinitialized previous solution. A new application-test (`vof-algebraic-interface-reinitialization-advected-circle-bdf2-frequency-check`) has been added to test this implementation. Also, a new validity map has been added to the VOFSubequationInterface. This ensures that subequations are solved using the correct VOF solution and in the right order. Subequations dependency checks are also made before solving each subequation. [#1507](https://github.com/chaos-polymtl/lethe/pull/1507)
 
+## [Master] - 2024-05-01
+
+### Added
+
+- MINOR Some of the functions related to the mortar coupling have been refactored, and new functionalities have been added. For instance, the matrix-based solver is able to read 'gmsh' files, and the matrix-free solver is able to read data from the mortar subsection. A new coupling operator has been added. [#1514] (https://github.com/chaos-polymtl/lethe/pull/1515)
+
 ## [Master] - 2024-04-30
 
 ### Added
