@@ -258,7 +258,7 @@ First, we can look at a slice of the velocity profile during the simulation. The
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://youtu.be/JkuSbaswFao" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/JkuSbaswFao" frameborder="0" allowfullscreen></iframe>
 
 We can also compare the results obtained for the velocity in time with the results proposed by the article of Wang `et al.` [#Wang2024]_, which are stored in the ``S18.dat`` file. They chose to represent the velocity as a function of a dimentionless settling time :math:`t^*`, defined as:
 
