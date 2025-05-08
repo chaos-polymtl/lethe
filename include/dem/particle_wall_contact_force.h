@@ -1065,7 +1065,7 @@ private:
     // Intialize wall variables and boundary conditions
     this->center_mass_container =
       dem_parameters.forces_torques.point_center_mass;
-    this->boundary_index  = boundary_index;
+    this->boundary_index = boundary_index;
     this->boundary_translational_velocity_map =
       dem_parameters.boundary_conditions.boundary_translational_velocity;
     this->boundary_rotational_speed_map =
