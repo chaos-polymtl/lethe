@@ -244,8 +244,7 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
   particle_particle_contact_force_object =
     set_particle_particle_contact_force_model<dim, PropertiesIndex>(parameters);
   particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model<dim, PropertiesIndex>(parameters,
-                                                                triangulation);
+    set_particle_wall_contact_force_model<dim, PropertiesIndex>(parameters);
 }
 
 template <int dim, typename PropertiesIndex>

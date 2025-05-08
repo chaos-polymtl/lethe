@@ -14,13 +14,11 @@ ParticleWallContactForce<dim,
                          PropertiesIndex,
                          contact_model,
                          rolling_friction_model>::
-  ParticleWallContactForce(
-    const DEMSolverParameters<dim>        &dem_parameters,
-    const std::vector<types::boundary_id> &boundary_index)
+  ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
 {
-  set_effective_properties(dem_parameters, boundary_index);
+  set_effective_properties(dem_parameters);
 }
 
 template <int dim,
@@ -116,9 +114,7 @@ ParticleWallContactForce<dim,
                                            tangential_torque,
                                            rolling_resistance_torque,
                                            particle_torque,
-                                           particle_force,
-                                           point_on_boundary,
-                                           contact_info.boundary_id);
+                                           particle_force);
             }
           else
             {
@@ -287,9 +283,7 @@ ParticleWallContactForce<dim,
                             tangential_torque,
                             rolling_resistance_torque,
                             particle_torque,
-                            particle_force,
-                            projection_point,
-                            contact_info.boundary_id);
+                            particle_force);
                         }
                       else
                         {
