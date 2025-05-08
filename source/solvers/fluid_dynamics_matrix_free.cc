@@ -2594,6 +2594,9 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
+  // Update the precomputed values needed for the evaluation of the residual.
+  // This is needed due to the alpha procedure of the non linear solver.
+  this->evaluation_point.update_ghost_values();
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->evaluation_point);
 
