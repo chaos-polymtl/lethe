@@ -282,7 +282,7 @@ public:
         std::vector<double> points;
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(quadrature.weight(q) * delta);
+          points.emplace_back(radius * quadrature.weight(q) * delta);
 
         return points;
       }
@@ -308,10 +308,10 @@ public:
         std::vector<double> points;
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(quadrature.weight(q) * (rad_1 - rad_0));
+          points.emplace_back(radius * quadrature.weight(q) * (rad_1 - rad_0));
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(quadrature.weight(q) * (rad_2 - rad_1));
+          points.emplace_back(radius * quadrature.weight(q) * (rad_2 - rad_1));
 
         return points;
       }
@@ -487,26 +487,27 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
       }
 }
 
-template <int dim, int n_components, typename Number>
-class CouplingOperator
+template <int dim, typename Number, typename DataType_>
+class CouplingOperatorBase
 {
 public:
-  using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
-
+  using DataType   = DataType_;
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
-  CouplingOperator(const Mapping<dim>              &mapping,
-                   const DoFHandler<dim>           &dof_handler,
-                   const AffineConstraints<Number> &constraints,
-                   const Quadrature<dim>            quadrature,
-                   const unsigned int               n_subdivisions,
-                   const double                     radius,
-                   const double                     rotate_pi,
-                   const unsigned int               bid_0,
-                   const unsigned int               bid_1,
-                   const double                     sip_factor = 1.0,
-                   const unsigned int first_selected_component = 0,
-                   const double       penalty_factor_grad      = 1.0);
+  CouplingOperatorBase(const Mapping<dim>              &mapping,
+                       const DoFHandler<dim>           &dof_handler,
+                       const AffineConstraints<Number> &constraints,
+                       const Quadrature<dim>            quadrature,
+                       const unsigned int               n_subdivisions,
+                       const unsigned int               n_components,
+                       const unsigned int               N,
+                       const double                     radius,
+                       const double                     rotate_pi,
+                       const unsigned int               bid_0,
+                       const unsigned int               bid_1,
+                       const double                     sip_factor,
+                       const std::vector<unsigned int>  relevant_dof_indices,
+                       const double                     penalty_factor_grad);
 
   const AffineConstraints<Number> &
   get_affine_constraints() const;
@@ -540,10 +541,6 @@ private:
   get_dof_indices(
     const typename DoFHandler<dim>::active_cell_iterator &cell) const;
 
-  static std::vector<unsigned int>
-  get_relevant_dof_indices(const FiniteElement<dim> &fe,
-                           const unsigned int        first_selected_component);
-
 
   const Mapping<dim>              &mapping;
   const DoFHandler<dim>           &dof_handler;
@@ -559,15 +556,18 @@ private:
                          Number>>
     all_intersections;
 
+protected:
   Number penalty_factor;
   Number penalty_factor_grad;
 
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
   std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
 
-  const unsigned int  bid_0;
-  const unsigned int  bid_1;
-  const FESystem<dim> fe_sub;
+  const unsigned int n_components;
+  const unsigned int N;
+
+  const unsigned int bid_0;
+  const unsigned int bid_1;
 
   const std::vector<unsigned int> relevant_dof_indices;
   const unsigned int              n_dofs_per_cell;
@@ -584,35 +584,417 @@ private:
   std::vector<Tensor<1, dim, Number>> all_normals;
 
   AffineConstraints<Number> constraints_extended;
+
+  virtual void
+  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
+               const ArrayView<const Point<dim, Number>> &points) const = 0;
+
+  virtual void
+  local_evaluate(const Vector<Number> &buffer,
+                 const unsigned int    ptr_q,
+                 const unsigned int    q_stride,
+                 DataType             *all_value_m) const = 0;
+
+  virtual void
+  local_integrate(Vector<Number>    &buffer,
+                  const unsigned int ptr_q,
+                  const unsigned int q_stride,
+                  DataType          *all_value_m,
+                  DataType          *all_value_p) const = 0;
 };
 
+
+
 template <int dim, int n_components, typename Number>
-CouplingOperator<dim, n_components, Number>::CouplingOperator(
+class CouplingOperator
+  : public CouplingOperatorBase<
+      dim,
+      Number,
+      typename FEPointEvaluation<n_components, dim, dim, Number>::value_type>
+{
+public:
+  using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
+  using DataType          = typename ::CouplingOperatorBase<
+    dim,
+    Number,
+    typename FEPointIntegrator::value_type>::DataType;
+
+  CouplingOperator(const Mapping<dim>              &mapping,
+                   const DoFHandler<dim>           &dof_handler,
+                   const AffineConstraints<Number> &constraints,
+                   const Quadrature<dim>            quadrature,
+                   const unsigned int               n_subdivisions,
+                   const double                     radius,
+                   const double                     rotate_pi,
+                   const unsigned int               bid_0,
+                   const unsigned int               bid_1,
+                   const double                     sip_factor = 1.0,
+                   const unsigned int first_selected_component = 0,
+                   const double       penalty_factor_grad      = 1.0)
+    : CouplingOperatorBase<dim, Number, typename FEPointIntegrator::value_type>(
+        mapping,
+        dof_handler,
+        constraints,
+        quadrature,
+        n_subdivisions,
+        n_components,
+        2,
+        radius,
+        rotate_pi,
+        bid_0,
+        bid_1,
+        sip_factor,
+        get_relevant_dof_indices(dof_handler.get_fe(),
+                                 first_selected_component),
+        penalty_factor_grad)
+    , fe_sub(dof_handler.get_fe().base_element(
+               dof_handler.get_fe()
+                 .component_to_base_index(first_selected_component)
+                 .first),
+             n_components)
+    , phi_m(mapping, fe_sub, update_values | update_gradients)
+  {}
+
+  static std::vector<unsigned int>
+  get_relevant_dof_indices(const FiniteElement<dim> &fe,
+                           const unsigned int        first_selected_component)
+  {
+    std::vector<unsigned int> result;
+
+    for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
+      if ((first_selected_component <= fe.system_to_component_index(i).first) &&
+          (fe.system_to_component_index(i).first <
+           first_selected_component + n_components))
+        result.push_back(i);
+
+    return result;
+  }
+
+  void
+  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
+               const ArrayView<const Point<dim, Number>> &points) const override
+  {
+    this->phi_m.reinit(cell, points);
+  }
+
+  void
+  local_evaluate(const Vector<Number> &buffer,
+                 const unsigned int    ptr_q,
+                 const unsigned int    q_stride,
+                 DataType             *all_value_m) const override
+  {
+    this->phi_m.evaluate(buffer,
+                         EvaluationFlags::values | EvaluationFlags::gradients);
+
+    for (const auto q : this->phi_m.quadrature_point_indices())
+      {
+        const unsigned int q_index = ptr_q + q;
+
+        const auto normal     = this->all_normals[q_index];
+        const auto value_m    = this->phi_m.get_value(q);
+        const auto gradient_m = contract(this->phi_m.get_gradient(q), normal);
+
+        all_value_m[q * 2 * q_stride + 0] = value_m;
+        all_value_m[q * 2 * q_stride + 1] = gradient_m;
+      }
+  }
+
+  void
+  local_integrate(Vector<Number>    &buffer,
+                  const unsigned int ptr_q,
+                  const unsigned int q_stride,
+                  DataType          *all_value_m,
+                  DataType          *all_value_p) const override
+  {
+    for (const auto q : this->phi_m.quadrature_point_indices())
+      {
+        const unsigned int q_index = ptr_q + q;
+
+        const auto value_m =
+          all_value_m ? all_value_m[q * 2 * q_stride + 0] : DataType();
+        const auto value_p =
+          all_value_p ? all_value_p[q * 2 * q_stride + 0] : DataType();
+        const auto normal_gradient_m =
+          all_value_m ? all_value_m[q * 2 * q_stride + 1] : DataType();
+        const auto normal_gradient_p =
+          all_value_p ? all_value_p[q * 2 * q_stride + 1] : DataType();
+        const auto JxW               = this->all_weights[q_index];
+        const auto penalty_parameter = this->all_penalty_parameter[q_index];
+        const auto normal            = this->all_normals[q_index];
+
+        const auto value_jump = (value_m - value_p);
+        const auto gradient_normal_avg =
+          (normal_gradient_m - normal_gradient_p) * 0.5;
+
+        const double sigma = penalty_parameter * this->penalty_factor;
+
+        // - (n avg(∇v), jump(u))
+        this->phi_m.submit_gradient(outer(-value_jump, normal) * 0.5 * JxW, q);
+
+        // + (jump(v), σ jump(u) - avg(∇u) n)
+        this->phi_m.submit_value((value_jump * sigma - gradient_normal_avg) *
+                                   JxW,
+                                 q);
+      }
+
+    this->phi_m.test_and_sum(buffer,
+                             EvaluationFlags::values |
+                               EvaluationFlags::gradients);
+  }
+
+  const FESystem<dim>       fe_sub;
+  mutable FEPointIntegrator phi_m;
+};
+
+
+
+template <int dim, typename Number>
+class CouplingOperatorStokes
+  : public CouplingOperatorBase<
+      dim,
+      Number,
+      typename FEPointEvaluation<dim, dim, dim, Number>::value_type>
+{
+public:
+  using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
+  using FEPointIntegratorP = FEPointEvaluation<1, dim, dim, Number>;
+
+  using DataType = typename ::CouplingOperatorBase<
+    dim,
+    Number,
+    typename FEPointIntegratorU::value_type>::DataType;
+
+  CouplingOperatorStokes(const Mapping<dim>              &mapping,
+                         const DoFHandler<dim>           &dof_handler,
+                         const AffineConstraints<Number> &constraints,
+                         const Quadrature<dim>            quadrature,
+                         const unsigned int               n_subdivisions,
+                         const double                     radius,
+                         const double                     rotate_pi,
+                         const unsigned int               bid_0,
+                         const unsigned int               bid_1,
+                         const double                     sip_factor = 1.0,
+                         const bool do_pressure_gradient_term        = true,
+                         const bool do_velocity_divergence_term      = true)
+    : CouplingOperatorBase<dim,
+                           Number,
+                           typename FEPointIntegratorU::value_type>(
+        mapping,
+        dof_handler,
+        constraints,
+        quadrature,
+        n_subdivisions,
+        dim,
+        4,
+        radius,
+        rotate_pi,
+        bid_0,
+        bid_1,
+        sip_factor,
+        get_relevant_dof_indices(dof_handler.get_fe()),
+        0.0 /*TODO*/)
+    , fe_sub_u(dof_handler.get_fe().base_element(
+                 dof_handler.get_fe().component_to_base_index(0).first),
+               dim)
+    , fe_sub_p(dof_handler.get_fe().base_element(
+                 dof_handler.get_fe().component_to_base_index(dim).first),
+               1)
+    , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
+    , phi_p_m(mapping, fe_sub_p, update_values)
+    , do_pressure_gradient_term(do_pressure_gradient_term)
+    , do_velocity_divergence_term(do_velocity_divergence_term)
+  {}
+
+  static std::vector<unsigned int>
+  get_relevant_dof_indices(const FiniteElement<dim> &fe)
+  {
+    std::vector<unsigned int> result;
+
+    for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
+      if (fe.system_to_component_index(i).first < dim)
+        result.push_back(i);
+
+    for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
+      if (fe.system_to_component_index(i).first == dim)
+        result.push_back(i);
+
+    AssertDimension(fe.n_dofs_per_cell(), result.size());
+
+    return result;
+  }
+
+  void
+  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
+               const ArrayView<const Point<dim, Number>> &points) const override
+  {
+    this->phi_u_m.reinit(cell, points);
+    this->phi_p_m.reinit(cell, points);
+  }
+
+  void
+  local_evaluate(const Vector<Number> &buffer,
+                 const unsigned int    ptr_q,
+                 const unsigned int    q_stride,
+                 DataType             *all_value_m) const override
+  {
+    AssertDimension(buffer.size(),
+                    fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+    ArrayView<const Number> buffer_u(buffer.data() + 0,
+                                     fe_sub_u.n_dofs_per_cell());
+    ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                                     fe_sub_p.n_dofs_per_cell());
+
+    this->phi_u_m.evaluate(buffer_u,
+                           EvaluationFlags::values |
+                             EvaluationFlags::gradients);
+    this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
+
+    for (const auto q : this->phi_u_m.quadrature_point_indices())
+      {
+        const unsigned int q_index = ptr_q + q;
+
+        const auto normal     = this->all_normals[q_index];
+        const auto value_m    = this->phi_u_m.get_value(q);
+        const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
+        const auto p_value_m  = this->phi_p_m.get_value(q) * normal;
+
+        all_value_m[q * 4 * q_stride + 0] = value_m;
+        all_value_m[q * 4 * q_stride + 1] = gradient_m;
+        all_value_m[q * 4 * q_stride + 2] = p_value_m;
+        all_value_m[q * 4 * q_stride + 3] = normal;
+      }
+  }
+
+  void
+  local_integrate(Vector<Number>    &buffer,
+                  const unsigned int ptr_q,
+                  const unsigned int q_stride,
+                  DataType          *all_value_m,
+                  DataType          *all_value_p) const override
+  {
+    for (const auto q : this->phi_u_m.quadrature_point_indices())
+      {
+        const unsigned int q_index = ptr_q + q;
+
+        const auto value_m =
+          all_value_m ? all_value_m[q * 4 * q_stride + 0] : DataType();
+        const auto value_p =
+          all_value_p ? all_value_p[q * 4 * q_stride + 0] : DataType();
+        const auto normal_gradient_m =
+          all_value_m ? all_value_m[q * 4 * q_stride + 1] : DataType();
+        const auto normal_gradient_p =
+          all_value_p ? all_value_p[q * 4 * q_stride + 1] : DataType();
+        const auto normal_p_value_m =
+          all_value_m ? all_value_m[q * 4 * q_stride + 2] : DataType();
+        const auto normal_p_value_p =
+          all_value_p ? all_value_p[q * 4 * q_stride + 2] : DataType();
+
+        const auto JxW               = this->all_weights[q_index];
+        const auto penalty_parameter = this->all_penalty_parameter[q_index];
+        const auto normal            = this->all_normals[q_index];
+
+        const auto u_value_avg  = (value_m + value_p) * 0.5;
+        const auto u_value_jump = value_m - value_p;
+        const auto u_gradient_avg =
+          (normal_gradient_m - normal_gradient_p) * 0.5;
+        const auto p_value_avg = (normal_p_value_m - normal_p_value_p) * 0.5;
+
+        typename FEPointIntegratorU::value_type u_normal_gradient_avg_result =
+          {};
+        typename FEPointIntegratorU::value_type u_value_jump_result = {};
+        typename FEPointIntegratorP::value_type p_value_jump_result = {};
+
+        const double sigma = penalty_parameter * this->penalty_factor;
+
+        if (true /*Laplace term*/)
+          {
+            // - (n avg(∇v), jump(u))
+            u_normal_gradient_avg_result -= u_value_jump;
+
+            // - (jump(v), avg(∇u) n)
+            u_value_jump_result -= u_gradient_avg;
+
+            // + (jump(v), σ jump(u))
+            u_value_jump_result += sigma * u_value_jump;
+          }
+
+        if (do_pressure_gradient_term)
+          {
+            // + (jump(v), avg(p) n)
+            u_value_jump_result += p_value_avg;
+          }
+        else
+          {
+            // nothing to do
+          }
+
+        if (do_velocity_divergence_term)
+          {
+            // + (jump(q), avg(u) n)
+            p_value_jump_result += u_value_avg * normal;
+          }
+        else
+          {
+            // nothing to do
+          }
+
+        phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
+                                  0.5 * JxW,
+                                q);
+        phi_u_m.submit_value(u_value_jump_result * JxW, q);
+        phi_p_m.submit_value(p_value_jump_result * JxW, q);
+      }
+
+    AssertDimension(buffer.size(),
+                    fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+    ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
+    ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                               fe_sub_p.n_dofs_per_cell());
+
+    this->phi_u_m.test_and_sum(buffer_u,
+                               EvaluationFlags::values |
+                                 EvaluationFlags::gradients);
+    this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
+  }
+
+  const FESystem<dim>        fe_sub_u;
+  const FESystem<dim>        fe_sub_p;
+  mutable FEPointIntegratorU phi_u_m;
+  mutable FEPointIntegratorP phi_p_m;
+
+  const bool do_pressure_gradient_term;
+  const bool do_velocity_divergence_term;
+};
+
+
+
+template <int dim, typename Number, typename DataType_>
+CouplingOperatorBase<dim, Number, DataType_>::CouplingOperatorBase(
   const Mapping<dim>              &mapping,
   const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<Number> &constraints,
   const Quadrature<dim>            quadrature,
   const unsigned int               n_subdivisions,
+  const unsigned int               n_components,
+  const unsigned int               N,
   const double                     radius,
   const double                     rotate_pi,
   const unsigned int               bid_0,
   const unsigned int               bid_1,
   const double                     sip_factor,
-  const unsigned int               first_selected_component,
+  const std::vector<unsigned int>  relevant_dof_indices,
   const double                     penalty_factor_grad)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
   , quadrature(quadrature)
+  , n_components(n_components)
+  , N(N)
   , bid_0(bid_0)
   , bid_1(bid_1)
-  , fe_sub(dof_handler.get_fe().base_element(
-             dof_handler.get_fe()
-               .component_to_base_index(first_selected_component)
-               .first),
-           n_components)
-  , relevant_dof_indices(
-      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component))
+  , relevant_dof_indices(relevant_dof_indices)
   , n_dofs_per_cell(relevant_dof_indices.size())
 {
   penalty_factor =
@@ -701,14 +1083,6 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
                                weights.end());
 
             // normals
-            auto normals = mortar_manager_q->get_normals(get_rad(cell, face));
-            if (face->boundary_id() == bid_0)
-              for (auto &normal : normals)
-                normal *= -1.0;
-            all_normals.insert(all_normals.end(),
-                               normals.begin(),
-                               normals.end());
-
             // points (also convert real to unit coordinates)
             if (false)
               {
@@ -721,9 +1095,47 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
                 all_points_ref.insert(all_points_ref.end(),
                                       points_ref.begin(),
                                       points_ref.end());
+
+                std::vector<Point<dim - 1>> quad;
+
+                for (const auto p : points_ref)
+                  {
+                    if ((face_no / 2) == 0)
+                      {
+                        quad.emplace_back(p[1]);
+                      }
+                    else if ((face_no / 2) == 1)
+                      {
+                        quad.emplace_back(p[0]);
+                      }
+                    else
+                      {
+                        AssertThrow(false, ExcInternalError());
+                      }
+                  }
+
+                FEFaceValues<dim> fe_face_values(mapping,
+                                                 cell->get_fe(),
+                                                 quad,
+                                                 update_normal_vectors);
+
+                fe_face_values.reinit(cell, face_no);
+
+                all_normals.insert(all_normals.end(),
+                                   fe_face_values.get_normal_vectors().begin(),
+                                   fe_face_values.get_normal_vectors().end());
               }
             else
               {
+                auto normals =
+                  mortar_manager_q->get_normals(get_rad(cell, face));
+                if (face->boundary_id() == bid_1)
+                  for (auto &normal : normals)
+                    normal *= -1.0;
+                all_normals.insert(all_normals.end(),
+                                   normals.begin(),
+                                   normals.end());
+
                 auto points =
                   mortar_manager_q->get_points_ref(get_rad(cell, face));
 
@@ -804,25 +1216,25 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   }
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 const AffineConstraints<Number> &
-CouplingOperator<dim, n_components, Number>::get_affine_constraints() const
+CouplingOperatorBase<dim, Number, DataType_>::get_affine_constraints() const
 {
   return constraints_extended;
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 Number
-CouplingOperator<dim, n_components, Number>::compute_penalty_factor(
+CouplingOperatorBase<dim, Number, DataType_>::compute_penalty_factor(
   const unsigned int degree,
   const Number       factor) const
 {
   return factor * (degree + 1.0) * (degree + 1.0);
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 Number
-CouplingOperator<dim, n_components, Number>::compute_penalty_parameter(
+CouplingOperatorBase<dim, Number, DataType_>::compute_penalty_parameter(
   const typename Triangulation<dim>::cell_iterator &cell) const
 {
   const unsigned int degree = dof_handler.get_fe().degree;
@@ -851,8 +1263,7 @@ CouplingOperator<dim, n_components, Number>::compute_penalty_parameter(
   for (const auto f : cell->face_indices())
     {
       fe_face_values.reinit(cell, f);
-      const Number factor =
-        (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. : 0.5;
+      const Number factor = 0.5; /*Assuming that we are within the domain*/
       for (unsigned int q = 0; q < face_quadrature.size(); ++q)
         surface_area += fe_face_values.JxW(q) * factor;
     }
@@ -860,9 +1271,9 @@ CouplingOperator<dim, n_components, Number>::compute_penalty_parameter(
   return surface_area / volume;
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 double
-CouplingOperator<dim, n_components, Number>::get_rad(
+CouplingOperatorBase<dim, Number, DataType_>::get_rad(
   const typename Triangulation<dim>::cell_iterator &cell,
   const typename Triangulation<dim>::face_iterator &face) const
 {
@@ -874,9 +1285,9 @@ CouplingOperator<dim, n_components, Number>::get_rad(
       MappingQ1<dim>().transform_real_to_unit_cell(cell, face->center())));
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 std::vector<types::global_dof_index>
-CouplingOperator<dim, n_components, Number>::get_dof_indices(
+CouplingOperatorBase<dim, Number, DataType_>::get_dof_indices(
   const typename DoFHandler<dim>::active_cell_iterator &cell) const
 {
   std::vector<types::global_dof_index> local_dofs_all(
@@ -891,40 +1302,19 @@ CouplingOperator<dim, n_components, Number>::get_dof_indices(
   return local_dofs;
 }
 
-template <int dim, int n_components, typename Number>
-std::vector<unsigned int>
-CouplingOperator<dim, n_components, Number>::get_relevant_dof_indices(
-  const FiniteElement<dim> &fe,
-  const unsigned int        first_selected_component)
-{
-  std::vector<unsigned int> result;
-
-  for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
-    if ((first_selected_component <= fe.system_to_component_index(i).first) &&
-        (fe.system_to_component_index(i).first <
-         first_selected_component + n_components))
-      result.push_back(i);
-
-  return result;
-}
-
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 void
-CouplingOperator<dim, n_components, Number>::vmult_add(
+CouplingOperatorBase<dim, Number, DataType_>::vmult_add(
   VectorType       &dst,
   const VectorType &src) const
 {
   // 1) evaluate
   unsigned int ptr_q = 0;
 
-  FEPointIntegrator phi_m(mapping, fe_sub, update_values | update_gradients);
-
   Vector<Number> buffer;
 
-  std::vector<typename FEPointIntegrator::value_type> all_value_m(
-    all_normals.size() * 2);
-  std::vector<typename FEPointIntegrator::value_type> all_value_p(
-    all_normals.size() * 2);
+  std::vector<DataType> all_value_m(all_normals.size() * N);
+  std::vector<DataType> all_value_p(all_normals.size() * N);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -934,7 +1324,7 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_rad(cell, face));
 
-            phi_m.reinit(cell,
+            local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
                            all_points_ref.data() + ptr_q, n_q_points));
 
@@ -945,34 +1335,18 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
             for (unsigned int i = 0; i < local_dofs.size(); ++i)
               buffer[i] = src[local_dofs[i]];
 
-            phi_m.evaluate(buffer,
-                           EvaluationFlags::values |
-                             EvaluationFlags::gradients);
-
-            for (const auto q : phi_m.quadrature_point_indices())
-              {
-                const unsigned int q_index = ptr_q + q;
-
-                AssertIndexRange(q_index, all_normals.size());
-                AssertIndexRange(q_index * 2 + 1, all_value_m.size());
-
-                const auto normal     = all_normals[q_index];
-                const auto value_m    = phi_m.get_value(q);
-                const auto gradient_m = contract(phi_m.get_gradient(q), normal);
-
-                all_value_m[q_index * 2 + 0] = value_m;
-                all_value_m[q_index * 2 + 1] = gradient_m;
-              }
+            local_evaluate(buffer, ptr_q, 1, all_value_m.data() + ptr_q * N);
 
             ptr_q += n_q_points;
           }
 
   // 2) communicate
-  partitioner.template export_to_ghosted_array<Number, 2u * n_components>(
+  partitioner.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
                             all_value_m.size() * n_components),
     ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size() * n_components));
+                      all_value_p.size() * n_components),
+    N * n_components);
 
   // 3) integrate
   ptr_q = 0;
@@ -984,40 +1358,16 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_rad(cell, face));
 
-            phi_m.reinit(cell,
+            local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
                            all_points_ref.data() + ptr_q, n_q_points));
 
-            for (const auto q : phi_m.quadrature_point_indices())
-              {
-                const unsigned int q_index = ptr_q + q;
-
-                const auto value_m           = all_value_m[q_index * 2 + 0];
-                const auto value_p           = all_value_p[q_index * 2 + 0];
-                const auto normal_gradient_m = all_value_m[q_index * 2 + 1];
-                const auto normal_gradient_p = all_value_p[q_index * 2 + 1];
-                const auto JxW               = all_weights[q_index];
-                const auto penalty_parameter = all_penalty_parameter[q_index];
-                const auto normal            = all_normals[q_index];
-
-                const auto jump_value = (value_m - value_p) * JxW;
-                const auto avg_normal_gradient =
-                  (normal_gradient_m + normal_gradient_p) * 0.5 * JxW;
-
-                const double sigma = penalty_parameter * penalty_factor;
-
-                phi_m.submit_gradient(outer(-jump_value * 0.5, normal) *
-                                        penalty_factor_grad,
-                                      q);
-                phi_m.submit_value(jump_value * sigma -
-                                     avg_normal_gradient * penalty_factor_grad,
-                                   q);
-              }
-
             buffer.reinit(n_dofs_per_cell);
-            phi_m.test_and_sum(buffer,
-                               EvaluationFlags::values |
-                                 EvaluationFlags::gradients);
+            local_integrate(buffer,
+                            ptr_q,
+                            1,
+                            all_value_m.data() + ptr_q * N,
+                            all_value_p.data() + ptr_q * N);
 
             const auto local_dofs = this->get_dof_indices(cell);
             constraints.distribute_local_to_global(buffer, local_dofs, dst);
@@ -1028,17 +1378,15 @@ CouplingOperator<dim, n_components, Number>::vmult_add(
   dst.compress(VectorOperation::add);
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 void
-CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
+CouplingOperatorBase<dim, Number, DataType_>::add_diagonal_entries(
   VectorType &diagonal) const
 {
   unsigned int ptr_q = 0;
 
-  FEPointIntegrator phi_m(mapping, fe_sub, update_values | update_gradients);
-
-  Vector<Number>                                      buffer, diagonal_local;
-  std::vector<typename FEPointIntegrator::value_type> all_value_m, all_value_p;
+  Vector<Number>        buffer, diagonal_local;
+  std::vector<DataType> all_value_m, all_value_p;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -1048,70 +1396,25 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_rad(cell, face));
 
-            phi_m.reinit(cell,
+            local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
                            all_points_ref.data() + ptr_q, n_q_points));
 
             buffer.reinit(n_dofs_per_cell);
             diagonal_local.reinit(n_dofs_per_cell);
-            all_value_m.resize(n_q_points * 2);
-            all_value_p.resize(n_q_points * 2);
+            all_value_m.resize(n_q_points * N);
+            all_value_p.resize(n_q_points * N);
 
             for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
               {
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
-                phi_m.evaluate(buffer,
-                               EvaluationFlags::values |
-                                 EvaluationFlags::gradients);
+                local_evaluate(buffer, ptr_q, 1, all_value_m.data());
 
-                for (const auto q : phi_m.quadrature_point_indices())
-                  {
-                    const unsigned int q_index = ptr_q + q;
-
-                    AssertIndexRange(q_index, all_normals.size());
-
-                    const auto normal  = all_normals[q_index];
-                    const auto value_m = phi_m.get_value(q);
-                    const auto gradient_m =
-                      contract(phi_m.get_gradient(q), normal);
-
-                    all_value_m[q * 2 + 0] = value_m;
-                    all_value_m[q * 2 + 1] = gradient_m;
-                  }
-
-                for (const auto q : phi_m.quadrature_point_indices())
-                  {
-                    const unsigned int q_index = ptr_q + q;
-
-                    const auto value_m           = all_value_m[q * 2 + 0];
-                    const auto value_p           = all_value_p[q * 2 + 0];
-                    const auto normal_gradient_m = all_value_m[q * 2 + 1];
-                    const auto normal_gradient_p = all_value_p[q * 2 + 1];
-
-                    const auto JxW = all_weights[q_index];
-                    const auto penalty_parameter =
-                      all_penalty_parameter[q_index];
-                    const auto normal = all_normals[q_index];
-
-                    const auto jump_value = (value_m - value_p) * 0.5 * JxW;
-                    const auto avg_gradient =
-                      (normal_gradient_m + normal_gradient_p) * 0.5 * JxW;
-
-                    const double sigma = penalty_parameter * penalty_factor;
-
-                    phi_m.submit_gradient(-outer(jump_value, normal) *
-                                            penalty_factor_grad,
-                                          q);
-                    phi_m.submit_value(jump_value * sigma * 2.0 -
-                                         avg_gradient * penalty_factor_grad,
-                                       q);
-                  }
-
-                phi_m.test_and_sum(buffer,
-                                   EvaluationFlags::values |
-                                     EvaluationFlags::gradients);
+                buffer.reinit(n_dofs_per_cell);
+                local_integrate(
+                  buffer, ptr_q, 1, all_value_m.data(), all_value_p.data());
 
                 diagonal_local[i] = buffer[i];
               }
@@ -1127,9 +1430,9 @@ CouplingOperator<dim, n_components, Number>::add_diagonal_entries(
   diagonal.compress(VectorOperation::add);
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 void
-CouplingOperator<dim, n_components, Number>::add_sparsity_pattern_entries(
+CouplingOperatorBase<dim, Number, DataType_>::add_sparsity_pattern_entries(
   TrilinosWrappers::SparsityPattern &dsp) const
 {
   const auto constraints = &constraints_extended;
@@ -1148,22 +1451,19 @@ CouplingOperator<dim, n_components, Number>::add_sparsity_pattern_entries(
     }
 }
 
-template <int dim, int n_components, typename Number>
+template <int dim, typename Number, typename DataType_>
 void
-CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
+CouplingOperatorBase<dim, Number, DataType_>::add_system_matrix_entries(
   TrilinosWrappers::SparseMatrix &system_matrix) const
 {
   const auto constraints = &constraints_extended;
 
-  std::vector<typename FEPointIntegrator::value_type> all_value_m(
-    all_normals.size() * n_dofs_per_cell * 2);
-  std::vector<typename FEPointIntegrator::value_type> all_value_p(
-    all_normals.size() * n_dofs_per_cell * 2);
+  std::vector<DataType> all_value_m(all_normals.size() * n_dofs_per_cell * N);
+  std::vector<DataType> all_value_p(all_normals.size() * n_dofs_per_cell * N);
 
   unsigned int ptr_q = 0;
 
-  FEPointIntegrator phi_m(mapping, fe_sub, update_values | update_gradients);
-  Vector<Number>    buffer;
+  Vector<Number> buffer;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -1173,7 +1473,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_rad(cell, face));
 
-            phi_m.reinit(cell,
+            local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
                            all_points_ref.data() + ptr_q, n_q_points));
 
@@ -1184,27 +1484,11 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
-                phi_m.evaluate(buffer,
-                               EvaluationFlags::values |
-                                 EvaluationFlags::gradients);
-
-                for (const auto q : phi_m.quadrature_point_indices())
-                  {
-                    const unsigned int q_index = ptr_q + q;
-
-                    AssertIndexRange(q_index, all_normals.size());
-                    AssertIndexRange(q_index * 2 + 1, all_value_m.size());
-
-                    const auto normal  = all_normals[q_index];
-                    const auto value_m = phi_m.get_value(q);
-                    const auto gradient_m =
-                      contract(phi_m.get_gradient(q), normal);
-
-                    all_value_m[(q_index * n_dofs_per_cell + i) * 2 + 0] =
-                      value_m;
-                    all_value_m[(q_index * n_dofs_per_cell + i) * 2 + 1] =
-                      gradient_m;
-                  }
+                local_evaluate(buffer,
+                               ptr_q,
+                               n_dofs_per_cell,
+                               all_value_m.data() +
+                                 (ptr_q * n_dofs_per_cell + i) * N);
               }
 
             ptr_q += n_q_points;
@@ -1218,7 +1502,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                             all_value_m.size() * n_components),
     ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
                       all_value_p.size() * n_components),
-    n_dofs_per_cell * n_q_points * 2 * n_components);
+    n_dofs_per_cell * n_q_points * N * n_components);
 
 
   ptr_q                 = 0;
@@ -1238,7 +1522,7 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
                   mortar_manager_q->get_n_points(get_rad(cell, face)) /
                   n_sub_cells;
 
-                phi_m.reinit(cell,
+                local_reinit(cell,
                              ArrayView<const Point<dim, Number>>(
                                all_points_ref.data() + ptr_q, n_q_points));
 
@@ -1249,61 +1533,21 @@ CouplingOperator<dim, n_components, Number>::add_system_matrix_entries(
 
                     for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
                       {
-                        for (const auto q : phi_m.quadrature_point_indices())
-                          {
-                            const unsigned int q_index = ptr_q + q;
-
-                            const auto value_m =
-                              (bb == 0) ?
-                                all_value_m[(q_index * n_dofs_per_cell + i) *
-                                              2 +
-                                            0] :
-                                typename FEPointIntegrator::value_type();
-                            const auto value_p =
-                              (bb == 1) ?
-                                all_value_p[(q_index * n_dofs_per_cell + i) *
-                                              2 +
-                                            0] :
-                                typename FEPointIntegrator::value_type();
-                            const auto normal_gradient_m =
-                              (bb == 0) ?
-                                all_value_m[(q_index * n_dofs_per_cell + i) *
-                                              2 +
-                                            1] :
-                                typename FEPointIntegrator::value_type();
-                            const auto normal_gradient_p =
-                              (bb == 1) ?
-                                all_value_p[(q_index * n_dofs_per_cell + i) *
-                                              2 +
-                                            1] :
-                                typename FEPointIntegrator::value_type();
-                            const auto JxW = all_weights[q_index];
-                            const auto penalty_parameter =
-                              all_penalty_parameter[q_index];
-                            const auto normal = all_normals[q_index];
-
-                            const auto jump_value =
-                              (value_m - value_p) * 0.5 * JxW;
-                            const auto avg_gradient =
-                              (normal_gradient_m + normal_gradient_p) * 0.5 *
-                              JxW;
-
-                            const double sigma =
-                              penalty_parameter * penalty_factor;
-
-                            phi_m.submit_gradient(-outer(jump_value, normal) *
-                                                    penalty_factor_grad,
-                                                  q);
-                            phi_m.submit_value(jump_value * sigma * 2.0 -
-                                                 avg_gradient *
-                                                   penalty_factor_grad,
-                                               q);
-                          }
-
                         buffer.reinit(n_dofs_per_cell);
-                        phi_m.test_and_sum(buffer,
-                                           EvaluationFlags::values |
-                                             EvaluationFlags::gradients);
+                        if (bb == 0)
+                          local_integrate(buffer,
+                                          ptr_q,
+                                          n_dofs_per_cell,
+                                          all_value_m.data() +
+                                            (ptr_q * n_dofs_per_cell + i) * N,
+                                          nullptr);
+                        else
+                          local_integrate(buffer,
+                                          ptr_q,
+                                          n_dofs_per_cell,
+                                          nullptr,
+                                          all_value_p.data() +
+                                            (ptr_q * n_dofs_per_cell + i) * N);
 
                         for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                           cell_matrix[j][i] = buffer[j];
