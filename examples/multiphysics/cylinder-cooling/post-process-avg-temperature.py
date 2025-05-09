@@ -27,7 +27,6 @@ def process_file(prm_name):
     pos_z  = 0
 
     number_of_times = len(example.list_vtu)
-    time_step       = example.step
     time_array      = np.zeros(number_of_times)
     temperature     = np.zeros(number_of_times)
 

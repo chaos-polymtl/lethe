@@ -34,7 +34,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -------------------------
 
-The geometry for the simulations is shown in the figure below. We consider a domain of length :math:`l = 32\,\text{m}` and height :math:`L = 16\,\text{m}`. A cylinder (shown in red) of radius :math:`R = 0.5\,\text{m}` is positioned at :math:`x = 8\,\text{m}` and :math:`y = 0\,\text{m}`. The cylinder is initially set at a temperature of :math:`T_0 = 1^\circ\text{C}` and is cooled by a fluid flowing at a temperature of :math:`T_\infty = 0^\circ\text{C}`. The flow enters from the left and exits to the right. No-slip boundary conditions are applied on the top and bottom walls of the domain.
+The geometry for the simulations is shown in the figure below. We consider a domain of length :math:`l = 32\,\text{m}` and height :math:`L = 16\,\text{m}`. A cylinder (shown in red) of radius :math:`R = 0.5\,\text{m}` is positioned at :math:`x = 8\,\text{m}` and :math:`y = 0\,\text{m}`. The cylinder is initially set at a temperature of :math:`T_0 = 1^\circ\text{C}` and is cooled by a fluid flowing at a temperature of :math:`T_\infty = 0^\circ\text{C}`. The flow enters from the left and exits to the right. Slip boundary conditions are applied on the top and bottom walls of the domain.
 
 .. image:: images/geometry.png
     :alt: problem_illustration
@@ -76,7 +76,10 @@ Conjugated heat transfer simulations require meshes in which the fluid and the s
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The next step is establishing the boundary conditions for the fluid flow. We specify an inlet velocity of :math:`20` (``id = 3``) in order to obtain a Reynolds number of :math:`20`. A slip boundary condition is set on the outer walls of the domain (``id = 5``) and an outlet boundary conditions is set for the right boundary (``id = 4``). The ids of the boundaries are written in the second column of the ``cylinder.msh`` file in the ``$PhysicalNames`` section.
+The next step is establishing the boundary conditions for the fluid flow. We specify an inlet velocity of :math:`20` (``id = 3``) in order to obtain a Reynolds number of :math:`20`. A slip boundary condition is set on the outer walls of the domain (``id = 5``) and an outlet boundary conditions is set for the right boundary (``id = 4``). The remaining ids (``id = 1`` and ``id = 2``) are defined on the cylinder but are not used in what follows. 
+
+.. Note ::
+    The ids of the boundaries are written in the second column of the ``cylinder.msh`` file in the ``$PhysicalNames`` section.
 
 .. code-block:: text
 
@@ -258,7 +261,7 @@ The results obtained are in good agreement with those reported by Juncu [#juncu2
 Possibilities for Extension
 ----------------------------
 
-- **Investigate the evolution of the Nusselt number:** Juncu [#juncu2004]_ also investigated the evolution of the Nusselt number evolution in time. The post-processing script could be modified to compare these results with those of Juncu.
+- **Investigate the evolution of the Nusselt number:** Juncu [#juncu2004]_ also investigated the evolution of the Nusselt number evolution in time. The post-processing script could be modified to compare these results with those of Juncu. If you do so, just make sure to use the corrected paper, in the original one there was an error with the Nusselt number post-processing. 
 
 ----------------------------
 References
