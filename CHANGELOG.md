@@ -3,6 +3,50 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-05-07
+
+### Fixed
+
+- MINOR The solution preceding the algebraic interface reinitialization time-step is now also regularized using the same process to ensure consistency in the time integration scheme. This is done by replacing the relevant previous solution with the reinitialized previous solution. A new application-test (`vof-algebraic-interface-reinitialization-advected-circle-bdf2-frequency-check`) has been added to test this implementation. Also, a new validity map has been added to the VOFSubequationInterface. This ensures that subequations are solved using the correct VOF solution and in the right order. Subequations dependency checks are also made before solving each subequation. [#1507](https://github.com/chaos-polymtl/lethe/pull/1507)
+
+## [Master] - 2025-04-30
+
+### Added
+
+- MAJOR Multiphysic DEM simulations can now be launched with solver type dem_mp to follow the evolution of the temperature of the particles. The temperature is also added in the properties printed by application tests for the solver type dem_mp. [#1514](https://github.com/chaos-polymtl/lethe/pull/1514)
+
+## [Master] - 2025-04-25
+
+### Changed 
+
+- MINOR The find_cell_neighbors is now templated with a boolean so that neighboring cell vectors can be reciprocal, which means that vector i and j will contain cell j and i, respectively. [#1512](https://github.com/chaos-polymtl/lethe/pull/1512)
+
+### Fixed
+
+- MINOR The Jacobian of the non-Newtonian GLS assembler has an error in the advection term. This has been fixed. [#1513](https://github.com/chaos-polymtl/lethe/pull/1513)
+
+## [Master] - 2025-04-24
+
+### Added
+
+- MINOR This PR Adds the find_line_sphere_intersection in lethe_grid_tools for use in the case of ray-particle intersection for the profilometry hackathon project. This function simply evaluates all intersection points between a line and a sphere. [#1511](https://github.com/chaos-polymtl/lethe/pull/1511)
+
+### Added
+
+- MAJOR Adds an experimental prototype that uses the DG method to solve the VOF equation. At the present stage, this prototype is compatible with surface tension, but does not support any of the redistanciation mechanism nor the smoothing of the initial condition. Furthermore, it does not yield satisfactory results when BDF2 is used as a time integration scheme. This feature is thus very experimental. [#1510](https://github.com/chaos-polymtl/lethe/pull/1510) 
+
+## [Master] - 2025-04-24
+
+### Changed
+
+- MAJOR The parameters of the function which calculates the contact force, torque and heat transfer rate between particles were changed. Parameters torque, force and heat_transfer_rate were replaced by a class object ParticleInteractionOutcomes where they are stored. A function to resize these containers is also implemented in the class. [#1504](https://github.com/chaos-polymtl/lethe/pull/1504)
+
+## [Master] - 2025-04-22
+
+### Added 
+
+- MINOR This PR completes the signed distance solver by filling the (almost) empty architecture of the SignedDistanceSolver implemented in [#1451](https://github.com/chaos-polymtl/lethe/pull/1451). Its coupling in the VOF solver (geometric reinitialization method) is also completed. The implemented routines follow the one of the already existing vof_advection prototype. [#1497](https://github.com/chaos-polymtl/lethe/pull/1497)
+
 ## [Master] - 2025-04-17
 
 ### Added

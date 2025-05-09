@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -27,29 +27,31 @@
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)
+
 #include <../tests/tests.h>
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::vector<Tensor<1, 3>>       &torque,
-                   std::vector<Tensor<1, 3>>       &force)
+reinitialize_contact_outcomes(
+  Particles::ParticleHandler<dim>              &particle_handler,
+  ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
-  torque.resize(particle_handler.n_locally_owned_particles());
-  force.resize(particle_handler.n_locally_owned_particles());
+  const unsigned int number_of_particles =
+    particle_handler.n_locally_owned_particles();
+  contact_outcome.resize_interaction_containers(number_of_particles);
 
-  for (unsigned int i = 0; i < torque.size(); ++i)
+  for (unsigned int i = 0; i < number_of_particles; ++i)
     {
-      // Reinitializing forces and torques of particles in the system
-      force[i][0] = 0;
-      force[i][1] = 0;
-      force[i][2] = 0;
+      // Reinitializing contact outcomes of particles in the system
+      contact_outcome.force[i][0] = 0;
+      contact_outcome.force[i][1] = 0;
+      contact_outcome.force[i][2] = 0;
 
-      torque[i][0] = 0;
-      torque[i][1] = 0;
-      torque[i][2] = 0;
+      contact_outcome.torque[i][0] = 0;
+      contact_outcome.torque[i][1] = 0;
+      contact_outcome.torque[i][2] = 0;
     }
 }
 
@@ -169,21 +171,22 @@ test()
       pit2->get_properties()[PropertiesIndex::mass]    = 1;
     }
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
-      // Reinitializing forces
-      reinitialize_force(particle_handler, torque, force);
+      // Reinitializing contact outcomes
+      reinitialize_contact_outcomes<dim, PropertiesIndex>(particle_handler,
+                                                          contact_outcome);
 
       particle_handler.exchange_ghost_particles();
 
@@ -202,18 +205,22 @@ test()
 
       // Integration
       // Calling non-linear force
-      nonlinear_force_object.calculate_particle_particle_contact_force(
+      nonlinear_force_object.calculate_particle_particle_contact(
         contact_manager.get_local_adjacent_particles(),
         contact_manager.get_ghost_adjacent_particles(),
         contact_manager.get_local_local_periodic_adjacent_particles(),
         contact_manager.get_local_ghost_periodic_adjacent_particles(),
         contact_manager.get_ghost_local_periodic_adjacent_particles(),
         dt,
-        torque,
-        force);
+        contact_outcome);
 
       // Integration
-      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+      integrator_object.integrate(particle_handler,
+                                  g,
+                                  dt,
+                                  contact_outcome.torque,
+                                  contact_outcome.force,
+                                  MOI);
 
       contact_manager.update_contacts();
 

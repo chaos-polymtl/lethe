@@ -2,11 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Test description:
-# This test is inspired from the granular damp-break example. And those twp things. 
+# This test is inspired from the granular damp-break example. And those twp things.
 # First, it uses the cell weight function feature, with a particle weight equal to zero, to give more weight to the cells we know the particle are heading.
 # Second, it is a restart (starting at iteration 500) and uses the "once" load balancing method at step 1.
 # Despite these conditions a load balance should still occur right after the restart, which is what we want.
-
 
 # Listing of Parameters
 #----------------------
@@ -16,11 +15,12 @@ set dimension = 3
 #---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step         = 5e-5
-  set time end          = 25e-3
-  set log frequency     = 500
-  set output frequency  = 0
+  set time step        = 5e-5
+  set time end         = 25e-3
+  set log frequency    = 500
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -104,6 +104,7 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle

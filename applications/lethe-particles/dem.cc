@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "dem/dem.h"
@@ -63,15 +63,19 @@ main(int argc, char *argv[])
                 dem_parameters);
               problem.solve();
             }
+          else if (solver_type == DEM::SolverType::dem_mp)
+            {
+              DEMSolver<2, DEM::DEMMPProperties::PropertiesIndex> problem(
+                dem_parameters);
+              problem.solve();
+            }
           else
             {
               AssertThrow(
                 false,
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\". As of January 2025, "
-                  "the lethe-particles application requires the uses of  "
-                  "\"solver type = dem\", which is the default value."));
+                  "Lethe found a value different than \"dem\" or \"dem_mp\"."));
             }
         }
 
@@ -89,12 +93,17 @@ main(int argc, char *argv[])
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
 
-          // const DEM::SolverType solver_type =
-          // dem_parameters.model_parameters.solver_type;
-          const DEM::SolverType solver_type = DEM::SolverType::dem;
+          const DEM::SolverType solver_type =
+            dem_parameters.model_parameters.solver_type;
           if (solver_type == DEM::SolverType::dem)
             {
               DEMSolver<3, DEM::DEMProperties::PropertiesIndex> problem(
+                dem_parameters);
+              problem.solve();
+            }
+          else if (solver_type == DEM::SolverType::dem_mp)
+            {
+              DEMSolver<3, DEM::DEMMPProperties::PropertiesIndex> problem(
                 dem_parameters);
               problem.solve();
             }
@@ -104,9 +113,7 @@ main(int argc, char *argv[])
                 false,
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\". As of January 2025, "
-                  "the lethe-particles application requires the uses of  "
-                  "\"solver type = dem\", which is the default value."));
+                  "Lethe found a value different than \"dem\" or \"dem_mp\"."));
             }
         }
 

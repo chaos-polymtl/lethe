@@ -241,9 +241,6 @@ protected:
         if (!restart)
           {
             multiphysics->set_initial_conditions();
-            this->postprocess_fd(true);
-            multiphysics->postprocess(true);
-            this->write_output_results(this->present_solution);
           }
         ref_iter++;
       }
@@ -251,6 +248,14 @@ protected:
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
+
+    if (!restart)
+      {
+        this->postprocess_fd(true);
+        multiphysics->postprocess(true);
+        if (this->simulation_control->is_output_iteration())
+          this->write_output_results(this->present_solution);
+      }
   }
 
   /**

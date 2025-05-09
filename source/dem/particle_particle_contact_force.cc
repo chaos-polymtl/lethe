@@ -37,7 +37,7 @@ ParticleParticleContactForce<dim,
                              PropertiesIndex,
                              contact_model,
                              rolling_friction_model>::
-  calculate_particle_particle_contact_force_and_heat_transfer_rate(
+  calculate_particle_particle_contact(
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
@@ -47,11 +47,9 @@ ParticleParticleContactForce<dim,
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    std::vector<double>       &heat_transfer_rate)
+                &ghost_local_periodic_adjacent_particles,
+    const double dt,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
   // Calculating the contact forces and heat transfer rates for local-local
   // adjacent particles.
@@ -59,7 +57,7 @@ ParticleParticleContactForce<dim,
        local_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::local_particle_particle>(
-        adjacent_particles_list, torque, force, heat_transfer_rate, dt);
+        adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for local-ghost
@@ -68,7 +66,7 @@ ParticleParticleContactForce<dim,
        ghost_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::ghost_particle_particle>(
-        adjacent_particles_list, torque, force, heat_transfer_rate, dt);
+        adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for local-local
@@ -78,11 +76,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::local_periodic_particle_particle>(
-        periodic_adjacent_particles_list,
-        torque,
-        force,
-        heat_transfer_rate,
-        dt);
+        periodic_adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for local-ghost
@@ -92,11 +86,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_periodic_particle_particle>(
-        periodic_adjacent_particles_list,
-        torque,
-        force,
-        heat_transfer_rate,
-        dt);
+        periodic_adjacent_particles_list, dt, contact_outcome);
     }
 
   // Calculating the contact forces and heat transfer rates for ghost-local
@@ -106,52 +96,8 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_local_periodic_particle_particle>(
-        periodic_adjacent_particles_list,
-        torque,
-        force,
-        heat_transfer_rate,
-        dt);
+        periodic_adjacent_particles_list, dt, contact_outcome);
     }
-}
-
-template <int dim,
-          typename PropertiesIndex,
-          ParticleParticleContactForceModel contact_model,
-          RollingResistanceMethod           rolling_friction_model>
-void
-ParticleParticleContactForce<dim,
-                             PropertiesIndex,
-                             contact_model,
-                             rolling_friction_model>::
-  calculate_particle_particle_contact_force(
-    typename dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
-      &local_local_periodic_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
-      &local_ghost_periodic_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force)
-{
-  std::vector<double> heat_transfer_rate;
-
-  // Calling calculate_particle_particle_contact_force_and_heat_transfer_rate
-  // with empty heat_transfer_rate
-  calculate_particle_particle_contact_force_and_heat_transfer_rate(
-    local_adjacent_particles,
-    ghost_adjacent_particles,
-    local_local_periodic_adjacent_particles,
-    local_ghost_periodic_adjacent_particles,
-    ghost_local_periodic_adjacent_particles,
-    dt,
-    torque,
-    force,
-    heat_transfer_rate);
 }
 
 // dem

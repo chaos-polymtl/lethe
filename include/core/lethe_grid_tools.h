@@ -316,6 +316,30 @@ namespace LetheGridTools
   find_point_triangle_distance(const std::vector<Point<dim>> &triangle_vertices,
                                const Point<dim>              &point);
 
+
+  /**
+   * @brief Calculates the intersection points between a line and a sphere. The
+   * full calculation is taken from  Geometric Tools for Computer Graphics,
+   * Eberly 2003 Chapter 11.3.2 - LINEAR COMPONENTS AND A SPHERE. The entire
+   * reference is available at:
+   * https://www.sciencedirect.com/science/article/pii/B978155860594750014X
+   *
+   * @param[in] line_start The starting point of the line
+   * @param[in] line_direction The direction of the line
+   * @param[in] sphere_center The center of the sphere
+   * @param[in] sphere_radius The radius of the sphere
+   * @return A vector of points that are the intersection points between the line
+   * and the sphere. The vector can be empty if there is no intersection, or
+   * contain one or two points if there is an intersection.
+   */
+  template <int dim>
+  std::vector<Point<dim>>
+  find_line_sphere_intersection(const Point<dim>     &line_start,
+                                const Tensor<1, dim> &line_direction,
+                                const Point<dim>     &sphere_center,
+                                const double         &sphere_radius);
+
+
   /**
    * @brief Calculate the minimum distance between a point and a line (defined using
    * its orign and direction). The full calculation is taken from

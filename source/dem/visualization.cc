@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/visualization.h>
@@ -92,7 +92,14 @@ Visualization<dim, PropertiesIndex>::print_xyz(
   const MPI_Comm                          &mpi_communicator,
   const ConditionalOStream                &pcout)
 {
-  pcout << "id, type, dp, x, y, z " << std::endl;
+  const bool is_dem_mp =
+    std::is_same_v<PropertiesIndex, DEM::DEMMPProperties::PropertiesIndex>;
+  pcout << "id, type, dp, x, y, z";
+  if constexpr (is_dem_mp)
+    {
+      pcout << ", T";
+    }
+  pcout << " " << std::endl;
   // Agressively force synchronization of the header line
   usleep(500);
   MPI_Barrier(mpi_communicator);
@@ -133,8 +140,13 @@ Visualization<dim, PropertiesIndex>::print_xyz(
                         << particle_properties[PropertiesIndex::type] << " "
                         << std::setprecision(5)
                         << particle_properties[PropertiesIndex::dp] << " "
-                        << std::setprecision(4) << particle_location
-                        << std::endl;
+                        << std::setprecision(4) << particle_location << " ";
+              if constexpr (is_dem_mp)
+                {
+                  std::cout << std::fixed << std::setprecision(4)
+                            << particle_properties[PropertiesIndex::T];
+                }
+              std::cout << std::endl;
             }
         }
       usleep(500);

@@ -14,7 +14,6 @@ subsection simulation control
   set method           = bdf1
   set time end         = 15
   set time step        = 1
-  set output name      = vof-algebraic-interface-reinitialization-advected-circle
   set output frequency = 0
 end
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -88,14 +88,14 @@ test()
   set_particle_properties<dim, PropertiesIndex>(
     pit2, type, particle_diameter, mass, v2, omega2);
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
+  std::vector<double>                          MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  const unsigned int number_of_particles =
+    particle_handler.get_max_local_particle_index();
+  contact_outcome.resize_interaction_containers(number_of_particles);
+  MOI.resize(number_of_particles);
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -117,21 +117,21 @@ test()
       hertz_mindlin_limit_overlap,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
-  nonlinear_force_object.calculate_particle_particle_contact_force(
+  nonlinear_force_object.calculate_particle_particle_contact(
     contact_manager.get_local_adjacent_particles(),
     contact_manager.get_ghost_adjacent_particles(),
     contact_manager.get_local_local_periodic_adjacent_particles(),
     contact_manager.get_local_ghost_periodic_adjacent_particles(),
     contact_manager.get_ghost_local_periodic_adjacent_particles(),
     dt,
-    torque,
-    force);
+    contact_outcome);
 
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force vector for particle 1 is: "
-          << force[particle->get_id()][0] << " " << force[particle->get_id()][1]
-          << " " << force[particle->get_id()][2] << " N " << std::endl;
+          << contact_outcome.force[particle->get_id()][0] << " "
+          << contact_outcome.force[particle->get_id()][1] << " "
+          << contact_outcome.force[particle->get_id()][2] << " N " << std::endl;
 }
 
 int

@@ -1511,182 +1511,214 @@ LetheGridTools::find_point_triangle_distance(
   const std::vector<Point<dim>> &triangle,
   const Point<dim>              &point)
 {
+  double distance;
+
   const Point<dim> &point_0 = triangle[0];
   const Point<dim> &point_1 = triangle[1];
-  const Point<dim> &point_2 = triangle[2];
 
-  const Tensor<1, dim> e_0 = point_1 - point_0;
-  const Tensor<1, dim> e_1 = point_2 - point_0;
-
-  const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
-  const double         normal_norm = normal.norm();
-  Tensor<1, dim>       normal_unit = normal / normal_norm;
-  Tensor<1, 3>         normal_unit_3d;
-  Point<3>             pt_in_triangle_3d;
-
-  const double a   = e_0.norm_square();
-  const double b   = scalar_product(e_0, e_1);
-  const double c   = e_1.norm_square();
-  const double det = a * c - b * b;
-
-
-  Tensor<1, dim> vector_to_plane;
-  Point<dim>     pt_in_triangle;
-
-  vector_to_plane = point_0 - point;
-
-  // From this point onward, the variable name follow the notation of  Geometric
-  // Tools for Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to
-  // triangle.
-
-  const double d = scalar_product(e_0, vector_to_plane);
-  const double e = scalar_product(e_1, vector_to_plane);
-
-  // Calculate necessary values;
-  double s = b * e - c * d;
-  double t = b * d - a * e;
-
-  if (s + t <= det)
+  if constexpr (dim == 3)
     {
-      if (s < 0)
+      const Point<dim> &point_2 = triangle[2];
+
+      const Tensor<1, dim> e_0 = point_1 - point_0;
+      const Tensor<1, dim> e_1 = point_2 - point_0;
+
+      const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
+      const double         normal_norm = normal.norm();
+      Tensor<1, dim>       normal_unit = normal / normal_norm;
+      Tensor<1, 3>         normal_unit_3d;
+      Point<3>             pt_in_triangle_3d;
+
+      const double a   = e_0.norm_square();
+      const double b   = scalar_product(e_0, e_1);
+      const double c   = e_1.norm_square();
+      const double det = a * c - b * b;
+
+
+      Tensor<1, dim> vector_to_plane;
+      Point<dim>     pt_in_triangle;
+
+      vector_to_plane = point_0 - point;
+
+      // From this point onward, the variable name follow the notation of
+      // Geometric Tools for Computer Graphics, Eberly 2003 Chapter 10.3.2 -
+      // Point to triangle.
+
+      const double d = scalar_product(e_0, vector_to_plane);
+      const double e = scalar_product(e_1, vector_to_plane);
+
+      // Calculate necessary values;
+      double s = b * e - c * d;
+      double t = b * d - a * e;
+
+      if (s + t <= det)
         {
-          if (t < 0)
+          if (s < 0)
             {
-              // Region 4
-              if (d < 0)
+              if (t < 0)
                 {
-                  t = 0;
-                  if (-d >= a)
-                    s = 1;
+                  // Region 4
+                  if (d < 0)
+                    {
+                      t = 0;
+                      if (-d >= a)
+                        s = 1;
+                      else
+                        s = -d / a;
+                    }
                   else
-                    s = -d / a;
+                    {
+                      s = 0;
+                      if (e >= 0)
+                        t = 0;
+                      else if (-e >= c)
+                        t = 1;
+                      else
+                        t = e / c;
+                    }
                 }
               else
                 {
+                  // Region 3
                   s = 0;
                   if (e >= 0)
                     t = 0;
                   else if (-e >= c)
                     t = 1;
                   else
-                    t = e / c;
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 5
+              t = 0;
+              if (d >= 0)
+                s = 0;
+              else if (-d >= a)
+                s = 1;
+              else
+                s = -d / a;
+            }
+          else
+            {
+              // Region 0
+              const double inv_det = 1. / det;
+              s *= inv_det;
+              t *= inv_det;
+
+              // In region 0, normal vector is the face normal vector
+              // Cast unit_normal to a tensor<1, 3>
+              if constexpr (dim == 3)
+                normal_unit_3d = normal_unit;
+
+              if constexpr (dim == 2)
+                normal_unit_3d = tensor_nd_to_3d(normal_unit);
+            }
+        }
+      else
+        {
+          if (s < 0)
+            {
+              // Region 2
+              const double tmp0 = b + d;
+              const double tmp1 = c + e;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+
+                  t = 1 - s;
+                }
+              else
+                {
+                  s = 0;
+                  if (tmp1 <= 0)
+                    t = 1;
+                  else if (e >= 0)
+                    t = 0;
+                  else
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 6
+              const double tmp0 = b + e;
+              const double tmp1 = a + d;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    t = 1;
+                  else
+                    t = numer / denom;
+                  s = 1 - t;
+                }
+              else
+                {
+                  t = 0;
+                  if (tmp1 <= 0)
+                    s = 1;
+                  else if (d >= 0)
+                    s = 0;
+                  else
+                    s = -d / a;
                 }
             }
           else
             {
-              // Region 3
-              s = 0;
-              if (e >= 0)
-                t = 0;
-              else if (-e >= c)
-                t = 1;
-              else
-                t = -e / c;
-            }
-        }
-      else if (t < 0)
-        {
-          // Region 5
-          t = 0;
-          if (d >= 0)
-            s = 0;
-          else if (-d >= a)
-            s = 1;
-          else
-            s = -d / a;
-        }
-      else
-        {
-          // Region 0
-          const double inv_det = 1. / det;
-          s *= inv_det;
-          t *= inv_det;
-
-          // In region 0, normal vector is the face normal vector
-          // Cast unit_normal to a tensor<1, 3>
-          if constexpr (dim == 3)
-            normal_unit_3d = normal_unit;
-
-          if constexpr (dim == 2)
-            normal_unit_3d = tensor_nd_to_3d(normal_unit);
-        }
-    }
-  else
-    {
-      if (s < 0)
-        {
-          // Region 2
-          const double tmp0 = b + d;
-          const double tmp1 = c + e;
-          if (tmp1 > tmp0)
-            {
-              const double numer = tmp1 - tmp0;
-              const double denom = a - 2 * b + c;
-              if (numer >= denom)
-                s = 1;
-              else
-                s = numer / denom;
-
-              t = 1 - s;
-            }
-          else
-            {
-              s = 0;
-              if (tmp1 <= 0)
-                t = 1;
-              else if (e >= 0)
-                t = 0;
-              else
-                t = -e / c;
-            }
-        }
-      else if (t < 0)
-        {
-          // Region 6
-          const double tmp0 = b + e;
-          const double tmp1 = a + d;
-          if (tmp1 > tmp0)
-            {
-              const double numer = tmp1 - tmp0;
-              const double denom = a - 2 * b + c;
-              if (numer >= denom)
-                t = 1;
-              else
-                t = numer / denom;
-              s = 1 - t;
-            }
-          else
-            {
-              t = 0;
-              if (tmp1 <= 0)
-                s = 1;
-              else if (d >= 0)
+              // Region 1
+              const double numer = (c + e) - (b + d);
+              if (numer <= 0)
                 s = 0;
               else
-                s = -d / a;
+                {
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+                }
+              t = 1 - s;
             }
+        }
+
+      pt_in_triangle = point_0 + s * e_0 + t * e_1;
+
+      distance = pt_in_triangle.distance(point);
+    }
+
+  if constexpr (dim == 2)
+    {
+      const Tensor<1, dim> d = point_1 - point_0;
+
+      const double t_bar =
+        d * (point - point_0) / (d.norm() * d.norm() + 1e-12);
+
+      if (t_bar <= 0.0)
+        {
+          const Tensor<1, dim> point_minus_p0 = point - point_0;
+          distance                            = point_minus_p0.norm();
+        }
+      else if (t_bar >= 1.0)
+        {
+          const Tensor<1, dim> point_minus_p1 = point - point_1;
+          distance                            = point_minus_p1.norm();
         }
       else
         {
-          // Region 1
-          const double numer = (c + e) - (b + d);
-          if (numer <= 0)
-            s = 0;
-          else
-            {
-              const double denom = a - 2 * b + c;
-              if (numer >= denom)
-                s = 1;
-              else
-                s = numer / denom;
-            }
-          t = 1 - s;
+          const Tensor<1, dim> projection = point - (point_0 + t_bar * d);
+          distance                        = projection.norm();
         }
     }
 
-  pt_in_triangle = point_0 + s * e_0 + t * e_1;
-
-  return pt_in_triangle.distance(point);
+  return distance;
 }
 
 template double
@@ -1697,3 +1729,59 @@ template double
 LetheGridTools::find_point_triangle_distance(
   const std::vector<Point<3>> &triangle,
   const Point<3>              &point);
+
+template <int dim>
+std::vector<Point<dim>>
+LetheGridTools::find_line_sphere_intersection(
+  const Point<dim>     &line_start,
+  const Tensor<1, dim> &line_direction,
+  const Point<dim>     &sphere_center,
+  const double         &sphere_radius)
+{
+  // Calculate the coefficients of the quadratic equation
+  const double a = line_direction.norm_square();
+  const double b =
+    2 * scalar_product(line_direction, line_start - sphere_center);
+  const double c =
+    (line_start - sphere_center).norm_square() - sphere_radius * sphere_radius;
+
+  // Initialize the vector to store intersection points
+  // Note: This vector will be empty if there are no intersection points
+  std::vector<Point<dim>> intersection_points;
+
+  // Calculate the discriminant
+  const double discriminant = b * b - 4 * a * c;
+  if (discriminant == 0.)
+    {
+      // One intersection point
+      const double t = -b / (2. * a);
+      intersection_points.push_back(line_start + t * line_direction);
+    }
+  else if (discriminant > 0.)
+    {
+      // Two intersection points
+      const double sqrt_discriminant = std::sqrt(discriminant);
+      const double t1                = (-b - sqrt_discriminant) / (2. * a);
+      const double t2                = (-b + sqrt_discriminant) / (2. * a);
+
+      intersection_points.push_back(line_start + t1 * line_direction);
+      intersection_points.push_back(line_start + t2 * line_direction);
+    }
+  // If the discriminant is negative, there are no intersection points therefore
+  // the vector remains empty
+
+  return intersection_points;
+}
+
+template std::vector<Point<2>>
+LetheGridTools::find_line_sphere_intersection(
+  const Point<2>     &line_start,
+  const Tensor<1, 2> &line_direction,
+  const Point<2>     &sphere_center,
+  const double       &sphere_radius);
+template std::vector<Point<3>>
+LetheGridTools::find_line_sphere_intersection(
+  const Point<3>     &line_start,
+  const Tensor<1, 3> &line_direction,
+  const Point<3>     &sphere_center,
+  const double       &sphere_radius);

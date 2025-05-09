@@ -9,3 +9,4 @@ Resolved CFD-DEM
 
     sedimentation-1-particle/sedimentation-1-particle
     sedimentation-64-particles/sedimentation-64-particles
+    sedimentation-1-cuboid/sedimentation-1-cuboid

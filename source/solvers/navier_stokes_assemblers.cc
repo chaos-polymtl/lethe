@@ -777,7 +777,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
                   shear_rate_magnitude *
                   scalar_product(grad_phi_u_j_non_newtonian, shear_rate) *
                   scalar_product(shear_rate, grad_phi_u_i) +
-                velocity_gradient_x_phi_u_j[j] * 0.5 * phi_u_i +
+                velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
                 mass_source * phi_u_j * phi_u_i +
                 // Continuity

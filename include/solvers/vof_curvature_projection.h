@@ -24,9 +24,6 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_multiphysics_interface Multiphysics interface object used to
-   * get information from physics.
-   *
    * @param[in,out] p_subequations_interface Subequations interface object used
    * to get information from other subequations and store information from the
    * current one.
@@ -35,21 +32,26 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                  &p_triangulation,
-    MultiphysicsInterface<dim>    *p_multiphysics_interface,
-    VOFSubequationsInterface<dim> *p_subequations_interface)
+                                   p_triangulation,
+    VOFSubequationsInterface<dim> &p_subequations_interface)
     : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::curvature_projection,
         p_simulation_parameters,
         ((p_simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
-         (p_simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.verbosity != Parameters::Verbosity::quiet)) ?
+         ((p_simulation_parameters.multiphysics.vof_parameters
+             .regularization_method.algebraic_interface_reinitialization
+             .enable) &&
+          (p_simulation_parameters.multiphysics.vof_parameters
+             .regularization_method.verbosity !=
+           Parameters::Verbosity::quiet))) ?
           Parameters::Verbosity::verbose :
-          Parameters::Verbosity::quiet,
+          Parameters::Verbosity::quiet, // Set to verbose if surface tension
+                                        // verbosity is enabled or if algebraic
+                                        // interface reinitialization is enabled
+                                        // and set to verbose
         p_pcout,
         p_triangulation,
-        p_multiphysics_interface,
         p_subequations_interface)
   {
     if (this->simulation_parameters.mesh.simplex)
@@ -83,6 +85,12 @@ private:
    */
   void
   assemble_system_matrix_and_rhs() override;
+
+  /**
+   * @brief Check if the phase gradient L2 projection has been solved.
+   */
+  void
+  check_dependencies_validity() override;
 };
 
 #endif

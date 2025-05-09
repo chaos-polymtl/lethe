@@ -16,19 +16,20 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
   auto mpi_communicator = this->triangulation->get_communicator();
 
   // Distribute and renumber DoFs
-  this->dof_handler.distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  this->dof_handler->distribute_dofs(*this->fe);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
   // Get locally owned and relevant DoFs
-  this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
+  this->locally_owned_dofs = this->dof_handler->locally_owned_dofs();
   this->locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
 
   // Constraints
   this->constraints.clear();
   this->constraints.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(this->dof_handler, this->constraints);
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
+                                          this->constraints);
 
   // Add periodic boundary conditions for the linear subequation
   for (auto const &[id, type] :
@@ -37,7 +38,7 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             this->simulation_parameters.boundary_conditions_vof
               .periodic_neighbor_id.at(id),
@@ -51,7 +52,7 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
 
   // Sparsity pattern
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
+  DoFTools::make_sparsity_pattern(*this->dof_handler,
                                   dsp,
                                   this->constraints,
                                   false);
@@ -68,27 +69,27 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
   this->system_rhs.reinit(this->locally_owned_dofs, mpi_communicator);
 
   // Reinitialize solution vectors
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                mpi_communicator);
-  this->evaluation_point = this->present_solution;
+  this->present_solution->reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 mpi_communicator);
+  this->evaluation_point = *this->present_solution;
 
 
   if (this->subequation_verbosity != Parameters::Verbosity::quiet)
     {
       std::string subequation_string =
-        this->subequations_interface->get_subequation_string(
+        this->subequations_interface.get_subequation_string(
           this->subequation_id);
       this->pcout << "   Number of " << subequation_string
-                  << " degrees of freedom: " << this->dof_handler.n_dofs()
+                  << " degrees of freedom: " << this->dof_handler->n_dofs()
                   << std::endl;
     }
 
   // Provide DoFHandler and solutions to the subequations interface
-  this->subequations_interface->set_dof_handler(this->subequation_id,
-                                                &this->dof_handler);
-  this->subequations_interface->set_solution(this->subequation_id,
-                                             &this->present_solution);
+  this->subequations_interface.set_dof_handler(this->subequation_id,
+                                               this->dof_handler);
+  this->subequations_interface.set_solution(this->subequation_id,
+                                            this->present_solution);
 }
 
 
@@ -107,7 +108,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
   if (verbose)
     {
       std::string subequation_string =
-        this->subequations_interface->get_subequation_string(
+        this->subequations_interface.get_subequation_string(
           this->subequation_id);
 
       this->pcout << "  -Solving " << subequation_string << ":" << std::endl;
@@ -172,8 +173,8 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
   constraints_used.distribute(completely_distributed_solution);
 
   // Update solution vectors
-  this->present_solution = completely_distributed_solution;
-  this->evaluation_point = this->present_solution;
+  *this->present_solution = completely_distributed_solution;
+  this->evaluation_point  = *this->present_solution;
 }
 
 
@@ -181,8 +182,10 @@ template <int dim>
 void
 VOFLinearSubequationsSolver<dim>::solve()
 {
+  check_dependencies_validity();
   assemble_system_matrix_and_rhs();
   solve_linear_system_and_update_solution();
+  this->subequations_interface.set_solution_valid(this->subequation_id);
 }
 
 

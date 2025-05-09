@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020- 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_find_cell_neighbors_h
@@ -21,6 +21,11 @@ using namespace dealii;
  * 2 types of container are used for cell neighbors : local-local cells
  * and local-ghost cells.
  *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the problem is solved.
+ * @tparam reciprocal An boolean that denotes if the cells_local_neighbor_list of
+ * cell i and j contains cell j and i, respectively.
+ *
  * @param triangulation Triangulation to access the information of the cells
  * @param cells_local_neighbor_list A vector (with size of the local cell
  * number) of vectors (local adjacent cells of each local cell). First element
@@ -29,7 +34,7 @@ using namespace dealii;
  * number) of vectors (ghost adjacent cells of each local cell). First element
  * of each set shows the main cell itself
  */
-template <int dim>
+template <int dim, bool reciprocal = false>
 void
 find_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,

@@ -13,6 +13,7 @@
 #include <dem/insertion_list.h>
 #include <dem/insertion_plane.h>
 #include <dem/insertion_volume.h>
+#include <dem/multiphysics_integrator.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
 #include <dem/set_particle_particle_contact_force_model.h>
@@ -827,12 +828,13 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
   // have changed subdomains
   if (action_manager->check_resize_containers())
     {
-      // Resize and reinitialize displacement container
-      displacement.resize(particle_handler.get_max_local_particle_index());
-      // Resize and reinitialize displacement container
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
-      MOI.resize(displacement.size());
+      unsigned int number_of_particles =
+        particle_handler.get_max_local_particle_index();
+      // Resize displacement container
+      displacement.resize(number_of_particles);
+      // Resize outcome containers
+      contact_outcome.resize_interaction_containers(number_of_particles);
+      MOI.resize(number_of_particles);
 
       // Updating moment of inertia container
       for (auto &particle : particle_handler)
@@ -1004,15 +1006,14 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Particle-particle contact force
       particle_particle_contact_force_object
-        ->calculate_particle_particle_contact_force(
+        ->calculate_particle_particle_contact(
           contact_manager.get_local_adjacent_particles(),
           contact_manager.get_ghost_adjacent_particles(),
           contact_manager.get_local_local_periodic_adjacent_particles(),
           contact_manager.get_local_ghost_periodic_adjacent_particles(),
           contact_manager.get_ghost_local_periodic_adjacent_particles(),
           simulation_control->get_time_step(),
-          torque,
-          force);
+          contact_outcome);
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
@@ -1031,6 +1032,17 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Particle-wall contact force
       particle_wall_contact_force();
+
+      // Integration of temperature for multiphysic DEM
+      if constexpr (std::is_same_v<PropertiesIndex,
+                                   DEM::DEMMPProperties::PropertiesIndex>)
+        {
+          integrate_temperature<dim, PropertiesIndex>(
+            particle_handler,
+            simulation_control->get_time_step(),
+            contact_outcome.heat_transfer_rate,
+            std::vector<double>(force.size()));
+        }
 
       // Integration of force and velocity for new location of particles
       // The half step is calculated at the first iteration
