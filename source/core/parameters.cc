@@ -4166,7 +4166,7 @@ namespace Parameters
                         "Center of rotation coordinates of rotor domain");
     }
     prm.leave_subsection();
-  };
+  }
 
   template <int dim>
   void

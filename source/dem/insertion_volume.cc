@@ -190,7 +190,7 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location_volume(
   std::vector<int> insertion_index;
   insertion_index.resize(dim);
 
-  unsigned int axis_0, axis_1, axis_2;
+  unsigned int axis_0, axis_1;
   int          number_of_particles_0, number_of_particles_1;
 
   // First direction (axis) to have particles inserted
@@ -228,6 +228,7 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location_volume(
                                    this->maximum_diameter;
 
       // Third direction (axis) to have particles inserted
+      unsigned int axis_2;
       axis_2 = insertion_information.direction_sequence.at(2);
       insertion_index[axis_2] =
         static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
