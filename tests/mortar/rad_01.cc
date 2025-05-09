@@ -18,9 +18,9 @@ test()
     {
       const double rad_in = 2 * numbers::PI / N * i;
 
-      const auto point = rad_to_point<dim>(radius, rad_in);
+      const auto point = radius_to_point<dim>(radius, rad_in);
 
-      const double rad_out = point_to_rad(point);
+      const double rad_out = point_to_angle(point);
 
       std::cout << rad_in << " " << point << " " << rad_out << std::endl;
     }
