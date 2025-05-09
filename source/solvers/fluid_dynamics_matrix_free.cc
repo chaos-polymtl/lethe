@@ -2070,6 +2070,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
       this->mg_transfer_gc_temperature =
         std::make_shared<GCTransferType>(this->transfers_temperature);
 
+#if DEAL_II_VERSION_GTE(9, 7, 0)
       this->mg_transfer_gc_temperature->build(
         temperature_dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
@@ -2077,6 +2078,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
                        this->temperature_dof_handlers[l]),
                      this->temperature_dof_handlers[l].get_mpi_communicator());
         });
+#endif
 
       MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
                                                           this->maxlevel);
@@ -2853,6 +2855,7 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
   const auto &heat_solution =
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
 
+#ifndef LETHE_USE_LDV
   const auto &heat_dof_handler =
     *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
@@ -2872,6 +2875,9 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
   convert_vector_trilinos_to_dealii(this->temperature_present_solution,
                                     temp_heat_solution);
 
+#else
+  this->temperature_present_solution = heat_solution;
+#endif
   // Update ghost values for deal.II vector
   this->temperature_present_solution.update_ghost_values();
 }
