@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['gctransfertype_0',['GCTransferType',['../classMFNavierStokesPreconditionGMGBase.html#a0873055d24b22b50bb3d3ba6f3769fdd',1,'MFNavierStokesPreconditionGMGBase']]],
-  ['global_5fface_5fid_1',['global_face_id',['../namespaceDEM.html#aef67e3518b42018c6fb5db80f6a9c4f7',1,'DEM']]],
-  ['globalblockvectortype_2',['GlobalBlockVectorType',['../vector_8h.html#ac71ba75c5119edae876800f9e80b59e7',1,'vector.h']]],
-  ['globalvectortype_3',['GlobalVectorType',['../vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39',1,'vector.h']]]
+  ['fecellintegrator_0',['fecellintegrator',['../classVANSOperator.html#a9a3dd8bec1922fa6fbf749153f1156c7',1,'VANSOperator::FECellIntegrator'],['../classNavierStokesOperatorBase.html#a9b317eea5e2ce56464fb7dd2ec7b403e',1,'NavierStokesOperatorBase::FECellIntegrator'],['../classNavierStokesStabilizedOperator.html#ad20718f9b6fd4178aa4a80a372baaa12',1,'NavierStokesStabilizedOperator::FECellIntegrator']]],
+  ['fefaceintegrator_1',['fefaceintegrator',['../classVANSOperator.html#ac332cd83b66ee9b63f439edbb5841cbc',1,'VANSOperator::FEFaceIntegrator'],['../classNavierStokesOperatorBase.html#a7988afad493de7e1acd6735df7462bf2',1,'NavierStokesOperatorBase::FEFaceIntegrator'],['../classNavierStokesStabilizedOperator.html#a72ce07dfd2f6243ec0c6025c4fd9b546',1,'NavierStokesStabilizedOperator::FEFaceIntegrator']]],
+  ['fepointintegrator_2',['FEPointIntegrator',['../classCouplingOperator.html#add7c983aeb5c2128bf448f0b2728b850',1,'CouplingOperator']]],
+  ['fepointintegratorp_3',['FEPointIntegratorP',['../classCouplingOperatorStokes.html#af8da175c279adb7d385768d0ebe8038a',1,'CouplingOperatorStokes']]],
+  ['fepointintegratoru_4',['FEPointIntegratorU',['../classCouplingOperatorStokes.html#adbbe8fd4e0e0ecab7c10b593f1aeaedf',1,'CouplingOperatorStokes']]],
+  ['funcptrtype_5',['funcptrtype',['../classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0',1,'GridMotion::FuncPtrType'],['../classParticleWallDMTForce.html#ada7447c8f3b5aabf923babbe2a227ab4',1,'ParticleWallDMTForce::FuncPtrType'],['../classParticleWallJKRForce.html#a2578f3ab7405a36345c4fd551c8b3eaf',1,'ParticleWallJKRForce::FuncPtrType'],['../classParticleWallLinearForce.html#a55ce81f955201864677a1fc369a8b935',1,'ParticleWallLinearForce::FuncPtrType'],['../classParticleWallNonLinearForce.html#a0c4d0132829d8432b9dcb1a92ce087ce',1,'ParticleWallNonLinearForce::FuncPtrType']]]
 ];

@@ -37,10 +37,14 @@ var searchData=
   ['copydata_34',['CopyData',['../classCopyData.html',1,'']]],
   ['copydataface_35',['CopyDataFace',['../structStabilizedDGMethodsCopyData_1_1CopyDataFace.html',1,'StabilizedDGMethodsCopyData']]],
   ['couplingoperator_36',['CouplingOperator',['../classCouplingOperator.html',1,'']]],
-  ['customdistribution_37',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
-  ['cut_5fcell_5fcomparison_38',['cut_cell_comparison',['../structDEM_1_1cut__cell__comparison.html',1,'DEM']]],
-  ['cuthollowsphere_39',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
-  ['cylinder_40',['Cylinder',['../classCylinder.html',1,'']]],
-  ['cylindricalhelix_41',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
-  ['cylindricaltube_42',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
+  ['couplingoperatorbase_37',['CouplingOperatorBase',['../classCouplingOperatorBase.html',1,'']]],
+  ['couplingoperatorbase_3c_20dim_2c_20number_2c_20fepointevaluation_3c_20dim_2c_20dim_2c_20dim_2c_20number_20_3e_3a_3avalue_5ftype_20_3e_38',['CouplingOperatorBase&lt; dim, Number, FEPointEvaluation&lt; dim, dim, dim, Number &gt;::value_type &gt;',['../classCouplingOperatorBase.html',1,'']]],
+  ['couplingoperatorbase_3c_20dim_2c_20number_2c_20fepointevaluation_3c_20n_5fcomponents_2c_20dim_2c_20dim_2c_20number_20_3e_3a_3avalue_5ftype_20_3e_39',['CouplingOperatorBase&lt; dim, Number, FEPointEvaluation&lt; n_components, dim, dim, Number &gt;::value_type &gt;',['../classCouplingOperatorBase.html',1,'']]],
+  ['couplingoperatorstokes_40',['CouplingOperatorStokes',['../classCouplingOperatorStokes.html',1,'']]],
+  ['customdistribution_41',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
+  ['cut_5fcell_5fcomparison_42',['cut_cell_comparison',['../structDEM_1_1cut__cell__comparison.html',1,'DEM']]],
+  ['cuthollowsphere_43',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
+  ['cylinder_44',['Cylinder',['../classCylinder.html',1,'']]],
+  ['cylindricalhelix_45',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
+  ['cylindricaltube_46',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
 ];

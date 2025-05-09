@@ -32,7 +32,7 @@ var searchData=
   ['regularization_5fmethod_5ftype_29',['regularization_method_type',['../structParameters_1_1VOF__RegularizationMethod.html#a6d825f3c1b1506e267afc63eb8ef4baa',1,'Parameters::VOF_RegularizationMethod']]],
   ['reinitialization_5fcfl_30',['reinitialization_cfl',['../structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#aab1e5eaf029500880abe0c85157702a6',1,'Parameters::VOF_AlgebraicInterfaceReinitialization']]],
   ['relative_5fresidual_31',['relative_residual',['../structParameters_1_1LinearSolver.html#a37749d5c2b57f9161faec8fb3ba71bf1',1,'Parameters::LinearSolver']]],
-  ['relevant_5fdof_5findices_32',['relevant_dof_indices',['../classCouplingOperator.html#ad095e26b14c738813279acdbca9971ba',1,'CouplingOperator']]],
+  ['relevant_5fdof_5findices_32',['relevant_dof_indices',['../classCouplingOperatorBase.html#a97cd5d25e24612f33daea9513c835664',1,'CouplingOperatorBase']]],
   ['remaining_5fparticles_5fof_5feach_5ftype_33',['remaining_particles_of_each_type',['../classInsertionFile.html#adb64f4406c86c918a98ed1175767af81',1,'InsertionFile::remaining_particles_of_each_type'],['../classInsertionList.html#a118d1cc94d9fd05229344d11ab2e7b16',1,'InsertionList::remaining_particles_of_each_type']]],
   ['removing_5fparticles_5fin_5fregion_34',['removing_particles_in_region',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#ac536cd74a248162db8a73b1b137934cb',1,'Parameters::Lagrangian::InsertionInfo::removing_particles_in_region'],['../classInsertion.html#ac8975798e3cdbb513209bab64bd93dfb',1,'Insertion::removing_particles_in_region']]],
   ['repetitions_5fx_35',['repetitions_x',['../classPeriodicHillsGrid.html#a2e476bfd541c990af8d20396d7fc36f3',1,'PeriodicHillsGrid']]],

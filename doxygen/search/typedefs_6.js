@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lstransfertype_0',['LSTransferType',['../classMFNavierStokesPreconditionGMGBase.html#a7a4a6a07555a3ae4a26fb80af809dbaa',1,'MFNavierStokesPreconditionGMGBase']]]
+  ['heattransferassemblerbase_0',['HeatTransferAssemblerBase',['../heat__transfer__assemblers_8h.html#afe4807324a18e5f860606c89ad0c941f',1,'heat_transfer_assemblers.h']]]
 ];

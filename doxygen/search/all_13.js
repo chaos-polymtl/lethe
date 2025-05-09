@@ -81,7 +81,7 @@ var searchData=
   ['reinitialize_5finterface_5fwith_5fgeometric_5fmethod_78',['reinitialize_interface_with_geometric_method',['../classVolumeOfFluid.html#a38ed758b661459fe52c558e138b27636',1,'VolumeOfFluid']]],
   ['relative_79',['relative',['../structParameters_1_1RPTFEMReconstructionParameters.html#a8a845872a339fc0a2cb6b670ce764a38a99c483e1d11b1a279a2a1a3960528487',1,'Parameters::RPTFEMReconstructionParameters']]],
   ['relative_5fresidual_80',['relative_residual',['../structParameters_1_1LinearSolver.html#a37749d5c2b57f9161faec8fb3ba71bf1',1,'Parameters::LinearSolver']]],
-  ['relevant_5fdof_5findices_81',['relevant_dof_indices',['../classCouplingOperator.html#ad095e26b14c738813279acdbca9971ba',1,'CouplingOperator']]],
+  ['relevant_5fdof_5findices_81',['relevant_dof_indices',['../classCouplingOperatorBase.html#a97cd5d25e24612f33daea9513c835664',1,'CouplingOperatorBase']]],
   ['remaining_5fparticles_5fof_5feach_5ftype_82',['remaining_particles_of_each_type',['../classInsertionList.html#a118d1cc94d9fd05229344d11ab2e7b16',1,'InsertionList::remaining_particles_of_each_type'],['../classInsertionFile.html#adb64f4406c86c918a98ed1175767af81',1,'InsertionFile::remaining_particles_of_each_type']]],
   ['remove_5fparticles_5fin_5fbox_83',['remove_particles_in_box',['../classInsertion.html#a0f825bcb3c690f0a95817daaa9f1853f',1,'Insertion']]],
   ['remove_5fsuperfluous_5fdata_84',['remove_superfluous_data',['../classCompositeShape.html#a48be7f23c3dc3dfe11a9880bd9b25b18',1,'CompositeShape::remove_superfluous_data()'],['../classIBParticle.html#a6f8122e0e1a3746c7cffd6951654c910',1,'IBParticle::remove_superfluous_data()'],['../classRBFShape.html#a02d165a5215eb4e8f45bbd82515551e1',1,'RBFShape::remove_superfluous_data()']]],
