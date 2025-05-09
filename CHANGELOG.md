@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-05-09
+
+### Added
+
+- MAJOR Added the buoyancy term to the matrix free operators to be able to support two way coupling between the heat transfer solver and the matrix-free fluid solver. In the GMG preconditioner the temperature solution is also transfered to all the MG levels. [#1524](https://github.com/chaos-polymtl/lethe/pull/1524)
+
 ## [Master] - 2025-05-07
 
 ### Fixed
