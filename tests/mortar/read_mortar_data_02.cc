@@ -25,6 +25,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 // Lethe
+#include <core/boundary_conditions.h>
 #include <core/grids.h>
 #include <core/parameters.h>
 
@@ -42,16 +43,14 @@ test()
   unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
   unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
-  const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 2;
-  const double       radius               = 1.0;
-  const double       outer_radius         = 2.0;
-  const double       rotate               = 3.0;
-  const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
-  const unsigned int mapping_degree       = 3;
+  const unsigned int dim            = 2;
+  const unsigned int mapping_degree = 3;
 
-  Parameters::Mesh        mesh_parameters;
-  Parameters::Mortar<dim> mortar_parameters;
+  Parameters::Mesh                       mesh_parameters;
+  Parameters::Mortar<dim>                mortar_parameters;
+  Parameters::Manifolds                  manifolds_parameters;
+  BoundaryConditions::BoundaryConditions boundary_conditions;
+  boundary_conditions.type[0] = BoundaryConditions::BoundaryType::none;
 
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
@@ -59,7 +58,7 @@ test()
   mesh_parameters.grid_arguments           = "1.0 : 2.0 : 5.0 : 1 : true";
   mesh_parameters.scale                    = 1;
   mesh_parameters.simplex                  = false;
-  mesh_parameters.initial_refinement       = n_global_refinements;
+  mesh_parameters.initial_refinement       = 2;
   mesh_parameters.refine_until_target_size = false;
   mesh_parameters.boundaries_to_refine     = std::vector<int>();
   mesh_parameters.initial_refinement_at_boundaries = 0;
@@ -82,7 +81,9 @@ test()
   // Merge stator and rotor triangulations
   read_mesh_and_manifolds_for_stator_and_rotor(triangulation,
                                                mesh_parameters,
+                                               manifolds_parameters,
                                                false,
+                                               boundary_conditions,
                                                mortar_parameters);
 
   // Print information

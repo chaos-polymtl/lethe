@@ -519,7 +519,7 @@ public:
   add_diagonal_entries(VectorType &diagonal) const;
 
   void
-  add_sparsity_pattern_entries(TrilinosWrappers::SparsityPattern &dsp) const;
+  add_sparsity_pattern_entries(SparsityPatternBase &dsp) const;
 
   void
   add_system_matrix_entries(
@@ -1433,7 +1433,7 @@ CouplingOperatorBase<dim, Number, DataType_>::add_diagonal_entries(
 template <int dim, typename Number, typename DataType_>
 void
 CouplingOperatorBase<dim, Number, DataType_>::add_sparsity_pattern_entries(
-  TrilinosWrappers::SparsityPattern &dsp) const
+  SparsityPatternBase &dsp) const
 {
   const auto constraints = &constraints_extended;
 
