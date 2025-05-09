@@ -172,7 +172,8 @@ public:
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
           points.emplace_back(
-            rad_to_point<dim>(radius, (id + quadrature.point(q)[0]) * delta));
+            radius_to_point<dim>(radius,
+                                 (id + quadrature.point(q)[0]) * delta));
 
         return points;
       }
@@ -202,14 +203,12 @@ public:
         std::vector<Point<dim>> points;
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(rad_to_point<dim>(radius,
-                                                rad_0 + quadrature.point(q)[0] *
-                                                          (rad_1 - rad_0)));
+          points.emplace_back(radius_to_point<dim>(
+            radius, rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0)));
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(rad_to_point<dim>(radius,
-                                                rad_1 + quadrature.point(q)[0] *
-                                                          (rad_2 - rad_1)));
+          points.emplace_back(radius_to_point<dim>(
+            radius, rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1)));
 
         return points;
       }
@@ -615,9 +614,9 @@ class CouplingOperator
 public:
   using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
   using DataType          = typename ::CouplingOperatorBase<
-    dim,
-    Number,
-    typename FEPointIntegrator::value_type>::DataType;
+             dim,
+             Number,
+             typename FEPointIntegrator::value_type>::DataType;
 
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
