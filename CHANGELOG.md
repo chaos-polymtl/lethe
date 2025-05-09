@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Some of the functions related to the mortar coupling have been refactored, and new functionalities have been added. For instance, the matrix-based solver is able to read 'gmsh' files, and the matrix-free solver is able to read data from the mortar subsection. A new coupling operator has been added. [#] (https://github.com/chaos-polymtl/lethe/pull/)
+- MINOR Some of the functions related to the mortar coupling have been refactored, and new functionalities have been added. For instance, the matrix-based solver is able to read 'gmsh' files, and the matrix-free solver is able to read data from the mortar subsection. A new coupling operator has been added. [#1526] (https://github.com/chaos-polymtl/lethe/pull/1526)
 
 ## [Master] - 2024-05-07
 
