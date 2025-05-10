@@ -216,6 +216,22 @@ public:
   void
   compute_forcing_term();
 
+
+  /**
+   * @brief Precompute buoyancy term for heat-transfer coupling.
+   *
+   * @param[in] temperature_solution Present solution of the temperature
+   * as given by the multiphysics interface.
+   * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
+   * @param[in] physical_properties_manager Properties manager to extract
+   * thermal expansion coefficient and the reference temperature.
+   */
+  void
+  compute_buoyancy_term(
+    const VectorType                &temperature_solution,
+    const DoFHandler<dim>           &temperature_dof_handler,
+    const PhysicalPropertiesManager &physical_properties_manager);
+
   /**
    * @brief Get the total number of DoFs.
    *
@@ -599,6 +615,13 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> forcing_terms;
+
+
+  /**
+   * @brief Table with precomputed buoyancy term values.
+   *
+   */
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> buoyancy_term;
 
   /**
    * @brief Flag to turn the calculation of face terms on or off.
