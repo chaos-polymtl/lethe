@@ -57,11 +57,13 @@ particle_wall_fine_search(
 
               particle_wall_pairs_in_contact[particle_id].emplace(
                 face_id,
-                particle_wall_contact_info<dim>(
+                particle_wall_contact_info<dim>{
                   particle,
                   normal_vector_3d,
                   point_on_boundary_3d,
-                  std::get<3>(particle_pair_candidate_content)));
+                  std::get<3>(particle_pair_candidate_content),
+                  Tensor<1, 3>(),
+                  Tensor<1, 3>()});
               // std::get<3> contains the boundary id
             }
         }
@@ -151,10 +153,12 @@ particle_floating_wall_fine_search(
                   // be modified after adding motion of floating walls
                   particle_floating_wall_pairs_in_contact[particle_id].emplace(
                     floating_wall_id,
-                    particle_wall_contact_info<dim>(particle,
+                    particle_wall_contact_info<dim>{particle,
                                                     normal_vector_3d,
                                                     point_on_floating_wall_3d,
-                                                    100));
+                                                    100,
+                                                    Tensor<1, 3>(),
+                                                    Tensor<1, 3>()});
                 }
             }
         }
@@ -191,8 +195,13 @@ particle_floating_mesh_fine_search(
                 {
                   particle_floating_mesh_element[cut_cell_key].emplace(
                     particle_floating_mesh_candidate_iterator.first,
-                    particle_wall_contact_info<dim>(
-                      particle_floating_mesh_candidate_iterator.second));
+                    particle_wall_contact_info<dim>{
+                      particle_floating_mesh_candidate_iterator.second,
+                      Tensor<1, 3>(),
+                      Point<3>(),
+                      0,
+                      Tensor<1, 3>(),
+                      Tensor<1, 3>()});
                 }
             }
         }
