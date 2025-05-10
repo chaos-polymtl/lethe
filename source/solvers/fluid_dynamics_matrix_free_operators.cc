@@ -74,15 +74,15 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                                  &mapping,
-  const DoFHandler<dim>                               &dof_handler,
-  const AffineConstraints<number>                     &constraints,
-  const Quadrature<dim>                               &quadrature,
-  const std::shared_ptr<Function<dim>>                 forcing_function,
-  const double                                         kinematic_viscosity,
-  const StabilizationType                              stabilization,
-  const unsigned int                                   mg_level,
-  const std::shared_ptr<SimulationControl>            &simulation_control,
+  const Mapping<dim>                       &mapping,
+  const DoFHandler<dim>                    &dof_handler,
+  const AffineConstraints<number>          &constraints,
+  const Quadrature<dim>                    &quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const PhysicalPropertiesManager          &physical_properties_manager,
+  const StabilizationType                   stabilization,
+  const unsigned int                        mg_level,
+  const std::shared_ptr<SimulationControl> &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const bool                                          &enable_hessians_jacobian,
   const bool                                          &enable_hessians_residual)
@@ -94,7 +94,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                constraints,
                quadrature,
                forcing_function,
-               kinematic_viscosity,
+               physical_properties_manager,
                stabilization,
                mg_level,
                simulation_control,
@@ -106,15 +106,15 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                                  &mapping,
-  const DoFHandler<dim>                               &dof_handler,
-  const AffineConstraints<number>                     &constraints,
-  const Quadrature<dim>                               &quadrature,
-  const std::shared_ptr<Function<dim>>                 forcing_function,
-  const double                                         kinematic_viscosity,
-  const StabilizationType                              stabilization,
-  const unsigned int                                   mg_level,
-  const std::shared_ptr<SimulationControl>            &simulation_control,
+  const Mapping<dim>                       &mapping,
+  const DoFHandler<dim>                    &dof_handler,
+  const AffineConstraints<number>          &constraints,
+  const Quadrature<dim>                    &quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const PhysicalPropertiesManager          &physical_properties_manager,
+  const StabilizationType                   stabilization,
+  const unsigned int                        mg_level,
+  const std::shared_ptr<SimulationControl> &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const bool                                          &enable_hessians_jacobian,
   const bool                                          &enable_hessians_residual)
@@ -160,7 +160,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->forcing_function = forcing_function;
 
-  this->kinematic_viscosity = kinematic_viscosity;
+  this->properties_manager =
+    std::make_shared<PhysicalPropertiesManager>(physical_properties_manager);
 
   if (stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
@@ -723,6 +724,9 @@ NavierStokesOperatorBase<dim, number>::
   const unsigned int n_inner_faces    = matrix_free.n_inner_face_batches();
   const unsigned int n_boundary_faces = matrix_free.n_boundary_face_batches();
 
+  const double kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
   FECellIntegrator integrator(matrix_free);
   FEFaceIntegrator face_integrator(matrix_free, true, 0);
 
@@ -735,6 +739,11 @@ NavierStokesOperatorBase<dim, number>::
   nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
+  kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
+  grad_kinematic_viscosity_shear_rate.reinit(n_cells, integrator.n_q_points);
+  kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
+  previous_shear_rate.reinit(n_cells, integrator.n_q_points);
+  previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -785,10 +794,147 @@ NavierStokesOperatorBase<dim, number>::
             1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
                            4. * u_mag_squared / h / h +
                            9. * Utilities::fixed_power<2>(
-                                  4. * this->kinematic_viscosity / (h * h)));
+                                  4. * kinematic_viscosity / (h * h)));
 
           stabilization_parameter_lsic(cell, q) =
             std::sqrt(u_mag_squared) * h * 0.5;
+        }
+
+      // Get the kinematic viscosity and its gradient from the physical
+      // properties
+      if (this->properties_manager->is_non_newtonian())
+        {
+          typename FECellIntegrator::gradient_type shear_rate;
+          typename FECellIntegrator::value_type    grad_shear_rate = {};
+          VectorizedArray<number>                  shear_rate_magnitude;
+
+          for (const auto q : integrator.quadrature_point_indices())
+            {
+              typename FECellIntegrator::gradient_type gradient =
+                integrator.get_gradient(q);
+
+              typename FECellIntegrator::hessian_type hessian =
+                integrator.get_hessian(q);
+
+              // Calculate shear rate
+              for (unsigned int i = 0; i < dim; ++i)
+                {
+                  for (unsigned int j = 0; j < dim; ++j)
+                    {
+                      shear_rate[i][j] = gradient[i][j] + gradient[j][i];
+                    }
+                }
+
+              // Store shear rate in the previous_shear_rate
+              this->previous_shear_rate[cell][q] = shear_rate;
+
+              // Calculate shear rate magnitude
+              shear_rate_magnitude = shear_rate * shear_rate;
+
+              shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),
+                                              VectorizedArray<number>(1e-12));
+
+              // Store shear rate magnitude in the previous_shear_rate
+              this->previous_shear_rate_magnitude[cell][q] =
+                shear_rate_magnitude;
+
+              // Get kinematic viscosity gradient which consists of two things:
+              // 1. Grad shear rate
+              // 2. grad_kinematic_viscosity_shear_rate
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  grad_shear_rate[d] = 0.;
+                  if constexpr (dim == 2)
+                    {
+                      for (unsigned int k = 0; k < dim; ++k)
+                        {
+                          grad_shear_rate[d] +=
+                            VectorizedArray<number>(2.) *
+                            (gradient[k][k] * hessian[k][d][k]) /
+                            shear_rate_magnitude;
+                        }
+                      grad_shear_rate[d] +=
+                        (gradient[0][1] + gradient[1][0]) *
+                        (hessian[0][d][1] + hessian[1][d][0]) /
+                        shear_rate_magnitude;
+                    }
+                  else
+                    {
+                      for (unsigned int k = 0; k < dim; ++k)
+                        {
+                          grad_shear_rate[d] +=
+                            VectorizedArray<number>(2.) *
+                              (gradient[k][k] * hessian[k][d][k]) /
+                              shear_rate_magnitude +
+                            (gradient[(k + 1) % dim][(k + 2) % dim] +
+                             gradient[(k + 2) % dim][(k + 1) % dim]) *
+                              (hessian[(k + 1) % dim][d][(k + 2) % dim] +
+                               hessian[(k + 2) % dim][d][(k + 1) % dim]) /
+                              shear_rate_magnitude;
+                        }
+                    }
+                }
+
+              // Alternative code for grad shear rate
+              //  ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui)(∂d∂iuj + ∂d∂jui)
+              // for (unsigned int d = 0; d < dim; ++d)
+              //   {
+              //     auto grad_shear_rate_d = VectorizedArray<number>(0.0);
+              //     for (unsigned int i = 0; i < dim; ++i)
+              //       {
+              //         for (unsigned int j = 0; j < dim; ++j)
+              //           {
+              //             auto dGamma_ij_dd =
+              //               hessian[d][i][j] + hessian[d][j][i];
+              //             grad_shear_rate_d += shear_rate[i][j] *
+              //             dGamma_ij_dd;
+              //           }
+              //       }
+              //     grad_shear_rate[d] = // 1.0;
+              //       (0.5 / shear_rate_magnitude) * grad_shear_rate_d;
+              //   }
+
+              // Store the shear rate magnitude in the appropriate data
+              // structure needed for the set field vector function
+
+              VectorizedArray<number> viscosity;
+              VectorizedArray<number> grad_viscosity_shear_rate;
+
+              for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+                {
+                  // Get information from physical properties class
+                  std::map<field, double> fields;
+                  fields[field::shear_rate] = shear_rate_magnitude[v];
+
+                  viscosity[v] =
+                    this->properties_manager->get_rheology()->value(fields);
+
+                  grad_viscosity_shear_rate[v] =
+                    this->properties_manager->get_rheology()->jacobian(
+                      fields, field::shear_rate);
+                }
+
+              grad_kinematic_viscosity_shear_rate(cell, q) =
+                grad_viscosity_shear_rate;
+
+              kinematic_viscosity_gradient(cell, q) =
+                grad_shear_rate * grad_viscosity_shear_rate;
+
+              kinematic_viscosity_vector(cell, q) = viscosity;
+
+              // Recalculate stabilization parameter using kinematic
+              // viscosity vector
+              VectorizedArray<number> u_mag_squared = 1e-12;
+              for (unsigned int k = 0; k < dim; ++k)
+                u_mag_squared +=
+                  Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+
+              stabilization_parameter(cell, q) =
+                1. /
+                std::sqrt(
+                  Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
+                  9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
+            }
         }
     }
 
@@ -802,8 +948,9 @@ NavierStokesOperatorBase<dim, number>::
                                             face_integrator.n_q_points);
 
       // Boundary faces are padded after the internal faces
-      // Consequently, we need to offset the indices to avoid storing too much
-      // information regarding the boundary faces (e.g. too large vectors)
+      // Consequently, we need to offset the indices to avoid storing too
+      // much information regarding the boundary faces (e.g. too large
+      // vectors)
       for (unsigned int face = n_inner_faces;
            face < n_inner_faces + n_boundary_faces;
            ++face)
@@ -1097,6 +1244,9 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   const auto         face       = integrator.get_current_cell_index();
   const unsigned int face_index = face - matrix_free.n_inner_face_batches();
 
+  const double kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
   const auto penalty_parameter = this->effective_beta_face[face_index];
 
   if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
@@ -1249,6 +1399,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   bool transient =
     (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
 
+  const double kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
   // Vector for BDF coefficients
   const Vector<double> *bdf_coefs;
   if (transient)
@@ -1299,7 +1452,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       for (unsigned int i = 0; i < dim; ++i)
         {
           // ν(∇v,∇δu)
-          gradient_result[i] = this->kinematic_viscosity * gradient[i];
+          gradient_result[i] = kinematic_viscosity * gradient[i];
           // -(∇·v,δp)
           gradient_result[i][i] += -value[dim];
           // +(q,∇δu)
@@ -1323,7 +1476,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             {
               // (-ν∆δu + (u·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
                        gradient[i][k] * previous_values[k] +
                        previous_gradient[i][k] * value[k]);
             }
@@ -1347,7 +1500,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                     tau * previous_values[k] *
                     (gradient[i][l] * previous_values[l] +
                      previous_gradient[i][l] * value[l] -
-                     this->kinematic_viscosity * hessian_diagonal[i][l]);
+                     kinematic_viscosity * hessian_diagonal[i][l]);
                 }
               // +(∇δp)τ(u·∇)v
               gradient_result[i][k] +=
@@ -1366,8 +1519,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                   gradient_result[i][k] +=
                     tau * value[k] *
                     (previous_gradient[i][l] * previous_values[l] -
-                     this->kinematic_viscosity *
-                       previous_hessian_diagonal[i][l]);
+                     kinematic_viscosity * previous_hessian_diagonal[i][l]);
                 }
               // +(∇p - f)τ(δu·∇)v
               gradient_result[i][k] +=
@@ -1395,21 +1547,19 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                         {
                           // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
                           hessian_result[i][k][k] +=
-                            tau * -this->kinematic_viscosity *
+                            tau * -kinematic_viscosity *
                             (gradient[i][l] * previous_values[l] +
                              previous_gradient[i][l] * value[l] -
-                             this->kinematic_viscosity *
-                               hessian_diagonal[i][l]);
+                             kinematic_viscosity * hessian_diagonal[i][l]);
                         }
 
                       // +(∇δp)τ(−ν∆v)
                       hessian_result[i][k][k] +=
-                        tau * -this->kinematic_viscosity * (gradient[dim][i]);
+                        tau * -kinematic_viscosity * (gradient[dim][i]);
 
                       // +(∂t δu)τ(−ν∆v)
                       if (transient)
-                        hessian_result[i][k][k] += tau *
-                                                   -this->kinematic_viscosity *
+                        hessian_result[i][k][k] += tau * -kinematic_viscosity *
                                                    ((*bdf_coefs)[0] * value[i]);
                     }
 
@@ -1453,6 +1603,9 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
   const std::pair<unsigned int, unsigned int> &range) const
 {
   FECellIntegrator integrator(matrix_free);
+
+  const double kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
 
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
@@ -1517,7 +1670,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           for (unsigned int i = 0; i < dim; ++i)
             {
               // ν(∇v,∇u)
-              gradient_result[i] = this->kinematic_viscosity * gradient[i];
+              gradient_result[i] = kinematic_viscosity * gradient[i];
               // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
               // +(v,-f)
@@ -1546,7 +1699,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                 {
                   // (-ν∆u + (u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
-                    tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
                            gradient[i][k] * value[k]);
                 }
               // +(-f)·τ∇q
@@ -1568,9 +1721,9 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                   for (unsigned int l = 0; l < dim; ++l)
                     {
                       // (-ν∆u)τ(u·∇)v
-                      gradient_result[i][k] +=
-                        -tau * this->kinematic_viscosity * value[k] *
-                        hessian_diagonal[i][l];
+                      gradient_result[i][k] += -tau * kinematic_viscosity *
+                                               value[k] *
+                                               hessian_diagonal[i][l];
 
                       // + ((u·∇)u)τ(u·∇)v
                       gradient_result[i][k] +=
@@ -1602,20 +1755,19 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                             {
                               // (-ν∆u + (u·∇)u)τ(−ν∆v)
                               hessian_result[i][k][k] +=
-                                tau * -this->kinematic_viscosity *
-                                (-this->kinematic_viscosity *
-                                   hessian_diagonal[i][l] +
+                                tau * -kinematic_viscosity *
+                                (-kinematic_viscosity * hessian_diagonal[i][l] +
                                  gradient[i][l] * value[l]);
                             }
                           // + (∇p - f)τ(−ν∆v)
                           hessian_result[i][k][k] +=
-                            tau * -this->kinematic_viscosity *
+                            tau * -kinematic_viscosity *
                             (gradient[dim][i] - source_value[i]);
 
                           // + (∂t u)τ(−ν∆v)
                           if (transient)
                             hessian_result[i][k][k] +=
-                              tau * -this->kinematic_viscosity *
+                              tau * -kinematic_viscosity *
                               ((*bdf_coefs)[0] * value[i] +
                                previous_time_derivatives[i]);
                         }
@@ -1649,3 +1801,427 @@ template class NavierStokesStabilizedOperator<2, double>;
 template class NavierStokesStabilizedOperator<3, double>;
 template class NavierStokesStabilizedOperator<2, float>;
 template class NavierStokesStabilizedOperator<3, float>;
+
+
+template <int dim, typename number>
+NavierStokesNonNewtonianStabilizedOperator<dim, number>::
+  NavierStokesNonNewtonianStabilizedOperator() = default;
+
+/**
+ * The expressions calculated in this cell integral are:
+ * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,(∇δu +
+ * ∇δuT)) + (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT)) (Weak
+ * form Jacobian), plus three additional terms in the case of SUPG-PSPG
+ * stabilization:
+ * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu - (∇ν)(∇δu + ∇δuT))τ·∇q (PSPG
+ * Jacobian)
+ * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu - (∇ν)(∇δu + ∇δuT))τu·∇v (SUPG
+ * Jacobian Part 1)
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - (∇ν)((∇u + ∇uT) - f )τδu·∇v (SUPG Jacobian
+ * Part 2),
+ */
+template <int dim, typename number>
+void
+NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
+  FECellIntegrator &integrator) const
+{
+  if (this->enable_hessians_jacobian)
+    integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                        EvaluationFlags::hessians);
+  else
+    integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+  const unsigned int cell = integrator.get_current_cell_index();
+
+  // To identify whether the problem is transient or steady
+  bool transient =
+    (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
+
+  // Vector for BDF coefficients
+  const Vector<double> *bdf_coefs;
+  if (transient)
+    bdf_coefs = &this->simulation_control->get_bdf_coefficients();
+
+  for (const auto q : integrator.quadrature_point_indices())
+    {
+      Tensor<1, dim, VectorizedArray<number>> source_value;
+
+      // Evaluate source term function if enabled
+      if (this->forcing_function)
+        source_value = this->forcing_terms(cell, q);
+
+      // Add to source term the dynamic flow control force (zero if not
+      // enabled)
+      source_value += this->beta_force;
+
+      // Gather the original value/gradient
+      typename FECellIntegrator::value_type    value = integrator.get_value(q);
+      typename FECellIntegrator::gradient_type gradient =
+        integrator.get_gradient(q);
+      typename FECellIntegrator::gradient_type hessian_diagonal;
+
+      if (this->enable_hessians_jacobian)
+        hessian_diagonal = integrator.get_hessian_diagonal(q);
+
+      // Result value/gradient we will use
+      typename FECellIntegrator::value_type    value_result;
+      typename FECellIntegrator::gradient_type gradient_result;
+      typename FECellIntegrator::hessian_type  hessian_result;
+
+      // Gather previous values of the velocity and the pressure
+      auto previous_values   = this->nonlinear_previous_values(cell, q);
+      auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
+      auto previous_hessian_diagonal =
+        this->nonlinear_previous_hessian_diagonal(cell, q);
+
+      Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
+      if (transient)
+        previous_time_derivatives =
+          this->time_derivatives_previous_solutions(cell, q);
+
+      // Gather previous values of the shear_rate and shear_rate_magnitude
+      auto previous_shear_rate = this->previous_shear_rate(cell, q);
+      auto previous_shear_rate_magnitude =
+        this->previous_shear_rate_magnitude(cell, q);
+
+      previous_shear_rate_magnitude =
+        std::max(previous_shear_rate_magnitude, VectorizedArray<number>(1e-3));
+
+      // Get kinematic viscosity from rheology model
+      const auto kinematic_viscosity =
+        this->kinematic_viscosity_vector[cell][q];
+      const auto kinematic_viscosity_gradient =
+        this->kinematic_viscosity_gradient[cell][q];
+      const auto grad_kinematic_viscosity_shear_rate =
+        this->grad_kinematic_viscosity_shear_rate[cell][q];
+
+      // Get stabilization parameter
+      const auto tau = this->stabilization_parameter[cell][q];
+
+      // Calculate shear rate per component
+      typename FECellIntegrator::gradient_type shear_rate;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int j = 0; j < dim; ++j)
+            {
+              shear_rate[i][j] = gradient[i][j] + gradient[j][i];
+            }
+        }
+
+      // Precompute double contraction between shear rate and previous shear
+      // rate
+      VectorizedArray<number> shear_rate_previous_product =
+        VectorizedArray<number>(0.);
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              shear_rate_previous_product +=
+                shear_rate[i][k] * previous_shear_rate[k][i];
+            }
+        }
+
+      // Weak form Jacobian
+      value_result[dim] = VectorizedArray<number>(0.);
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          // -(∇·v,δp)
+          gradient_result[i][i] = -value[dim];
+          // +(q,∇δu)
+          value_result[dim] += gradient[i][i];
+          // ν(∇v,(∇δu + ∇δuT))
+          gradient_result[i] += kinematic_viscosity * shear_rate[i];
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
+              gradient_result[i][k] += 0.5 / previous_shear_rate_magnitude *
+                                       grad_kinematic_viscosity_shear_rate *
+                                       shear_rate_previous_product *
+                                       previous_shear_rate[i][k];
+              // +(v,(u·∇)δu + (δu·∇)u)
+              value_result[i] += gradient[i][k] * previous_values[k] +
+                                 previous_gradient[i][k] * value[k];
+            }
+          // +(v,∂t δu)
+          if (transient)
+            value_result[i] += (*bdf_coefs)[0] * value[i];
+        }
+
+      // PSPG Jacobian
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
+              gradient_result[dim][i] +=
+                tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
+                       kinematic_viscosity_gradient[k] * shear_rate[k][i] +
+                       gradient[i][k] * previous_values[k] +
+                       previous_gradient[i][k] * value[k]);
+            }
+          // +(∂t δu)·τ∇q
+          if (transient)
+            gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
+        }
+      // (∇δp)τ·∇q
+      gradient_result[dim] += tau * gradient[dim];
+
+      // SUPG Jacobian
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              // Part 1
+              for (unsigned int l = 0; l < dim; ++l)
+                {
+                  // +((u·∇)δu + (δu·∇)u - ν∆δu  - (∇ν)(∇δu + ∇δuT))τ(u·∇)v
+                  gradient_result[i][k] +=
+                    tau * previous_values[k] *
+                    (gradient[i][l] * previous_values[l] +
+                     previous_gradient[i][l] * value[l] -
+                     kinematic_viscosity * hessian_diagonal[i][l] -
+                     kinematic_viscosity_gradient[i] * shear_rate[i][l]);
+                }
+              // +(∇δp)τ(u·∇)v
+              gradient_result[i][k] +=
+                tau * previous_values[k] * (gradient[dim][i]);
+
+              // +(∂t δu)τ(u·∇)v
+              if (transient)
+                gradient_result[i][k] +=
+                  tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
+
+
+              // Part 2
+              for (unsigned int l = 0; l < dim; ++l)
+                {
+                  // +((u·∇)u - ν∆u - (∇ν)((∇u + ∇uT))τ(δu·∇)v
+                  gradient_result[i][k] +=
+                    tau * value[k] *
+                    (previous_gradient[i][l] * previous_values[l] -
+                     kinematic_viscosity * previous_hessian_diagonal[i][l] -
+                     kinematic_viscosity_gradient[i] *
+                       previous_shear_rate[i][l]);
+                }
+              // +(∇p - f)τ(δu·∇)v
+              gradient_result[i][k] +=
+                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
+
+              // +(∂t u)τ(δu·∇)v
+              if (transient)
+                gradient_result[i][k] += tau * value[k] *
+                                         ((*bdf_coefs)[0] * previous_values[i] +
+                                          previous_time_derivatives[i]);
+            }
+        }
+
+      integrator.submit_gradient(gradient_result, q);
+      integrator.submit_value(value_result, q);
+
+      if (this->enable_hessians_jacobian)
+        integrator.submit_hessian(hessian_result, q);
+    }
+
+  if (this->enable_hessians_jacobian)
+    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients |
+                         EvaluationFlags::hessians);
+  else
+    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+}
+
+/**
+ * The expressions calculated in this cell integral are:
+ * (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,(∇u + ∇uT)) - (v,f) (Weak
+ * form), plus two additional terms in the case of SUPG-PSPG stabilization:
+ * \+ (∂t u +(u·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τ∇·q (PSPG term)
+ * \+ (∂t u +(u·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τu·∇v (SUPG term),
+ */
+template <int dim, typename number>
+void
+NavierStokesNonNewtonianStabilizedOperator<dim, number>::
+  local_evaluate_residual(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const
+{
+  FECellIntegrator integrator(matrix_free);
+
+  for (unsigned int cell = range.first; cell < range.second; ++cell)
+    {
+      integrator.reinit(cell);
+      integrator.read_dof_values_plain(src);
+
+      if (this->enable_hessians_residual)
+        integrator.evaluate(EvaluationFlags::values |
+                            EvaluationFlags::gradients |
+                            EvaluationFlags::hessians);
+      else
+        integrator.evaluate(EvaluationFlags::values |
+                            EvaluationFlags::gradients);
+
+      // To identify whether the problem is transient or steady
+      bool transient =
+        (is_bdf(this->simulation_control->get_assembly_method())) ? true :
+                                                                    false;
+
+      // Vector for BDF coefficients
+      const Vector<double> *bdf_coefs;
+      if (transient)
+        bdf_coefs = &this->simulation_control->get_bdf_coefficients();
+
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          Tensor<1, dim, VectorizedArray<number>> source_value;
+
+          // Evaluate source term function if enabled
+          if (this->forcing_function)
+            source_value = this->forcing_terms(cell, q);
+
+          // Add to source term the dynamic flow control force (zero if not
+          // enabled)
+          source_value += this->beta_force;
+
+          // Gather the original value/gradient
+          typename FECellIntegrator::value_type value = integrator.get_value(q);
+          typename FECellIntegrator::gradient_type gradient =
+            integrator.get_gradient(q);
+          typename FECellIntegrator::gradient_type hessian_diagonal;
+
+          if (this->enable_hessians_residual)
+            hessian_diagonal = integrator.get_hessian_diagonal(q);
+
+          // Time derivatives of previous solutions
+          Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
+          if (transient)
+            previous_time_derivatives =
+              this->time_derivatives_previous_solutions(cell, q);
+
+          // Get stabilization parameter
+          const auto tau = this->stabilization_parameter[cell][q];
+
+          // Get kinematic viscosity from rheology model
+          const auto kinematic_viscosity =
+            this->kinematic_viscosity_vector[cell][q];
+
+          // Get kinematic viscosity gradient
+          const auto kinematic_viscosity_gradient =
+            this->kinematic_viscosity_gradient[cell][q];
+
+          // Result value/gradient we will use
+          typename FECellIntegrator::value_type    value_result;
+          typename FECellIntegrator::gradient_type gradient_result;
+          typename FECellIntegrator::hessian_type  hessian_result;
+
+          // Additional values/gradients needed
+          typename FECellIntegrator::gradient_type shear_rate;
+
+          // Calculate shear rate per component
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int j = 0; j < dim; ++j)
+                {
+                  shear_rate[i][j] = gradient[i][j] + gradient[j][i];
+                }
+            }
+
+          // Weak form
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              // ν(∇v,(∇u + ∇uT))
+              gradient_result[i] = kinematic_viscosity * shear_rate[i];
+              // -(∇·v,p)
+              gradient_result[i][i] += -value[dim];
+              // +(v,-f)
+              value_result[i] = -source_value[i];
+
+              // +(v,∂t u)
+              if (transient)
+                value_result[i] +=
+                  (*bdf_coefs)[0] * value[i] + previous_time_derivatives[i];
+
+
+              // +(q,∇·u)
+              value_result[dim] += gradient[i][i];
+
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  // +(v,(u·∇)u)
+                  value_result[i] += gradient[i][k] * value[k];
+                }
+            }
+
+          // PSPG term
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u·∇)u)·τ∇q
+                  gradient_result[dim][i] +=
+                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
+                           kinematic_viscosity_gradient[k] * shear_rate[k][i] +
+                           gradient[i][k] * value[k]);
+                }
+              // +(-f)·τ∇q
+              gradient_result[dim][i] += tau * (-source_value[i]);
+
+              // +(∂t u)·τ∇q
+              if (transient)
+                gradient_result[dim][i] += tau * ((*bdf_coefs)[0] * value[i] +
+                                                  previous_time_derivatives[i]);
+            }
+          // +(∇p)τ∇·q
+          gradient_result[dim] += tau * gradient[dim];
+
+          // SUPG term
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  for (unsigned int l = 0; l < dim; ++l)
+                    {
+                      // (-ν∆u - (∇ν)((∇u + ∇uT)))τ(u·∇)v
+                      gradient_result[i][k] +=
+                        tau * value[k] *
+                        (-kinematic_viscosity * hessian_diagonal[i][l] -
+                         kinematic_viscosity_gradient[l] * shear_rate[l][i]);
+
+                      // + ((u·∇)u)τ(u·∇)v
+                      gradient_result[i][k] +=
+                        tau * value[k] * gradient[i][l] * value[l];
+                    }
+                  // + (∇p - f)τ(u·∇)v
+                  gradient_result[i][k] +=
+                    tau * value[k] * (gradient[dim][i] - source_value[i]);
+
+                  // + (∂t u)τ(u·∇)v
+                  if (transient)
+                    gradient_result[i][k] += tau * value[k] *
+                                             ((*bdf_coefs)[0] * value[i] +
+                                              previous_time_derivatives[i]);
+                }
+            }
+
+          integrator.submit_gradient(gradient_result, q);
+          integrator.submit_value(value_result, q);
+          if (this->enable_hessians_residual)
+            integrator.submit_hessian(hessian_result, q);
+        }
+
+      if (this->enable_hessians_residual)
+        integrator.integrate_scatter(EvaluationFlags::values |
+                                       EvaluationFlags::gradients |
+                                       EvaluationFlags::hessians,
+                                     dst);
+      else
+        integrator.integrate_scatter(EvaluationFlags::values |
+                                       EvaluationFlags::gradients,
+                                     dst);
+    }
+}
+
+template class NavierStokesNonNewtonianStabilizedOperator<2, double>;
+template class NavierStokesNonNewtonianStabilizedOperator<3, double>;
+template class NavierStokesNonNewtonianStabilizedOperator<2, float>;
+template class NavierStokesNonNewtonianStabilizedOperator<3, float>;

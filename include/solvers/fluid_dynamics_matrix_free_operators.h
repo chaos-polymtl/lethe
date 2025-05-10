@@ -139,7 +139,8 @@ public:
    * @param[in] quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
-   * @param[in] kinematic_viscosity Kinematic viscosity.
+   * @param[in] properties_manager The physical properties manager (see
+   physical_properties_manager.h)
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
@@ -152,15 +153,15 @@ public:
 
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                                  &mapping,
-    const DoFHandler<dim>                               &dof_handler,
-    const AffineConstraints<number>                     &constraints,
-    const Quadrature<dim>                               &quadrature,
-    const std::shared_ptr<Function<dim>>                 forcing_function,
-    const double                                         kinematic_viscosity,
-    const StabilizationType                              stabilization,
-    const unsigned int                                   mg_level,
-    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const Mapping<dim>                       &mapping,
+    const DoFHandler<dim>                    &dof_handler,
+    const AffineConstraints<number>          &constraints,
+    const Quadrature<dim>                    &quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const PhysicalPropertiesManager          &physical_properties_manager,
+    const StabilizationType                   stabilization,
+    const unsigned int                        mg_level,
+    const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual);
@@ -177,7 +178,8 @@ public:
    * @param[in] quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
-   * @param[in] kinematic_viscosity Kinematic viscosity.
+   * @param[in] properties_manager The physical properties manager (see
+   * physical_properties_manager.h)
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
@@ -190,15 +192,15 @@ public:
    */
   void
   reinit(
-    const Mapping<dim>                                  &mapping,
-    const DoFHandler<dim>                               &dof_handler,
-    const AffineConstraints<number>                     &constraints,
-    const Quadrature<dim>                               &quadrature,
-    const std::shared_ptr<Function<dim>>                 forcing_function,
-    const double                                         kinematic_viscosity,
-    const StabilizationType                              stabilization,
-    const unsigned int                                   mg_level,
-    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const Mapping<dim>                       &mapping,
+    const DoFHandler<dim>                    &dof_handler,
+    const AffineConstraints<number>          &constraints,
+    const Quadrature<dim>                    &quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const PhysicalPropertiesManager          &physical_properties_manager,
+    const StabilizationType                   stabilization,
+    const unsigned int                        mg_level,
+    const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual);
@@ -388,7 +390,8 @@ public:
   void
   set_kinematic_viscosity(const double p_kinematic_viscosity)
   {
-    kinematic_viscosity = p_kinematic_viscosity;
+    properties_manager->get_rheology()->set_kinematic_viscosity(
+      p_kinematic_viscosity);
   }
 
 protected:
@@ -553,10 +556,10 @@ protected:
   Tensor<1, dim, VectorizedArray<number>> beta_force;
 
   /**
-   * @brief Kinematic viscosity needed for the operator.
+   * @brief Shared pointer to physical properties manager.
    *
    */
-  double kinematic_viscosity;
+  std::shared_ptr<PhysicalPropertiesManager> properties_manager;
 
 
   /**
@@ -672,6 +675,43 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
+   * of the kinematic viscosity.
+   *
+   */
+  Table<2, VectorizedArray<number>> kinematic_viscosity_vector;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the gradient of the kinematic viscosity w.r.t shear rate.
+   *
+   */
+  Table<2, VectorizedArray<number>> grad_kinematic_viscosity_shear_rate;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the kinematic viscosity gradient.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    kinematic_viscosity_gradient;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the shear_rate.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
+    previous_shear_rate;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the shear_rate_magnitude.
+   *
+   */
+  Table<2, VectorizedArray<number>> previous_shear_rate_magnitude;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
    * of the face penalization term effective_beta_face
    *
    */
@@ -754,6 +794,53 @@ public:
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
 
   NavierStokesStabilizedOperator();
+
+protected:
+  /**
+   * @brief Perform cell integral on a cell batch without gathering and scattering
+   * the values, and according to the Jacobian of the discretized
+   * steady/transient Navier-Stokes equations with stabilization.
+   *
+   * @param[in] integrator FEEvaluation object that allows to evaluate functions
+   * at quadrature points and perform cell integrations.
+   */
+  void
+  do_cell_integral_local(FECellIntegrator &integrator) const override;
+
+  /**
+   * @brief Perform cell integral on a cell batch with gathering and scattering
+   * the values, and according to the residual of the discretized
+   * steady/transient Navier-Stokes equations with stabilization.
+   *
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the cell batch.
+   */
+  void
+  local_evaluate_residual(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const override;
+};
+
+/**
+ * @brief Implements the matrix-free operator to solve steady/transient Non-newtonian Navier-Stokes equations using stabilization.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam number Abstract type for number across the class (i.e., double).
+ */
+template <int dim, typename number>
+class NavierStokesNonNewtonianStabilizedOperator
+  : public NavierStokesOperatorBase<dim, number>
+{
+public:
+  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using FEFaceIntegrator = FEFaceEvaluation<dim, -1, 0, dim + 1, number>;
+  using VectorType       = LinearAlgebra::distributed::Vector<number>;
+
+  NavierStokesNonNewtonianStabilizedOperator();
 
 protected:
   /**

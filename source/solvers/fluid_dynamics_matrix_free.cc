@@ -838,8 +838,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             level_constraints[level],
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager
-              .get_kinematic_viscosity_scale(),
+            this->simulation_parameters.physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
             level,
             simulation_control,
@@ -1237,8 +1236,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             level_constraint,
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager
-              .get_kinematic_viscosity_scale(),
+            this->simulation_parameters.physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
@@ -1909,8 +1907,13 @@ void
 MFNavierStokesPreconditionGMG<dim>::create_level_operator(
   const unsigned int level)
 {
-  this->mg_operators[level] =
-    std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
+    this->mg_operators[level] = std::make_shared<
+      NavierStokesNonNewtonianStabilizedOperator<dim, MGNumber>>();
+  else
+    this->mg_operators[level] =
+      std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
 }
 
 template <int dim>
@@ -2019,16 +2022,16 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
 
-  AssertThrow(
-    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
-    ExcMessage(
-      "Non-Newtonian fluids are not supported by the matrix free application."));
-
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
 
-  system_operator =
-    std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
+    system_operator = std::make_shared<
+      NavierStokesNonNewtonianStabilizedOperator<dim, double>>();
+  else
+    system_operator =
+      std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 
   if (!this->simulation_parameters.source_term.enable)
     {
@@ -2189,8 +2192,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->zero_constraints,
     *this->cell_quadrature,
     this->forcing_function,
-    this->simulation_parameters.physical_properties_manager
-      .get_kinematic_viscosity_scale(),
+    this->simulation_parameters.physical_properties_manager,
     this->simulation_parameters.stabilization.stabilization,
     mg_level,
     this->simulation_control,
@@ -2287,19 +2289,12 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
 
-      // Create a pointer to the current viscosity model
-      std::shared_ptr<RheologicalModel> viscosity_model =
-        this->simulation_parameters.physical_properties_manager.get_rheology();
+      const double viscosity_end =
+        this->simulation_parameters.physical_properties_manager.get_rheology()
+          ->get_kinematic_viscosity();
 
-      // Keep in memory the initial viscosity
-      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
-
-      // Set it to the initial condition viscosity
-      viscosity_model->set_kinematic_viscosity(
-        this->simulation_parameters.initial_condition->kinematic_viscosity);
-
-      // Set the kinematic viscosity in the system operator to be the
-      // temporary viscosity
+      // Set the kinematic viscosity in the system operator to be the temporary
+      // viscosity
       this->system_operator->set_kinematic_viscosity(
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale());
@@ -2339,10 +2334,6 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
       // Set the kinematic viscosity in the system operator to be the original
       // viscosity
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
-
-      // Reset kinematic viscosity to simulation parameters
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
       this->system_operator->set_kinematic_viscosity(viscosity_end);
 
       if ((this->simulation_parameters.linear_solver
@@ -2395,7 +2386,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
 
-      viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
+      this->system_operator->set_kinematic_viscosity(kinematic_viscosity);
 
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
@@ -2404,8 +2395,6 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
                       << "********* Solution for kinematic viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
-
-          viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
 
           // Set the kinematic viscosity in the system operator to be the
           // temporary viscosity
@@ -2450,7 +2439,6 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
             alpha_viscosity * (viscosity_end - kinematic_viscosity);
         }
       // Reset kinematic viscosity to simulation parameters
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
       this->system_operator->set_kinematic_viscosity(viscosity_end);
 
       if ((this->simulation_parameters.linear_solver
@@ -2502,6 +2490,12 @@ void
 FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
+  // Update the precomputed values needed for the evaluation of the residual.
+  // This is needed due to the alpha procedure of the non linear solver.
+  this->evaluation_point.update_ghost_values();
+  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
+    this->evaluation_point);
 
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
@@ -2743,7 +2737,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->present_solution);
-
+  // this->system_operator->get_system_matrix().print(std::cout);
   this->computing_timer.leave_subsection("Evaluate non linear term and tau");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
