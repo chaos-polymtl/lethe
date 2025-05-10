@@ -399,102 +399,184 @@ void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                            &restart,
+  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
-  AssertThrow(
-    mesh_parameters.type == Parameters::Mesh::Type::dealii,
-    ExcMessage(
-      "GMSH files are currently not compatible with the mortar implementation."));
+  /* Dealii meshes: since the rotor and stator meshes are read separately,
+  a dummy triangulation is created for each domain and then merged */
 
-  // Stator triangulation
-  Triangulation<dim> stator_temp_tria;
-  attach_grid_to_triangulation(stator_temp_tria, mesh_parameters);
-
-  // Rotor triangulation
-  Triangulation<dim> rotor_temp_tria;
-  attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
-  GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle,
-                    rotor_temp_tria);
-
-  // Get stator manifold ids without flat id
-  unsigned int stator_ids_no_flat = 0;
-  for (const auto &id : stator_temp_tria.get_manifold_ids())
-    {
-      if (id != numbers::flat_manifold_id)
-        stator_ids_no_flat++;
-    }
-
-  // Get rotor manifold ids without flat id
-  unsigned int rotor_ids_no_flat = 0;
-  for (const auto &id : rotor_temp_tria.get_manifold_ids())
-    {
-      if (id != numbers::flat_manifold_id)
-        rotor_ids_no_flat++;
-    }
+  /* Gmsh meshes: the complete rotor-stator configuration is read in a single
+  file, and thus the grid is attached to the 'already merged' triangulation.
+  Manifolds need to be attached manually */
 
   // Faces at rotor-stator interface
   unsigned int n_faces_rotor_interface  = 0;
   unsigned int n_faces_stator_interface = 0;
 
-  // Shift rotor boundary IDs #
-  unsigned int n_boundary_ids_stator =
-    stator_temp_tria.get_boundary_ids().size();
-  // Check number of faces at rotor interface with stator
-  for (const auto &face : rotor_temp_tria.active_face_iterators())
+  if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
     {
-      if (face->at_boundary())
+      // Stator triangulation
+      Triangulation<dim> stator_temp_tria;
+      attach_grid_to_triangulation(stator_temp_tria, mesh_parameters);
+
+      // Rotor triangulation
+      Triangulation<dim> rotor_temp_tria;
+      attach_grid_to_triangulation(rotor_temp_tria,
+                                   *mortar_parameters.rotor_mesh);
+      GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle,
+                        rotor_temp_tria);
+
+      // Get stator manifold ids without flat id
+      unsigned int stator_ids_no_flat = 0;
+      for (const auto &id : stator_temp_tria.get_manifold_ids())
         {
-          face->set_boundary_id(face->boundary_id() + n_boundary_ids_stator);
-          if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
-            n_faces_rotor_interface++;
+          if (id != numbers::flat_manifold_id)
+            stator_ids_no_flat++;
         }
-    }
 
-  // Keep track of modified IDs in faces and lines
-  std::vector<bool> changed_manifold_ids_faces(rotor_temp_tria.n_active_faces(),
-                                               false);
-  std::vector<bool> changed_manifold_ids_lines(rotor_temp_tria.n_active_lines(),
-                                               false);
-
-  // Shift rotor manifold IDs #
-  for (const auto &cell : rotor_temp_tria.active_cell_iterators())
-    {
-      if (cell->manifold_id() != numbers::flat_manifold_id)
-        cell->set_manifold_id(cell->manifold_id() + stator_ids_no_flat);
-      for (const auto &face : cell->face_iterators())
+      // Get rotor manifold ids without flat id
+      unsigned int rotor_ids_no_flat = 0;
+      for (const auto &id : rotor_temp_tria.get_manifold_ids())
         {
-          if (face->manifold_id() != numbers::flat_manifold_id &&
-              !changed_manifold_ids_faces[face->index()])
+          if (id != numbers::flat_manifold_id)
+            rotor_ids_no_flat++;
+        }
+
+      // Shift rotor boundary IDs #
+      unsigned int n_boundary_ids_stator =
+        stator_temp_tria.get_boundary_ids().size();
+      // Check number of faces at rotor interface with stator
+      for (const auto &face : rotor_temp_tria.active_face_iterators())
+        {
+          if (face->at_boundary())
             {
-              face->set_manifold_id(face->manifold_id() + stator_ids_no_flat);
-              changed_manifold_ids_faces[face->index()] = true;
+              face->set_boundary_id(face->boundary_id() +
+                                    n_boundary_ids_stator);
+              if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
+                n_faces_rotor_interface++;
             }
-          if constexpr (dim == 3)
+        }
+
+      // Keep track of modified IDs in faces and lines
+      std::vector<bool> changed_manifold_ids_faces(
+        rotor_temp_tria.n_active_faces(), false);
+      std::vector<bool> changed_manifold_ids_lines(
+        rotor_temp_tria.n_active_lines(), false);
+
+      // Shift rotor manifold IDs #
+      for (const auto &cell : rotor_temp_tria.active_cell_iterators())
+        {
+          if (cell->manifold_id() != numbers::flat_manifold_id)
+            cell->set_manifold_id(cell->manifold_id() + stator_ids_no_flat);
+          for (const auto &face : cell->face_iterators())
             {
-              for (const auto line_index : cell->line_indices())
+              if (face->manifold_id() != numbers::flat_manifold_id &&
+                  !changed_manifold_ids_faces[face->index()])
                 {
-                  if (cell->line(line_index)->manifold_id() !=
-                        numbers::flat_manifold_id &&
-                      !changed_manifold_ids_lines[line_index])
-                    cell->line(line_index)
-                      ->set_manifold_id(cell->line(line_index)->manifold_id() +
+                  face->set_manifold_id(face->manifold_id() +
                                         stator_ids_no_flat);
-                  changed_manifold_ids_lines[line_index] = true;
+                  changed_manifold_ids_faces[face->index()] = true;
+                }
+              if constexpr (dim == 3)
+                {
+                  for (const auto line_index : cell->line_indices())
+                    {
+                      if (cell->line(line_index)->manifold_id() !=
+                            numbers::flat_manifold_id &&
+                          !changed_manifold_ids_lines[line_index])
+                        cell->line(line_index)
+                          ->set_manifold_id(
+                            cell->line(line_index)->manifold_id() +
+                            stator_ids_no_flat);
+                      changed_manifold_ids_lines[line_index] = true;
+                    }
                 }
             }
         }
-    }
 
-  // Check number of faces at stator interface with rotor
-  for (const auto &face : stator_temp_tria.active_face_iterators())
-    {
-      if (face->at_boundary())
+      // Check number of faces at stator interface with rotor
+      for (const auto &face : stator_temp_tria.active_face_iterators())
         {
-          if (face->boundary_id() == mortar_parameters.stator_boundary_id)
-            n_faces_stator_interface++;
+          if (face->at_boundary())
+            {
+              if (face->boundary_id() == mortar_parameters.stator_boundary_id)
+                n_faces_stator_interface++;
+            }
+        }
+
+      // Store rotor manifolds in shifted IDs #
+      for (unsigned int m = 0; m < rotor_temp_tria.get_manifold_ids().size();
+           m++)
+        {
+          unsigned int temp = rotor_temp_tria.get_manifold_ids()[m];
+          if (temp != numbers::flat_manifold_id)
+            rotor_temp_tria.set_manifold(m + stator_ids_no_flat,
+                                         rotor_temp_tria.get_manifold(m));
+        }
+
+      // Merge triangulations
+      GridGenerator::merge_triangulations(
+        stator_temp_tria, rotor_temp_tria, triangulation, 0.0, true, true);
+
+      // Attach manifolds to merged triangulation
+      unsigned int n = 0;
+      for (unsigned int i = 0; i < stator_ids_no_flat; i++)
+        {
+          triangulation.set_manifold(n, stator_temp_tria.get_manifold(i));
+          n++;
+        }
+      for (unsigned int j = stator_ids_no_flat;
+           j < stator_ids_no_flat + rotor_ids_no_flat;
+           j++)
+        {
+          triangulation.set_manifold(n, rotor_temp_tria.get_manifold(j));
+          n++;
         }
     }
+  else if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
+    {
+      // Attach grid to merged triangulation
+      attach_grid_to_triangulation(triangulation, mesh_parameters);
+
+      // Check number of faces at the rotor-stator interface
+      for (const auto &face : triangulation.active_face_iterators())
+        {
+          if (face->at_boundary())
+            {
+              if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
+                n_faces_rotor_interface++;
+              if (face->boundary_id() == mortar_parameters.stator_boundary_id)
+                n_faces_stator_interface++;
+            }
+        }
+
+      // Gather all the manifold ids within a set
+      std::set<int> manifold_ids;
+      for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
+        manifold_ids.insert(manifolds_parameters.id[i]);
+
+      // Reset all the manifolds manually and force them to zero
+      triangulation.reset_all_manifolds();
+
+      // Set manifolds
+      if (manifolds_parameters.size > 0)
+        {
+          for (const auto &face : triangulation.active_face_iterators())
+            {
+              if (face->at_boundary() &&
+                  manifold_ids.find(face->boundary_id()) != manifold_ids.end())
+                face->set_all_manifold_ids(face->boundary_id());
+            }
+        }
+
+      // Attach manifolds to rotor-stator triangulation
+      attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
+    }
+  else
+    throw std::runtime_error(
+      "Unsupported mesh type - mesh will not be created");
 
   AssertThrow(
     n_faces_rotor_interface == n_faces_stator_interface,
@@ -504,37 +586,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       " is different from the number of faces at the stator interface ID #" +
       std::to_string(mortar_parameters.stator_boundary_id) + "."));
 
-  // Store rotor manifolds in shifted IDs #
-  for (unsigned int m = 0; m < rotor_temp_tria.get_manifold_ids().size(); m++)
-    {
-      unsigned int temp = rotor_temp_tria.get_manifold_ids()[m];
-      if (temp != numbers::flat_manifold_id)
-        rotor_temp_tria.set_manifold(m + stator_ids_no_flat,
-                                     rotor_temp_tria.get_manifold(m));
-    }
-
-  // Merge triangulations
-  GridGenerator::merge_triangulations(
-    stator_temp_tria, rotor_temp_tria, triangulation, 0.0, true, true);
-
-  // TODO
   // Setup boundary conditions
-  // setup_periodic_boundary_conditions(triangulation, boundary_conditions);
-
-  // Attach manifolds to merged triangulation
-  unsigned int n = 0;
-  for (unsigned int i = 0; i < stator_ids_no_flat; i++)
-    {
-      triangulation.set_manifold(n, stator_temp_tria.get_manifold(i));
-      n++;
-    }
-  for (unsigned int j = stator_ids_no_flat;
-       j < stator_ids_no_flat + rotor_ids_no_flat;
-       j++)
-    {
-      triangulation.set_manifold(n, rotor_temp_tria.get_manifold(j));
-      n++;
-    }
+  setup_periodic_boundary_conditions(triangulation, boundary_conditions);
 
   // Initial mesh refinement
   if (mesh_parameters.simplex)
@@ -612,13 +665,17 @@ read_mesh_and_manifolds(
 
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
-  parallel::DistributedTriangulationBase<2> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
-  const bool                                &restart,
-  const Parameters::Mortar<2>               &mortar_parameters);
+  parallel::DistributedTriangulationBase<2>    &triangulation,
+  const Parameters::Mesh                       &mesh_parameters,
+  const Parameters::Manifolds                  &manifolds_parameters,
+  const bool                                   &restart,
+  const BoundaryConditions::BoundaryConditions &boundary_conditions,
+  const Parameters::Mortar<2>                  &mortar_parameters);
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
-  parallel::DistributedTriangulationBase<3> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
-  const bool                                &restart,
-  const Parameters::Mortar<3>               &mortar_parameters);
+  parallel::DistributedTriangulationBase<3>    &triangulation,
+  const Parameters::Mesh                       &mesh_parameters,
+  const Parameters::Manifolds                  &manifolds_parameters,
+  const bool                                   &restart,
+  const BoundaryConditions::BoundaryConditions &boundary_conditions,
+  const Parameters::Mortar<3>                  &mortar_parameters);
