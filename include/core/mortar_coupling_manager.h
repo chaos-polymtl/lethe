@@ -625,11 +625,10 @@ compute_n_subdivisions_and_radius(
   return {n_subdivisions, radius};
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 class CouplingOperatorBase
 {
 public:
-  using DataType   = DataType_;
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
   CouplingOperatorBase(const Mapping<dim>              &mapping,
@@ -731,31 +730,84 @@ protected:
   local_evaluate(const Vector<Number> &buffer,
                  const unsigned int    ptr_q,
                  const unsigned int    q_stride,
-                 DataType             *all_value_m) const = 0;
+                 Number               *all_value_m) const = 0;
 
   virtual void
   local_integrate(Vector<Number>    &buffer,
                   const unsigned int ptr_q,
                   const unsigned int q_stride,
-                  DataType          *all_value_m,
-                  DataType          *all_value_p) const = 0;
+                  Number            *all_value_m,
+                  Number            *all_value_p) const = 0;
+};
+
+
+
+template <typename T>
+class BufferRW
+{
+public:
+  BufferRW(T *ptr, const unsigned int offset)
+    : ptr(ptr ? (ptr + offset) : nullptr)
+  {}
+
+  void
+  write(const T &in)
+  {
+    ptr[0] = in;
+    ptr += 1;
+  }
+
+  template <int dim>
+  void
+  write(const Tensor<1, dim, T> &in)
+  {
+    for (unsigned int i = 0; i < dim; ++i)
+      ptr[i] = in[i];
+
+    ptr += dim;
+  }
+
+  template <typename T0>
+  T0
+  read() const
+  {
+    T0 result = {};
+
+    if (ptr)
+      read(result);
+
+    return result;
+  }
+
+private:
+  mutable T *ptr;
+
+  template <int dim>
+  void
+  read(Tensor<1, dim, T> &out) const
+  {
+    for (unsigned int i = 0; i < dim; ++i)
+      out[i] = ptr[i];
+
+    ptr += dim;
+  }
+
+  void
+  read(T &out) const
+  {
+    out = ptr[0];
+    ptr += 1;
+  }
 };
 
 
 
 template <int dim, int n_components, typename Number>
-class CouplingOperator
-  : public CouplingOperatorBase<
-      dim,
-      Number,
-      typename FEPointEvaluation<n_components, dim, dim, Number>::value_type>
+class CouplingOperator : public CouplingOperatorBase<dim, Number>
 {
 public:
   using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
-  using DataType          = typename ::CouplingOperatorBase<
-    dim,
-    Number,
-    typename FEPointIntegrator::value_type>::DataType;
+  using value_type        = typename FEPointIntegrator::value_type;
 
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
@@ -769,14 +821,14 @@ public:
                    const double                     sip_factor = 1.0,
                    const unsigned int first_selected_component = 0,
                    const double       penalty_factor_grad      = 1.0)
-    : CouplingOperatorBase<dim, Number, typename FEPointIntegrator::value_type>(
+    : CouplingOperatorBase<dim, Number>(
         mapping,
         dof_handler,
         constraints,
         quadrature,
         n_subdivisions,
-        n_components,
-        2,
+        1,
+        2 * n_components,
         radius,
         rotate_pi,
         bid_0,
@@ -809,14 +861,14 @@ public:
                    const Parameters::Mortar<dim>   &mortar_parameters,
                    const unsigned int first_selected_component = 0,
                    const double       penalty_factor_grad      = 1.0)
-    : CouplingOperatorBase<dim, Number, typename FEPointIntegrator::value_type>(
+    : CouplingOperatorBase<dim, Number>(
         mapping,
         dof_handler,
         constraints,
         quadrature,
         compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first,
-        n_components,
-        2,
+        1,
+        2 * n_components,
         compute_n_subdivisions_and_radius(dof_handler, mortar_parameters)
           .second,
         mortar_parameters.rotor_mesh->rotation_angle,
@@ -860,7 +912,7 @@ public:
   local_evaluate(const Vector<Number> &buffer,
                  const unsigned int    ptr_q,
                  const unsigned int    q_stride,
-                 DataType             *all_value_m) const override
+                 Number               *all_value_m) const override
   {
     this->phi_m.evaluate(buffer,
                          EvaluationFlags::values | EvaluationFlags::gradients);
@@ -873,8 +925,10 @@ public:
         const auto value_m    = this->phi_m.get_value(q);
         const auto gradient_m = contract(this->phi_m.get_gradient(q), normal);
 
-        all_value_m[q * 2 * q_stride + 0] = value_m;
-        all_value_m[q * 2 * q_stride + 1] = gradient_m;
+        BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
+
+        buffer_m.write(value_m);
+        buffer_m.write(gradient_m);
       }
   }
 
@@ -882,21 +936,21 @@ public:
   local_integrate(Vector<Number>    &buffer,
                   const unsigned int ptr_q,
                   const unsigned int q_stride,
-                  DataType          *all_value_m,
-                  DataType          *all_value_p) const override
+                  Number            *all_value_m,
+                  Number            *all_value_p) const override
   {
     for (const auto q : this->phi_m.quadrature_point_indices())
       {
         const unsigned int q_index = ptr_q + q;
 
-        const auto value_m =
-          all_value_m ? all_value_m[q * 2 * q_stride + 0] : DataType();
-        const auto value_p =
-          all_value_p ? all_value_p[q * 2 * q_stride + 0] : DataType();
-        const auto normal_gradient_m =
-          all_value_m ? all_value_m[q * 2 * q_stride + 1] : DataType();
-        const auto normal_gradient_p =
-          all_value_p ? all_value_p[q * 2 * q_stride + 1] : DataType();
+        BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
+        BufferRW<Number> buffer_p(all_value_p, q * 2 * n_components * q_stride);
+
+        const auto value_m           = buffer_m.template read<value_type>();
+        const auto value_p           = buffer_p.template read<value_type>();
+        const auto normal_gradient_m = buffer_m.template read<value_type>();
+        const auto normal_gradient_p = buffer_p.template read<value_type>();
+
         const auto JxW               = this->all_weights[q_index];
         const auto penalty_parameter = this->all_penalty_parameter[q_index];
         const auto normal            = this->all_normals[q_index];
@@ -928,20 +982,13 @@ public:
 
 
 template <int dim, typename Number>
-class CouplingOperatorStokes
-  : public CouplingOperatorBase<
-      dim,
-      Number,
-      typename FEPointEvaluation<dim, dim, dim, Number>::value_type>
+class CouplingOperatorStokes : public CouplingOperatorBase<dim, Number>
 {
 public:
   using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
   using FEPointIntegratorP = FEPointEvaluation<1, dim, dim, Number>;
 
-  using DataType = typename ::CouplingOperatorBase<
-    dim,
-    Number,
-    typename FEPointIntegratorU::value_type>::DataType;
+  using u_value_type = typename FEPointIntegratorU::value_type;
 
   CouplingOperatorStokes(const Mapping<dim>              &mapping,
                          const DoFHandler<dim>           &dof_handler,
@@ -955,23 +1002,21 @@ public:
                          const double                     sip_factor = 1.0,
                          const bool do_pressure_gradient_term        = true,
                          const bool do_velocity_divergence_term      = true)
-    : CouplingOperatorBase<dim,
-                           Number,
-                           typename FEPointIntegratorU::value_type>(
-        mapping,
-        dof_handler,
-        constraints,
-        quadrature,
-        n_subdivisions,
-        dim,
-        4,
-        radius,
-        rotate_pi,
-        bid_0,
-        bid_1,
-        sip_factor,
-        get_relevant_dof_indices(dof_handler.get_fe()),
-        0.0 /*TODO*/)
+    : CouplingOperatorBase<dim, Number>(mapping,
+                                        dof_handler,
+                                        constraints,
+                                        quadrature,
+                                        n_subdivisions,
+                                        1,
+                                        4 * dim,
+                                        radius,
+                                        rotate_pi,
+                                        bid_0,
+                                        bid_1,
+                                        sip_factor,
+                                        get_relevant_dof_indices(
+                                          dof_handler.get_fe()),
+                                        0.0 /*TODO*/)
     , fe_sub_u(dof_handler.get_fe().base_element(
                  dof_handler.get_fe().component_to_base_index(0).first),
                dim)
@@ -1014,7 +1059,7 @@ public:
   local_evaluate(const Vector<Number> &buffer,
                  const unsigned int    ptr_q,
                  const unsigned int    q_stride,
-                 DataType             *all_value_m) const override
+                 Number               *all_value_m) const override
   {
     AssertDimension(buffer.size(),
                     fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
@@ -1033,15 +1078,18 @@ public:
       {
         const unsigned int q_index = ptr_q + q;
 
-        const auto normal     = this->all_normals[q_index];
+        const auto normal = this->all_normals[q_index];
+
         const auto value_m    = this->phi_u_m.get_value(q);
         const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
         const auto p_value_m  = this->phi_p_m.get_value(q) * normal;
 
-        all_value_m[q * 4 * q_stride + 0] = value_m;
-        all_value_m[q * 4 * q_stride + 1] = gradient_m;
-        all_value_m[q * 4 * q_stride + 2] = p_value_m;
-        all_value_m[q * 4 * q_stride + 3] = normal;
+        BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+
+        buffer_m.write(value_m);
+        buffer_m.write(gradient_m);
+        buffer_m.write(p_value_m);
+        buffer_m.write(normal);
       }
   }
 
@@ -1049,25 +1097,22 @@ public:
   local_integrate(Vector<Number>    &buffer,
                   const unsigned int ptr_q,
                   const unsigned int q_stride,
-                  DataType          *all_value_m,
-                  DataType          *all_value_p) const override
+                  Number            *all_value_m,
+                  Number            *all_value_p) const override
   {
     for (const auto q : this->phi_u_m.quadrature_point_indices())
       {
         const unsigned int q_index = ptr_q + q;
 
-        const auto value_m =
-          all_value_m ? all_value_m[q * 4 * q_stride + 0] : DataType();
-        const auto value_p =
-          all_value_p ? all_value_p[q * 4 * q_stride + 0] : DataType();
-        const auto normal_gradient_m =
-          all_value_m ? all_value_m[q * 4 * q_stride + 1] : DataType();
-        const auto normal_gradient_p =
-          all_value_p ? all_value_p[q * 4 * q_stride + 1] : DataType();
-        const auto normal_p_value_m =
-          all_value_m ? all_value_m[q * 4 * q_stride + 2] : DataType();
-        const auto normal_p_value_p =
-          all_value_p ? all_value_p[q * 4 * q_stride + 2] : DataType();
+        BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+        BufferRW<Number> buffer_p(all_value_p, q * 4 * dim * q_stride);
+
+        const auto value_m           = buffer_m.template read<u_value_type>();
+        const auto value_p           = buffer_p.template read<u_value_type>();
+        const auto normal_gradient_m = buffer_m.template read<u_value_type>();
+        const auto normal_gradient_p = buffer_p.template read<u_value_type>();
+        const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
+        const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
 
         const auto JxW               = this->all_weights[q_index];
         const auto penalty_parameter = this->all_penalty_parameter[q_index];
@@ -1149,8 +1194,8 @@ public:
 
 
 
-template <int dim, typename Number, typename DataType_>
-CouplingOperatorBase<dim, Number, DataType_>::CouplingOperatorBase(
+template <int dim, typename Number>
+CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
   const Mapping<dim>              &mapping,
   const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<Number> &constraints,
@@ -1395,25 +1440,25 @@ CouplingOperatorBase<dim, Number, DataType_>::CouplingOperatorBase(
   }
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 const AffineConstraints<Number> &
-CouplingOperatorBase<dim, Number, DataType_>::get_affine_constraints() const
+CouplingOperatorBase<dim, Number>::get_affine_constraints() const
 {
   return constraints_extended;
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 Number
-CouplingOperatorBase<dim, Number, DataType_>::compute_penalty_factor(
+CouplingOperatorBase<dim, Number>::compute_penalty_factor(
   const unsigned int degree,
   const Number       factor) const
 {
   return factor * (degree + 1.0) * (degree + 1.0);
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 Number
-CouplingOperatorBase<dim, Number, DataType_>::compute_penalty_parameter(
+CouplingOperatorBase<dim, Number>::compute_penalty_parameter(
   const typename Triangulation<dim>::cell_iterator &cell) const
 {
   const unsigned int degree = dof_handler.get_fe().degree;
@@ -1450,9 +1495,9 @@ CouplingOperatorBase<dim, Number, DataType_>::compute_penalty_parameter(
   return surface_area / volume;
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 double
-CouplingOperatorBase<dim, Number, DataType_>::get_rad(
+CouplingOperatorBase<dim, Number>::get_rad(
   const typename Triangulation<dim>::cell_iterator &cell,
   const typename Triangulation<dim>::face_iterator &face) const
 {
@@ -1464,9 +1509,9 @@ CouplingOperatorBase<dim, Number, DataType_>::get_rad(
       MappingQ1<dim>().transform_real_to_unit_cell(cell, face->center())));
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 std::vector<types::global_dof_index>
-CouplingOperatorBase<dim, Number, DataType_>::get_dof_indices(
+CouplingOperatorBase<dim, Number>::get_dof_indices(
   const typename DoFHandler<dim>::active_cell_iterator &cell) const
 {
   std::vector<types::global_dof_index> local_dofs_all(
@@ -1481,19 +1526,18 @@ CouplingOperatorBase<dim, Number, DataType_>::get_dof_indices(
   return local_dofs;
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number, DataType_>::vmult_add(
-  VectorType       &dst,
-  const VectorType &src) const
+CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
+                                             const VectorType &src) const
 {
   // 1) evaluate
   unsigned int ptr_q = 0;
 
   Vector<Number> buffer;
 
-  std::vector<DataType> all_value_m(all_normals.size() * N);
-  std::vector<DataType> all_value_p(all_normals.size() * N);
+  std::vector<Number> all_value_m(all_normals.size() * N);
+  std::vector<Number> all_value_p(all_normals.size() * N);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -1557,15 +1601,15 @@ CouplingOperatorBase<dim, Number, DataType_>::vmult_add(
   dst.compress(VectorOperation::add);
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number, DataType_>::add_diagonal_entries(
+CouplingOperatorBase<dim, Number>::add_diagonal_entries(
   VectorType &diagonal) const
 {
   unsigned int ptr_q = 0;
 
-  Vector<Number>        buffer, diagonal_local;
-  std::vector<DataType> all_value_m, all_value_p;
+  Vector<Number>      buffer, diagonal_local;
+  std::vector<Number> all_value_m, all_value_p;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -1609,9 +1653,9 @@ CouplingOperatorBase<dim, Number, DataType_>::add_diagonal_entries(
   diagonal.compress(VectorOperation::add);
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number, DataType_>::add_sparsity_pattern_entries(
+CouplingOperatorBase<dim, Number>::add_sparsity_pattern_entries(
   SparsityPatternBase &dsp) const
 {
   const auto constraints = &constraints_extended;
@@ -1630,15 +1674,15 @@ CouplingOperatorBase<dim, Number, DataType_>::add_sparsity_pattern_entries(
     }
 }
 
-template <int dim, typename Number, typename DataType_>
+template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number, DataType_>::add_system_matrix_entries(
+CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
   TrilinosWrappers::SparseMatrix &system_matrix) const
 {
   const auto constraints = &constraints_extended;
 
-  std::vector<DataType> all_value_m(all_normals.size() * n_dofs_per_cell * N);
-  std::vector<DataType> all_value_p(all_normals.size() * n_dofs_per_cell * N);
+  std::vector<Number> all_value_m(all_normals.size() * n_dofs_per_cell * N);
+  std::vector<Number> all_value_p(all_normals.size() * n_dofs_per_cell * N);
 
   unsigned int ptr_q = 0;
 

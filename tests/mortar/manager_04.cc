@@ -39,19 +39,11 @@ using namespace dealii;
 
 
 template <int dim, typename Number>
-class MyCouplingOperator
-  : public CouplingOperatorBase<
-      dim,
-      Number,
-      typename FEPointEvaluation<1, dim, dim, Number>::value_type>
+class MyCouplingOperator : public CouplingOperatorBase<dim, Number>
 {
 public:
   using FEPointIntegrator = FEPointEvaluation<1, dim, dim, Number>;
-
-  using DataType = typename ::CouplingOperatorBase<
-    dim,
-    Number,
-    typename FEPointIntegrator::value_type>::DataType;
+  using value_type        = typename FEPointIntegrator::value_type;
 
   MyCouplingOperator(const Mapping<dim>              &mapping,
                      const DoFHandler<dim>           &dof_handler,
@@ -63,21 +55,21 @@ public:
                      const unsigned int               bid_0,
                      const unsigned int               bid_1,
                      const double                     sip_factor = 1.0)
-    : CouplingOperatorBase<dim, Number, typename FEPointIntegrator::value_type>(
-        mapping,
-        dof_handler,
-        constraints,
-        quadrature,
-        n_subdivisions,
-        1 /*n components*/,
-        1 /*n data points*/,
-        radius,
-        rotate_pi,
-        bid_0,
-        bid_1,
-        sip_factor,
-        get_relevant_dof_indices(dof_handler.get_fe()),
-        0.0 /*TODO*/)
+    : CouplingOperatorBase<dim, Number>(mapping,
+                                        dof_handler,
+                                        constraints,
+                                        quadrature,
+                                        n_subdivisions,
+                                        1 /*n components*/,
+                                        1 /*n data points*/,
+                                        radius,
+                                        rotate_pi,
+                                        bid_0,
+                                        bid_1,
+                                        sip_factor,
+                                        get_relevant_dof_indices(
+                                          dof_handler.get_fe()),
+                                        0.0 /*TODO*/)
     , fe_sub(dof_handler.get_fe().base_element(
                dof_handler.get_fe().component_to_base_index(0).first),
              1)
@@ -108,7 +100,7 @@ public:
   local_evaluate(const Vector<Number> &buffer,
                  const unsigned int    ptr_q,
                  const unsigned int    q_stride,
-                 DataType             *all_value_m) const override
+                 Number               *all_value_m) const override
   {
     (void)ptr_q;
 
@@ -118,7 +110,9 @@ public:
       {
         const auto value_m = this->phi_m.get_value(q);
 
-        all_value_m[q * 1 * q_stride + 0] = value_m;
+        BufferRW<Number> buffer_m(all_value_m, q * 1 * q_stride);
+
+        buffer_m.write(value_m);
       }
   }
 
@@ -126,18 +120,19 @@ public:
   local_integrate(Vector<Number>    &buffer,
                   const unsigned int ptr_q,
                   const unsigned int q_stride,
-                  DataType          *all_value_m,
-                  DataType          *all_value_p) const override
+                  Number            *all_value_m,
+                  Number            *all_value_p) const override
   {
     for (const auto q : this->phi_m.quadrature_point_indices())
       {
         const unsigned int q_index = ptr_q + q;
 
-        const auto value_m =
-          all_value_m ? all_value_m[q * 1 * q_stride + 0] : DataType();
-        const auto value_p =
-          all_value_p ? all_value_p[q * 1 * q_stride + 0] : DataType();
-        const auto JxW = this->all_weights[q_index];
+        BufferRW<Number> buffer_m(all_value_m, q * 1 * q_stride);
+        BufferRW<Number> buffer_p(all_value_p, q * 1 * q_stride);
+
+        const auto value_m = buffer_m.template read<value_type>();
+        const auto value_p = buffer_p.template read<value_type>();
+        const auto JxW     = this->all_weights[q_index];
 
         phi_m.submit_value((value_m - value_p) * JxW, q);
       }
