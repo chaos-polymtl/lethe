@@ -63,7 +63,8 @@ class DirectSteadyNavierStokes
 {
 public:
   DirectSteadyNavierStokes(const unsigned int degreeVelocity,
-                           const unsigned int degreePressure);
+                           const unsigned int degreePressure,
+                          const unsigned int degreeTurbulence);
   ~DirectSteadyNavierStokes();
   void
   runMMS();
@@ -76,33 +77,63 @@ public:
   std::vector<Tensor<1, dim>>
   get_velocity()
   {
-    return present_solution.block(0);
+    std::vector<Tensor<1, dim>> velocities;
+    QGauss<dim> quadrature_formula(degreeIntegration_ + 2);
+    FEValues<dim> fe_values(fe,
+                            quadrature_formula,
+                            update_values | update_quadrature_points);
+    typename DoFHandler<dim>::active_cell_iterator cell = dof_handler.begin_active(),
+                                                   endc = dof_handler.end();
+    for (; cell != endc; ++cell)
+    {
+      fe_values.reinit(cell);
+      std::vector<Tensor<1, dim>> cell_velocities(fe_values.n_quadrature_points);
+      fe_values[FEValuesExtractors::Vector(0)].get_function_values(present_solution, cell_velocities);
+      velocities.insert(velocities.end(), cell_velocities.begin(), cell_velocities.end());
+    }
+    return velocities;
   }
 
   std::vector<Tensor<2, dim>>
   get_velocity_gradient()
   {
-    FEValuesExtractors::Vector  velocities(0);
-    std::vector<Tensor<2, dim>> velocity_gradient;
-    velocity_gradient.resize(triangulation.n_active_cells());
+    std::vector<Tensor<2, dim>> velocity_gradients;
+    QGauss<dim> quadrature_formula(degreeIntegration_ + 2);
     FEValues<dim> fe_values(fe,
-                            QGauss<dim>(degreeIntegration_ + 2),
+                            quadrature_formula,
                             update_gradients | update_quadrature_points);
-    for (auto cell : dof_handler.active_cell_iterators())
-      {
-        fe_values.reinit(cell);
-        std::vector<Tensor<1, dim>> present_velocity_values(
-          fe_values.get_quadrature_points().size());
-        fe_values[velocities].get_function_values(present_solution,
-                                                  present_velocity_values);
-        for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
-          {
-            velocity_gradient[q] =
-              fe_values[velocities].gradient(q) * present_velocity_values[q];
-          }
-      }
-    return velocity_gradient;
+    typename DoFHandler<dim>::active_cell_iterator cell = dof_handler.begin_active(),
+                                                   endc = dof_handler.end();
+    for (; cell != endc; ++cell)
+    {
+      fe_values.reinit(cell);
+      std::vector<Tensor<2, dim>> cell_gradients(fe_values.n_quadrature_points);
+      fe_values[FEValuesExtractors::Vector(0)].get_function_gradients(present_solution, cell_gradients);
+      velocity_gradients.insert(velocity_gradients.end(), cell_gradients.begin(), cell_gradients.end());
+    }
+    return velocity_gradients;
   }
+
+  std::vector<double>
+  get_turbulent_k()
+  {
+    std::vector<double> k_values;
+    QGauss<dim> quadrature_formula(degreeIntegration_);
+    FEValues<dim> fe_values(fe_turbulence,
+                            quadrature_formula,
+                            update_values | update_quadrature_points);
+    typename DoFHandler<dim>::active_cell_iterator cell = dof_handler_turbulence.begin_active(),
+                                                   endc = dof_handler_turbulence.end();
+    for (; cell != endc; ++cell)
+    {
+      fe_values.reinit(cell);
+      std::vector<double> cell_k_values(fe_values.n_quadrature_points);
+      fe_values.get_function_values(present_solution_turbulence, cell_k_values);
+      k_values.insert(k_values.end(), cell_k_values.begin(), cell_k_values.end());
+    }
+    return k_values;
+  }
+  bool add_turbulence_to_ns = false;
 
 private:
   void
@@ -184,7 +215,10 @@ private:
   const bool            stabilized_     = false;
   const bool            iterative_      = false;
   std::vector<double>   L2ErrorU_;
-  const int             initialSize_ = 4;
+  const int             initialSize_ = 2;
+  const double          C_viscosity = 0.09;
+  const double          sigma_viscosity = 1;
+
 };
 
 
@@ -192,12 +226,13 @@ private:
 template <int dim>
 DirectSteadyNavierStokes<dim>::DirectSteadyNavierStokes(
   const unsigned int degreeVelocity,
-  const unsigned int degreePressure)
+  const unsigned int degreePressure,
+  const unsigned int degreeTurbulence)
   : viscosity_(1)
   , degreeIntegration_(degreeVelocity)
   , fe(FE_Q<dim>(degreeVelocity), dim, FE_Q<dim>(degreePressure), 1)
   , dof_handler(triangulation)
-  , fe_turbulence(1)
+  , fe_turbulence(degreeTurbulence)
   , dof_handler_turbulence(triangulation)
 {}
 
@@ -214,7 +249,7 @@ template <int dim>
 void
 DirectSteadyNavierStokes<dim>::make_cube_grid(int refinementLevel)
 {
-  GridGenerator::hyper_cube(triangulation, -1, 1);
+  GridGenerator::hyper_cube(triangulation, -1, 1, true);
   triangulation.refine_global(refinementLevel);
 }
 
@@ -248,12 +283,21 @@ DirectSteadyNavierStokes<dim>::setup_dofs()
     nonzero_constraints.clear();
 
     DoFTools::make_hanging_node_constraints(dof_handler, nonzero_constraints);
-    VectorTools::interpolate_boundary_values(
-      dof_handler,
-      0,
-      dealii::Functions::ZeroFunction<dim>(dim + 1),
-      nonzero_constraints,
-      fe.component_mask(velocities));
+    for (unsigned int i = 0; i < dim; ++i)
+      {
+        VectorTools::interpolate_boundary_values(
+          dof_handler,
+          i,
+          dealii::Functions::ZeroFunction<dim>(dim + 1),
+          nonzero_constraints,
+          fe.component_mask(velocities));
+      }
+    //   DoFTools::make_hanging_node_constraints(dof_handler_turbulence, nonzero_constraints);
+    // VectorTools::interpolate_boundary_values(
+    //   dof_handler_turbulence,
+    //   0,
+    //   dealii::Functions::ZeroFunction<dim>(1),
+    //   nonzero_constraints);
 
     if (simulationCase_ == SimulationCases::TaylorCouette)
       {
@@ -269,12 +313,21 @@ DirectSteadyNavierStokes<dim>::setup_dofs()
   {
     zero_constraints.clear();
     DoFTools::make_hanging_node_constraints(dof_handler, zero_constraints);
-    VectorTools::interpolate_boundary_values(
-      dof_handler,
-      0,
-      dealii::Functions::ZeroFunction<dim>(dim + 1),
-      zero_constraints,
-      fe.component_mask(velocities));
+    for (unsigned int i = 0; i < dim; ++i)
+      {
+        VectorTools::interpolate_boundary_values(
+          dof_handler,
+          i,
+          dealii::Functions::ZeroFunction<dim>(dim + 1),
+          zero_constraints,
+          fe.component_mask(velocities));
+      }
+    //   DoFTools::make_hanging_node_constraints(dof_handler_turbulence, zero_constraints);
+    // VectorTools::interpolate_boundary_values(
+    //   dof_handler_turbulence,
+    //   0,
+    //   dealii::Functions::ZeroFunction<dim>(1),
+    //   zero_constraints);
 
 
     if (simulationCase_ == SimulationCases::TaylorCouette)
@@ -324,6 +377,7 @@ DirectSteadyNavierStokes<dim>::initialize_system_turbulent_model()
   present_solution_turbulence.reinit(dof_handler_turbulence.n_dofs());
   newton_update_turbulence.reinit(dof_handler_turbulence.n_dofs());
   system_rhs_turbulence.reinit(dof_handler_turbulence.n_dofs());
+  evaluation_point_turbulence.reinit(dof_handler_turbulence.n_dofs());
 }
 
 template <int dim>
@@ -358,6 +412,18 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
                                                    dof_handler.begin_active(),
                                                  endc = dof_handler.end();
 
+
+  std::vector<double> turbulent_viscosity(n_q_points, 0.0);
+
+  if (add_turbulence_to_ns)
+  {
+  const auto present_k = get_turbulent_k();
+  for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          // Calculate turbulent viscosity from the turbulent k
+          turbulent_viscosity[q] = C_viscosity * present_k[q] * present_k[q];
+        }
+  }
 
   for (; cell != endc; ++cell)
     {
@@ -395,6 +461,10 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
                          grad_phi_u[j] * present_velocity_values[q] * phi_u[i] -
                          div_phi_u[i] * phi_p[j] - phi_p[i] * div_phi_u[j]) *
                         fe_values.JxW(q);
+                      // Add the contribution of the turbulent viscosity
+                          local_matrix(i, j) -= turbulent_viscosity[q] *
+                                            scalar_product(grad_phi_u[j], grad_phi_u[i]) *
+                                            fe_values.JxW(q);
                     }
                 }
               const unsigned int component_i =
@@ -409,6 +479,13 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
                  present_pressure_values[q] * div_phi_u[i] +
                  present_velocity_divergence * phi_p[i]) *
                 fe_values.JxW(q);
+
+              // Add the contribution of the turbulent viscosity
+              local_rhs(i) -=
+                turbulent_viscosity[q] *
+                   scalar_product(present_velocity_gradients[q], grad_phi_u[i]) *
+                fe_values.JxW(q);
+              
 
               local_rhs(i) += fe_values.shape_value(i, q) *
                               rhs_force[q](component_i) * fe_values.JxW(q);
@@ -463,10 +540,10 @@ DirectSteadyNavierStokes<dim>::assemble_turbulent_model(
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<double> local_turbulence_values(n_q_points);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  std::vector<Tensor<1, dim>>          present_k_values(n_q_points);
-  std::vector<Tensor<2, dim>>          present_k_gradients(n_q_points);
+  std::vector<double>          present_k_values(n_q_points);
+  std::vector<Tensor<1, dim>>          present_k_gradients(n_q_points);
   std::vector<double>                  phi_k(dofs_per_cell);
-  std::vector<double>                  grad_phi_k(dofs_per_cell);
+  std::vector<Tensor<1, dim>>          grad_phi_k(dofs_per_cell);
 
   typename DoFHandler<dim>::active_cell_iterator cell = dof_handler_turbulence
                                                           .begin_active(),
@@ -483,8 +560,9 @@ DirectSteadyNavierStokes<dim>::assemble_turbulent_model(
       fe_values.reinit(cell);
       local_matrix = 0.;
       local_rhs    = 0.;
-      fe_values.get_function_values(evaluation_point, present_k_values);
-      fe_values.get_function_gradients(evaluation_point, present_k_gradients);
+      fe_values.get_function_values(evaluation_point_turbulence,
+                                                present_k_values);
+      fe_values.get_function_gradients(evaluation_point_turbulence, present_k_gradients);
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
           const auto shear_rate =
@@ -494,19 +572,19 @@ DirectSteadyNavierStokes<dim>::assemble_turbulent_model(
             scalar_product(shear_rate, shear_rate);
           for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
-              grad_phi_k[k] = fe_values.gradient(k, q);
-              phi_k[k]      = fe_values.value(k, q);
+              grad_phi_k[k] = fe_values.shape_grad(k, q);
+              phi_k[k]      = fe_values.shape_value(k, q);
             }
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
               for (unsigned int j = 0; j < dofs_per_cell; ++j)
                 {
                   local_matrix(i, j) +=
-                    (present_velocity[q] * grad_phi_k[j] * phi_k[i] +
+                    (scalar_product(present_velocity[q], grad_phi_k[j]) * phi_k[i] +
                      2. * C_mu / sigma_k * phi_k[j] *
-                       scalar_product(present_k_gradients[q], grad_phi_k[i]) +
+                       present_k_gradients[q] * grad_phi_k[i] +
                      C_mu / sigma_k * present_k_values[q] *
-                       present_k_values[q] * grad_phi_k[j] * phi_k[i] -
+                       present_k_values[q] * grad_phi_k[j] * grad_phi_k[i] -
                      2. * C_mu * phi_k[j] * shear_rate_squared * phi_k[i]) *
                     fe_values.JxW(q);
                 }
@@ -520,28 +598,6 @@ DirectSteadyNavierStokes<dim>::assemble_turbulent_model(
                 fe_values.JxW(q);
             }
         }
-      for (const auto &face : cell->face_iterators())
-        {
-          if (face->at_boundary() &&
-              face->boundary_id() == 0) // Adjust boundary ID as needed
-            {
-              fe_face_values.reinit(cell, face);
-              for (unsigned int q = 0; q < n_face_q_points; ++q)
-                {
-                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                    {
-                      if (fe.system_to_component_index(i).first ==
-                          dim + 1) // k_turbulence component
-                        {
-                          local_rhs(i) += 1.0 *
-                                          fe_face_values.shape_value(i, q) *
-                                          fe_face_values.JxW(q);
-                          // Zero-penetration Neumann condition
-                        }
-                    }
-                }
-            }
-        }
 
       cell->get_dof_indices(local_dof_indices);
       for (const unsigned int i : fe_values.dof_indices())
@@ -549,6 +605,23 @@ DirectSteadyNavierStokes<dim>::assemble_turbulent_model(
           system_matrix_turbulence.add(local_dof_indices[i],
                                        local_dof_indices[j],
                                        local_matrix(i, j));
+
+      // const AffineConstraints<double> &constraints_used =
+      //   initial_step ? nonzero_constraints : zero_constraints;
+      // if (assemble_matrix)
+      //   {
+      //     constraints_used.distribute_local_to_global(local_matrix,
+      //                                                 local_rhs,
+      //                                                 local_dof_indices,
+      //                                                 system_matrix,
+      //                                                 system_rhs);
+      //   }
+      // else
+      //   {
+      //     constraints_used.distribute_local_to_global(local_rhs,
+      //                                                 local_dof_indices,
+      //                                                 system_rhs);
+      //   }
     }
 }
 
@@ -572,14 +645,14 @@ void
 DirectSteadyNavierStokes<dim>::assemble_turbulent_model_system(
   const bool initial_step)
 {
-  assemble(initial_step, true);
+  assemble_turbulent_model(initial_step, true);
 }
 template <int dim>
 void
 DirectSteadyNavierStokes<dim>::assemble_turbulent_model_rhs(
   const bool initial_step)
 {
-  assemble(initial_step, false);
+  assemble_turbulent_model(initial_step, false);
 }
 
 template <int dim>
@@ -598,12 +671,12 @@ template <int dim>
 void
 DirectSteadyNavierStokes<dim>::solve_turbulent_model(const bool initial_step)
 {
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : zero_constraints;
+  // const AffineConstraints<double> &constraints_used =
+  //   initial_step ? nonzero_constraints : zero_constraints;
   SparseDirectUMFPACK direct;
   direct.initialize(system_matrix_turbulence);
   direct.vmult(newton_update_turbulence, system_rhs_turbulence);
-  constraints_used.distribute(newton_update_turbulence);
+  // constraints_used.distribute(newton_update_turbulence);
 }
 
 template <int dim>
@@ -629,6 +702,7 @@ DirectSteadyNavierStokes<dim>::refine_mesh()
   triangulation.execute_coarsening_and_refinement();
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
+  Vector<double> tmp_turbulence(dof_handler_turbulence.n_dofs());
 
 #if DEAL_II_VERSION_GTE(9, 7, 0)
   solution_transfer.interpolate(tmp);
@@ -638,7 +712,9 @@ DirectSteadyNavierStokes<dim>::refine_mesh()
 
   nonzero_constraints.distribute(tmp);
   initialize_system();
+  initialize_system_turbulent_model();
   present_solution = tmp;
+  present_solution_turbulence = tmp_turbulence;
 }
 
 template <int dim>
@@ -650,6 +726,7 @@ DirectSteadyNavierStokes<dim>::refine_mesh_uniform()
   triangulation.refine_global(1);
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
+  Vector<double> tmp_turbulence(dof_handler_turbulence.n_dofs());
 
 #if DEAL_II_VERSION_GTE(9, 7, 0)
   solution_transfer.interpolate(tmp);
@@ -659,7 +736,9 @@ DirectSteadyNavierStokes<dim>::refine_mesh_uniform()
 
   nonzero_constraints.distribute(tmp);
   initialize_system();
+  initialize_system_turbulent_model();
   present_solution = tmp;
+  present_solution_turbulence = tmp_turbulence;
 }
 
 
@@ -678,6 +757,7 @@ DirectSteadyNavierStokes<dim>::newton_iteration(
     unsigned int outer_iteration = 0;
     last_res                     = 1.0;
     current_res                  = 1.0;
+    std::cout << "\n\nFLUID NEWTON SOLVER:\n" << std::endl;
     while ((first_step || (current_res > tolerance)) &&
            outer_iteration < max_iteration)
       {
@@ -743,6 +823,7 @@ DirectSteadyNavierStokes<dim>::newton_iteration_turbulent_model(
     unsigned int outer_iteration = 0;
     last_res                     = 1.0;
     current_res                  = 1.0;
+    std::cout << "\n\nTURBULENCE NEWTON SOLVER:\n" << std::endl;
     while ((first_step || (current_res > tolerance)) &&
            outer_iteration < max_iteration)
       {
@@ -756,7 +837,7 @@ DirectSteadyNavierStokes<dim>::newton_iteration_turbulent_model(
                       << "  - Residual:  " << current_res << std::endl;
             solve_turbulent_model(first_step);
             present_solution_turbulence = newton_update_turbulence;
-            nonzero_constraints.distribute(present_solution_turbulence);
+            // nonzero_constraints.distribute(present_solution_turbulence);
           }
         else
           {
@@ -768,7 +849,7 @@ DirectSteadyNavierStokes<dim>::newton_iteration_turbulent_model(
                 evaluation_point_turbulence = present_solution_turbulence;
                 evaluation_point_turbulence.add(alpha,
                                                 newton_update_turbulence);
-                nonzero_constraints.distribute(evaluation_point_turbulence);
+                // nonzero_constraints.distribute(evaluation_point_turbulence);
                 assemble_turbulent_model_rhs(first_step);
                 current_res = system_rhs_turbulence.l2_norm();
                 std::cout << "\t\talpha = " << std::setw(6) << alpha
@@ -812,7 +893,18 @@ DirectSteadyNavierStokes<dim>::output_results(const unsigned int cycle) const
                            data_component_interpretation);
   data_out.build_patches(1);
 
+  // DataOut<dim> data_out_turbulence;
+  // data_out_turbulence.attach_dof_handler(dof_handler_turbulence);
+  // data_out_turbulence.add_data_vector(dof_handler_turbulence,
+  //                                     present_solution_turbulence,
+  //                                     "turbulence",
+  //                                     DataComponentInterpretation::component_is_scalar);
+  // data_out_turbulence.build_patches(1);
+  // data_out.merge_patches(data_out_turbulence);
+
   std::string filenamesolution = "solution-";
+  if (add_turbulence_to_ns)
+    filenamesolution += "turbulence-";
   filenamesolution += ('0' + cycle);
   filenamesolution += ".vtk";
 
@@ -923,7 +1015,10 @@ DirectSteadyNavierStokes<dim>::runMMS()
       if (cycle != 0)
         refine_mesh_uniform();
       newton_iteration(1.e-6, 5, true, true);
+      output_results(cycle);
       newton_iteration_turbulent_model(1.e-3, 5, true, true);
+      add_turbulence_to_ns = true;
+      newton_iteration(1.e-6, 5, true, true);
       output_results(cycle);
       calculateL2Error();
     }
@@ -981,7 +1076,7 @@ main()
 {
   try
     {
-      DirectSteadyNavierStokes<2> problem_2d(2, 1);
+      DirectSteadyNavierStokes<2> problem_2d(2, 1, 1);
       //        problem_2d.runCouette();
       problem_2d.runMMS();
     }
