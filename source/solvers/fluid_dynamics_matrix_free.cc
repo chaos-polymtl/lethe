@@ -2413,6 +2413,9 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
         solve_non_linear_system(false);
       this->finish_time_step();
+
+      this->simulation_parameters.physical_properties_manager.set_rheology(
+        original_viscosity_model);
     }
   else if (initial_condition_type == Parameters::InitialConditionType::ramp)
     {
