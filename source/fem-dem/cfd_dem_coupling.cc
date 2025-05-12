@@ -879,7 +879,7 @@ void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
-  particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+  particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
     dem_time_step,
     contact_outcome);
@@ -887,7 +887,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
-      particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+      particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
         contact_outcome);

@@ -159,7 +159,7 @@ test(double coefficient_of_restitution)
       particle_wall_fine_search<dim>(particle_wall_contact_list,
                                      particle_wall_contact_information);
 
-      particle_wall_force_object.calculate_particle_wall_contact_force(
+      particle_wall_force_object.calculate_particle_wall_contact(
         particle_wall_contact_information, dt, contact_outcome);
       integrator_object.integrate(particle_handler,
                                   g,
