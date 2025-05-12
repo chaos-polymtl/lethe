@@ -6,7 +6,7 @@ var searchData=
   ['add_5fdiagonal_5fentries_3',['add_diagonal_entries',['../classCouplingOperatorBase.html#a39bbcecf9090864aac443a9b4b310c14',1,'CouplingOperatorBase']]],
   ['add_5ffluid_5fparticle_5finteraction_5fforce_4',['add_fluid_particle_interaction_force',['../classCFDDEMSolver.html#a7f3c153d5873a0d09a1ec66cbf14e0e9',1,'CFDDEMSolver']]],
   ['add_5ffluid_5fparticle_5finteraction_5ftorque_5',['add_fluid_particle_interaction_torque',['../classCFDDEMSolver.html#a1aee1014f1952cb81984991034dd423c',1,'CFDDEMSolver']]],
-  ['add_5fsparsity_5fpattern_5fentries_6',['add_sparsity_pattern_entries',['../classCouplingOperatorBase.html#a46df6380d2fb346138a39a52e04aa17c',1,'CouplingOperatorBase']]],
+  ['add_5fsparsity_5fpattern_5fentries_6',['add_sparsity_pattern_entries',['../classCouplingOperatorBase.html#a2c764fe33079b51d13898d6aa29c1412',1,'CouplingOperatorBase']]],
   ['add_5fstatistics_5fto_5ftable_5fhandler_7',['add_statistics_to_table_handler',['../utilities_8h.html#a28e3647b49b871d119c8e19d390d6d66',1,'utilities.h']]],
   ['add_5fsystem_5fmatrix_5fentries_8',['add_system_matrix_entries',['../classCouplingOperatorBase.html#a575fe424d48d4b1e92e1c1a0316c60ed',1,'CouplingOperatorBase']]],
   ['add_5ftime_5fstep_9',['add_time_step',['../classSimulationControl.html#a42cbd4f9cfd5ce83560d7179ed269b59',1,'SimulationControl']]],

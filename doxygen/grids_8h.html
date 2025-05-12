@@ -247,9 +247,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a12c5f7ced96095e07e2610117cf726df" id="r_a12c5f7ced96095e07e2610117cf726df"><td class="memTemplParams" colspan="2">template&lt;int dim, int spacedim = dim&gt; </td></tr>
 <tr class="memitem:a12c5f7ced96095e07e2610117cf726df"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="grids_8h.html#a12c5f7ced96095e07e2610117cf726df">read_mesh_and_manifolds</a> (parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const <a class="el" href="structParameters_1_1Mesh.html">Parameters::Mesh</a> &amp;mesh_parameters, const <a class="el" href="classParameters_1_1Manifolds.html">Parameters::Manifolds</a> &amp;manifolds_parameters, const bool &amp;restart, const <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html">BoundaryConditions::BoundaryConditions</a> &amp;boundary_conditions)</td></tr>
 <tr class="separator:a12c5f7ced96095e07e2610117cf726df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b063048946440b0a9ae4d68f4d44e6e" id="r_a9b063048946440b0a9ae4d68f4d44e6e"><td class="memTemplParams" colspan="2">template&lt;int dim, int spacedim = dim&gt; </td></tr>
-<tr class="memitem:a9b063048946440b0a9ae4d68f4d44e6e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="grids_8h.html#a9b063048946440b0a9ae4d68f4d44e6e">read_mesh_and_manifolds_for_stator_and_rotor</a> (parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const <a class="el" href="structParameters_1_1Mesh.html">Parameters::Mesh</a> &amp;mesh_parameters, const bool &amp;restart, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;mortar_parameters)</td></tr>
-<tr class="separator:a9b063048946440b0a9ae4d68f4d44e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2531d415f6bbcee20e4514819b689da6" id="r_a2531d415f6bbcee20e4514819b689da6"><td class="memTemplParams" colspan="2">template&lt;int dim, int spacedim = dim&gt; </td></tr>
+<tr class="memitem:a2531d415f6bbcee20e4514819b689da6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="grids_8h.html#a2531d415f6bbcee20e4514819b689da6">read_mesh_and_manifolds_for_stator_and_rotor</a> (parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const <a class="el" href="structParameters_1_1Mesh.html">Parameters::Mesh</a> &amp;mesh_parameters, const <a class="el" href="classParameters_1_1Manifolds.html">Parameters::Manifolds</a> &amp;manifolds_parameters, const bool &amp;restart, const <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html">BoundaryConditions::BoundaryConditions</a> &amp;boundary_conditions, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:a2531d415f6bbcee20e4514819b689da6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0bc70021b257d066eeef9e6f2a9f77d" id="r_ab0bc70021b257d066eeef9e6f2a9f77d"><td class="memTemplParams" colspan="2">template&lt;int dim, int spacedim = dim&gt; </td></tr>
 <tr class="memitem:ab0bc70021b257d066eeef9e6f2a9f77d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="grids_8h.html#ab0bc70021b257d066eeef9e6f2a9f77d">refine_triangulation_at_boundaries</a> (const std::vector&lt; int &gt; boundary_ids, const unsigned int n_refinement, parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation)</td></tr>
 <tr class="separator:ab0bc70021b257d066eeef9e6f2a9f77d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -357,12 +357,12 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00321">321</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00023">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01399">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864cab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="manifolds_8h_source.html#l00039">Parameters::Manifolds::id</a>, <a class="el" href="parameters_8h_source.html#l01392">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01396">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00102">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01402">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="grids_8cc_source.html#l00293">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l01405">Parameters::Mesh::simplex</a>, <a class="el" href="manifolds_8h_source.html#l00053">Parameters::Manifolds::size</a>, <a class="el" href="parameters_8h_source.html#l01408">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01380">Parameters::Mesh::type</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00023">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01399">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864cab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="manifolds_8h_source.html#l00039">Parameters::Manifolds::id</a>, <a class="el" href="parameters_8h_source.html#l01392">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01396">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00105">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01402">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="grids_8cc_source.html#l00293">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l01405">Parameters::Mesh::simplex</a>, <a class="el" href="manifolds_8h_source.html#l00053">Parameters::Manifolds::size</a>, <a class="el" href="parameters_8h_source.html#l01408">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01380">Parameters::Mesh::type</a>.</p>
 
 </div>
 </div>
-<a id="a9b063048946440b0a9ae4d68f4d44e6e" name="a9b063048946440b0a9ae4d68f4d44e6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b063048946440b0a9ae4d68f4d44e6e">&#9670;&#160;</a></span>read_mesh_and_manifolds_for_stator_and_rotor()</h2>
+<a id="a2531d415f6bbcee20e4514819b689da6" name="a2531d415f6bbcee20e4514819b689da6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2531d415f6bbcee20e4514819b689da6">&#9670;&#160;</a></span>read_mesh_and_manifolds_for_stator_and_rotor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -384,8 +384,20 @@ template&lt;int dim, int spacedim = dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="classParameters_1_1Manifolds.html">Parameters::Manifolds</a> &amp;&#160;</td>
+          <td class="paramname"><em>manifolds_parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const bool &amp;&#160;</td>
           <td class="paramname"><em>restart</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html">BoundaryConditions::BoundaryConditions</a> &amp;&#160;</td>
+          <td class="paramname"><em>boundary_conditions</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -404,18 +416,18 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 <p>Completely set up a mesh and its manifold for rotor-stator domains. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">triangulation</td><td>[stator] The triangulation to which a grid is attached. It will be substituted by the merged rotor-stator triangulation</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">mesh_parameters</td><td>[stator] The mesh parameters used to decide what type of mesh or primitive is used</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">manifolds_parameters</td><td>[stator] The information about the type of manifolds attached to the boundary conditions</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_conditions</td><td>[stator] The information about the boundary conditions id. This is used to set-up the periodicity of the domain</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">mortar</td><td>[rotor] The information about the mortar method control, including the rotor mesh parameters This function currently only works for dealii meshes. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">triangulation</td><td>The triangulation to which a grid is attached. For dealii grids, this is intially the stator triangulation information, which is later substituted by the merged rotor-stator triangulation. For gmsh grids, this already refers to the merged configuration</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mesh_parameters</td><td>The mesh parameters used to decide what type of mesh or primitive is used</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">manifolds_parameters</td><td>The information about the type of manifolds attached to the boundary conditions</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_conditions</td><td>The information about the boundary conditions id. This is used to set-up the periodicity of the domain</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mortar</td><td>The information about the mortar method control, including the rotor mesh parameters </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00399">399</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00023">attach_grid_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01399">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864ca3c4b939087811f328575e358443a5880">Parameters::Mesh::dealii</a>, <a class="el" href="parameters_8h_source.html#l01392">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01396">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00102">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01402">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="parameters_8h_source.html#l01798">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01796">Parameters::Mortar&lt; dim &gt;::rotor_mesh</a>, <a class="el" href="parameters_8h_source.html#l01405">Parameters::Mesh::simplex</a>, <a class="el" href="parameters_8h_source.html#l01800">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01408">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01380">Parameters::Mesh::type</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00023">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01399">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864ca3c4b939087811f328575e358443a5880">Parameters::Mesh::dealii</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864cab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="manifolds_8h_source.html#l00039">Parameters::Manifolds::id</a>, <a class="el" href="parameters_8h_source.html#l01392">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01396">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00105">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01402">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="parameters_8h_source.html#l01798">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01796">Parameters::Mortar&lt; dim &gt;::rotor_mesh</a>, <a class="el" href="grids_8cc_source.html#l00293">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l01405">Parameters::Mesh::simplex</a>, <a class="el" href="manifolds_8h_source.html#l00053">Parameters::Manifolds::size</a>, <a class="el" href="parameters_8h_source.html#l01800">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01408">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01380">Parameters::Mesh::type</a>.</p>
 
 </div>
 </div>
@@ -463,7 +475,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8h_source.html#l00102">102</a> of file <a class="el" href="grids_8h_source.html">grids.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8h_source.html#l00105">105</a> of file <a class="el" href="grids_8h_source.html">grids.h</a>.</p>
 
 </div>
 </div>

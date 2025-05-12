@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['a_0',['a',['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a'],['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A']]],
+  ['a_0',['a',['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a']]],
   ['a_5finverse_1',['A_inverse',['../classBlockDiagPreconditioner.html#aaebbf0f342b00811c1839c90176936bc',1,'BlockDiagPreconditioner']]],
   ['abort_5fat_5fconvergence_5ffailure_2',['abort_at_convergence_failure',['../structParameters_1_1NonLinearSolver.html#a491f1c3c8f1c66e2ee84e42fd23be06e',1,'Parameters::NonLinearSolver']]],
   ['absolute_3',['absolute',['../structParameters_1_1RPTFEMReconstructionParameters.html#a8a845872a339fc0a2cb6b670ce764a38adc4d53aa0d117d8b189b36d161af4e96',1,'Parameters::RPTFEMReconstructionParameters']]],
@@ -24,7 +24,7 @@ var searchData=
   ['add_5fdiagonal_5fentries_21',['add_diagonal_entries',['../classCouplingOperatorBase.html#a39bbcecf9090864aac443a9b4b310c14',1,'CouplingOperatorBase']]],
   ['add_5ffluid_5fparticle_5finteraction_5fforce_22',['add_fluid_particle_interaction_force',['../classCFDDEMSolver.html#a7f3c153d5873a0d09a1ec66cbf14e0e9',1,'CFDDEMSolver']]],
   ['add_5ffluid_5fparticle_5finteraction_5ftorque_23',['add_fluid_particle_interaction_torque',['../classCFDDEMSolver.html#a1aee1014f1952cb81984991034dd423c',1,'CFDDEMSolver']]],
-  ['add_5fsparsity_5fpattern_5fentries_24',['add_sparsity_pattern_entries',['../classCouplingOperatorBase.html#a46df6380d2fb346138a39a52e04aa17c',1,'CouplingOperatorBase']]],
+  ['add_5fsparsity_5fpattern_5fentries_24',['add_sparsity_pattern_entries',['../classCouplingOperatorBase.html#a2c764fe33079b51d13898d6aa29c1412',1,'CouplingOperatorBase']]],
   ['add_5fstatistics_5fto_5ftable_5fhandler_25',['add_statistics_to_table_handler',['../utilities_8h.html#a28e3647b49b871d119c8e19d390d6d66',1,'utilities.h']]],
   ['add_5fsystem_5fmatrix_5fentries_26',['add_system_matrix_entries',['../classCouplingOperatorBase.html#a575fe424d48d4b1e92e1c1a0316c60ed',1,'CouplingOperatorBase']]],
   ['add_5ftime_5fstep_27',['add_time_step',['../classSimulationControl.html#a42cbd4f9cfd5ce83560d7179ed269b59',1,'SimulationControl']]],
