@@ -101,5 +101,6 @@ var searchData=
   ['build_5fpatches_98',['build_patches',['../structFluidDynamicsSharp_1_1Visualization__IB.html#a5f9d51b970b73a7f4fe82da9fe14f979',1,'FluidDynamicsSharp::Visualization_IB::build_patches()'],['../classVisualization.html#a29014b0590114f94ecd7786ae984de93',1,'Visualization::build_patches()'],['../classInterfaceTools_1_1InterfaceReconstructionDataOut.html#a98db2dc3c7bd7d170c7e5be049707fd9',1,'InterfaceTools::InterfaceReconstructionDataOut::build_patches()']]],
   ['build_5fvisualization_5ffiles_99',['build_visualization_files',['../classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22',1,'ParticleVisualization']]],
   ['buoyancy_5fforce_100',['buoyancy_force',['../structParameters_1_1Multiphysics.html#aaa334803b65e6ea0092588f8aa78c31b',1,'Parameters::Multiphysics::buoyancy_force'],['../structParameters_1_1CFDDEM.html#a7199b79f866744d36b1001b7d3a56acf',1,'Parameters::CFDDEM::buoyancy_force']]],
-  ['butcher_20s_20tableau_20for_20sdirk33_101',['Butcher&apos;s Tableau for SDIRK33',['../sdirk_8cc.html#autotoc_md0',1,'']]]
+  ['buoyancy_5fterm_101',['buoyancy_term',['../classNavierStokesOperatorBase.html#aa9199e8db697c18155a310ae4d0200ee',1,'NavierStokesOperatorBase']]],
+  ['butcher_20s_20tableau_20for_20sdirk33_102',['Butcher&apos;s Tableau for SDIRK33',['../sdirk_8cc.html#autotoc_md0',1,'']]]
 ];

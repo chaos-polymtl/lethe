@@ -292,6 +292,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ab7074f258602a91ee3f283fa98a07cdf" id="r_ab7074f258602a91ee3f283fa98a07cdf"><td class="memTemplParams" colspan="2">template&lt;typename number &gt; </td></tr>
 <tr class="memitem:ab7074f258602a91ee3f283fa98a07cdf"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free_8cc.html#ab7074f258602a91ee3f283fa98a07cdf">convert_vector_dealii_to_trilinos</a> (TrilinosWrappers::MPI::Vector &amp;out, const LinearAlgebra::distributed::Vector&lt; number &gt; &amp;in)</td></tr>
 <tr class="separator:ab7074f258602a91ee3f283fa98a07cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab71c8fe7d0d338121740ec4dab3b45e8" id="r_ab71c8fe7d0d338121740ec4dab3b45e8"><td class="memTemplParams" colspan="2">template&lt;typename number &gt; </td></tr>
+<tr class="memitem:ab71c8fe7d0d338121740ec4dab3b45e8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free_8cc.html#ab71c8fe7d0d338121740ec4dab3b45e8">convert_vector_trilinos_to_dealii</a> (LinearAlgebra::distributed::Vector&lt; number &gt; &amp;out, const TrilinosWrappers::MPI::Vector &amp;in)</td></tr>
+<tr class="separator:ab71c8fe7d0d338121740ec4dab3b45e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ab7074f258602a91ee3f283fa98a07cdf" name="ab7074f258602a91ee3f283fa98a07cdf"></a>
@@ -338,6 +341,53 @@ template&lt;typename number &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00438">438</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+
+</div>
+</div>
+<a id="ab71c8fe7d0d338121740ec4dab3b45e8" name="ab71c8fe7d0d338121740ec4dab3b45e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab71c8fe7d0d338121740ec4dab3b45e8">&#9670;&#160;</a></span>convert_vector_trilinos_to_dealii()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void convert_vector_trilinos_to_dealii </td>
+          <td>(</td>
+          <td class="paramtype">LinearAlgebra::distributed::Vector&lt; number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const TrilinosWrappers::MPI::Vector &amp;&#160;</td>
+          <td class="paramname"><em>in</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Helper function that allows to convert Trilinos vectors to deal.II vectors. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">number</td><td>Abstract type for number across the class (i.e., double). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">out</td><td>Destination LinearAlgebra::distributed::Vector&lt;number&gt; vector. </td></tr>
+    <tr><td class="paramname">in</td><td>Source TrilinosWrappers::MPI::Vector vector. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00456">456</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
