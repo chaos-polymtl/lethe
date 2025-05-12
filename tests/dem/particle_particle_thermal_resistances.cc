@@ -9,8 +9,8 @@
 
 
 #include <../tests/dem/test_particles_functions.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/particle_particle_heat_transfer.h>
 
 
 template <int dim, typename PropertiesIndex>
