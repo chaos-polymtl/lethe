@@ -156,6 +156,17 @@ public:
   }
 
   /**
+   * @brief Returns the temperature of the solid object
+   *
+   * @return The temperature of the solid object
+   */
+  inline double
+  get_temperature() const
+  {
+    return this->current_solid_temperature;
+  }
+
+  /**
    * @brief Returns the solid id of the solid object.
    * This ID is an unsigned integer which is given to the solid object at
    * compile time and is mostly used when writing files.
@@ -285,9 +296,12 @@ private:
   // Elements used to store the velocity of the solid object
   std::shared_ptr<Function<spacedim>> translational_velocity;
   std::shared_ptr<Function<spacedim>> angular_velocity;
+  std::shared_ptr<Function<spacedim>> solid_temperature;
   Point<spacedim>                     center_of_rotation;
   Tensor<1, spacedim>                 current_translational_velocity;
   Tensor<1, 3>                        current_angular_velocity;
+  double                              current_solid_temperature;
+  const ThermalBoundaryType           thermal_boundary_type;
 };
 
 #endif

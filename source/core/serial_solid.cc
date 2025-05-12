@@ -34,6 +34,8 @@ SerialSolid<dim, spacedim>::SerialSolid(
   , translational_velocity(param->translational_velocity)
   , angular_velocity(param->angular_velocity)
   , center_of_rotation(param->center_of_rotation)
+  , solid_temperature(param->solid_temperature)
+  , thermal_boundary_type(param->thermal_boundary_type)
 {
   if (param->solid_mesh.simplex)
     {
@@ -306,6 +308,17 @@ void
 SerialSolid<3, 3>::translate_grid(const Tensor<1, 3> translation)
 {
   GridTools::shift(translation, *solid_tria);
+}
+
+template <int dim, int spacedim>
+void
+SerialSolid<dim, spacedim>::update_solid_temperature(const double initial_time)
+{
+  if constexpr (thermal_boundary_type == ThermalBoundaryType::adiabatic)
+    return;
+
+  solid_temperature->set_time(initial_time);
+  current_solid_temperature = solid_temperature->value(Point<spacedim>());
 }
 
 template <int dim, int spacedim>

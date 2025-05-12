@@ -575,6 +575,18 @@ DEMSolver<dim, PropertiesIndex>::move_solid_objects()
     solid_object->move_solid_triangulation(
       simulation_control->get_time_step(),
       simulation_control->get_previous_time());
+
+  if constexpr (std::is_same_v<PropertiesIndex,
+                               DEM::DEMMPProperties::PropertiesIndex>)
+    {
+      for (auto &solid_object : solid_surfaces)
+        solid_object->update_solid_temperature(
+          simulation_control->get_previous_time());
+
+      for (auto &solid_object : solid_volumes)
+        solid_object->update_solid_temperature(
+          simulation_control->get_previous_time());
+    }
 }
 
 template <int dim, typename PropertiesIndex>
