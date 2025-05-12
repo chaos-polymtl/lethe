@@ -2119,8 +2119,15 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
 
   if (this->simulation_parameters.physical_properties_manager
         .is_non_newtonian())
-    system_operator = std::make_shared<
-      NavierStokesNonNewtonianStabilizedOperator<dim, double>>();
+    {
+      system_operator = std::make_shared<
+        NavierStokesNonNewtonianStabilizedOperator<dim, double>>();
+      AssertThrow(
+        this->simulation_parameters.stabilization.stabilization ==
+          Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
+        dealii::ExcMessage(
+          "Matrix free Non-Newtonian Navier-Stokes does not support GLS stabilization."));
+    }
   else
     system_operator =
       std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
@@ -2595,7 +2602,10 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
   // Update the precomputed values needed for the evaluation of the residual.
-  // This is needed due to the alpha procedure of the non linear solver.
+  // This is needed, otherwise the line-search mechanism used in the Newton
+  // method might fail even though the Newton step should have been accepted due
+  // to a wrong evaluation of the residual and, consequently, a wrong evaluation
+  // of the step length.
   this->evaluation_point.update_ghost_values();
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->evaluation_point);
@@ -2886,7 +2896,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->present_solution);
-  // this->system_operator->get_system_matrix().print(std::cout);
+
   this->computing_timer.leave_subsection("Evaluate non linear term and tau");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

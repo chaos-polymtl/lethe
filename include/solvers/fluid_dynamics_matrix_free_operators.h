@@ -849,7 +849,7 @@ protected:
 };
 
 /**
- * @brief Implements the matrix-free operator to solve steady/transient Non-newtonian Navier-Stokes equations using stabilization.
+ * @brief Implements the matrix-free operator to solve steady/transient non-Newtonian Navier-Stokes equations using stabilization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).

@@ -860,8 +860,8 @@ NavierStokesOperatorBase<dim, number>::
             std::sqrt(u_mag_squared) * h * 0.5;
         }
 
-      // Get the kinematic viscosity and its gradient from the physical
-      // properties
+      // Compute kinematic viscosity-related entries for non-Newtonian fluids
+      // according to the rheological model
       if (this->properties_manager->is_non_newtonian())
         {
           typename FECellIntegrator::gradient_type shear_rate;
@@ -898,61 +898,23 @@ NavierStokesOperatorBase<dim, number>::
               this->previous_shear_rate_magnitude[cell][q] =
                 shear_rate_magnitude;
 
-              // Get kinematic viscosity gradient which consists of two things:
-              // 1. Grad shear rate
-              // 2. grad_kinematic_viscosity_shear_rate
+              // Compute gradient of shear rate
+              // ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui) * ∂d(∂iuj + ∂jui)
               for (unsigned int d = 0; d < dim; ++d)
                 {
                   grad_shear_rate[d] = 0.;
-                  if constexpr (dim == 2)
+                  for (unsigned int i = 0; i < dim; ++i)
                     {
                       for (unsigned int k = 0; k < dim; ++k)
                         {
                           grad_shear_rate[d] +=
-                            VectorizedArray<number>(2.) *
-                            (gradient[k][k] * hessian[k][d][k]) /
+                            VectorizedArray<number>(0.5) *
+                            (gradient[i][k] + gradient[k][i]) *
+                            (hessian[i][d][k] + hessian[k][d][i]) /
                             shear_rate_magnitude;
-                        }
-                      grad_shear_rate[d] +=
-                        (gradient[0][1] + gradient[1][0]) *
-                        (hessian[0][d][1] + hessian[1][d][0]) /
-                        shear_rate_magnitude;
-                    }
-                  else
-                    {
-                      for (unsigned int k = 0; k < dim; ++k)
-                        {
-                          grad_shear_rate[d] +=
-                            VectorizedArray<number>(2.) *
-                              (gradient[k][k] * hessian[k][d][k]) /
-                              shear_rate_magnitude +
-                            (gradient[(k + 1) % dim][(k + 2) % dim] +
-                             gradient[(k + 2) % dim][(k + 1) % dim]) *
-                              (hessian[(k + 1) % dim][d][(k + 2) % dim] +
-                               hessian[(k + 2) % dim][d][(k + 1) % dim]) /
-                              shear_rate_magnitude;
                         }
                     }
                 }
-
-              // Alternative code for grad shear rate
-              //  ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui)(∂d∂iuj + ∂d∂jui)
-              // for (unsigned int d = 0; d < dim; ++d)
-              //   {
-              //     auto grad_shear_rate_d = VectorizedArray<number>(0.0);
-              //     for (unsigned int i = 0; i < dim; ++i)
-              //       {
-              //         for (unsigned int j = 0; j < dim; ++j)
-              //           {
-              //             auto dGamma_ij_dd =
-              //               hessian[d][i][j] + hessian[d][j][i];
-              //             grad_shear_rate_d += shear_rate[i][j] *
-              //             dGamma_ij_dd;
-              //           }
-              //       }
-              //     grad_shear_rate[d] = // 1.0;
-              //       (0.5 / shear_rate_magnitude) * grad_shear_rate_d;
-              //   }
 
               // Store the shear rate magnitude in the appropriate data
               // structure needed for the set field vector function
