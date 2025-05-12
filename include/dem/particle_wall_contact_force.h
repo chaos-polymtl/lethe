@@ -406,7 +406,8 @@ protected:
 
   /**
    * @brief Calculate the minimum overlap at which particle-wall forces are
-   * computed.
+   * computed. This function is useful for non-contact cohesive force models 
+   * such as the DMT.
    *
    * @return minimum overlap for the force calculation.
    */
@@ -416,7 +417,7 @@ protected:
     if constexpr (contact_model ==
                   Parameters::Lagrangian::ParticleWallContactForceModel::DMT)
       {
-        // We are looking for the maximum hamaker constant and minimum surface
+        // We are looking for the maximum Hamaker constant and minimum surface
         // energy to compute the biggest distance at which force will be
         // computed. In other words, we are maximising the delta_0.
         // This way, force_calculation_threshold_distance can be set
@@ -444,7 +445,7 @@ private:
    *
    * @param[in] normal_force Contact normal force.
    * @param[in] tangential_force Contact tangential force.
-   * @param[in] tangential_torque Contact tangential torque.
+   * @param[in] tangential_torque Contact torque induced by the tangential force.
    * @param[in] rolling_resistance_torque Contact rolling resistance torque.
    * @param[in,out] particle_torque Torque acting on particle.
    * @param[in,out] particle_force Force acting on particle.
