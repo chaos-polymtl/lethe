@@ -43,12 +43,12 @@ public:
    * using the contact pair information and physical properties.
    *
    * @param[in] particle_wall_pairs_in_contact Required information for the
-   * calculation of the particle-wall contact force.
+   * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
-  calculate_particle_wall_contact_force(
+  calculate_particle_wall_contact(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                 &particle_wall_pairs_in_contact,
     const double dt,
@@ -65,7 +65,7 @@ public:
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
-  calculate_particle_solid_object_contact_force(
+  calculate_particle_solid_object_contact(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
                 &particle_floating_mesh_in_contact,
     const double dt,
@@ -74,7 +74,7 @@ public:
 };
 
 /**
- * @brief Execute calculation of particle-wall contact forces.
+ * @brief Execute calculation of particle-wall contacts.
  *
  * @tparam dim The dimension of the problem.
  * @tparam contact_model The particle-wall contact force model.
@@ -99,12 +99,12 @@ public:
    * using the contact pair information and physical properties.
    *
    * @param[in] particle_wall_pairs_in_contact Required information for the
-   * calculation of the particle-wall contact force.
+   * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
-  calculate_particle_wall_contact_force(
+  calculate_particle_wall_contact(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                 &particle_wall_pairs_in_contact,
     const double dt,
@@ -121,7 +121,7 @@ public:
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
-  calculate_particle_solid_object_contact_force(
+  calculate_particle_solid_object_contact(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
                 &particle_floating_mesh_in_contact,
     const double dt,
@@ -130,7 +130,7 @@ public:
 
 protected:
   /**
-   * @brief Update the contact pair information for contact force calculations.
+   * @brief Update the contact pair information for contact calculations.
    *
    * @param[in,out] contact_info Contact information of a particle-wall pair.
    * @param[out] tangential_relative_velocity Tangential relative velocity.
@@ -204,8 +204,8 @@ protected:
       (normal_relative_velocity_value * normal_vector);
 
     // Calculating new tangential_displacement
-    // Since this value is history-dependent it needs the value at previous
-    // time-step This variable is the main reason that we have iteration over
+    // Since this value is history-dependent, it needs the value at previous
+    // time-step. This variable is the main reason that we have iteration over
     // two different vectors (pairs_in_contact and contact_pair_candidates):
     // tangential_displacement of the particles which were already in contact
     // (pairs_in_contact) needs to be modified using its history, while the
@@ -252,7 +252,6 @@ protected:
     particle_velocity[1] = particle_properties[PropertiesIndex::v_y];
     particle_velocity[2] = particle_properties[PropertiesIndex::v_z];
 
-
     Tensor<1, 3> particle_angular_velocity;
     particle_angular_velocity[0] =
       particle_properties[PropertiesIndex::omega_x];
@@ -279,8 +278,9 @@ protected:
       contact_relative_velocity -
       normal_relative_velocity_value * normal_vector;
 
-    // Calculate the new tangential_displacement, since this value is
-    // history-dependent, it needs the value at previous time-step
+    // Calculate the new tangential_displacement
+    // Since this value is history-dependent, it needs the value at
+    // previous time-step.
     contact_info.tangential_displacement += tangential_relative_velocity * dt;
   }
 
@@ -497,7 +497,7 @@ private:
     [[maybe_unused]] const double        normal_spring_constant,
     [[maybe_unused]] const double        normal_force_norm,
     [[maybe_unused]] const Tensor<1, 3> &normal_unit_vector,
-    Tensor<1, 3> &cumulative_rolling_resistance_spring_torque)
+    [[maybe_unused]] Tensor<1, 3> &cumulative_rolling_resistance_spring_torque)
   {
     using namespace Parameters::Lagrangian;
 

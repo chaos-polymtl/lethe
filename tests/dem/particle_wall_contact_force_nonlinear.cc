@@ -156,7 +156,7 @@ test()
     Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     force_object(dem_parameters);
-  force_object.calculate_particle_wall_contact_force(
+  force_object.calculate_particle_wall_contact(
     particle_wall_contact_information, dt, contact_outcome);
 
   // Output

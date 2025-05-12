@@ -182,7 +182,7 @@ test()
           auto particle_wall_contact_information_iterator =
             particle_wall_pairs_in_contact_iterator->begin();
 
-          particle_wall_force_object.calculate_particle_wall_contact_force(
+          particle_wall_force_object.calculate_particle_wall_contact(
             particle_wall_contact_information, dt, contact_outcome);
 
           // Storing force before integration
