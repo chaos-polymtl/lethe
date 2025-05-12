@@ -1629,7 +1629,9 @@ FluidDynamicsMatrixBased<dim>::solve()
     read_mesh_and_manifolds_for_stator_and_rotor(
       *this->triangulation,
       this->simulation_parameters.mesh,
+      this->simulation_parameters.manifolds_parameters,
       this->simulation_parameters.restart_parameters.restart,
+      this->simulation_parameters.boundary_conditions,
       this->simulation_parameters.mortar);
   else
     read_mesh_and_manifolds(

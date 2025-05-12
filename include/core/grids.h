@@ -61,28 +61,31 @@ read_mesh_and_manifolds(
 /**
  * @brief Completely set up a mesh and its manifold for rotor-stator domains
  *
- * @param[in, out] triangulation [stator] The triangulation to which a grid is
- * attached. It will be substituted by the merged rotor-stator triangulation
+ * @param[in, out] triangulation The triangulation to which a grid is attached.
+ * For dealii grids, this is intially the stator triangulation information,
+ * which is later substituted by the merged rotor-stator triangulation. For gmsh
+ * grids, this already refers to the merged configuration
  *
- * @param[in] mesh_parameters [stator] The mesh parameters used to decide what
- * type of mesh or primitive is  used
+ * @param[in] mesh_parameters The mesh parameters used to decide what type of
+ * mesh or primitive is used
  *
- * @param[in] manifolds_parameters [stator] The information about the type of
- * manifolds attached to the boundary conditions
+ * @param[in] manifolds_parameters The information about the type of manifolds
+ * attached to the boundary conditions
  *
- * @param[in] boundary_conditions [stator] The information about the boundary
- * conditions id. This is used to set-up the periodicity of the domain
+ * @param[in] boundary_conditions The information about the boundary conditions
+ * id. This is used to set-up the periodicity of the domain
  *
- * @param[in] mortar [rotor] The information about the mortar method control,
- * including the rotor mesh parameters This function currently only works for
- * dealii meshes.
+ * @param[in] mortar The information about the mortar method control, including
+ * the rotor mesh parameters
  */
 template <int dim, int spacedim = dim>
 void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                            &restart,
+  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters);
 
 /**
