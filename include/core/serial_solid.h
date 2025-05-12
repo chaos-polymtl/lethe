@@ -167,6 +167,17 @@ public:
   }
 
   /**
+   * @brief Returns the thermal boundary type of the solid object
+   *
+   * @return The thermal boundary type of the solid object
+   */
+  inline double
+  get_thermal_boundary_type() const
+  {
+    return this->thermal_boundary_type;
+  }
+
+  /**
    * @brief Returns the solid id of the solid object.
    * This ID is an unsigned integer which is given to the solid object at
    * compile time and is mostly used when writing files.
