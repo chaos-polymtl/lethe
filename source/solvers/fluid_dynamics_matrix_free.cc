@@ -2032,9 +2032,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
-  const DoFHandler<dim>           &temperature_dof_handler,
-  const VectorType                &temperature_present_solution,
-  const PhysicalPropertiesManager &physical_properties_manager)
+  const DoFHandler<dim> &temperature_dof_handler,
+  const VectorType      &temperature_present_solution)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -2096,9 +2095,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
           mg_temperature_solution[l].update_ghost_values();
 
           this->mg_operators[l]->compute_buoyancy_term(
-            mg_temperature_solution[l],
-            this->temperature_dof_handlers[l],
-            physical_properties_manager);
+            mg_temperature_solution[l], this->temperature_dof_handlers[l]);
         }
     }
 }
@@ -2210,8 +2207,7 @@ FluidDynamicsMatrixFree<dim>::solve()
           if (this->simulation_parameters.multiphysics.buoyancy_force)
             this->system_operator->compute_buoyancy_term(
               temperature_present_solution,
-              *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
-              this->simulation_parameters.physical_properties_manager);
+              *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
         }
 
       this->iterate();
@@ -2593,10 +2589,9 @@ FluidDynamicsMatrixFree<dim>::initialize_GMG()
   // Initialize everything related to heat transfer within the MG algorithm
   if (this->simulation_parameters.multiphysics.buoyancy_force)
     dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
-      ->initialize_auxiliary_physics(
-        *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
-        this->temperature_present_solution,
-        this->simulation_parameters.physical_properties_manager);
+      ->initialize_auxiliary_physics(*this->multiphysics->get_dof_handler(
+                                       PhysicsID::heat_transfer),
+                                     this->temperature_present_solution);
 
   dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
     ->initialize(this->simulation_control,

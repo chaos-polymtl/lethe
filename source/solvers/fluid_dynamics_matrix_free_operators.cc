@@ -318,15 +318,14 @@ NavierStokesOperatorBase<dim, number>::compute_forcing_term()
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
-  const VectorType                &temperature_solution,
-  const DoFHandler<dim>           &temperature_dof_handler,
-  const PhysicalPropertiesManager &physical_properties_manager)
+  const VectorType      &temperature_solution,
+  const DoFHandler<dim> &temperature_dof_handler)
 {
   const auto thermal_expansion_model =
-    physical_properties_manager.get_thermal_expansion();
+    this->properties_manager->get_thermal_expansion();
 
   const double reference_temperature =
-    physical_properties_manager.get_reference_temperature();
+    this->properties_manager->get_reference_temperature();
 
   const unsigned int n_cells =
     matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();

@@ -225,14 +225,10 @@ public:
    * @param[in] temperature_solution Present solution of the temperature
    * as given by the multiphysics interface.
    * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
-   * @param[in] physical_properties_manager Properties manager to extract
-   * thermal expansion coefficient and the reference temperature.
    */
   void
-  compute_buoyancy_term(
-    const VectorType                &temperature_solution,
-    const DoFHandler<dim>           &temperature_dof_handler,
-    const PhysicalPropertiesManager &physical_properties_manager);
+  compute_buoyancy_term(const VectorType      &temperature_solution,
+                        const DoFHandler<dim> &temperature_dof_handler);
 
   /**
    * @brief Get the total number of DoFs.
