@@ -13,7 +13,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Mortar: the matrix-based solver is now able to read 'gmsh' files, and a function to compute the rotor radius and the number of subdivisions at the rotor-stator interface has been added. [#1526] (https://github.com/chaos-polymtl/lethe/pull/1526)
 
-## [Master] - 2024-05-07
+### Added
+
+- MAJOR Added the buoyancy term to the matrix free operators to be able to support two way coupling between the heat transfer solver and the matrix-free fluid solver. In the GMG preconditioner the temperature solution is also transfered to all the MG levels. [#1524](https://github.com/chaos-polymtl/lethe/pull/1524)
+
+## [Master] - 2025-05-07
 
 ### Fixed
 
