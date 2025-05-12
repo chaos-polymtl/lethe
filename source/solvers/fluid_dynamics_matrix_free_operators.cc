@@ -357,10 +357,14 @@ NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
 
           for (const auto q : fe_values.quadrature_point_indices())
             {
+              // The following term is precomputed: (1 - β (T -Tref))
               const auto scaling =
                 1 - thermal_expansion[q] *
                       (cell_temperature_solution[q] - reference_temperature);
 
+              // Store in table the total buoyancy term given as:
+              // (1 - β (T -Tref))g where the g has already been precomputed in
+              // compute_forcing_term() function.
               for (unsigned int c = 0; c < dim; ++c)
                 buoyancy_term[cell][q][c][lane] =
                   forcing_terms[cell][q][c][lane] * scaling;
