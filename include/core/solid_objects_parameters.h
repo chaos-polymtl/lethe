@@ -13,6 +13,12 @@ using namespace dealii;
 
 namespace Parameters
 {
+  enum ThermalBoundaryType
+  {
+    adiabatic,
+    isothermal
+  };
+
   template <int dim>
   class NitscheObject
   {
@@ -293,6 +299,10 @@ namespace Parameters
     Point<dim>
       center_of_rotation; // Center of rotation used to locate the center of the
                           // object and also used to rotate the object
+    // Temperature function for solid object
+    std::shared_ptr<Function<dim>> solid_temperature;
+    // Thermal boundary type for solid object
+    ThermalBoundaryType thermal_boundary_type;
   };
 
 
@@ -309,6 +319,8 @@ namespace Parameters
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     auto angular_velocity_parsed =
       std::make_shared<Functions::ParsedFunction<dim>>(3);
+    auto solid_temperature_parsed =
+      std::make_shared<Functions::ParsedFunction<dim>>(1);
 
     prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
     {
@@ -337,6 +349,16 @@ namespace Parameters
                             "Solid object center of rotation");
         }
 
+      prm.declare_entry("thermal boundary type",
+                        "adiabatic",
+                        Patterns::Selection("adiabatic|isothermal"),
+                        "Choosing thermal boundary type"
+                        "Choices are <adiabatic|isothermal>.");
+
+      // Isothermal boundary
+      prm.enter_subsection("temperature");
+      solid_temperature_parsed->declare_parameters(prm, 1);
+      prm.leave_subsection();
 
       prm.declare_entry("output solid object",
                         "true",
@@ -348,6 +370,7 @@ namespace Parameters
     // Cast to std::shared_ptr<Function<dim>> after parameter declaration.
     translational_velocity = translational_velocity_parsed;
     angular_velocity       = angular_velocity_parsed;
+    solid_temperature      = solid_temperature_parsed;
   }
 
   template <int dim>
@@ -363,6 +386,8 @@ namespace Parameters
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     auto angular_velocity_parsed =
       std::make_shared<Functions::ParsedFunction<dim>>(3);
+    auto solid_temperature_parsed =
+      std::make_shared<Functions::ParsedFunction<dim>>(1);
 
     prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
     {
@@ -389,10 +414,26 @@ namespace Parameters
         }
 
       output_bool = prm.get_bool("output solid object");
+
+      const std::string thermal_type = prm.get("thermal boundary type");
+      if (thermal_type == "adiabatic")
+        thermal_boundary_type = ThermalBoundaryType::adiabatic;
+      else if (thermal_type == "isothermal")
+        thermal_boundary_type = ThermalBoundaryType::isothermal;
+      else
+        {
+          throw(std::runtime_error("Invalid thermal boundary type"));
+        }
+
+      // Isothermal boundary
+      prm.enter_subsection("temperature");
+      solid_temperature_parsed->parse_parameters(prm);
+      prm.leave_subsection();
     }
     prm.leave_subsection();
     translational_velocity = translational_velocity_parsed;
     angular_velocity       = angular_velocity_parsed;
+    solid_temperature      = solid_temperature_parsed;
   }
 
 
