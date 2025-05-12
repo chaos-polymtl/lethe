@@ -556,13 +556,6 @@ protected:
   Tensor<1, dim, VectorizedArray<number>> beta_force;
 
   /**
-   * @brief Shared pointer to physical properties manager.
-   *
-   */
-  std::shared_ptr<PhysicalPropertiesManager> properties_manager;
-
-
-  /**
    * @brief Stabilization type needed to add or remove terms from operator.
    *
    */
@@ -777,6 +770,12 @@ protected:
   ConditionalOStream pcout;
 
 public:
+  /**
+   * @brief Shared pointer to physical properties manager.
+   *
+   */
+  std::shared_ptr<PhysicalPropertiesManager> properties_manager;
+
   /**
    * @brief Timer for internal operator calls.
    *

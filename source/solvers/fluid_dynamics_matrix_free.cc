@@ -2397,15 +2397,40 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
       // Get viscosity model
       std::shared_ptr<RheologicalModel> original_viscosity_model =
-        this->simulation_parameters.physical_properties_manager.get_rheology();
+        this->system_operator->properties_manager->get_rheology();
 
       // Temporarily set the rheology to be newtonian with predefined viscosity
       std::shared_ptr<Newtonian> temporary_rheology =
         std::make_shared<Newtonian>(
           this->simulation_parameters.initial_condition->kinematic_viscosity);
 
-      this->simulation_parameters.physical_properties_manager.set_rheology(
+      this->system_operator->properties_manager->set_rheology(
         temporary_rheology);
+
+      // Set temporary viscosity in the multigrid operators
+      if ((this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          // Create the mg operators if they do not exist to be able
+          // to change the viscosity for all of them
+          if (!gmg_preconditioner)
+            this->create_GMG();
+
+          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+          for (unsigned int level = mg_operators.min_level();
+               level <= mg_operators.max_level();
+               level++)
+            {
+              mg_operators[level]->properties_manager->set_rheology(
+                temporary_rheology);
+            }
+        }
 
       // Solve the problem with the temporary viscosity
       this->simulation_control->set_assembly_method(
@@ -2414,8 +2439,29 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
         solve_non_linear_system(false);
       this->finish_time_step();
 
-      this->simulation_parameters.physical_properties_manager.set_rheology(
+      // Reset original rheology for the system operator
+      this->system_operator->properties_manager->set_rheology(
         original_viscosity_model);
+
+      // Reset original rheology for the multigrid operators
+      if ((this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+          for (unsigned int level = mg_operators.min_level();
+               level <= mg_operators.max_level();
+               level++)
+            {
+              mg_operators[level]->properties_manager->set_rheology(
+                original_viscosity_model);
+            }
+        }
     }
   else if (initial_condition_type == Parameters::InitialConditionType::ramp)
     {
@@ -2431,12 +2477,13 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
       // Create a pointer to the current viscosity model
       std::shared_ptr<RheologicalModel> viscosity_model =
-        this->simulation_parameters.physical_properties_manager.get_rheology();
+        this->system_operator->properties_manager->get_rheology();
 
-      // Gather viscosity final parameters
-      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
+      // Gather the kinematic viscosity for the simulation
+      const double original_viscosity =
+        viscosity_model->get_kinematic_viscosity();
 
-      // Kinematic viscosity ramp parameters
+      // Gather kinematic viscosity ramp parameters
       const int n_iter_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .n_iter;
@@ -2444,12 +2491,10 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
         n_iter_viscosity > 0 ?
           this->simulation_parameters.initial_condition->ramp.ramp_viscosity
             .kinematic_viscosity_init :
-          viscosity_end;
+          original_viscosity;
       const double alpha_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
-
-      viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
 
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
@@ -2459,18 +2504,73 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
 
+          // Set the temporary viscosity to the one given by the ramp
+          viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
+
+          // Set temporary viscosity in the multigrid operators as well
+          if ((this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::lsmg) ||
+              (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::gcmg))
+            {
+              // Create the mg operators if they do not exist to be able
+              // to change the viscosity for all of them
+              if (!gmg_preconditioner)
+                this->create_GMG();
+
+              auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+              for (unsigned int level = mg_operators.min_level();
+                   level <= mg_operators.max_level();
+                   level++)
+                {
+                  mg_operators[level]
+                    ->properties_manager->get_rheology()
+                    ->set_kinematic_viscosity(kinematic_viscosity);
+                }
+            }
+
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
+
           // Solve the problem with the temporary viscosity
           PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
             solve_non_linear_system(false);
           this->finish_time_step();
 
+          // Update the viscosity to the next one in the ramp parameters
           kinematic_viscosity +=
-            alpha_viscosity * (viscosity_end - kinematic_viscosity);
+            alpha_viscosity * (original_viscosity - kinematic_viscosity);
         }
-      // Reset kinematic viscosity to simulation parameters
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
+
+
+      // Reset kinematic viscosity to original value for the system operator
+      viscosity_model->set_kinematic_viscosity(original_viscosity);
+
+      // Reset kinematic viscosity to original value for the multigrid operators
+      if ((this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+          for (unsigned int level = mg_operators.min_level();
+               level <= mg_operators.max_level();
+               level++)
+            {
+              mg_operators[level]
+                ->properties_manager->get_rheology()
+                ->set_kinematic_viscosity(original_viscosity);
+            }
+        }
+
       timer.stop();
 
       if (this->simulation_parameters.timer.type !=
