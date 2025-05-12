@@ -406,7 +406,7 @@ protected:
 
   /**
    * @brief Calculate the minimum overlap at which particle-wall forces are
-   * computed. This function is useful for non-contact cohesive force models 
+   * computed. This function is useful for non-contact cohesive force models
    * such as the DMT.
    *
    * @return minimum overlap for the force calculation.
@@ -445,7 +445,8 @@ private:
    *
    * @param[in] normal_force Contact normal force.
    * @param[in] tangential_force Contact tangential force.
-   * @param[in] tangential_torque Contact torque induced by the tangential force.
+   * @param[in] tangential_torque Contact torque induced by the tangential
+   * force.
    * @param[in] rolling_resistance_torque Contact rolling resistance torque.
    * @param[in,out] particle_torque Torque acting on particle.
    * @param[in,out] particle_force Force acting on particle.
