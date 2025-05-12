@@ -444,6 +444,24 @@ convert_vector_dealii_to_trilinos(
   out.import_elements(rwv, VectorOperation::insert);
 }
 
+/**
+ * @brief Helper function that allows to convert Trilinos vectors to deal.II vectors.
+ *
+ * @tparam number Abstract type for number across the class (i.e., double).
+ * @param out Destination LinearAlgebra::distributed::Vector<number> vector.
+ * @param in Source TrilinosWrappers::MPI::Vector vector.
+ */
+template <typename number>
+void
+convert_vector_trilinos_to_dealii(
+  LinearAlgebra::distributed::Vector<number> &out,
+  const TrilinosWrappers::MPI::Vector        &in)
+{
+  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+  rwv.reinit(in);
+  out.import_elements(rwv, VectorOperation::insert);
+}
+
 namespace dealii
 {
   /**
@@ -2009,6 +2027,80 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 }
 
 template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
+  const DoFHandler<dim>           &temperature_dof_handler,
+  const VectorType                &temperature_present_solution,
+  const PhysicalPropertiesManager &physical_properties_manager)
+{
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    {
+      AssertThrow(false, ExcNotImplemented());
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
+    {
+      const unsigned int min_level = this->minlevel;
+      const unsigned int max_level = this->maxlevel;
+
+      this->temperature_dof_handlers.resize(min_level, max_level);
+
+      for (unsigned int l = min_level; l <= max_level; l++)
+        {
+          this->temperature_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->temperature_dof_handlers[l].distribute_dofs(
+            temperature_dof_handler.get_fe());
+        }
+
+      this->transfers_temperature.resize(min_level, max_level);
+
+      for (unsigned int l = min_level; l < max_level; l++)
+        {
+          this->transfers_temperature[l + 1].reinit(
+            this->temperature_dof_handlers[l + 1],
+            this->temperature_dof_handlers[l],
+            {},
+            {});
+        }
+
+      this->mg_transfer_gc_temperature =
+        std::make_shared<GCTransferType>(this->transfers_temperature);
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+      this->mg_transfer_gc_temperature->build(
+        temperature_dof_handler, [&](const auto l, auto &vec) {
+          vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
+                     DoFTools::extract_locally_active_dofs(
+                       this->temperature_dof_handlers[l]),
+                     this->temperature_dof_handlers[l].get_mpi_communicator());
+        });
+#endif
+
+      MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
+                                                          this->maxlevel);
+
+      this->mg_transfer_gc_temperature->interpolate_to_mg(
+        temperature_dof_handler,
+        mg_temperature_solution,
+        temperature_present_solution);
+
+      for (unsigned int l = min_level; l <= max_level; l++)
+        {
+          mg_temperature_solution[l].update_ghost_values();
+
+          this->mg_operators[l]->compute_buoyancy_term(
+            mg_temperature_solution[l],
+            this->temperature_dof_handlers[l],
+            physical_properties_manager);
+        }
+    }
+}
+
+template <int dim>
 FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
   SimulationParameters<dim> &nsparam)
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
@@ -2099,6 +2191,17 @@ FluidDynamicsMatrixFree<dim>::solve()
           if (this->simulation_parameters.flow_control.enable_flow_control)
             this->system_operator->update_beta_force(
               this->flow_control.get_beta());
+        }
+
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          update_solutions_for_fluid_dynamics();
+
+          if (this->simulation_parameters.multiphysics.buoyancy_force)
+            this->system_operator->compute_buoyancy_term(
+              temperature_present_solution,
+              *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
+              this->simulation_parameters.physical_properties_manager);
         }
 
       this->iterate();
@@ -2580,6 +2683,14 @@ template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::initialize_GMG()
 {
+  // Initialize everything related to heat transfer within the MG algorithm
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
+    dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
+      ->initialize_auxiliary_physics(
+        *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
+        this->temperature_present_solution,
+        this->simulation_parameters.physical_properties_manager);
+
   dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
     ->initialize(this->simulation_control,
                  this->flow_control,
@@ -2731,6 +2842,44 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
 #endif
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
+{
+  TimerOutput::Scope t(this->computing_timer,
+                       "Update solutions for fluid dynamics");
+
+  // Get present solution and dof handler of the heat transfer
+  const auto &heat_solution =
+    *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+
+#ifndef LETHE_USE_LDV
+  const auto &heat_dof_handler =
+    *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+  // Copy solution to temporary vector
+  TrilinosWrappers::MPI::Vector temp_heat_solution;
+  temp_heat_solution.reinit(heat_dof_handler.locally_owned_dofs(),
+                            this->mpi_communicator);
+  temp_heat_solution = heat_solution;
+
+  // Initialize deal.II vector to store solution
+  this->temperature_present_solution.reinit(
+    heat_dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_active_dofs(heat_dof_handler),
+    this->mpi_communicator);
+
+  // Perform copy between two vector types
+  convert_vector_trilinos_to_dealii(this->temperature_present_solution,
+                                    temp_heat_solution);
+
+#else
+  this->temperature_present_solution = heat_solution;
+#endif
+  // Update ghost values for deal.II vector
+  this->temperature_present_solution.update_ghost_values();
 }
 
 template <int dim>

@@ -314,6 +314,13 @@ protected:
   update_solutions_for_multiphysics()
   {}
 
+  /**
+   * @brief  Required only for the matrix-free solver to update multiphysics solutions within iterate function.
+   */
+  virtual void
+  update_solutions_for_fluid_dynamics()
+  {}
+
   virtual void
   set_initial_condition_fd(
     Parameters::InitialConditionType initial_condition_type,

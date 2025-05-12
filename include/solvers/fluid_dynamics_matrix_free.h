@@ -290,6 +290,17 @@ protected:
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;
 
+  /// Temperature DoF handlers for each of the levels of the global coarsening
+  /// algorithm
+  MGLevelObject<DoFHandler<dim>> temperature_dof_handlers;
+
+  /// Temperature transfers for each of the levels of the global coarsening
+  /// algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_temperature;
+
+  /// Transfer operator for global coarsening for the temperature
+  std::shared_ptr<GCTransferType> mg_transfer_gc_temperature;
+
 public:
   /// Timer for specific geometric multigrid components.
   mutable TimerOutput mg_setup_timer;
@@ -312,7 +323,7 @@ public:
   using MGVectorType =
     typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType;
   using MGNumber = typename MFNavierStokesPreconditionGMGBase<dim>::MGNumber;
-
+  using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
 
   /**
    * Constructor.
@@ -346,6 +357,21 @@ public:
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
              const VectorType &time_derivative_previous_solutions);
+
+  /**
+   * @brief Transfer the current temperature solution to the different multigrid levels and compute the buoyancy term in each of the multigrid operators.
+   *
+   * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
+   * @param[in] temperature_present_solution Present solution of the temperature
+   * as given by the multiphysics interface.
+   * @param[in] physical_properties_manager Properties manager to extract
+   * thermal expansion coefficient and the reference temperature.
+   */
+  void
+  initialize_auxiliary_physics(
+    const DoFHandler<dim>           &temperature_dof_handler,
+    const VectorType                &temperature_present_solution,
+    const PhysicalPropertiesManager &physical_properties_manager);
 };
 
 /**
@@ -444,6 +470,14 @@ protected:
    */
   virtual void
   update_solutions_for_multiphysics() override;
+
+
+  /**
+   * @brief  Provide present multiphysics solutions from the multiphysics
+   * interface to the fluid dynamics.
+   */
+  virtual void
+  update_solutions_for_fluid_dynamics() override;
 
   /**
    * @brief Calculate and store time derivatives of previous solutions according to
@@ -585,6 +619,12 @@ protected:
    *
    */
   std::vector<TrilinosWrappers::MPI::Vector> multiphysics_previous_solutions;
+
+  /**
+   * @brief Vector storing the present temperature solution from the heat transfer solver.
+   *
+   */
+  VectorType temperature_present_solution;
 };
 
 #endif
