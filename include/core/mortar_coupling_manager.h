@@ -39,43 +39,20 @@ public:
   MortarManager(const unsigned int n_subdivisions,
                 const unsigned int n_quadrature_points,
                 const double       radius,
-                const double       rotate_pi)
-    : n_subdivisions(n_subdivisions)
-    , n_quadrature_points(n_quadrature_points)
-    , radius(radius)
-    , rotate_pi(rotate_pi)
-    , quadrature(n_quadrature_points)
-  {}
+                const double       rotate_pi);
 
   /**
    * @brief Verify if cells of the inner and outer domains are aligned
    */
   bool
-  is_mesh_aligned() const
-  {
-    const double tolerance = 1e-8;
-    const double delta     = 2 * numbers::PI / n_subdivisions;
-
-    return std::abs(rotate_pi / delta - std::round(rotate_pi / delta)) <
-           tolerance;
-  }
+  is_mesh_aligned() const;
 
   /**
    * @brief Returns the total number of quadrature points at the inner/outer boundary interface
    * // TODO keep only one version of this function
    */
   unsigned int
-  get_n_points() const
-  {
-    if (this->is_mesh_aligned()) // aligned
-      {
-        return n_subdivisions * n_quadrature_points;
-      }
-    else // inside/outside
-      {
-        return 2 * n_subdivisions * n_quadrature_points;
-      }
-  }
+  get_n_points() const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
@@ -85,76 +62,14 @@ public:
    * @return points Coordinate of quadrature points of the cell
    */
   unsigned int
-  get_n_points([[maybe_unused]] const double &angle_cell_center) const
-  {
-    if (this->is_mesh_aligned()) // aligned
-      {
-        return n_quadrature_points;
-      }
-    else // inside/outside
-      {
-        return 2 * n_quadrature_points;
-      }
-  }
+  get_n_points(const double &angle_cell_center) const;
 
   /**
    * @brief Returns the indices of all quadrature points at both sides of the interface
    * @param[in] angle_cell_center Angular coordinate of cell center
    */
   std::vector<unsigned int>
-  get_indices(const double &angle_cell_center) const
-  {
-    // mesh alignment type and cell index
-    const auto [type, id] = get_config(angle_cell_center);
-
-    if (type == 0) // aligned
-      {
-        std::vector<unsigned int> indices;
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          {
-            const unsigned int index = id * n_quadrature_points + q;
-
-            AssertIndexRange(index, get_n_points());
-
-            indices.emplace_back(index);
-          }
-
-        return indices;
-      }
-    else if (type == 1) // inside
-      {
-        std::vector<unsigned int> indices;
-
-        for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
-          {
-            const unsigned int index =
-              (id * n_quadrature_points * 2 + n_quadrature_points + q) %
-              get_n_points();
-
-            AssertIndexRange(index, get_n_points());
-
-            indices.emplace_back(index);
-          }
-
-        return indices;
-      }
-    else // outside
-      {
-        std::vector<unsigned int> indices;
-
-        for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
-          {
-            const unsigned int index = id * n_quadrature_points * 2 + q;
-
-            AssertIndexRange(index, get_n_points());
-
-            indices.emplace_back(index);
-          }
-
-        return indices;
-      }
-  }
+  get_indices(const double &angle_cell_center) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
@@ -162,60 +77,7 @@ public:
    * @param[out] points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
-  get_points(const double rad) const
-  {
-    // mesh alignment type and cell index
-    const auto [type, id] = get_config(rad);
-    // angle variation within each cell
-    const double delta = 2 * numbers::PI / n_subdivisions;
-
-    if (type == 0) // aligned
-      {
-        std::vector<Point<dim>> points;
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(
-            radius_to_point<dim>(radius,
-                                 (id + quadrature.point(q)[0]) * delta));
-
-        return points;
-      }
-    else // point at the inner boundary lies somewhere in the face of the outer
-         // boundary cell
-      {
-        // rad_0: first cell vertex (fixed)
-        // rad_1: shifted vertex
-        // rad_2: last cell vertex (fixed)
-        double rad_0, rad_1, rad_2;
-        // minimum rotation angle
-        double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
-
-        if (type == 2) // outside
-          {
-            rad_0 = id * delta;
-            rad_1 = id * delta + rot_min;
-            rad_2 = (id + 1) * delta;
-          }
-        else // inside
-          {
-            rad_0 = id * delta + rot_min;
-            rad_1 = (id + 1) * delta;
-            rad_2 = (id + 1) * delta + rot_min;
-          }
-
-        std::vector<Point<dim>> points;
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(radius_to_point<dim>(
-            radius, rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0)));
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(radius_to_point<dim>(
-            radius, rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1)));
-
-        return points;
-      }
-  }
+  get_points(const double rad) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at the interface
@@ -225,52 +87,7 @@ public:
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<1>>
-  get_points_ref(const double angle_cell_center) const
-  {
-    const auto [type, id] = get_config(angle_cell_center);
-
-    const double delta = 2 * numbers::PI / n_subdivisions;
-
-    if (type == 0) // aligned
-      {
-        std::vector<Point<1>> points;
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(quadrature.point(q));
-
-        return points;
-      }
-    else // inside/outside
-      {
-        double rad_0, rad_1, rad_2;
-
-        double rot_min =
-          (rotate_pi - std::floor(rotate_pi / delta) * delta) / delta;
-
-        if (type == 2) // outside
-          {
-            rad_0 = 0.0;
-            rad_1 = rot_min;
-            rad_2 = 1.0;
-          }
-        else // inside
-          {
-            rad_0 = 0.0;
-            rad_1 = 1.0 - rot_min;
-            rad_2 = 1.0;
-          }
-
-        std::vector<Point<1>> points;
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0));
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1));
-
-        return points;
-      }
-  }
+  get_points_ref(const double angle_cell_center) const;
 
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
@@ -279,52 +96,7 @@ public:
    * @return points Angular weights of quadrature points of the cell
    */
   std::vector<double>
-  get_weights(const double &angle_cell_center) const
-  {
-    // mesh alignment type and cell index
-    const auto [type, id] = get_config(angle_cell_center);
-    // angle variation within each cell
-    const double delta = 2 * numbers::PI / n_subdivisions;
-
-    if (type == 0) // aligned
-      {
-        std::vector<double> points;
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(radius * quadrature.weight(q) * delta);
-
-        return points;
-      }
-    else // inside/outside
-      {
-        double rad_0, rad_1, rad_2;
-
-        double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
-
-        if (type == 2) // outside
-          {
-            rad_0 = id * delta;
-            rad_1 = id * delta + rot_min;
-            rad_2 = (id + 1) * delta;
-          }
-        else // inside
-          {
-            rad_0 = id * delta + rot_min;
-            rad_1 = (id + 1) * delta;
-            rad_2 = (id + 1) * delta + rot_min;
-          }
-
-        std::vector<double> points;
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(radius * quadrature.weight(q) * (rad_1 - rad_0));
-
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          points.emplace_back(radius * quadrature.weight(q) * (rad_2 - rad_1));
-
-        return points;
-      }
-  }
+  get_weights(const double &angle_cell_center) const;
 
   /**
    * @brief Returns the normal vector for the quadrature points
@@ -333,18 +105,7 @@ public:
    * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
-  get_normals(const double &angle_cell_center) const
-  {
-    // Coordinates of cell quadrature points
-    const auto points = get_points(angle_cell_center);
-
-    std::vector<Tensor<1, dim, double>> result;
-
-    for (const auto &point : points)
-      result.emplace_back(point / point.norm());
-
-    return result;
-  }
+  get_normals(const double &angle_cell_center) const;
 
 private:
   /**
@@ -358,37 +119,7 @@ private:
    * @return id Index of the cell in which lies the rotated cell center
    */
   std::pair<unsigned int, unsigned int>
-  get_config(const double &rad) const
-  {
-    // alignment tolerance
-    const double tolerance = 1e-8;
-    // angular variation in each cell
-    const double delta = 2 * numbers::PI / n_subdivisions;
-    // minimum rotation angle
-    double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
-    // point position in the cell
-    const double segment = (rad - delta / 2) / delta;
-    // point position after rotation
-    const double segment_rot = (rad - delta / 2 - rot_min) / delta;
-
-    if (this->is_mesh_aligned())
-      {
-        // case 1: mesh is aligned
-        return {0, std::round(segment)};
-      }
-    else
-      {
-        // case 2: mesh is not aligned
-        if (std::abs(segment - std::round(segment)) < tolerance)
-          // outer (fixed) domain
-          return {2, std::round(segment)};
-        else
-          // inner (rotated) domain
-          return {1,
-                  static_cast<unsigned int>(std::round(segment_rot)) %
-                    (2 * n_subdivisions)};
-      }
-  }
+  get_config(const double &rad) const;
 
   const unsigned int n_subdivisions;
   const unsigned int n_quadrature_points;
