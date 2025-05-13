@@ -31,10 +31,10 @@ using namespace dealii;
 
 /**
  * @brief Base class for the mortar manager
- * @param n_subdivisions Number of cells at the interface between inner and outer domains
- * @param n_quadrature_points Number of quadrature points per cell
- * @param radius Radius at the interface between inner and outer domains
- * @param rotate_pi Rotation angle for the inner domain
+ * @tparam n_subdivisions Number of cells at the interface between inner and outer domains
+ * @tparam n_quadrature_points Number of quadrature points per cell
+ * @tparam radius Radius at the interface between inner and outer domains
+ * @tparam rotation_angle Rotation angle for the inner domain
  */
 template <int dim>
 class MortarManager
@@ -43,7 +43,7 @@ public:
   MortarManager(const unsigned int n_subdivisions,
                 const unsigned int n_quadrature_points,
                 const double       radius,
-                const double       rotate_pi);
+                const double       rotation_angle);
 
   /**
    * @brief Verify if cells of the inner and outer domains are aligned
@@ -78,7 +78,8 @@ public:
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
    * @param[in] rad Angular coordinate of cell center
-   * @param[out] points Coordinate of quadrature points of the cell
+   *
+   * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
   get_points(const double rad) const;
@@ -114,7 +115,7 @@ public:
 private:
   /**
    * @brief Returns the mesh alignement type and cell index
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] angle_cell_center Angular coordinate of cell center
    *
    * @return type Cell configuration type at the interface
    * type = 0: mesh aligned
@@ -123,12 +124,12 @@ private:
    * @return id Index of the cell in which lies the rotated cell center
    */
   std::pair<unsigned int, unsigned int>
-  get_config(const double &rad) const;
+  get_config(const double &angle_cell_center) const;
 
   const unsigned int n_subdivisions;
   const unsigned int n_quadrature_points;
   const double       radius;
-  const double       rotate_pi;
+  const double       rotation_angle;
   QGauss<1>          quadrature;
 };
 
@@ -294,41 +295,92 @@ public:
                        const unsigned int               n_components,
                        const unsigned int               N,
                        const double                     radius,
-                       const double                     rotate_pi,
-                       const unsigned int               bid_0,
-                       const unsigned int               bid_1,
+                       const double                     rotation_angle,
+                       const unsigned int               bid_rotor,
+                       const unsigned int               bid_stator,
                        const double                     sip_factor,
                        const std::vector<unsigned int>  relevant_dof_indices,
                        const double                     penalty_factor_grad);
 
+  /**
+   * @brief Return object containing problem constraints
+   *
+   * @return AffineConstraints
+   */
   const AffineConstraints<Number> &
   get_affine_constraints() const;
 
+  /**
+   * @brief Add matrix-vector multiplication
+   *
+   * @param[in, out] dst Destination vector holding the result
+   * @param[in] src Input source vector
+   */
   void
   vmult_add(VectorType &dst, const VectorType &src) const;
 
+  /**
+   * @brief Add mortar coupling terms in diagonal entries
+   *
+   * @param[in, out] diagonal Matrix diagonal
+   */
   void
   add_diagonal_entries(VectorType &diagonal) const;
 
+  /**
+   * @brief Add mortar coupling terms in the sparsity pattern
+   *
+   * @param[in, out] dsp Dynamic Sparsity Pattern object
+   */
   void
   add_sparsity_pattern_entries(SparsityPatternBase &dsp) const;
 
+  /**
+   * @brief Add mortar coupling terms in the system matrix
+   *
+   * @param[in, out] system_matrix System matrix
+   */
   void
   add_system_matrix_entries(
     TrilinosWrappers::SparseMatrix &system_matrix) const;
 
 private:
+  /**
+   * @brief Compute penalty factor used in weak imposition of coupling at the rotor-stator interface
+   *
+   * @param[in] degree Polynomail degree of the FE approximation
+   * @param[in] factor Penalty factor (akin to symmetric interior penalty factor
+   * in SIPG)
+   */
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
 
+  /**
+   * @brief Compute penalty parameter in a cell
+   *
+   * @param[in] cell Cell iterator
+   * @return Penalty parameter
+   */
   Number
   compute_penalty_parameter(
     const typename Triangulation<dim>::cell_iterator &cell) const;
 
+  /**
+   * @brief Returns angle of a point (cell center) in radians
+   *
+   * @param[in] cell Cell iterator
+   * @param[in] face Face iterator
+   */
   double
-  get_rad(const typename Triangulation<dim>::cell_iterator &cell,
-          const typename Triangulation<dim>::face_iterator &face) const;
+  get_angle_cell_center(
+    const typename Triangulation<dim>::cell_iterator &cell,
+    const typename Triangulation<dim>::face_iterator &face) const;
 
+  /**
+   * @brief Returns dof indices
+   *
+   * @param[in] cell Cell iterator
+   */
   std::vector<types::global_dof_index>
   get_dof_indices(
     const typename DoFHandler<dim>::active_cell_iterator &cell) const;
@@ -358,8 +410,8 @@ protected:
   const unsigned int n_components;
   const unsigned int N;
 
-  const unsigned int bid_0;
-  const unsigned int bid_1;
+  const unsigned int bid_rotor;
+  const unsigned int bid_stator;
 
   const std::vector<unsigned int> relevant_dof_indices;
   const unsigned int              n_dofs_per_cell;
@@ -377,16 +429,42 @@ protected:
 
   AffineConstraints<Number> constraints_extended;
 
+  /**
+   * @brief Set up mapping information
+   *
+   * @param[in] cell Cell iterator
+   * @param[in] points List of points where FEPointIntegrator should be
+   * evaluated
+   */
   virtual void
   local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
                const ArrayView<const Point<dim, Number>> &points) const = 0;
 
+  /**
+   * @brief Evaluate values and gradients at the coupling entries
+   *
+   * @param[in] buffer Temporary vector where data is stored before being passes
+   * to the system matrix
+   * @param[in] ptr_q Pointer for the quadrature point index related to the rotor-stator interface
+   * @param[in] q_stride
+   * @param[in] all_value_m
+   */
   virtual void
   local_evaluate(const Vector<Number> &buffer,
                  const unsigned int    ptr_q,
                  const unsigned int    q_stride,
                  Number               *all_value_m) const = 0;
 
+  /**
+   * @brief Perform integral of mortar elements at the rotor-stator interface
+   *
+   * @param[in] buffer Temporary vector where data is stored before being passes
+   * to the system matrix
+   * @param[in] ptr_q Pointer for the quadrature point index related to the rotor-stator interface
+   * @param[in] q_stride
+   * @param[in] all_value_m
+   * @param[in] all_value_p
+   */
   virtual void
   local_integrate(Vector<Number>    &buffer,
                   const unsigned int ptr_q,
@@ -470,9 +548,9 @@ public:
                    const Quadrature<dim>            quadrature,
                    const unsigned int               n_subdivisions,
                    const double                     radius,
-                   const double                     rotate_pi,
-                   const unsigned int               bid_0,
-                   const unsigned int               bid_1,
+                   const double                     rotation_angle,
+                   const unsigned int               bid_rotor,
+                   const unsigned int               bid_stator,
                    const double                     sip_factor = 1.0,
                    const unsigned int first_selected_component = 0,
                    const double       penalty_factor_grad      = 1.0);
@@ -494,6 +572,14 @@ public:
                    const unsigned int first_selected_component = 0,
                    const double       penalty_factor_grad      = 1.0);
 
+  /**
+   * @brief
+   *
+   * @param[in] fe
+   * @param[in] first_selected_component
+   *
+   * @return dof_indices
+   */
   static std::vector<unsigned int>
   get_relevant_dof_indices(const FiniteElement<dim> &fe,
                            const unsigned int        first_selected_component);
