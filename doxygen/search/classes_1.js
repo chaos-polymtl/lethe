@@ -7,5 +7,6 @@ var searchData=
   ['boundarycellsinfo_4',['BoundaryCellsInfo',['../structIBParticlesDEM_1_1BoundaryCellsInfo.html',1,'IBParticlesDEM']]],
   ['boundarycellsinformation_5',['BoundaryCellsInformation',['../classBoundaryCellsInformation.html',1,'']]],
   ['boundaryconditions_6',['BoundaryConditions',['../classBoundaryConditions_1_1BoundaryConditions.html',1,'BoundaryConditions']]],
-  ['boundarypostprocessor_7',['BoundaryPostprocessor',['../classBoundaryPostprocessor.html',1,'']]]
+  ['boundarypostprocessor_7',['BoundaryPostprocessor',['../classBoundaryPostprocessor.html',1,'']]],
+  ['bufferrw_8',['BufferRW',['../classBufferRW.html',1,'']]]
 ];

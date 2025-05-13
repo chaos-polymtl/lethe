@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structcell__line__info.html" title="Handle information related to the cell&#45;line matching." alt="" coords="5,5,168,31"/>
+<area shape="rect" id="Node000000" href="$classCahnHilliardFilterBase.html" title="Filter phase fraction according to the selected filtering method." alt="" coords="5,55,172,80"/>
+<area shape="rect" id="Node000001" href="$classCahnHilliardClipFilter.html" title="Calculate a filtered phase fraction for Cahn&#45;Hilliard simulations. In this case, a simple clamping is..." alt="" coords="223,5,383,31"/>
+<area shape="poly" id="edge24_Node000000_Node000001" title=" " alt="" coords="157,49,246,28,247,33,158,54"/>
+<area shape="rect" id="Node000002" href="$classCahnHilliardNoFilter.html" title="Used as a default when no filter is applied to the phase fraction." alt="" coords="226,55,379,80"/>
+<area shape="poly" id="edge25_Node000000_Node000002" title=" " alt="" coords="186,65,226,65,226,70,186,70"/>
+<area shape="rect" id="Node000003" href="$classCahnHilliardTanhFilter.html" title="Calculate a filtered phase fraction for Cahn&#45;Hilliard simulations." alt="" coords="220,104,385,129"/>
+<area shape="poly" id="edge26_Node000000_Node000003" title=" " alt="" coords="158,81,247,101,246,107,157,86"/>
 </map>

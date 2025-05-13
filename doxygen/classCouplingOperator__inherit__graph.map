@@ -1,5 +1,5 @@
 <map id="CouplingOperator&lt; dim, n_components, Number &gt;" name="CouplingOperator&lt; dim, n_components, Number &gt;">
-<area shape="rect" id="Node000001" title=" " alt="" coords="312,20,508,60"/>
-<area shape="rect" id="Node000002" href="$classCouplingOperatorBase.html" title=" " alt="" coords="5,5,264,75"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="278,37,312,37,312,43,278,43"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,93,201,133"/>
+<area shape="rect" id="Node000002" href="$classCouplingOperatorBase.html" title=" " alt="" coords="19,5,187,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,59,106,93,101,93,101,59"/>
 </map>
