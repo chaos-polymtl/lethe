@@ -14,6 +14,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_wall_rolling_resistance_torque.h>
 
@@ -1143,6 +1144,69 @@ private:
       }
   }
 
+  /**
+   * @brief Set every containers needed to carry the heat transfer rate
+   * calculation.
+   *
+   * @param[in] dem_parameters DEM parameters declared in the .prm
+   * file.
+   */
+  void
+  set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters)
+  {
+    auto properties = dem_parameters.lagrangian_physical_properties;
+
+    n_particle_types = properties.particle_type_number;
+    equivalent_surface_roughness.resize(n_particle_types);
+    equivalent_surface_slope.resize(n_particle_types);
+    effective_microhardness.resize(n_particle_types);
+    particle_thermal_conductivity.resize(n_particle_types);
+    gas_parameter_m.resize(n_particle_types);
+    this->gas_thermal_conductivity = properties.thermal_conductivity_gas;
+
+    // Wall properties
+    const double wall_surface_roughness = properties.surface_roughness_wall;
+    const double wall_surface_slope     = properties.surface_slope_wall;
+    const double wall_microhardness     = properties.microhardness_wall;
+    const double wall_thermal_accommodation =
+      properties.thermal_accommodation_wall;
+    this->wall_thermal_conductivity = properties.thermal_conductivity_wall;
+
+    for (unsigned int i = 0; i < n_particle_types; ++i)
+      {
+        // Particle properties
+        const double particle_surface_roughness =
+          properties.surface_roughness_particle.at(i);
+        const double particle_surface_slope =
+          properties.surface_slope_particle.at(i);
+        const double particle_microhardness =
+          properties.microhardness_particle.at(i);
+        const double particle_thermal_accommodation =
+          properties.thermal_accommodation_particle.at(i);
+        this->particle_thermal_conductivity[i] =
+          properties.thermal_conductivity_particle.at(i);
+
+        // Effective particle-wall properties
+        this->equivalent_surface_roughness[i] =
+          sqrt(particle_surface_roughness * particle_surface_roughness +
+               wall_surface_roughness * wall_surface_roughness);
+        this->equivalent_surface_slope[i] =
+          sqrt(particle_surface_slope * particle_surface_slope +
+               wall_surface_slope * wall_surface_slope);
+        this->effective_microhardness[i] =
+          harmonic_mean(particle_microhardness, wall_microhardness);
+        this->gas_parameter_m[i] =
+          ((2. - particle_thermal_accommodation) /
+             particle_thermal_accommodation +
+           (2. - wall_thermal_accommodation) / wall_thermal_accommodation) *
+          (2. * properties.specific_heats_ratio_gas) /
+          (1. + properties.specific_heats_ratio_gas) *
+          properties.molecular_mean_free_path_gas /
+          (properties.dynamic_viscosity_gas * properties.specific_heat_gas /
+           properties.thermal_conductivity_gas);
+      }
+  }
+
   // Members of the class
 
   unsigned int        n_particle_types;
@@ -1155,6 +1219,13 @@ private:
   std::vector<double> effective_surface_energy;
   std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
+  std::vector<double> equivalent_surface_roughness;
+  std::vector<double> equivalent_surface_slope;
+  std::vector<double> effective_microhardness;
+  std::vector<double> particle_thermal_conductivity;
+  std::vector<double> gas_parameter_m;
+  double              gas_thermal_conductivity;
+  double              wall_thermal_conductivity;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
 

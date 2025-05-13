@@ -19,6 +19,11 @@ ParticleWallContactForce<dim,
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
 {
   set_effective_properties(dem_parameters);
+  if constexpr (std::is_same_v<PropertiesIndex,
+                               DEM::DEMMPProperties::PropertiesIndex>)
+    {
+      set_multiphysic_properties(dem_parameters);
+    }
 }
 
 template <int dim,
@@ -162,6 +167,11 @@ ParticleWallContactForce<dim,
         solids[solid_counter]->get_angular_velocity();
       Point<3> center_of_rotation =
         solids[solid_counter]->get_center_of_rotation();
+      Parameters::ThermalBoundaryType thermal_boundary_type =
+        solids[solid_counter]->get_thermal_boundary_type();
+      double temperature_wall;
+      if (thermal_boundary_type != Parameters::ThermalBoundaryType::adiabatic)
+        temperature_wall = solids[solid_counter]->get_temperature();
 
       auto &particle_floating_mesh_contact_pair =
         particle_floating_mesh_in_contact[solid_counter];
@@ -289,6 +299,51 @@ ParticleWallContactForce<dim,
                         {
                           contact_info.tangential_displacement.clear();
                           contact_info.rolling_resistance_spring_torque.clear();
+                        }
+
+                      if constexpr (std::is_same_v<
+                                      PropertiesIndex,
+                                      DEM::DEMMPProperties::PropertiesIndex>)
+                        {
+                          if ((thermal_boundary_type !=
+                               Parameters::ThermalBoundaryType::adiabatic) &&
+                              (normal_overlap > 0))
+                            {
+                              const unsigned int particle_type =
+                                particle_properties[PropertiesIndex::type];
+                              const double temperature_particle =
+                                particle_properties[PropertiesIndex::T];
+                              double &particle_heat_transfer_rate =
+                                contact_outcome.heat_transfer_rate
+                                  [particle->get_local_index()];
+                              double thermal_conductance;
+
+                              calculate_contact_thermal_conductance<
+                                ContactType::particle_floating_mesh>(
+                                0.5 * particle_properties[PropertiesIndex::dp],
+                                0,
+                                this->effective_youngs_modulus[particle_type],
+                                this->effective_youngs_modulus[particle_type],
+                                this
+                                  ->equivalent_surface_roughness[particle_type],
+                                this->equivalent_surface_slope[particle_type],
+                                this->effective_microhardness[particle_type],
+                                this->particle_thermal_conductivity
+                                  [particle_type],
+                                this->wall_thermal_conductivity,
+                                this->gas_thermal_conductivity,
+                                this->gas_parameter_m[particle_type],
+                                normal_overlap,
+                                normal_force.norm(),
+                                thermal_conductance);
+
+                              // Apply the heat transfer to the particle
+                              apply_heat_transfer_on_single_local_particle(
+                                temperature_particle,
+                                temperature_wall,
+                                thermal_conductance,
+                                particle_heat_transfer_rate);
+                            }
                         }
                     }
                   particle_counter++;
