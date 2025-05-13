@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/mortar_coupling_manager.h>
+#include <deal.II/base/config.h>
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+
+#  include <core/mortar_coupling_manager.h>
 
 
 /*-------------- MortarManager -------------------------------*/
@@ -1207,3 +1211,5 @@ template class CouplingOperator<2, 3, double>;
 template class CouplingOperator<3, 1, double>;
 template class CouplingOperator<3, 3, double>;
 template class CouplingOperator<3, 4, double>;
+
+#endif

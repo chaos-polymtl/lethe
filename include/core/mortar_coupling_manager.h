@@ -4,24 +4,28 @@
 #ifndef lethe_core_mortar_coupling_manager_h
 #define lethe_core_mortar_coupling_manager_h
 
-#include <core/parameters.h>
-#include <core/utilities.h>
+#include <deal.II/base/config.h>
 
-#include <deal.II/base/mpi_noncontiguous_partitioner.h>
-#include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
-#include <deal.II/base/quadrature_lib.h>
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 
-#include <deal.II/fe/fe_system.h>
+#  include <core/parameters.h>
+#  include <core/utilities.h>
 
-#include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/trilinos_solver.h>
-#include <deal.II/lac/trilinos_sparse_matrix.h>
-#include <deal.II/lac/trilinos_sparsity_pattern.h>
+#  include <deal.II/base/mpi_noncontiguous_partitioner.h>
+#  include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
+#  include <deal.II/base/quadrature_lib.h>
 
-#include <deal.II/matrix_free/fe_evaluation.h>
-#include <deal.II/matrix_free/fe_point_evaluation.h>
-#include <deal.II/matrix_free/matrix_free.h>
-#include <deal.II/matrix_free/tools.h>
+#  include <deal.II/fe/fe_system.h>
+
+#  include <deal.II/lac/trilinos_precondition.h>
+#  include <deal.II/lac/trilinos_solver.h>
+#  include <deal.II/lac/trilinos_sparse_matrix.h>
+#  include <deal.II/lac/trilinos_sparsity_pattern.h>
+
+#  include <deal.II/matrix_free/fe_evaluation.h>
+#  include <deal.II/matrix_free/fe_point_evaluation.h>
+#  include <deal.II/matrix_free/matrix_free.h>
+#  include <deal.II/matrix_free/tools.h>
 
 using namespace dealii;
 
@@ -516,4 +520,5 @@ public:
   mutable FEPointIntegrator phi_m;
 };
 
+#endif
 #endif
