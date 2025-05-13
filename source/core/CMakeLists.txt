@@ -14,6 +14,7 @@ add_library(lethe-core
   manifolds.cc
   mesh_controller.cc
   mobility_cahn_hilliard_model.cc
+  mortar_coupling_manager.cc
   parameters.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
