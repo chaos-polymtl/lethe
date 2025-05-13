@@ -171,7 +171,7 @@ public:
    *
    * @return The thermal boundary type of the solid object
    */
-  inline double
+  inline Parameters::ThermalBoundaryType
   get_thermal_boundary_type() const
   {
     return this->thermal_boundary_type;
@@ -189,6 +189,15 @@ public:
   {
     return id;
   }
+
+  /**
+   * @brief Update the temperature of the solid object, which is a function of time.
+   *
+   * @param initial_time The initial time (time t) of the timestep. This is used to
+   * set the time of the temperature function.
+   */
+  void
+  update_solid_temperature(const double initial_time);
 
   /**
    * @brief Moves the vertices of the solid triangulation. This function
@@ -307,12 +316,12 @@ private:
   // Elements used to store the velocity of the solid object
   std::shared_ptr<Function<spacedim>> translational_velocity;
   std::shared_ptr<Function<spacedim>> angular_velocity;
-  std::shared_ptr<Function<spacedim>> solid_temperature;
   Point<spacedim>                     center_of_rotation;
   Tensor<1, spacedim>                 current_translational_velocity;
   Tensor<1, 3>                        current_angular_velocity;
+  std::shared_ptr<Function<spacedim>> solid_temperature;
+  Parameters::ThermalBoundaryType     thermal_boundary_type;
   double                              current_solid_temperature;
-  const ThermalBoundaryType           thermal_boundary_type;
 };
 
 #endif
