@@ -62,8 +62,8 @@ test()
   double         particle_diameter                           = 0.005;
   unsigned int   rotating_wall_maximum_number                = 6;
   properties.particle_type_number                            = 1;
-  properties.youngs_modulus_particle[0]                      = 50000000;
-  properties.youngs_modulus_wall                             = 50000000;
+  properties.youngs_modulus_particle[0]                      = 5.e6;
+  properties.youngs_modulus_wall                             = 5.e6;
   properties.poisson_ratio_particle[0]                       = 0.3;
   properties.poisson_ratio_wall                              = 0.3;
   properties.restitution_coefficient_particle[0]             = 0.5;
@@ -79,8 +79,8 @@ test()
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   // Defining parameters for thermal DEM
-  const double equivalent_surface_roughness  = 25e-9;
-  const double equivalent_surface_slope      = 0.078;
+  const double equivalent_surface_roughness  = 1e-9;
+  const double equivalent_surface_slope      = 0.08;
   const double effective_microhardness       = 9e9;
   const double thermal_conductivity_particle = 3000;
   const double thermal_conductivity_wall     = 300;
@@ -122,7 +122,6 @@ test()
   Tensor<1, dim>     omega_1{{0, 0, 0}};
   const double       mass = 1;
   const unsigned int type = 0;
-
   set_particle_properties<dim, PropertiesIndex>(
     pit_1, type, particle_diameter, mass, v_1, omega_1);
 
@@ -148,7 +147,7 @@ test()
     ConditionalOStream(std::cout,
                        Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
-  // P-W broad search
+  // Calling broad search
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
     particle_wall_contact_list;
   find_particle_wall_contact_pairs<dim>(
@@ -161,10 +160,8 @@ test()
     particle_wall_contact_list);
 
   // Calling fine search
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    particle_wall_contact_information;
-  particle_wall_fine_search<dim>(particle_wall_contact_list,
-                                 particle_wall_contact_information);
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact contact_info;
+  particle_wall_fine_search<dim>(particle_wall_contact_list, contact_info);
 
   // Calling non-linear force
   ParticleWallContactForce<
@@ -173,8 +170,9 @@ test()
     Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
-  nonlinear_force_object.calculate_particle_wall_contact(
-    particle_wall_contact_information, dt, contact_outcome);
+  nonlinear_force_object.calculate_particle_wall_contact(contact_info,
+                                                         dt,
+                                                         contact_outcome);
 
   // Calculating  parameters for thermal DEM
   auto     particle          = particle_handler.begin();
@@ -183,7 +181,14 @@ test()
   const double radius_particle = particle_diameter * 0.5;
   const double effective_youngs_modulus =
     youngs_modulus / (2.0 * (1. - poisson_ratio * poisson_ratio));
-  const double normal_overlap = radius_particle - ;
+  const Tensor<1, 3> point_to_particle_vector =
+    particle_location - contact_info.point_on_boundary;
+  const Tensor<1, 3> normal_vector = contact_info.normal_vector;
+  const Tensor<1, 3> projected_vector =
+    ((point_to_particle_vector * normal_vector) /
+     (normal_vector.norm_square())) *
+    normal_vector;
+  const double normal_overlap = radius_particle - (projected_vector.norm());
   const double normal_force_norm =
     contact_outcome.force[particle->get_id()].norm();
   const double prandtl_gas =
@@ -196,7 +201,7 @@ test()
   double thermal_conductance;
   calculate_contact_thermal_conductance<ContactType::particle_floating_mesh>(
     radius_particle,
-    0,
+    0, // unused
     effective_youngs_modulus,
     effective_youngs_modulus,
     equivalent_surface_roughness,
@@ -209,7 +214,6 @@ test()
     normal_overlap,
     normal_force_norm,
     thermal_conductance);
-
 
   // Output
   auto particle = particle_handler.begin();
