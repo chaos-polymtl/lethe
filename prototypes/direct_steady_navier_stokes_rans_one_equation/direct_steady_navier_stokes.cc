@@ -152,6 +152,16 @@ public:
   }
   bool add_turbulence_to_ns = false;
 
+  inline double
+  calculate_navier_stokes_gls_tau_steady(const double u_mag,
+                                         const double kinematic_viscosity,
+                                         const double h)
+  {
+    return 1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
+                          9 * Utilities::fixed_power<2>(
+                                4 * kinematic_viscosity / (h * h)));
+  }
+
 private:
   void
   make_cube_grid(int refinementLevel);
@@ -319,7 +329,7 @@ DirectSteadyNavierStokes<dim>::setup_dofs()
           nonzero_constraints,
           fe.component_mask(velocities));
 
-        std::vector<double> inlet_bc = {0.01, 0.0, 0.0};
+        std::vector<double> inlet_bc = {1., 0.0, 0.0};
         VectorTools::interpolate_boundary_values(
           dof_handler,
           1,
@@ -450,7 +460,8 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
   FEValues<dim>                    fe_values(fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
-                            update_JxW_values | update_gradients);
+                            update_JxW_values | update_gradients |
+                            update_hessians);
   const unsigned int               dofs_per_cell = fe.dofs_per_cell;
   const unsigned int               n_q_points    = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
@@ -461,7 +472,9 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<Tensor<1, dim>>          present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>>          present_velocity_gradients(n_q_points);
+  std::vector<Tensor<1, dim>>          velocity_laplacians(n_q_points);
   std::vector<double>                  present_pressure_values(n_q_points);
+  std::vector<Tensor<1, dim>>          pressure_gradient(n_q_points);
   std::vector<double>                  div_phi_u(dofs_per_cell);
   std::vector<Tensor<1, dim>>          phi_u(dofs_per_cell);
   std::vector<Tensor<2, dim>>          grad_phi_u(dofs_per_cell);
@@ -492,13 +505,28 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
                                                 present_velocity_values);
       fe_values[velocities].get_function_gradients(evaluation_point,
                                                    present_velocity_gradients);
+      fe_values[velocities].get_function_laplacians(evaluation_point,
+                                                    velocity_laplacians);
       fe_values[pressure].get_function_values(evaluation_point,
                                               present_pressure_values);
+      fe_values[pressure].get_function_gradients(evaluation_point,
+                                                 pressure_gradient);
       forcing_function->vector_value_list(fe_values.get_quadrature_points(),
                                           rhs_force);
 
+      Tensor<1, dim> present_velocity_divergence;
+
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
+          const double u_mag =
+            std::max(present_velocity_values[q].norm(), 1e-12);
+          const double h = cell->measure();
+          const double tau =
+            calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_, h);
+          auto strong_residual =
+            present_velocity_gradients[q] * present_velocity_values[q] +
+            pressure_gradient[q] -
+            viscosity_ * velocity_laplacians[q]; // TODO: Missing rhs force term
           for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
               div_phi_u[k]  = fe_values[velocities].divergence(k, q);
@@ -520,6 +548,7 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
                          div_phi_u[i] * phi_p[j] - phi_p[i] * div_phi_u[j]) *
                         fe_values.JxW(q);
                       // Add the contribution of the turbulent viscosity
+
                       local_matrix(i, j) +=
                         turbulent_viscosity[q] *
                         scalar_product(grad_phi_u[j], grad_phi_u[i]) *
@@ -540,11 +569,18 @@ DirectSteadyNavierStokes<dim>::assemble(const bool initial_step,
                 fe_values.JxW(q);
 
               // Add the contribution of the turbulent viscosity
-              local_rhs(i) -=
-                turbulent_viscosity[q] *
-                scalar_product(present_velocity_gradients[q], grad_phi_u[i]) *
-                fe_values.JxW(q);
+              // local_rhs(i) -=
+              //   turbulent_viscosity[q] *
+              //   scalar_product(present_velocity_gradients[q], grad_phi_u[i])
+              //   * fe_values.JxW(q);
 
+
+              // SUPG term
+              // local_rhs(i) += -tau *
+              //                 (strong_residual *
+              //                  (grad_phi_u[i] * present_velocity_values[q]))
+              //                  *
+              //                 fe_values.JxW(q);
 
               local_rhs(i) += fe_values.shape_value(i, q) *
                               rhs_force[q](component_i) * fe_values.JxW(q);
@@ -675,23 +711,23 @@ DirectSteadyNavierStokes<dim>::assemble_turbulent_model(
   std::map<types::global_dof_index, double> boundary_values_turbulence;
   double                                    contour_value = 0.;
 
-    VectorTools::interpolate_boundary_values(
-      dof_handler_turbulence,
-      0,
-      dealii::Functions::ConstantFunction<dim>(0., 1),
-      boundary_values_turbulence);
+  VectorTools::interpolate_boundary_values(
+    dof_handler_turbulence,
+    0,
+    dealii::Functions::ConstantFunction<dim>(0., 1),
+    boundary_values_turbulence);
 
-          VectorTools::interpolate_boundary_values(
-      dof_handler_turbulence,
-      1,
-      dealii::Functions::ConstantFunction<dim>(0.05, 1),
-      boundary_values_turbulence);
+  VectorTools::interpolate_boundary_values(
+    dof_handler_turbulence,
+    1,
+    dealii::Functions::ConstantFunction<dim>(10, 1),
+    boundary_values_turbulence);
 
-      //         VectorTools::interpolate_boundary_values(
-      // dof_handler_turbulence,
-      // 2,
-      // dealii::Functions::ConstantFunction<dim>(0., 1),
-      // boundary_values_turbulence);
+  //         VectorTools::interpolate_boundary_values(
+  // dof_handler_turbulence,
+  // 2,
+  // dealii::Functions::ConstantFunction<dim>(0., 1),
+  // boundary_values_turbulence);
 
 
   MatrixTools::apply_boundary_values(boundary_values_turbulence,
@@ -832,7 +868,6 @@ DirectSteadyNavierStokes<dim>::newton_iteration(
     unsigned int outer_iteration = 0;
     last_res                     = 1.0;
     current_res                  = 1.0;
-    std::cout << "\n\nFLUID NEWTON SOLVER:\n" << std::endl;
     while ((first_step || (current_res > tolerance)) &&
            outer_iteration < max_iteration)
       {
@@ -860,6 +895,7 @@ DirectSteadyNavierStokes<dim>::newton_iteration(
             evaluation_point = present_solution;
             assemble_system(first_step);
             solve(first_step);
+            present_solution = newton_update;
             for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
               {
                 evaluation_point = present_solution;
