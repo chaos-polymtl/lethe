@@ -1061,7 +1061,28 @@ compute_n_subdivisions_and_radius(
   return {n_subdivisions, radius};
 }
 
+/**
+ * @brief Construct oversampled quadrature
+ *
+ * @param[in, out] quadrature Quadrature for local cell operations
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ */
+template <int dim>
+static Quadrature<dim>
+construct_quadrature(const Quadrature<dim>         &quadrature,
+                     const Parameters::Mortar<dim> &mortar_parameters)
+{
+  const double oversampling_factor = mortar_parameters.oversampling_factor;
 
+  for (unsigned int i = 1; i <= 10; ++i)
+    if (quadrature == QGauss<dim>(i))
+      return QGauss<dim>(i * oversampling_factor);
+
+  AssertThrow(false, ExcNotImplemented());
+
+  return quadrature;
+}
 
 template <int dim, int n_components, typename Number>
 CouplingOperator<dim, n_components, Number>::CouplingOperator(
@@ -1113,7 +1134,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
       mapping,
       dof_handler,
       constraints,
-      quadrature,
+      construct_quadrature(quadrature, mortar_parameters),
       compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first,
       1,
       2 * n_components,

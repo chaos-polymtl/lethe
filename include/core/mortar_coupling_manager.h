@@ -600,7 +600,7 @@ public:
 
   /**
    * @brief Constructor of the class
-   * 
+   *
    * @param[in] mapping Mapping of the domain
    * @param[in] dof_handler DoFHandler associated to the triangulation
    * @param[in] constraints Object with the constrains according to DoFs
