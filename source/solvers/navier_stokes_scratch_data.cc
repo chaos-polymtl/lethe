@@ -464,6 +464,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               thermal_expansion_model->vector_value(fields, thermal_expansion);
             }
           break;
+          if (gather_rans_turbulence)
+            {
+              const bool a = false;
+            }
         }
       case 2:
         {

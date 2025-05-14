@@ -112,6 +112,7 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
+    gather_rans_turbulence                   = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -150,6 +151,7 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
+    gather_rans_turbulence                   = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
 
