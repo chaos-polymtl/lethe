@@ -67,7 +67,7 @@ template <int dim>
 std::vector<unsigned int>
 MortarManager<dim>::get_indices(const double &angle_cell_center) const
 {
-  // mesh alignment type and cell index
+  // Mesh alignment type and cell index
   const auto [type, id] = get_config(angle_cell_center);
 
   if (type == 0) // aligned
@@ -123,9 +123,9 @@ template <int dim>
 std::vector<Point<dim>>
 MortarManager<dim>::get_points(const double rad) const
 {
-  // mesh alignment type and cell index
+  // Mesh alignment type and cell index
   const auto [type, id] = get_config(rad);
-  // angle variation within each cell
+  // Angle variation within each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
 
   if (type == 0) // aligned
@@ -138,14 +138,14 @@ MortarManager<dim>::get_points(const double rad) const
 
       return points;
     }
-  else // point at the inner boundary lies somewhere in the face of the outer
+  else // Point at the inner boundary lies somewhere in the face of the outer
        // boundary cell
     {
       // rad_0: first cell vertex (fixed)
       // rad_1: shifted vertex
       // rad_2: last cell vertex (fixed)
       double rad_0, rad_1, rad_2;
-      // minimum rotation angle
+      // Minimum rotation angle
       double rot_min =
         rotation_angle - std::floor(rotation_angle / delta) * delta;
 
@@ -229,9 +229,9 @@ template <int dim>
 std::vector<double>
 MortarManager<dim>::get_weights(const double &angle_cell_center) const
 {
-  // mesh alignment type and cell index
+  // Mesh alignment type and cell index
   const auto [type, id] = get_config(angle_cell_center);
-  // angle variation within each cell
+  // Angle variation within each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
 
   if (type == 0) // aligned
@@ -294,25 +294,25 @@ template <int dim>
 std::pair<unsigned int, unsigned int>
 MortarManager<dim>::get_config(const double &rad) const
 {
-  // alignment tolerance
+  // Aalignment tolerance
   const double tolerance = 1e-8;
-  // angular variation in each cell
+  // Angular variation in each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
-  // minimum rotation angle
+  // Minimum rotation angle
   double rot_min = rotation_angle - std::floor(rotation_angle / delta) * delta;
-  // point position in the cell
+  // Point position in the cell
   const double segment = (rad - delta / 2) / delta;
-  // point position after rotation
+  // Point position after rotation
   const double segment_rot = (rad - delta / 2 - rot_min) / delta;
 
   if (this->is_mesh_aligned())
     {
-      // case 1: mesh is aligned
+      // Case 1: mesh is aligned
       return {0, std::round(segment)};
     }
   else
     {
-      // case 2: mesh is not aligned
+      // Case 2: mesh is not aligned
       if (std::abs(segment - std::round(segment)) < tolerance)
         // outer (fixed) domain
         return {2, std::round(segment)};
@@ -359,22 +359,22 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
   this->penalty_factor_grad = penalty_factor_grad;
 
-  // create manager at the quadrature point level
+  // Create manager at the quadrature point level
   mortar_manager_q = std::make_shared<MortarManager<dim>>(
     n_subdivisions,
     quadrature.get_tensor_basis()[0].size(),
     radius,
     rotation_angle);
 
-  // create manager at the cell level
+  // Create manager at the cell level
   mortar_manager_cell = std::make_shared<MortarManager<dim>>(n_subdivisions,
                                                              1,
                                                              radius,
                                                              rotation_angle);
 
-  // number of quadrature points
+  // Number of quadrature points
   const unsigned int n_points = mortar_manager_q->get_n_points();
-  // number of cells
+  // Number of cells
   const unsigned int n_sub_cells = mortar_manager_cell->get_n_points();
 
   std::vector<types::global_dof_index> is_local;
