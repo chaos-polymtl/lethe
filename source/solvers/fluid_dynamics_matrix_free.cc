@@ -2123,7 +2123,7 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
         this->simulation_parameters.stabilization.stabilization ==
           Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
         dealii::ExcMessage(
-          "Matrix free Non-Newtonian Navier-Stokes does not support GLS stabilization."));
+          "Matrix free Non-Newtonian Navier-Stokes only supports SUPG/PSPG stabilization."));
     }
   else
     system_operator =
