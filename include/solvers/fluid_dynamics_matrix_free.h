@@ -107,6 +107,8 @@ public:
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] physical_properties_manager Required to have the updated values
+   * of physical properties in case of ramp or viscous initial conditions.
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
   void
@@ -114,7 +116,9 @@ public:
          const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
          const std::shared_ptr<Function<dim>>      forcing_function,
          const std::shared_ptr<SimulationControl> &simulation_control,
-         const std::shared_ptr<FESystem<dim>>      fe);
+         const std::shared_ptr<PhysicalPropertiesManager>
+                                             &physical_properties_manager,
+         const std::shared_ptr<FESystem<dim>> fe);
 
   /**
    * @brief Creates the operator for a given level.
@@ -621,6 +625,12 @@ protected:
    *
    */
   VectorType temperature_present_solution;
+
+  /**
+   * @brief Pointer to the physical properties object
+   *
+   */
+  std::shared_ptr<PhysicalPropertiesManager> physical_properties_manager;
 };
 
 #endif

@@ -144,6 +144,8 @@ public:
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] physical_properties_manager Required to have the updated values
+   * of physical properties in case of ramp or viscous initial conditions.
    * @param[in] boundary_conditions Contains information regarding all boundary
    * conditions. Required to weakly impose boundary conditions.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
@@ -153,12 +155,13 @@ public:
 
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                       &mapping,
-    const DoFHandler<dim>                    &dof_handler,
-    const AffineConstraints<number>          &constraints,
-    const Quadrature<dim>                    &quadrature,
-    const std::shared_ptr<Function<dim>>      forcing_function,
-    const PhysicalPropertiesManager          &physical_properties_manager,
+    const Mapping<dim>                  &mapping,
+    const DoFHandler<dim>               &dof_handler,
+    const AffineConstraints<number>     &constraints,
+    const Quadrature<dim>               &quadrature,
+    const std::shared_ptr<Function<dim>> forcing_function,
+    const std::shared_ptr<PhysicalPropertiesManager>
+                                             &physical_properties_manager,
     const StabilizationType                   stabilization,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
@@ -192,12 +195,13 @@ public:
    */
   void
   reinit(
-    const Mapping<dim>                       &mapping,
-    const DoFHandler<dim>                    &dof_handler,
-    const AffineConstraints<number>          &constraints,
-    const Quadrature<dim>                    &quadrature,
-    const std::shared_ptr<Function<dim>>      forcing_function,
-    const PhysicalPropertiesManager          &physical_properties_manager,
+    const Mapping<dim>                  &mapping,
+    const DoFHandler<dim>               &dof_handler,
+    const AffineConstraints<number>     &constraints,
+    const Quadrature<dim>               &quadrature,
+    const std::shared_ptr<Function<dim>> forcing_function,
+    const std::shared_ptr<PhysicalPropertiesManager>
+                                             &physical_properties_manager,
     const StabilizationType                   stabilization,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
@@ -568,6 +572,12 @@ protected:
   std::shared_ptr<SimulationControl> simulation_control;
 
   /**
+   * @brief Object pointing to the physical properties manager of the matrix free class.
+   *
+   */
+  std::shared_ptr<PhysicalPropertiesManager> properties_manager;
+
+  /**
    * @brief  Boundary conditions object to impose the correct boundary conditions. This object
    * is only used to impose boundary conditions that appear in the weak form as
    * face terms (Weak Dirichlet boundary conditions and, eventually, outlets).
@@ -770,12 +780,6 @@ protected:
   ConditionalOStream pcout;
 
 public:
-  /**
-   * @brief Shared pointer to physical properties manager.
-   *
-   */
-  std::shared_ptr<PhysicalPropertiesManager> properties_manager;
-
   /**
    * @brief Timer for internal operator calls.
    *
