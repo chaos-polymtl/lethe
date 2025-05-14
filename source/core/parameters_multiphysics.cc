@@ -58,6 +58,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Cahn-Hilliard calculation <true|false>");
 
+    prm.declare_entry("rans turbulence",
+                      "false",
+                      Patterns::Bool(),
+                      "RANS turbulence model <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       "false",
@@ -81,11 +86,12 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
 {
   prm.enter_subsection("multiphysics");
   {
-    fluid_dynamics = prm.get_bool("fluid dynamics");
-    heat_transfer  = prm.get_bool("heat transfer");
-    tracer         = prm.get_bool("tracer");
-    VOF            = prm.get_bool("VOF");
-    cahn_hilliard  = prm.get_bool("cahn hilliard");
+    fluid_dynamics  = prm.get_bool("fluid dynamics");
+    heat_transfer   = prm.get_bool("heat transfer");
+    tracer          = prm.get_bool("tracer");
+    VOF             = prm.get_bool("VOF");
+    cahn_hilliard   = prm.get_bool("cahn hilliard");
+    rans_turbulence = prm.get_bool("rans turbulence");
 
     // subparameters for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
@@ -734,6 +740,51 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler    &prm,
       epsilon *= dimensions.cahn_hilliard_epsilon_scaling;
     }
     prm.leave_subsection();
+  }
+
+  prm.leave_subsection();
+}
+
+void
+Parameters::RANSTurbulence::declare_parameters(ParameterHandler &prm)
+{
+  prm.declare_entry("RANS turbulence",
+                    "false",
+                    Patterns::Bool(),
+                    "Enable RANS turbulence model <true|false>");
+  prm.enter_subsection("turbulence");
+  {
+    prm.declare_entry("turbulence model",
+                      "none",
+                      Patterns::Selection("none|k-epsilon"),
+                      "Turbulence model used in the RANS simulation"
+                      "Choices are <none|k-epsilon>.");
+    prm.declare_entry("turbulence intensity",
+                      "0.1",
+                      Patterns::Double(),
+                      "Turbulence intensity");
+    prm.declare_entry("turbulence length scale",
+                      "0.1",
+                      Patterns::Double(),
+                      "Turbulence length scale");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::RANSTurbulence::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("turbulence");
+  {
+    const std::string op = prm.get("turbulence model");
+    if (op == "k-epsilon")
+      turbulence_model = RANSTurbulenceModel::k_epsilon;
+    else if (op == "none")
+      turbulence_model = RANSTurbulenceModel::none;
+    else
+      throw(std::runtime_error("Invalid turbulence model"));
+    turbulence_intensity    = prm.get_double("turbulence intensity");
+    turbulence_length_scale = prm.get_double("turbulence length scale");
   }
   prm.leave_subsection();
 }

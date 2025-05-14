@@ -359,6 +359,30 @@ namespace Parameters
   };
 
   /**
+   * @brief Set of parameters for the simulation of turbulent flows using RANS.
+   *
+   */
+  struct RANSTurbulence
+  {
+    // Type of turbulence model
+    enum class RANSTurbulenceModel
+    {
+      k_epsilon,
+      none,
+    } model;
+
+    RANSTurbulenceModel turbulence_model;
+
+    double turbulence_intensity;
+    double turbulence_length_scale;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Multiphysics - the parameters for multiphysics simulations
    * and handles sub-physics parameters.
    */
@@ -369,13 +393,15 @@ namespace Parameters
     bool tracer;
     bool VOF;
     bool cahn_hilliard;
+    bool rans_turbulence;
 
     // subparameters for heat_transfer
     bool viscous_dissipation;
     bool buoyancy_force;
 
-    Parameters::VOF          vof_parameters;
-    Parameters::CahnHilliard cahn_hilliard_parameters;
+    Parameters::VOF            vof_parameters;
+    Parameters::CahnHilliard   cahn_hilliard_parameters;
+    Parameters::RANSTurbulence rans_turbulence_parameters;
 
     void
     declare_parameters(ParameterHandler &prm);

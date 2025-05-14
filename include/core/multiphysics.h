@@ -6,11 +6,12 @@
 
 enum PhysicsID : unsigned int
 {
-  fluid_dynamics = 0,
-  heat_transfer  = 1,
-  tracer         = 2,
-  VOF            = 3,
-  cahn_hilliard  = 4
+  fluid_dynamics  = 0,
+  heat_transfer   = 1,
+  tracer          = 2,
+  VOF             = 3,
+  cahn_hilliard   = 4,
+  rans_turbulence = 5
 };
 
 /**
@@ -32,7 +33,9 @@ enum class Variable : unsigned int
   /// Chemical potential scalar field from Cahn Hilliard
   chemical_potential_cahn_hilliard = 5,
   /// Tracer scalar field
-  tracer = 6
+  tracer = 6,
+  // RANS turbulent viscosity
+  turbulent_viscosity = 7
 };
 
 /**
@@ -51,8 +54,12 @@ get_physics_id(std::string physics_name)
     return PhysicsID::tracer;
   else if (physics_name == "VOF")
     return PhysicsID::VOF;
-  else
+  else if (physics_name == "cahn hilliard")
     return PhysicsID::cahn_hilliard;
+  else if (physics_name == "rans turbulence")
+    return PhysicsID::rans_turbulence;
+  else
+    AssertThrow(false, ExcMessage("Unknown physics name: " + physics_name));
 }
 
 #endif

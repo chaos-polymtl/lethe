@@ -372,6 +372,20 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
 }
 
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_rans_turbulence(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
+{
+  gather_rans_turbulence    = true;
+  fe_values_rans_turbulence = std::make_shared<FEValues<dim>>(
+    mapping, fe, quadrature, update_values | update_gradients);
+
+  turbulent_viscosity = std::vector<double>(this->n_q_points);
+}
+
 
 template <int dim>
 void

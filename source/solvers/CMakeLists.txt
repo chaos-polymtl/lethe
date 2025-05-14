@@ -20,6 +20,7 @@ add_library(lethe-solvers
   fluid_dynamics_matrix_free_operators.cc
   multiphysics_interface.cc
   navier_stokes_assemblers.cc
+  rans_assemblers.cc
   navier_stokes_base.cc
   navier_stokes_cahn_hilliard_assemblers.cc
   navier_stokes_scratch_data.cc

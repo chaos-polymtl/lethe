@@ -184,6 +184,10 @@ public:
                            sd.fe_values_cahn_hilliard->get_quadrature(),
                            sd.fe_values_cahn_hilliard->get_mapping(),
                            sd.cahn_hilliard_filter);
+    if (sd.gather_rans_turbulence)
+      enable_rans_turbulence(sd.fe_values_rans_turbulence->get_fe(),
+                             sd.fe_values_rans_turbulence->get_quadrature(),
+                             sd.fe_values_rans_turbulence->get_mapping());
 
     gather_hessian = sd.gather_hessian;
   }
@@ -995,6 +999,51 @@ public:
                            this->filtered_phase_order_cahn_hilliard_values);
   }
 
+  /** @brief Enable the collection of the RANS turbulence data by the scratch
+   *
+   * @params fe FiniteElement associated with the RANS turbulence physics
+   *
+   * @params quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @params mapping Mapping used for the Navier-Stokes problem assembly
+   */
+  void
+  enable_rans_turbulence(const FiniteElement<dim> &fe,
+                         const Quadrature<dim>    &quadrature,
+                         const Mapping<dim>       &mapping);
+
+  /** @brief Reinitialize the content of the scratch for RANS turbulence
+   *
+   * @params cell The cell over which the assembly is being carried.
+   *
+   * @params current_solution The present value of the solution for [k]
+   *
+   * @param previous_solutions Vector of \f$n\f$ @p VectorType containers of
+   * previous turbulence solutions. \f$n\f$ depends on the BDF scheme selected
+   * for time-stepping.
+   */
+  template <typename VectorType>
+  void
+  reinit_rans_turbulence(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType                                     &current_solution,
+    const std::vector<VectorType>                        &previous_solutions)
+  {
+    this->fe_values_rans_turbulence->reinit(cell);
+
+    // Gather turbulence (values, gradients)
+    this->fe_values_rans_turbulence->get_function_values(
+      current_solution, this->turbulence_values);
+    this->fe_values_rans_turbulence->get_function_gradients(
+      current_solution, this->turbulence_gradients);
+
+    // Gather previous turbulence values
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values_rans_turbulence->get_function_values(
+          previous_solutions[p], this->previous_turbulence_values[p]);
+      }
+  }
 
   /** @brief Calculates the physical properties. This function calculates the
    * physical properties that may be required by the fluid dynamics problem.
@@ -1183,6 +1232,14 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;
   FEValuesExtractors::Scalar     phase_order;
   FEValuesExtractors::Scalar     chemical_potential;
+
+  /**
+   * Scratch component for the RANS turbulence models
+   */
+  bool                           gather_rans_turbulence;
+  unsigned int                   n_dofs_rans_turbulence;
+  std::vector<double>            turbulent_viscosity;
+  std::shared_ptr<FEValues<dim>> fe_values_rans_turbulence;
 
   /**
    * Is boundary cell indicator

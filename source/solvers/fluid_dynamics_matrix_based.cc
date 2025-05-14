@@ -532,6 +532,14 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                         *this->cell_quadrature,
                                         *this->mapping);
     }
+  if (this->simulation_parameters.multiphysics.rans_turbulence)
+    {
+      const DoFHandler<dim> *dof_handler_rans_turbulence =
+        this->multiphysics->get_dof_handler(PhysicsID::rans_turbulence);
+      scratch_data.enable_rans_turbulence(dof_handler_rans_turbulence->get_fe(),
+                                          *this->cell_quadrature,
+                                          *this->mapping);
+    }
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -745,6 +753,15 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
       scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
                                         *this->cell_quadrature,
                                         *this->mapping);
+    }
+
+  if (this->simulation_parameters.multiphysics.rans_turbulence)
+    {
+      const DoFHandler<dim> *dof_handler_rans_turbulence =
+        this->multiphysics->get_dof_handler(PhysicsID::rans_turbulence);
+      scratch_data.enable_rans_turbulence(dof_handler_rans_turbulence->get_fe(),
+                                          *this->cell_quadrature,
+                                          *this->mapping);
     }
 
   WorkStream::run(
