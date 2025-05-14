@@ -31,10 +31,6 @@ using namespace dealii;
 
 /**
  * @brief Base class for the mortar manager
- * @tparam n_subdivisions Number of cells at the interface between inner and outer domains
- * @tparam n_quadrature_points Number of quadrature points per cell
- * @tparam radius Radius at the interface between inner and outer domains
- * @tparam rotation_angle Rotation angle for the inner domain
  */
 template <int dim>
 class MortarManager
@@ -133,11 +129,16 @@ private:
   std::pair<unsigned int, unsigned int>
   get_config(const double &angle_cell_center) const;
 
+  /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;
+  /// Number of quadrature points per cell
   const unsigned int n_quadrature_points;
-  const double       radius;
-  const double       rotation_angle;
-  QGauss<1>          quadrature;
+  /// Radius at the interface between inner and outer domains
+  const double radius;
+  /// Rotation angle for the inner domain
+  const double rotation_angle;
+  /// Mortar quadrature
+  QGauss<1> quadrature;
 };
 
 
@@ -305,22 +306,6 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
 
 /**
  * @brief Base class for the Coupling Operator Base
- *
- * @tparam mapping Mapping of the domain
- * @tparam dof_handler DoFHandler associated to the triangulation
- * @tparam constraints Object with the constrains according to DoFs
- * @tparam quadrature Required for local operations on cells
- * @tparam n_subdivisions Number of cells at the interface between inner and outer domains
- * @tparam n_components Number of vector components in the PDE to be solved
- * @tparam N Number of data points
- * @tparam radius Radius at the interface between inner and outer domains
- * @tparam rotation_angle Rotation angle for the inner domain
- * @tparam bid_rotor Boundary ID of the inner domain (rotor)
- * @tparam bid_stator Boundary ID of the outer domain (stator)
- * @tparam sip_factor Penalty factor (akin to symmetric interior penalty
- * factor in SIPG)
- * @tparam relevant_dof_indices
- * @tparam penalty_factor_grad
  */
 template <int dim, typename Number>
 class CouplingOperatorBase
@@ -392,6 +377,8 @@ private:
    * @param[in] degree Polynomail degree of the FE approximation
    * @param[in] factor Penalty factor (akin to symmetric interior penalty factor
    * in SIPG)
+   *
+   * @return penalty factor value
    */
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
@@ -401,16 +388,20 @@ private:
    *
    * @param[in] cell Cell iterator
    * @return Penalty parameter
+   *
+   * @return penalty parameter value
    */
   Number
   compute_penalty_parameter(
     const typename Triangulation<dim>::cell_iterator &cell) const;
 
   /**
-   * @brief Returns angle of a point (cell center) in radians
+   * @brief Returns angle of a point (cell center)
    *
    * @param[in] cell Cell iterator
    * @param[in] face Face iterator
+   *
+   * @return Angle in radians
    */
   double
   get_angle_cell_center(
@@ -427,10 +418,14 @@ private:
     const typename DoFHandler<dim>::active_cell_iterator &cell) const;
 
 
-  const Mapping<dim>              &mapping;
-  const DoFHandler<dim>           &dof_handler;
+  /// Mapping of the domain
+  const Mapping<dim> &mapping;
+  /// DoFHandler associated to the triangulation
+  const DoFHandler<dim> &dof_handler;
+  /// Object with the constrains according to DoFs
   const AffineConstraints<Number> &constraints;
-  const Quadrature<dim>            quadrature;
+  /// Quadrature required for local operations on cells
+  const Quadrature<dim> quadrature;
 
   std::vector<std::tuple<std::vector<double>,
                          typename Triangulation<dim>::active_cell_iterator,
@@ -442,20 +437,27 @@ private:
     all_intersections;
 
 protected:
+  /// Penalty factor (akin to symmetric interior penalty factor in SIPG)
   Number penalty_factor;
   Number penalty_factor_grad;
 
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
   std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
 
+  /// Number of vector components in the PDE to be solved
   const unsigned int n_components;
+  /// Number of data points per quadrature point
   const unsigned int N;
 
+  /// Boundary ID of the inner domain (rotor)
   const unsigned int bid_rotor;
+  /// Boundary ID of the outer domain (stator)
   const unsigned int bid_stator;
 
+  /// List of relevant DoF indices per cell
   const std::vector<unsigned int> relevant_dof_indices;
-  const unsigned int              n_dofs_per_cell;
+  /// Number of DoFs per cell
+  const unsigned int n_dofs_per_cell;
 
   Utilities::MPI::NoncontiguousPartitioner partitioner;
   Utilities::MPI::NoncontiguousPartitioner partitioner_cell;
@@ -463,11 +465,14 @@ protected:
   std::vector<types::global_dof_index> dof_indices;
   std::vector<types::global_dof_index> dof_indices_ghost;
 
+  /// Vectors storing information at quadrature points for all cells at the
+  /// rotor-stator interface
   std::vector<Number>                 all_penalty_parameter;
   std::vector<Number>                 all_weights;
   std::vector<Point<dim, Number>>     all_points_ref;
   std::vector<Tensor<1, dim, Number>> all_normals;
 
+  /// Constaints extended according to mortar entries
   AffineConstraints<Number> constraints_extended;
 
   /**
@@ -488,8 +493,10 @@ protected:
    * to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
    * rotor-stator interface
-   * @param[in] q_stride
-   * @param[in] all_value_m
+   * @param[in] q_stride Pointer for the cell index in which the quadradure
+   * point lies in
+   * @param[in] all_value_m Number of values stored in the mortar side of the
+   * interface
    */
   virtual void
   local_evaluate(const Vector<Number> &buffer,
@@ -504,9 +511,12 @@ protected:
    * to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
    * rotor-stator interface
-   * @param[in] q_stride
-   * @param[in] all_value_m
-   * @param[in] all_value_p
+   * @param[in] q_stride Pointer for the cell index in which the quadradure
+   * point lies in
+   * @param[in] all_value_m Number of values stored in the mortar side of the
+   * interface
+   * @param[in] all_value_p Number of values stored in the non-mortar side of
+   * the interface
    */
   virtual void
   local_integrate(Vector<Number>    &buffer,
@@ -607,7 +617,7 @@ public:
    * @param[in] quadrature Required for local operations on cells
    * @param[in] mortar_parameters The information about the mortar method
    * control, including the rotor mesh parameters
-   * @param[in] first_selected_component
+   * @param[in] first_selected_component Index of first selected component
    * @param[in] penalty_factor_grad
    */
   CouplingOperator(const Mapping<dim>              &mapping,
@@ -648,7 +658,8 @@ public:
                   Number            *all_value_m,
                   Number            *all_value_p) const override;
 
-  const FESystem<dim>       fe_sub;
+  const FESystem<dim> fe_sub;
+  /// Interface to the evaluation of mortar coupling interpolated solution
   mutable FEPointIntegrator phi_m;
 };
 

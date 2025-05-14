@@ -359,20 +359,22 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
   this->penalty_factor_grad = penalty_factor_grad;
 
-  // create manager for the quadrature points of the cells at the interface
+  // create manager at the quadrature point level
   mortar_manager_q = std::make_shared<MortarManager<dim>>(
     n_subdivisions,
     quadrature.get_tensor_basis()[0].size(),
     radius,
     rotation_angle);
 
-  // create manager for the correspondent mortar cells (dim-1)
+  // create manager at the cell level
   mortar_manager_cell = std::make_shared<MortarManager<dim>>(n_subdivisions,
                                                              1,
                                                              radius,
                                                              rotation_angle);
 
-  const unsigned int n_points    = mortar_manager_q->get_n_points();
+  // number of quadrature points
+  const unsigned int n_points = mortar_manager_q->get_n_points();
+  // number of cells
   const unsigned int n_sub_cells = mortar_manager_cell->get_n_points();
 
   std::vector<types::global_dof_index> is_local;
@@ -558,7 +560,7 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
     all_penalty_parameter[i] =
       std::min(all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
 
-  // Finialize DoF indices
+  // Finialize DoF indices and update constraints
   dof_indices_ghost.resize(dof_indices.size());
   partitioner_cell.template export_to_ghosted_array<types::global_dof_index, 0>(
     dof_indices, dof_indices_ghost, n_dofs_per_cell);
