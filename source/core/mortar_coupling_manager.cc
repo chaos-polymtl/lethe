@@ -1066,9 +1066,11 @@ compute_n_subdivisions_and_radius(
 /**
  * @brief Construct oversampled quadrature
  *
- * @param[in, out] quadrature Quadrature for local cell operations
+ * @param[in] quadrature Quadrature for local cell operations
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
+ *
+ * @return Quadrature oversampled
  */
 template <int dim>
 static Quadrature<dim>
