@@ -658,12 +658,9 @@ CouplingOperatorBase<dim, Number>::get_angle_cell_center(
 }
 
 template <int dim, typename Number>
-std::vector<
-  types::global_dof_index> // QUESTION: does this mean
-                           // get_locally_relevant_dof_indices?
-                           CouplingOperatorBase<dim, Number>::get_dof_indices(
-                             const typename DoFHandler<
-                               dim>::active_cell_iterator &cell) const
+std::vector<types::global_dof_index>
+CouplingOperatorBase<dim, Number>::get_dof_indices(
+  const typename DoFHandler<dim>::active_cell_iterator &cell) const
 {
   std::vector<types::global_dof_index> local_dofs_all(
     dof_handler.get_fe().n_dofs_per_cell());
@@ -686,7 +683,7 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
   unsigned int ptr_q = 0;
 
   Vector<Number> buffer;
-  // QUESTION: what is N?
+
   std::vector<Number> all_value_m(all_normals.size() * N);
   std::vector<Number> all_value_p(all_normals.size() * N);
 
@@ -705,7 +702,7 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
             local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
                            all_points_ref.data() + ptr_q, n_q_points));
-            
+
             buffer.reinit(n_dofs_per_cell);
 
             const auto local_dofs = this->get_dof_indices(cell);
@@ -839,14 +836,14 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
   TrilinosWrappers::SparseMatrix &system_matrix) const
 {
   const auto constraints = &constraints_extended;
-  // QUESTION: does _m and _p refer to both sides of the interface?
+
   std::vector<Number> all_value_m(all_normals.size() * n_dofs_per_cell * N);
   std::vector<Number> all_value_p(all_normals.size() * n_dofs_per_cell * N);
 
   unsigned int ptr_q = 0;
 
   Vector<Number> buffer;
-  
+
   // 1) Evaluate
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -1174,7 +1171,8 @@ CouplingOperator<dim, n_components, Number>::local_evaluate(
 
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
-      // Quadrature point index ('global' index within the rotor-stator interface)
+      // Quadrature point index ('global' index within the rotor-stator
+      // interface)
       const unsigned int q_index = ptr_q + q;
 
       // Normal, value, and gradient referring to the quadrature point
@@ -1182,7 +1180,7 @@ CouplingOperator<dim, n_components, Number>::local_evaluate(
       const auto value_m    = this->phi_m.get_value(q);
       const auto gradient_m = contract(this->phi_m.get_gradient(q), normal);
 
-      // Store data in buffer 
+      // Store data in buffer
       BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
 
       buffer_m.write(value_m);

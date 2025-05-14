@@ -60,6 +60,7 @@ public:
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
+   *
    * @param[in] angle_cell_center Angle between cell center and x-axis (in
    * radians)
    *
@@ -70,6 +71,7 @@ public:
 
   /**
    * @brief Returns the indices of all quadrature points at both sides of the interface
+   *
    * @param[in] angle_cell_center Angular coordinate of cell center
    */
   std::vector<unsigned int>
@@ -77,6 +79,7 @@ public:
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface
+   *
    * @param[in] rad Angular coordinate of cell center
    *
    * @return points Coordinate of quadrature points of the cell
@@ -86,6 +89,7 @@ public:
 
   /**
    * @brief Returns the coordinates of the quadrature points at the interface
+   *
    * @param[in] angle_cell_center Angle between cell center and x-axis (in
    * radians)
    *
@@ -96,6 +100,7 @@ public:
 
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
+   *
    * @param[in] angle_cell_center Angular coordinate of cell center
    *
    * @return points Angular weights of quadrature points of the cell
@@ -105,6 +110,7 @@ public:
 
   /**
    * @brief Returns the normal vector for the quadrature points
+   *
    * @param[in] angle_cell_center Angular coordinate of cell center
    *
    * @return result Normal vectors of the cell quadrature points
@@ -115,6 +121,7 @@ public:
 private:
   /**
    * @brief Returns the mesh alignement type and cell index
+   *
    * @param[in] angle_cell_center Angular coordinate of cell center
    *
    * @return type Cell configuration type at the interface
@@ -245,6 +252,14 @@ outer(const Tensor<1, n_components, Number> &value,
   return result;
 }
 
+/**
+ * @brief Compute scalar product
+ *
+ * @param[in, out] v_gradient Rank-1 tensor within rank-1 tensor where result is
+ * stored
+ * @param[in] u_gradient Rank-2 tensor
+ * @param[in] factor Scalar factor
+ */
 template <int dim, int dim_, typename Number>
 inline DEAL_II_ALWAYS_INLINE void
 symm_scalar_product_add(Tensor<1, dim_, Tensor<1, dim, Number>> &v_gradient,
@@ -263,6 +278,13 @@ symm_scalar_product_add(Tensor<1, dim_, Tensor<1, dim, Number>> &v_gradient,
       }
 }
 
+/**
+ * @brief Compute scalar product
+ *
+ * @param[in, out] v_gradient Rank-2 tensor where result is stored
+ * @param[in] u_gradient Rank-2 tensor
+ * @param[in] factor Scalar factor
+ */
 template <int dim, typename Number>
 inline DEAL_II_ALWAYS_INLINE void
 symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
@@ -281,6 +303,25 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
       }
 }
 
+/**
+ * @brief Base class for the Coupling Operator Base
+ *
+ * @tparam mapping Mapping of the domain
+ * @tparam dof_handler DoFHandler associated to the triangulation
+ * @tparam constraints Object with the constrains according to DoFs
+ * @tparam quadrature Required for local operations on cells
+ * @tparam n_subdivisions Number of cells at the interface between inner and outer domains
+ * @tparam n_components Number of vector components in the PDE to be solved
+ * @tparam N Number of data points
+ * @tparam radius Radius at the interface between inner and outer domains
+ * @tparam rotation_angle Rotation angle for the inner domain
+ * @tparam bid_rotor Boundary ID of the inner domain (rotor)
+ * @tparam bid_stator Boundary ID of the outer domain (stator)
+ * @tparam sip_factor Penalty factor (akin to symmetric interior penalty
+ * factor in SIPG)
+ * @tparam relevant_dof_indices
+ * @tparam penalty_factor_grad
+ */
 template <int dim, typename Number>
 class CouplingOperatorBase
 {
@@ -445,7 +486,8 @@ protected:
    *
    * @param[in] buffer Temporary vector where data is stored before being passes
    * to the system matrix
-   * @param[in] ptr_q Pointer for the quadrature point index related to the rotor-stator interface
+   * @param[in] ptr_q Pointer for the quadrature point index related to the
+   * rotor-stator interface
    * @param[in] q_stride
    * @param[in] all_value_m
    */
@@ -460,7 +502,8 @@ protected:
    *
    * @param[in] buffer Temporary vector where data is stored before being passes
    * to the system matrix
-   * @param[in] ptr_q Pointer for the quadrature point index related to the rotor-stator interface
+   * @param[in] ptr_q Pointer for the quadrature point index related to the
+   * rotor-stator interface
    * @param[in] q_stride
    * @param[in] all_value_m
    * @param[in] all_value_p
@@ -557,12 +600,15 @@ public:
 
   /**
    * @brief Constructor of the class
+   * 
    * @param[in] mapping Mapping of the domain
    * @param[in] dof_handler DoFHandler associated to the triangulation
    * @param[in] constraints Object with the constrains according to DoFs
    * @param[in] quadrature Required for local operations on cells
    * @param[in] mortar_parameters The information about the mortar method
    * control, including the rotor mesh parameters
+   * @param[in] first_selected_component
+   * @param[in] penalty_factor_grad
    */
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
@@ -573,12 +619,12 @@ public:
                    const double       penalty_factor_grad      = 1.0);
 
   /**
-   * @brief
+   * @brief Return relevant dof indices
    *
-   * @param[in] fe
+   * @param[in] fe Finite Element
    * @param[in] first_selected_component
    *
-   * @return dof_indices
+   * @return dof_indices Vector of relevant dof indices
    */
   static std::vector<unsigned int>
   get_relevant_dof_indices(const FiniteElement<dim> &fe,
