@@ -83,6 +83,12 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   // Zero constraints
   this->define_zero_constraints();
+  
+  // std::cout << "locally owned dofs before before " << Utilities::MPI::this_mpi_process(this->dof_handler.get_mpi_communicator()) << std::endl; 
+  // this->locally_owned_dofs.print(std::cout);
+
+  // Create mortar coupling
+  init_mortar_coupling();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -110,6 +116,11 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                   dsp,
                                   nonzero_constraints,
                                   false);
+
+  // Add sparsity pattern entries
+  add_mortar_sparsity_patterns(dsp);
+  sparsity_pattern.copy_from(dsp);
+
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),
@@ -543,6 +554,8 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
+  // add_mortar_system_matrix_entries();
+
   system_matrix.compress(VectorOperation::add);
 }
 
@@ -895,6 +908,45 @@ FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
   constraints_used.distribute_local_to_global(copy_data.local_rhs,
                                               copy_data.local_dof_indices,
                                               this->system_rhs);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::init_mortar_coupling()
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  this->mortar_coupling_operator =
+    std::make_shared<CouplingOperator<dim, dim + 1, double>>(
+      *this->mapping,
+      this->dof_handler,
+      this->zero_constraints,
+      *this->cell_quadrature,
+      this->simulation_parameters.mortar);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::add_mortar_sparsity_patterns(
+  DynamicSparsityPattern &dsp)
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+}
+
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::add_mortar_system_matrix_entries()
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  this->mortar_coupling_operator->add_system_matrix_entries(
+    this->system_matrix);
 }
 
 /**
