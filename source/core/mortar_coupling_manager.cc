@@ -566,7 +566,7 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
     dof_indices, dof_indices_ghost, n_dofs_per_cell);
 
   {
-    auto locally_owned_dofs = constraints.get_locally_owned_indices();
+    auto locally_owned_dofs = dof_handler.locally_owned_dofs();
     auto constraints_to_make_consistent = constraints.get_local_lines();
 
 
