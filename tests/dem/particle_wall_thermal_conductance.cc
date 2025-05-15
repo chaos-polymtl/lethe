@@ -43,13 +43,13 @@ test()
 {
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
-  const int                                       hyper_cube_length = 1;
+  const int                                 hyper_cube_length = 1;
   GridGenerator::hyper_cube(tr,
                             -1 * hyper_cube_length,
                             hyper_cube_length,
                             true);
   const double grid_radius       = 0.5 * GridTools::diameter(tr);
-  const int          refinement_number = 2;
+  const int    refinement_number = 2;
   tr.refine_global(refinement_number);
   MappingQ<dim> mapping(1);
 
@@ -57,13 +57,13 @@ test()
   // Defining general simulation parameters
   DEMSolverParameters<dim> dem_parameters;
   set_default_dem_parameters(1, dem_parameters);
-  auto          &properties = dem_parameters.lagrangian_physical_properties;
+  auto &properties = dem_parameters.lagrangian_physical_properties;
   const Tensor<1, dim> g{{0, 0, -9.81}};
-  const double   dt                                          = 1.e-5;
-  const double   particle_diameter                           = 0.005;
-  const unsigned int   rotating_wall_maximum_number                = 6;
-  const double   poisson_ratio                               = 0.3;
-  const double   youngs_modulus                              = 5.e6;
+  const double         dt                                    = 1.e-5;
+  const double         particle_diameter                     = 0.005;
+  const unsigned int   rotating_wall_maximum_number          = 6;
+  const double         poisson_ratio                         = 0.3;
+  const double         youngs_modulus                        = 5.e6;
   properties.particle_type_number                            = 1;
   properties.youngs_modulus_particle[0]                      = youngs_modulus;
   properties.youngs_modulus_wall                             = youngs_modulus;
@@ -116,15 +116,15 @@ test()
 
   // Inserting one particle in contact with a wall
   Point<dim>                       position_1 = {-0.998, 0, 0};
-  const unsigned int                              id_1       = 0;
+  const unsigned int               id_1       = 0;
   Particles::ParticleIterator<dim> pit_1 =
     construct_particle_iterator<dim>(particle_handler, tr, position_1, id_1);
 
   // Setting particle properties
-  const Tensor<1, dim>     v_1{{0.01, 0, 0}};
-  const Tensor<1, dim>     omega_1{{0, 0, 0}};
-  const double       mass = 1;
-  const unsigned int type = 0;
+  const Tensor<1, dim> v_1{{0.01, 0, 0}};
+  const Tensor<1, dim> omega_1{{0, 0, 0}};
+  const double         mass = 1;
+  const unsigned int   type = 0;
   set_particle_properties<dim, PropertiesIndex>(
     pit_1, type, particle_diameter, mass, v_1, omega_1);
 
@@ -163,8 +163,10 @@ test()
     particle_wall_contact_list);
 
   // Calling fine search
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact particle_wall_pairs_in_contact;
-  particle_wall_fine_search<dim>(particle_wall_contact_list, particle_wall_pairs_in_contact);
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    particle_wall_pairs_in_contact;
+  particle_wall_fine_search<dim>(particle_wall_contact_list,
+                                 particle_wall_pairs_in_contact);
 
   // Calling non-linear force
   ParticleWallContactForce<
@@ -173,14 +175,14 @@ test()
     Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
-  nonlinear_force_object.calculate_particle_wall_contact(particle_wall_pairs_in_contact,
-                                                         dt,
-                                                         contact_outcome);
-  
+  nonlinear_force_object.calculate_particle_wall_contact(
+    particle_wall_pairs_in_contact, dt, contact_outcome);
+
   // Calculating  parameters for thermal DEM
   auto     particle          = particle_handler.begin();
   Point<3> particle_location = particle->get_location();
-  auto &pairs_in_contact_content = particle_wall_pairs_in_contact.at(particle->get_id());
+  auto    &pairs_in_contact_content =
+    particle_wall_pairs_in_contact.at(particle->get_id());
   auto &contact_info = pairs_in_contact_content.begin()->second;
 
   const double radius_particle = particle_diameter * 0.5;
