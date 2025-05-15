@@ -20,7 +20,6 @@ add_library(lethe-solvers
   fluid_dynamics_matrix_free_operators.cc
   multiphysics_interface.cc
   navier_stokes_assemblers.cc
-  rans_assemblers.cc
   navier_stokes_base.cc
   navier_stokes_cahn_hilliard_assemblers.cc
   navier_stokes_scratch_data.cc
@@ -45,6 +44,9 @@ add_library(lethe-solvers
   vof_phase_gradient_projection.cc
   vof_scratch_data.cc
   vof_subequations_interface.cc
+  rans_turbulence.cc
+  rans_turbulence_scratch_data.cc
+  rans_turbulence_assemblers.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
@@ -97,6 +99,9 @@ add_library(lethe-solvers
   ../../include/solvers/vof_scratch_data.h
   ../../include/solvers/vof_subequations.h
   ../../include/solvers/vof_subequations_interface.h
+  ../../include/solvers/rans_turbulence.h
+  ../../include/solvers/rans_turbulence_scratch_data.h
+  ../../include/solvers/rans_turbulence_assemblers.h
   )
 
 deal_ii_setup_target(lethe-solvers)

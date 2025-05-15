@@ -55,7 +55,8 @@ RANSTurbulence<dim>::setup_assemblers()
 
   // Core assembler
   this->assemblers.emplace_back(
-    std::make_shared<RANSTurbulenceAssemblerCore<dim>>(this->simulation_control));
+    std::make_shared<RANSTurbulenceAssemblerCore<dim>>(
+      this->simulation_control));
 }
 
 template <int dim>
@@ -94,7 +95,7 @@ template <int dim>
 void
 RANSTurbulence<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  RANSTurbulenceScratchData<dim>                         &scratch_data,
+  RANSTurbulenceScratchData<dim>                       &scratch_data,
   StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
@@ -232,7 +233,7 @@ template <int dim>
 void
 RANSTurbulence<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  RANSTurbulenceScratchData<dim>                         &scratch_data,
+  RANSTurbulenceScratchData<dim>                       &scratch_data,
   StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
@@ -341,7 +342,9 @@ void
 RANSTurbulence<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   // TODO compute turbulent viscosity from k-e model
-  data_out.add_data_vector(dof_handler, present_solution, "turbulent viscosity");
+  data_out.add_data_vector(dof_handler,
+                           present_solution,
+                           "turbulent viscosity");
 }
 
 template <int dim>
@@ -439,13 +442,14 @@ RANSTurbulence<dim>::postprocess(bool first_iteration)
 
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
-      error_table.add_value("error_turbulent_viscosity", turbulent_viscosity_error);
+      error_table.add_value("error_turbulent_viscosity",
+                            turbulent_viscosity_error);
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error turbulent viscosity : " << turbulent_viscosity_error
-                      << std::endl;
+          this->pcout << "L2 error turbulent viscosity : "
+                      << turbulent_viscosity_error << std::endl;
         }
     }
 
@@ -902,7 +906,7 @@ RANSTurbulence<dim>::set_initial_conditions()
 template <int dim>
 void
 RANSTurbulence<dim>::solve_linear_system(const bool initial_step,
-                                       const bool /*renewed_matrix*/)
+                                         const bool /*renewed_matrix*/)
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 

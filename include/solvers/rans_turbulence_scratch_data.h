@@ -75,18 +75,17 @@ public:
                             const Quadrature<dim - 1>      &face_quadrature)
     : properties_manager(properties_manager)
     , fe_values_rans(mapping,
-                                fe_rans,
-                                quadrature,
-                                update_values | update_quadrature_points |
-                                  update_JxW_values | update_gradients |
-                                  update_hessians)
+                     fe_rans,
+                     quadrature,
+                     update_values | update_quadrature_points |
+                       update_JxW_values | update_gradients | update_hessians)
     , velocities(0)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
     , fe_face_values_rans(mapping,
-                                     fe_rans,
-                                     face_quadrature,
-                                     update_values | update_quadrature_points |
-                                       update_JxW_values)
+                          fe_rans,
+                          face_quadrature,
+                          update_values | update_quadrature_points |
+                            update_JxW_values)
   {
     gather_vof = false;
 
@@ -105,21 +104,20 @@ public:
   RANSTurbulenceScratchData(const RANSTurbulenceScratchData<dim> &sd)
     : properties_manager(sd.properties_manager)
     , fe_values_rans(sd.fe_values.get_mapping(),
-                                sd.fe_values_rans.get_fe(),
-                                sd.fe_values_rans.get_quadrature(),
-                                update_values | update_quadrature_points |
-                                  update_JxW_values | update_gradients |
-                                  update_hessians)
+                     sd.fe_values_rans.get_fe(),
+                     sd.fe_values_rans.get_quadrature(),
+                     update_values | update_quadrature_points |
+                       update_JxW_values | update_gradients | update_hessians)
     , velocities(0)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values | update_gradients)
-    , fe_face_values_rans(
-        sd.fe_face_values_rans.get_mapping(),
-        sd.fe_face_values_rans.get_fe(),
-        sd.fe_face_values_rans.get_quadrature(),
-        update_values | update_quadrature_points | update_JxW_values)
+    , fe_face_values_rans(sd.fe_face_values_rans.get_mapping(),
+                          sd.fe_face_values_rans.get_fe(),
+                          sd.fe_face_values_rans.get_quadrature(),
+                          update_values | update_quadrature_points |
+                            update_JxW_values)
   {
     AssertThrow(!sd.gather_vof,
                 ExcMessage("RANS turbulence model does not support VOF."));
@@ -172,8 +170,8 @@ public:
     source_function->value_list(quadrature_points, source);
 
     // Compute cell diameter
-    double cell_measure = compute_cell_measure_with_JxW(
-      this->fe_values_rans.get_JxW_values());
+    double cell_measure =
+      compute_cell_measure_with_JxW(this->fe_values_rans.get_JxW_values());
     this->cell_size = compute_cell_diameter<dim>(cell_measure, fe_rans.degree);
 
     // TODO: MAKE THE FOLLOWING LINES DEPENDENT OF THE MODEL
@@ -200,12 +198,9 @@ public:
         for (unsigned int k = 0; k < n_dofs; ++k)
           {
             // Shape function
-            this->phi_eta[q][k] =
-              this->fe_values_rans.shape_value(k, q);
-            this->grad_phi_eta[q][k] =
-              this->fe_values_rans.shape_grad(k, q);
-            this->hess_phi_eta[q][k] =
-              this->fe_values_rans.shape_hessian(k, q);
+            this->phi_eta[q][k]      = this->fe_values_rans.shape_value(k, q);
+            this->grad_phi_eta[q][k] = this->fe_values_rans.shape_grad(k, q);
+            this->hess_phi_eta[q][k] = this->fe_values_rans.shape_hessian(k, q);
             this->laplacian_phi_eta[q][k] = trace(this->hess_phi_T[q][k]);
           }
       }
@@ -247,7 +242,8 @@ public:
                 for (unsigned int q = 0; q < n_faces_q_points; ++q)
                   {
                     face_JxW[face][q] = fe_face_values_rans.JxW(q);
-                    for (const unsigned int k : fe_face_values_rans.dof_indices())
+                    for (const unsigned int k :
+                         fe_face_values_rans.dof_indices())
                       {
                         this->phi_face_T[face][q][k] =
                           this->fe_face_values_rans.shape_value(k, q);
@@ -356,7 +352,7 @@ public:
   std::vector<Point<dim>> quadrature_points;
 
   // Temperature values
-  std::vector<double>                      present_turbulent_viscosity_values;
+  std::vector<double> present_turbulent_viscosity_values;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_eta;

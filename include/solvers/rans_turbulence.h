@@ -90,7 +90,7 @@ public:
         // for simplex meshes
         fe = std::make_shared<FE_SimplexP<dim>>(
           simulation_parameters.fem_parameters.temperature_order);
-        rans_mapping = std::make_shared<MappingFE<dim>>(*fe);
+        rans_mapping    = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
@@ -100,9 +100,9 @@ public:
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
           simulation_parameters.fem_parameters.temperature_order);
-        rans_mapping = std::make_shared<MappingQ<dim>>(fe->degree);
-        cell_quadrature     = std::make_shared<QGauss<dim>>(fe->degree + 1);
-        face_quadrature     = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
+        rans_mapping    = std::make_shared<MappingQ<dim>>(fe->degree);
+        cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
     // Allocate solution transfer
