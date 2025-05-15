@@ -60,6 +60,11 @@ In this subsection, gravitational acceleration, and the physical properties of t
     set rolling viscous damping wall = 0.1
     set surface energy wall          = 0.0
     set Hamaker constant wall        = 4.e-19
+    set thermal conductivity wall    = 100
+    set microhardness wall           = 1.e9
+    set surface slope wall           = 0.1
+    set surface roughness wall       = 1.e-10
+    set thermal accommodation wall   = 0.7
 
     # Interstitial gas properties
     set thermal conductivity gas     = 0.01
@@ -155,3 +160,13 @@ In this subsection, gravitational acceleration, and the physical properties of t
 * The ``specific heats ratio gas`` defines the specific heats ratio of the interstitial gas.
 
 * The ``molecular mean free path gas`` defines the molecular mean free path of the interstitial gas.
+
+* The ``thermal conductivity wall`` defines the thermal conductivity of the wall.
+
+* The ``microhardness wall`` defines the microhardness of the wall.
+
+* The ``surface slope wall`` defines the surface slope of the wall.
+
+* The ``surface roughness wall`` defines the surface roughness of the wall.
+
+* The ``thermal accommodation wall`` defines the thermal accommodation coefficient of the wall.

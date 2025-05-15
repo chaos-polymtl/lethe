@@ -39,6 +39,13 @@ This subsection explains the solid objects information. First of all, the ``numb
 
        set center of rotation    = 0., 0., 0.
        set output solid object = true
+
+       # Choices are adiabatic|isothermal
+       set thermal boundary type = adiabatic
+       # If type = isothermal
+       subsection temperature
+         set Function expression = 0
+       end
      end
    end
  end
@@ -55,3 +62,6 @@ This subsection explains the solid objects information. First of all, the ``numb
 
 * The ``output solid object`` defines if we want an output file to be generated for the solid object at every output time step.
 
+* The ``thermal boundary type`` defines whether the solid object should be adiabatic or isothermal when launching a multiphysic DEM simulation.
+
+* In the subsection ``temperature``, we define the temperature of the solid object as a function of time. It is used only if the solid object is not adiabatic.
