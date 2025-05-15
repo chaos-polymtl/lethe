@@ -235,6 +235,7 @@ FluidDynamicsVANSMatrixFree<dim>::create_GMG()
                                    this->cell_quadrature,
                                    this->forcing_function,
                                    this->simulation_control,
+                                   this->physical_properties_manager,
                                    this->fe);
 }
 
