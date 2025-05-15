@@ -1,0 +1,399 @@
+// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#ifndef lethe_rans_turbulence_scratch_data_h
+#define lethe_rans_turbulence_scratch_data_h
+
+#include <core/density_model.h>
+#include <core/multiphysics.h>
+#include <core/physical_property_model.h>
+#include <core/vector.h>
+
+#include <solvers/multiphysics_interface.h>
+#include <solvers/physics_scratch_data.h>
+
+#include <deal.II/base/exceptions.h>
+#include <deal.II/base/quadrature.h>
+
+#include <deal.II/dofs/dof_renumbering.h>
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/mapping.h>
+
+#include <deal.II/numerics/vector_tools.h>
+
+using namespace dealii;
+
+
+/**
+ * @brief Class that stores the information required by the assembly procedure for the turbulence models applied to RANS simulations. Consequently, this class
+ * calculates the turbulent viscosity from the turbulence variables of the
+ *different models, for instance, the turbulent kinetic energy function (values,
+ *gradients, laplacians) at all the gauss points for all degrees of freedom and
+ *stores it into arrays. Additionally, the user can request that this class
+ *gathers additional fields for the velocity which is required. This class
+ *serves as a separation between the evaluation at the gauss point of the
+ *variables of interest and their use in the assembly, which is carried out by
+ *the assembler methods
+ *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the flow is solved
+ *
+ * @ingroup solvers
+ **/
+
+template <int dim>
+class RANSTurbulenceScratchData : public PhysicsScratchDataBase
+{
+public:
+  /**
+   * @brief Constructor. The constructor creates the fe_values that will be used
+   * to fill the member variables of the scratch. It also allocated the
+   * necessary memory for all member variables. However, it does not do any
+   * evaluation, since this needs to be done at the cell level.
+   *
+   * @param properties_manager The physical properties Manager (see physical_properties_manager.h)
+   *
+   * @param fe_rans The FESystem used to solve the Heat Transfer equations
+   *
+   * @param quadrature The quadrature to use for the assembly
+   *
+   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   *
+   * @param fe_fd The FESystem used to solve the Fluid Dynamics equations
+   *
+   * @param face_quadrature_formula The face quadrature formula
+   *
+   */
+  RANSTurbulenceScratchData(const PhysicalPropertiesManager properties_manager,
+                            const FiniteElement<dim>       &fe_rans,
+                            const Quadrature<dim>          &quadrature,
+                            const Mapping<dim>             &mapping,
+                            const FiniteElement<dim>       &fe_fd,
+                            const Quadrature<dim - 1>      &face_quadrature)
+    : properties_manager(properties_manager)
+    , fe_values_rans(mapping,
+                                fe_rans,
+                                quadrature,
+                                update_values | update_quadrature_points |
+                                  update_JxW_values | update_gradients |
+                                  update_hessians)
+    , velocities(0)
+    , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
+    , fe_face_values_rans(mapping,
+                                     fe_rans,
+                                     face_quadrature,
+                                     update_values | update_quadrature_points |
+                                       update_JxW_values)
+  {
+    gather_vof = false;
+
+    allocate();
+  }
+
+  /**
+   * @brief Copy Constructor. Same as the main constructor.
+   * This constructor only uses the other scratch to build the FeValues, it
+   * does not copy the content of the other scratch into itself since, by
+   * definition of the WorkStream mechanism, it is assumed that the content of
+   * the scratch will be reset on a cell basis.
+   *
+   * @param sd The scratch data
+   */
+  RANSTurbulenceScratchData(const RANSTurbulenceScratchData<dim> &sd)
+    : properties_manager(sd.properties_manager)
+    , fe_values_rans(sd.fe_values.get_mapping(),
+                                sd.fe_values_rans.get_fe(),
+                                sd.fe_values_rans.get_quadrature(),
+                                update_values | update_quadrature_points |
+                                  update_JxW_values | update_gradients |
+                                  update_hessians)
+    , velocities(0)
+    , fe_values_fd(sd.fe_values_fd.get_mapping(),
+                   sd.fe_values_fd.get_fe(),
+                   sd.fe_values_fd.get_quadrature(),
+                   update_values | update_gradients)
+    , fe_face_values_rans(
+        sd.fe_face_values_rans.get_mapping(),
+        sd.fe_face_values_rans.get_fe(),
+        sd.fe_face_values_rans.get_quadrature(),
+        update_values | update_quadrature_points | update_JxW_values)
+  {
+    AssertThrow(!sd.gather_vof,
+                ExcMessage("RANS turbulence model does not support VOF."));
+
+    allocate();
+  }
+
+
+  /** @brief Allocates the memory for the scratch
+   *
+   * This method allocates the necessary memory for all members of the scratch
+   *
+   */
+  void
+  allocate() override;
+
+  /** @brief Reinitializes the content of the scratch.
+   *
+   * Using the FeValues and the content of the solutions, previous solutions,
+   * fills all of the class member of the scratch.
+   *
+   * @tparam VectorType The Vector type used for the solvers.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the FE which is used to fill the
+   * FeValues.
+   *
+   * @param[in] current_solution The present value of the solution for the Heat
+   * Transfer.
+   *
+   * @param[in] previous_solutions The solutions at the previous time steps.
+   *
+   * @param[in] source_function The function describing the Heat Transfer source
+   * term.
+   */
+
+  template <typename VectorType>
+  void
+  reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
+         const VectorType                                     &current_solution,
+         const std::vector<GlobalVectorType> &previous_solutions,
+         Function<dim>                       *source_function)
+  {
+    material_id = cell->material_id();
+    this->fe_values_rans.reinit(cell);
+
+    quadrature_points = this->fe_values_rans.get_quadrature_points();
+    auto &fe_rans     = this->fe_values_rans.get_fe();
+
+    source_function->value_list(quadrature_points, source);
+
+    // Compute cell diameter
+    double cell_measure = compute_cell_measure_with_JxW(
+      this->fe_values_rans.get_JxW_values());
+    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe_rans.degree);
+
+    // TODO: MAKE THE FOLLOWING LINES DEPENDENT OF THE MODEL
+
+    // Gather turbulent viscosity and other quantities (values, gradient and
+    // laplacian)
+    this->fe_values_rans.get_function_values(
+      current_solution, this->present_turbulent_viscosity_values);
+
+    // Gather previous turbulent viscosity values
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values_rans.get_function_values(
+          previous_solutions[p], previous_turbulent_viscosity[p]);
+
+        this->fe_values_rans.get_function_gradients(
+          previous_solutions[p], previous_turbulent_viscosit[p]);
+      }
+
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        this->JxW[q] = this->fe_values_rans.JxW(q);
+
+        for (unsigned int k = 0; k < n_dofs; ++k)
+          {
+            // Shape function
+            this->phi_eta[q][k] =
+              this->fe_values_rans.shape_value(k, q);
+            this->grad_phi_eta[q][k] =
+              this->fe_values_rans.shape_grad(k, q);
+            this->hess_phi_eta[q][k] =
+              this->fe_values_rans.shape_hessian(k, q);
+            this->laplacian_phi_eta[q][k] = trace(this->hess_phi_T[q][k]);
+          }
+      }
+
+    // Arrays related to faces must be re-initialized for each cell, since they
+    // might depend on reference cell
+    // Only carry out this initialization if the cell is a boundary cell,
+    // otherwise these are wasted calculations
+    this->is_boundary_cell = cell->at_boundary();
+    if (cell->at_boundary())
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values_ht.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+
+        this->phi_face_eta = std::vector<std::vector<std::vector<double>>>(
+          n_faces,
+          std::vector<std::vector<double>>(n_faces_q_points,
+                                           std::vector<double>(n_dofs)));
+
+        this->eta_face_value = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        for (const auto face : cell->face_indices())
+          {
+            this->is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (this->is_boundary_face[face])
+              {
+                fe_face_values_rans.reinit(cell, face);
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+                this->fe_face_values_rans.get_function_values(
+                  current_solution, this->eta_face_value[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    face_JxW[face][q] = fe_face_values_rans.JxW(q);
+                    for (const unsigned int k : fe_face_values_rans.dof_indices())
+                      {
+                        this->phi_face_T[face][q][k] =
+                          this->fe_face_values_rans.shape_value(k, q);
+                      }
+                  }
+              }
+          }
+      }
+  }
+
+  /**
+   * @brief Reinitialize cell's velocity and pressure values with values
+   * calculated in the Fluid Dynamics (FD) physic while also taking into account
+   * ALE for the velocity.
+   *
+   * @tparam VectorType Type of vector used for storing fluid dynamics
+   * solutions.
+   *
+   * @param[in] cell Pointer to an active cell for which the velocity and
+   * pressure are reinitialized.This cell must be compatible with the FD
+   * FiniteElement.
+   *
+   * @param[in] current_solution Solution vector from FD containing velocity
+   * components and pressure values.
+   *
+   * @param[in] ale The ALE parameters which include the ALE function
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_fluid_dynamics(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType                                     &current_solution,
+    const Parameters::ALE<dim>                           &ale)
+  {
+    this->fe_values_fd.reinit(cell);
+
+    this->fe_values_fd[velocities].get_function_values(current_solution,
+                                                       velocity_values);
+    if (!this->properties_manager.density_is_constant())
+      this->fe_values_fd[pressure].get_function_values(current_solution,
+                                                       pressure_values);
+
+    if (!ale.enabled())
+      return;
+
+    // ALE enabled, so extract the ALE velocity and subtract it from the
+    // velocity obtained from the fluid dynamics
+    Tensor<1, dim>                                  velocity_ale;
+    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+      ale.velocity;
+    Vector<double> velocity_ale_vector(dim);
+
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        velocity_ale_function->vector_value(quadrature_points[q],
+                                            velocity_ale_vector);
+        for (unsigned int d = 0; d < dim; ++d)
+          velocity_ale[d] = velocity_ale_vector[d];
+
+        velocity_values[q] -= velocity_ale;
+      }
+  }
+
+  /** @brief Reinitialize the velocity gradient, calculated by the Fluid Dynamics
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param current_solution The present value of the solution for [u,p]
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_velocity_gradient(const VectorType &current_solution)
+  {
+    this->fe_values_fd[velocities].get_function_gradients(
+      current_solution, velocity_gradient_values);
+  }
+
+
+  /** @brief Calculates the physical properties. This method calculates the physical properties
+   * that may be required by the rans turbulence model.
+   *
+   */
+  void
+  calculate_physical_properties();
+
+
+  // Physical properties
+  PhysicalPropertiesManager            properties_manager;
+  std::map<field, std::vector<double>> fields;
+  dealii::types::material_id           material_id;
+  std::vector<double>                  turbulent_viscosity;
+
+  // FEValues for the RANS equations
+  FEValues<dim> fe_values_rans;
+  unsigned int  n_dofs;
+  unsigned int  n_q_points;
+  double        cell_size;
+
+
+  // Quadrature
+  std::vector<double>     JxW;
+  std::vector<Point<dim>> quadrature_points;
+
+  // Temperature values
+  std::vector<double>                      present_turbulent_viscosity_values;
+
+  // Shape functions and gradients
+  std::vector<std::vector<double>>         phi_eta;
+  std::vector<std::vector<Tensor<1, dim>>> grad_phi_eta;
+  std::vector<std::vector<Tensor<2, dim>>> hess_phi_eta;
+
+  // Source term
+  std::vector<double> source;
+
+  /**
+   * Scratch component for the Navier-Stokes components
+   */
+  const FEValuesExtractors::Vector velocities;
+  const FEValuesExtractors::Scalar pressure;
+  // This FEValues must be instantiated for the velocity
+  FEValues<dim>               fe_values_fd;
+  std::vector<Tensor<1, dim>> velocity_values;
+  std::vector<Tensor<2, dim>> velocity_gradient_values;
+  std::vector<double>         shear_rate_values;
+  /// Pressure field for physical property models requiring them
+  std::vector<double> pressure_values;
+
+  // Scratch for the face boundary condition
+  FEFaceValues<dim>                fe_face_values_ht;
+  std::vector<std::vector<double>> face_JxW;
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+
+  // Is boundary cell indicator
+  bool                      is_boundary_cell;
+  std::vector<bool>         is_boundary_face;
+  std::vector<unsigned int> boundary_face_id;
+
+
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<double>>> phi_face_eta;
+};
+
+#endif

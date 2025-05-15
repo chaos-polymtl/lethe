@@ -71,6 +71,8 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
+  const BoundaryConditions::RANSTurbulenceBoundaryConditions<dim>
+    &boundary_conditions_rans_turbulence;
 };
 
 /**

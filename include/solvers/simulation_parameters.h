@@ -48,8 +48,10 @@ public:
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-                                      boundary_conditions_cahn_hilliard;
-  Parameters::InitialConditions<dim> *initial_condition;
+    boundary_conditions_cahn_hilliard;
+  BoundaryConditions::RANSTurbulenceBoundaryConditions<dim>
+                                                boundary_conditions_rans;
+  Parameters::InitialConditions<dim>           *initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
   SourceTerms::SourceTerm<dim>                  source_term;
   Parameters::VelocitySource                    velocity_sources;
@@ -97,6 +99,8 @@ public:
     boundary_conditions_vof.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_cahn_hilliard.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_rans_turbulence.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
 
     initial_condition = new Parameters::InitialConditions<dim>;
@@ -190,6 +194,7 @@ public:
     boundary_conditions_tracer.parse_parameters(prm);
     boundary_conditions_vof.parse_parameters(prm);
     boundary_conditions_cahn_hilliard.parse_parameters(prm);
+    boundary_conditions_rans_turbulence.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);
