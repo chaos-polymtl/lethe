@@ -1,0 +1,876 @@
+#include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/function.h>
+#include <deal.II/base/timer.h>
+
+
+
+
+
+
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/sparse_matrix.h>
+#include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/precondition.h>
+#include <deal.II/lac/vector.h>
+
+
+
+
+#include <deal.II/grid/tria.h>
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/dofs/dof_handler.h>
+#include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/numerics/data_out.h>
+#include <deal.II/base/work_stream.h>
+#include <deal.II/dofs/dof_renumbering.h>
+#include <deal.II/numerics/vector_tools.h>
+#include <deal.II/lac/affine_constraints.h>
+
+
+
+#include <deal.II/lac/block_sparsity_pattern.h>
+#include <deal.II/lac/block_vector.h>
+
+
+
+
+#include <deal.II/lac/solver_bicgstab.h>
+#include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/sparse_ilu.h>
+#include <solvers/solid_phase.h>
+#include <deal.II/dofs/dof_tools.h>
+
+
+
+#include <deal.II/lac/solver_gmres.h>
+
+#include <deal.II/numerics/vector_tools.h>
+
+
+#include <deal.II/base/utilities.h>
+#include <fstream>
+#include <iomanip>
+#include <limits>
+
+
+#include <deal.II/lac/generic_linear_algebra.h>
+
+#include <deal.II/base/index_set.h>
+#include <deal.II/base/conditional_ostream.h>
+
+#include <deal.II/distributed/tria.h>
+#include <deal.II/distributed/grid_refinement.h>
+
+
+#include <deal.II/numerics/data_out.h>
+
+
+#include <deal.II/lac/trilinos_block_sparse_matrix.h>
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_sparsity_pattern.h>   
+#include <deal.II/lac/trilinos_solver.h>
+#include <deal.II/lac/sparsity_tools.h>
+
+
+
+
+
+#include <core/manifolds.h>
+#include <core/pvd_handler.h>
+#include <core/solutions_output.h>
+
+
+#include <sys/stat.h>
+#include <sys/types.h>
+
+
+using namespace dealii;
+
+
+
+
+template <int dim>
+class BlockAMGILU : public Subscriptor
+{
+public:
+  void initialize(const TrilinosWrappers::BlockSparseMatrix &A,
+                  const unsigned int                        fe_degree,
+                  const unsigned int                        ilu_overlap,
+                  const unsigned int                        amg_sweeps,
+                  const double                              amg_agg_threshold,
+                  const std::string                        &amg_smoother_type,
+                  const bool                                amg_elliptic)
+  {
+    // ---- AMG for velocity block 
+    TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+    amg_data.elliptic              = amg_elliptic;
+    amg_data.higher_order_elements = (fe_degree > 1);
+    amg_data.smoother_type         = "ILU";
+    amg_data.smoother_sweeps       = amg_sweeps;
+    amg_data.aggregation_threshold = amg_agg_threshold;
+    amg_data.output_details        = false;
+
+    if (A.block(0,0).m() > 0)
+      amg_u.initialize(A.block(0,0), amg_data);
+
+    
+    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+    ilu_data.overlap = ilu_overlap;
+
+    if (A.block(1,1).m() > 0)
+      ilu_a.initialize(A.block(1,1), ilu_data);
+  }
+
+  void vmult(TrilinosWrappers::MPI::BlockVector       &dst,
+             const TrilinosWrappers::MPI::BlockVector &src) const
+  {
+    if (dst.block(0).size() > 0)
+      amg_u.vmult(dst.block(0), src.block(0));
+
+    if (dst.block(1).size() > 0)
+      ilu_a.vmult(dst.block(1), src.block(1));
+  }
+
+private:
+  TrilinosWrappers::PreconditionAMG amg_u;
+  TrilinosWrappers::PreconditionILU ilu_a;
+};
+
+
+template <int dim>
+class SolidInitialValues : public Function<dim>
+{
+public:
+SolidInitialValues(const double &alpha0,
+                   const double &u0)
+  : Function<dim>(dim + 1)   // dim velocity components + 1 scalar
+  , alpha_0(alpha0)
+  , u_0(u0)
+{}
+
+
+virtual double
+value(const Point<dim> & /*p*/,
+      const unsigned int component) const override
+{
+  if (component < dim)
+  {
+    // initial solid velocity: (u_0, 0, 0, ...)
+    return (0.0);
+  }
+  else
+  {
+    // initial solid volume fraction α_s^0
+    return alpha_0;
+  }
+}
+
+
+private:
+const double alpha_0;
+const double u_0;
+};
+
+
+
+
+
+template <int dim>
+class SolidBoundaryValues : public Function<dim>
+{
+public:
+  SolidBoundaryValues(const double alpha_inlet,
+                      const Tensor<1,dim> &u_inlet)
+    : Function<dim>(dim + 1)
+    , alpha_in(alpha_inlet)
+    , u_in(u_inlet)
+  {}
+
+  double value(const Point<dim> &,
+               const unsigned int component) const override
+  {
+    if (component < dim)
+      return u_in[component];
+    else
+      return alpha_in;
+  }
+
+private:
+  const double alpha_in;
+  const Tensor<1, dim> u_in;
+};
+
+
+
+template <int dim>
+SolidPhaseSolver<dim>::SolidPhaseSolver(const SolidPhaseParameters &p,
+                                        MPI_Comm                    comm)
+  : parameters(p)
+  , mpi_communicator(comm)
+  , degree(parameters.degree)
+  , fe(FE_Q<dim>(degree), dim, FE_Q<dim>(degree), 1)
+  , triangulation(mpi_communicator,
+                  typename Triangulation<dim>::MeshSmoothing(
+                    Triangulation<dim>::smoothing_on_refinement |
+                    Triangulation<dim>::smoothing_on_coarsening))
+  , dof_handler(triangulation)
+  , rho_s(parameters.rho_s)
+  , beta(parameters.beta)
+  , time_step(parameters.time_step)
+  , timestep_number(0)
+  , pcout(std::cout, Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+  , computing_timer(mpi_communicator, pcout, TimerOutput::never, TimerOutput::wall_times)
+  , output_every(parameters.output_every)
+  , digits(parameters.digits)
+  , output_folder(parameters.output_folder)
+  , output_prefix(parameters.output_prefix)
+{
+  sub.assign(dim, 1);
+  sub[0] = parameters.nx;
+  if (dim > 1) sub[1] = parameters.ny;
+  if (dim > 2) sub[2] = parameters.nz;
+
+  inlet_velocity = Tensor<1, dim>();
+  inlet_velocity[0] = parameters.u_inlet_x;
+  if constexpr (dim >= 2) inlet_velocity[1] = parameters.u_inlet_y;
+  if constexpr (dim >= 3) inlet_velocity[2] = parameters.u_inlet_z;
+}
+
+
+
+template <int dim>
+void SolidPhaseSolver<dim>::make_grid()
+{
+Point<dim> p1, p2;
+
+
+for (unsigned int d = 0; d < dim; ++d)
+{
+  p1[d] = 0.0;
+  p2[d] = 1.0;
+}
+
+
+
+// sub.assign(dim, 1);
+// sub[0] = 10;           // x-direction
+// if (dim > 1) sub[1] = 10;  // y-direction
+// if (dim > 2) sub[2] = 10;   // z-direction
+
+
+
+
+GridGenerator::subdivided_hyper_rectangle(triangulation, sub, p1, p2);
+
+
+triangulation.refine_global(parameters.global_refinement);
+
+
+const double tol = 1e-12;
+
+
+const auto axis_from = [&](const std::string &d) -> unsigned int
+{
+  if (d == "x") return 0;
+  if (d == "y") return 1;
+  if (d == "z") return 2;
+  AssertThrow(false, ExcMessage("direction must be x, y, or z"));
+  return 0;
+};
+
+const unsigned int axis1 = axis_from(parameters.direction1);
+const unsigned int axis2 = axis_from(parameters.direction2);
+
+pcout << "dim = " << dim << std::endl;
+
+for (const auto &cell : triangulation.active_cell_iterators())
+ for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
+   if (cell->face(f)->at_boundary())
+   {
+     const Point<dim> fc = cell->face(f)->center();
+
+     cell->face(f)->set_boundary_id(0);
+
+      if (std::fabs(fc[axis1]) < tol)
+      {
+        cell->face(f)->set_boundary_id(1);
+      }
+        
+      else if (std::fabs(fc[axis1] - 1.0) < tol)
+      {
+        cell->face(f)->set_boundary_id(2);
+      }
+      
+      else if (std::fabs(fc[axis2]) < tol)
+      {
+        cell->face(f)->set_boundary_id(1);
+      }
+        
+      else if (std::fabs(fc[axis2] - 1.0) < tol)
+      {
+        cell->face(f)->set_boundary_id(2);
+      }
+        
+    }
+     
+
+    //  if (std::fabs(fc[0]) < tol || (dim >= 2 && std::fabs(fc[1]) < tol))
+    //    cell->face(f)->set_boundary_id(1);      // inlet
+    //  else if (std::fabs(fc[0] - 1.0) < tol || (dim >= 2 && std::fabs(fc[1] - 1.0) < tol))
+    //    cell->face(f)->set_boundary_id(2);      // outlet
+    //  else
+    //    cell->face(f)->set_boundary_id(0);      // walls
+   
+
+
+
+pcout << "active cells " << triangulation.n_global_active_cells() << std::endl;
+}
+
+
+template <int dim>
+void SolidPhaseSolver<dim>::setup_dofs()
+{
+  TimerOutput::Scope t(computing_timer, "setup");
+
+  dof_handler.distribute_dofs(fe);
+
+  std::vector<unsigned int> block_component(fe.n_components(), 0);
+  block_component[dim] = 1;
+  DoFRenumbering::component_wise(dof_handler, block_component);
+
+  const auto dofs_per_block =
+    DoFTools::count_dofs_per_fe_block(dof_handler, block_component);
+
+  const types::global_dof_index n_u = dofs_per_block[0];
+  const types::global_dof_index n_a = dofs_per_block[1];
+
+  pcout << "   Number of degrees of freedom: " << dof_handler.n_dofs()
+        << " (" << n_u << "+" << n_a << ")" << std::endl;
+
+  const IndexSet locally_owned    = dof_handler.locally_owned_dofs();
+  const IndexSet locally_relevant = DoFTools::extract_locally_relevant_dofs(dof_handler);
+
+  owned_partitioning.clear();
+  relevant_partitioning.clear();
+
+  owned_partitioning.emplace_back(locally_owned.get_view(0, n_u));
+  owned_partitioning.emplace_back(locally_owned.get_view(n_u, n_u + n_a));
+
+  relevant_partitioning.emplace_back(locally_relevant.get_view(0, n_u));
+  relevant_partitioning.emplace_back(locally_relevant.get_view(n_u, n_u + n_a));
+
+  constraints.clear();
+  constraints.reinit(locally_owned, locally_relevant);
+  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+
+  
+  SolidBoundaryValues<dim> bc(parameters.alpha_inlet, inlet_velocity);
+
+  ComponentMask vel_mask(fe.n_components(), false);
+  for (unsigned int c = 0; c < dim; ++c)
+    vel_mask.set(c, true);
+
+  ComponentMask alpha_mask(fe.n_components(), false);
+  alpha_mask.set(dim, true);
+
+  // Inlet id convention from make_grid(): 1
+  VectorTools::interpolate_boundary_values(dof_handler, 1, bc, constraints, vel_mask);
+  VectorTools::interpolate_boundary_values(dof_handler, 1, bc, constraints, alpha_mask);
+
+  // Walls id convention from make_grid(): 0
+  std::set<types::boundary_id> no_normal_flux_boundaries;
+  no_normal_flux_boundaries.insert(0);
+
+  VectorTools::compute_no_normal_flux_constraints(dof_handler,
+                                                  0,
+                                                  no_normal_flux_boundaries,
+                                                  constraints);
+
+  constraints.close();
+
+  system_matrix.clear();
+
+  TrilinosWrappers::BlockSparsityPattern sp(owned_partitioning,
+                                            owned_partitioning,
+                                            relevant_partitioning,
+                                            mpi_communicator);
+
+  DoFTools::make_sparsity_pattern(dof_handler,
+                                  sp,
+                                  constraints,
+                                  false,
+                                  Utilities::MPI::this_mpi_process(mpi_communicator));
+
+  sp.compress();
+  system_matrix.reinit(sp);
+
+  solution.reinit(owned_partitioning, mpi_communicator);
+  old_solution.reinit(owned_partitioning, mpi_communicator);
+  system_rhs.reinit(owned_partitioning, mpi_communicator);
+
+  locally_relevant_solution.reinit(owned_partitioning, relevant_partitioning, mpi_communicator);
+  locally_relevant_old_solution.reinit(owned_partitioning, relevant_partitioning, mpi_communicator);
+}
+
+
+
+
+template <int dim>
+void SolidPhaseSolver<dim>::assemble_system()
+{
+  if (parameters.verbose_assembly)
+    pcout << "Assembling...\n" << std::endl;
+
+  TimerOutput::Scope t(computing_timer, "assembly");
+
+  system_matrix = 0.0;
+  system_rhs    = 0.0;
+
+  const QGauss<dim> quadrature(degree + 1);
+
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar alpha(dim);
+
+  FEValues<dim> fe_values(fe,
+                          quadrature,
+                          update_values |
+                          update_gradients |
+                          update_quadrature_points |
+                          update_JxW_values);
+
+  const unsigned int dofs_per_cell = fe.dofs_per_cell;
+  const unsigned int n_q           = quadrature.size();
+
+  FullMatrix<double>                   cell_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>                       cell_rhs(dofs_per_cell);
+  std::vector<types::global_dof_index>  local_dof_indices(dofs_per_cell);
+
+  
+  const double beta  = parameters.beta;
+  const double rho_s = parameters.rho_s;
+
+
+  const double dt = time_step;
+
+  
+  const Tensor<1, dim> u_f = inlet_velocity;
+
+  // Shape function caches
+  std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
+  std::vector<Tensor<2, dim>> grad_phi_u(dofs_per_cell);
+  std::vector<double>         phi_a(dofs_per_cell);
+  std::vector<Tensor<1, dim>> grad_phi_a(dofs_per_cell);
+
+  // Old solution values 
+  std::vector<Tensor<1, dim>> u_old(n_q);
+  std::vector<Tensor<2, dim>> grad_u_old(n_q);
+  std::vector<double>         a_old(n_q);
+  std::vector<Tensor<1, dim>> grad_a_old(n_q);
+
+  
+  locally_relevant_old_solution = old_solution;
+  locally_relevant_old_solution.update_ghost_values();
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+    {
+      fe_values.reinit(cell);
+      cell_matrix = 0.0;
+      cell_rhs    = 0.0;
+
+      fe_values[velocities].get_function_values(locally_relevant_old_solution, u_old);
+      fe_values[velocities].get_function_gradients(locally_relevant_old_solution, grad_u_old);
+      fe_values[alpha].get_function_values(locally_relevant_old_solution, a_old);
+      fe_values[alpha].get_function_gradients(locally_relevant_old_solution, grad_a_old);
+
+      for (unsigned int q = 0; q < n_q; ++q)
+      {
+        const double         JxW     = fe_values.JxW(q);
+        const Tensor<1, dim> u_k     = u_old[q];
+        const double         a_k     = a_old[q];
+        const double         div_u_k = trace(grad_u_old[q]);
+
+        // Precompute shape values at this q
+        for (unsigned int k = 0; k < dofs_per_cell; ++k)
+        {
+          phi_u[k]      = fe_values[velocities].value(k, q);
+          grad_phi_u[k] = fe_values[velocities].gradient(k, q);
+          phi_a[k]      = fe_values[alpha].value(k, q);
+          grad_phi_a[k] = fe_values[alpha].gradient(k, q);
+        }
+
+        for (unsigned int i = 0; i < dofs_per_cell; ++i)
+        {
+          const unsigned int comp_i = fe.system_to_component_index(i).first;
+
+          // ---------- alpha equation row ----------
+          if (comp_i == dim)
+          {
+            for (unsigned int j = 0; j < dofs_per_cell; ++j)
+            {
+              const unsigned int comp_j = fe.system_to_component_index(j).first;
+              if (comp_j != dim)
+                continue;
+
+              // (w, alpha^{n+1})/dt
+              cell_matrix(i, j) += (phi_a[i] * phi_a[j] / dt) * JxW;
+
+              // (w, u_k · ∇alpha^{n+1})
+              cell_matrix(i, j) += (phi_a[i] * (grad_phi_a[j] * u_k)) * JxW;
+
+              // (w, alpha^{n+1} div(u_k))  
+              if (parameters.use_div_term_in_alpha)
+                cell_matrix(i, j) += (phi_a[i] * phi_a[j] * div_u_k) * JxW;
+            }
+
+            // RHS: (w, alpha^n)/dt
+            cell_rhs(i) += (phi_a[i] * a_k / dt) * JxW;
+          }
+
+          // ---------- momentum equation rows ----------
+          else if (comp_i < dim)
+          {
+            for (unsigned int j = 0; j < dofs_per_cell; ++j)
+            {
+              const unsigned int comp_j = fe.system_to_component_index(j).first;
+              if (comp_j != comp_i)
+                continue;
+
+              const double v_i = fe_values[velocities].value(i, q)[comp_i];
+              const double u_j = fe_values[velocities].value(j, q)[comp_i];
+
+              const Tensor<1, dim> grad_u_j =
+                fe_values[velocities].gradient(j, q)[comp_i];
+
+              const double adv = u_k * grad_u_j;
+
+              // mass
+              cell_matrix(i, j) += (rho_s * a_k / dt) * (v_i * u_j) * JxW;
+
+              // convection
+              cell_matrix(i, j) += (rho_s * a_k) * (v_i * adv) * JxW;
+
+              // drag
+              cell_matrix(i, j) += (beta * a_k) * (v_i * u_j) * JxW;
+            }
+
+            const double v_i = fe_values[velocities].value(i, q)[comp_i];
+
+            // RHS
+            cell_rhs(i) += (rho_s * a_k / dt) * (v_i * u_k[comp_i]) * JxW;
+            cell_rhs(i) += (beta  * a_k)      * (v_i * u_f[comp_i]) * JxW;
+          }
+        }
+      }
+
+      cell->get_dof_indices(local_dof_indices);
+      constraints.distribute_local_to_global(cell_matrix,
+                                             cell_rhs,
+                                             local_dof_indices,
+                                             system_matrix,
+                                             system_rhs);
+    }
+
+  system_matrix.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
+
+  if (parameters.verbose_assembly)
+    pcout << "Done assembling.\n" << std::endl;
+}
+
+
+
+template <int dim>
+void SolidPhaseSolver<dim>::solve()
+{
+  TimerOutput::Scope t(computing_timer, "solve");
+
+  if (parameters.solver_verbose)
+    pcout << "Solving solid system... " << std::flush;
+
+  // Owned vector (no ghosts) used in solve:
+  TrilinosWrappers::MPI::BlockVector distributed_solution(owned_partitioning,
+                                                          mpi_communicator);
+  distributed_solution = solution; // good initial guess
+
+  for (auto it = locally_owned.begin(); it != locally_owned.end(); ++it)
+    if (constraints.is_constrained(*it))
+      distributed_solution(*it) = 0.0;
+
+  PrimitiveVectorMemory<TrilinosWrappers::MPI::BlockVector> mem;
+
+  const double rhs_norm = system_rhs.l2_norm();
+  const double tol =
+    std::max(parameters.solver_abs_tol,
+             parameters.solver_rel_tol * rhs_norm);
+
+  SolverControl solver_control(parameters.solver_max_it, tol);
+
+  // Preconditioner
+  BlockAMGILU<dim> preconditioner;
+  
+  preconditioner.initialize(system_matrix,
+                          degree,
+                          parameters.ilu_overlap,
+                          parameters.amg_sweeps,
+                          parameters.amg_agg_threshold,
+                          parameters.amg_smoother_type,
+                          parameters.amg_elliptic);
+
+  SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(
+    solver_control,
+    mem,
+    SolverFGMRES<TrilinosWrappers::MPI::BlockVector>::AdditionalData(
+      parameters.solver_restart));
+
+  try
+  {
+    solver.solve(system_matrix,
+                 distributed_solution,
+                 system_rhs,
+                 preconditioner);
+  }
+  catch (SolverControl::NoConvergence &)
+  {
+   
+    if (parameters.solver_verbose)
+      pcout << "\nNoConvergence: retrying with relaxed settings...\n";
+
+    SolverControl solver_control_refined(system_matrix.m(),
+                                         tol);
+
+    SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver_refined(
+      solver_control_refined,
+      mem,
+      SolverFGMRES<TrilinosWrappers::MPI::BlockVector>::AdditionalData(
+        std::max(parameters.solver_restart, 200u)));
+
+    solver_refined.solve(system_matrix,
+                         distributed_solution,
+                         system_rhs,
+                         preconditioner);
+
+    
+  }
+
+  
+  constraints.distribute(distributed_solution);
+  distributed_solution.compress(VectorOperation::insert);
+
+  solution = distributed_solution;
+  solution.compress(VectorOperation::insert);
+
+ 
+  locally_relevant_solution = solution;
+  locally_relevant_solution.update_ghost_values();
+
+  if (parameters.solver_verbose)
+    pcout << solver_control.last_step()
+          << " iterations. residual="
+          << solver_control.last_value() << std::endl;
+}
+
+
+
+
+
+template <int dim>
+void SolidPhaseSolver<dim>::make_output_dir() const
+{
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    mkdir(parameters.output_folder.c_str(), 0777);
+
+  MPI_Barrier(mpi_communicator);
+}
+
+
+
+
+template <int dim>
+void SolidPhaseSolver<dim>::output_results(const double /*time*/)
+{
+  TimerOutput::Scope t(computing_timer, "output");
+
+  if (timestep_number % parameters.output_every != 0)
+    return;
+
+  if (parameters.output_verbose)
+    pcout << "Writing output..." << std::endl;
+
+  std::vector<std::string> names(dim, "u");
+  names.emplace_back("alpha");
+
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    interpretation(dim + 1, DataComponentInterpretation::component_is_scalar);
+  for (unsigned int d = 0; d < dim; ++d)
+    interpretation[d] = DataComponentInterpretation::component_is_part_of_vector;
+
+  DataOut<dim> data_out;
+  data_out.attach_dof_handler(dof_handler);
+
+  // ghosted for parallel output
+  data_out.add_data_vector(locally_relevant_solution,
+                           names,
+                           DataOut<dim>::type_dof_data,
+                           interpretation);
+
+  
+  Vector<float> subdomain(triangulation.n_active_cells());
+  for (unsigned int i = 0; i < subdomain.size(); ++i)
+    subdomain(i) = static_cast<float>(triangulation.locally_owned_subdomain());
+
+  data_out.add_data_vector(subdomain, "subdomain", DataOut<dim>::type_cell_data);
+
+  data_out.build_patches();
+
+  data_out.write_vtu_with_pvtu_record(parameters.output_folder,
+                                      parameters.output_prefix,
+                                      timestep_number,
+                                      mpi_communicator,
+                                      parameters.digits);
+}
+
+
+
+
+// template <int dim>
+// void SolidPhaseSolver<dim>::print_u0_profile(
+//   const TrilinosWrappers::MPI::BlockVector &sol) const
+// {
+//   if (!parameters.print_profile)
+//     return;
+
+//   // sol must be ghosted (owned+relevant), i.e. locally_relevant_solution
+//   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+//     std::cout << "step=" << timestep_number << "\n  u0(x):\n";
+
+//   Vector<double> values(dim + 1);
+
+//   const unsigned int n_samples = parameters.profile_n_samples;
+//   const double y0 = parameters.profile_y; // e.g. 0.5
+//   const double z0 = parameters.profile_z; // e.g. 0.5
+
+//   for (unsigned int k = 1; k <= n_samples; ++k)
+//   {
+//     const double x = (double)k / (double)n_samples; // in (0,1]
+
+//     Point<dim> p;
+//     p[0] = x;
+//     if constexpr (dim >= 2) p[1] = y0;
+//     if constexpr (dim >= 3) p[2] = z0;
+
+//     double local_value = 0.0;
+//     int    local_found = 0;
+
+//     try
+//     {
+//       VectorTools::point_value(dof_handler, sol, p, values);
+//       local_value = values[0]; // u0
+//       local_found = 1;
+//     }
+//     catch (...)
+//     {
+//       local_value = 0.0;
+//       local_found = 0;
+//     }
+
+//     const int    found_any = Utilities::MPI::max(local_found, mpi_communicator);
+//     const double u0_sum    = Utilities::MPI::sum(local_value, mpi_communicator);
+
+//     if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+//     {
+//       const double out = (found_any ? u0_sum
+//                                     : std::numeric_limits<double>::quiet_NaN());
+
+//       std::cout << std::fixed << std::setprecision(6)
+//                 << " " << x << ":" << out << ",\n";
+//     }
+//   }
+
+//   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+//     std::cout << "\n";
+// }
+
+
+
+
+template <int dim>
+void SolidPhaseSolver<dim>::run()
+{
+  make_grid();
+  setup_dofs();
+
+  make_output_dir();
+
+  // --- IC 
+  SolidInitialValues<dim> ic(parameters.alpha0, 0.0);
+
+  old_solution = 0.0;
+  VectorTools::interpolate(dof_handler, ic, old_solution);
+  constraints.distribute(old_solution);
+  old_solution.compress(VectorOperation::insert);
+
+  // Ghosted copy for FEValues/output/point queries
+  locally_relevant_old_solution = old_solution;
+  locally_relevant_old_solution.update_ghost_values();
+
+  solution = old_solution;
+  solution.compress(VectorOperation::insert);
+
+  locally_relevant_solution = solution;
+  locally_relevant_solution.update_ghost_values();
+
+  timestep_number = 0;
+  output_results(0.0);
+
+  const double L = 1.0;
+  const double h = L / static_cast<double>(sub[0]);
+
+  for (timestep_number = 1; timestep_number <= parameters.n_steps; ++timestep_number)
+  {
+    const double time = timestep_number * time_step;
+
+    assemble_system();
+    solve();
+
+    
+    // Profile print must use ghosted vector
+    //print_u0_profile(locally_relevant_solution);
+
+    output_results(time);
+
+    // advance
+    old_solution = solution;
+    old_solution.compress(VectorOperation::insert);
+
+    locally_relevant_old_solution = old_solution;
+    locally_relevant_old_solution.update_ghost_values();
+
+    const double CFL = inlet_velocity[0] * time_step / h;
+
+    pcout << "TimeStep " << timestep_number
+          << " time = " << time
+          << " CFL = " << CFL
+          << " ||rhs|| = " << system_rhs.l2_norm()
+          << "\n";
+
+    
+    if (parameters.print_timer_each_step)
+      computing_timer.print_summary();
+  }
+
+  if (parameters.print_timer_at_end)
+    computing_timer.print_summary();
+}
+
+
+
+
+
+
+template class SolidPhaseSolver<2>;
+template class SolidPhaseSolver<3>;
+

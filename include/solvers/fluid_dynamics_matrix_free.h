@@ -107,6 +107,8 @@ public:
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] physical_properties_manager Required to have the updated values
+   * of physical properties in case of ramp or viscous initial conditions.
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
   void
@@ -114,7 +116,9 @@ public:
          const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
          const std::shared_ptr<Function<dim>>      forcing_function,
          const std::shared_ptr<SimulationControl> &simulation_control,
-         const std::shared_ptr<FESystem<dim>>      fe);
+         const std::shared_ptr<PhysicalPropertiesManager>
+                                             &physical_properties_manager,
+         const std::shared_ptr<FESystem<dim>> fe);
 
   /**
    * @brief Creates the operator for a given level.
@@ -364,14 +368,10 @@ public:
    * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
    * @param[in] temperature_present_solution Present solution of the temperature
    * as given by the multiphysics interface.
-   * @param[in] physical_properties_manager Properties manager to extract
-   * thermal expansion coefficient and the reference temperature.
    */
   void
-  initialize_auxiliary_physics(
-    const DoFHandler<dim>           &temperature_dof_handler,
-    const VectorType                &temperature_present_solution,
-    const PhysicalPropertiesManager &physical_properties_manager);
+  initialize_auxiliary_physics(const DoFHandler<dim> &temperature_dof_handler,
+                               const VectorType &temperature_present_solution);
 };
 
 /**
@@ -625,6 +625,12 @@ protected:
    *
    */
   VectorType temperature_present_solution;
+
+  /**
+   * @brief Pointer to the physical properties object
+   *
+   */
+  std::shared_ptr<PhysicalPropertiesManager> physical_properties_manager;
 };
 
 #endif

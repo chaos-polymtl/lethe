@@ -1,0 +1,16 @@
+--------------------------------------------------------------------------
+mpirun was unable to find the specified executable file, and therefore
+did not launch the job.  This error was first reported for process
+rank 0; it may have occurred for other processes as well.
+
+NOTE: A common cause for this error is misspelling a mpirun command
+      line parameter option (remember that mpirun interprets the first
+      unrecognized command line token as the executable).
+
+Node:       818960a6ee04
+Executable: lethe-fluid
+--------------------------------------------------------------------------
+
+real	0m0.107s
+user	0m0.028s
+sys	0m0.052s

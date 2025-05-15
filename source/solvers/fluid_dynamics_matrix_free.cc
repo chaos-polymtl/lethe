@@ -576,11 +576,12 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
 template <int dim>
 void
 MFNavierStokesPreconditionGMGBase<dim>::reinit(
-  const std::shared_ptr<Mapping<dim>>      &mapping,
-  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-  const std::shared_ptr<Function<dim>>      forcing_function,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const std::shared_ptr<FESystem<dim>>      fe)
+  const std::shared_ptr<Mapping<dim>>              &mapping,
+  const std::shared_ptr<Quadrature<dim>>           &cell_quadrature,
+  const std::shared_ptr<Function<dim>>              forcing_function,
+  const std::shared_ptr<SimulationControl>         &simulation_control,
+  const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
+  const std::shared_ptr<FESystem<dim>>              fe)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -856,8 +857,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             level_constraints[level],
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager
-              .get_kinematic_viscosity_scale(),
+            physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
             level,
             simulation_control,
@@ -1255,8 +1255,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             level_constraint,
             quadrature_mg,
             forcing_function,
-            this->simulation_parameters.physical_properties_manager
-              .get_kinematic_viscosity_scale(),
+            physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
@@ -1927,8 +1926,13 @@ void
 MFNavierStokesPreconditionGMG<dim>::create_level_operator(
   const unsigned int level)
 {
-  this->mg_operators[level] =
-    std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
+    this->mg_operators[level] = std::make_shared<
+      NavierStokesNonNewtonianStabilizedOperator<dim, MGNumber>>();
+  else
+    this->mg_operators[level] =
+      std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
 }
 
 template <int dim>
@@ -2029,9 +2033,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
-  const DoFHandler<dim>           &temperature_dof_handler,
-  const VectorType                &temperature_present_solution,
-  const PhysicalPropertiesManager &physical_properties_manager)
+  const DoFHandler<dim> &temperature_dof_handler,
+  const VectorType      &temperature_present_solution)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -2093,9 +2096,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
           mg_temperature_solution[l].update_ghost_values();
 
           this->mg_operators[l]->compute_buoyancy_term(
-            mg_temperature_solution[l],
-            this->temperature_dof_handlers[l],
-            physical_properties_manager);
+            mg_temperature_solution[l], this->temperature_dof_handlers[l]);
         }
     }
 }
@@ -2111,16 +2112,25 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
 
-  AssertThrow(
-    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
-    ExcMessage(
-      "Non-Newtonian fluids are not supported by the matrix free application."));
-
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
 
-  system_operator =
-    std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+  physical_properties_manager = std::make_shared<PhysicalPropertiesManager>(
+    this->simulation_parameters.physical_properties_manager);
+
+  if (this->physical_properties_manager->is_non_newtonian())
+    {
+      system_operator = std::make_shared<
+        NavierStokesNonNewtonianStabilizedOperator<dim, double>>();
+      AssertThrow(
+        this->simulation_parameters.stabilization.stabilization ==
+          Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
+        dealii::ExcMessage(
+          "Matrix free Non-Newtonian Navier-Stokes only supports SUPG/PSPG stabilization."));
+    }
+  else
+    system_operator =
+      std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 
   if (!this->simulation_parameters.source_term.enable)
     {
@@ -2200,8 +2210,7 @@ FluidDynamicsMatrixFree<dim>::solve()
           if (this->simulation_parameters.multiphysics.buoyancy_force)
             this->system_operator->compute_buoyancy_term(
               temperature_present_solution,
-              *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
-              this->simulation_parameters.physical_properties_manager);
+              *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
         }
 
       this->iterate();
@@ -2292,8 +2301,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->zero_constraints,
     *this->cell_quadrature,
     this->forcing_function,
-    this->simulation_parameters.physical_properties_manager
-      .get_kinematic_viscosity_scale(),
+    this->physical_properties_manager,
     this->simulation_parameters.stabilization.stabilization,
     mg_level,
     this->simulation_control,
@@ -2344,7 +2352,8 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
 
-  // Initialize Trilinos vectors used to pass solution to multiphysics interface
+  // Initialize Trilinos vectors used to pass solution to multiphysics
+  // interface
   this->multiphysics_present_solution.reinit(this->locally_owned_dofs,
                                              this->locally_relevant_dofs,
                                              this->mpi_communicator);
@@ -2390,48 +2399,17 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
 
-      // Create a pointer to the current viscosity model
-      std::shared_ptr<RheologicalModel> viscosity_model =
-        this->simulation_parameters.physical_properties_manager.get_rheology();
+      // Get viscosity model
+      std::shared_ptr<RheologicalModel> original_viscosity_model =
+        this->physical_properties_manager->get_rheology();
 
-      // Keep in memory the initial viscosity
-      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
+      // Temporarily set the rheology to be newtonian with predefined
+      // viscosity
+      std::shared_ptr<Newtonian> temporary_rheology =
+        std::make_shared<Newtonian>(
+          this->simulation_parameters.initial_condition->kinematic_viscosity);
 
-      // Set it to the initial condition viscosity
-      viscosity_model->set_kinematic_viscosity(
-        this->simulation_parameters.initial_condition->kinematic_viscosity);
-
-      // Set the kinematic viscosity in the system operator to be the
-      // temporary viscosity
-      this->system_operator->set_kinematic_viscosity(
-        this->simulation_parameters.physical_properties_manager
-          .get_kinematic_viscosity_scale());
-
-      // Set temporary viscosity in the multigrid operators
-      if ((this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::lsmg) ||
-          (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::gcmg))
-        {
-          // Create the mg operators if they do not exist to be able
-          // to change the viscosity for all of them
-          if (!gmg_preconditioner)
-            this->create_GMG();
-
-          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
-          for (unsigned int level = mg_operators.min_level();
-               level <= mg_operators.max_level();
-               level++)
-            {
-              mg_operators[level]->set_kinematic_viscosity(
-                this->simulation_parameters.physical_properties_manager
-                  .get_kinematic_viscosity_scale());
-            }
-        }
+      this->physical_properties_manager->set_rheology(temporary_rheology);
 
       // Solve the problem with the temporary viscosity
       this->simulation_control->set_assembly_method(
@@ -2440,31 +2418,8 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
         solve_non_linear_system(false);
       this->finish_time_step();
 
-      // Set the kinematic viscosity in the system operator to be the original
-      // viscosity
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
-
-      // Reset kinematic viscosity to simulation parameters
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
-      this->system_operator->set_kinematic_viscosity(viscosity_end);
-
-      if ((this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::lsmg) ||
-          (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::gcmg))
-        {
-          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
-          for (unsigned int level = mg_operators.min_level();
-               level <= mg_operators.max_level();
-               level++)
-            {
-              mg_operators[level]->set_kinematic_viscosity(viscosity_end);
-            }
-        }
+      // Reset original rheology for the system operator
+      this->physical_properties_manager->set_rheology(original_viscosity_model);
     }
   else if (initial_condition_type == Parameters::InitialConditionType::ramp)
     {
@@ -2480,12 +2435,13 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
       // Create a pointer to the current viscosity model
       std::shared_ptr<RheologicalModel> viscosity_model =
-        this->simulation_parameters.physical_properties_manager.get_rheology();
+        this->physical_properties_manager->get_rheology();
 
-      // Gather viscosity final parameters
-      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
+      // Gather the kinematic viscosity for the simulation
+      const double original_viscosity =
+        viscosity_model->get_kinematic_viscosity();
 
-      // Kinematic viscosity ramp parameters
+      // Gather kinematic viscosity ramp parameters
       const int n_iter_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .n_iter;
@@ -2493,12 +2449,10 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
         n_iter_viscosity > 0 ?
           this->simulation_parameters.initial_condition->ramp.ramp_viscosity
             .kinematic_viscosity_init :
-          viscosity_end;
+          original_viscosity;
       const double alpha_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
-
-      viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
 
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
@@ -2508,71 +2462,25 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
 
+          // Set the temporary viscosity to the one given by the ramp
           viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
-
-          // Set the kinematic viscosity in the system operator to be the
-          // temporary viscosity
-          this->system_operator->set_kinematic_viscosity(
-            this->simulation_parameters.physical_properties_manager
-              .get_kinematic_viscosity_scale());
-
-          // Set temporary viscosity in the multigrid operators
-          if ((this->simulation_parameters.linear_solver
-                 .at(PhysicsID::fluid_dynamics)
-                 .preconditioner ==
-               Parameters::LinearSolver::PreconditionerType::lsmg) ||
-              (this->simulation_parameters.linear_solver
-                 .at(PhysicsID::fluid_dynamics)
-                 .preconditioner ==
-               Parameters::LinearSolver::PreconditionerType::gcmg))
-            {
-              // Create the mg operators if they do not exist to be able
-              // to change the viscosity for all of them
-              if (!gmg_preconditioner)
-                this->create_GMG();
-
-              auto mg_operators = this->gmg_preconditioner->get_mg_operators();
-              for (unsigned int level = mg_operators.min_level();
-                   level <= mg_operators.max_level();
-                   level++)
-                {
-                  mg_operators[level]->set_kinematic_viscosity(
-                    this->simulation_parameters.physical_properties_manager
-                      .get_kinematic_viscosity_scale());
-                }
-            }
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
+
           // Solve the problem with the temporary viscosity
           PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
             solve_non_linear_system(false);
           this->finish_time_step();
 
+          // Update the viscosity to the next one in the ramp parameters
           kinematic_viscosity +=
-            alpha_viscosity * (viscosity_end - kinematic_viscosity);
+            alpha_viscosity * (original_viscosity - kinematic_viscosity);
         }
-      // Reset kinematic viscosity to simulation parameters
-      viscosity_model->set_kinematic_viscosity(viscosity_end);
-      this->system_operator->set_kinematic_viscosity(viscosity_end);
 
-      if ((this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::lsmg) ||
-          (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::gcmg))
-        {
-          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
-          for (unsigned int level = mg_operators.min_level();
-               level <= mg_operators.max_level();
-               level++)
-            {
-              mg_operators[level]->set_kinematic_viscosity(viscosity_end);
-            }
-        }
+
+      // Reset kinematic viscosity to original value for the system operator
+      viscosity_model->set_kinematic_viscosity(original_viscosity);
 
       timer.stop();
 
@@ -2605,6 +2513,15 @@ void
 FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
+  // Update the precomputed values needed for the evaluation of the residual.
+  // This is needed, otherwise the line-search mechanism used in the Newton
+  // method might fail even though the Newton step should have been accepted
+  // due to a wrong evaluation of the residual and, consequently, a wrong
+  // evaluation of the step length.
+  this->evaluation_point.update_ghost_values();
+  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
+    this->evaluation_point);
 
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
@@ -2676,6 +2593,7 @@ FluidDynamicsMatrixFree<dim>::create_GMG()
                              this->cell_quadrature,
                              this->forcing_function,
                              this->simulation_control,
+                             this->physical_properties_manager,
                              this->fe);
 }
 
@@ -2686,10 +2604,9 @@ FluidDynamicsMatrixFree<dim>::initialize_GMG()
   // Initialize everything related to heat transfer within the MG algorithm
   if (this->simulation_parameters.multiphysics.buoyancy_force)
     dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
-      ->initialize_auxiliary_physics(
-        *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer),
-        this->temperature_present_solution,
-        this->simulation_parameters.physical_properties_manager);
+      ->initialize_auxiliary_physics(*this->multiphysics->get_dof_handler(
+                                       PhysicsID::heat_transfer),
+                                     this->temperature_present_solution);
 
   dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
     ->initialize(this->simulation_control,
@@ -2798,8 +2715,8 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       &this->dof_handler);
 
-  // Convert the present solution to multiphysics vector type and provide it to
-  // the multiphysics interface
+  // Convert the present solution to multiphysics vector type and provide it
+  // to the multiphysics interface
   TrilinosWrappers::MPI::Vector temp_solution(this->locally_owned_dofs,
                                               this->mpi_communicator);
 
@@ -2815,8 +2732,8 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
                                    &this->present_solution);
 #endif
 
-  // Convert the previous solutions to multiphysics vector type and provide them
-  // to the multiphysics interface
+  // Convert the previous solutions to multiphysics vector type and provide
+  // them to the multiphysics interface
   const unsigned int number_of_previous_solutions =
     this->simulation_control->get_number_of_previous_solution_in_assembly();
 

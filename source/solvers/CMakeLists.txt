@@ -30,6 +30,7 @@ add_library(lethe-solvers
   postprocessing_scalar.cc
   postprocessors_smoothing.cc
   simulation_parameters.cc
+  solid_phase.cc
   source_terms.cc
   tracer.cc
   tracer_assemblers.cc

@@ -13,6 +13,8 @@ foreach(_target IN ITEMS
     lethe-rpt-cell-reconstruction-3d
     lethe-rpt-fem-reconstruction-3d
     lethe-rpt-l2-projection-3d
+    euler-euler
+
     dem_parameter_template
     navier_stokes_parameter_template
     )
