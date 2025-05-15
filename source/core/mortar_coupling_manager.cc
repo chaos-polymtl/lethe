@@ -14,11 +14,11 @@ template <int dim>
 MortarManager<dim>::MortarManager(const unsigned int n_subdivisions,
                                   const unsigned int n_quadrature_points,
                                   const double       radius,
-                                  const double       rotate_pi)
+                                  const double       rotation_angle)
   : n_subdivisions(n_subdivisions)
   , n_quadrature_points(n_quadrature_points)
   , radius(radius)
-  , rotate_pi(rotate_pi)
+  , rotation_angle(rotation_angle)
   , quadrature(n_quadrature_points)
 {}
 
@@ -29,7 +29,7 @@ MortarManager<dim>::is_mesh_aligned() const
   const double tolerance = 1e-8;
   const double delta     = 2 * numbers::PI / n_subdivisions;
 
-  return std::abs(rotate_pi / delta - std::round(rotate_pi / delta)) <
+  return std::abs(rotation_angle / delta - std::round(rotation_angle / delta)) <
          tolerance;
 }
 
@@ -67,7 +67,7 @@ template <int dim>
 std::vector<unsigned int>
 MortarManager<dim>::get_indices(const double &angle_cell_center) const
 {
-  // mesh alignment type and cell index
+  // Mesh alignment type and cell index
   const auto [type, id] = get_config(angle_cell_center);
 
   if (type == 0) // aligned
@@ -123,9 +123,9 @@ template <int dim>
 std::vector<Point<dim>>
 MortarManager<dim>::get_points(const double rad) const
 {
-  // mesh alignment type and cell index
+  // Mesh alignment type and cell index
   const auto [type, id] = get_config(rad);
-  // angle variation within each cell
+  // Angle variation within each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
 
   if (type == 0) // aligned
@@ -138,15 +138,16 @@ MortarManager<dim>::get_points(const double rad) const
 
       return points;
     }
-  else // point at the inner boundary lies somewhere in the face of the outer
+  else // Point at the inner boundary lies somewhere in the face of the outer
        // boundary cell
     {
       // rad_0: first cell vertex (fixed)
       // rad_1: shifted vertex
       // rad_2: last cell vertex (fixed)
       double rad_0, rad_1, rad_2;
-      // minimum rotation angle
-      double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
+      // Minimum rotation angle
+      double rot_min =
+        rotation_angle - std::floor(rotation_angle / delta) * delta;
 
       if (type == 2) // outside
         {
@@ -197,7 +198,7 @@ MortarManager<dim>::get_points_ref(const double angle_cell_center) const
       double rad_0, rad_1, rad_2;
 
       double rot_min =
-        (rotate_pi - std::floor(rotate_pi / delta) * delta) / delta;
+        (rotation_angle - std::floor(rotation_angle / delta) * delta) / delta;
 
       if (type == 2) // outside
         {
@@ -228,9 +229,9 @@ template <int dim>
 std::vector<double>
 MortarManager<dim>::get_weights(const double &angle_cell_center) const
 {
-  // mesh alignment type and cell index
+  // Mesh alignment type and cell index
   const auto [type, id] = get_config(angle_cell_center);
-  // angle variation within each cell
+  // Angle variation within each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
 
   if (type == 0) // aligned
@@ -246,7 +247,8 @@ MortarManager<dim>::get_weights(const double &angle_cell_center) const
     {
       double rad_0, rad_1, rad_2;
 
-      double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
+      double rot_min =
+        rotation_angle - std::floor(rotation_angle / delta) * delta;
 
       if (type == 2) // outside
         {
@@ -292,25 +294,25 @@ template <int dim>
 std::pair<unsigned int, unsigned int>
 MortarManager<dim>::get_config(const double &rad) const
 {
-  // alignment tolerance
+  // Aalignment tolerance
   const double tolerance = 1e-8;
-  // angular variation in each cell
+  // Angular variation in each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
-  // minimum rotation angle
-  double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
-  // point position in the cell
+  // Minimum rotation angle
+  double rot_min = rotation_angle - std::floor(rotation_angle / delta) * delta;
+  // Point position in the cell
   const double segment = (rad - delta / 2) / delta;
-  // point position after rotation
+  // Point position after rotation
   const double segment_rot = (rad - delta / 2 - rot_min) / delta;
 
   if (this->is_mesh_aligned())
     {
-      // case 1: mesh is aligned
+      // Case 1: mesh is aligned
       return {0, std::round(segment)};
     }
   else
     {
-      // case 2: mesh is not aligned
+      // Case 2: mesh is not aligned
       if (std::abs(segment - std::round(segment)) < tolerance)
         // outer (fixed) domain
         return {2, std::round(segment)};
@@ -336,9 +338,9 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
   const unsigned int               n_components,
   const unsigned int               N,
   const double                     radius,
-  const double                     rotate_pi,
-  const unsigned int               bid_0,
-  const unsigned int               bid_1,
+  const double                     rotation_angle,
+  const unsigned int               bid_rotor,
+  const unsigned int               bid_stator,
   const double                     sip_factor,
   const std::vector<unsigned int>  relevant_dof_indices,
   const double                     penalty_factor_grad)
@@ -348,8 +350,8 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
   , quadrature(quadrature)
   , n_components(n_components)
   , N(N)
-  , bid_0(bid_0)
-  , bid_1(bid_1)
+  , bid_rotor(bid_rotor)
+  , bid_stator(bid_stator)
   , relevant_dof_indices(relevant_dof_indices)
   , n_dofs_per_cell(relevant_dof_indices.size())
 {
@@ -357,13 +359,22 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
   this->penalty_factor_grad = penalty_factor_grad;
 
+  // Create manager at the quadrature point level
   mortar_manager_q = std::make_shared<MortarManager<dim>>(
-    n_subdivisions, quadrature.get_tensor_basis()[0].size(), radius, rotate_pi);
+    n_subdivisions,
+    quadrature.get_tensor_basis()[0].size(),
+    radius,
+    rotation_angle);
 
-  mortar_manager_cell =
-    std::make_shared<MortarManager<dim>>(n_subdivisions, 1, radius, rotate_pi);
+  // Create manager at the cell level
+  mortar_manager_cell = std::make_shared<MortarManager<dim>>(n_subdivisions,
+                                                             1,
+                                                             radius,
+                                                             rotation_angle);
 
-  const unsigned int n_points    = mortar_manager_q->get_n_points();
+  // Number of quadrature points
+  const unsigned int n_points = mortar_manager_q->get_n_points();
+  // Number of cells
   const unsigned int n_sub_cells = mortar_manager_cell->get_n_points();
 
   std::vector<types::global_dof_index> is_local;
@@ -374,25 +385,29 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto face_no : cell->face_indices())
-        if ((cell->face(face_no)->boundary_id() == bid_0) ||
-            (cell->face(face_no)->boundary_id() == bid_1))
+        if ((cell->face(face_no)->boundary_id() == bid_rotor) ||
+            (cell->face(face_no)->boundary_id() == bid_stator))
           {
             const auto face = cell->face(face_no);
 
-            // indices
+            // Indices of quadrature points
             const auto indices_q =
-              mortar_manager_q->get_indices(get_rad(cell, face));
+              mortar_manager_q->get_indices(get_angle_cell_center(cell, face));
+
+            /* Loop over the quadrature points, storing indices for both sides.
+             * We assume that the rotor side is the 'local' reference, and the
+             * stator side is the 'ghost reference. */
             for (unsigned int ii = 0; ii < indices_q.size(); ++ii)
               {
                 unsigned int i = indices_q[ii];
                 unsigned int id_local, id_ghost;
 
-                if (face->boundary_id() == bid_0)
+                if (face->boundary_id() == bid_rotor)
                   {
                     id_local = i;
                     id_ghost = i + n_points;
                   }
-                else if (face->boundary_id() == bid_1)
+                else if (face->boundary_id() == bid_stator)
                   {
                     id_local = i + n_points;
                     id_ghost = i;
@@ -402,23 +417,26 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
                 is_ghost.emplace_back(id_ghost);
               }
 
-            // indices of cells/DoFs on them
-            const auto indices =
-              mortar_manager_cell->get_indices(get_rad(cell, face));
+            // Indices of cells/DoFs on them
+            const auto indices = mortar_manager_cell->get_indices(
+              get_angle_cell_center(cell, face));
 
             const auto local_dofs = this->get_dof_indices(cell);
 
+            /* Loop over the DoFs indices of the cells at the rotor-stator
+             * interface. The logic of local (rotor) and ghost (stator) is the
+             * same as in the previous loop. */
             for (unsigned int ii = 0; ii < indices.size(); ++ii)
               {
                 unsigned int i = indices[ii];
                 unsigned int id_local, id_ghost;
 
-                if (face->boundary_id() == bid_0)
+                if (face->boundary_id() == bid_rotor)
                   {
                     id_local = i;
                     id_ghost = i + n_sub_cells;
                   }
-                else if (face->boundary_id() == bid_1)
+                else if (face->boundary_id() == bid_stator)
                   {
                     id_local = i + n_sub_cells;
                     id_ghost = i;
@@ -431,19 +449,18 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
                   dof_indices.emplace_back(i);
               }
 
-            // weights
+            // Weights of quadrature points
             const auto weights =
-              mortar_manager_q->get_weights(get_rad(cell, face));
+              mortar_manager_q->get_weights(get_angle_cell_center(cell, face));
             all_weights.insert(all_weights.end(),
                                weights.begin(),
                                weights.end());
 
-            // normals
-            // points (also convert real to unit coordinates)
+            // Normals of quadrature points
             if (false)
               {
-                const auto points =
-                  mortar_manager_q->get_points(get_rad(cell, face));
+                const auto points = mortar_manager_q->get_points(
+                  get_angle_cell_center(cell, face));
                 std::vector<Point<dim, Number>> points_ref(points.size());
                 mapping.transform_points_real_to_unit_cell(cell,
                                                            points,
@@ -483,17 +500,17 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
               }
             else
               {
-                auto normals =
-                  mortar_manager_q->get_normals(get_rad(cell, face));
-                if (face->boundary_id() == bid_1)
+                auto normals = mortar_manager_q->get_normals(
+                  get_angle_cell_center(cell, face));
+                if (face->boundary_id() == bid_stator)
                   for (auto &normal : normals)
                     normal *= -1.0;
                 all_normals.insert(all_normals.end(),
                                    normals.begin(),
                                    normals.end());
 
-                auto points =
-                  mortar_manager_q->get_points_ref(get_rad(cell, face));
+                auto points = mortar_manager_q->get_points_ref(
+                  get_angle_cell_center(cell, face));
 
                 const bool flip =
                   (face->vertex(0)[0] * face->vertex(1)[1] -
@@ -519,22 +536,23 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
                   }
               }
 
-            // penalty parmeter
+            // Penalty parmeter
             const Number penalty_parameter = compute_penalty_parameter(cell);
 
-            for (unsigned int i = 0;
-                 i < mortar_manager_q->get_n_points(get_rad(cell, face));
+            // Store penalty parameter for all quadrature points
+            for (unsigned int i = 0; i < mortar_manager_q->get_n_points(
+                                           get_angle_cell_center(cell, face));
                  ++i)
               all_penalty_parameter.emplace_back(penalty_parameter);
           }
 
-  // setup communication
+  // Setup communication
   partitioner.reinit(is_local, is_ghost, dof_handler.get_mpi_communicator());
   partitioner_cell.reinit(is_local_cell,
                           is_ghost_cell,
                           dof_handler.get_mpi_communicator());
 
-  // finalized penalty parameters
+  // Finalized penalty parameters
   std::vector<Number> all_penalty_parameter_ghost(all_penalty_parameter.size());
   partitioner.template export_to_ghosted_array<Number, 1>(
     all_penalty_parameter, all_penalty_parameter_ghost);
@@ -542,7 +560,7 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
     all_penalty_parameter[i] =
       std::min(all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
 
-  // finialize DoF indices
+  // Finialize DoF indices and update constraints
   dof_indices_ghost.resize(dof_indices.size());
   partitioner_cell.template export_to_ghosted_array<types::global_dof_index, 0>(
     dof_indices, dof_indices_ghost, n_dofs_per_cell);
@@ -629,7 +647,7 @@ CouplingOperatorBase<dim, Number>::compute_penalty_parameter(
 
 template <int dim, typename Number>
 double
-CouplingOperatorBase<dim, Number>::get_rad(
+CouplingOperatorBase<dim, Number>::get_angle_cell_center(
   const typename Triangulation<dim>::cell_iterator &cell,
   const typename Triangulation<dim>::face_iterator &face) const
 {
@@ -663,7 +681,7 @@ void
 CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
                                              const VectorType &src) const
 {
-  // 1) evaluate
+  // 1) Evaluate
   unsigned int ptr_q = 0;
 
   Vector<Number> buffer;
@@ -674,10 +692,14 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
+        if ((face->boundary_id() == bid_rotor) ||
+            (face->boundary_id() == bid_stator))
           {
+            /* Number of quadrature points at the cell(rotor)/cell(stator)
+             * interaction. For non-aligned meshes, this value indicates the
+             * number of quadrature points at both rotor and stator cells. */
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -695,7 +717,7 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
             ptr_q += n_q_points;
           }
 
-  // 2) communicate
+  // 2) Communicate
   partitioner.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
                             all_value_m.size() * n_components),
@@ -703,15 +725,17 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
                       all_value_p.size() * n_components),
     N * n_components);
 
-  // 3) integrate
+  // 3) Integrate
   ptr_q = 0;
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
+        if ((face->boundary_id() == bid_rotor) ||
+            (face->boundary_id() == bid_stator))
           {
+            // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -746,10 +770,12 @@ CouplingOperatorBase<dim, Number>::add_diagonal_entries(
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
+        if ((face->boundary_id() == bid_rotor) ||
+            (face->boundary_id() == bid_stator))
           {
+            // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -820,13 +846,16 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
 
   Vector<Number> buffer;
 
+  // 1) Evaluate
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
+        if ((face->boundary_id() == bid_rotor) ||
+            (face->boundary_id() == bid_stator))
           {
+            // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_rad(cell, face));
+              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
             local_reinit(cell,
                          ArrayView<const Point<dim, Number>>(
@@ -852,6 +881,7 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
   const unsigned n_q_points =
     Utilities::pow(quadrature.get_tensor_basis()[0].size(), dim - 1);
 
+  // 2) Communicate
   partitioner_cell.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
                             all_value_m.size() * n_components),
@@ -863,18 +893,21 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
   ptr_q                 = 0;
   unsigned int ptr_dofs = 0;
 
+  // 3) Integrate
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_0) || (face->boundary_id() == bid_1))
+        if ((face->boundary_id() == bid_rotor) ||
+            (face->boundary_id() == bid_stator))
           {
-            const unsigned int n_sub_cells =
-              mortar_manager_cell->get_n_points(get_rad(cell, face));
+            const unsigned int n_sub_cells = mortar_manager_cell->get_n_points(
+              get_angle_cell_center(cell, face));
 
             for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
               {
                 const unsigned int n_q_points =
-                  mortar_manager_q->get_n_points(get_rad(cell, face)) /
+                  mortar_manager_q->get_n_points(
+                    get_angle_cell_center(cell, face)) /
                   n_sub_cells;
 
                 local_reinit(cell,
@@ -1030,7 +1063,30 @@ compute_n_subdivisions_and_radius(
   return {n_subdivisions, radius};
 }
 
+/**
+ * @brief Construct oversampled quadrature
+ *
+ * @param[in] quadrature Quadrature for local cell operations
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return Quadrature oversampled
+ */
+template <int dim>
+static Quadrature<dim>
+construct_quadrature(const Quadrature<dim>         &quadrature,
+                     const Parameters::Mortar<dim> &mortar_parameters)
+{
+  const double oversampling_factor = mortar_parameters.oversampling_factor;
 
+  for (unsigned int i = 1; i <= 10; ++i)
+    if (quadrature == QGauss<dim>(i))
+      return QGauss<dim>(i * oversampling_factor);
+
+  AssertThrow(false, ExcNotImplemented());
+
+  return quadrature;
+}
 
 template <int dim, int n_components, typename Number>
 CouplingOperator<dim, n_components, Number>::CouplingOperator(
@@ -1040,9 +1096,9 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const Quadrature<dim>            quadrature,
   const unsigned int               n_subdivisions,
   const double                     radius,
-  const double                     rotate_pi,
-  const unsigned int               bid_0,
-  const unsigned int               bid_1,
+  const double                     rotation_angle,
+  const unsigned int               bid_rotor,
+  const unsigned int               bid_stator,
   const double                     sip_factor,
   const unsigned int               first_selected_component,
   const double                     penalty_factor_grad)
@@ -1055,9 +1111,9 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
       1,
       2 * n_components,
       radius,
-      rotate_pi,
-      bid_0,
-      bid_1,
+      rotation_angle,
+      bid_rotor,
+      bid_stator,
       sip_factor,
       get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component),
       penalty_factor_grad)
@@ -1082,7 +1138,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
       mapping,
       dof_handler,
       constraints,
-      quadrature,
+      construct_quadrature(quadrature, mortar_parameters),
       compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first,
       1,
       2 * n_components,
@@ -1140,12 +1196,16 @@ CouplingOperator<dim, n_components, Number>::local_evaluate(
 
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
+      // Quadrature point index ('global' index within the rotor-stator
+      // interface)
       const unsigned int q_index = ptr_q + q;
 
+      // Normal, value, and gradient referring to the quadrature point
       const auto normal     = this->all_normals[q_index];
       const auto value_m    = this->phi_m.get_value(q);
       const auto gradient_m = contract(this->phi_m.get_gradient(q), normal);
 
+      // Store data in buffer
       BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
 
       buffer_m.write(value_m);
