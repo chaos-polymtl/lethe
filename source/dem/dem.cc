@@ -244,8 +244,7 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
   particle_particle_contact_force_object =
     set_particle_particle_contact_force_model<dim, PropertiesIndex>(parameters);
   particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model<dim, PropertiesIndex>(parameters,
-                                                                triangulation);
+    set_particle_wall_contact_force_model<dim, PropertiesIndex>(parameters);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -517,40 +516,29 @@ void
 DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
 {
   // Particle-wall contact force
-  particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+  particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
     simulation_control->get_time_step(),
-    torque,
-    force);
-
-  if (parameters.forces_torques.calculate_force_torque)
-    {
-      forces_boundary_information[simulation_control->get_step_number()] =
-        particle_wall_contact_force_object->get_force();
-      torques_boundary_information[simulation_control->get_step_number()] =
-        particle_wall_contact_force_object->get_torque();
-    }
+    contact_outcome);
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
-      particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+      particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
-        torque,
-        force);
+        contact_outcome);
     }
 
   // Particle-solid objects contact force
   if (action_manager->check_solid_objects_enabled()) // until refactor
     {
       particle_wall_contact_force_object
-        ->calculate_particle_floating_wall_contact_force(
+        ->calculate_particle_solid_object_contact(
           contact_manager.get_particle_floating_mesh_in_contact(),
           simulation_control->get_time_step(),
-          torque,
-          force,
-          solid_surfaces);
+          solid_surfaces,
+          contact_outcome);
     }
 
   particle_point_line_contact_force_object

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_parameters_lagrangian_h
@@ -15,13 +15,21 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    enum ParticleParticleContactForceModel
+    enum class ParticleParticleContactForceModel
     {
       linear,
       hertz_mindlin_limit_force,
       hertz_mindlin_limit_overlap,
       hertz,
       hertz_JKR,
+      DMT
+    };
+
+    enum class ParticleWallContactForceModel
+    {
+      linear,
+      nonlinear,
+      JKR,
       DMT
     };
 
@@ -327,13 +335,7 @@ namespace Parameters
       ParticleParticleContactForceModel particle_particle_contact_force_model;
 
       // Particle-wall contact force model
-      enum class ParticleWallContactForceModel
-      {
-        linear,
-        nonlinear,
-        JKR,
-        DMT
-      } particle_wall_contact_force_method;
+      ParticleWallContactForceModel particle_wall_contact_force_method;
 
       // Rolling resistance torque method
       RollingResistanceMethod rolling_resistance_method;
@@ -341,7 +343,7 @@ namespace Parameters
       // Model parameter for the EPSD rolling resistance model
       double f_coefficient_epsd;
 
-      // Itegration method
+      // Integration method
       enum class IntegrationMethod
       {
         velocity_verlet,
