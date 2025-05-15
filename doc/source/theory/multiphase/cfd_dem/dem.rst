@@ -404,7 +404,7 @@ The temperature of each particle `i` is computed as:
 
 where :math:`Q_i \approx \sum Q_{ij} + Q_{Si}` is the total rate of heat transferred to particle `i`, :math:`Q_{ij}` is the rate of heat transferred between particles `i` and `j`, :math:`Q_{Si}` is a potential source term applied to particle `i` and :math:`H_{ij}` is the thermal conductance between particles `i` and `j`.
 
-The thermal conductance, which is the inverse of the thermal resistance :math:`R_{ij}`, is calculated as follows by Beaulieu *et al*. [#Beaulieu2020]_:
+The thermal conductance, which is the inverse of the thermal resistance :math:`R_{ij}`, is calculated as follows by Beaulieu *et al*. [#beaulieu2020]_:
 
 .. math::
 
@@ -412,11 +412,11 @@ The thermal conductance, which is the inverse of the thermal resistance :math:`R
 
 Where:
 
-* :math:`R_L` resistance of the contact surface [#Batchelor1977]_
-* :math:`R_s` resistance of the microcontacts [#VanLew2016]_
-* :math:`R_g` resistance of the interstitial gas microgap [#Bahrami2006]_
-* :math:`R_c` resistance of the solid layers of the particles [#Beaulieu2020]_
-* :math:`R_G` resistance of the interstitial gas macrogap [#Bahrami2006]_
+* :math:`R_L` resistance of the contact surface [#batchelor1977]_
+* :math:`R_s` resistance of the microcontacts [#vanlew2016]_
+* :math:`R_g` resistance of the interstitial gas microgap [#bahrami2006]_
+* :math:`R_c` resistance of the solid layers of the particles [#beaulieu2020]_
+* :math:`R_G` resistance of the interstitial gas macrogap [#bahrami2006]_
 
 .. figure:: images/particle_particle_resistances.png
     :width: 800
@@ -445,7 +445,7 @@ The contact radius :math:`r_c` is calculated as follows:
 
    r_c = \left( \frac{3F_n r^* }{4E^*}\right)^{1/3}
 
-The Young's modulus in the simulation can sometimes be underestimated for computational efficiency and that can cause the contact radius and the overlap to be overestimated. To correct the contact radius, a factor c introduced by Zhou *et al.* [#Zhou2010]_ is used:
+The Young's modulus in the simulation can sometimes be underestimated for computational efficiency and that can cause the contact radius and the overlap to be overestimated. To correct the contact radius, a factor c introduced by Zhou *et al.* [#zhou2010]_ is used:
 
 .. math::
 
@@ -541,7 +541,7 @@ As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`r^*` a
     :width: 800
     :align: center
 
-    Modeling Heat transfer between two rough particles in contact.
+    Modeling Heat transfer between a rough wall and rough particle in contact.
 
 -------------
 References
@@ -569,12 +569,12 @@ References
 
 .. [#meier2019] \C. Meier, R. Weissbach, J. Weinberg, W. A. Wall, and A. John Hart, “Modeling and characterization of cohesion in fine metal powders with a focus on additive manufacturing process simulations,” *Powder Technology*, vol. 343, pp. 855–866, Feb. 2019, doi: `10.1016/j.powtec.2018.11.072 <https://doi.org/10.1016/j.powtec.2018.11.072>`_\.
 
-.. [#Batchelor1977] \G. K. Batchelor and R. W. O’Brien, “Thermal or electrical conduction through a granular material,” Proc. R. Soc. Lond. A Math. Phys. Sci., vol. 355, no. 1682, pp. 313–333, Jul. 1977, doi: `10.1098/rspa.1977.0100 <https://doi.org/10.1098/rspa.1977.0100>`_\.
+.. [#batchelor1977] \G. K. Batchelor and R. W. O’Brien, “Thermal or electrical conduction through a granular material,” Proc. R. Soc. Lond. A Math. Phys. Sci., vol. 355, no. 1682, pp. 313–333, Jul. 1977, doi: `10.1098/rspa.1977.0100 <https://doi.org/10.1098/rspa.1977.0100>`_\.
 
-.. [#Beaulieu2020] \C. Beaulieu, “Impact de la ségrégation granulaire sur le transfert de chaleur dans un lit rotatif,” (Order No. 28990310), Ph.D. thesis, Polytechnique Montréal, 2020. Available: `<https://www.proquest.com/dissertations-thèses/impact-de-la-ségrégation-granulaire-sur-le/docview/2626891455/se-2>`_\.
+.. [#beaulieu2020] \C. Beaulieu, “Impact de la ségrégation granulaire sur le transfert de chaleur dans un lit rotatif,” (Order No. 28990310), Ph.D. thesis, Polytechnique Montréal, 2020. Available: `<https://www.proquest.com/dissertations-thèses/impact-de-la-ségrégation-granulaire-sur-le/docview/2626891455/se-2>`_\.
 
-.. [#VanLew2016] \J. T. Van Lew, “On thermal characterization of breeder pebble beds with microscale numerical modeling of thermofluid and pebble-pebble interactions,” (Order No. 10158428), Ph.D. thesis, University of California, Los Angeles, 2016. Available: `<https://www.proquest.com/dissertations-theses/on-thermal-characterization-breeder-pebble-beds/docview/1839265662/se-2>`_\.
+.. [#vanlew2016] \J. T. Van Lew, “On thermal characterization of breeder pebble beds with microscale numerical modeling of thermofluid and pebble-pebble interactions,” (Order No. 10158428), Ph.D. thesis, University of California, Los Angeles, 2016. Available: `<https://www.proquest.com/dissertations-theses/on-thermal-characterization-breeder-pebble-beds/docview/1839265662/se-2>`_\.
 
-.. [#Bahrami2006] \M. Bahrami, M. M. Yovanovich, and J. R. Culham, “Effective thermal conductivity of rough spherical packed beds,” Int. J. Heat Mass Transf., vol. 49, no. 19–20, pp. 3691–3701, Sep. 2006, doi: `10.1016/j.ijheatmasstransfer.2006.02.021 <https://doi.org/10.1016/j.ijheatmasstransfer.2006.02.021>`_\.
+.. [#bahrami2006] \M. Bahrami, M. M. Yovanovich, and J. R. Culham, “Effective thermal conductivity of rough spherical packed beds,” Int. J. Heat Mass Transf., vol. 49, no. 19–20, pp. 3691–3701, Sep. 2006, doi: `10.1016/j.ijheatmasstransfer.2006.02.021 <https://doi.org/10.1016/j.ijheatmasstransfer.2006.02.021>`_\.
 
-.. [#Zhou2010] \Z. Y. Zhou, A. B. Yu, and P. Zulli, “A new computational method for studying heat transfer in fluid bed reactors,” Powder Technol., vol. 197, no. 1–2, pp. 102–110, Sep. 2010, doi: `10.1016/j.powtec.2009.09.002 <https://doi.org/10.1016/j.powtec.2009.09.002>`_\.
+.. [#zhou2010] \Z. Y. Zhou, A. B. Yu, and P. Zulli, “A new computational method for studying heat transfer in fluid bed reactors,” Powder Technol., vol. 197, no. 1–2, pp. 102–110, Sep. 2010, doi: `10.1016/j.powtec.2009.09.002 <https://doi.org/10.1016/j.powtec.2009.09.002>`_\.
