@@ -83,9 +83,10 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   // Zero constraints
   this->define_zero_constraints();
-  
-  // std::cout << "locally owned dofs before before " << Utilities::MPI::this_mpi_process(this->dof_handler.get_mpi_communicator()) << std::endl; 
-  // this->locally_owned_dofs.print(std::cout);
+
+  // std::cout << "locally owned dofs before before " <<
+  // Utilities::MPI::this_mpi_process(this->dof_handler.get_mpi_communicator())
+  // << std::endl; this->locally_owned_dofs.print(std::cout);
 
   // Create mortar coupling
   init_mortar_coupling();
@@ -554,7 +555,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
-  // add_mortar_system_matrix_entries();
+  add_mortar_system_matrix_entries();
 
   system_matrix.compress(VectorOperation::add);
 }
@@ -918,7 +919,7 @@ FluidDynamicsMatrixBased<dim>::init_mortar_coupling()
     return;
 
   this->mortar_coupling_operator =
-    std::make_shared<CouplingOperator<dim, dim + 1, double>>(
+    std::make_shared<NavierStokesMortarCouplingOperator<dim, dim + 1, double>>(
       *this->mapping,
       this->dof_handler,
       this->zero_constraints,

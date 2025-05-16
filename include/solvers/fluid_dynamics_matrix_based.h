@@ -270,7 +270,7 @@ private:
   int current_preconditioner_fill_level;
   int initial_preconditioner_fill_level;
 
-  std::shared_ptr<CouplingOperator<dim, dim + 1, double>>
+  std::shared_ptr<NavierStokesMortarCouplingOperator<dim, dim + 1, double>>
     mortar_coupling_operator;
 };
 

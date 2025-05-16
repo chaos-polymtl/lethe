@@ -566,7 +566,7 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
     dof_indices, dof_indices_ghost, n_dofs_per_cell);
 
   {
-    auto locally_owned_dofs = dof_handler.locally_owned_dofs();
+    auto locally_owned_dofs             = dof_handler.locally_owned_dofs();
     auto constraints_to_make_consistent = constraints.get_local_lines();
 
 
@@ -1126,38 +1126,6 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
 {}
 
 template <int dim, int n_components, typename Number>
-CouplingOperator<dim, n_components, Number>::CouplingOperator(
-  const Mapping<dim>              &mapping,
-  const DoFHandler<dim>           &dof_handler,
-  const AffineConstraints<Number> &constraints,
-  const Quadrature<dim>           &quadrature,
-  const Parameters::Mortar<dim>   &mortar_parameters,
-  const unsigned int               first_selected_component,
-  const double                     penalty_factor_grad)
-  : CouplingOperatorBase<dim, Number>(
-      mapping,
-      dof_handler,
-      constraints,
-      construct_quadrature(quadrature, mortar_parameters),
-      compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first,
-      1,
-      2 * n_components,
-      compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).second,
-      mortar_parameters.rotor_mesh->rotation_angle,
-      mortar_parameters.rotor_boundary_id,
-      mortar_parameters.stator_boundary_id,
-      mortar_parameters.sip_factor,
-      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component),
-      penalty_factor_grad)
-  , fe_sub(dof_handler.get_fe().base_element(
-             dof_handler.get_fe()
-               .component_to_base_index(first_selected_component)
-               .first),
-           n_components)
-  , phi_m(mapping, fe_sub, update_values | update_gradients)
-{}
-
-template <int dim, int n_components, typename Number>
 std::vector<unsigned int>
 CouplingOperator<dim, n_components, Number>::get_relevant_dof_indices(
   const FiniteElement<dim> &fe,
@@ -1257,6 +1225,177 @@ CouplingOperator<dim, n_components, Number>::local_integrate(
                              EvaluationFlags::gradients);
 }
 
+template <int dim, int n_components, typename Number>
+NavierStokesMortarCouplingOperator<dim, n_components, Number>::
+  NavierStokesMortarCouplingOperator(
+    const Mapping<dim>              &mapping,
+    const DoFHandler<dim>           &dof_handler,
+    const AffineConstraints<Number> &constraints,
+    const Quadrature<dim>           &quadrature,
+    const Parameters::Mortar<dim>   &mortar_parameters,
+    const unsigned int               first_selected_component,
+    const double                     penalty_factor_grad)
+  : CouplingOperatorBase<dim, Number>(
+      mapping,
+      dof_handler,
+      constraints,
+      construct_quadrature(quadrature, mortar_parameters),
+      compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first,
+      1,
+      2 * n_components,
+      compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).second,
+      mortar_parameters.rotor_mesh->rotation_angle,
+      mortar_parameters.rotor_boundary_id,
+      mortar_parameters.stator_boundary_id,
+      mortar_parameters.sip_factor,
+      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component),
+      penalty_factor_grad)
+  , fe_sub_u(dof_handler.get_fe().base_element(
+               dof_handler.get_fe().component_to_base_index(0).first),
+             dim)
+  , fe_sub_p(dof_handler.get_fe().base_element(
+               dof_handler.get_fe().component_to_base_index(dim).first),
+             1)
+  , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
+  , phi_p_m(mapping, fe_sub_p, update_values)
+{}
+
+template <int dim, int n_components, typename Number>
+std::vector<unsigned int>
+NavierStokesMortarCouplingOperator<dim, n_components, Number>::
+  get_relevant_dof_indices(const FiniteElement<dim> &fe,
+                           const unsigned int        first_selected_component)
+{
+  std::vector<unsigned int> result;
+
+  for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
+    if ((first_selected_component <= fe.system_to_component_index(i).first) &&
+        (fe.system_to_component_index(i).first <
+         first_selected_component + n_components))
+      result.push_back(i);
+
+  return result;
+}
+
+template <int dim, int n_components, typename Number>
+void
+NavierStokesMortarCouplingOperator<dim, n_components, Number>::local_reinit(
+  const typename Triangulation<dim>::cell_iterator &cell,
+  const ArrayView<const Point<dim, Number>>        &points) const
+{
+  this->phi_u_m.reinit(cell, points);
+  this->phi_p_m.reinit(cell, points);
+}
+
+template <int dim, int n_components, typename Number>
+void
+NavierStokesMortarCouplingOperator<dim, n_components, Number>::local_evaluate(
+  const Vector<Number> &buffer,
+  const unsigned int    ptr_q,
+  const unsigned int    q_stride,
+  Number               *all_value_m) const
+{
+  AssertDimension(buffer.size(),
+                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<const Number> buffer_u(buffer.data() + 0,
+                                   fe_sub_u.n_dofs_per_cell());
+  ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                                   fe_sub_p.n_dofs_per_cell());
+
+  this->phi_u_m.evaluate(buffer_u,
+                         EvaluationFlags::values | EvaluationFlags::gradients);
+  this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
+
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      const unsigned int q_index = ptr_q + q;
+
+      const auto normal = this->all_normals[q_index];
+
+      const auto value_m    = this->phi_u_m.get_value(q);
+      const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
+      const auto p_value_m  = this->phi_p_m.get_value(q) * normal;
+
+      BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+
+      buffer_m.write(value_m);
+      buffer_m.write(gradient_m);
+      buffer_m.write(p_value_m);
+      buffer_m.write(normal);
+    }
+}
+
+template <int dim, int n_components, typename Number>
+void
+NavierStokesMortarCouplingOperator<dim, n_components, Number>::local_integrate(
+  Vector<Number>    &buffer,
+  const unsigned int ptr_q,
+  const unsigned int q_stride,
+  Number            *all_value_m,
+  Number            *all_value_p) const
+{
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      const unsigned int q_index = ptr_q + q;
+
+      BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_p(all_value_p, q * 4 * dim * q_stride);
+
+      const auto value_m           = buffer_m.template read<u_value_type>();
+      const auto value_p           = buffer_p.template read<u_value_type>();
+      const auto normal_gradient_m = buffer_m.template read<u_value_type>();
+      const auto normal_gradient_p = buffer_p.template read<u_value_type>();
+      const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
+      const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
+
+      const auto JxW               = this->all_weights[q_index];
+      const auto penalty_parameter = this->all_penalty_parameter[q_index];
+      const auto normal            = this->all_normals[q_index];
+
+      const auto u_value_avg    = (value_m + value_p) * 0.5;
+      const auto u_value_jump   = value_m - value_p;
+      const auto u_gradient_avg = (normal_gradient_m - normal_gradient_p) * 0.5;
+      const auto p_value_avg    = (normal_p_value_m - normal_p_value_p) * 0.5;
+
+      typename FEPointIntegratorU::value_type u_normal_gradient_avg_result = {};
+      typename FEPointIntegratorU::value_type u_value_jump_result          = {};
+      typename FEPointIntegratorP::value_type p_value_jump_result          = {};
+
+      const double sigma = penalty_parameter * this->penalty_factor;
+
+      if (true /*Laplace term*/)
+        {
+          // - (n avg(∇v), jump(u))
+          u_normal_gradient_avg_result -= u_value_jump;
+
+          // - (jump(v), avg(∇u) n)
+          u_value_jump_result -= u_gradient_avg;
+
+          // + (jump(v), σ jump(u))
+          u_value_jump_result += sigma * u_value_jump;
+        }
+
+      phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
+                                0.5 * JxW,
+                              q);
+      phi_u_m.submit_value(u_value_jump_result * JxW, q);
+      phi_p_m.submit_value(p_value_jump_result * JxW, q);
+    }
+
+  AssertDimension(buffer.size(),
+                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
+  ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                             fe_sub_p.n_dofs_per_cell());
+
+  this->phi_u_m.test_and_sum(buffer_u,
+                             EvaluationFlags::values |
+                               EvaluationFlags::gradients);
+  this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
+}
+
 
 /*-------------- Explicit Instantiations -------------------------------*/
 template class MortarManager<2>;
@@ -1271,5 +1410,12 @@ template class CouplingOperator<2, 3, double>;
 template class CouplingOperator<3, 1, double>;
 template class CouplingOperator<3, 3, double>;
 template class CouplingOperator<3, 4, double>;
+
+template class NavierStokesMortarCouplingOperator<2, 1, double>;
+template class NavierStokesMortarCouplingOperator<2, 2, double>;
+template class NavierStokesMortarCouplingOperator<2, 3, double>;
+template class NavierStokesMortarCouplingOperator<3, 1, double>;
+template class NavierStokesMortarCouplingOperator<3, 3, double>;
+template class NavierStokesMortarCouplingOperator<3, 4, double>;
 
 #endif

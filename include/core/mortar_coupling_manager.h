@@ -609,26 +609,6 @@ public:
                    const double       penalty_factor_grad      = 1.0);
 
   /**
-   * @brief Constructor of the class
-   *
-   * @param[in] mapping Mapping of the domain
-   * @param[in] dof_handler DoFHandler associated to the triangulation
-   * @param[in] constraints Object with the constrains according to DoFs
-   * @param[in] quadrature Required for local operations on cells
-   * @param[in] mortar_parameters The information about the mortar method
-   * control, including the rotor mesh parameters
-   * @param[in] first_selected_component Index of first selected component
-   * @param[in] penalty_factor_grad
-   */
-  CouplingOperator(const Mapping<dim>              &mapping,
-                   const DoFHandler<dim>           &dof_handler,
-                   const AffineConstraints<Number> &constraints,
-                   const Quadrature<dim>           &quadrature,
-                   const Parameters::Mortar<dim>   &mortar_parameters,
-                   const unsigned int first_selected_component = 0,
-                   const double       penalty_factor_grad      = 1.0);
-
-  /**
    * @brief Return relevant dof indices
    *
    * @param[in] fe Finite Element
@@ -661,6 +641,75 @@ public:
   const FESystem<dim> fe_sub;
   /// Interface to the evaluation of mortar coupling interpolated solution
   mutable FEPointIntegrator phi_m;
+};
+
+
+
+template <int dim, int n_components, typename Number>
+class NavierStokesMortarCouplingOperator
+  : public CouplingOperatorBase<dim, Number>
+{
+public:
+  using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
+  using FEPointIntegratorP = FEPointEvaluation<1, dim, dim, Number>;
+
+  using u_value_type = typename FEPointIntegratorU::value_type;
+
+  /**
+   * @brief Constructor of the class
+   *
+   * @param[in] mapping Mapping of the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] constraints Object with the constrains according to DoFs
+   * @param[in] quadrature Required for local operations on cells
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
+   * @param[in] first_selected_component Index of first selected component
+   * @param[in] penalty_factor_grad
+   */
+  NavierStokesMortarCouplingOperator(
+    const Mapping<dim>              &mapping,
+    const DoFHandler<dim>           &dof_handler,
+    const AffineConstraints<Number> &constraints,
+    const Quadrature<dim>           &quadrature,
+    const Parameters::Mortar<dim>   &mortar_parameters,
+    const unsigned int               first_selected_component = 0,
+    const double                     penalty_factor_grad      = 1.0);
+
+  /**
+   * @brief Return relevant dof indices
+   *
+   * @param[in] fe Finite Element
+   * @param[in] first_selected_component
+   *
+   * @return dof_indices Vector of relevant dof indices
+   */
+  static std::vector<unsigned int>
+  get_relevant_dof_indices(const FiniteElement<dim> &fe,
+                           const unsigned int        first_selected_component);
+
+  void
+  local_reinit(
+    const typename Triangulation<dim>::cell_iterator &cell,
+    const ArrayView<const Point<dim, Number>>        &points) const override;
+
+  void
+  local_evaluate(const Vector<Number> &buffer,
+                 const unsigned int    ptr_q,
+                 const unsigned int    q_stride,
+                 Number               *all_value_m) const override;
+
+  void
+  local_integrate(Vector<Number>    &buffer,
+                  const unsigned int ptr_q,
+                  const unsigned int q_stride,
+                  Number            *all_value_m,
+                  Number            *all_value_p) const override;
+
+  const FESystem<dim>        fe_sub_u;
+  const FESystem<dim>        fe_sub_p;
+  mutable FEPointIntegratorU phi_u_m;
+  mutable FEPointIntegratorP phi_p_m;
 };
 
 #endif
