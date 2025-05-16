@@ -153,16 +153,10 @@ private:
                        const unsigned int n_quadrature_points) const;
 
   Point<dim>
-  from_1D(const double rad) const
-  {
-    return radius_to_point<dim>(radius, rad);
-  }
+  from_1D(const double rad) const;
 
   double
-  to_1D(const Point<dim> &face_center) const
-  {
-    return point_to_angle(face_center);
-  }
+  to_1D(const Point<dim> &face_center) const;
 
   /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;

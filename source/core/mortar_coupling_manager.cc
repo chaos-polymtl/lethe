@@ -354,6 +354,20 @@ MortarManager<dim>::get_config(const Point<dim> &face_center) const
     }
 }
 
+template <int dim>
+Point<dim>
+MortarManager<dim>::from_1D(const double rad) const
+{
+  return radius_to_point<dim>(radius, rad);
+}
+
+template <int dim>
+double
+MortarManager<dim>::to_1D(const Point<dim> &face_center) const
+{
+  return point_to_angle(face_center);
+}
+
 
 
 /*-------------- CouplingOperator -------------------------------*/
