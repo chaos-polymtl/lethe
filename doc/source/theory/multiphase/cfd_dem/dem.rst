@@ -419,7 +419,7 @@ Where:
 * :math:`R_G` resistance of the interstitial gas macrogap [#bahrami2006]_
 
 .. figure:: images/particle_particle_resistances.png
-    :width: 800
+    :width: 700
     :align: center
 
     Modeling Heat transfer between two rough particles in contact.
@@ -531,14 +531,14 @@ the interstitial gas macrogap resistance is halved as there is only a macrogap a
 
 .. math::
 
-   R_L &= \frac{1}{4 k_i r_c } \\
-   R_c &= R_{c,i} = \frac{L_i}{k_i A_i} \\
+   R_L &= \frac{1}{4 k_p r_c } \\
+   R_c &= R_{c,p} = \frac{L_p}{k_p A_p} \\
    R_G &= \frac{1}{2} \, \frac{2}{\pi k_g \left[S \ln\left(\frac{S-B}{S-A}\right) + B - A\right]} \\
 
-As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`r^*` are taken equal to :math:`2r_i` and :math:`r_i` respectively.
+As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`r^*` are taken equal to :math:`2r_p` and :math:`r_p` respectively.
 
 .. figure:: images/particle_wall_resistances.png
-    :width: 800
+    :width: 700
     :align: center
 
     Modeling Heat transfer between a rough wall and rough particle in contact.
