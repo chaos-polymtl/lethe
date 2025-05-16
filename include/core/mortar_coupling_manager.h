@@ -554,7 +554,7 @@ private:
     all_intersections;
 
 protected:
-  std::shared_ptr<MortarManager<dim>> mortar_manager_q;
+  std::shared_ptr<MortarManager<dim>> mortar_manager;
 
   /// Number of data points per quadrature point
   unsigned int N;
