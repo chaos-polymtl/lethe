@@ -1134,7 +1134,7 @@ public:
 
     valid_system = false;
 
-    comute_penalty_parameters();
+    compute_penalty_parameters();
 
     panalty_factor = compute_pentaly_factor(dof_handler.get_fe().degree, 1.0);
   }
@@ -1439,7 +1439,7 @@ protected:
   }
 
   void
-  comute_penalty_parameters()
+  compute_penalty_parameters()
   {
     const unsigned int n_cells =
       matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
@@ -1558,7 +1558,7 @@ public:
 
     this->sip_factor = sip_factor;
 
-    comute_penalty_parameters();
+    compute_penalty_parameters();
 
     panalty_factor =
       compute_pentaly_factor(dof_handler.get_fe().degree, sip_factor);
@@ -1596,7 +1596,7 @@ public:
     coupling_bids.insert(bid_0);
     coupling_bids.insert(bid_1);
 
-    comute_penalty_parameters();
+    compute_penalty_parameters();
   }
 
   virtual types::global_dof_index
@@ -2141,7 +2141,7 @@ private:
   }
 
   void
-  comute_penalty_parameters()
+  compute_penalty_parameters()
   {
     const unsigned int n_cells =
       matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
