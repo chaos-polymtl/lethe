@@ -162,8 +162,7 @@ MortarManager<dim>::get_points(const Point<dim> &face_center) const
       std::vector<Point<dim>> points;
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        points.emplace_back(
-          radius_to_point<dim>(radius, (id + quadrature.point(q)[0]) * delta));
+        points.emplace_back(from_1D((id + quadrature.point(q)[0]) * delta));
 
       return points;
     }
@@ -194,12 +193,12 @@ MortarManager<dim>::get_points(const Point<dim> &face_center) const
       std::vector<Point<dim>> points;
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        points.emplace_back(radius_to_point<dim>(
-          radius, rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0)));
+        points.emplace_back(
+          from_1D(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0)));
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        points.emplace_back(radius_to_point<dim>(
-          radius, rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1)));
+        points.emplace_back(
+          from_1D(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1)));
 
       return points;
     }
@@ -323,7 +322,7 @@ template <int dim>
 std::pair<unsigned int, unsigned int>
 MortarManager<dim>::get_config(const Point<dim> &face_center) const
 {
-  const auto angle_cell_center = point_to_angle(face_center);
+  const auto angle_cell_center = to_1D(face_center);
 
   // Alignment tolerance
   const double tolerance = 1e-8;
