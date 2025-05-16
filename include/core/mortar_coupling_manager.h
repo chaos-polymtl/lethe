@@ -439,11 +439,8 @@ public:
     const Mapping<dim>                                        &mapping,
     const DoFHandler<dim>                                     &dof_handler,
     const AffineConstraints<Number>                           &constraints,
-    const Quadrature<dim>                                      quadrature,
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
-    const unsigned int                                         n_subdivisions,
-    const double                                               radius,
-    const double                                               rotation_angle,
+    const std::shared_ptr<MortarManager<dim>>                  mortar_manager,
     const unsigned int                                         bid_rotor,
     const unsigned int                                         bid_stator,
     const double                                               sip_factor);
@@ -554,8 +551,6 @@ private:
     all_intersections;
 
 protected:
-  std::shared_ptr<MortarManager<dim>> mortar_manager;
-
   /// Number of data points per quadrature point
   unsigned int N;
 
@@ -584,6 +579,7 @@ protected:
   AffineConstraints<Number> constraints_extended;
 
   std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator;
+  std::shared_ptr<MortarManager<dim>>                  mortar_manager;
 };
 
 

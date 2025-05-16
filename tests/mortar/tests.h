@@ -380,6 +380,13 @@ public:
                const unsigned int bid_1,
                const double       sip_factor = 1.0)
   {
+    const auto mortar_manager =
+      std::make_shared<MortarManager<dim>>(n_subdivisions,
+                                           construct_quadrature(
+                                             matrix_free.get_quadrature()),
+                                           radius,
+                                           rotate_pi);
+
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
         std::make_shared<CouplingEvaluationSIPG<dim, n_components, Number>>(
@@ -390,11 +397,8 @@ public:
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
-      construct_quadrature(matrix_free.get_quadrature()),
       coupling_evaluator,
-      n_subdivisions,
-      radius,
-      rotate_pi,
+      mortar_manager,
       bid_0,
       bid_1,
       sip_factor);
@@ -763,6 +767,9 @@ public:
                                              .first)
                              .n_dofs_per_vertex() == 0;
 
+    const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+      n_subdivisions, matrix_free.get_quadrature(), radius, rotate_pi);
+
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
         std::make_shared<CouplingEvaluationStokes<dim, Number>>(
@@ -775,11 +782,8 @@ public:
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
-      matrix_free.get_quadrature(),
       coupling_evaluator,
-      n_subdivisions,
-      radius,
-      rotate_pi,
+      mortar_manager,
       bid_0,
       bid_1,
       sip_factor);
@@ -1146,6 +1150,9 @@ public:
                const unsigned int bid_1,
                const double       sip_factor = 1.0)
   {
+    const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+      n_subdivisions, matrix_free.get_quadrature(), radius, rotate_pi);
+
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
         std::make_shared<CouplingEvaluationSIPG<dim, n_components, Number>>(
@@ -1156,11 +1163,8 @@ public:
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
-      matrix_free.get_quadrature(),
       coupling_evaluator,
-      n_subdivisions,
-      radius,
-      rotate_pi,
+      mortar_manager,
       bid_0,
       bid_1,
       sip_factor);
@@ -1570,6 +1574,9 @@ public:
                const unsigned int bid_0,
                const unsigned int bid_1)
   {
+    const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+      n_subdivisions, matrix_free.get_quadrature(), radius, rotate_pi);
+
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
         std::make_shared<CouplingEvaluationStokes<dim, Number>>(
@@ -1580,11 +1587,8 @@ public:
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
-      matrix_free.get_quadrature(),
       coupling_evaluator,
-      n_subdivisions,
-      radius,
-      rotate_pi,
+      mortar_manager,
       bid_0,
       bid_1,
       sip_factor);

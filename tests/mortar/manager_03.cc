@@ -343,24 +343,25 @@ main(int argc, char **argv)
       constraints.reinit(dof_handler.locally_owned_dofs(),
                          locally_relevant_dofs);
 
+      const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+        4 * Utilities::pow(2, n_global_refinements + 1),
+        quadrature,
+        radius,
+        0.0);
 
       const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
         coupling_evaluator =
           std::make_shared<MyCouplingOperator<dim, Number>>(mapping,
                                                             dof_handler);
 
-      CouplingOperator<dim, double> coupling_operator(
-        mapping,
-        dof_handler,
-        constraints,
-        quadrature,
-        coupling_evaluator,
-        4 * Utilities::pow(2, n_global_refinements + 1),
-        radius,
-        0,
-        0,
-        5,
-        1.0);
+      CouplingOperator<dim, double> coupling_operator(mapping,
+                                                      dof_handler,
+                                                      constraints,
+                                                      coupling_evaluator,
+                                                      mortar_manager,
+                                                      0,
+                                                      5,
+                                                      1.0);
 
 
       TrilinosWrappers::SparsityPattern dsp;

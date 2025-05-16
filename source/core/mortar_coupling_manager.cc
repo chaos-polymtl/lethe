@@ -364,11 +364,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
   const Mapping<dim>                                        &mapping,
   const DoFHandler<dim>                                     &dof_handler,
   const AffineConstraints<Number>                           &constraints,
-  const Quadrature<dim>                                      quadrature,
   const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
-  const unsigned int                                         n_subdivisions,
-  const double                                               radius,
-  const double                                               rotation_angle,
+  const std::shared_ptr<MortarManager<dim>>                  mortar_manager,
   const unsigned int                                         bid_rotor,
   const unsigned int                                         bid_stator,
   const double                                               sip_factor)
@@ -378,6 +375,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
   , bid_rotor(bid_rotor)
   , bid_stator(bid_stator)
   , evaluator(evaluator)
+  , mortar_manager(mortar_manager)
 {
   this->N                    = evaluator->data_size();
   this->relevant_dof_indices = evaluator->get_relevant_dof_indices();
@@ -385,12 +383,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
   data.penalty_factor =
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
-
-  // Create manager at the quadrature point level
-  mortar_manager = std::make_shared<MortarManager<dim>>(n_subdivisions,
-                                                        quadrature,
-                                                        radius,
-                                                        rotation_angle);
 
   // Number of quadrature points
   const unsigned int n_points = mortar_manager->get_n_total_points();
