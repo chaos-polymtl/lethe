@@ -75,7 +75,7 @@ main(int argc, char *argv[])
   tria.refine_global(n_global_refinements);
 
   const MortarManager<dim> mm(4 * Utilities::pow(2, n_global_refinements + 1),
-                              n_quadrature_points,
+                              QGauss<dim>(n_quadrature_points),
                               radius,
                               rotate_pi);
 

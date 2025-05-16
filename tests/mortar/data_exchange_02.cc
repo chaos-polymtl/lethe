@@ -81,7 +81,7 @@ main(int argc, char *argv[])
   dof_handler.distribute_dofs(fe);
 
   const MortarManager<dim> mm(4 * Utilities::pow(2, n_global_refinements + 1),
-                              n_quadrature_points,
+                              QGauss<dim>(n_quadrature_points),
                               radius,
                               rotate_pi);
 

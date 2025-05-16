@@ -21,7 +21,7 @@ main()
       const double rotate = 2 * numbers::PI / N * i;
 
       const MortarManager<dim> manager(n_subdivisions,
-                                       n_quadrature_points,
+                                       QGauss<dim>(n_quadrature_points),
                                        radius,
                                        rotate);
 

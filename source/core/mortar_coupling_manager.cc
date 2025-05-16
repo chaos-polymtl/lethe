@@ -11,18 +11,6 @@
 /*-------------- MortarManager -------------------------------*/
 
 template <int dim>
-MortarManager<dim>::MortarManager(const unsigned int n_subdivisions,
-                                  const unsigned int n_quadrature_points,
-                                  const double       radius,
-                                  const double       rotation_angle)
-  : n_subdivisions(n_subdivisions)
-  , n_quadrature_points(n_quadrature_points)
-  , radius(radius)
-  , rotation_angle(rotation_angle)
-  , quadrature(n_quadrature_points)
-{}
-
-template <int dim>
 bool
 MortarManager<dim>::is_mesh_aligned() const
 {
@@ -399,11 +387,10 @@ CouplingOperator<dim, Number>::CouplingOperator(
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
 
   // Create manager at the quadrature point level
-  mortar_manager_q = std::make_shared<MortarManager<dim>>(
-    n_subdivisions,
-    quadrature.get_tensor_basis()[0].size(),
-    radius,
-    rotation_angle);
+  mortar_manager_q = std::make_shared<MortarManager<dim>>(n_subdivisions,
+                                                          quadrature,
+                                                          radius,
+                                                          rotation_angle);
 
   // Number of quadrature points
   const unsigned int n_points = mortar_manager_q->get_n_total_points();

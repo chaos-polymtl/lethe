@@ -36,10 +36,11 @@ template <int dim>
 class MortarManager
 {
 public:
-  MortarManager(const unsigned int n_subdivisions,
-                const unsigned int n_quadrature_points,
-                const double       radius,
-                const double       rotation_angle);
+  template <int dim2>
+  MortarManager(const unsigned int      n_subdivisions,
+                const Quadrature<dim2> &quadrature,
+                const double            radius,
+                const double            rotation_angle);
 
   /**
    * @brief Verify if cells of the inner and outer domains are aligned
@@ -153,15 +154,29 @@ private:
 
   /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;
+  /// Mortar quadrature
+  Quadrature<1> quadrature;
   /// Number of quadrature points per cell
   const unsigned int n_quadrature_points;
   /// Radius at the interface between inner and outer domains
   const double radius;
   /// Rotation angle for the inner domain
   const double rotation_angle;
-  /// Mortar quadrature
-  QGauss<1> quadrature;
 };
+
+
+template <int dim>
+template <int dim2>
+MortarManager<dim>::MortarManager(const unsigned int      n_subdivisions,
+                                  const Quadrature<dim2> &quadrature_in,
+                                  const double            radius,
+                                  const double            rotation_angle)
+  : n_subdivisions(n_subdivisions)
+  , quadrature(quadrature_in.get_tensor_basis()[0])
+  , n_quadrature_points(quadrature.size())
+  , radius(radius)
+  , rotation_angle(rotation_angle)
+{}
 
 
 /**
