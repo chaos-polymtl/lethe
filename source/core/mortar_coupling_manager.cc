@@ -387,7 +387,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
-  , quadrature(quadrature)
   , bid_rotor(bid_rotor)
   , bid_stator(bid_stator)
   , evaluator(evaluator)
