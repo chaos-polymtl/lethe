@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Test CouplingOperatorBase on rotated hypershell-hypershell geometry
+ * @brief Test CouplingOperator on rotated hypershell-hypershell geometry
  * by implementing SIPG and comparing it to a regular DG simulation.
  */
 
@@ -308,7 +308,7 @@ main(int argc, char **argv)
           std::make_shared<MyCouplingOperator<dim, Number>>(mapping,
                                                             dof_handler);
 
-      CouplingOperatorBase<dim, double> coupling_operator(
+      CouplingOperator<dim, double> coupling_operator(
         mapping,
         dof_handler,
         constraints,

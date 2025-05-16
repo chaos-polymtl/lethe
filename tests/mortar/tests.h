@@ -143,9 +143,9 @@ public:
   using u_value_type = typename FEPointIntegratorU::value_type;
 
   CouplingEvaluationStokes(const Mapping<dim>    &mapping,
-                         const DoFHandler<dim> &dof_handler,
-                         const bool do_pressure_gradient_term   = true,
-                         const bool do_velocity_divergence_term = true)
+                           const DoFHandler<dim> &dof_handler,
+                           const bool do_pressure_gradient_term   = true,
+                           const bool do_velocity_divergence_term = true)
     : fe_sub_u(dof_handler.get_fe().base_element(
                  dof_handler.get_fe().component_to_base_index(0).first),
                dim)
@@ -386,7 +386,7 @@ public:
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler());
 
-    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
+    coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
@@ -555,7 +555,7 @@ protected:
   mutable TrilinosWrappers::SparseMatrix       system_matrix;
   mutable bool                                 valid_system;
 
-  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
+  std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 
 private:
   static Quadrature<dim>
@@ -771,7 +771,7 @@ public:
           !is_p_disc,
           false);
 
-    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
+    coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
@@ -1078,7 +1078,7 @@ private:
   mutable TrilinosWrappers::SparseMatrix       system_matrix;
   mutable bool                                 valid_system;
 
-  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
+  std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 
   const double delta_1_scaling;
 };
@@ -1152,7 +1152,7 @@ public:
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler());
 
-    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
+    coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
@@ -1499,7 +1499,7 @@ protected:
   AlignedVector<VectorizedArrayType> penalty_parameters;
   VectorizedArrayType                panalty_factor;
 
-  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
+  std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 };
 
 
@@ -1576,7 +1576,7 @@ public:
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler());
 
-    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
+    coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
@@ -2208,7 +2208,7 @@ private:
   AlignedVector<VectorizedArrayType> penalty_parameters;
   VectorizedArrayType                panalty_factor;
 
-  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
+  std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 
   std::set<unsigned int> coupling_bids;
 };

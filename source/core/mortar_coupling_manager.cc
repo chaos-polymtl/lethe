@@ -326,10 +326,10 @@ MortarManager<dim>::get_config(const double &rad) const
 
 
 
-/*-------------- CouplingOperatorBase -------------------------------*/
+/*-------------- CouplingOperator -------------------------------*/
 
 template <int dim, typename Number>
-CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
+CouplingOperator<dim, Number>::CouplingOperator(
   const Mapping<dim>                                        &mapping,
   const DoFHandler<dim>                                     &dof_handler,
   const AffineConstraints<Number>                           &constraints,
@@ -591,23 +591,22 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
 
 template <int dim, typename Number>
 const AffineConstraints<Number> &
-CouplingOperatorBase<dim, Number>::get_affine_constraints() const
+CouplingOperator<dim, Number>::get_affine_constraints() const
 {
   return constraints_extended;
 }
 
 template <int dim, typename Number>
 Number
-CouplingOperatorBase<dim, Number>::compute_penalty_factor(
-  const unsigned int degree,
-  const Number       factor) const
+CouplingOperator<dim, Number>::compute_penalty_factor(const unsigned int degree,
+                                                      const Number factor) const
 {
   return factor * (degree + 1.0) * (degree + 1.0);
 }
 
 template <int dim, typename Number>
 Number
-CouplingOperatorBase<dim, Number>::compute_penalty_parameter(
+CouplingOperator<dim, Number>::compute_penalty_parameter(
   const typename Triangulation<dim>::cell_iterator &cell) const
 {
   const unsigned int degree = dof_handler.get_fe().degree;
@@ -646,7 +645,7 @@ CouplingOperatorBase<dim, Number>::compute_penalty_parameter(
 
 template <int dim, typename Number>
 double
-CouplingOperatorBase<dim, Number>::get_angle_cell_center(
+CouplingOperator<dim, Number>::get_angle_cell_center(
   const typename Triangulation<dim>::cell_iterator &cell,
   const typename Triangulation<dim>::face_iterator &face) const
 {
@@ -660,7 +659,7 @@ CouplingOperatorBase<dim, Number>::get_angle_cell_center(
 
 template <int dim, typename Number>
 std::vector<types::global_dof_index>
-CouplingOperatorBase<dim, Number>::get_dof_indices(
+CouplingOperator<dim, Number>::get_dof_indices(
   const typename DoFHandler<dim>::active_cell_iterator &cell) const
 {
   std::vector<types::global_dof_index> local_dofs_all(
@@ -677,8 +676,8 @@ CouplingOperatorBase<dim, Number>::get_dof_indices(
 
 template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
-                                             const VectorType &src) const
+CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
+                                         const VectorType &src) const
 {
   // 1) Evaluate
   unsigned int ptr_q = 0;
@@ -762,8 +761,7 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
 
 template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number>::add_diagonal_entries(
-  VectorType &diagonal) const
+CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
 {
   unsigned int ptr_q = 0;
 
@@ -822,7 +820,7 @@ CouplingOperatorBase<dim, Number>::add_diagonal_entries(
 
 template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number>::add_sparsity_pattern_entries(
+CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
   SparsityPatternBase &dsp) const
 {
   const auto constraints = &constraints_extended;
@@ -843,7 +841,7 @@ CouplingOperatorBase<dim, Number>::add_sparsity_pattern_entries(
 
 template <int dim, typename Number>
 void
-CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
+CouplingOperator<dim, Number>::add_system_matrix_entries(
   TrilinosWrappers::SparseMatrix &system_matrix) const
 {
   const auto constraints = &constraints_extended;
@@ -1231,8 +1229,8 @@ CouplingEvaluationBaseSIPG<dim, n_components, Number>::local_integrate(
 template class MortarManager<2>;
 template class MortarManager<3>;
 
-template class CouplingOperatorBase<2, double>;
-template class CouplingOperatorBase<3, double>;
+template class CouplingOperator<2, double>;
+template class CouplingOperator<3, double>;
 
 template class CouplingEvaluationBaseSIPG<2, 1, double>;
 template class CouplingEvaluationBaseSIPG<2, 2, double>;

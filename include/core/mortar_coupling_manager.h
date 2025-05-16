@@ -393,12 +393,12 @@ public:
  * @brief Base class for the Coupling Operator Base
  */
 template <int dim, typename Number>
-class CouplingOperatorBase
+class CouplingOperator
 {
 public:
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
-  CouplingOperatorBase(
+  CouplingOperator(
     const Mapping<dim>                                        &mapping,
     const DoFHandler<dim>                                     &dof_handler,
     const AffineConstraints<Number>                           &constraints,
