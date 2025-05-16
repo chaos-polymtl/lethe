@@ -64,57 +64,56 @@ public:
   /**
    * @brief Returns the indices of all quadrature points at both sides of the interface
    *
-   * @param[in] angle_cell_center Angular coordinate of cell center
+   * @param[in] face_center Face center
    */
   std::vector<unsigned int>
-  get_indices(const double angle_cell_center) const;
+  get_indices(const Point<dim> &face_center) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
    *
-   * @param[in] rad Angular coordinate of cell center
+   * @param[in] face_center Face center
    *
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
-  get_points(const double angle_cell_center) const;
+  get_points(const Point<dim> &face_center) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at the interface
    *
-   * @param[in] angle_cell_center Angle between cell center and x-axis (in
-   * radians)
+   * @param[in] face_center Face center
    *
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<1>>
-  get_points_ref(const double angle_cell_center) const;
+  get_points_ref(const Point<dim> &face_center) const;
 
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
    *
-   * @param[in] angle_cell_center Angular coordinate of cell center
+   * @param[in] face_center Face center
    *
    * @return points Angular weights of quadrature points of the cell
    */
   std::vector<double>
-  get_weights(const double angle_cell_center) const;
+  get_weights(const Point<dim> &face_center) const;
 
   /**
    * @brief Returns the normal vector for the quadrature points
    *
-   * @param[in] angle_cell_center Angular coordinate of cell center
+   * @param[in] face_center Face center
    *
    * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
-  get_normals(const double angle_cell_center) const;
+  get_normals(const Point<dim> &face_center) const;
 
 private:
   /**
-   * @brief Returns the mesh alignement type and cell index
+   * @brief Returns the mesh alignment type and cell index
    *
-   * @param[in] angle_cell_center Angular coordinate of cell center
+   * @param[in] face_center Face center
    *
    * @return type Cell configuration type at the interface
    * type = 0: mesh aligned
@@ -123,7 +122,7 @@ private:
    * @return id Index of the cell in which lies the rotated cell center
    */
   std::pair<unsigned int, unsigned int>
-  get_config(const double angle_cell_center) const;
+  get_config(const Point<dim> &face_center) const;
 
   /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;
@@ -482,10 +481,9 @@ private:
    *
    * @return Angle in radians
    */
-  double
-  get_angle_cell_center(
-    const typename Triangulation<dim>::cell_iterator &cell,
-    const typename Triangulation<dim>::face_iterator &face) const;
+  Point<dim>
+  get_face_center(const typename Triangulation<dim>::cell_iterator &cell,
+                  const typename Triangulation<dim>::face_iterator &face) const;
 
   /**
    * @brief Returns dof indices

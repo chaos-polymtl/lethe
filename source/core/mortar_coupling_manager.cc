@@ -63,10 +63,10 @@ MortarManager<dim>::get_n_points() const
 
 template <int dim>
 std::vector<unsigned int>
-MortarManager<dim>::get_indices(const double angle_cell_center) const
+MortarManager<dim>::get_indices(const Point<dim> &face_center) const
 {
   // Mesh alignment type and cell index
-  const auto [type, id] = get_config(angle_cell_center);
+  const auto [type, id] = get_config(face_center);
 
   if (type == 0) // aligned
     {
@@ -119,10 +119,10 @@ MortarManager<dim>::get_indices(const double angle_cell_center) const
 
 template <int dim>
 std::vector<Point<dim>>
-MortarManager<dim>::get_points(const double angle_cell_center) const
+MortarManager<dim>::get_points(const Point<dim> &face_center) const
 {
   // Mesh alignment type and cell index
-  const auto [type, id] = get_config(angle_cell_center);
+  const auto [type, id] = get_config(face_center);
   // Angle variation within each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
 
@@ -176,9 +176,9 @@ MortarManager<dim>::get_points(const double angle_cell_center) const
 
 template <int dim>
 std::vector<Point<1>>
-MortarManager<dim>::get_points_ref(const double angle_cell_center) const
+MortarManager<dim>::get_points_ref(const Point<dim> &face_center) const
 {
-  const auto [type, id] = get_config(angle_cell_center);
+  const auto [type, id] = get_config(face_center);
 
   const double delta = 2 * numbers::PI / n_subdivisions;
 
@@ -225,10 +225,10 @@ MortarManager<dim>::get_points_ref(const double angle_cell_center) const
 
 template <int dim>
 std::vector<double>
-MortarManager<dim>::get_weights(const double angle_cell_center) const
+MortarManager<dim>::get_weights(const Point<dim> &face_center) const
 {
   // Mesh alignment type and cell index
-  const auto [type, id] = get_config(angle_cell_center);
+  const auto [type, id] = get_config(face_center);
   // Angle variation within each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
 
@@ -275,10 +275,10 @@ MortarManager<dim>::get_weights(const double angle_cell_center) const
 
 template <int dim>
 std::vector<Tensor<1, dim, double>>
-MortarManager<dim>::get_normals(const double angle_cell_center) const
+MortarManager<dim>::get_normals(const Point<dim> &face_center) const
 {
   // Coordinates of cell quadrature points
-  const auto points = get_points(angle_cell_center);
+  const auto points = get_points(face_center);
 
   std::vector<Tensor<1, dim, double>> result;
 
@@ -290,9 +290,11 @@ MortarManager<dim>::get_normals(const double angle_cell_center) const
 
 template <int dim>
 std::pair<unsigned int, unsigned int>
-MortarManager<dim>::get_config(const double angle_cell_center) const
+MortarManager<dim>::get_config(const Point<dim> &face_center) const
 {
-  // Aalignment tolerance
+  const auto angle_cell_center = point_to_angle(face_center);
+
+  // Alignment tolerance
   const double tolerance = 1e-8;
   // Angular variation in each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
@@ -387,7 +389,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
             // Indices of quadrature points
             const auto indices_q =
-              mortar_manager_q->get_indices(get_angle_cell_center(cell, face));
+              mortar_manager_q->get_indices(get_face_center(cell, face));
 
             /* Loop over the quadrature points, storing indices for both sides.
              * We assume that the rotor side is the 'local' reference, and the
@@ -413,8 +415,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
               }
 
             // Indices of cells/DoFs on them
-            const auto indices = mortar_manager_cell->get_indices(
-              get_angle_cell_center(cell, face));
+            const auto indices =
+              mortar_manager_cell->get_indices(get_face_center(cell, face));
 
             const auto local_dofs = this->get_dof_indices(cell);
 
@@ -446,7 +448,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
             // Weights of quadrature points
             const auto weights =
-              mortar_manager_q->get_weights(get_angle_cell_center(cell, face));
+              mortar_manager_q->get_weights(get_face_center(cell, face));
             data.all_weights.insert(data.all_weights.end(),
                                     weights.begin(),
                                     weights.end());
@@ -454,8 +456,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
             // Normals of quadrature points
             if (false)
               {
-                const auto points = mortar_manager_q->get_points(
-                  get_angle_cell_center(cell, face));
+                const auto points =
+                  mortar_manager_q->get_points(get_face_center(cell, face));
                 std::vector<Point<dim, Number>> points_ref(points.size());
                 mapping.transform_points_real_to_unit_cell(cell,
                                                            points,
@@ -496,8 +498,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
               }
             else
               {
-                auto normals = mortar_manager_q->get_normals(
-                  get_angle_cell_center(cell, face));
+                auto normals =
+                  mortar_manager_q->get_normals(get_face_center(cell, face));
                 if (face->boundary_id() == bid_stator)
                   for (auto &normal : normals)
                     normal *= -1.0;
@@ -505,8 +507,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
                                         normals.begin(),
                                         normals.end());
 
-                auto points = mortar_manager_q->get_points_ref(
-                  get_angle_cell_center(cell, face));
+                auto points =
+                  mortar_manager_q->get_points_ref(get_face_center(cell, face));
 
                 const bool flip =
                   (face->vertex(0)[0] * face->vertex(1)[1] -
@@ -640,17 +642,13 @@ CouplingOperator<dim, Number>::compute_penalty_parameter(
 }
 
 template <int dim, typename Number>
-double
-CouplingOperator<dim, Number>::get_angle_cell_center(
+Point<dim>
+CouplingOperator<dim, Number>::get_face_center(
   const typename Triangulation<dim>::cell_iterator &cell,
   const typename Triangulation<dim>::face_iterator &face) const
 {
-  if (false)
-    return point_to_angle(face->center());
-  else
-    return point_to_angle(mapping.transform_unit_to_real_cell(
-      cell,
-      MappingQ1<dim>().transform_real_to_unit_cell(cell, face->center())));
+  return mapping.transform_unit_to_real_cell(
+    cell, MappingQ1<dim>().transform_real_to_unit_cell(cell, face->center()));
 }
 
 template <int dim, typename Number>

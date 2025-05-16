@@ -39,10 +39,12 @@ main()
             std::cout << "Shift: " << shift << std::endl;
             std::cout << "Cell center at " << rad << ": " << std::endl;
 
-            const auto indices = manager.get_indices(rad);
-            const auto weights = manager.get_weights(rad);
-            const auto points  = manager.get_points(rad);
-            const auto normals = manager.get_normals(rad);
+            const auto p = radius_to_point<dim>(1.0, rad);
+
+            const auto indices = manager.get_indices(p);
+            const auto weights = manager.get_weights(p);
+            const auto points  = manager.get_points(p);
+            const auto normals = manager.get_normals(p);
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {
