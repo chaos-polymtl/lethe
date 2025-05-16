@@ -89,7 +89,7 @@ public:
       {
         // for simplex meshes
         fe = std::make_shared<FE_SimplexP<dim>>(
-          simulation_parameters.fem_parameters.temperature_order);
+          simulation_parameters.fem_parameters.turbulence_order);
         rans_mapping    = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
@@ -99,7 +99,7 @@ public:
       {
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
-          simulation_parameters.fem_parameters.temperature_order);
+          simulation_parameters.fem_parameters.turbulence_order);
         rans_mapping    = std::make_shared<MappingQ<dim>>(fe->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
@@ -379,9 +379,9 @@ private:
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
         AssertThrow(
-          simulation_parameters.boundary_conditions_rans_turbulence.type.find(
+          simulation_parameters.boundary_conditions_rans.type.find(
             boundary_id_in_tria) !=
-            simulation_parameters.boundary_conditions_rans_turbulence.type
+            simulation_parameters.boundary_conditions_rans.type
               .end(),
           RANSTurbulenceBoundaryConditionMissing(boundary_id_in_tria));
       }
@@ -470,7 +470,7 @@ private:
    */
 
   void
-  postprocess_temperature_turbulence();
+  postprocess_rans_turbulence();
 
   /**
    * @brief Post-processing.

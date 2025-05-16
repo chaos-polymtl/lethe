@@ -772,6 +772,138 @@ namespace BoundaryConditions
     prm.leave_subsection();
   }
 
+  /**
+   * @brief This class manages the boundary conditions for Heat-Transfer solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently.
+   * The members "value", "h" and "Tinf" contain double used for bc calculation:
+   *
+   *  - if bc type is "noflux"
+   *
+   */
+
+  template <int dim>
+  class RANSTurbulenceBoundaryConditions : public BoundaryConditions
+  {
+  public:
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      dirichlet_value;
+
+    void
+    declare_default_entry(ParameterHandler  &prm,
+                          types::boundary_id default_boundary_id);
+    void
+    declare_parameters(ParameterHandler &prm,
+                       unsigned int      number_of_boundary_conditions);
+    void
+    parse_boundary(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Declares the default parameters for a boundary condition id i_bc
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param default_boundary_id Default value given to the boundary id.
+   */
+  template <int dim>
+  void
+  RANSTurbulenceBoundaryConditions<dim>::declare_default_entry(
+    ParameterHandler        &prm,
+    const types::boundary_id default_boundary_id)
+  {
+
+    prm.declare_entry("id",
+                      Utilities::to_string(default_boundary_id, 2),
+                      Patterns::Integer(),
+                      "Mesh id for boundary conditions");
+
+    Functions::ParsedFunction<dim> temporary_function;
+
+    // Expression for the temperature for an imposed temperature at bc
+    prm.enter_subsection("value");
+    temporary_function.declare_parameters(prm);
+    prm.leave_subsection();
+  }
+
+  /**
+   * @brief Declare the boundary conditions default parameters
+   * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param number_of_boundary_conditions Number of boundary conditions
+   */
+  template <int dim>
+  void
+  RANSTurbulenceBoundaryConditions<dim>::declare_parameters(
+    ParameterHandler  &prm,
+    const unsigned int number_of_boundary_conditions)
+  {
+    prm.enter_subsection("boundary conditions rans turbulence");
+    {
+      prm.declare_entry("number",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of boundary conditions");
+      }
+    prm.leave_subsection();
+  }
+
+  /**
+   * @brief Parse the information for a boundary condition
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+
+  template <int dim>
+  void
+  RANSTurbulenceBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
+  {
+    AssertThrow(
+      prm.get_integer("id") >= 0,
+      ExcMessage(
+        "An invalid boundary id has been given for a heat transfer boundary condition."));
+
+    types::boundary_id boundary_id = prm.get_integer("id");
+
+    // All the functions are parsed since they might be used for post-processing
+    prm.enter_subsection("value");
+    this->dirichlet_value[boundary_id] =
+      std::make_shared<Functions::ParsedFunction<dim>>();
+    prm.leave_subsection();
+  }
+
+  /**
+   * @brief Parse the boundary conditions
+   * Calls parse_boundary method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+
+  template <int dim>
+  void
+  RANSTurbulenceBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("boundary conditions heat transfer");
+    {
+      this->number_of_boundary_conditions = prm.get_integer("number");
+      this->time_dependent                = prm.get_bool("time dependent");
+      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
 
   /**
    * @brief This class manages the boundary conditions for Tracer solver

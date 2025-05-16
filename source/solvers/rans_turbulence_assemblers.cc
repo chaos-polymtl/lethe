@@ -6,7 +6,7 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/rans_assemblers.h>
+#include <solvers/rans_turbulence_assemblers.h>
 #include <solvers/stabilization.h>
 
 template <int dim>

@@ -1035,15 +1035,15 @@ public:
 
     // Gather turbulence (values, gradients)
     this->fe_values_rans_turbulence->get_function_values(
-      current_solution, this->turbulence_values);
+      current_solution, this->turbulent_viscosity);
     this->fe_values_rans_turbulence->get_function_gradients(
-      current_solution, this->turbulence_gradients);
+      current_solution, this->turbulent_viscosity);
 
     // Gather previous turbulence values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         this->fe_values_rans_turbulence->get_function_values(
-          previous_solutions[p], this->previous_turbulence_values[p]);
+          previous_solutions[p], this->previous_turbulent_viscosity[p]);
       }
   }
 
@@ -1241,6 +1241,7 @@ public:
   bool                           gather_rans_turbulence;
   unsigned int                   n_dofs_rans_turbulence;
   std::vector<double>            turbulent_viscosity;
+  std::vector<Tensor<1, dim>>    previous_turbulent_viscosity;
   std::shared_ptr<FEValues<dim>> fe_values_rans_turbulence;
 
   /**

@@ -85,10 +85,8 @@ public:
                           fe_rans,
                           face_quadrature,
                           update_values | update_quadrature_points |
-                            update_JxW_values)
+                            update_JxW_values | update_gradients)
   {
-    gather_vof = false;
-
     allocate();
   }
 
@@ -342,6 +340,8 @@ public:
 
   // FEValues for the RANS equations
   FEValues<dim> fe_values_rans;
+  FEValues<dim> fe_values_fd;
+  FEFaceValues<dim> fe_face_values_rans;
   unsigned int  n_dofs;
   unsigned int  n_q_points;
   double        cell_size;

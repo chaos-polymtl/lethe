@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef rans_assemblers_h
-#define rans_assemblers_h
+#ifndef rans_turbulence_assemblers_h
+#define rans_turbulence_assemblers_h
 
 #include <core/boundary_conditions.h>
 #include <core/simulation_control.h>
@@ -72,7 +72,7 @@ public:
 
   const std::shared_ptr<SimulationControl> simulation_control;
   const BoundaryConditions::RANSTurbulenceBoundaryConditions<dim>
-    &boundary_conditions_rans_turbulence;
+    &boundary_conditions_rans;
 };
 
 /**

@@ -15,4 +15,6 @@ namespace BoundaryConditions
   extern template class VOFBoundaryConditions<3>;
   extern template class CahnHilliardBoundaryConditions<2>;
   extern template class CahnHilliardBoundaryConditions<3>;
+  extern template class RANSTurbulenceBoundaryConditions<2>;
+  extern template class RANSTurbulenceBoundaryConditions<3>;
 } // namespace BoundaryConditions

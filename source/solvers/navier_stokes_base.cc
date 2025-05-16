@@ -651,7 +651,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
   // For RANS turbulence models
   const DoFHandler<dim> *dof_handler_rans_turbulence =
-    this->multiphysics->get_dof_handler(PhysicsID::turbulence);
+    this->multiphysics->get_dof_handler(PhysicsID::rans_turbulence);
 
   this->fe_values_temperature =
     std::make_shared<FEValues<dim>>(*this->mapping,
