@@ -406,12 +406,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
     radius,
     rotation_angle);
 
-  // Create manager at the cell level
-  mortar_manager_cell = std::make_shared<MortarManager<dim>>(n_subdivisions,
-                                                             1,
-                                                             radius,
-                                                             rotation_angle);
-
   // Number of quadrature points
   const unsigned int n_points = mortar_manager_q->get_n_total_points();
   // Number of cells
@@ -923,7 +917,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
           }
 
   const unsigned n_q_points =
-    Utilities::pow(quadrature.get_tensor_basis()[0].size(), dim - 1);
+    mortar_manager_q->get_n_points() / mortar_manager_q->get_n_mortars();
 
   // 2) Communicate
   partitioner_cell.template export_to_ghosted_array<Number, 0>(
@@ -948,9 +942,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
             for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
               {
-                const unsigned int n_q_points =
-                  mortar_manager_q->get_n_points() / n_sub_cells;
-
                 evaluator->local_reinit(cell,
                                         ArrayView<const Point<dim, Number>>(
                                           all_points_ref.data() + ptr_q,
