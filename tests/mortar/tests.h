@@ -134,7 +134,7 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
 }
 
 template <int dim, typename Number>
-class CouplingOperatorStokes : public CouplingEvaluationBase<dim, Number>
+class CouplingEvaluationStokes : public CouplingEvaluationBase<dim, Number>
 {
 public:
   using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
@@ -142,7 +142,7 @@ public:
 
   using u_value_type = typename FEPointIntegratorU::value_type;
 
-  CouplingOperatorStokes(const Mapping<dim>    &mapping,
+  CouplingEvaluationStokes(const Mapping<dim>    &mapping,
                          const DoFHandler<dim> &dof_handler,
                          const bool do_pressure_gradient_term   = true,
                          const bool do_velocity_divergence_term = true)
@@ -765,7 +765,7 @@ public:
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
-        std::make_shared<CouplingOperatorStokes<dim, Number>>(
+        std::make_shared<CouplingEvaluationStokes<dim, Number>>(
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler(),
           !is_p_disc,
@@ -1572,7 +1572,7 @@ public:
   {
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
-        std::make_shared<CouplingOperatorStokes<dim, Number>>(
+        std::make_shared<CouplingEvaluationStokes<dim, Number>>(
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler());
 
