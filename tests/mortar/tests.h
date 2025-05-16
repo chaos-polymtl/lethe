@@ -134,7 +134,7 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
 }
 
 template <int dim, typename Number>
-class CouplingOperatorStokes : public CouplingOperatorBase<dim, Number>
+class CouplingOperatorStokes : public CouplingEvaluationBase<dim, Number>
 {
 public:
   using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
@@ -142,33 +142,11 @@ public:
 
   using u_value_type = typename FEPointIntegratorU::value_type;
 
-  CouplingOperatorStokes(const Mapping<dim>              &mapping,
-                         const DoFHandler<dim>           &dof_handler,
-                         const AffineConstraints<Number> &constraints,
-                         const Quadrature<dim>            quadrature,
-                         const unsigned int               n_subdivisions,
-                         const double                     radius,
-                         const double                     rotate_pi,
-                         const unsigned int               bid_0,
-                         const unsigned int               bid_1,
-                         const double                     sip_factor = 1.0,
-                         const bool do_pressure_gradient_term        = true,
-                         const bool do_velocity_divergence_term      = true)
-    : CouplingOperatorBase<dim, Number>(mapping,
-                                        dof_handler,
-                                        constraints,
-                                        quadrature,
-                                        n_subdivisions,
-                                        1,
-                                        4 * dim,
-                                        radius,
-                                        rotate_pi,
-                                        bid_0,
-                                        bid_1,
-                                        sip_factor,
-                                        get_relevant_dof_indices(
-                                          dof_handler.get_fe()))
-    , fe_sub_u(dof_handler.get_fe().base_element(
+  CouplingOperatorStokes(const Mapping<dim>    &mapping,
+                         const DoFHandler<dim> &dof_handler,
+                         const bool do_pressure_gradient_term   = true,
+                         const bool do_velocity_divergence_term = true)
+    : fe_sub_u(dof_handler.get_fe().base_element(
                  dof_handler.get_fe().component_to_base_index(0).first),
                dim)
     , fe_sub_p(dof_handler.get_fe().base_element(
@@ -178,24 +156,29 @@ public:
     , phi_p_m(mapping, fe_sub_p, update_values)
     , do_pressure_gradient_term(do_pressure_gradient_term)
     , do_velocity_divergence_term(do_velocity_divergence_term)
-  {}
-
-  static std::vector<unsigned int>
-  get_relevant_dof_indices(const FiniteElement<dim> &fe)
   {
-    std::vector<unsigned int> result;
+    for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+      if (dof_handler.get_fe().system_to_component_index(i).first < dim)
+        relevant_dof_indices.push_back(i);
 
-    for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
-      if (fe.system_to_component_index(i).first < dim)
-        result.push_back(i);
+    for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+      if (dof_handler.get_fe().system_to_component_index(i).first == dim)
+        relevant_dof_indices.push_back(i);
 
-    for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
-      if (fe.system_to_component_index(i).first == dim)
-        result.push_back(i);
+    AssertDimension(dof_handler.get_fe().n_dofs_per_cell(),
+                    relevant_dof_indices.size());
+  }
 
-    AssertDimension(fe.n_dofs_per_cell(), result.size());
+  unsigned int
+  data_size() const override
+  {
+    return 4 * dim;
+  }
 
-    return result;
+  const std::vector<unsigned int> &
+  get_relevant_dof_indices() const override
+  {
+    return relevant_dof_indices;
   }
 
   void
@@ -207,10 +190,11 @@ public:
   }
 
   void
-  local_evaluate(const Vector<Number> &buffer,
-                 const unsigned int    ptr_q,
-                 const unsigned int    q_stride,
-                 Number               *all_value_m) const override
+  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
+                 const Vector<Number>                      &buffer,
+                 const unsigned int                         ptr_q,
+                 const unsigned int                         q_stride,
+                 Number *all_value_m) const override
   {
     AssertDimension(buffer.size(),
                     fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
@@ -229,7 +213,7 @@ public:
       {
         const unsigned int q_index = ptr_q + q;
 
-        const auto normal = this->all_normals[q_index];
+        const auto normal = data.all_normals[q_index];
 
         const auto value_m    = this->phi_u_m.get_value(q);
         const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
@@ -240,16 +224,16 @@ public:
         buffer_m.write(value_m);
         buffer_m.write(gradient_m);
         buffer_m.write(p_value_m);
-        buffer_m.write(normal);
       }
   }
 
   void
-  local_integrate(Vector<Number>    &buffer,
-                  const unsigned int ptr_q,
-                  const unsigned int q_stride,
-                  Number            *all_value_m,
-                  Number            *all_value_p) const override
+  local_integrate(const CouplingEvaluationData<dim, Number> &data,
+                  Vector<Number>                            &buffer,
+                  const unsigned int                         ptr_q,
+                  const unsigned int                         q_stride,
+                  Number                                    *all_value_m,
+                  Number *all_value_p) const override
   {
     for (const auto q : this->phi_u_m.quadrature_point_indices())
       {
@@ -265,9 +249,9 @@ public:
         const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
         const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
 
-        const auto JxW               = this->all_weights[q_index];
-        const auto penalty_parameter = this->all_penalty_parameter[q_index];
-        const auto normal            = this->all_normals[q_index];
+        const auto JxW               = data.all_weights[q_index];
+        const auto penalty_parameter = data.all_penalty_parameter[q_index];
+        const auto normal            = data.all_normals[q_index];
 
         const auto u_value_avg  = (value_m + value_p) * 0.5;
         const auto u_value_jump = value_m - value_p;
@@ -280,7 +264,7 @@ public:
         typename FEPointIntegratorU::value_type u_value_jump_result = {};
         typename FEPointIntegratorP::value_type p_value_jump_result = {};
 
-        const double sigma = penalty_parameter * this->penalty_factor;
+        const double sigma = penalty_parameter * data.penalty_factor;
 
         if (true /*Laplace term*/)
           {
@@ -341,6 +325,8 @@ public:
 
   const bool do_pressure_gradient_term;
   const bool do_velocity_divergence_term;
+
+  std::vector<unsigned int> relevant_dof_indices;
 };
 
 /**
@@ -394,18 +380,24 @@ public:
                const unsigned int bid_1,
                const double       sip_factor = 1.0)
   {
-    coupling_operator =
-      std::make_shared<CouplingOperator<dim, n_components, Number>>(
-        *matrix_free.get_mapping_info().mapping,
-        matrix_free.get_dof_handler(),
-        matrix_free.get_affine_constraints(),
-        construct_quadrature(matrix_free.get_quadrature()),
-        n_subdivisions,
-        radius,
-        rotate_pi,
-        bid_0,
-        bid_1,
-        sip_factor);
+    const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
+      coupling_evaluator =
+        std::make_shared<CouplingOperator<dim, n_components, Number>>(
+          *matrix_free.get_mapping_info().mapping,
+          matrix_free.get_dof_handler());
+
+    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
+      *matrix_free.get_mapping_info().mapping,
+      matrix_free.get_dof_handler(),
+      matrix_free.get_affine_constraints(),
+      construct_quadrature(matrix_free.get_quadrature()),
+      coupling_evaluator,
+      n_subdivisions,
+      radius,
+      rotate_pi,
+      bid_0,
+      bid_1,
+      sip_factor);
   }
 
   virtual types::global_dof_index
@@ -563,8 +555,7 @@ protected:
   mutable TrilinosWrappers::SparseMatrix       system_matrix;
   mutable bool                                 valid_system;
 
-  std::shared_ptr<CouplingOperator<dim, n_components, Number>>
-    coupling_operator;
+  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
 
 private:
   static Quadrature<dim>
@@ -772,19 +763,26 @@ public:
                                              .first)
                              .n_dofs_per_vertex() == 0;
 
-    coupling_operator = std::make_shared<CouplingOperatorStokes<dim, Number>>(
+    const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
+      coupling_evaluator =
+        std::make_shared<CouplingOperatorStokes<dim, Number>>(
+          *matrix_free.get_mapping_info().mapping,
+          matrix_free.get_dof_handler(),
+          !is_p_disc,
+          false);
+
+    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
       matrix_free.get_quadrature(),
+      coupling_evaluator,
       n_subdivisions,
       radius,
       rotate_pi,
       bid_0,
       bid_1,
-      sip_factor,
-      !is_p_disc,
-      false);
+      sip_factor);
   }
 
   virtual types::global_dof_index
@@ -1080,7 +1078,7 @@ private:
   mutable TrilinosWrappers::SparseMatrix       system_matrix;
   mutable bool                                 valid_system;
 
-  std::shared_ptr<CouplingOperatorStokes<dim, Number>> coupling_operator;
+  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
 
   const double delta_1_scaling;
 };
@@ -1148,18 +1146,24 @@ public:
                const unsigned int bid_1,
                const double       sip_factor = 1.0)
   {
-    coupling_operator =
-      std::make_shared<CouplingOperator<dim, n_components, Number>>(
-        *matrix_free.get_mapping_info().mapping,
-        matrix_free.get_dof_handler(),
-        matrix_free.get_affine_constraints(),
-        matrix_free.get_quadrature(),
-        n_subdivisions,
-        radius,
-        rotate_pi,
-        bid_0,
-        bid_1,
-        sip_factor);
+    const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
+      coupling_evaluator =
+        std::make_shared<CouplingOperator<dim, n_components, Number>>(
+          *matrix_free.get_mapping_info().mapping,
+          matrix_free.get_dof_handler());
+
+    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
+      *matrix_free.get_mapping_info().mapping,
+      matrix_free.get_dof_handler(),
+      matrix_free.get_affine_constraints(),
+      matrix_free.get_quadrature(),
+      coupling_evaluator,
+      n_subdivisions,
+      radius,
+      rotate_pi,
+      bid_0,
+      bid_1,
+      sip_factor);
   }
 
   virtual types::global_dof_index
@@ -1495,8 +1499,7 @@ protected:
   AlignedVector<VectorizedArrayType> penalty_parameters;
   VectorizedArrayType                panalty_factor;
 
-  std::shared_ptr<CouplingOperator<dim, n_components, Number>>
-    coupling_operator;
+  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
 };
 
 
@@ -1567,11 +1570,18 @@ public:
                const unsigned int bid_0,
                const unsigned int bid_1)
   {
-    coupling_operator = std::make_shared<CouplingOperatorStokes<dim, Number>>(
+    const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
+      coupling_evaluator =
+        std::make_shared<CouplingOperatorStokes<dim, Number>>(
+          *matrix_free.get_mapping_info().mapping,
+          matrix_free.get_dof_handler());
+
+    coupling_operator = std::make_shared<CouplingOperatorBase<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
       matrix_free.get_affine_constraints(),
       matrix_free.get_quadrature(),
+      coupling_evaluator,
       n_subdivisions,
       radius,
       rotate_pi,
@@ -2198,7 +2208,7 @@ private:
   AlignedVector<VectorizedArrayType> penalty_parameters;
   VectorizedArrayType                panalty_factor;
 
-  std::shared_ptr<CouplingOperatorStokes<dim, Number>> coupling_operator;
+  std::shared_ptr<CouplingOperatorBase<dim, Number>> coupling_operator;
 
   std::set<unsigned int> coupling_bids;
 };

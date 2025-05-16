@@ -304,6 +304,91 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
       }
 }
 
+
+
+template <int dim, typename Number>
+struct CouplingEvaluationData
+{
+  /// Penalty factor (akin to symmetric interior penalty factor in SIPG)
+  Number                              penalty_factor;
+  std::vector<Number>                 all_penalty_parameter;
+  std::vector<Number>                 all_weights;
+  std::vector<Tensor<1, dim, Number>> all_normals;
+};
+
+
+
+/**
+ * @brief Base class for coupling evaluation routines.
+ */
+template <int dim, typename Number>
+class CouplingEvaluationBase
+{
+public:
+  virtual unsigned int
+  data_size() const = 0;
+
+  /**
+   * @brief Return relevant dof indices.
+   */
+  virtual const std::vector<unsigned int> &
+  get_relevant_dof_indices() const = 0;
+
+  /**
+   * @brief Set up mapping information
+   *
+   * @param[in] cell Cell iterator
+   * @param[in] points List of points where FEPointIntegrator should be
+   * evaluated
+   */
+  virtual void
+  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
+               const ArrayView<const Point<dim, Number>> &points) const = 0;
+
+  /**
+   * @brief Evaluate values and gradients at the coupling entries
+   *
+   * @param[in] buffer Temporary vector where data is stored before being passes
+   * to the system matrix
+   * @param[in] ptr_q Pointer for the quadrature point index related to the
+   * rotor-stator interface
+   * @param[in] q_stride Pointer for the cell index in which the quadrature
+   * point lies in
+   * @param[in] all_value_m Number of values stored in the mortar side of the
+   * interface
+   */
+  virtual void
+  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
+                 const Vector<Number>                      &buffer,
+                 const unsigned int                         ptr_q,
+                 const unsigned int                         q_stride,
+                 Number *all_value_m) const = 0;
+
+  /**
+   * @brief Perform integral of mortar elements at the rotor-stator interface
+   *
+   * @param[in] buffer Temporary vector where data is stored before being passes
+   * to the system matrix
+   * @param[in] ptr_q Pointer for the quadrature point index related to the
+   * rotor-stator interface
+   * @param[in] q_stride Pointer for the cell index in which the quadrature
+   * point lies in
+   * @param[in] all_value_m Number of values stored in the mortar side of the
+   * interface
+   * @param[in] all_value_p Number of values stored in the non-mortar side of
+   * the interface
+   */
+  virtual void
+  local_integrate(const CouplingEvaluationData<dim, Number> &data,
+                  Vector<Number>                            &buffer,
+                  const unsigned int                         ptr_q,
+                  const unsigned int                         q_stride,
+                  Number                                    *all_value_m,
+                  Number *all_value_p) const = 0;
+};
+
+
+
 /**
  * @brief Base class for the Coupling Operator Base
  */
@@ -313,19 +398,18 @@ class CouplingOperatorBase
 public:
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
-  CouplingOperatorBase(const Mapping<dim>              &mapping,
-                       const DoFHandler<dim>           &dof_handler,
-                       const AffineConstraints<Number> &constraints,
-                       const Quadrature<dim>            quadrature,
-                       const unsigned int               n_subdivisions,
-                       const unsigned int               n_components,
-                       const unsigned int               N,
-                       const double                     radius,
-                       const double                     rotation_angle,
-                       const unsigned int               bid_rotor,
-                       const unsigned int               bid_stator,
-                       const double                     sip_factor,
-                       const std::vector<unsigned int>  relevant_dof_indices);
+  CouplingOperatorBase(
+    const Mapping<dim>                                        &mapping,
+    const DoFHandler<dim>                                     &dof_handler,
+    const AffineConstraints<Number>                           &constraints,
+    const Quadrature<dim>                                      quadrature,
+    const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
+    const unsigned int                                         n_subdivisions,
+    const double                                               radius,
+    const double                                               rotation_angle,
+    const unsigned int                                         bid_rotor,
+    const unsigned int                                         bid_stator,
+    const double                                               sip_factor);
 
   /**
    * @brief Return object containing problem constraints
@@ -373,7 +457,7 @@ private:
   /**
    * @brief Compute penalty factor used in weak imposition of coupling at the rotor-stator interface
    *
-   * @param[in] degree Polynomail degree of the FE approximation
+   * @param[in] degree Polynomial degree of the FE approximation
    * @param[in] factor Penalty factor (akin to symmetric interior penalty factor
    * in SIPG)
    *
@@ -436,16 +520,11 @@ private:
     all_intersections;
 
 protected:
-  /// Penalty factor (akin to symmetric interior penalty factor in SIPG)
-  Number penalty_factor;
-
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
   std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
 
-  /// Number of vector components in the PDE to be solved
-  const unsigned int n_components;
   /// Number of data points per quadrature point
-  const unsigned int N;
+  unsigned int N;
 
   /// Boundary ID of the inner domain (rotor)
   const unsigned int bid_rotor;
@@ -453,9 +532,9 @@ protected:
   const unsigned int bid_stator;
 
   /// List of relevant DoF indices per cell
-  const std::vector<unsigned int> relevant_dof_indices;
+  std::vector<unsigned int> relevant_dof_indices;
   /// Number of DoFs per cell
-  const unsigned int n_dofs_per_cell;
+  unsigned int n_dofs_per_cell;
 
   Utilities::MPI::NoncontiguousPartitioner partitioner;
   Utilities::MPI::NoncontiguousPartitioner partitioner_cell;
@@ -465,63 +544,13 @@ protected:
 
   /// Vectors storing information at quadrature points for all cells at the
   /// rotor-stator interface
-  std::vector<Number>                 all_penalty_parameter;
-  std::vector<Number>                 all_weights;
   std::vector<Point<dim, Number>>     all_points_ref;
-  std::vector<Tensor<1, dim, Number>> all_normals;
+  CouplingEvaluationData<dim, Number> data;
 
-  /// Constaints extended according to mortar entries
+  /// Constraints extended according to mortar entries
   AffineConstraints<Number> constraints_extended;
 
-  /**
-   * @brief Set up mapping information
-   *
-   * @param[in] cell Cell iterator
-   * @param[in] points List of points where FEPointIntegrator should be
-   * evaluated
-   */
-  virtual void
-  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
-               const ArrayView<const Point<dim, Number>> &points) const = 0;
-
-  /**
-   * @brief Evaluate values and gradients at the coupling entries
-   *
-   * @param[in] buffer Temporary vector where data is stored before being passes
-   * to the system matrix
-   * @param[in] ptr_q Pointer for the quadrature point index related to the
-   * rotor-stator interface
-   * @param[in] q_stride Pointer for the cell index in which the quadradure
-   * point lies in
-   * @param[in] all_value_m Number of values stored in the mortar side of the
-   * interface
-   */
-  virtual void
-  local_evaluate(const Vector<Number> &buffer,
-                 const unsigned int    ptr_q,
-                 const unsigned int    q_stride,
-                 Number               *all_value_m) const = 0;
-
-  /**
-   * @brief Perform integral of mortar elements at the rotor-stator interface
-   *
-   * @param[in] buffer Temporary vector where data is stored before being passes
-   * to the system matrix
-   * @param[in] ptr_q Pointer for the quadrature point index related to the
-   * rotor-stator interface
-   * @param[in] q_stride Pointer for the cell index in which the quadradure
-   * point lies in
-   * @param[in] all_value_m Number of values stored in the mortar side of the
-   * interface
-   * @param[in] all_value_p Number of values stored in the non-mortar side of
-   * the interface
-   */
-  virtual void
-  local_integrate(Vector<Number>    &buffer,
-                  const unsigned int ptr_q,
-                  const unsigned int q_stride,
-                  Number            *all_value_m,
-                  Number            *all_value_p) const = 0;
+  std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator;
 };
 
 
@@ -587,53 +616,21 @@ private:
 
 
 template <int dim, int n_components, typename Number>
-class CouplingOperator : public CouplingOperatorBase<dim, Number>
+class CouplingOperator : public CouplingEvaluationBase<dim, Number>
 {
 public:
   using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
   using value_type        = typename FEPointIntegrator::value_type;
 
-  CouplingOperator(const Mapping<dim>              &mapping,
-                   const DoFHandler<dim>           &dof_handler,
-                   const AffineConstraints<Number> &constraints,
-                   const Quadrature<dim>            quadrature,
-                   const unsigned int               n_subdivisions,
-                   const double                     radius,
-                   const double                     rotation_angle,
-                   const unsigned int               bid_rotor,
-                   const unsigned int               bid_stator,
-                   const double                     sip_factor = 1.0,
-                   const unsigned int first_selected_component = 0);
+  CouplingOperator(const Mapping<dim>    &mapping,
+                   const DoFHandler<dim> &dof_handler,
+                   const unsigned int     first_selected_component = 0);
 
-  /**
-   * @brief Constructor of the class
-   *
-   * @param[in] mapping Mapping of the domain
-   * @param[in] dof_handler DoFHandler associated to the triangulation
-   * @param[in] constraints Object with the constrains according to DoFs
-   * @param[in] quadrature Required for local operations on cells
-   * @param[in] mortar_parameters The information about the mortar method
-   * control, including the rotor mesh parameters
-   * @param[in] first_selected_component Index of first selected component
-   */
-  CouplingOperator(const Mapping<dim>              &mapping,
-                   const DoFHandler<dim>           &dof_handler,
-                   const AffineConstraints<Number> &constraints,
-                   const Quadrature<dim>           &quadrature,
-                   const Parameters::Mortar<dim>   &mortar_parameters,
-                   const unsigned int first_selected_component = 0);
+  unsigned int
+  data_size() const override;
 
-  /**
-   * @brief Return relevant dof indices
-   *
-   * @param[in] fe Finite Element
-   * @param[in] first_selected_component
-   *
-   * @return dof_indices Vector of relevant dof indices
-   */
-  static std::vector<unsigned int>
-  get_relevant_dof_indices(const FiniteElement<dim> &fe,
-                           const unsigned int        first_selected_component);
+  const std::vector<unsigned int> &
+  get_relevant_dof_indices() const override;
 
   void
   local_reinit(
@@ -641,21 +638,25 @@ public:
     const ArrayView<const Point<dim, Number>>        &points) const override;
 
   void
-  local_evaluate(const Vector<Number> &buffer,
-                 const unsigned int    ptr_q,
-                 const unsigned int    q_stride,
-                 Number               *all_value_m) const override;
+  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
+                 const Vector<Number>                      &buffer,
+                 const unsigned int                         ptr_q,
+                 const unsigned int                         q_stride,
+                 Number *all_value_m) const override;
 
   void
-  local_integrate(Vector<Number>    &buffer,
-                  const unsigned int ptr_q,
-                  const unsigned int q_stride,
-                  Number            *all_value_m,
-                  Number            *all_value_p) const override;
+  local_integrate(const CouplingEvaluationData<dim, Number> &data,
+                  Vector<Number>                            &buffer,
+                  const unsigned int                         ptr_q,
+                  const unsigned int                         q_stride,
+                  Number                                    *all_value_m,
+                  Number *all_value_p) const override;
 
   const FESystem<dim> fe_sub;
   /// Interface to the evaluation of mortar coupling interpolated solution
   mutable FEPointIntegrator phi_m;
+
+  std::vector<unsigned int> relevant_dof_indices;
 };
 
 #endif

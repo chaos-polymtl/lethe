@@ -330,31 +330,30 @@ MortarManager<dim>::get_config(const double &rad) const
 
 template <int dim, typename Number>
 CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
-  const Mapping<dim>              &mapping,
-  const DoFHandler<dim>           &dof_handler,
-  const AffineConstraints<Number> &constraints,
-  const Quadrature<dim>            quadrature,
-  const unsigned int               n_subdivisions,
-  const unsigned int               n_components,
-  const unsigned int               N,
-  const double                     radius,
-  const double                     rotation_angle,
-  const unsigned int               bid_rotor,
-  const unsigned int               bid_stator,
-  const double                     sip_factor,
-  const std::vector<unsigned int>  relevant_dof_indices)
+  const Mapping<dim>                                        &mapping,
+  const DoFHandler<dim>                                     &dof_handler,
+  const AffineConstraints<Number>                           &constraints,
+  const Quadrature<dim>                                      quadrature,
+  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
+  const unsigned int                                         n_subdivisions,
+  const double                                               radius,
+  const double                                               rotation_angle,
+  const unsigned int                                         bid_rotor,
+  const unsigned int                                         bid_stator,
+  const double                                               sip_factor)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
   , quadrature(quadrature)
-  , n_components(n_components)
-  , N(N)
   , bid_rotor(bid_rotor)
   , bid_stator(bid_stator)
-  , relevant_dof_indices(relevant_dof_indices)
-  , n_dofs_per_cell(relevant_dof_indices.size())
+  , evaluator(evaluator)
 {
-  penalty_factor =
+  this->N                    = evaluator->data_size();
+  this->relevant_dof_indices = evaluator->get_relevant_dof_indices();
+  this->n_dofs_per_cell      = this->relevant_dof_indices.size();
+
+  data.penalty_factor =
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
 
   // Create manager at the quadrature point level
@@ -450,9 +449,9 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
             // Weights of quadrature points
             const auto weights =
               mortar_manager_q->get_weights(get_angle_cell_center(cell, face));
-            all_weights.insert(all_weights.end(),
-                               weights.begin(),
-                               weights.end());
+            data.all_weights.insert(data.all_weights.end(),
+                                    weights.begin(),
+                                    weights.end());
 
             // Normals of quadrature points
             if (false)
@@ -492,9 +491,10 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
 
                 fe_face_values.reinit(cell, face_no);
 
-                all_normals.insert(all_normals.end(),
-                                   fe_face_values.get_normal_vectors().begin(),
-                                   fe_face_values.get_normal_vectors().end());
+                data.all_normals.insert(
+                  data.all_normals.end(),
+                  fe_face_values.get_normal_vectors().begin(),
+                  fe_face_values.get_normal_vectors().end());
               }
             else
               {
@@ -503,9 +503,9 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
                 if (face->boundary_id() == bid_stator)
                   for (auto &normal : normals)
                     normal *= -1.0;
-                all_normals.insert(all_normals.end(),
-                                   normals.begin(),
-                                   normals.end());
+                data.all_normals.insert(data.all_normals.end(),
+                                        normals.begin(),
+                                        normals.end());
 
                 auto points = mortar_manager_q->get_points_ref(
                   get_angle_cell_center(cell, face));
@@ -541,7 +541,7 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
             for (unsigned int i = 0; i < mortar_manager_q->get_n_points(
                                            get_angle_cell_center(cell, face));
                  ++i)
-              all_penalty_parameter.emplace_back(penalty_parameter);
+              data.all_penalty_parameter.emplace_back(penalty_parameter);
           }
 
   // Setup communication
@@ -551,12 +551,13 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
                           dof_handler.get_mpi_communicator());
 
   // Finalized penalty parameters
-  std::vector<Number> all_penalty_parameter_ghost(all_penalty_parameter.size());
+  std::vector<Number> all_penalty_parameter_ghost(
+    data.all_penalty_parameter.size());
   partitioner.template export_to_ghosted_array<Number, 1>(
-    all_penalty_parameter, all_penalty_parameter_ghost);
-  for (unsigned int i = 0; i < all_penalty_parameter.size(); ++i)
-    all_penalty_parameter[i] =
-      std::min(all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
+    data.all_penalty_parameter, all_penalty_parameter_ghost);
+  for (unsigned int i = 0; i < data.all_penalty_parameter.size(); ++i)
+    data.all_penalty_parameter[i] =
+      std::min(data.all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
 
   // Finialize DoF indices and update constraints
   dof_indices_ghost.resize(dof_indices.size());
@@ -684,8 +685,8 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
 
   Vector<Number> buffer;
 
-  std::vector<Number> all_value_m(all_normals.size() * N);
-  std::vector<Number> all_value_p(all_normals.size() * N);
+  std::vector<Number> all_value_m(data.all_normals.size() * N);
+  std::vector<Number> all_value_p(data.all_normals.size() * N);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -699,9 +700,10 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
-            local_reinit(cell,
-                         ArrayView<const Point<dim, Number>>(
-                           all_points_ref.data() + ptr_q, n_q_points));
+            evaluator->local_reinit(
+              cell,
+              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
+                                                  n_q_points));
 
             buffer.reinit(n_dofs_per_cell);
 
@@ -710,7 +712,8 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
             for (unsigned int i = 0; i < local_dofs.size(); ++i)
               buffer[i] = src[local_dofs[i]];
 
-            local_evaluate(buffer, ptr_q, 1, all_value_m.data() + ptr_q * N);
+            evaluator->local_evaluate(
+              data, buffer, ptr_q, 1, all_value_m.data() + ptr_q * N);
 
             ptr_q += n_q_points;
           }
@@ -718,10 +721,10 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
   // 2) Communicate
   partitioner.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
-                            all_value_m.size() * n_components),
+                            all_value_m.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size() * n_components),
-    N * n_components);
+                      all_value_p.size()),
+    N);
 
   // 3) Integrate
   ptr_q = 0;
@@ -735,16 +738,18 @@ CouplingOperatorBase<dim, Number>::vmult_add(VectorType       &dst,
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
-            local_reinit(cell,
-                         ArrayView<const Point<dim, Number>>(
-                           all_points_ref.data() + ptr_q, n_q_points));
+            evaluator->local_reinit(
+              cell,
+              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
+                                                  n_q_points));
 
             buffer.reinit(n_dofs_per_cell);
-            local_integrate(buffer,
-                            ptr_q,
-                            1,
-                            all_value_m.data() + ptr_q * N,
-                            all_value_p.data() + ptr_q * N);
+            evaluator->local_integrate(data,
+                                       buffer,
+                                       ptr_q,
+                                       1,
+                                       all_value_m.data() + ptr_q * N,
+                                       all_value_p.data() + ptr_q * N);
 
             const auto local_dofs = this->get_dof_indices(cell);
             constraints.distribute_local_to_global(buffer, local_dofs, dst);
@@ -775,9 +780,10 @@ CouplingOperatorBase<dim, Number>::add_diagonal_entries(
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
-            local_reinit(cell,
-                         ArrayView<const Point<dim, Number>>(
-                           all_points_ref.data() + ptr_q, n_q_points));
+            evaluator->local_reinit(
+              cell,
+              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
+                                                  n_q_points));
 
             buffer.reinit(n_dofs_per_cell);
             diagonal_local.reinit(n_dofs_per_cell);
@@ -789,11 +795,16 @@ CouplingOperatorBase<dim, Number>::add_diagonal_entries(
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
-                local_evaluate(buffer, ptr_q, 1, all_value_m.data());
+                evaluator->local_evaluate(
+                  data, buffer, ptr_q, 1, all_value_m.data());
 
                 buffer.reinit(n_dofs_per_cell);
-                local_integrate(
-                  buffer, ptr_q, 1, all_value_m.data(), all_value_p.data());
+                evaluator->local_integrate(data,
+                                           buffer,
+                                           ptr_q,
+                                           1,
+                                           all_value_m.data(),
+                                           all_value_p.data());
 
                 diagonal_local[i] = buffer[i];
               }
@@ -837,8 +848,10 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
 {
   const auto constraints = &constraints_extended;
 
-  std::vector<Number> all_value_m(all_normals.size() * n_dofs_per_cell * N);
-  std::vector<Number> all_value_p(all_normals.size() * n_dofs_per_cell * N);
+  std::vector<Number> all_value_m(data.all_normals.size() * n_dofs_per_cell *
+                                  N);
+  std::vector<Number> all_value_p(data.all_normals.size() * n_dofs_per_cell *
+                                  N);
 
   unsigned int ptr_q = 0;
 
@@ -855,9 +868,10 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
             const unsigned int n_q_points =
               mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
 
-            local_reinit(cell,
-                         ArrayView<const Point<dim, Number>>(
-                           all_points_ref.data() + ptr_q, n_q_points));
+            evaluator->local_reinit(
+              cell,
+              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
+                                                  n_q_points));
 
             buffer.reinit(n_dofs_per_cell);
 
@@ -866,11 +880,12 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
-                local_evaluate(buffer,
-                               ptr_q,
-                               n_dofs_per_cell,
-                               all_value_m.data() +
-                                 (ptr_q * n_dofs_per_cell + i) * N);
+                evaluator->local_evaluate(data,
+                                          buffer,
+                                          ptr_q,
+                                          n_dofs_per_cell,
+                                          all_value_m.data() +
+                                            (ptr_q * n_dofs_per_cell + i) * N);
               }
 
             ptr_q += n_q_points;
@@ -882,10 +897,10 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
   // 2) Communicate
   partitioner_cell.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
-                            all_value_m.size() * n_components),
+                            all_value_m.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size() * n_components),
-    n_dofs_per_cell * n_q_points * N * n_components);
+                      all_value_p.size()),
+    n_dofs_per_cell * n_q_points * N);
 
 
   ptr_q                 = 0;
@@ -908,9 +923,10 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
                     get_angle_cell_center(cell, face)) /
                   n_sub_cells;
 
-                local_reinit(cell,
-                             ArrayView<const Point<dim, Number>>(
-                               all_points_ref.data() + ptr_q, n_q_points));
+                evaluator->local_reinit(cell,
+                                        ArrayView<const Point<dim, Number>>(
+                                          all_points_ref.data() + ptr_q,
+                                          n_q_points));
 
                 for (unsigned int bb = 0; bb < 2; ++bb)
                   {
@@ -921,19 +937,23 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
                       {
                         buffer.reinit(n_dofs_per_cell);
                         if (bb == 0)
-                          local_integrate(buffer,
-                                          ptr_q,
-                                          n_dofs_per_cell,
-                                          all_value_m.data() +
-                                            (ptr_q * n_dofs_per_cell + i) * N,
-                                          nullptr);
+                          evaluator->local_integrate(
+                            data,
+                            buffer,
+                            ptr_q,
+                            n_dofs_per_cell,
+                            all_value_m.data() +
+                              (ptr_q * n_dofs_per_cell + i) * N,
+                            nullptr);
                         else
-                          local_integrate(buffer,
-                                          ptr_q,
-                                          n_dofs_per_cell,
-                                          nullptr,
-                                          all_value_p.data() +
-                                            (ptr_q * n_dofs_per_cell + i) * N);
+                          evaluator->local_integrate(
+                            data,
+                            buffer,
+                            ptr_q,
+                            n_dofs_per_cell,
+                            nullptr,
+                            all_value_p.data() +
+                              (ptr_q * n_dofs_per_cell + i) * N);
 
                         for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                           cell_matrix[j][i] = buffer[j];
@@ -970,7 +990,7 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
               }
           }
 
-  AssertDimension(ptr_q, all_normals.size());
+  AssertDimension(ptr_q, data.all_normals.size());
   AssertDimension(ptr_dofs, dof_indices.size());
 }
 
@@ -1088,84 +1108,36 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 
 template <int dim, int n_components, typename Number>
 CouplingOperator<dim, n_components, Number>::CouplingOperator(
-  const Mapping<dim>              &mapping,
-  const DoFHandler<dim>           &dof_handler,
-  const AffineConstraints<Number> &constraints,
-  const Quadrature<dim>            quadrature,
-  const unsigned int               n_subdivisions,
-  const double                     radius,
-  const double                     rotation_angle,
-  const unsigned int               bid_rotor,
-  const unsigned int               bid_stator,
-  const double                     sip_factor,
-  const unsigned int               first_selected_component)
-  : CouplingOperatorBase<dim, Number>(
-      mapping,
-      dof_handler,
-      constraints,
-      quadrature,
-      n_subdivisions,
-      1,
-      2 * n_components,
-      radius,
-      rotation_angle,
-      bid_rotor,
-      bid_stator,
-      sip_factor,
-      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component))
-  , fe_sub(dof_handler.get_fe().base_element(
+  const Mapping<dim>    &mapping,
+  const DoFHandler<dim> &dof_handler,
+  const unsigned int     first_selected_component)
+  : fe_sub(dof_handler.get_fe().base_element(
              dof_handler.get_fe()
                .component_to_base_index(first_selected_component)
                .first),
            n_components)
   , phi_m(mapping, fe_sub, update_values | update_gradients)
-{}
-
-template <int dim, int n_components, typename Number>
-CouplingOperator<dim, n_components, Number>::CouplingOperator(
-  const Mapping<dim>              &mapping,
-  const DoFHandler<dim>           &dof_handler,
-  const AffineConstraints<Number> &constraints,
-  const Quadrature<dim>           &quadrature,
-  const Parameters::Mortar<dim>   &mortar_parameters,
-  const unsigned int               first_selected_component)
-  : CouplingOperatorBase<dim, Number>(
-      mapping,
-      dof_handler,
-      constraints,
-      construct_quadrature(quadrature, mortar_parameters),
-      compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first,
-      1,
-      2 * n_components,
-      compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).second,
-      mortar_parameters.rotor_mesh->rotation_angle,
-      mortar_parameters.rotor_boundary_id,
-      mortar_parameters.stator_boundary_id,
-      mortar_parameters.sip_factor,
-      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component))
-  , fe_sub(dof_handler.get_fe().base_element(
-             dof_handler.get_fe()
-               .component_to_base_index(first_selected_component)
-               .first),
-           n_components)
-  , phi_m(mapping, fe_sub, update_values | update_gradients)
-{}
-
-template <int dim, int n_components, typename Number>
-std::vector<unsigned int>
-CouplingOperator<dim, n_components, Number>::get_relevant_dof_indices(
-  const FiniteElement<dim> &fe,
-  const unsigned int        first_selected_component)
 {
-  std::vector<unsigned int> result;
-
-  for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
-    if ((first_selected_component <= fe.system_to_component_index(i).first) &&
-        (fe.system_to_component_index(i).first <
+  for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+    if ((first_selected_component <=
+         dof_handler.get_fe().system_to_component_index(i).first) &&
+        (dof_handler.get_fe().system_to_component_index(i).first <
          first_selected_component + n_components))
-      result.push_back(i);
+      relevant_dof_indices.push_back(i);
+}
 
-  return result;
+template <int dim, int n_components, typename Number>
+unsigned int
+CouplingOperator<dim, n_components, Number>::data_size() const
+{
+  return n_components * 2;
+}
+
+template <int dim, int n_components, typename Number>
+const std::vector<unsigned int> &
+CouplingOperator<dim, n_components, Number>::get_relevant_dof_indices() const
+{
+  return relevant_dof_indices;
 }
 
 template <int dim, int n_components, typename Number>
@@ -1180,10 +1152,11 @@ CouplingOperator<dim, n_components, Number>::local_reinit(
 template <int dim, int n_components, typename Number>
 void
 CouplingOperator<dim, n_components, Number>::local_evaluate(
-  const Vector<Number> &buffer,
-  const unsigned int    ptr_q,
-  const unsigned int    q_stride,
-  Number               *all_value_m) const
+  const CouplingEvaluationData<dim, Number> &data,
+  const Vector<Number>                      &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_value_m) const
 {
   this->phi_m.evaluate(buffer,
                        EvaluationFlags::values | EvaluationFlags::gradients);
@@ -1195,7 +1168,7 @@ CouplingOperator<dim, n_components, Number>::local_evaluate(
       const unsigned int q_index = ptr_q + q;
 
       // Normal, value, and gradient referring to the quadrature point
-      const auto normal     = this->all_normals[q_index];
+      const auto normal     = data.all_normals[q_index];
       const auto value_m    = this->phi_m.get_value(q);
       const auto gradient_m = contract(this->phi_m.get_gradient(q), normal);
 
@@ -1210,11 +1183,12 @@ CouplingOperator<dim, n_components, Number>::local_evaluate(
 template <int dim, int n_components, typename Number>
 void
 CouplingOperator<dim, n_components, Number>::local_integrate(
-  Vector<Number>    &buffer,
-  const unsigned int ptr_q,
-  const unsigned int q_stride,
-  Number            *all_value_m,
-  Number            *all_value_p) const
+  const CouplingEvaluationData<dim, Number> &data,
+  Vector<Number>                            &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_value_m,
+  Number                                    *all_value_p) const
 {
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
@@ -1228,15 +1202,15 @@ CouplingOperator<dim, n_components, Number>::local_integrate(
       const auto normal_gradient_m = buffer_m.template read<value_type>();
       const auto normal_gradient_p = buffer_p.template read<value_type>();
 
-      const auto JxW               = this->all_weights[q_index];
-      const auto penalty_parameter = this->all_penalty_parameter[q_index];
-      const auto normal            = this->all_normals[q_index];
+      const auto JxW               = data.all_weights[q_index];
+      const auto penalty_parameter = data.all_penalty_parameter[q_index];
+      const auto normal            = data.all_normals[q_index];
 
       const auto value_jump = (value_m - value_p);
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
 
-      const double sigma = penalty_parameter * this->penalty_factor;
+      const double sigma = penalty_parameter * data.penalty_factor;
 
       // - (n avg(∇v), jump(u))
       this->phi_m.submit_gradient(outer(-value_jump, normal) * 0.5 * JxW, q);

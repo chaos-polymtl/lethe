@@ -39,53 +39,33 @@ using namespace dealii;
 
 
 template <int dim, typename Number>
-class MyCouplingOperator : public CouplingOperatorBase<dim, Number>
+class MyCouplingOperator : public CouplingEvaluationBase<dim, Number>
 {
 public:
   using FEPointIntegrator = FEPointEvaluation<1, dim, dim, Number>;
   using value_type        = typename FEPointIntegrator::value_type;
 
-  MyCouplingOperator(const Mapping<dim>              &mapping,
-                     const DoFHandler<dim>           &dof_handler,
-                     const AffineConstraints<Number> &constraints,
-                     const Quadrature<dim>            quadrature,
-                     const unsigned int               n_subdivisions,
-                     const double                     radius,
-                     const double                     rotate_pi,
-                     const unsigned int               bid_0,
-                     const unsigned int               bid_1,
-                     const double                     sip_factor = 1.0)
-    : CouplingOperatorBase<dim, Number>(mapping,
-                                        dof_handler,
-                                        constraints,
-                                        quadrature,
-                                        n_subdivisions,
-                                        1 /*n components*/,
-                                        1 /*n data points*/,
-                                        radius,
-                                        rotate_pi,
-                                        bid_0,
-                                        bid_1,
-                                        sip_factor,
-                                        get_relevant_dof_indices(
-                                          dof_handler.get_fe()))
-    , fe_sub(dof_handler.get_fe().base_element(
+  MyCouplingOperator(const Mapping<dim>    &mapping,
+                     const DoFHandler<dim> &dof_handler)
+    : fe_sub(dof_handler.get_fe().base_element(
                dof_handler.get_fe().component_to_base_index(0).first),
              1)
     , phi_m(mapping, fe_sub, update_values)
-  {}
-
-  static std::vector<unsigned int>
-  get_relevant_dof_indices(const FiniteElement<dim> &fe)
   {
-    std::vector<unsigned int> result;
+    for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+      relevant_dof_indices.push_back(i);
+  }
 
-    for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
-      result.push_back(i);
+  unsigned int
+  data_size() const override
+  {
+    return 1;
+  }
 
-    AssertDimension(fe.n_dofs_per_cell(), result.size());
-
-    return result;
+  const std::vector<unsigned int> &
+  get_relevant_dof_indices() const override
+  {
+    return relevant_dof_indices;
   }
 
   void
@@ -96,11 +76,13 @@ public:
   }
 
   void
-  local_evaluate(const Vector<Number> &buffer,
-                 const unsigned int    ptr_q,
-                 const unsigned int    q_stride,
-                 Number               *all_value_m) const override
+  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
+                 const Vector<Number>                      &buffer,
+                 const unsigned int                         ptr_q,
+                 const unsigned int                         q_stride,
+                 Number *all_value_m) const override
   {
+    (void)data;
     (void)ptr_q;
 
     this->phi_m.evaluate(buffer, EvaluationFlags::values);
@@ -116,11 +98,12 @@ public:
   }
 
   void
-  local_integrate(Vector<Number>    &buffer,
-                  const unsigned int ptr_q,
-                  const unsigned int q_stride,
-                  Number            *all_value_m,
-                  Number            *all_value_p) const override
+  local_integrate(const CouplingEvaluationData<dim, Number> &data,
+                  Vector<Number>                            &buffer,
+                  const unsigned int                         ptr_q,
+                  const unsigned int                         q_stride,
+                  Number                                    *all_value_m,
+                  Number *all_value_p) const override
   {
     for (const auto q : this->phi_m.quadrature_point_indices())
       {
@@ -131,7 +114,7 @@ public:
 
         const auto value_m = buffer_m.template read<value_type>();
         const auto value_p = buffer_p.template read<value_type>();
-        const auto JxW     = this->all_weights[q_index];
+        const auto JxW     = data.all_weights[q_index];
 
         phi_m.submit_value((value_m - value_p) * JxW, q);
       }
@@ -141,6 +124,8 @@ public:
 
   const FESystem<dim>       fe_sub;
   mutable FEPointIntegrator phi_m;
+
+  std::vector<unsigned int> relevant_dof_indices;
 };
 
 
@@ -317,16 +302,24 @@ main(int argc, char **argv)
       constraints.reinit(dof_handler.locally_owned_dofs(),
                          locally_relevant_dofs);
 
-      MyCouplingOperator<dim, double> coupling_operator(
+
+      const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
+        coupling_evaluator =
+          std::make_shared<MyCouplingOperator<dim, Number>>(mapping,
+                                                            dof_handler);
+
+      CouplingOperatorBase<dim, double> coupling_operator(
         mapping,
         dof_handler,
         constraints,
         quadrature,
+        coupling_evaluator,
         6 * Utilities::pow(2, n_global_refinements),
         0.5 * radius,
         0.0,
         1,
-        2);
+        2,
+        1.0);
 
 
       TrilinosWrappers::SparsityPattern dsp;
