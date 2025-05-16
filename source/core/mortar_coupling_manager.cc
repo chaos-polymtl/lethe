@@ -49,10 +49,8 @@ MortarManager<dim>::get_n_total_points() const
 
 template <int dim>
 unsigned int
-MortarManager<dim>::get_n_points(const double angle_cell_center) const
+MortarManager<dim>::get_n_points() const
 {
-  (void)angle_cell_center;
-
   if (this->is_mesh_aligned()) // aligned
     {
       return n_quadrature_points;
@@ -538,9 +536,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
             const Number penalty_parameter = compute_penalty_parameter(cell);
 
             // Store penalty parameter for all quadrature points
-            for (unsigned int i = 0; i < mortar_manager_q->get_n_points(
-                                           get_angle_cell_center(cell, face));
-                 ++i)
+            for (unsigned int i = 0; i < mortar_manager_q->get_n_points(); ++i)
               data.all_penalty_parameter.emplace_back(penalty_parameter);
           }
 
@@ -696,8 +692,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
             /* Number of quadrature points at the cell(rotor)/cell(stator)
              * interaction. For non-aligned meshes, this value indicates the
              * number of quadrature points at both rotor and stator cells. */
-            const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
+            const unsigned int n_q_points = mortar_manager_q->get_n_points();
 
             evaluator->local_reinit(
               cell,
@@ -734,8 +729,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
             (face->boundary_id() == bid_stator))
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
-            const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
+            const unsigned int n_q_points = mortar_manager_q->get_n_points();
 
             evaluator->local_reinit(
               cell,
@@ -775,8 +769,7 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
             (face->boundary_id() == bid_stator))
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
-            const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
+            const unsigned int n_q_points = mortar_manager_q->get_n_points();
 
             evaluator->local_reinit(
               cell,
@@ -863,8 +856,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
             (face->boundary_id() == bid_stator))
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
-            const unsigned int n_q_points =
-              mortar_manager_q->get_n_points(get_angle_cell_center(cell, face));
+            const unsigned int n_q_points = mortar_manager_q->get_n_points();
 
             evaluator->local_reinit(
               cell,
@@ -911,15 +903,13 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
         if ((face->boundary_id() == bid_rotor) ||
             (face->boundary_id() == bid_stator))
           {
-            const unsigned int n_sub_cells = mortar_manager_cell->get_n_points(
-              get_angle_cell_center(cell, face));
+            const unsigned int n_sub_cells =
+              mortar_manager_cell->get_n_points();
 
             for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
               {
                 const unsigned int n_q_points =
-                  mortar_manager_q->get_n_points(
-                    get_angle_cell_center(cell, face)) /
-                  n_sub_cells;
+                  mortar_manager_q->get_n_points() / n_sub_cells;
 
                 evaluator->local_reinit(cell,
                                         ArrayView<const Point<dim, Number>>(

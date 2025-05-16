@@ -56,13 +56,10 @@ public:
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
    *
-   * @param[in] angle_cell_center Angle between cell center and x-axis (in
-   * radians)
-   *
    * @return points Coordinate of quadrature points of the cell
    */
   unsigned int
-  get_n_points(const double angle_cell_center) const;
+  get_n_points() const;
 
   /**
    * @brief Returns the indices of all quadrature points at both sides of the interface
