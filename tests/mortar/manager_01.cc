@@ -27,6 +27,6 @@ main()
 
       std::cout << rotate << " "
                 << static_cast<unsigned int>(manager.is_mesh_aligned()) << " "
-                << manager.get_n_points() << std::endl;
+                << manager.get_n_total_points() << std::endl;
     }
 }

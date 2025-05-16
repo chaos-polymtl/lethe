@@ -49,10 +49,9 @@ public:
 
   /**
    * @brief Returns the total number of quadrature points at the inner/outer boundary interface
-   * // TODO keep only one version of this function
    */
   unsigned int
-  get_n_points() const;
+  get_n_total_points() const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the inerface

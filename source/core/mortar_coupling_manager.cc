@@ -35,7 +35,7 @@ MortarManager<dim>::is_mesh_aligned() const
 
 template <int dim>
 unsigned int
-MortarManager<dim>::get_n_points() const
+MortarManager<dim>::get_n_total_points() const
 {
   if (this->is_mesh_aligned()) // aligned
     {
@@ -78,7 +78,7 @@ MortarManager<dim>::get_indices(const double &angle_cell_center) const
         {
           const unsigned int index = id * n_quadrature_points + q;
 
-          AssertIndexRange(index, get_n_points());
+          AssertIndexRange(index, get_n_total_points());
 
           indices.emplace_back(index);
         }
@@ -93,9 +93,9 @@ MortarManager<dim>::get_indices(const double &angle_cell_center) const
         {
           const unsigned int index =
             (id * n_quadrature_points * 2 + n_quadrature_points + q) %
-            get_n_points();
+            get_n_total_points();
 
-          AssertIndexRange(index, get_n_points());
+          AssertIndexRange(index, get_n_total_points());
 
           indices.emplace_back(index);
         }
@@ -110,7 +110,7 @@ MortarManager<dim>::get_indices(const double &angle_cell_center) const
         {
           const unsigned int index = id * n_quadrature_points * 2 + q;
 
-          AssertIndexRange(index, get_n_points());
+          AssertIndexRange(index, get_n_total_points());
 
           indices.emplace_back(index);
         }
@@ -370,9 +370,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
                                                              rotation_angle);
 
   // Number of quadrature points
-  const unsigned int n_points = mortar_manager_q->get_n_points();
+  const unsigned int n_points = mortar_manager_q->get_n_total_points();
   // Number of cells
-  const unsigned int n_sub_cells = mortar_manager_cell->get_n_points();
+  const unsigned int n_sub_cells = mortar_manager_cell->get_n_total_points();
 
   std::vector<types::global_dof_index> is_local;
   std::vector<types::global_dof_index> is_ghost;

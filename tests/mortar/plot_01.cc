@@ -115,7 +115,7 @@ main(int argc, char *argv[])
                               radius,
                               rotate_pi);
 
-  const unsigned int n_points = mm.get_n_points();
+  const unsigned int n_points = mm.get_n_total_points();
 
   // convert local/ghost points to indices
   IndexSet is_local(n_points * 2);

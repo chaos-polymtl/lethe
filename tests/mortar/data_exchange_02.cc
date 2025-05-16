@@ -85,7 +85,7 @@ main(int argc, char *argv[])
                               radius,
                               rotate_pi);
 
-  const unsigned int n_points = mm.get_n_points();
+  const unsigned int n_points = mm.get_n_total_points();
 
   // convert local/ghost points to indices
   std::vector<types::global_dof_index> local_values;
