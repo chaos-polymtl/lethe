@@ -54,7 +54,7 @@ public:
   get_n_total_points() const;
 
   /**
-   * @brief Returns the coordinates of the quadrature points at both sides of the inerface
+   * @brief Returns the coordinates of the quadrature points at both sides of the interface
    *
    * @param[in] angle_cell_center Angle between cell center and x-axis (in
    * radians)
@@ -73,7 +73,7 @@ public:
   get_indices(const double &angle_cell_center) const;
 
   /**
-   * @brief Returns the coordinates of the quadrature points at both sides of the inerface
+   * @brief Returns the coordinates of the quadrature points at both sides of the interface
    *
    * @param[in] rad Angular coordinate of cell center
    *
