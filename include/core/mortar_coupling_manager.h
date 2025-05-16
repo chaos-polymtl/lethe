@@ -616,15 +616,15 @@ private:
 
 
 template <int dim, int n_components, typename Number>
-class CouplingOperator : public CouplingEvaluationBase<dim, Number>
+class CouplingEvaluationBaseSIPG : public CouplingEvaluationBase<dim, Number>
 {
 public:
   using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
   using value_type        = typename FEPointIntegrator::value_type;
 
-  CouplingOperator(const Mapping<dim>    &mapping,
-                   const DoFHandler<dim> &dof_handler,
-                   const unsigned int     first_selected_component = 0);
+  CouplingEvaluationBaseSIPG(const Mapping<dim>    &mapping,
+                             const DoFHandler<dim> &dof_handler,
+                             const unsigned int first_selected_component = 0);
 
   unsigned int
   data_size() const override;

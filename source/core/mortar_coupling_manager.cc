@@ -996,7 +996,7 @@ CouplingOperatorBase<dim, Number>::add_system_matrix_entries(
 
 
 
-/*-------------- CouplingOperator -------------------------------*/
+/*-------------- CouplingEvaluationBaseSIPG -------------------------------*/
 
 
 
@@ -1107,10 +1107,10 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 }
 
 template <int dim, int n_components, typename Number>
-CouplingOperator<dim, n_components, Number>::CouplingOperator(
-  const Mapping<dim>    &mapping,
-  const DoFHandler<dim> &dof_handler,
-  const unsigned int     first_selected_component)
+CouplingEvaluationBaseSIPG<dim, n_components, Number>::
+  CouplingEvaluationBaseSIPG(const Mapping<dim>    &mapping,
+                             const DoFHandler<dim> &dof_handler,
+                             const unsigned int     first_selected_component)
   : fe_sub(dof_handler.get_fe().base_element(
              dof_handler.get_fe()
                .component_to_base_index(first_selected_component)
@@ -1128,21 +1128,22 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
 
 template <int dim, int n_components, typename Number>
 unsigned int
-CouplingOperator<dim, n_components, Number>::data_size() const
+CouplingEvaluationBaseSIPG<dim, n_components, Number>::data_size() const
 {
   return n_components * 2;
 }
 
 template <int dim, int n_components, typename Number>
 const std::vector<unsigned int> &
-CouplingOperator<dim, n_components, Number>::get_relevant_dof_indices() const
+CouplingEvaluationBaseSIPG<dim, n_components, Number>::
+  get_relevant_dof_indices() const
 {
   return relevant_dof_indices;
 }
 
 template <int dim, int n_components, typename Number>
 void
-CouplingOperator<dim, n_components, Number>::local_reinit(
+CouplingEvaluationBaseSIPG<dim, n_components, Number>::local_reinit(
   const typename Triangulation<dim>::cell_iterator &cell,
   const ArrayView<const Point<dim, Number>>        &points) const
 {
@@ -1151,7 +1152,7 @@ CouplingOperator<dim, n_components, Number>::local_reinit(
 
 template <int dim, int n_components, typename Number>
 void
-CouplingOperator<dim, n_components, Number>::local_evaluate(
+CouplingEvaluationBaseSIPG<dim, n_components, Number>::local_evaluate(
   const CouplingEvaluationData<dim, Number> &data,
   const Vector<Number>                      &buffer,
   const unsigned int                         ptr_q,
@@ -1182,7 +1183,7 @@ CouplingOperator<dim, n_components, Number>::local_evaluate(
 
 template <int dim, int n_components, typename Number>
 void
-CouplingOperator<dim, n_components, Number>::local_integrate(
+CouplingEvaluationBaseSIPG<dim, n_components, Number>::local_integrate(
   const CouplingEvaluationData<dim, Number> &data,
   Vector<Number>                            &buffer,
   const unsigned int                         ptr_q,
@@ -1233,11 +1234,11 @@ template class MortarManager<3>;
 template class CouplingOperatorBase<2, double>;
 template class CouplingOperatorBase<3, double>;
 
-template class CouplingOperator<2, 1, double>;
-template class CouplingOperator<2, 2, double>;
-template class CouplingOperator<2, 3, double>;
-template class CouplingOperator<3, 1, double>;
-template class CouplingOperator<3, 3, double>;
-template class CouplingOperator<3, 4, double>;
+template class CouplingEvaluationBaseSIPG<2, 1, double>;
+template class CouplingEvaluationBaseSIPG<2, 2, double>;
+template class CouplingEvaluationBaseSIPG<2, 3, double>;
+template class CouplingEvaluationBaseSIPG<3, 1, double>;
+template class CouplingEvaluationBaseSIPG<3, 3, double>;
+template class CouplingEvaluationBaseSIPG<3, 4, double>;
 
 #endif
