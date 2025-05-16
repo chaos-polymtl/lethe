@@ -35,6 +35,41 @@ MortarManager<dim>::is_mesh_aligned() const
 
 template <int dim>
 unsigned int
+MortarManager<dim>::get_n_total_mortars() const
+{
+  if (this->is_mesh_aligned()) // aligned
+    {
+      return n_subdivisions;
+    }
+  else // inside/outside
+    {
+      return 2 * n_subdivisions;
+    }
+}
+
+template <int dim>
+unsigned int
+MortarManager<dim>::get_n_mortars() const
+{
+  if (this->is_mesh_aligned()) // aligned
+    {
+      return 1;
+    }
+  else // inside/outside
+    {
+      return 2;
+    }
+}
+
+template <int dim>
+std::vector<unsigned int>
+MortarManager<dim>::get_mortar_indices(const Point<dim> &face_center) const
+{
+  return get_indices_internal(face_center, 1);
+}
+
+template <int dim>
+unsigned int
 MortarManager<dim>::get_n_total_points() const
 {
   if (this->is_mesh_aligned()) // aligned
@@ -65,6 +100,14 @@ template <int dim>
 std::vector<unsigned int>
 MortarManager<dim>::get_indices(const Point<dim> &face_center) const
 {
+  return get_indices_internal(face_center, n_quadrature_points);
+}
+
+template <int dim>
+std::vector<unsigned int>
+MortarManager<dim>::get_indices_internal(const Point<dim> &face_center,
+                                         unsigned int n_quadrature_points) const
+{
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(face_center);
 
@@ -76,7 +119,7 @@ MortarManager<dim>::get_indices(const Point<dim> &face_center) const
         {
           const unsigned int index = id * n_quadrature_points + q;
 
-          AssertIndexRange(index, get_n_total_points());
+          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
 
           indices.emplace_back(index);
         }
@@ -91,9 +134,9 @@ MortarManager<dim>::get_indices(const Point<dim> &face_center) const
         {
           const unsigned int index =
             (id * n_quadrature_points * 2 + n_quadrature_points + q) %
-            get_n_total_points();
+            (n_subdivisions * n_quadrature_points * 2);
 
-          AssertIndexRange(index, get_n_total_points());
+          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
 
           indices.emplace_back(index);
         }
@@ -108,7 +151,7 @@ MortarManager<dim>::get_indices(const Point<dim> &face_center) const
         {
           const unsigned int index = id * n_quadrature_points * 2 + q;
 
-          AssertIndexRange(index, get_n_total_points());
+          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
 
           indices.emplace_back(index);
         }
@@ -372,7 +415,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
   // Number of quadrature points
   const unsigned int n_points = mortar_manager_q->get_n_total_points();
   // Number of cells
-  const unsigned int n_sub_cells = mortar_manager_cell->get_n_total_points();
+  const unsigned int n_sub_cells = mortar_manager_q->get_n_total_mortars();
 
   std::vector<types::global_dof_index> is_local;
   std::vector<types::global_dof_index> is_ghost;
@@ -416,7 +459,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
             // Indices of cells/DoFs on them
             const auto indices =
-              mortar_manager_cell->get_indices(get_face_center(cell, face));
+              mortar_manager_q->get_mortar_indices(get_face_center(cell, face));
 
             const auto local_dofs = this->get_dof_indices(cell);
 
@@ -901,8 +944,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
         if ((face->boundary_id() == bid_rotor) ||
             (face->boundary_id() == bid_stator))
           {
-            const unsigned int n_sub_cells =
-              mortar_manager_cell->get_n_points();
+            const unsigned int n_sub_cells = mortar_manager_q->get_n_mortars();
 
             for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
               {

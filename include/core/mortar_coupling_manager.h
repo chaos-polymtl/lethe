@@ -48,6 +48,26 @@ public:
   is_mesh_aligned() const;
 
   /**
+   * @brief Returns the total number of mortars
+   */
+  unsigned int
+  get_n_total_mortars() const;
+
+  /**
+   * @brief Returns the number of mortars per face
+   */
+  unsigned int
+  get_n_mortars() const;
+
+  /**
+   * @brief Returns the indices of all mortars at both sides of the interface
+   *
+   * @param[in] face_center Face center
+   */
+  std::vector<unsigned int>
+  get_mortar_indices(const Point<dim> &face_center) const;
+
+  /**
    * @brief Returns the total number of quadrature points at the inner/outer boundary interface
    */
   unsigned int
@@ -55,8 +75,6 @@ public:
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
-   *
-   * @return points Coordinate of quadrature points of the cell
    */
   unsigned int
   get_n_points() const;
@@ -123,6 +141,15 @@ private:
    */
   std::pair<unsigned int, unsigned int>
   get_config(const Point<dim> &face_center) const;
+
+  /**
+   * @brief Returns the indices of all quadrature points at both sides of the interface
+   *
+   * @param[in] face_center Face center
+   */
+  std::vector<unsigned int>
+  get_indices_internal(const Point<dim>  &face_center,
+                       const unsigned int n_quadrature_points) const;
 
   /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;
@@ -515,7 +542,6 @@ private:
 
 protected:
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
-  std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
 
   /// Number of data points per quadrature point
   unsigned int N;
