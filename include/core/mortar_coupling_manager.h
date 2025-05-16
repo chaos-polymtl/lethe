@@ -325,8 +325,7 @@ public:
                        const unsigned int               bid_rotor,
                        const unsigned int               bid_stator,
                        const double                     sip_factor,
-                       const std::vector<unsigned int>  relevant_dof_indices,
-                       const double                     penalty_factor_grad);
+                       const std::vector<unsigned int>  relevant_dof_indices);
 
   /**
    * @brief Return object containing problem constraints
@@ -439,7 +438,6 @@ private:
 protected:
   /// Penalty factor (akin to symmetric interior penalty factor in SIPG)
   Number penalty_factor;
-  Number penalty_factor_grad;
 
   std::shared_ptr<MortarManager<dim>> mortar_manager_q;
   std::shared_ptr<MortarManager<dim>> mortar_manager_cell;
@@ -605,8 +603,7 @@ public:
                    const unsigned int               bid_rotor,
                    const unsigned int               bid_stator,
                    const double                     sip_factor = 1.0,
-                   const unsigned int first_selected_component = 0,
-                   const double       penalty_factor_grad      = 1.0);
+                   const unsigned int first_selected_component = 0);
 
   /**
    * @brief Constructor of the class
@@ -618,15 +615,13 @@ public:
    * @param[in] mortar_parameters The information about the mortar method
    * control, including the rotor mesh parameters
    * @param[in] first_selected_component Index of first selected component
-   * @param[in] penalty_factor_grad
    */
   CouplingOperator(const Mapping<dim>              &mapping,
                    const DoFHandler<dim>           &dof_handler,
                    const AffineConstraints<Number> &constraints,
                    const Quadrature<dim>           &quadrature,
                    const Parameters::Mortar<dim>   &mortar_parameters,
-                   const unsigned int first_selected_component = 0,
-                   const double       penalty_factor_grad      = 1.0);
+                   const unsigned int first_selected_component = 0);
 
   /**
    * @brief Return relevant dof indices

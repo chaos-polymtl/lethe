@@ -68,8 +68,7 @@ public:
                                         bid_1,
                                         sip_factor,
                                         get_relevant_dof_indices(
-                                          dof_handler.get_fe()),
-                                        0.0 /*TODO*/)
+                                          dof_handler.get_fe()))
     , fe_sub(dof_handler.get_fe().base_element(
                dof_handler.get_fe().component_to_base_index(0).first),
              1)

@@ -342,8 +342,7 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
   const unsigned int               bid_rotor,
   const unsigned int               bid_stator,
   const double                     sip_factor,
-  const std::vector<unsigned int>  relevant_dof_indices,
-  const double                     penalty_factor_grad)
+  const std::vector<unsigned int>  relevant_dof_indices)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
@@ -357,7 +356,6 @@ CouplingOperatorBase<dim, Number>::CouplingOperatorBase(
 {
   penalty_factor =
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
-  this->penalty_factor_grad = penalty_factor_grad;
 
   // Create manager at the quadrature point level
   mortar_manager_q = std::make_shared<MortarManager<dim>>(
@@ -1100,8 +1098,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const unsigned int               bid_rotor,
   const unsigned int               bid_stator,
   const double                     sip_factor,
-  const unsigned int               first_selected_component,
-  const double                     penalty_factor_grad)
+  const unsigned int               first_selected_component)
   : CouplingOperatorBase<dim, Number>(
       mapping,
       dof_handler,
@@ -1115,8 +1112,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
       bid_rotor,
       bid_stator,
       sip_factor,
-      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component),
-      penalty_factor_grad)
+      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component))
   , fe_sub(dof_handler.get_fe().base_element(
              dof_handler.get_fe()
                .component_to_base_index(first_selected_component)
@@ -1132,8 +1128,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
   const AffineConstraints<Number> &constraints,
   const Quadrature<dim>           &quadrature,
   const Parameters::Mortar<dim>   &mortar_parameters,
-  const unsigned int               first_selected_component,
-  const double                     penalty_factor_grad)
+  const unsigned int               first_selected_component)
   : CouplingOperatorBase<dim, Number>(
       mapping,
       dof_handler,
@@ -1147,8 +1142,7 @@ CouplingOperator<dim, n_components, Number>::CouplingOperator(
       mortar_parameters.rotor_boundary_id,
       mortar_parameters.stator_boundary_id,
       mortar_parameters.sip_factor,
-      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component),
-      penalty_factor_grad)
+      get_relevant_dof_indices(dof_handler.get_fe(), first_selected_component))
   , fe_sub(dof_handler.get_fe().base_element(
              dof_handler.get_fe()
                .component_to_base_index(first_selected_component)

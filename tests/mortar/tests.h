@@ -167,8 +167,7 @@ public:
                                         bid_1,
                                         sip_factor,
                                         get_relevant_dof_indices(
-                                          dof_handler.get_fe()),
-                                        0.0 /*TODO*/)
+                                          dof_handler.get_fe()))
     , fe_sub_u(dof_handler.get_fe().base_element(
                  dof_handler.get_fe().component_to_base_index(0).first),
                dim)
@@ -1566,11 +1565,8 @@ public:
                const double       radius,
                const double       rotate_pi,
                const unsigned int bid_0,
-               const unsigned int bid_1,
-               const double       sip_factor_p = 0.0)
+               const unsigned int bid_1)
   {
-    (void)sip_factor_p;
-
     coupling_operator = std::make_shared<CouplingOperatorStokes<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
       matrix_free.get_dof_handler(),
