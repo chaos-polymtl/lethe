@@ -49,7 +49,7 @@ MortarManager<dim>::get_n_total_points() const
 
 template <int dim>
 unsigned int
-MortarManager<dim>::get_n_points(const double &angle_cell_center) const
+MortarManager<dim>::get_n_points(const double angle_cell_center) const
 {
   (void)angle_cell_center;
 
@@ -65,7 +65,7 @@ MortarManager<dim>::get_n_points(const double &angle_cell_center) const
 
 template <int dim>
 std::vector<unsigned int>
-MortarManager<dim>::get_indices(const double &angle_cell_center) const
+MortarManager<dim>::get_indices(const double angle_cell_center) const
 {
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(angle_cell_center);
@@ -121,10 +121,10 @@ MortarManager<dim>::get_indices(const double &angle_cell_center) const
 
 template <int dim>
 std::vector<Point<dim>>
-MortarManager<dim>::get_points(const double rad) const
+MortarManager<dim>::get_points(const double angle_cell_center) const
 {
   // Mesh alignment type and cell index
-  const auto [type, id] = get_config(rad);
+  const auto [type, id] = get_config(angle_cell_center);
   // Angle variation within each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
 
@@ -227,7 +227,7 @@ MortarManager<dim>::get_points_ref(const double angle_cell_center) const
 
 template <int dim>
 std::vector<double>
-MortarManager<dim>::get_weights(const double &angle_cell_center) const
+MortarManager<dim>::get_weights(const double angle_cell_center) const
 {
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(angle_cell_center);
@@ -277,7 +277,7 @@ MortarManager<dim>::get_weights(const double &angle_cell_center) const
 
 template <int dim>
 std::vector<Tensor<1, dim, double>>
-MortarManager<dim>::get_normals(const double &angle_cell_center) const
+MortarManager<dim>::get_normals(const double angle_cell_center) const
 {
   // Coordinates of cell quadrature points
   const auto points = get_points(angle_cell_center);
@@ -292,7 +292,7 @@ MortarManager<dim>::get_normals(const double &angle_cell_center) const
 
 template <int dim>
 std::pair<unsigned int, unsigned int>
-MortarManager<dim>::get_config(const double &rad) const
+MortarManager<dim>::get_config(const double angle_cell_center) const
 {
   // Aalignment tolerance
   const double tolerance = 1e-8;
@@ -301,9 +301,9 @@ MortarManager<dim>::get_config(const double &rad) const
   // Minimum rotation angle
   double rot_min = rotation_angle - std::floor(rotation_angle / delta) * delta;
   // Point position in the cell
-  const double segment = (rad - delta / 2) / delta;
+  const double segment = (angle_cell_center - delta / 2) / delta;
   // Point position after rotation
-  const double segment_rot = (rad - delta / 2 - rot_min) / delta;
+  const double segment_rot = (angle_cell_center - delta / 2 - rot_min) / delta;
 
   if (this->is_mesh_aligned())
     {

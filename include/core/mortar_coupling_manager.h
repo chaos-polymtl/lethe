@@ -62,7 +62,7 @@ public:
    * @return points Coordinate of quadrature points of the cell
    */
   unsigned int
-  get_n_points(const double &angle_cell_center) const;
+  get_n_points(const double angle_cell_center) const;
 
   /**
    * @brief Returns the indices of all quadrature points at both sides of the interface
@@ -70,7 +70,7 @@ public:
    * @param[in] angle_cell_center Angular coordinate of cell center
    */
   std::vector<unsigned int>
-  get_indices(const double &angle_cell_center) const;
+  get_indices(const double angle_cell_center) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
@@ -80,7 +80,7 @@ public:
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
-  get_points(const double rad) const;
+  get_points(const double angle_cell_center) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at the interface
@@ -101,7 +101,7 @@ public:
    * @return points Angular weights of quadrature points of the cell
    */
   std::vector<double>
-  get_weights(const double &angle_cell_center) const;
+  get_weights(const double angle_cell_center) const;
 
   /**
    * @brief Returns the normal vector for the quadrature points
@@ -111,7 +111,7 @@ public:
    * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
-  get_normals(const double &angle_cell_center) const;
+  get_normals(const double angle_cell_center) const;
 
 private:
   /**
@@ -126,7 +126,7 @@ private:
    * @return id Index of the cell in which lies the rotated cell center
    */
   std::pair<unsigned int, unsigned int>
-  get_config(const double &angle_cell_center) const;
+  get_config(const double angle_cell_center) const;
 
   /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;
