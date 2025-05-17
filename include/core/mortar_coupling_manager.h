@@ -125,7 +125,7 @@ public:
    *
    * @return result Normal vectors of the cell quadrature points
    */
-  virtual std::vector<Tensor<1, dim, double>>
+  std::vector<Tensor<1, dim, double>>
   get_normals(const Point<dim> &face_center) const;
 
 protected:
@@ -156,7 +156,10 @@ protected:
   from_1D(const double rad) const;
 
   virtual double
-  to_1D(const Point<dim> &face_center) const;
+  to_1D(const Point<dim> &point) const;
+
+  virtual Tensor<1, dim, double>
+  get_normal(const Point<dim> &point) const;
 
   /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;

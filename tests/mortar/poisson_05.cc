@@ -44,18 +44,11 @@ public:
   {}
 
 
-  std::vector<Tensor<1, dim, double>>
-  get_normals(const Point<dim> &face_center) const override
+protected:
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &) const override
   {
-    // Coordinates of cell quadrature points
-    const auto points = this->get_points(face_center);
-
-    std::vector<Tensor<1, dim, double>> result;
-
-    for (const auto &point : points)
-      result.emplace_back(Point<dim>(1.0, 0.0));
-
-    return result;
+    return Point<dim>(1.0, 0.0);
   }
 
   Point<dim>
@@ -69,8 +62,6 @@ public:
   {
     return (2.0 * numbers::PI) * face_center[1];
   }
-
-protected:
 };
 
 int

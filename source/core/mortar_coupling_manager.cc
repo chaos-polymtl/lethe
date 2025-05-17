@@ -313,7 +313,7 @@ MortarManager<dim>::get_normals(const Point<dim> &face_center) const
   std::vector<Tensor<1, dim, double>> result;
 
   for (const auto &point : points)
-    result.emplace_back(point / point.norm());
+    result.emplace_back(get_normal(point));
 
   return result;
 }
@@ -363,9 +363,16 @@ MortarManager<dim>::from_1D(const double rad) const
 
 template <int dim>
 double
-MortarManager<dim>::to_1D(const Point<dim> &face_center) const
+MortarManager<dim>::to_1D(const Point<dim> &point) const
 {
-  return point_to_angle(face_center);
+  return point_to_angle(point);
+}
+
+template <int dim>
+Tensor<1, dim, double>
+MortarManager<dim>::get_normal(const Point<dim> &point) const
+{
+  return point / point.norm();
 }
 
 
