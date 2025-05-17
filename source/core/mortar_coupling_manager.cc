@@ -8,11 +8,11 @@
 #  include <core/mortar_coupling_manager.h>
 
 
-/*-------------- MortarManager -------------------------------*/
+/*-------------- MortarManagerBase -------------------------------*/
 
 template <int dim>
 bool
-MortarManager<dim>::is_mesh_aligned() const
+MortarManagerBase<dim>::is_mesh_aligned() const
 {
   const double tolerance = 1e-8;
   const double delta     = 2 * numbers::PI / n_subdivisions;
@@ -23,7 +23,7 @@ MortarManager<dim>::is_mesh_aligned() const
 
 template <int dim>
 unsigned int
-MortarManager<dim>::get_n_total_mortars() const
+MortarManagerBase<dim>::get_n_total_mortars() const
 {
   if (this->is_mesh_aligned()) // aligned
     {
@@ -37,7 +37,7 @@ MortarManager<dim>::get_n_total_mortars() const
 
 template <int dim>
 unsigned int
-MortarManager<dim>::get_n_mortars() const
+MortarManagerBase<dim>::get_n_mortars() const
 {
   if (this->is_mesh_aligned()) // aligned
     {
@@ -51,14 +51,14 @@ MortarManager<dim>::get_n_mortars() const
 
 template <int dim>
 std::vector<unsigned int>
-MortarManager<dim>::get_mortar_indices(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
 {
   return get_indices_internal(face_center, 1);
 }
 
 template <int dim>
 unsigned int
-MortarManager<dim>::get_n_total_points() const
+MortarManagerBase<dim>::get_n_total_points() const
 {
   if (this->is_mesh_aligned()) // aligned
     {
@@ -72,7 +72,7 @@ MortarManager<dim>::get_n_total_points() const
 
 template <int dim>
 unsigned int
-MortarManager<dim>::get_n_points() const
+MortarManagerBase<dim>::get_n_points() const
 {
   if (this->is_mesh_aligned()) // aligned
     {
@@ -86,15 +86,16 @@ MortarManager<dim>::get_n_points() const
 
 template <int dim>
 std::vector<unsigned int>
-MortarManager<dim>::get_indices(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_indices(const Point<dim> &face_center) const
 {
   return get_indices_internal(face_center, n_quadrature_points);
 }
 
 template <int dim>
 std::vector<unsigned int>
-MortarManager<dim>::get_indices_internal(const Point<dim> &face_center,
-                                         unsigned int n_quadrature_points) const
+MortarManagerBase<dim>::get_indices_internal(
+  const Point<dim> &face_center,
+  unsigned int      n_quadrature_points) const
 {
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(face_center);
@@ -150,7 +151,7 @@ MortarManager<dim>::get_indices_internal(const Point<dim> &face_center,
 
 template <int dim>
 std::vector<Point<dim>>
-MortarManager<dim>::get_points(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
 {
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(face_center);
@@ -206,7 +207,7 @@ MortarManager<dim>::get_points(const Point<dim> &face_center) const
 
 template <int dim>
 std::vector<Point<1>>
-MortarManager<dim>::get_points_ref(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center) const
 {
   const auto [type, id] = get_config(face_center);
 
@@ -255,7 +256,7 @@ MortarManager<dim>::get_points_ref(const Point<dim> &face_center) const
 
 template <int dim>
 std::vector<double>
-MortarManager<dim>::get_weights(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_weights(const Point<dim> &face_center) const
 {
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(face_center);
@@ -305,7 +306,7 @@ MortarManager<dim>::get_weights(const Point<dim> &face_center) const
 
 template <int dim>
 std::vector<Tensor<1, dim, double>>
-MortarManager<dim>::get_normals(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_normals(const Point<dim> &face_center) const
 {
   // Coordinates of cell quadrature points
   const auto points = get_points(face_center);
@@ -320,7 +321,7 @@ MortarManager<dim>::get_normals(const Point<dim> &face_center) const
 
 template <int dim>
 std::pair<unsigned int, unsigned int>
-MortarManager<dim>::get_config(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 {
   const auto angle_cell_center = to_1D(face_center);
 
@@ -354,11 +355,14 @@ MortarManager<dim>::get_config(const Point<dim> &face_center) const
     }
 }
 
+
+/*-------------- MortarManager -------------------------------*/
+
 template <int dim>
 Point<dim>
 MortarManager<dim>::from_1D(const double rad) const
 {
-  return radius_to_point<dim>(radius, rad);
+  return radius_to_point<dim>(this->radius, rad);
 }
 
 template <int dim>
@@ -1245,6 +1249,9 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
 
 
 /*-------------- Explicit Instantiations -------------------------------*/
+template class MortarManagerBase<2>;
+template class MortarManagerBase<3>;
+
 template class MortarManager<2>;
 template class MortarManager<3>;
 

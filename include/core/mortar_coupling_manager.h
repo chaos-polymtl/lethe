@@ -33,14 +33,14 @@ using namespace dealii;
  * @brief Base class for the mortar manager
  */
 template <int dim>
-class MortarManager
+class MortarManagerBase
 {
 public:
   template <int dim2>
-  MortarManager(const unsigned int      n_subdivisions,
-                const Quadrature<dim2> &quadrature,
-                const double            radius,
-                const double            rotation_angle);
+  MortarManagerBase(const unsigned int      n_subdivisions,
+                    const Quadrature<dim2> &quadrature,
+                    const double            radius,
+                    const double            rotation_angle);
 
   /**
    * @brief Verify if cells of the inner and outer domains are aligned
@@ -153,13 +153,13 @@ protected:
                        const unsigned int n_quadrature_points) const;
 
   virtual Point<dim>
-  from_1D(const double rad) const;
+  from_1D(const double rad) const = 0;
 
   virtual double
-  to_1D(const Point<dim> &point) const;
+  to_1D(const Point<dim> &point) const = 0;
 
   virtual Tensor<1, dim, double>
-  get_normal(const Point<dim> &point) const;
+  get_normal(const Point<dim> &point) const = 0;
 
   /// Number of cells at the interface between inner and outer domains
   const unsigned int n_subdivisions;
@@ -173,18 +173,49 @@ protected:
   const double rotation_angle;
 };
 
+template <int dim>
+class MortarManager : public MortarManagerBase<dim>
+{
+public:
+  template <int dim2>
+  MortarManager(const unsigned int      n_subdivisions,
+                const Quadrature<dim2> &quadrature,
+                const double            radius,
+                const double            rotation_angle);
+
+protected:
+  Point<dim>
+  from_1D(const double rad) const override;
+
+  double
+  to_1D(const Point<dim> &point) const override;
+
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &point) const override;
+};
+
 
 template <int dim>
 template <int dim2>
-MortarManager<dim>::MortarManager(const unsigned int      n_subdivisions,
-                                  const Quadrature<dim2> &quadrature_in,
-                                  const double            radius,
-                                  const double            rotation_angle)
+MortarManagerBase<dim>::MortarManagerBase(const unsigned int n_subdivisions,
+                                          const Quadrature<dim2> &quadrature_in,
+                                          const double            radius,
+                                          const double rotation_angle)
   : n_subdivisions(n_subdivisions)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , radius(radius)
   , rotation_angle(rotation_angle)
+{}
+
+
+template <int dim>
+template <int dim2>
+MortarManager<dim>::MortarManager(const unsigned int      n_subdivisions,
+                                  const Quadrature<dim2> &quadrature,
+                                  const double            radius,
+                                  const double            rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions, quadrature, radius, rotation_angle)
 {}
 
 

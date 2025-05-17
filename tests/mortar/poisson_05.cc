@@ -43,7 +43,6 @@ public:
                          0.0)
   {}
 
-
 protected:
   Tensor<1, dim, double>
   get_normal(const Point<dim> &) const override
