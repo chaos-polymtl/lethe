@@ -11,6 +11,7 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_q.h>
+#include <deal.II/fe/mapping_q_cache.h>
 
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
@@ -36,11 +37,12 @@ class MyMortarManager : public MortarManagerBase<dim>
 public:
   template <int dim2>
   MyMortarManager(const unsigned int      n_subdivisions,
-                  const Quadrature<dim2> &quadrature)
+                  const Quadrature<dim2> &quadrature,
+                  const double            shift)
     : MortarManagerBase<dim>(n_subdivisions,
                              quadrature,
                              1.0 / (2.0 * numbers::PI),
-                             0.0)
+                             shift * (2.0 * numbers::PI))
   {}
 
 protected:
@@ -76,20 +78,44 @@ main(int argc, char **argv)
   const unsigned int mapping_degree       = 3;
   const unsigned int dim                  = 2;
   const unsigned int n_global_refinements = 2;
-  const double       radius               = 1.0;
+  const double       shift                = 0.4;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
 
   FE_Q<dim>     fe(fe_degree);
-  MappingQ<dim> mapping(mapping_degree);
+  MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
   // generate merged grid
   parallel::distributed::Triangulation<dim> tria(comm);
   split_hyper_cube(tria);
+
+  std::vector<
+    GridTools::PeriodicFacePair<typename Triangulation<dim>::cell_iterator>>
+    periodic_faces;
+  GridTools::collect_periodic_faces(tria, 2, 3, 1, periodic_faces);
+  GridTools::collect_periodic_faces(tria, 6, 7, 1, periodic_faces);
+  tria.add_periodicity(periodic_faces);
+
   tria.refine_global(n_global_refinements);
+
+  MappingQCache<dim> mapping(mapping_degree);
+
+  mapping.initialize(
+    mapping_q,
+    tria,
+    [&](const auto &cell, const auto &point) {
+      if (cell->center()[0] > 0.5)
+        return point;
+
+      auto p = point;
+      p[1] += shift;
+
+      return p;
+    },
+    false);
 
   DoFHandler<dim> dof_handler(tria);
   dof_handler.distribute_dofs(fe);
@@ -99,11 +125,16 @@ main(int argc, char **argv)
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
   DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
   DoFTools::make_zero_boundary_constraints(dof_handler, 5, constraints);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
+
+  DoFTools::make_periodicity_constraints(dof_handler, 2, 3, 1, constraints);
+  DoFTools::make_periodicity_constraints(dof_handler, 6, 7, 1, constraints);
+
+
   constraints.close();
 
   PoissonOperator<dim, 1, double> op(mapping,
@@ -113,7 +144,7 @@ main(int argc, char **argv)
 
   const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
     std::make_shared<MyMortarManager<dim>>(
-      2 * Utilities::pow(2, n_global_refinements), quadrature);
+      2 * Utilities::pow(2, n_global_refinements), quadrature, shift);
 
   op.add_coupling(mortar_manager, 1, 4);
 
@@ -121,13 +152,15 @@ main(int argc, char **argv)
   op.initialize_dof_vector(rhs);
   op.initialize_dof_vector(solution);
 
-  VectorTools::create_right_hand_side(mapping,
-                                      dof_handler,
-                                      quadrature,
-                                      ScalarFunctionFromFunctionObject<dim>(
-                                        [](const auto &p) { return p[0]; }),
-                                      rhs,
-                                      constraints);
+  VectorTools::create_right_hand_side(
+    mapping,
+    dof_handler,
+    quadrature,
+    ScalarFunctionFromFunctionObject<dim>([](const auto &p) {
+      return p[0] * std::pow(std::sin(numbers::PI * p[1]), 2.0);
+    }),
+    rhs,
+    constraints);
 
   ReductionControl        reduction_control(10000, 1e-20, 1e-6);
   SolverGMRES<VectorType> solver(reduction_control);
@@ -167,6 +200,8 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step() << std::endl;
     }
+
+  constraints.distribute(solution);
 
   DataOut<dim> data_out;
 

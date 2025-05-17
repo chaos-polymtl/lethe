@@ -482,7 +482,18 @@ public:
 
     // apply coupling terms
     if (coupling_operator)
-      coupling_operator->vmult_add(dst, src);
+      {
+        // apply constraints
+        // TODO: only apply relevant constraints
+        const auto &constraints = coupling_operator->get_affine_constraints();
+        constraints.distribute(const_cast<VectorType &>(src));
+        src.update_ghost_values();
+
+        coupling_operator->vmult_add(dst, src);
+
+        constraints.set_zero(const_cast<VectorType &>(src));
+        constraints.set_zero(dst);
+      }
 
     src.zero_out_ghost_values();
   }
