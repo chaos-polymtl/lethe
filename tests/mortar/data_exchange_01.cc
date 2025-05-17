@@ -74,12 +74,14 @@ main(int argc, char *argv[])
 
   tria.refine_global(n_global_refinements);
 
-  const MortarManager<dim> mm(4 * Utilities::pow(2, n_global_refinements + 1),
-                              n_quadrature_points,
-                              radius,
-                              rotate_pi);
+  const MortarManagerCircle<dim> mm(4 *
+                                      Utilities::pow(2,
+                                                     n_global_refinements + 1),
+                                    QGauss<dim>(n_quadrature_points),
+                                    radius,
+                                    rotate_pi);
 
-  const unsigned int n_points = mm.get_n_points();
+  const unsigned int n_points = mm.get_n_total_points();
 
   // convert local/ghost points to indices
   std::vector<double>                  local_values;
@@ -91,8 +93,8 @@ main(int argc, char *argv[])
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
-            const auto indices = mm.get_indices(point_to_angle(face->center()));
-            const auto points  = mm.get_points(point_to_angle(face->center()));
+            const auto indices = mm.get_indices(face->center());
+            const auto points  = mm.get_points(face->center());
 
             for (unsigned int ii = 0; ii < indices.size(); ++ii)
               {

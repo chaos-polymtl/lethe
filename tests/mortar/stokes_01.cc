@@ -129,12 +129,15 @@ main(int argc, char **argv)
     mapping, dof_handler, constraints, quadrature, delta_1_scaling);
 
   if (grid == "hyper_cube_with_cylindrical_hole")
-    op.add_coupling(4 * Utilities::pow(2, n_global_refinements + 1),
-                    radius,
-                    rotate_pi,
-                    0,
-                    5,
-                    sip_factor);
+    {
+      const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+        4 * Utilities::pow(2, n_global_refinements + 1),
+        construct_quadrature(quadrature),
+        radius,
+        rotate_pi);
+
+      op.add_coupling(mortar_manager, 0, 5, sip_factor);
+    }
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
   op.initialize_dof_vector(rhs);

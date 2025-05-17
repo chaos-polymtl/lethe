@@ -268,7 +268,14 @@ test(const unsigned int n_refinements, const unsigned int fe_degree_fine)
       // set up operator
       op.reinit(*mappings[l], dof_handler, constraint, *quads[l]);
 
-      op.add_coupling(4 * Utilities::pow(2, l + 1), radius, rotate_pi, 0, 5);
+      const auto mortar_manager =
+        std::make_shared<MortarManagerCircle<dim>>(4 * Utilities::pow(2, l + 1),
+                                                   construct_quadrature(
+                                                     *quads[l]),
+                                                   radius,
+                                                   rotate_pi);
+
+      op.add_coupling(mortar_manager, 0, 5);
     }
 
   GMGParameters mg_data; // TODO

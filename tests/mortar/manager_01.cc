@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief MortarManager: check aligned mesh and output points.
+ * @brief MortarManagerCircle: check aligned mesh and output points.
  */
 
 #include <core/mortar_coupling_manager.h>
@@ -20,13 +20,13 @@ main()
     {
       const double rotate = 2 * numbers::PI / N * i;
 
-      const MortarManager<dim> manager(n_subdivisions,
-                                       n_quadrature_points,
-                                       radius,
-                                       rotate);
+      const MortarManagerCircle<dim> manager(n_subdivisions,
+                                             QGauss<dim>(n_quadrature_points),
+                                             radius,
+                                             rotate);
 
       std::cout << rotate << " "
                 << static_cast<unsigned int>(manager.is_mesh_aligned()) << " "
-                << manager.get_n_points() << std::endl;
+                << manager.get_n_total_points() << std::endl;
     }
 }

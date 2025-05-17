@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief PoissonOperator: test on rotated hypercube-cylinder geometry with
- *  multiple components.
+ * @brief PoissonOperator: test on split hypercube geometry.
  */
 
 #include <deal.II/base/conditional_ostream.h>
@@ -11,7 +10,6 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_q.h>
 #include <deal.II/fe/mapping_q_cache.h>
 
@@ -27,13 +25,45 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
 
-#include <deal.II/physics/transformations.h>
-
 #include <fstream>
 
 #include "./tests.h"
 
 using namespace dealii;
+
+template <int dim>
+class MyMortarManager : public MortarManagerBase<dim>
+{
+public:
+  template <int dim2>
+  MyMortarManager(const unsigned int      n_subdivisions,
+                  const Quadrature<dim2> &quadrature,
+                  const double            shift)
+    : MortarManagerBase<dim>(n_subdivisions,
+                             quadrature,
+                             1.0 / (2.0 * numbers::PI),
+                             shift * (2.0 * numbers::PI))
+  {}
+
+protected:
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &) const override
+  {
+    return Point<dim>(1.0, 0.0);
+  }
+
+  Point<dim>
+  from_1D(const double rad) const override
+  {
+    return Point<dim>(0.5, rad / (2.0 * numbers::PI));
+  }
+
+  double
+  to_1D(const Point<dim> &face_center) const override
+  {
+    return (2.0 * numbers::PI) * face_center[1];
+  }
+};
 
 int
 main(int argc, char **argv)
@@ -48,44 +78,44 @@ main(int argc, char **argv)
   const unsigned int mapping_degree       = 3;
   const unsigned int dim                  = 2;
   const unsigned int n_global_refinements = 2;
-  const double       radius               = 1.0;
-  const double       rotate               = 3.0;
-  const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
-  const bool         rotate_triangulation = false;
+  const double       shift                = 0.4;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
 
-  FESystem<dim> fe(FE_Q<dim>(fe_degree), dim);
+  FE_Q<dim>     fe(fe_degree);
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
   // generate merged grid
   parallel::distributed::Triangulation<dim> tria(comm);
-  hyper_cube_with_cylindrical_hole(radius,
-                                   2.0,
-                                   rotate_triangulation ? rotate_pi : 0.0,
-                                   tria);
+  split_hyper_cube(tria);
+
+  std::vector<
+    GridTools::PeriodicFacePair<typename Triangulation<dim>::cell_iterator>>
+    periodic_faces;
+  GridTools::collect_periodic_faces(tria, 2, 3, 1, periodic_faces);
+  GridTools::collect_periodic_faces(tria, 6, 7, 1, periodic_faces);
+  tria.add_periodicity(periodic_faces);
+
   tria.refine_global(n_global_refinements);
 
   MappingQCache<dim> mapping(mapping_degree);
 
-  if (rotate_triangulation)
-    mapping.initialize(mapping_q, tria);
-  else
-    mapping.initialize(
-      mapping_q,
-      tria,
-      [&](const auto &cell, const auto &point) {
-        if (cell->center().norm() > radius)
-          return point;
+  mapping.initialize(
+    mapping_q,
+    tria,
+    [&](const auto &cell, const auto &point) {
+      if (cell->center()[0] > 0.5)
+        return point;
 
-        return static_cast<Point<dim>>(
-          Physics::Transformations::Rotations::rotation_matrix_2d(rotate_pi) *
-          point);
-      },
-      false);
+      auto p = point;
+      p[1] += shift;
+
+      return p;
+    },
+    false);
 
   DoFHandler<dim> dof_handler(tria);
   dof_handler.distribute_dofs(fe);
@@ -94,36 +124,43 @@ main(int argc, char **argv)
   const IndexSet            locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 1, constraints);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
-  DoFTools::make_zero_boundary_constraints(dof_handler, 4, constraints);
+  DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
+  DoFTools::make_zero_boundary_constraints(dof_handler, 5, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
+  // DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
+
+  DoFTools::make_periodicity_constraints(dof_handler, 2, 3, 1, constraints);
+  DoFTools::make_periodicity_constraints(dof_handler, 6, 7, 1, constraints);
+
+
   constraints.close();
 
-  PoissonOperator<dim, dim, double> op(mapping,
-                                       dof_handler,
-                                       constraints,
-                                       quadrature);
+  PoissonOperator<dim, 1, double> op(mapping,
+                                     dof_handler,
+                                     constraints,
+                                     quadrature);
 
-  const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-    4 * Utilities::pow(2, n_global_refinements + 1),
-    construct_quadrature(quadrature),
-    radius,
-    rotate_pi);
+  const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
+    std::make_shared<MyMortarManager<dim>>(
+      2 * Utilities::pow(2, n_global_refinements), quadrature, shift);
 
-  op.add_coupling(mortar_manager, 0, 5);
+  op.add_coupling(mortar_manager, 1, 4);
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
   op.initialize_dof_vector(rhs);
   op.initialize_dof_vector(solution);
 
-  VectorTools::create_right_hand_side(mapping,
-                                      dof_handler,
-                                      quadrature,
-                                      Functions::ConstantFunction<dim>(1.0,
-                                                                       dim),
-                                      rhs,
-                                      constraints);
+  VectorTools::create_right_hand_side(
+    mapping,
+    dof_handler,
+    quadrature,
+    ScalarFunctionFromFunctionObject<dim>([](const auto &p) {
+      return p[0] * std::pow(std::sin(numbers::PI * p[1]), 2.0);
+    }),
+    rhs,
+    constraints);
 
   ReductionControl        reduction_control(10000, 1e-20, 1e-6);
   SolverGMRES<VectorType> solver(reduction_control);
@@ -136,7 +173,7 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step() << std::endl;
     }
-  if (true)
+  if (false)
     {
       // 1) with preconditioner: inverse diagonal
       DiagonalMatrix<LinearAlgebra::distributed::Vector<double>> preconditioner;
@@ -145,7 +182,7 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step() << std::endl;
     }
-  if (true)
+  if (false)
     {
       // 2) with preconditioner: algebraic multigrid
       TrilinosWrappers::PreconditionILU preconditioner;
@@ -164,6 +201,8 @@ main(int argc, char **argv)
       pcout << reduction_control.last_step() << std::endl;
     }
 
+  constraints.distribute(solution);
+
   DataOut<dim> data_out;
 
   DataOutBase::VtkFlags flags;
@@ -176,7 +215,6 @@ main(int argc, char **argv)
   Vector<double> ranks(tria.n_active_cells());
   ranks = Utilities::MPI::this_mpi_process(comm);
   data_out.add_data_vector(ranks, "ranks");
-
   data_out.build_patches(mapping,
                          fe_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);

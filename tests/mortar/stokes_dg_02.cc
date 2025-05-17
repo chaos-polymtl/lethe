@@ -57,7 +57,6 @@ main(int argc, char **argv)
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
   const double       sip_factor           = 1.0;
-  const double       sip_factor_p         = 100.0;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
@@ -160,12 +159,8 @@ main(int argc, char **argv)
     mapping, dof_handler, constraints, quadrature, sip_factor);
 
   if (grid == "hyper_cube_with_cylindrical_hole")
-    op.add_coupling(4 * Utilities::pow(2, n_global_refinements + 1),
-                    radius,
-                    rotate_pi,
-                    0,
-                    5,
-                    sip_factor_p);
+    op.add_coupling(
+      4 * Utilities::pow(2, n_global_refinements + 1), radius, rotate_pi, 0, 5);
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
   op.initialize_dof_vector(rhs);
