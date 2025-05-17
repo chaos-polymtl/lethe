@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief PoissonOperator: test on rotated hypershell-hypershell geometry.
+ * @brief PoissonOperator: test on split hypercube geometry.
  */
 
 #include <deal.II/base/conditional_ostream.h>
