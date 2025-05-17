@@ -130,7 +130,7 @@ main(int argc, char **argv)
 
   if (grid == "hyper_cube_with_cylindrical_hole")
     {
-      const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+      const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
         4 * Utilities::pow(2, n_global_refinements + 1),
         construct_quadrature(quadrature),
         radius,

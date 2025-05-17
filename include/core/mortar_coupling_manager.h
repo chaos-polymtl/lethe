@@ -174,14 +174,14 @@ protected:
 };
 
 template <int dim>
-class MortarManager : public MortarManagerBase<dim>
+class MortarManagerCircle : public MortarManagerBase<dim>
 {
 public:
   template <int dim2>
-  MortarManager(const unsigned int      n_subdivisions,
-                const Quadrature<dim2> &quadrature,
-                const double            radius,
-                const double            rotation_angle);
+  MortarManagerCircle(const unsigned int      n_subdivisions,
+                      const Quadrature<dim2> &quadrature,
+                      const double            radius,
+                      const double            rotation_angle);
 
 protected:
   Point<dim>
@@ -211,10 +211,11 @@ MortarManagerBase<dim>::MortarManagerBase(const unsigned int n_subdivisions,
 
 template <int dim>
 template <int dim2>
-MortarManager<dim>::MortarManager(const unsigned int      n_subdivisions,
-                                  const Quadrature<dim2> &quadrature,
-                                  const double            radius,
-                                  const double            rotation_angle)
+MortarManagerCircle<dim>::MortarManagerCircle(
+  const unsigned int      n_subdivisions,
+  const Quadrature<dim2> &quadrature,
+  const double            radius,
+  const double            rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions, quadrature, radius, rotation_angle)
 {}
 

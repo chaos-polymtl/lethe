@@ -80,10 +80,12 @@ main(int argc, char *argv[])
   DoFHandler<dim> dof_handler(tria);
   dof_handler.distribute_dofs(fe);
 
-  const MortarManager<dim> mm(4 * Utilities::pow(2, n_global_refinements + 1),
-                              QGauss<dim>(n_quadrature_points),
-                              radius,
-                              rotate_pi);
+  const MortarManagerCircle<dim> mm(4 *
+                                      Utilities::pow(2,
+                                                     n_global_refinements + 1),
+                                    QGauss<dim>(n_quadrature_points),
+                                    radius,
+                                    rotate_pi);
 
   const unsigned int n_points = mm.get_n_total_points();
 

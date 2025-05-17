@@ -356,25 +356,25 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 }
 
 
-/*-------------- MortarManager -------------------------------*/
+/*-------------- MortarManagerCircle -------------------------------*/
 
 template <int dim>
 Point<dim>
-MortarManager<dim>::from_1D(const double rad) const
+MortarManagerCircle<dim>::from_1D(const double rad) const
 {
   return radius_to_point<dim>(this->radius, rad);
 }
 
 template <int dim>
 double
-MortarManager<dim>::to_1D(const Point<dim> &point) const
+MortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
 {
   return point_to_angle(point);
 }
 
 template <int dim>
 Tensor<1, dim, double>
-MortarManager<dim>::get_normal(const Point<dim> &point) const
+MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 {
   return point / point.norm();
 }
@@ -1252,8 +1252,8 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
 template class MortarManagerBase<2>;
 template class MortarManagerBase<3>;
 
-template class MortarManager<2>;
-template class MortarManager<3>;
+template class MortarManagerCircle<2>;
+template class MortarManagerCircle<3>;
 
 template class CouplingOperator<2, double>;
 template class CouplingOperator<3, double>;

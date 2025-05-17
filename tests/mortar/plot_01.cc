@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief MortarManager: output points as particles.
+ * @brief MortarManagerCircle: output points as particles.
  */
 
 #include <deal.II/distributed/tria.h>
@@ -110,10 +110,12 @@ main(int argc, char *argv[])
   tria.refine_global(n_global_refinements);
   output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
 
-  const MortarManager<dim> mm(4 * Utilities::pow(2, n_global_refinements + 1),
-                              QGauss<dim>(n_quadrature_points),
-                              radius,
-                              rotate_pi);
+  const MortarManagerCircle<dim> mm(4 *
+                                      Utilities::pow(2,
+                                                     n_global_refinements + 1),
+                                    QGauss<dim>(n_quadrature_points),
+                                    radius,
+                                    rotate_pi);
 
   const unsigned int n_points = mm.get_n_total_points();
 

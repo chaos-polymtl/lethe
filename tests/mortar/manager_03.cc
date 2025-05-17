@@ -343,7 +343,7 @@ main(int argc, char **argv)
       constraints.reinit(dof_handler.locally_owned_dofs(),
                          locally_relevant_dofs);
 
-      const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+      const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
         4 * Utilities::pow(2, n_global_refinements + 1),
         quadrature,
         radius,

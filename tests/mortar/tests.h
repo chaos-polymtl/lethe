@@ -795,10 +795,10 @@ public:
                              .n_dofs_per_vertex() == 0;
 
     const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManager<dim>>(n_subdivisions,
-                                           matrix_free.get_quadrature(),
-                                           radius,
-                                           rotate_pi);
+      std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
+                                                 matrix_free.get_quadrature(),
+                                                 radius,
+                                                 rotate_pi);
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
@@ -1181,10 +1181,10 @@ public:
                const double       sip_factor = 1.0)
   {
     const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManager<dim>>(n_subdivisions,
-                                           matrix_free.get_quadrature(),
-                                           radius,
-                                           rotate_pi);
+      std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
+                                                 matrix_free.get_quadrature(),
+                                                 radius,
+                                                 rotate_pi);
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
@@ -1608,10 +1608,10 @@ public:
                const unsigned int bid_1)
   {
     const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManager<dim>>(n_subdivisions,
-                                           matrix_free.get_quadrature(),
-                                           radius,
-                                           rotate_pi);
+      std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
+                                                 matrix_free.get_quadrature(),
+                                                 radius,
+                                                 rotate_pi);
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =

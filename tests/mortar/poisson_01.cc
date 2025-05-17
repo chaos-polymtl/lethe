@@ -74,7 +74,7 @@ main(int argc, char **argv)
                                      constraints,
                                      quadrature);
 
-  const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+  const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     6 * Utilities::pow(2, n_global_refinements),
     construct_quadrature(quadrature),
     0.5 * radius,
