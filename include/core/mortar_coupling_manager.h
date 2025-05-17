@@ -125,10 +125,10 @@ public:
    *
    * @return result Normal vectors of the cell quadrature points
    */
-  std::vector<Tensor<1, dim, double>>
+  virtual std::vector<Tensor<1, dim, double>>
   get_normals(const Point<dim> &face_center) const;
 
-private:
+protected:
   /**
    * @brief Returns the mesh alignment type and cell index
    *
@@ -152,10 +152,10 @@ private:
   get_indices_internal(const Point<dim>  &face_center,
                        const unsigned int n_quadrature_points) const;
 
-  Point<dim>
+  virtual Point<dim>
   from_1D(const double rad) const;
 
-  double
+  virtual double
   to_1D(const Point<dim> &face_center) const;
 
   /// Number of cells at the interface between inner and outer domains

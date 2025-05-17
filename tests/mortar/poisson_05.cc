@@ -30,6 +30,49 @@
 
 using namespace dealii;
 
+template <int dim>
+class MyMortarManager : public MortarManager<dim>
+{
+public:
+  template <int dim2>
+  MyMortarManager(const unsigned int      n_subdivisions,
+                  const Quadrature<dim2> &quadrature)
+    : MortarManager<dim>(n_subdivisions,
+                         quadrature,
+                         1.0 / (2.0 * numbers::PI),
+                         0.0)
+  {}
+
+
+  std::vector<Tensor<1, dim, double>>
+  get_normals(const Point<dim> &face_center) const override
+  {
+    // Coordinates of cell quadrature points
+    const auto points = this->get_points(face_center);
+
+    std::vector<Tensor<1, dim, double>> result;
+
+    for (const auto &point : points)
+      result.emplace_back(Point<dim>(1.0, 0.0));
+
+    return result;
+  }
+
+  Point<dim>
+  from_1D(const double rad) const override
+  {
+    return Point<dim>(0.5, rad / (2.0 * numbers::PI));
+  }
+
+  double
+  to_1D(const Point<dim> &face_center) const override
+  {
+    return (2.0 * numbers::PI) * face_center[1];
+  }
+
+protected:
+};
+
 int
 main(int argc, char **argv)
 {
@@ -55,7 +98,7 @@ main(int argc, char **argv)
 
   // generate merged grid
   parallel::distributed::Triangulation<dim> tria(comm);
-  hyper_shell_with_hyper_shell(radius, tria);
+  split_hyper_cube(tria);
   tria.refine_global(n_global_refinements);
 
   DoFHandler<dim> dof_handler(tria);
@@ -66,7 +109,11 @@ main(int argc, char **argv)
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
   DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
+  DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
   DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
+  DoFTools::make_zero_boundary_constraints(dof_handler, 5, constraints);
+  DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
+  DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
   constraints.close();
 
   PoissonOperator<dim, 1, double> op(mapping,
@@ -74,13 +121,11 @@ main(int argc, char **argv)
                                      constraints,
                                      quadrature);
 
-  const auto mortar_manager = std::make_shared<MortarManager<dim>>(
-    6 * Utilities::pow(2, n_global_refinements),
-    construct_quadrature(quadrature),
-    0.5 * radius,
-    0.0);
+  const std::shared_ptr<MortarManager<dim>> mortar_manager =
+    std::make_shared<MyMortarManager<dim>>(
+      2 * Utilities::pow(2, n_global_refinements), quadrature);
 
-  op.add_coupling(mortar_manager, 1, 2);
+  op.add_coupling(mortar_manager, 1, 4);
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
   op.initialize_dof_vector(rhs);
@@ -89,7 +134,8 @@ main(int argc, char **argv)
   VectorTools::create_right_hand_side(mapping,
                                       dof_handler,
                                       quadrature,
-                                      Functions::ConstantFunction<dim>(1.0),
+                                      ScalarFunctionFromFunctionObject<dim>(
+                                        [](const auto &p) { return p[0]; }),
                                       rhs,
                                       constraints);
 
@@ -104,7 +150,7 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step() << std::endl;
     }
-  if (true)
+  if (false)
     {
       // 1) with preconditioner: inverse diagonal
       DiagonalMatrix<LinearAlgebra::distributed::Vector<double>> preconditioner;
@@ -113,7 +159,7 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step() << std::endl;
     }
-  if (true)
+  if (false)
     {
       // 2) with preconditioner: algebraic multigrid
       TrilinosWrappers::PreconditionILU preconditioner;

@@ -133,6 +133,40 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
   tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));
 }
 
+/**
+ * @brief TODO
+ */
+template <int dim>
+void
+split_hyper_cube(Triangulation<dim> &tria)
+{
+  Triangulation<dim> tria_0, tria_1;
+
+  // inner domain triangulation
+  GridGenerator::subdivided_hyper_rectangle(tria_0,
+                                            std::vector<unsigned int>{1, 2},
+                                            Point<dim>(0.0, 0.0),
+                                            Point<dim>(0.5, 1.0),
+                                            true);
+
+  // outer domain triangulation
+  GridGenerator::subdivided_hyper_rectangle(tria_1,
+                                            std::vector<unsigned int>{1, 2},
+                                            Point<dim>(0.5, 0.0),
+                                            Point<dim>(1.0, 1.0),
+                                            true);
+
+  // shift boundary IDs # in outer grid
+  for (const auto &face : tria_1.active_face_iterators())
+    if (face->at_boundary())
+      {
+        face->set_boundary_id(face->boundary_id() + 4);
+      }
+
+  // create unique triangulation
+  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
+}
+
 template <int dim>
 Quadrature<dim>
 construct_quadrature(const Quadrature<dim> &quad)
