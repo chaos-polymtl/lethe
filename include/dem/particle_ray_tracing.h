@@ -95,7 +95,7 @@ public:
   //  total_neighbor_list;
 
   typename dem_data_structures<dim>::cell_set
-    local_and_ghost_cells_with_particles_and_neighbors;
+    local_and_ghost_cells_near_particles;
 };
 
 
