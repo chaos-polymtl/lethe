@@ -480,7 +480,7 @@ public:
     const DoFHandler<dim>                                     &dof_handler,
     const AffineConstraints<Number>                           &constraints,
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
-    const std::shared_ptr<MortarManager<dim>>                  mortar_manager,
+    const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
     const unsigned int                                         bid_rotor,
     const unsigned int                                         bid_stator,
     const double                                               sip_factor);
@@ -619,7 +619,7 @@ protected:
   AffineConstraints<Number> constraints_extended;
 
   std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator;
-  std::shared_ptr<MortarManager<dim>>                  mortar_manager;
+  std::shared_ptr<MortarManagerBase<dim>>              mortar_manager;
 };
 
 

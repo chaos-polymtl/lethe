@@ -31,16 +31,16 @@
 using namespace dealii;
 
 template <int dim>
-class MyMortarManager : public MortarManager<dim>
+class MyMortarManager : public MortarManagerBase<dim>
 {
 public:
   template <int dim2>
   MyMortarManager(const unsigned int      n_subdivisions,
                   const Quadrature<dim2> &quadrature)
-    : MortarManager<dim>(n_subdivisions,
-                         quadrature,
-                         1.0 / (2.0 * numbers::PI),
-                         0.0)
+    : MortarManagerBase<dim>(n_subdivisions,
+                             quadrature,
+                             1.0 / (2.0 * numbers::PI),
+                             0.0)
   {}
 
 protected:
@@ -111,7 +111,7 @@ main(int argc, char **argv)
                                      constraints,
                                      quadrature);
 
-  const std::shared_ptr<MortarManager<dim>> mortar_manager =
+  const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
     std::make_shared<MyMortarManager<dim>>(
       2 * Utilities::pow(2, n_global_refinements), quadrature);
 
