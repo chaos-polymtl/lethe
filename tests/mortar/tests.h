@@ -133,6 +133,21 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
   tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));
 }
 
+template <int dim>
+Quadrature<dim>
+construct_quadrature(const Quadrature<dim> &quad)
+{
+  const double oversampling_factor = 2.0; // make parameter
+
+  for (unsigned int i = 1; i <= 10; ++i)
+    if (quad == QGauss<dim>(i))
+      return QGauss<dim>(i * oversampling_factor);
+
+  AssertThrow(false, ExcNotImplemented());
+
+  return quad;
+}
+
 template <int dim, typename Number>
 class CouplingEvaluationStokes : public CouplingEvaluationBase<dim, Number>
 {
@@ -373,20 +388,11 @@ public:
    * @brief Create coupling operator
    */
   void
-  add_coupling(const unsigned int n_subdivisions,
-               const double       radius,
-               const double       rotate_pi,
-               const unsigned int bid_0,
-               const unsigned int bid_1,
-               const double       sip_factor = 1.0)
+  add_coupling(const std::shared_ptr<MortarManager<dim>> mortar_manager,
+               const unsigned int                        bid_0,
+               const unsigned int                        bid_1,
+               const double                              sip_factor = 1.0)
   {
-    const auto mortar_manager =
-      std::make_shared<MortarManager<dim>>(n_subdivisions,
-                                           construct_quadrature(
-                                             matrix_free.get_quadrature()),
-                                           radius,
-                                           rotate_pi);
-
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
         std::make_shared<CouplingEvaluationSIPG<dim, n_components, Number>>(
@@ -562,19 +568,6 @@ protected:
   std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 
 private:
-  static Quadrature<dim>
-  construct_quadrature(const Quadrature<dim> &quad)
-  {
-    const double oversampling_factor = 2.0; // make parameter
-
-    for (unsigned int i = 1; i <= 10; ++i)
-      if (quad == QGauss<dim>(i))
-        return QGauss<dim>(i * oversampling_factor);
-
-    AssertThrow(false, ExcNotImplemented());
-
-    return quad;
-  }
 };
 
 

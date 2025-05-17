@@ -76,8 +76,13 @@ main(int argc, char **argv)
                                        constraints,
                                        quadrature);
 
-  op.add_coupling(
-    6 * Utilities::pow(2, n_global_refinements), 0.5 * radius, 0.0, 1, 2);
+  const auto mortar_manager = std::make_shared<MortarManager<dim>>(
+    6 * Utilities::pow(2, n_global_refinements),
+    construct_quadrature(quadrature),
+    0.5 * radius,
+    0.0);
+
+  op.add_coupling(mortar_manager, 1, 2);
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
   op.initialize_dof_vector(rhs);
