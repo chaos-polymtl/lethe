@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_ray_tracing_parameters_h
@@ -22,7 +22,6 @@ public:
   Parameters::Lagrangian::InsertionInfo<dim>        insertion_info;
   Parameters::Lagrangian::FloatingWalls<dim>        floating_walls;
   Parameters::Lagrangian::FloatingGrid<dim>         floating_grid;
-  Parameters::Lagrangian::GridMotion<dim>           grid_motion;
   Parameters::Lagrangian::LagrangianPostProcessing  post_processing;
   std::shared_ptr<Parameters::DEMSolidObjects<dim>> solid_objects;
 
@@ -49,7 +48,6 @@ public:
     Parameters::Lagrangian::ModelParameters<dim>::declare_parameters(prm);
     floating_walls.declare_parameters(prm);
     floating_grid.declare_parameters(prm);
-    grid_motion.declare_parameters(prm);
     post_processing.declare_parameters(prm);
     solid_objects = std::make_shared<Parameters::DEMSolidObjects<dim>>();
     solid_objects->declare_parameters(prm);
@@ -64,7 +62,6 @@ public:
     simulation_control.parse_parameters(prm);
     floating_walls.parse_parameters(prm);
     floating_grid.parse_parameters(prm);
-    grid_motion.parse_parameters(prm);
     post_processing.parse_parameters(prm);
     solid_objects->parse_parameters(prm);
   }

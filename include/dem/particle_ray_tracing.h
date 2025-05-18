@@ -8,6 +8,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/insertion.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -25,10 +26,23 @@ class ParticleRayTracing
 public:
   ParticleRayTracing(DEMSolverParameters<dim> dem_parameters);
 
+  /*
+   * @brief Find locals cells containing particles or with neighboring cells, local
+   * and ghost, containing particles.
+   *
+   * @param[in,out] local_cells_near_particles Contains local cells with
+   * particles or with particles in their neighbors.
+   */
   void
-  find_locally_own_cells_with_particles(
-    typename DEM::dem_data_structures<dim>::cells_neighbor_list
-      &cells_with_particle_and_neighbours);
+  find_locally_own_cells_near_particles(
+    typename dem_data_structures<dim>::cell_set local_cells_near_particles);
+
+
+  /*
+   * @brief Insert the photon at the appropriate location.
+   */
+  void
+  insert_photon();
 
 
   /**
@@ -87,15 +101,7 @@ public:
   /**
    * @brief The displacement tensor of a photons during a pseudo time-step.
    */
-  const Tensor<1, dim> photon_displacement_tensor;
-
-  // Container that shows the local/ghost neighbor cells of all local cells in
-  // the triangulation
-  // typename dem_data_structures<dim>::cells_total_neighbor_list
-  //  total_neighbor_list;
-
-  typename dem_data_structures<dim>::cell_set
-    local_and_ghost_cells_near_particles;
+  Tensor<1, dim> photon_displacement_tensor;
 };
 
 
