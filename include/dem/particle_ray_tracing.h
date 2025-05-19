@@ -9,6 +9,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
+#include <dem/load_balancing.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -25,6 +26,12 @@ class ParticleRayTracing
 {
 public:
   ParticleRayTracing(DEMSolverParameters<dim> dem_parameters);
+
+  /**
+   * @brief Set the parameters for the ray tracing simulation
+   */
+  void
+  setup_parameters();
 
   /*
    * @brief Find locals cells containing particles or with neighboring cells, local
@@ -43,6 +50,13 @@ public:
    */
   void
   insert_photon();
+
+  /**
+   * @brief Calls all the necessary functions to set parameters, solve the
+   * simulation, and finish the simulation.
+   */
+  void
+  solve();
 
 
   /**
@@ -64,6 +78,11 @@ public:
    * @brief The rank of the current MPI process.
    */
   const unsigned int this_mpi_process;
+
+  /**
+   * @brief The parameters of the DEM simulation.
+   */
+  DEMSolverParameters<dim> parameters;
 
   /**
    * @brief The output stream used for the parallel simulation, only used by
@@ -102,6 +121,16 @@ public:
    * @brief The displacement tensor of a photons during a pseudo time-step.
    */
   Tensor<1, dim> photon_displacement_tensor;
+
+  /*
+   * @brief Insertion object used to insert particle.
+   */
+  std::shared_ptr<Insertion<dim, PropertiesIndex>> insertion_object;
+
+  /**
+   * @brief The load balancing handler.
+   */
+  LagrangianLoadBalancing<dim, PropertiesIndex> load_balancing;
 };
 
 

@@ -3,6 +3,10 @@
 
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_ray_tracing.h>
+#include <dem/read_mesh.h>
+
+#include <sys/stat.h>
+#include <sstream>
 
 
 template <int dim, typename PropertiesIndex>
@@ -11,6 +15,7 @@ ParticleRayTracing<dim, PropertiesIndex>::ParticleRayTracing(
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
+  , parameters(dem_parameters)
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , triangulation(this->mpi_communicator)
   , mapping(1)
@@ -22,6 +27,31 @@ ParticleRayTracing<dim, PropertiesIndex>::ParticleRayTracing(
   Tensor<1, dim> temp;
   photon_displacement_tensor =
     temp * GridTools::minimal_cell_diameter(triangulation);
+}
+
+template <int dim, typename PropertiesIndex>
+void
+ParticleRayTracing<dim, PropertiesIndex>::setup_parameters()
+{
+  // Print simulation starting information
+  pcout << std::endl;
+  std::stringstream ss;
+  ss << "Running on " << n_mpi_processes << " rank(s)";
+  announce_string(pcout, ss.str(), '*');
+
+  // Check if the output directory exists
+  std::string output_dir_name = parameters.simulation_control.output_folder;
+  struct stat buffer;
+
+  // If output directory does not exist, create it
+  if (this_mpi_process == 0)
+    {
+      if (stat(output_dir_name.c_str(), &buffer) != 0)
+        {
+          create_output_folder(output_dir_name);
+        }
+    }
+
 }
 
 template <int dim, typename PropertiesIndex>
@@ -186,6 +216,24 @@ ParticleRayTracing<dim, PropertiesIndex>::insert_photon()
   photon_handler.insert_global_particles(insertion_points_on_proc,
                                          global_bounding_boxes,
                                          photon_properties);
+}
+
+template <int dim, typename PropertiesIndex>
+void
+ParticleRayTracing<dim, PropertiesIndex>::solve()
+{
+  // Triangulation
+  // Insert particle
+  // Insert photons
+
+  // While number of photon bigger than 0
+
+  //  // Pseudo integrate
+
+  //  // Store contact intersection point
+
+  // Output
+
 }
 
 template class ParticleRayTracing<2, DEM::DEMProperties::PropertiesIndex>;
