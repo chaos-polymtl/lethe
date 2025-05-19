@@ -740,6 +740,376 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
 template class VANSAssemblerCoreModelA<2>;
 template class VANSAssemblerCoreModelA<3>;
 
+
+template <int dim>
+void
+VANSAssemblerCoreModelAs<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector =
+    scratch_data.kinematic_viscosity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Grad-div weight factor
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Physical properties
+      const double kinematic_viscosity = viscosity_vector[q];
+
+
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
+      const Tensor<2, dim> velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+
+      const Tensor<1, dim> pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      const double         void_fraction = scratch_data.void_fraction_values[q];
+      const Tensor<1, dim> void_fraction_gradients =
+        scratch_data.void_fraction_gradient_values[q];
+
+      // Forcing term
+      const Tensor<1, dim> force       = scratch_data.force[q];
+      double               mass_source = scratch_data.mass_source[q];
+
+      double u_mag = 0;
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (this->simulation_control->get_current_time() ==
+              this->simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma =
+        calculate_gamma(u_mag, kinematic_viscosity, h, cfd_dem.cstar);
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));
+
+      // Calculate the strong residual for GLS stabilization
+      auto strong_residual =
+        velocity_gradient * velocity / void_fraction +
+        // Mass Source
+        mass_source * velocity
+        // Pressure
+        + void_fraction * pressure_gradient -
+        // Kinematic viscosity and Force
+        void_fraction * kinematic_viscosity * velocity_laplacian -
+        force * void_fraction + strong_residual_vec[q];
+
+      // Pressure scaling factor
+      const double pressure_scaling_factor =
+        scratch_data.pressure_scaling_factor;
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j           = scratch_data.phi_u[q][j];
+          const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
+          const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
+
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
+
+          strong_jacobian_vec[q][j] +=
+            (velocity_gradient * phi_u_j / void_fraction +
+             grad_phi_u_j * velocity / void_fraction +
+             // Mass Source
+             mass_source * phi_u_j +
+             // Pressure
+             void_fraction * grad_phi_p_j
+             // Kinematic viscosity
+             - void_fraction * kinematic_viscosity * laplacian_phi_u_j);
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const unsigned int component_i  = scratch_data.components[i];
+          const auto        &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto        &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto        &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto        &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto        &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const unsigned int component_j  = scratch_data.components[j];
+              const auto        &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto        &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto        &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const auto        &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
+
+              const auto &strong_jac = strong_jacobian_vec[q][j];
+
+              // Pressure
+              double local_matrix_ij =
+                -(div_phi_u_i * phi_p_j * void_fraction +
+                  phi_p_j * void_fraction_gradients * phi_u_i);
+
+              if (component_i == dim)
+                {
+                  local_matrix_ij +=
+                    phi_p_i * ((void_fraction * div_phi_u_j) +
+                               (phi_u_j * void_fraction_gradients));
+
+                  // PSPG GLS term
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                }
+
+              if (component_i < dim && component_j < dim)
+                {
+                  // Convection
+                  local_matrix_ij +=
+                    ((phi_u_j / void_fraction * velocity_gradient * phi_u_i) +
+                     (grad_phi_u_j / void_fraction * velocity * phi_u_i));
+
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij += void_fraction * kinematic_viscosity *
+                                           (grad_phi_u_j[component_j] *
+                                            grad_phi_u_i[component_i]) +
+                                         kinematic_viscosity * grad_phi_u_j *
+                                           void_fraction_gradients * phi_u_i +
+                                         mass_source * phi_u_j * phi_u_i;
+                    }
+                }
+
+              // The jacobian matrix for the SUPG formulation
+              // currently does not include the jacobian of the stabilization
+              // parameter tau. Our experience has shown that does not alter the
+              // number of newton iteration for convergence, but greatly
+              // simplifies assembly.
+              if (SUPG && component_i < dim)
+                {
+                  local_matrix_ij +=
+                    tau * (strong_jac * grad_phi_u_i * velocity +
+                           strong_residual * grad_phi_u_i * phi_u_j);
+                }
+
+              // Grad-div stabilization
+              if (cfd_dem.grad_div == true)
+                {
+                  local_matrix_ij += gamma *
+                                     (div_phi_u_j) *
+                                     div_phi_u_i;
+                }
+
+              local_matrix_ij *= JxW;
+              local_matrix(i, j) += local_matrix_ij;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+VANSAssemblerCoreModelAs<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector =
+    scratch_data.kinematic_viscosity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Physical properties
+      const double kinematic_viscosity = viscosity_vector[q];
+
+      // Velocity
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const Tensor<2, dim> velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+
+      // Pressure
+      const double         pressure = scratch_data.pressure_values[q];
+      const Tensor<1, dim> pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Void Fraction
+      const double         void_fraction = scratch_data.void_fraction_values[q];
+      const Tensor<1, dim> void_fraction_gradients =
+        scratch_data.void_fraction_gradient_values[q];
+
+      // Forcing term
+      const Tensor<1, dim> force       = scratch_data.force[q];
+      double               mass_source = scratch_data.mass_source[q];
+
+      double u_mag = 0;
+      // Calculation of the magnitude of the
+      // velocity for the stabilization parameter
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (this->simulation_control->get_current_time() ==
+              this->simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma =
+        calculate_gamma(u_mag, kinematic_viscosity, h, cfd_dem.cstar);
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));
+
+      // Calculate the strong residual for GLS stabilization
+      auto strong_residual =
+        velocity_gradient * velocity * void_fraction +
+        // Mass Source
+        mass_source * velocity
+        // Pressure
+        + void_fraction * pressure_gradient -
+        // Kinematic viscosity and Force
+        void_fraction * kinematic_viscosity * velocity_laplacian -
+        force * void_fraction + strong_residual_vec[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const unsigned int component_i = scratch_data.components[i];
+
+          const auto phi_u_i      = scratch_data.phi_u[q][i];
+          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto phi_p_i      = scratch_data.phi_p[q][i];
+          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+
+          // Navier-Stokes Residual
+          double local_rhs_i = 0;
+
+          if (component_i < dim)
+            local_rhs_i += (
+              // Momentum
+              -(void_fraction * kinematic_viscosity *
+                  scalar_product(velocity_gradient, grad_phi_u_i) +
+                kinematic_viscosity * velocity_gradient *
+                  void_fraction_gradients * phi_u_i) -
+              velocity_gradient * velocity * void_fraction * phi_u_i
+              // Mass Source
+              - mass_source * velocity * phi_u_i
+              // Pressure and Force
+              + (void_fraction * pressure * div_phi_u_i +
+                 pressure * void_fraction_gradients * phi_u_i) +
+              force * void_fraction * phi_u_i);
+
+          if (component_i == dim)
+            // Continuity
+            local_rhs_i -= (velocity_divergence * void_fraction +
+                            velocity * void_fraction_gradients - mass_source) *
+                           phi_p_i;
+
+          // PSPG GLS term
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i);
+
+          // SUPG GLS term
+          if (SUPG)
+            {
+              local_rhs_i +=
+                -tau * (strong_residual * (grad_phi_u_i * velocity));
+            }
+
+          // Grad-div stabilization
+          if (cfd_dem.grad_div == true)
+            {
+              local_rhs_i -= gamma *
+                             (void_fraction * velocity_divergence +
+                              velocity * void_fraction_gradients) *
+                             div_phi_u_i;
+            }
+
+          local_rhs_i *= JxW;
+          local_rhs(i) += local_rhs_i;
+        }
+    }
+}
+
+template class VANSAssemblerCoreModelAs<2>;
+template class VANSAssemblerCoreModelAs<3>;
+
 template <int dim>
 void
 VANSAssemblerBDF<dim>::assemble_matrix(

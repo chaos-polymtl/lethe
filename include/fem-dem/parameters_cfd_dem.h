@@ -50,7 +50,8 @@ namespace Parameters
   enum class VANSModel
   {
     modelA,
-    modelB
+    modelB,
+    modelAs
   };
 
 

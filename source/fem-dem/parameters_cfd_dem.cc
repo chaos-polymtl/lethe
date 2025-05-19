@@ -226,6 +226,8 @@ namespace Parameters
       vans_model = Parameters::VANSModel::modelA;
     else if (op1 == "modelB")
       vans_model = Parameters::VANSModel::modelB;
+    else if (op1 == "modelAs")
+      vans_model = Parameters::VANSModel::modelAs;
     else
       throw(std::runtime_error(
         "Invalid vans model. Valid choices are modelA and modelB."));

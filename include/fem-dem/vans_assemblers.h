@@ -126,6 +126,49 @@ public:
   const Parameters::CFDDEM                 cfd_dem;
 };
 
+
+/**
+ * @brief Class that assembles the core of Model A of the Volume Averaged Navier-Stokes equations in superficial velocity form.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class VANSAssemblerCoreModelAs : public NavierStokesAssemblerBase<dim>
+{
+public:
+  VANSAssemblerCoreModelAs(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const Parameters::CFDDEM                 &cfd_dem)
+    : simulation_control(simulation_control)
+    , cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)Particles::ParticleHandler
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const bool SUPG = true;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CFDDEM                 cfd_dem;
+};
+
 /**
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier-Stokes equation with
