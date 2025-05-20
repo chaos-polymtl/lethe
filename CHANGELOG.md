@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-05-20
+
+### Fixed
+
+- MINOR The functions used to define constraints in navier_stokes_base were calling reinit() without passing the locally_owned_dofs. This caused the constraints object to not have the updated locally owned DoFs in each process. This has now been fixed. [#1533](https://github.com/chaos-polymtl/lethe/pull/1533)
+
 ## [Master] - 2025-05-09
 
 ### Added
