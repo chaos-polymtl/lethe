@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['jkr_0',['JKR',['../structParameters_1_1Lagrangian_1_1ModelParameters.html#a482f29a3bf87c90aec4469c2cef7c540a7dfcd2d872a1f653ce346e9fbddf698f',1,'Parameters::Lagrangian::ModelParameters']]]
+  ['jkr_0',['JKR',['../namespaceParameters_1_1Lagrangian.html#a52cf43225bd8a4a5e0b77c8f25e31af1a7dfcd2d872a1f653ce346e9fbddf698f',1,'Parameters::Lagrangian']]]
 ];

@@ -33,8 +33,7 @@ var searchData=
   ['move_5fsolid_5fobjects_30',['move_solid_objects',['../classDEMSolver.html#aba266cd57fa8dd40c741b60713d587d3',1,'DEMSolver']]],
   ['move_5fsolid_5ftriangulation_31',['move_solid_triangulation',['../classSerialSolid.html#a61418fd2272a22899c3fc0bfbe948cd0',1,'SerialSolid::move_solid_triangulation()'],['../classSolidBase.html#a4c767cc5b7c391f820dfe881eec58e28',1,'SolidBase::move_solid_triangulation()']]],
   ['move_5fsolid_5ftriangulation_5fwith_5fdisplacement_32',['move_solid_triangulation_with_displacement',['../classSerialSolid.html#ae5bc1623235411e6761d5b7f4cd450ff',1,'SerialSolid::move_solid_triangulation_with_displacement()'],['../classSolidBase.html#a9ebae14d0b18ffddedab124a4619e172',1,'SolidBase::move_solid_triangulation_with_displacement()']]],
-  ['mpi_5fcorrection_5fover_5fcalculation_5fof_5fforces_5fand_5ftorques_33',['mpi_correction_over_calculation_of_forces_and_torques',['../classParticleWallContactForce.html#a25d04d3e650544053a801776cc35a798',1,'ParticleWallContactForce']]],
-  ['multi_5fgeneral_5fcell_34',['multi_general_cell',['../classParticlesForceChains.html#a4f5ae0a2c3ddf3c9539c61b4f1445991',1,'ParticlesForceChains']]],
-  ['multiphysicsinterface_35',['MultiphysicsInterface',['../classMultiphysicsInterface.html#a27f42b3d6dfed363f457a8c02721741c',1,'MultiphysicsInterface']]],
-  ['mydiagonalmatrix_36',['MyDiagonalMatrix',['../classMyDiagonalMatrix.html#aedcc09c95544f02717ea78c9314363df',1,'MyDiagonalMatrix']]]
+  ['multi_5fgeneral_5fcell_33',['multi_general_cell',['../classParticlesForceChains.html#a4f5ae0a2c3ddf3c9539c61b4f1445991',1,'ParticlesForceChains']]],
+  ['multiphysicsinterface_34',['MultiphysicsInterface',['../classMultiphysicsInterface.html#a27f42b3d6dfed363f457a8c02721741c',1,'MultiphysicsInterface']]],
+  ['mydiagonalmatrix_35',['MyDiagonalMatrix',['../classMyDiagonalMatrix.html#aedcc09c95544f02717ea78c9314363df',1,'MyDiagonalMatrix']]]
 ];

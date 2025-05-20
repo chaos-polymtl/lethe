@@ -1,11 +1,5 @@
-<map id="ParticleWallContactForce&lt; dim, PropertiesIndex &gt;" name="ParticleWallContactForce&lt; dim, PropertiesIndex &gt;">
-<area shape="rect" id="Node000001" title="Base interface for classes that carry out the calculation of particle&#45;wall contact force." alt="" coords="5,69,192,109"/>
-<area shape="rect" id="Node000002" href="$classParticleWallJKRForce.html" title="Calculation of the JKR particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="246,5,433,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="187,63,263,43,264,48,189,68"/>
-<area shape="rect" id="Node000003" href="$classParticleWallLinearForce.html" title="Calculate particle&#45;wall contact force using the information obtained from the fine search and physica..." alt="" coords="246,69,433,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="205,87,246,87,246,92,205,92"/>
-<area shape="rect" id="Node000004" href="$classParticleWallNonLinearForce.html" title="Calculate the non&#45;linear particle&#45;wall contact force using the information obtained from the fine sea..." alt="" coords="240,133,439,173"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="189,110,264,131,263,136,187,116"/>
-<area shape="rect" id="Node000005" href="$classParticleWallDMTForce.html" title="Calculation of the DMT particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="487,133,673,173"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="452,151,486,151,486,156,452,156"/>
+<map id="ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;" name="ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;">
+<area shape="rect" id="Node000001" title="Execute calculation of particle&#45;wall contacts." alt="" coords="23,93,206,163"/>
+<area shape="rect" id="Node000002" href="$classParticleWallContactForceBase.html" title="Base class for the particle&#45;wall contact force models This class does not implement any of the models..." alt="" coords="5,5,224,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,59,117,93,112,93,112,59"/>
 </map>

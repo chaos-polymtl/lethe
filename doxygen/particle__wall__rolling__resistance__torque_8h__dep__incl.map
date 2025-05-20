@@ -1,0 +1,34 @@
+<map id="/home/runner/work/lethe/lethe/include/dem/particle_wall_rolling_resistance_torque.h" name="/home/runner/work/lethe/lethe/include/dem/particle_wall_rolling_resistance_torque.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="520,5,759,60"/>
+<area shape="rect" id="Node000002" href="$particle__wall__contact__force_8h.html" title=" " alt="" coords="541,108,737,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="642,74,642,108,637,108,637,74"/>
+<area shape="rect" id="Node000003" href="$dem_8h.html" title=" " alt="" coords="167,225,355,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="535,169,328,228,326,223,533,164"/>
+<area shape="rect" id="Node000009" href="$set__particle__wall__contact__force__model_8h.html" title=" " alt="" coords="445,211,628,280"/>
+<area shape="poly" id="edge9_Node000002_Node000009" title=" " alt="" coords="607,175,571,212,567,209,603,171"/>
+<area shape="rect" id="Node000011" href="$ib__particles__dem_8h.html" title=" " alt="" coords="716,218,899,273"/>
+<area shape="poly" id="edge13_Node000002_Node000011" title=" " alt="" coords="693,168,768,215,765,220,690,172"/>
+<area shape="rect" id="Node000015" href="$particle__wall__contact__force_8cc.html" title=" " alt="" coords="923,218,1115,273"/>
+<area shape="poly" id="edge17_Node000002_Node000015" title=" " alt="" coords="751,163,912,208,936,215,935,220,911,213,750,169"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,445,188,500"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="155,267,127,277,101,290,78,308,59,329,52,343,49,357,53,388,64,418,79,444,75,446,60,420,48,389,44,357,47,341,54,327,74,304,98,286,125,272,153,262"/>
+<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="69,335,252,390"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="237,277,186,337,182,333,233,274"/>
+<area shape="rect" id="Node000008" href="$dem_8cc.html" title=" " alt="" coords="276,343,467,383"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="290,273,355,341,351,344,286,277"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="209,548,392,603"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="163,503,249,546,246,550,161,508"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="140,403,115,446,110,444,136,401"/>
+<area shape="rect" id="Node000007" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,445,395,500"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="208,396,270,443,267,447,205,400"/>
+<area shape="poly" id="edge12_Node000009_Node000005" title=" " alt="" coords="525,294,507,341,482,396,449,452,408,502,378,528,346,550,343,546,374,524,404,498,444,449,477,394,502,339,520,292"/>
+<area shape="poly" id="edge10_Node000009_Node000008" title=" " alt="" coords="479,290,400,345,397,340,476,286"/>
+<area shape="rect" id="Node000010" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="543,328,725,397"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="576,289,608,326,603,330,572,293"/>
+<area shape="rect" id="Node000012" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="749,335,932,390"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="821,285,836,334,830,336,816,286"/>
+<area shape="rect" id="Node000014" href="$ib__particles__dem_8cc.html" title=" " alt="" coords="956,335,1139,390"/>
+<area shape="poly" id="edge16_Node000011_Node000014" title=" " alt="" coords="875,276,994,333,992,338,873,281"/>
+<area shape="rect" id="Node000013" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="748,445,933,500"/>
+<area shape="poly" id="edge15_Node000012_Node000013" title=" " alt="" coords="843,404,843,445,838,445,838,404"/>
+</map>
