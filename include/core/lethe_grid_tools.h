@@ -12,6 +12,7 @@
 
 #include <deal.II/fe/mapping_manifold.h>
 #include <deal.II/fe/mapping_q1.h>
+#include <deal.II/fe/mapping_q_cache.h>
 
 #include <unordered_set>
 
@@ -404,7 +405,8 @@ namespace LetheGridTools
   template <int dim>
   void
   rotate_mapping(const DoFHandler<dim> &dof_handler,
-                 const MappingQ<dim>   &mapping,
+                 MappingQCache<dim>    &mapping,
+                 const Mapping<dim>    &mapping_q,
                  const double           radius,
                  const double           rotation_angle);
 
