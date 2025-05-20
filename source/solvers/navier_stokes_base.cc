@@ -5,6 +5,7 @@
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
 #include <core/mesh_controller.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -1991,6 +1992,23 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
+
+  // Rotate mapping for rotor-stator configuration
+  if (this->simulation_parameters.mortar.enable)
+    {
+      MappingQCache<dim> mapping_cache(this->velocity_fem_degree);
+
+      LetheGridTools::rotate_mapping(
+        this->dof_handler,
+        mapping_cache,
+        *this->mapping,
+        compute_n_subdivisions_and_radius(this->dof_handler,
+                                          this->simulation_parameters.mortar)
+          .second,
+        this->simulation_parameters.mortar.rotor_mesh->rotation_angle);
+
+      this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
