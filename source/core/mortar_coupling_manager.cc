@@ -1092,15 +1092,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
 
-/**
- * @brief Construct oversampled quadrature
- *
- * @param[in] quadrature Quadrature for local cell operations
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return Quadrature oversampled
- */
 template <int dim>
 static Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
