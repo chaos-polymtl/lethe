@@ -154,18 +154,15 @@ protected:
     Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
     const unsigned int boundary_id   = contact_info.boundary_id;
 
-    Tensor<1, 3> particle_velocity;
-    particle_velocity[0] = particle_properties[PropertiesIndex::v_x];
-    particle_velocity[1] = particle_properties[PropertiesIndex::v_y];
-    particle_velocity[2] = particle_properties[PropertiesIndex::v_z];
+    Tensor<1, 3> particle_velocity = {
+      particle_properties[PropertiesIndex::v_x],
+      particle_properties[PropertiesIndex::v_y],
+      particle_properties[PropertiesIndex::v_z]};
 
-    Tensor<1, 3> particle_angular_velocity;
-    particle_angular_velocity[0] =
-      particle_properties[PropertiesIndex::omega_x];
-    particle_angular_velocity[1] =
-      particle_properties[PropertiesIndex::omega_y];
-    particle_angular_velocity[2] =
-      particle_properties[PropertiesIndex::omega_z];
+    Tensor<1, 3> particle_angular_velocity = {
+      particle_properties[PropertiesIndex::omega_x],
+      particle_properties[PropertiesIndex::omega_y],
+      particle_properties[PropertiesIndex::omega_z]};
 
     // Calculating approximation of the contact point using the normal vector
     Point<3> contact_point =
@@ -247,18 +244,15 @@ protected:
 
     // Using velocity and angular velocity of particle as
     // local vectors
-    Tensor<1, 3> particle_velocity;
-    particle_velocity[0] = particle_properties[PropertiesIndex::v_x];
-    particle_velocity[1] = particle_properties[PropertiesIndex::v_y];
-    particle_velocity[2] = particle_properties[PropertiesIndex::v_z];
+    Tensor<1, 3> particle_velocity = {
+      particle_properties[PropertiesIndex::v_x],
+      particle_properties[PropertiesIndex::v_y],
+      particle_properties[PropertiesIndex::v_z]};
 
-    Tensor<1, 3> particle_angular_velocity;
-    particle_angular_velocity[0] =
-      particle_properties[PropertiesIndex::omega_x];
-    particle_angular_velocity[1] =
-      particle_properties[PropertiesIndex::omega_y];
-    particle_angular_velocity[2] =
-      particle_properties[PropertiesIndex::omega_z];
+    Tensor<1, 3> particle_angular_velocity = {
+      particle_properties[PropertiesIndex::omega_x],
+      particle_properties[PropertiesIndex::omega_y],
+      particle_properties[PropertiesIndex::omega_z]};
 
     // Defining relative contact velocity
     // v_ij = v_j - v_i
