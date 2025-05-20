@@ -84,7 +84,8 @@ void
 VOFAlgebraicInterfaceReinitialization<dim>::define_zero_constraints()
 {
   this->zero_constraints.clear();
-  this->zero_constraints.reinit(this->locally_relevant_dofs);
+  this->zero_constraints.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs);
 
   DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           this->zero_constraints);
@@ -125,7 +126,8 @@ void
 VOFAlgebraicInterfaceReinitialization<dim>::define_non_zero_constraints()
 {
   this->nonzero_constraints.clear();
-  this->nonzero_constraints.reinit(this->locally_relevant_dofs);
+  this->nonzero_constraints.reinit(this->locally_owned_dofs,
+                                   this->locally_relevant_dofs);
 
   DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           this->nonzero_constraints);

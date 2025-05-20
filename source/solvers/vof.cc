@@ -2347,7 +2347,8 @@ VolumeOfFluid<dim>::define_zero_constraints()
 {
   // Zero constraints
   this->zero_constraints.clear();
-  this->zero_constraints.reinit(this->locally_relevant_dofs);
+  this->zero_constraints.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs);
 
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           this->zero_constraints);
@@ -2385,7 +2386,8 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
 {
   {
     nonzero_constraints.clear();
-    nonzero_constraints.reinit(this->locally_relevant_dofs);
+    nonzero_constraints.reinit(this->locally_owned_dofs,
+                               this->locally_relevant_dofs);
 
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
