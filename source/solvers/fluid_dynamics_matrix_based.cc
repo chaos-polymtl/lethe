@@ -778,38 +778,40 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
 
       if (copy_data.local_matrix.n() != n_dofs)
         {
-          std::cout << "Local matrix = " << std::endl;
-          copy_data.local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
+          // std::cout << "Local matrix = " << std::endl;
+          // copy_data.local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
           
           LAPACKFullMatrix<double> ns_bloc = LAPACKFullMatrix<double>(n_dofs);
 
           ns_bloc.fill(copy_data.local_matrix, 0, 0, 0, 0);
-          std::cout << "ns_bloc = " << std::endl;
-          ns_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
+          // std::cout << "ns_bloc = " << std::endl;
+          // ns_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
           
           LAPACKFullMatrix<double> ns_enrichment_bloc =
-            LAPACKFullMatrix<double>(n_dofs, 2);
+            LAPACKFullMatrix<double>(n_dofs, 4);
 
           ns_enrichment_bloc.fill(copy_data.local_matrix, 0, 0, 0, n_dofs);
 
           LAPACKFullMatrix<double> enrichment_ns_bloc =
-            LAPACKFullMatrix<double>(2, n_dofs);
+            LAPACKFullMatrix<double>(4, n_dofs);
 
           enrichment_ns_bloc.fill(copy_data.local_matrix, 0, 0, n_dofs, 0);
 
           LAPACKFullMatrix<double> enrichment_bloc =
-            LAPACKFullMatrix<double>(2, 2);
+            LAPACKFullMatrix<double>(4, 4);
 
           enrichment_bloc.fill(copy_data.local_matrix, 0, 0, n_dofs, n_dofs);
 
           LAPACKFullMatrix<double> tmp_condensed_copy_data_local_matrix =
             LAPACKFullMatrix<double>(ns_bloc);
-
+          
+          // std::cout << "enrichment_bloc = " << std::endl;
+          // enrichment_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
           enrichment_bloc.invert();
 
           LAPACKFullMatrix<double>
             inverse_enrichment_bloc_x_enrichment_ns_bloc =
-              LAPACKFullMatrix<double>(2, n_dofs);
+              LAPACKFullMatrix<double>(4, n_dofs);
 
           LAPACKFullMatrix<double>
             ns_enrichment_bloc_x_inverse_enrichment_bloc_x_enrichment_ns_bloc =
@@ -829,13 +831,13 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
 
           FullMatrix<double> condensed_copy_data_local_matrix =
             FullMatrix<double>(n_dofs, n_dofs);
-          std::cout << "tmp_condensed_copy_data_local_matrix = " << std::endl;
-          tmp_condensed_copy_data_local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
+          // std::cout << "tmp_condensed_copy_data_local_matrix = " << std::endl;
+          // tmp_condensed_copy_data_local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
           
           condensed_copy_data_local_matrix =
             tmp_condensed_copy_data_local_matrix;
-          std::cout << "condensed_copy_data_local_matrix = " << std::endl;
-          condensed_copy_data_local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
+          // std::cout << "condensed_copy_data_local_matrix = " << std::endl;
+          // condensed_copy_data_local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
           
           const AffineConstraints<double> &constraints_used =
             (!this->simulation_parameters.constrain_solid_domain.enable) ?
@@ -859,8 +861,8 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
     }
   else
     {
-      std::cout << "Local matrix = " << std::endl;
-      copy_data.local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
+      // std::cout << "Local matrix = " << std::endl;
+      // copy_data.local_matrix.print_formatted(std::cout, 3, true, 0, "0.0");
       
       const AffineConstraints<double> &constraints_used =
         (!this->simulation_parameters.constrain_solid_domain.enable) ?
@@ -1159,50 +1161,50 @@ FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
       if (copy_data.local_matrix.n() != n_dofs)
         {
           LAPACKFullMatrix<double> ns_rhs_bloc = LAPACKFullMatrix<double>(n_dofs, 1);
-          LAPACKFullMatrix<double> enrichment_rhs_bloc = LAPACKFullMatrix<double>(2, 1);
+          LAPACKFullMatrix<double> enrichment_rhs_bloc = LAPACKFullMatrix<double>(4, 1);
           
-          std::cout << "Local rhs" << std::endl;
-          copy_data.local_rhs.print(std::cout, 3, true, false);
+          // std::cout << "Local rhs" << std::endl;
+          // copy_data.local_rhs.print(std::cout, 3, true, false);
           
           for (unsigned int i = 0; i < n_dofs; i++)
           {
             ns_rhs_bloc(i,0) = copy_data.local_rhs[i];
           }
           
-          std::cout << "ns_rhs_bloc" << std::endl;
-          ns_rhs_bloc.print_formatted(std::cout, 3, true, false);
+          // std::cout << "ns_rhs_bloc" << std::endl;
+          // ns_rhs_bloc.print_formatted(std::cout, 3, true, false);
           
-          for (unsigned int i = 0; i < 2; i++)
+          for (unsigned int i = 0; i < 4; i++)
           {
             enrichment_rhs_bloc(i,0) = copy_data.local_rhs[n_dofs + i];
           }
           
-          std::cout << "enrichment_rhs_bloc" << std::endl;
-          enrichment_rhs_bloc.print_formatted(std::cout, 3, true, false);
+          // std::cout << "enrichment_rhs_bloc" << std::endl;
+          // enrichment_rhs_bloc.print_formatted(std::cout, 3, true, false);
           
           
           LAPACKFullMatrix<double> ns_enrichment_matrix_bloc =
-            LAPACKFullMatrix<double>(n_dofs, 2);
+            LAPACKFullMatrix<double>(n_dofs, 4);
 
           ns_enrichment_matrix_bloc.fill(copy_data.local_matrix, 0, 0, 0, n_dofs);
           
-          std::cout << "ns_enrichment_matrix_bloc" << std::endl;
-          ns_enrichment_matrix_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
+          // std::cout << "ns_enrichment_matrix_bloc" << std::endl;
+          // ns_enrichment_matrix_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
           
           
           LAPACKFullMatrix<double> enrichment_matrix_bloc =
-            LAPACKFullMatrix<double>(2, 2);
+            LAPACKFullMatrix<double>(4, 4);
 
           enrichment_matrix_bloc.fill(copy_data.local_matrix, 0, 0, n_dofs, n_dofs);
           
-          std::cout << "enrichment_matrix_bloc" << std::endl;
-          enrichment_matrix_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
+          // std::cout << "enrichment_matrix_bloc" << std::endl;
+          // enrichment_matrix_bloc.print_formatted(std::cout, 3, true, 0, "0.0");
           enrichment_matrix_bloc.invert();
           
           
           LAPACKFullMatrix<double>
             inverse_enrichment_matrix_bloc_x_enrichment_rhs_bloc =
-              LAPACKFullMatrix<double>(2, 1);
+              LAPACKFullMatrix<double>(4, 1);
           
           LAPACKFullMatrix<double>
             ns_enrichment_bloc_x_inverse_enrichment_matrix_bloc_x_enrichment_rhs_bloc =
@@ -1241,8 +1243,8 @@ FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
         }
         else
         {
-          std::cout << "Local rhs bip" << std::endl;
-          copy_data.local_rhs.print(std::cout, 3, true, false);
+          // std::cout << "Local rhs bip" << std::endl;
+          // copy_data.local_rhs.print(std::cout, 3, true, false);
           
           const AffineConstraints<double> &constraints_used =
             (!this->simulation_parameters.constrain_solid_domain.enable) ?
@@ -1255,8 +1257,8 @@ FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
       }
     else
     {
-      std::cout << "Local rhs bop" << std::endl;
-      copy_data.local_rhs.print(std::cout, 3, true, false);
+      // std::cout << "Local rhs bop" << std::endl;
+      // copy_data.local_rhs.print(std::cout, 3, true, false);
       
       const AffineConstraints<double> &constraints_used =
         (!this->simulation_parameters.constrain_solid_domain.enable) ?

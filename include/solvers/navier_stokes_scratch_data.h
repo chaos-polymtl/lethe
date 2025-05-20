@@ -12,6 +12,8 @@
 #include <core/rheological_model.h>
 #include <core/time_integration_utilities.h>
 #include <core/vector.h>
+#include <core/utilities.h>
+
 
 #include <solvers/cahn_hilliard_filter.h>
 #include <solvers/physical_properties_manager.h>
@@ -192,12 +194,12 @@ public:
                            sd.cahn_hilliard_filter);
     if (sd.gather_pressure_enrichment)
       {
-        std::cout <<"Boop" << std::endl;
+        // std::cout <<"Boop" << std::endl;
         enable_pressure_enrichment(*sd.dof_handler_level_set,
                                    *sd.level_set,
                                    *sd.mesh_classifier,
                                    *sd.fe_collection);
-        std::cout <<"Bip" << std::endl;
+        // std::cout <<"Bip" << std::endl;
       }
     gather_hessian = sd.gather_hessian;
   }
@@ -1049,7 +1051,7 @@ public:
       ObserverPointer<hp::FECollection<dim>>(&fe_collection_in);
     // fe_collection->push_back(this->fe_values.get_fe());
 
-    const QGauss<1> quadrature_1D(this->fe_values.get_fe().degree + 1);
+    const QGauss<1> quadrature_1D((this->fe_values.get_fe().degree + 1)*2);
 
     NonMatching::RegionUpdateFlags region_update_flags;
     region_update_flags.inside = update_values | update_gradients |
@@ -1079,10 +1081,8 @@ public:
                    Tensor<1, dim>                 beta_force,
                    const unsigned int             start,
                    const FEValues<dim>           &reinited_fe_falues_to_append,
-                   std::vector<double>           &M_0_x_q,
-                   std::vector<double>           &M_1_x_q,
-                   std::vector<Tensor<1, dim>>   &grad_M_0_x_q,
-                   std::vector<Tensor<1, dim>>   &grad_M_1_x_q)
+                   std::vector<std::vector<double>>         &M_0_x_q,
+                   std::vector<std::vector<Tensor<1, dim>>> &grad_M_0_x_q)
   {
     const unsigned int append_n_q_points =
       reinited_fe_falues_to_append.get_quadrature().size();
@@ -1269,22 +1269,29 @@ public:
             this->hess_phi_u[q + start][k + dof_start] = 0;
             for (int d = 0; d < dim; ++d)
               this->laplacian_phi_u[q + start][k + dof_start][d] = 0;
+              
+            this->phi_p[q + start][k+dof_start]      = M_0_x_q[q + start][k];
+            this->grad_phi_p[q + start][k+dof_start] = grad_M_0_x_q[q + start][k];
+            // std::cout << "phi_p[q + start][k+dof_start] = "
+            //           << phi_p[q + start][k+dof_start] << std::endl;
+            // std::cout << "grad_phi_p[q + start][k+dof_start] = "
+            //           << grad_phi_p[q + start][k+dof_start] << std::endl;
           }
 
-        this->phi_p[q + start][dof_start]      = M_0_x_q[q + start];
-        this->grad_phi_p[q + start][dof_start] = grad_M_0_x_q[q + start];
+        // this->phi_p[q + start][dof_start]      = M_0_x_q[q + start];
+        // this->grad_phi_p[q + start][dof_start] = grad_M_0_x_q[q + start];
+        // 
+        // this->phi_p[q + start][dof_start + 1]      = M_1_x_q[q + start];
+        // this->grad_phi_p[q + start][dof_start + 1] = grad_M_1_x_q[q + start];
 
-        this->phi_p[q + start][dof_start + 1]      = M_1_x_q[q + start];
-        this->grad_phi_p[q + start][dof_start + 1] = grad_M_1_x_q[q + start];
-
-        std::cout << "phi_p[q + start][dof_start] = "
-                  << phi_p[q + start][dof_start] << std::endl;
-        std::cout << "phi_p[q + start][dof_start+1] = "
-                  << phi_p[q + start][dof_start + 1] << std::endl;
-        std::cout << "grad_phi_p[q + start][dof_start] = "
-                  << grad_phi_p[q + start][dof_start] << std::endl;
-        std::cout << "grad_phi_p[q + start][dof_start+1] = "
-                  << grad_phi_p[q + start][dof_start + 1] << std::endl;
+        // std::cout << "phi_p[q + start][dof_start] = "
+        //           << phi_p[q + start][dof_start] << std::endl;
+        // std::cout << "phi_p[q + start][dof_start+1] = "
+        //           << phi_p[q + start][dof_start + 1] << std::endl;
+        // std::cout << "grad_phi_p[q + start][dof_start] = "
+        //           << grad_phi_p[q + start][dof_start] << std::endl;
+        // std::cout << "grad_phi_p[q + start][dof_start+1] = "
+        //           << grad_phi_p[q + start][dof_start + 1] << std::endl;
       }
   }
 
@@ -1295,10 +1302,8 @@ public:
     const unsigned int                                    outside_n_q_points,
     const FEValues<dim>         &reinited_inside_fe_values,
     const FEValues<dim>         &reinited_outside_fe_values,
-    std::vector<double>         &M_0_x_q,
-    std::vector<double>         &M_1_x_q,
-    std::vector<Tensor<1, dim>> &grad_M_0_x_q,
-    std::vector<Tensor<1, dim>> &grad_M_1_x_q)
+    std::vector<std::vector<double>>         &M_0_x_q,
+    std::vector<std::vector<Tensor<1, dim>>> &grad_M_0_x_q)
   {
     typename DoFHandler<dim>::active_cell_iterator cell_level_set(
       &(dof_handler_level_set->get_triangulation()),
@@ -1332,89 +1337,103 @@ public:
             }
         }
       
+      for (unsigned int q = 0; q < inside_n_q_points; q++)
+      {
+        const double H_x_q = -1.0;
+        for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+          {
+            const double level_set_x_j = dof_values_level_set[j];
+            const double H_x_j = sgn(level_set_x_j);
+            
+            M_0_x_q[q][j] = 0.5*H_x_q*(H_x_q-H_x_j)*reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q);
+            grad_M_0_x_q[q][j] = 0.5*H_x_q*(H_x_q-H_x_j)*reinited_inside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
+            
+            // std::cout << "reinited_inside_fe_values.shape_value(j, q) = " << reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q) << std::endl;
+            // std::cout << "reinited_inside_fe_values.grad_value(j, q) = " << reinited_inside_fe_values[this->pressure].gradient(pressure_dof_index[j], q) << std::endl;
+            
+          }
+      }
+      
+      for (unsigned int q = 0; q < outside_n_q_points; q++)
+      {
+        const double H_x_q = 1.0;
+        for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+          {
+            const double level_set_x_j = dof_values_level_set[j];
+            const double H_x_j = sgn(level_set_x_j);
+            
+            M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q][j] = 0.5*H_x_q*(H_x_q-H_x_j)*reinited_outside_fe_values[this->pressure].value(pressure_dof_index[j], q);
+            grad_M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q][j] = 0.5*H_x_q*(H_x_q-H_x_j)*reinited_outside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
+            
+            // std::cout << "reinited_outside_fe_values.shape_value(j, q) = " << reinited_outside_fe_values[this->pressure].value(pressure_dof_index[j], q) << std::endl;
+            // std::cout << "reinited_outside_fe_values.grad_value(j, q) = " << reinited_outside_fe_values[this->pressure].gradient(pressure_dof_index[j], q) << std::endl;
+            
+          }
+      }
       
       // std::cout << "Inside" << std::endl;
-      for (unsigned int q = 0; q < inside_n_q_points; q++)
-        {
-          double         s_x_q_inside      = 0.0;
-          Tensor<1, dim> grad_s_x_q_inside = Tensor<1, dim>();
-
-          for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
-            {
-              std::cout << "reinited_inside_fe_values.shape_value(j, q) = " << reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q) << std::endl;
-              const double solution_J = dof_values_level_set[j];
-              std::cout << "solution_J = " << solution_J << std::endl;
-              if (solution_J > 0.0)
-                {
-                  
-                  
-                  s_x_q_inside += reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q);
-                  grad_s_x_q_inside +=
-                    reinited_inside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
-                }
-            }
-          M_0_x_q[q] = 0.0;
-          M_1_x_q[q] = s_x_q_inside;
-
-          grad_M_0_x_q[q] = 0.0;
-          grad_M_1_x_q[q] = grad_s_x_q_inside;
-
-          std::cout << "q = " << q << std::endl;
-          std::cout << "x_q = " << reinited_inside_fe_values.quadrature_point(q)
-                    << std::endl;
-          
-          std::cout << "M_0_x_q[q] = " << M_0_x_q[q] << std::endl;
-          std::cout << "M_1_x_q[q] = " << M_1_x_q[q] << std::endl;
-          std::cout << "grad_M_0_x_q[q] = " << grad_M_0_x_q[q] << std::endl;
-          std::cout << "grad_M_1_x_q[q] = " << grad_M_1_x_q[q] << std::endl;
-        }
-      // std::cout << "Outside" << std::endl;
-      for (unsigned int q = 0; q < outside_n_q_points; q++)
-        {
-          double         s_x_q_outside      = 0.0;
-          Tensor<1, dim> grad_s_x_q_outside = Tensor<1, dim>();
-
-          for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
-            {
-              std::cout << "reinited_outside_fe_values.value(j, q) = " << reinited_outside_fe_values[this->pressure].value(pressure_dof_index[j], q) << std::endl;
-              
-              const double solution_J = dof_values_level_set[j];
-              if (solution_J > 0.0)
-                {
-
-                  s_x_q_outside += reinited_outside_fe_values[this->pressure].value(pressure_dof_index[j], q);
-                  grad_s_x_q_outside +=
-                    reinited_outside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
-                }
-            }
-          M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q] =
-            1.0 - s_x_q_outside;
-          M_1_x_q[reinited_inside_fe_values.n_quadrature_points + q] = 0.0;
-
-          grad_M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q] =
-            -grad_s_x_q_outside;
-          grad_M_1_x_q[reinited_inside_fe_values.n_quadrature_points + q] = 0.0;
-
-          std::cout << "q = "
-                    << q + reinited_inside_fe_values.n_quadrature_points
-                    << std::endl;
-          std::cout
-            << "M_0_x_q[q] = "
-            << M_0_x_q[q + reinited_inside_fe_values.n_quadrature_points]
-            << std::endl;
-          std::cout
-            << "M_1_x_q[q] = "
-            << M_1_x_q[q + reinited_inside_fe_values.n_quadrature_points]
-            << std::endl;
-          std::cout
-            << "grad_M_0_x_q[q] = "
-            << grad_M_0_x_q[q + reinited_inside_fe_values.n_quadrature_points]
-            << std::endl;
-          std::cout
-            << "grad_M_1_x_q[q] = "
-            << grad_M_1_x_q[q + reinited_inside_fe_values.n_quadrature_points]
-            << std::endl;
-        }
+      // for (unsigned int q = 0; q < inside_n_q_points; q++)
+      //   {
+      //     double         s_x_q_inside      = 0.0;
+      //     Tensor<1, dim> grad_s_x_q_inside = Tensor<1, dim>();
+      // 
+      //     for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+      //       {
+      //         // std::cout << "reinited_inside_fe_values.shape_value(j, q) = " << reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q) << std::endl;
+      //         const double solution_J = dof_values_level_set[j];
+      //         // std::cout << "solution_J = " << solution_J << std::endl;
+      //         if (solution_J > 0.0)
+      //           {
+      // 
+      // 
+      //             s_x_q_inside += reinited_inside_fe_values[this->pressure].value(pressure_dof_index[j], q);
+      //             grad_s_x_q_inside +=
+      //               reinited_inside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
+      //           }
+      //       }
+      //     // std::cout << "this->cell_size = " << this->cell_size << std::endl;
+      //     // std::cout << "this->dynamic_viscosity[q] = " << this->dynamic_viscosity[q] << std::endl;
+      // 
+      // 
+      //     const double scaling_factor = 1.0/(this->cell_size*this->cell_size);
+      // 
+      //     M_0_x_q[q] = 0.0;
+      //     M_1_x_q[q] = s_x_q_inside*scaling_factor;
+      // 
+      //     grad_M_0_x_q[q] = 0.0;
+      //     grad_M_1_x_q[q] = grad_s_x_q_inside*scaling_factor;
+      // 
+      // 
+      //   }
+      // // std::cout << "Outside" << std::endl;
+      // for (unsigned int q = 0; q < outside_n_q_points; q++)
+      //   {
+      //     double         s_x_q_outside      = 0.0;
+      //     Tensor<1, dim> grad_s_x_q_outside = Tensor<1, dim>();
+      // 
+      //     for (unsigned int j = 0; j < n_dofs_per_cell_level_set; j++)
+      //       {
+      // 
+      //         const double solution_J = dof_values_level_set[j];
+      //         if (solution_J > 0.0)
+      //           {
+      // 
+      //             s_x_q_outside += reinited_outside_fe_values[this->pressure].value(pressure_dof_index[j], q);
+      //             grad_s_x_q_outside +=
+      //               reinited_outside_fe_values[this->pressure].gradient(pressure_dof_index[j], q);
+      //           }
+      //       }
+      //     const double scaling_factor = 1.0/(this->cell_size*this->cell_size);
+      // 
+      //     M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q] =
+      //       (1.0 - s_x_q_outside)*scaling_factor;
+      //     M_1_x_q[reinited_inside_fe_values.n_quadrature_points + q] = 0.0;
+      // 
+      //     grad_M_0_x_q[reinited_inside_fe_values.n_quadrature_points + q] =
+      //       -grad_s_x_q_outside*scaling_factor;
+      //     grad_M_1_x_q[reinited_inside_fe_values.n_quadrature_points + q] = 0.0;
+      // 
+      //   }
   }
 
   template <typename VectorType>
@@ -1440,12 +1459,20 @@ public:
 
       this->non_matching_fe_values->reinit(cell);
       this->fe_values.reinit(cell);
+      
+      auto &fe = this->fe_values.get_fe();
+      
+      double cell_measure =
+        compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
+      this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
+
+      this->pressure_scaling_factor = pressure_scaling_factor;
 
       // std::cout << "Hiiiii"<< std::endl;
 
       unsigned int       new_n_q_points = 0;
       const unsigned int new_n_dofs =
-        this->fe_values.get_fe().n_dofs_per_cell() + 2;
+        this->fe_values.get_fe().n_dofs_per_cell() + 4;
 
       const std::optional<FEValues<dim>> &inside_fe_values =
         this->non_matching_fe_values->get_inside_fe_values();
@@ -1468,23 +1495,24 @@ public:
 
       this->reallocate(new_n_q_points, new_n_dofs);
 
-      auto &fe = this->fe_values.get_fe();
       for (const unsigned int k : fe_values.dof_indices())
         {
           components[k] = fe.system_to_component_index(k).first;
         }
       components[fe_values.get_fe().n_dofs_per_cell()]     = dim;
       components[fe_values.get_fe().n_dofs_per_cell() + 1] = dim;
+      components[fe_values.get_fe().n_dofs_per_cell() + 2] = dim;
+      components[fe_values.get_fe().n_dofs_per_cell() + 3] = dim;
       
-      std::vector<double> M_0_x_q(inside_n_q_points + outside_n_q_points, 0.0);
-      std::vector<double> M_1_x_q(inside_n_q_points + outside_n_q_points, 0.0);
+      
+      std::vector<std::vector<double>> M_0_x_q = std::vector<std::vector<double>>(new_n_q_points, std::vector<double>(new_n_dofs));
+      // std::vector<double> M_1_x_q(inside_n_q_points + outside_n_q_points, 0.0);
 
-      std::vector<Tensor<1, dim>> grad_M_0_x_q(inside_n_q_points +
-                                                 outside_n_q_points,
-                                               Tensor<1, dim>());
-      std::vector<Tensor<1, dim>> grad_M_1_x_q(inside_n_q_points +
-                                                 outside_n_q_points,
-                                               Tensor<1, dim>());
+      std::vector<std::vector<Tensor<1, dim>>> grad_M_0_x_q= std::vector<std::vector<Tensor<1, dim>>>(
+        new_n_q_points, std::vector<Tensor<1, dim>>(new_n_dofs));
+      // std::vector<Tensor<1, dim>> grad_M_1_x_q(inside_n_q_points +
+      //                                            outside_n_q_points,
+      //                                          Tensor<1, dim>());
 
       compute_enrichment_shape_functions(cell,
                                          inside_n_q_points,
@@ -1492,9 +1520,7 @@ public:
                                          *inside_fe_values,
                                          *outside_fe_values,
                                          M_0_x_q,
-                                         M_1_x_q,
-                                         grad_M_0_x_q,
-                                         grad_M_1_x_q);
+                                         grad_M_0_x_q);
       if (inside_fe_values)
         append_fe_values(current_solution,
                          previous_solutions,
@@ -1503,9 +1529,7 @@ public:
                          0,
                          *inside_fe_values,
                          M_0_x_q,
-                         M_1_x_q,
-                         grad_M_0_x_q,
-                         grad_M_1_x_q);
+                         grad_M_0_x_q);
 
       if (outside_fe_values)
         append_fe_values(current_solution,
@@ -1515,19 +1539,8 @@ public:
                          inside_n_q_points,
                          *outside_fe_values,
                          M_0_x_q,
-                         M_1_x_q,
-                         grad_M_0_x_q,
-                         grad_M_1_x_q);
+                         grad_M_0_x_q);
 
-
-
-
-
-      double cell_measure =
-        compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
-      this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
-
-      this->pressure_scaling_factor = pressure_scaling_factor;
 
       // reinit_boundary_face_values(cell, current_solution);
       
