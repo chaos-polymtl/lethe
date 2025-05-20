@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The functions used to define constraints in navier_stokes_base were calling reinit() without passing the locally_owned_dofs. This caused the constraints object to not have the updated locally owned DoFs in each process. This has now been fixed. [#1533](https://github.com/chaos-polymtl/lethe/pull/1533)
 
+### Changed 
+
+- MAJOR The architecture of the code for particle-wall contacts was changed to reproduce the one for particle-particle contacts and remove code duplication. 
+The particle_wall_contact_info has been changed to a struct instead of a class and normal_overlap, tangential_relative_velocity and normal_relative_velocity_value are calculated on the fly and not stored in contact_info anymore. [#1520](https://github.com/chaos-polymtl/lethe/pull/1520)
+
 ## [Master] - 2025-05-09
 
 ### Added
