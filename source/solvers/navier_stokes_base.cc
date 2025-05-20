@@ -1764,11 +1764,13 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
         locally_relevant_dofs_acquisition.get_view(0, dof_u);
       this->locally_relevant_dofs[1] =
         locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
-      nonzero_constraints.reinit(locally_relevant_dofs_acquisition);
+      nonzero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+                                 locally_relevant_dofs_acquisition);
     }
   else
     {
-      nonzero_constraints.reinit(this->locally_relevant_dofs);
+      nonzero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+                                 this->locally_relevant_dofs);
     }
 
   DoFTools::make_hanging_node_constraints(this->dof_handler,
@@ -1870,13 +1872,15 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
         locally_relevant_dofs_acquisition.get_view(0, dof_u);
       this->locally_relevant_dofs[1] =
         locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
-      this->zero_constraints.reinit(locally_relevant_dofs_acquisition);
+      this->zero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+                                    locally_relevant_dofs_acquisition);
     }
   else
     {
       this->locally_relevant_dofs =
         DoFTools::extract_locally_relevant_dofs(this->dof_handler);
-      this->zero_constraints.reinit(this->locally_relevant_dofs);
+      this->zero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+                                    this->locally_relevant_dofs);
     }
 
   DoFTools::make_hanging_node_constraints(this->dof_handler,
