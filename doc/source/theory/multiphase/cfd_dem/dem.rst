@@ -422,7 +422,7 @@ Where:
     :width: 700
     :align: center
 
-    Modeling Heat transfer between two rough particles in contact.
+    Modeling Heat transfer between two rough particles in contact. Inspired by [#beaulieu2020]_.
 
 ~~~~~~~~~~~~~~~~~~~~
 Thermal Resistances
