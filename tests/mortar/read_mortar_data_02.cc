@@ -69,7 +69,6 @@ test()
   mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
   mortar_parameters.rotor_mesh->grid_type      = "hyper_ball_balanced";
   mortar_parameters.rotor_mesh->grid_arguments = "0, 0 : 1.0";
-  mortar_parameters.rotor_mesh->rotation_angle = 3.0;
   mortar_parameters.rotor_mesh->scale          = 1;
   mortar_parameters.rotor_mesh->simplex        = false;
   mortar_parameters.stator_boundary_id         = 4;
