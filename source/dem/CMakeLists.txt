@@ -36,10 +36,6 @@ add_library(lethe-dem
   particle_wall_broad_search.cc
   particle_wall_contact_force.cc
   particle_wall_fine_search.cc
-  particle_wall_dmt_force.cc
-  particle_wall_jkr_force.cc
-  particle_wall_linear_force.cc
-  particle_wall_nonlinear_force.cc
   periodic_boundaries_manipulator.cc
   read_checkpoint.cc
   read_mesh.cc
@@ -89,11 +85,8 @@ add_library(lethe-dem
   ../../include/dem/particle_point_line_fine_search.h
   ../../include/dem/particle_wall_broad_search.h
   ../../include/dem/particle_wall_contact_force.h
-  ../../include/dem/particle_wall_dmt_force.h
   ../../include/dem/particle_wall_fine_search.h
-  ../../include/dem/particle_wall_jkr_force.h
-  ../../include/dem/particle_wall_linear_force.h
-  ../../include/dem/particle_wall_nonlinear_force.h
+  ../../include/dem/particle_wall_rolling_resistance_torque.h
   ../../include/dem/periodic_boundaries_manipulator.h
   ../../include/dem/read_checkpoint.h
   ../../include/dem/read_mesh.h

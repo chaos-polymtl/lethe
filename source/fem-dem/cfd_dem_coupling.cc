@@ -230,8 +230,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   particle_wall_contact_force_object = set_particle_wall_contact_force_model<
     dim,
     DEM::CFDDEMProperties::PropertiesIndex>(
-    this->cfd_dem_simulation_parameters.dem_parameters,
-    *parallel_triangulation);
+    this->cfd_dem_simulation_parameters.dem_parameters);
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob diameter
@@ -880,30 +879,18 @@ void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
-  particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+  particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
     dem_time_step,
-    torque,
-    force);
-
-  if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
-        .calculate_force_torque)
-    {
-      forces_boundary_information[this->simulation_control->get_step_number()] =
-        particle_wall_contact_force_object->get_force();
-      torques_boundary_information[this->simulation_control
-                                     ->get_step_number()] =
-        particle_wall_contact_force_object->get_torque();
-    }
+    contact_outcome);
 
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
-      particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+      particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
-        torque,
-        force);
+        contact_outcome);
     }
 
   particle_point_line_contact_force_object

@@ -3,7 +3,6 @@
 
 #include <core/parameters_lagrangian.h>
 
-#include <dem/particle_wall_linear_force.h>
 #include <fem-dem/ib_particles_dem.h>
 
 #include <deal.II/fe/fe_system.h>

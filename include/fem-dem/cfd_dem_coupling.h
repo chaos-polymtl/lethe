@@ -222,7 +222,7 @@ private:
                                      DEM::CFDDEMProperties::PropertiesIndex>>
     particle_particle_contact_force_object;
   std::shared_ptr<
-    ParticleWallContactForce<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+    ParticleWallContactForceBase<dim, DEM::CFDDEMProperties::PropertiesIndex>>
     particle_wall_contact_force_object;
   Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex>
                                 visualization_object;

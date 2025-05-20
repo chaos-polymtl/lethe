@@ -350,7 +350,7 @@ private:
   /**
    * @brief The particle-wall contact force object.
    */
-  std::shared_ptr<ParticleWallContactForce<dim, PropertiesIndex>>
+  std::shared_ptr<ParticleWallContactForceBase<dim, PropertiesIndex>>
     particle_wall_contact_force_object;
 
   /**
