@@ -667,7 +667,35 @@ protected:
   std::shared_ptr<MortarManagerBase<dim>>              mortar_manager;
 };
 
+/**
+ * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+ * @param[in] dof_handler DoFHandler associated to the triangulation
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return n_subdivisions Number of cells at the interface between inner
+ * and outer domains
+ * @return radius Radius at the interface between inner and outer domains
+ */
+template <int dim>
+std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius(
+  const DoFHandler<dim>         &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters);
 
+/**
+ * @brief Construct oversampled quadrature
+ *
+ * @param[in] quadrature Quadrature for local cell operations
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return Quadrature oversampled
+ */
+template <int dim>
+static Quadrature<dim>
+construct_quadrature(const Quadrature<dim>         &quadrature,
+                     const Parameters::Mortar<dim> &mortar_parameters);
 
 template <typename T>
 class BufferRW
