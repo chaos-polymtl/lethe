@@ -43,10 +43,10 @@ constant_rolling_torque(const double                   particle_radius,
 
 {
   // Getting the angular velocity of the particle
-  Tensor<1, 3> particle_angular_velocity = {
+  Tensor<1, 3> particle_angular_velocity{{
     particle_properties[PropertiesIndex::omega_x],
     particle_properties[PropertiesIndex::omega_y],
-    particle_properties[PropertiesIndex::omega_z]};
+    particle_properties[PropertiesIndex::omega_z]}};
 
   // Calculation of particle-wall angular velocity (norm of the
   // particle angular velocity)
@@ -93,10 +93,10 @@ viscous_rolling_torque(const double                   particle_radius,
 
 {
   // Getting the angular velocity of particle
-  Tensor<1, 3> particle_angular_velocity = {
+  Tensor<1, 3> particle_angular_velocity{{
     particle_properties[PropertiesIndex::omega_x],
     particle_properties[PropertiesIndex::omega_y],
-    particle_properties[PropertiesIndex::omega_z]};
+    particle_properties[PropertiesIndex::omega_z]}};
 
   // Calculation of particle-wall angular velocity (norm of the
   // particle angular velocity)
@@ -161,10 +161,10 @@ epsd_rolling_torque(const double                   particle_radius,
     effective_rolling_friction_coefficient * particle_radius;
 
   // Getting the angular velocity of particle
-  Tensor<1, 3> particle_angular_velocity = {
+  Tensor<1, 3> particle_angular_velocity{{
     particle_properties[PropertiesIndex::omega_x],
     particle_properties[PropertiesIndex::omega_y],
-    particle_properties[PropertiesIndex::omega_z]};
+    particle_properties[PropertiesIndex::omega_z]}};
 
   // Non-collinear component of the relative velocity.
   const Tensor<1, 3> omega_perpendicular =
