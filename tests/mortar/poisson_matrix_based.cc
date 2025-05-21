@@ -74,17 +74,29 @@ public:
     DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
     constraints.close();
 
+    // create mortar manager
+    const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+      6 * Utilities::pow(2, n_global_refinements),
+      quadrature,
+      0.5 * radius,
+      0.0);
+  
+    // create coupling evaluator
+    const std::shared_ptr<CouplingEvaluationBase<dim, double>> 
+      mortar_coupling_evaluator = std::make_shared<CouplingEvaluationSIPG<dim, 1, double>>(
+      mapping, 
+      dof_handler);
+
     // create coupling operator
-    coupling = std::make_shared<CouplingOperator<dim, 1, double>>(
+    mortar_coupling_operator = std::make_shared<CouplingOperator<dim, double>>(
       mapping,
       dof_handler,
       constraints,
-      quadrature,
-      6 * Utilities::pow(2, n_global_refinements),
-      0.5 * radius,
-      0,
+      mortar_coupling_evaluator,
+      mortar_manager,
       1,
-      2);
+      2,
+      1.0);
 
     // create sparsity pattern
     DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -95,7 +107,7 @@ public:
                                     /*keep_constrained_dofs = */ true);
 
     // add coupling entries in sparsity pattern
-    coupling->add_sparsity_pattern_entries(dsp);
+    mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
     constraints.close();
     sparsity_pattern.copy_from(dsp);
 
@@ -163,7 +175,7 @@ public:
           }
       }
     // add coupling entries in stiffness matrix
-    coupling->add_system_matrix_entries(system_matrix);
+    mortar_coupling_operator->add_system_matrix_entries(system_matrix);
 
     system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
@@ -232,7 +244,7 @@ private:
   TrilinosWrappers::SparsityPattern                 sparsity_pattern;
   TrilinosWrappers::MPI::Vector                     solution;
   TrilinosWrappers::MPI::Vector                     system_rhs;
-  std::shared_ptr<CouplingOperator<dim, 1, double>> coupling;
+  std::shared_ptr<CouplingOperator<dim, double>>    mortar_coupling_operator;
 };
 
 
