@@ -418,7 +418,7 @@ Where:
 * :math:`R_c` resistance of the solid layers of the particles [#beaulieu2020]_
 * :math:`R_G` resistance of the interstitial gas macrogap [#bahrami2006]_
 
-.. figure:: images/particle_particle_resistances.svg
+.. figure:: images/particle_particle_resistances.png
     :width: 700
     :align: center
 
@@ -540,7 +540,7 @@ the interstitial gas macrogap resistance is halved as there is only a macrogap a
 
 As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`R_{\mathrm{e}}` are taken equal to :math:`2r_j` and :math:`r_j` respectively.
 
-.. figure:: images/particle_wall_resistances.svg
+.. figure:: images/particle_wall_resistances.png
     :width: 700
     :align: center
 
