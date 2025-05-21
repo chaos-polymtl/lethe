@@ -121,10 +121,10 @@ test()
     construct_particle_iterator<dim>(particle_handler, tr, position_1, id_1);
 
   // Setting particle properties
-  const Tensor<1, dim> v_1{{0.01, 0, 0}};
-  const Tensor<1, dim> omega_1{{0, 0, 0}};
-  const double         mass = 1;
-  const unsigned int   type = 0;
+  Tensor<1, dim>     v_1{{0.01, 0, 0}};
+  Tensor<1, dim>     omega_1{{0, 0, 0}};
+  const double       mass = 1;
+  const unsigned int type = 0;
   set_particle_properties<dim, PropertiesIndex>(
     pit_1, type, particle_diameter, mass, v_1, omega_1);
 
