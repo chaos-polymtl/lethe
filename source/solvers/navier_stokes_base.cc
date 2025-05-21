@@ -1996,6 +1996,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   // Rotate mapping for rotor-stator configuration
   if (this->simulation_parameters.mortar.enable)
     {
+#if DEAL_II_VERSION_GTE(9, 7, 0)
       MappingQCache<dim> mapping_cache(this->velocity_fem_degree);
 
       LetheGridTools::rotate_mapping(
@@ -2009,6 +2010,12 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
 
       this->previous_mapping = this->mapping;
       this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The mapping rotation requires a more recent version of deal.II."));
+#endif
     }
 }
 
