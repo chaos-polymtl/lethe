@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief MortarManager: check generated points.
+ * @brief MortarManagerCircle: check generated points.
  */
 
 #include <core/mortar_coupling_manager.h>
@@ -25,10 +25,10 @@ main()
       const double rotate = delta * scale;
       std::cout << "Rotation angle: " << rotate << std::endl;
 
-      const MortarManager<dim> manager(n_subdivisions,
-                                       n_quadrature_points,
-                                       radius,
-                                       rotate);
+      const MortarManagerCircle<dim> manager(n_subdivisions,
+                                             QGauss<dim>(n_quadrature_points),
+                                             radius,
+                                             rotate);
 
       const auto print = [&](const double shift) {
         for (unsigned int i = 0; i < n_subdivisions; ++i)
@@ -39,10 +39,12 @@ main()
             std::cout << "Shift: " << shift << std::endl;
             std::cout << "Cell center at " << rad << ": " << std::endl;
 
-            const auto indices = manager.get_indices(rad);
-            const auto weights = manager.get_weights(rad);
-            const auto points  = manager.get_points(rad);
-            const auto normals = manager.get_normals(rad);
+            const auto p = radius_to_point<dim>(radius, rad);
+
+            const auto indices = manager.get_indices(p);
+            const auto weights = manager.get_weights(p);
+            const auto points  = manager.get_points(p);
+            const auto normals = manager.get_normals(p);
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {

@@ -80,12 +80,14 @@ main(int argc, char *argv[])
   DoFHandler<dim> dof_handler(tria);
   dof_handler.distribute_dofs(fe);
 
-  const MortarManager<dim> mm(4 * Utilities::pow(2, n_global_refinements + 1),
-                              n_quadrature_points,
-                              radius,
-                              rotate_pi);
+  const MortarManagerCircle<dim> mm(4 *
+                                      Utilities::pow(2,
+                                                     n_global_refinements + 1),
+                                    QGauss<dim>(n_quadrature_points),
+                                    radius,
+                                    rotate_pi);
 
-  const unsigned int n_points = mm.get_n_points();
+  const unsigned int n_points = mm.get_n_total_points();
 
   // convert local/ghost points to indices
   std::vector<types::global_dof_index> local_values;
@@ -97,7 +99,7 @@ main(int argc, char *argv[])
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
-            const auto indices = mm.get_indices(point_to_angle(face->center()));
+            const auto indices = mm.get_indices(face->center());
 
             std::vector<types::global_dof_index> local_dofs(
               fe.n_dofs_per_cell());

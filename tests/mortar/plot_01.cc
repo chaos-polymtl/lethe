@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief MortarManager: output points as particles.
+ * @brief MortarManagerCircle: output points as particles.
  */
 
 #include <deal.II/distributed/tria.h>
@@ -110,12 +110,14 @@ main(int argc, char *argv[])
   tria.refine_global(n_global_refinements);
   output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
 
-  const MortarManager<dim> mm(4 * Utilities::pow(2, n_global_refinements + 1),
-                              n_quadrature_points,
-                              radius,
-                              rotate_pi);
+  const MortarManagerCircle<dim> mm(4 *
+                                      Utilities::pow(2,
+                                                     n_global_refinements + 1),
+                                    QGauss<dim>(n_quadrature_points),
+                                    radius,
+                                    rotate_pi);
 
-  const unsigned int n_points = mm.get_n_points();
+  const unsigned int n_points = mm.get_n_total_points();
 
   // convert local/ghost points to indices
   IndexSet is_local(n_points * 2);
@@ -128,7 +130,7 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices = mm.get_indices(point_to_angle(face->center()));
+            const auto indices = mm.get_indices(face->center());
 
             for (const auto i : indices)
               {
@@ -165,10 +167,10 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices = mm.get_indices(point_to_angle(face->center()));
+            const auto indices = mm.get_indices(face->center());
 
             // get points
-            const auto points = mm.get_points(point_to_angle(face->center()));
+            const auto points = mm.get_points(face->center());
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {
