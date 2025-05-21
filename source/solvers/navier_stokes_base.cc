@@ -2007,7 +2007,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
           .second,
         this->simulation_parameters.mortar.rotor_mesh->rotation_angle);
 
-      this->previous_mapping = this->mapping;  
+      this->previous_mapping = this->mapping;
       this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
     }
 }

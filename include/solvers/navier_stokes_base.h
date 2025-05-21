@@ -911,8 +911,8 @@ protected:
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
   // Previous mapping for rotor mesh rotation in mortar method
-  std::shared_ptr<Mapping<dim>>        previous_mapping;
-  
+  std::shared_ptr<Mapping<dim>> previous_mapping;
+
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers;
 
