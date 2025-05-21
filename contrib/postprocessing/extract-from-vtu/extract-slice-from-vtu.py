@@ -60,7 +60,7 @@ def extract_slice(vtu_file_path: list, origin: np.array, normal: np.array) -> No
     """
 
     # slice the file
-    sliced_solution = pv.read(vtu_file_path).slice(normal=normal, origin=origin)
+    sliced_solution = pv.read(vtu_file_path).slice(normal=normal, origin=origin, generate_triangles=True)
     sliced_solution = sliced_solution.cast_to_unstructured_grid()
 
     # If the slice is empty (the slice does not intersect the domain), return
