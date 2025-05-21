@@ -796,11 +796,6 @@ NavierStokesOperatorBase<dim, number>::precompute_for_cell(
   nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
-  kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
-  grad_kinematic_viscosity_shear_rate.reinit(n_cells, integrator.n_q_points);
-  kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
-  previous_shear_rate.reinit(n_cells, integrator.n_q_points);
-  previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -855,105 +850,6 @@ NavierStokesOperatorBase<dim, number>::precompute_for_cell(
 
           stabilization_parameter_lsic(cell, q) =
             std::sqrt(u_mag_squared) * h * 0.5;
-        }
-
-      // Compute kinematic viscosity-related entries for non-Newtonian fluids
-      // according to the rheological model
-      if (this->properties_manager->is_non_newtonian())
-        {
-          typename FECellIntegrator::gradient_type shear_rate;
-          typename FECellIntegrator::value_type    grad_shear_rate = {};
-          VectorizedArray<number>                  shear_rate_magnitude;
-
-          for (const auto q : integrator.quadrature_point_indices())
-            {
-              typename FECellIntegrator::gradient_type gradient =
-                integrator.get_gradient(q);
-
-              typename FECellIntegrator::hessian_type hessian =
-                integrator.get_hessian(q);
-
-              // Calculate shear rate
-              for (unsigned int i = 0; i < dim; ++i)
-                {
-                  for (unsigned int j = 0; j < dim; ++j)
-                    {
-                      shear_rate[i][j] = gradient[i][j] + gradient[j][i];
-                    }
-                }
-
-              // Store shear rate in the previous_shear_rate
-              this->previous_shear_rate[cell][q] = shear_rate;
-
-              // Calculate shear rate magnitude
-              shear_rate_magnitude = shear_rate * shear_rate;
-
-              shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),
-                                              VectorizedArray<number>(1e-12));
-
-              // Store shear rate magnitude in the previous_shear_rate
-              this->previous_shear_rate_magnitude[cell][q] =
-                shear_rate_magnitude;
-
-              // Compute gradient of shear rate
-              // ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui) * ∂d(∂iuj + ∂jui)
-              for (unsigned int d = 0; d < dim; ++d)
-                {
-                  grad_shear_rate[d] = 0.;
-                  for (unsigned int i = 0; i < dim; ++i)
-                    {
-                      for (unsigned int k = 0; k < dim; ++k)
-                        {
-                          grad_shear_rate[d] +=
-                            VectorizedArray<number>(0.5) *
-                            (gradient[i][k] + gradient[k][i]) *
-                            (hessian[i][d][k] + hessian[k][d][i]) /
-                            shear_rate_magnitude;
-                        }
-                    }
-                }
-
-              // Store the shear rate magnitude in the appropriate data
-              // structure needed for the set field vector function
-
-              VectorizedArray<number> viscosity;
-              VectorizedArray<number> grad_viscosity_shear_rate;
-
-              for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-                {
-                  // Get information from physical properties class
-                  std::map<field, double> fields;
-                  fields[field::shear_rate] = shear_rate_magnitude[v];
-
-                  viscosity[v] =
-                    this->properties_manager->get_rheology()->value(fields);
-
-                  grad_viscosity_shear_rate[v] =
-                    this->properties_manager->get_rheology()->jacobian(
-                      fields, field::shear_rate);
-                }
-
-              grad_kinematic_viscosity_shear_rate(cell, q) =
-                grad_viscosity_shear_rate;
-
-              kinematic_viscosity_gradient(cell, q) =
-                grad_shear_rate * grad_viscosity_shear_rate;
-
-              kinematic_viscosity_vector(cell, q) = viscosity;
-
-              // Recalculate stabilization parameter using kinematic
-              // viscosity vector
-              VectorizedArray<number> u_mag_squared = 1e-12;
-              for (unsigned int k = 0; k < dim; ++k)
-                u_mag_squared +=
-                  Utilities::fixed_power<2>(integrator.get_value(q)[k]);
-
-              stabilization_parameter(cell, q) =
-                1. /
-                std::sqrt(
-                  Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
-                  9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
-            }
         }
     }
 
@@ -1077,11 +973,6 @@ NavierStokesOperatorBase<dim, number>::precompute_for_residual(
   // Set appropriate size for tables
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
-  kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
-  grad_kinematic_viscosity_shear_rate.reinit(n_cells, integrator.n_q_points);
-  kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
-  previous_shear_rate.reinit(n_cells, integrator.n_q_points);
-  previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
 
   // Define 1 / dt if the simulation is transient
   double sdt = 0.0;
@@ -1129,105 +1020,6 @@ NavierStokesOperatorBase<dim, number>::precompute_for_residual(
 
           stabilization_parameter_lsic(cell, q) =
             std::sqrt(u_mag_squared) * h * 0.5;
-        }
-
-      // Compute kinematic viscosity-related entries for non-Newtonian fluids
-      // according to the rheological model
-      if (this->properties_manager->is_non_newtonian())
-        {
-          typename FECellIntegrator::gradient_type shear_rate;
-          typename FECellIntegrator::value_type    grad_shear_rate = {};
-          VectorizedArray<number>                  shear_rate_magnitude;
-
-          for (const auto q : integrator.quadrature_point_indices())
-            {
-              typename FECellIntegrator::gradient_type gradient =
-                integrator.get_gradient(q);
-
-              typename FECellIntegrator::hessian_type hessian =
-                integrator.get_hessian(q);
-
-              // Calculate shear rate
-              for (unsigned int i = 0; i < dim; ++i)
-                {
-                  for (unsigned int j = 0; j < dim; ++j)
-                    {
-                      shear_rate[i][j] = gradient[i][j] + gradient[j][i];
-                    }
-                }
-
-              // Store shear rate in the previous_shear_rate
-              this->previous_shear_rate[cell][q] = shear_rate;
-
-              // Calculate shear rate magnitude
-              shear_rate_magnitude = shear_rate * shear_rate;
-
-              shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),
-                                              VectorizedArray<number>(1e-12));
-
-              // Store shear rate magnitude in the previous_shear_rate
-              this->previous_shear_rate_magnitude[cell][q] =
-                shear_rate_magnitude;
-
-              // Compute gradient of shear rate
-              // ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui) * ∂d(∂iuj + ∂jui)
-              for (unsigned int d = 0; d < dim; ++d)
-                {
-                  grad_shear_rate[d] = 0.;
-                  for (unsigned int i = 0; i < dim; ++i)
-                    {
-                      for (unsigned int k = 0; k < dim; ++k)
-                        {
-                          grad_shear_rate[d] +=
-                            VectorizedArray<number>(0.5) *
-                            (gradient[i][k] + gradient[k][i]) *
-                            (hessian[i][d][k] + hessian[k][d][i]) /
-                            shear_rate_magnitude;
-                        }
-                    }
-                }
-
-              // Store the shear rate magnitude in the appropriate data
-              // structure needed for the set field vector function
-
-              VectorizedArray<number> viscosity;
-              VectorizedArray<number> grad_viscosity_shear_rate;
-
-              for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-                {
-                  // Get information from physical properties class
-                  std::map<field, double> fields;
-                  fields[field::shear_rate] = shear_rate_magnitude[v];
-
-                  viscosity[v] =
-                    this->properties_manager->get_rheology()->value(fields);
-
-                  grad_viscosity_shear_rate[v] =
-                    this->properties_manager->get_rheology()->jacobian(
-                      fields, field::shear_rate);
-                }
-
-              grad_kinematic_viscosity_shear_rate(cell, q) =
-                grad_viscosity_shear_rate;
-
-              kinematic_viscosity_gradient(cell, q) =
-                grad_shear_rate * grad_viscosity_shear_rate;
-
-              kinematic_viscosity_vector(cell, q) = viscosity;
-
-              // Recalculate stabilization parameter using kinematic
-              // viscosity vector
-              VectorizedArray<number> u_mag_squared = 1e-12;
-              for (unsigned int k = 0; k < dim; ++k)
-                u_mag_squared +=
-                  Utilities::fixed_power<2>(integrator.get_value(q)[k]);
-
-              stabilization_parameter(cell, q) =
-                1. /
-                std::sqrt(
-                  Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
-                  9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
-            }
         }
     }
 
@@ -2005,6 +1797,286 @@ template class NavierStokesStabilizedOperator<3, float>;
 template <int dim, typename number>
 NavierStokesNonNewtonianStabilizedOperator<dim, number>::
   NavierStokesNonNewtonianStabilizedOperator() = default;
+
+template <int dim, typename number>
+void
+NavierStokesNonNewtonianStabilizedOperator<dim, number>::precompute_for_cell(
+  const VectorType &newton_step)
+{
+  NavierStokesOperatorBase<dim, number>::precompute_for_cell(newton_step);
+
+  this->timer.enter_subsection("operator::precompute_for_cell");
+
+  const unsigned int n_cells = this->matrix_free.n_cell_batches();
+
+  FECellIntegrator integrator(this->matrix_free);
+
+  // Set appropriate size for tables
+  stabilization_parameter.reinit(n_cells, integrator.n_q_points);
+  kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
+  grad_kinematic_viscosity_shear_rate.reinit(n_cells, integrator.n_q_points);
+  kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
+  previous_shear_rate.reinit(n_cells, integrator.n_q_points);
+  previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
+
+  // Define 1/dt if the simulation is transient
+  double sdt = 0.0;
+
+  bool transient =
+    (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
+
+  if (transient)
+    {
+      const auto time_steps_vector =
+        this->simulation_control->get_time_steps_vector();
+      const double dt = time_steps_vector[0];
+      sdt             = 1. / dt;
+    }
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      integrator.reinit(cell);
+      integrator.read_dof_values_plain(newton_step);
+
+      integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                          EvaluationFlags::hessians);
+
+      // Get previously calculated element size needed for tau
+      const auto h = integrator.read_cell_data(this->get_element_size());
+
+      // Compute kinematic viscosity-related entries for non-Newtonian fluids
+      // according to the rheological model
+      if (this->properties_manager->is_non_newtonian())
+        {
+          typename FECellIntegrator::gradient_type shear_rate;
+          typename FECellIntegrator::value_type    grad_shear_rate = {};
+          VectorizedArray<number>                  shear_rate_magnitude;
+
+          for (const auto q : integrator.quadrature_point_indices())
+            {
+              typename FECellIntegrator::gradient_type gradient =
+                integrator.get_gradient(q);
+
+              typename FECellIntegrator::hessian_type hessian =
+                integrator.get_hessian(q);
+
+              // Calculate shear rate
+              for (unsigned int i = 0; i < dim; ++i)
+                {
+                  for (unsigned int j = 0; j < dim; ++j)
+                    {
+                      shear_rate[i][j] = gradient[i][j] + gradient[j][i];
+                    }
+                }
+
+              // Store shear rate in the previous_shear_rate
+              this->previous_shear_rate[cell][q] = shear_rate;
+
+              // Calculate shear rate magnitude
+              shear_rate_magnitude = shear_rate * shear_rate;
+
+              shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),
+                                              VectorizedArray<number>(1e-12));
+
+              // Store shear rate magnitude in the previous_shear_rate
+              this->previous_shear_rate_magnitude[cell][q] =
+                shear_rate_magnitude;
+
+              // Compute gradient of shear rate
+              // ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui) * ∂d(∂iuj + ∂jui)
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  grad_shear_rate[d] = 0.;
+                  for (unsigned int i = 0; i < dim; ++i)
+                    {
+                      for (unsigned int k = 0; k < dim; ++k)
+                        {
+                          grad_shear_rate[d] +=
+                            VectorizedArray<number>(0.5) *
+                            (gradient[i][k] + gradient[k][i]) *
+                            (hessian[i][d][k] + hessian[k][d][i]) /
+                            shear_rate_magnitude;
+                        }
+                    }
+                }
+
+              // Store the shear rate magnitude in the appropriate data
+              // structure needed for the set field vector function
+
+              VectorizedArray<number> viscosity;
+              VectorizedArray<number> grad_viscosity_shear_rate;
+
+              for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+                {
+                  // Get information from physical properties class
+                  std::map<field, double> fields;
+                  fields[field::shear_rate] = shear_rate_magnitude[v];
+
+                  viscosity[v] =
+                    this->properties_manager->get_rheology()->value(fields);
+
+                  grad_viscosity_shear_rate[v] =
+                    this->properties_manager->get_rheology()->jacobian(
+                      fields, field::shear_rate);
+                }
+
+              grad_kinematic_viscosity_shear_rate(cell, q) =
+                grad_viscosity_shear_rate;
+
+              kinematic_viscosity_gradient(cell, q) =
+                grad_shear_rate * grad_viscosity_shear_rate;
+
+              kinematic_viscosity_vector(cell, q) = viscosity;
+
+              // Recalculate stabilization parameter using kinematic
+              // viscosity vector
+              VectorizedArray<number> u_mag_squared = 1e-12;
+              for (unsigned int k = 0; k < dim; ++k)
+                u_mag_squared +=
+                  Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+
+              stabilization_parameter(cell, q) =
+                1. /
+                std::sqrt(
+                  Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
+                  9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
+            }
+        }
+    }
+  this->timer.leave_subsection("operator::precompute_for_cell");
+}
+
+template <int dim, typename number>
+void
+NavierStokesNonNewtonianStabilizedOperator<dim, number>::
+  precompute_for_residual(const VectorType &newton_step)
+{
+  NavierStokesOperatorBase<dim, number>::precompute_for_residual(newton_step);
+
+  this->timer.enter_subsection("operator::precompute_for_residual");
+
+  const unsigned int n_cells = this->matrix_free.n_cell_batches();
+
+  FECellIntegrator integrator(this->matrix_free);
+
+  // Set appropriate size for tables
+  stabilization_parameter.reinit(n_cells, integrator.n_q_points);
+  kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
+  kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
+
+  // Define 1 / dt if the simulation is transient
+  double sdt = 0.0;
+
+  bool transient =
+    (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
+
+  if (transient)
+    {
+      const auto time_steps_vector =
+        this->simulation_control->get_time_steps_vector();
+      const double dt = time_steps_vector[0];
+      sdt             = 1. / dt;
+    }
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      integrator.reinit(cell);
+      integrator.read_dof_values_plain(newton_step);
+
+      integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                          EvaluationFlags::hessians);
+
+      // Get previously calculated element size needed for tau
+      const auto h = integrator.read_cell_data(this->get_element_size());
+
+      // Compute kinematic viscosity-related entries for non-Newtonian fluids
+      // according to the rheological model
+      typename FECellIntegrator::gradient_type shear_rate;
+      typename FECellIntegrator::value_type    grad_shear_rate = {};
+      VectorizedArray<number>                  shear_rate_magnitude;
+
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          typename FECellIntegrator::gradient_type gradient =
+            integrator.get_gradient(q);
+
+          typename FECellIntegrator::hessian_type hessian =
+            integrator.get_hessian(q);
+
+          // Calculate shear rate
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int j = 0; j < dim; ++j)
+                {
+                  shear_rate[i][j] = gradient[i][j] + gradient[j][i];
+                }
+            }
+
+          // Calculate shear rate magnitude
+          shear_rate_magnitude = shear_rate * shear_rate;
+
+          shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),
+                                          VectorizedArray<number>(1e-12));
+
+          // Compute gradient of shear rate
+          // ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui) * ∂d(∂iuj + ∂jui)
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              grad_shear_rate[d] = 0.;
+              for (unsigned int i = 0; i < dim; ++i)
+                {
+                  for (unsigned int k = 0; k < dim; ++k)
+                    {
+                      grad_shear_rate[d] +=
+                        VectorizedArray<number>(0.5) *
+                        (gradient[i][k] + gradient[k][i]) *
+                        (hessian[i][d][k] + hessian[k][d][i]) /
+                        shear_rate_magnitude;
+                    }
+                }
+            }
+
+          // Store the shear rate magnitude in the appropriate data
+          // structure needed for the set field vector function
+
+          VectorizedArray<number> viscosity;
+          VectorizedArray<number> grad_viscosity_shear_rate;
+
+          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+            {
+              // Get information from physical properties class
+              std::map<field, double> fields;
+              fields[field::shear_rate] = shear_rate_magnitude[v];
+
+              viscosity[v] =
+                this->properties_manager->get_rheology()->value(fields);
+
+              grad_viscosity_shear_rate[v] =
+                this->properties_manager->get_rheology()->jacobian(
+                  fields, field::shear_rate);
+            }
+
+          kinematic_viscosity_gradient(cell, q) =
+            grad_shear_rate * grad_viscosity_shear_rate;
+
+          kinematic_viscosity_vector(cell, q) = viscosity;
+
+          // Recalculate stabilization parameter using kinematic
+          // viscosity vector
+          VectorizedArray<number> u_mag_squared = 1e-12;
+          for (unsigned int k = 0; k < dim; ++k)
+            u_mag_squared +=
+              Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+
+          stabilization_parameter(cell, q) =
+            1. / std::sqrt(
+                   Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
+                   9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
+        }
+    }
+
+  this->timer.leave_subsection("operator::precompute_for_residual");
+}
 
 /**
  * The expressions calculated in this cell integral are:

@@ -222,7 +222,6 @@ public:
   void
   compute_forcing_term();
 
-
   /**
    * @brief Precompute buoyancy term for heat-transfer coupling.
    *
@@ -691,44 +690,6 @@ protected:
    */
   Table<2, VectorizedArray<number>> stabilization_parameter_lsic;
 
-
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
-   * of the kinematic viscosity.
-   *
-   */
-  Table<2, VectorizedArray<number>> kinematic_viscosity_vector;
-
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
-   * of the gradient of the kinematic viscosity w.r.t shear rate.
-   *
-   */
-  Table<2, VectorizedArray<number>> grad_kinematic_viscosity_shear_rate;
-
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
-   * of the kinematic viscosity gradient.
-   *
-   */
-  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
-    kinematic_viscosity_gradient;
-
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
-   * of the shear_rate.
-   *
-   */
-  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
-    previous_shear_rate;
-
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
-   * of the shear_rate_magnitude.
-   *
-   */
-  Table<2, VectorizedArray<number>> previous_shear_rate_magnitude;
-
   /**
    * @brief Table with correct alignment for vectorization to store the values
    * of the face penalization term effective_beta_face
@@ -863,6 +824,27 @@ public:
 
 protected:
   /**
+   * @brief Precompute relevant quantities related to the last newton step solution
+   * needed for the cell computation: tau, kinematic viscosity, grad kinematic
+   * viscosity shear rate, kinematic_viscosity gradient, previous shear rate and
+   * shear rate magnitude.
+   *
+   * @param[in] newton_step Vector of the last newton step.
+   */
+  virtual void
+  precompute_for_cell(const VectorType &newton_step) override;
+
+  /**
+   * @brief Precompute relevant quantities related to the last newton step solution
+   * needed for the residual computation: tau, kinematic viscosity vector and
+   * kinematic viscosity gradient.
+   *
+   * @param[in] newton_step Vector of the last newton step.
+   */
+  virtual void
+  precompute_for_residual(const VectorType &newton_step) override;
+
+  /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
    * the values, and according to the Jacobian of the discretized
    * steady/transient Navier-Stokes equations with stabilization.
@@ -889,6 +871,50 @@ protected:
     VectorType                                  &dst,
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const override;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the stabilization parameter tau.
+   *
+   */
+  Table<2, VectorizedArray<number>> stabilization_parameter;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the kinematic viscosity.
+   *
+   */
+  Table<2, VectorizedArray<number>> kinematic_viscosity_vector;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the gradient of the kinematic viscosity w.r.t shear rate.
+   *
+   */
+  Table<2, VectorizedArray<number>> grad_kinematic_viscosity_shear_rate;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the kinematic viscosity gradient.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    kinematic_viscosity_gradient;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the shear_rate.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
+    previous_shear_rate;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the shear_rate_magnitude.
+   *
+   */
+  Table<2, VectorizedArray<number>> previous_shear_rate_magnitude;
 };
 
 #endif
