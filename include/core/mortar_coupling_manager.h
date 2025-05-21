@@ -12,20 +12,13 @@
 #  include <core/utilities.h>
 
 #  include <deal.II/base/mpi_noncontiguous_partitioner.h>
-#  include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
 #  include <deal.II/base/quadrature_lib.h>
 
 #  include <deal.II/fe/fe_system.h>
 
-#  include <deal.II/lac/trilinos_precondition.h>
-#  include <deal.II/lac/trilinos_solver.h>
 #  include <deal.II/lac/trilinos_sparse_matrix.h>
-#  include <deal.II/lac/trilinos_sparsity_pattern.h>
 
-#  include <deal.II/matrix_free/fe_evaluation.h>
 #  include <deal.II/matrix_free/fe_point_evaluation.h>
-#  include <deal.II/matrix_free/matrix_free.h>
-#  include <deal.II/matrix_free/tools.h>
 
 using namespace dealii;
 

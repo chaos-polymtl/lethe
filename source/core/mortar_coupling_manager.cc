@@ -7,6 +7,10 @@
 
 #  include <core/mortar_coupling_manager.h>
 
+#  include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
+
+#  include <deal.II/fe/fe_nothing.h>
+
 
 /*-------------- MortarManagerBase -------------------------------*/
 
