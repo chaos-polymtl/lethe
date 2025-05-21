@@ -2,11 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test reads two mesh input parameters and merges
- * them in a unique triangulation. The goal is to test the steps on the
- * function read_mesh_and_manifolds only related to reading and merging two
- * distinct triangulations.
- * Based on the test mortar/plot_01.cc
+ * @brief Mortar: test functions to compute radius, number of subdivisions, and rotate mapping.
+ *
  */
 
 #include <deal.II/distributed/tria.h>
@@ -99,6 +96,10 @@ test()
   // Distribute dofs
   dof_handler.distribute_dofs(fe);
 
+  // Number of subdivisions
+  unsigned int n_subdivisions =
+    compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first;
+
   // Rotor radius
   double radius =
     compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).second;
@@ -111,6 +112,7 @@ test()
   if (Utilities::MPI::this_mpi_process(comm) == 0)
     {
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
+      deallog << "Number of subdivisions at interface : " << n_subdivisions << std::endl;
       deallog << "Radius : " << radius << std::endl;
     }
 
