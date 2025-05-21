@@ -272,7 +272,7 @@ The effective surface energy can be computed as:
     \gamma_{\mathrm{e}} = \gamma_{i} + \gamma_{j} - 2\gamma_{i,j}
 
 Where :math:`\gamma_{i}` and :math:`\gamma_{j}` are the surface energy of each material (particle or wall) and where :math:`\gamma_{i,j}` is the interface energy which is equal to zero when both surfaces are the same material.
-The interface energy term is approximated using [#israelachvili–289]_:
+The interface energy term is approximated using [#israelachvili2011]_:
 
 .. math::
     \gamma_{i,j} \approx \left( \sqrt{\gamma_{i}} - \sqrt{\gamma_{j}}  \right)^{2}
@@ -378,7 +378,7 @@ And velocity Verlet method is calculated with half-step velocity as:
 Thermal DEM in a Stagnant Gas
 --------------------------------
 
-The heat transfer mechanisms considered here are:
+The heat transfer mechanisms considered are:
    - Conduction through the particles themselves
    - Conduction between particles through the contact surface (microcontacts and macrocontacts)
    - Conduction through the interstitial fluid (microgap and macrogap between particles)
@@ -422,7 +422,7 @@ Where:
     :width: 700
     :align: center
 
-    Modeling Heat transfer between two rough particles in contact. Inspired by [#beaulieu2020]_.
+    Modeling Heat transfer between two rough particles in contact. Adapted from [#beaulieu2020]_.
 
 ~~~~~~~~~~~~~~~~~~~~
 Thermal Resistances
@@ -443,13 +443,13 @@ The contact radius :math:`r_c` is calculated as follows:
 
 .. math::
 
-   r_c = \left( \frac{3F_n r^* }{4E^*}\right)^{1/3}
+   r_c = \left( \frac{3F_n R_{\mathrm{e}} }{4 Y_\mathrm{e} }\right)^{1/3}
 
 The Young's modulus in the simulation can sometimes be underestimated for computational efficiency and that can cause the contact radius and the overlap to be overestimated. To correct the contact radius, a factor c introduced by Zhou *et al.* [#zhou2010]_ is used:
 
 .. math::
 
-   r_c' = r_c \, c \quad, \quad c = \left( \frac{E^*_{Sim}}{E^*_{Real}} \right)^{1/5}
+   r_c' = r_c \, c \quad, \quad c = \left( \frac{Y_{\mathrm{e},Sim}}{Y_{\mathrm{e},Real}} \right)^{1/5}
 
 .. note::
    For now, the parameter for the real young modulus of the particles is not implemented so the factor c is equal to 1.
@@ -469,14 +469,17 @@ The parameters used to calculate the resistances are summed up in the following 
    * - Characteristic length (parallel to heat flux)
      - :math:`L_i`
      - :math:`\frac{\pi r_i}{4}`
+   * - Harmonic mean thermal conductivity
+     - :math:`k_h`
+     - :math:`\frac{2k_i k_j}{k_i + k_j}`
    * - Effective microhardness
      - :math:`H'`
      - :math:`\frac{2H_i H_j}{H_i + H_j}`
    * - Effective radius
-     - :math:`r^* = \frac{1}{2} \, r_h`
+     - :math:`R_{\mathrm{e}} = \frac{1}{2} \, r_h`
      - :math:`\frac{r_i r_j}{r_i + r_j}`
    * - Effective Young’s modulus
-     - :math:`E^*`
+     - :math:`Y_\mathrm{e}`
      - :math:`\left( \frac{(1 - \nu_i^2)}{E_i} + \frac{(1 - \nu_j^2)}{E_j} \right)^{-1}`
    * - Equivalent surface roughness
      - :math:`\sigma`
@@ -484,46 +487,46 @@ The parameters used to calculate the resistances are summed up in the following 
    * - Equivalent surface slope
      - :math:`\tau`
      - :math:`\sqrt{\tau_i^2 + \tau_j^2}`
+   * - Maximum Hertzian contact pressure
+     - :math:`P_0`
+     - :math:`\frac{2Y_\mathrm{e} \delta_n}{\pi r_c}`
    * - Error parameter 1
      - :math:`a_1`
      - :math:`\operatorname{erfc}^{-1}(2P_0/H')`
    * - Error parameter 2
      - :math:`a_2`
      - :math:`\operatorname{erfc}^{-1}(0.03P_0/H') - a_1`
+   * - Thermal accommodation coefficients
+     - :math:`\alpha_{T_i}, \, \alpha_{T_j}`
+     - values depend on the particles and gas
+   * - Gas specific heats ratio
+     - :math:`\gamma_g`
+     - value depends on the gas
+   * - Gas thermal conductivity
+     - :math:`k_g`
+     - value depends on the gas
    * - Gas molecular mean free path
      - :math:`\Lambda`
      - value depends on the gas
+   * - Gas Prandtl number
+     - :math:`Pr`
+     - :math:`\frac{\mu_g c_g}{k_g}`
    * - Gas parameter
      - :math:`M`
      - :math:`\left( \frac{2 - \alpha_{T_i}}{\alpha_{T_i}} + \frac{2 - \alpha_{T_j}}{\alpha_{T_j}} \right)\left( \frac{2 \gamma_g}{1 + \gamma_g} \right)\frac{\Lambda}{Pr}`
    * - Gas parameter
      - :math:`S`
      - :math:`2\left(r_h - \frac{r_c^2}{2r_h}\right) + M`
-   * - Gas Prandtl number
-     - :math:`Pr`
-     - :math:`\frac{\mu_g c_g}{k_g}`
-   * - Gas specific heats ratio
-     - :math:`\gamma_g`
-     - value depends on the gas
    * - Geometrical parameter
      - :math:`A`
      - :math:`2\sqrt{r_h^2 - r_c^2}`
    * - Geometrical parameter
      - :math:`B`
      - :math:`0` (for simple cubic packing)
-   * - Harmonic mean thermal conductivity
-     - :math:`k_h`
-     - :math:`\frac{2k_i k_j}{k_i + k_j}`
-   * - Maximum Hertzian contact pressure
-     - :math:`P_0`
-     - :math:`\frac{2E^* \delta_n}{\pi r_c}`
-   * - Thermal accommodation coefficients
-     - :math:`\alpha_{T_i}, \, \alpha_{T_j}`
-     - values depend on the particles and gas
 
-~~~~~~~~~~~~~~~~~~~~~~~
-Particle-wall Contacts
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Particle-wall Resistances
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For particle-wall contacts, conduction is mostly computed the same way, except for minor differences.
 For the macrocontact and the solid layers resistances, they are only considered for the particle. In the same way,
@@ -535,7 +538,7 @@ the interstitial gas macrogap resistance is halved as there is only a macrogap a
    R_c &= R_{c,p} = \frac{L_p}{k_p A_p} \\
    R_G &= \frac{1}{2} \, \frac{2}{\pi k_g \left[S \ln\left(\frac{S-B}{S-A}\right) + B - A\right]} \\
 
-As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`r^*` are taken equal to :math:`2r_p` and :math:`r_p` respectively.
+As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`R_{\mathrm{e}}` are taken equal to :math:`2r_p` and :math:`r_p` respectively.
 
 .. figure:: images/particle_wall_resistances.png
     :width: 700
@@ -562,8 +565,6 @@ References
 .. [#israelachvili2011] \J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in *Intermolecular and Surface Forces*, 3rd ed., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289, doi: `10.1016/B978-0-12-391927-4.10013-1 <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_\.
 
 .. [#parteli2014] \E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” *Sci Rep*, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: `10.1038/srep06227 <https://doi.org/10.1038/srep06227>`_\.
-
-.. [#violano2018] \G. Violano, G. P. Demelio, and L. Afferrante, “On the DMT Adhesion Theory: From the First Studies to the Modern Applications in Rough Contacts.” *Procedia Structural Integrity*, vol. 12, pp. 58–70, Jan. 2018, doi: `0.1016/j.prostr.2018.11.106 <https://doi.org/10.1016/j.prostr.2018.11.106.>`_\.
 
 .. [#thornton1991] \C. Thornton, “ Interparticle sliding in the presence of adhesion,” *Journal of Physics D: Applied Physics*, vol. 24, no. 11, pp. 1942–1946, 1991, doi: `10.1088/0022-3727/24/11/007 <https://doi.org/10.1088/0022-3727/24/11/007>`_\.
 
