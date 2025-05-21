@@ -641,7 +641,7 @@ protected:
 template <int dim>
 std::pair<unsigned int, double>
 compute_n_subdivisions_and_radius(
-  const DoFHandler<dim>         &dof_handler,
+  const Triangulation<dim>      &triangulation,
   const Parameters::Mortar<dim> &mortar_parameters);
 
 /**

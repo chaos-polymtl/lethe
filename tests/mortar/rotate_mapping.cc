@@ -90,23 +90,23 @@ test()
 
   FE_Q<dim>          fe(fe_degree);
   DoFHandler<dim>    dof_handler(triangulation);
-  MappingQ<dim, dim> mapping_q(mapping_degree);
-  MappingQCache<dim> mapping(mapping_degree);
+  MappingQ<dim, dim> mapping(mapping_degree);
+  MappingQCache<dim> mapping_cache(mapping_degree);
 
   // Distribute dofs
   dof_handler.distribute_dofs(fe);
 
   // Number of subdivisions
   unsigned int n_subdivisions =
-    compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).first;
+    compute_n_subdivisions_and_radius(triangulation, mortar_parameters).first;
 
   // Rotor radius
   double radius =
-    compute_n_subdivisions_and_radius(dof_handler, mortar_parameters).second;
+    compute_n_subdivisions_and_radius(triangulation, mortar_parameters).second;
 
   // Rotate mapping
   LetheGridTools::rotate_mapping(
-    dof_handler, mapping, mapping_q, radius, rotation_angle);
+    dof_handler, mapping_cache, mapping, radius, rotation_angle);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)
@@ -129,7 +129,7 @@ test()
   Vector<double> ranks(triangulation.n_active_cells());
   ranks = Utilities::MPI::this_mpi_process(comm);
   data_out.add_data_vector(ranks, "ranks");
-  data_out.build_patches(mapping,
+  data_out.build_patches(mapping_cache,
                          mapping_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
   data_out.write_vtu_in_parallel("out.vtu", comm);

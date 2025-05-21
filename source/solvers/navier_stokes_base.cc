@@ -2002,11 +2002,12 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
         this->dof_handler,
         mapping_cache,
         *this->mapping,
-        compute_n_subdivisions_and_radius(this->dof_handler,
+        compute_n_subdivisions_and_radius(*this->triangulation,
                                           this->simulation_parameters.mortar)
           .second,
         this->simulation_parameters.mortar.rotor_mesh->rotation_angle);
 
+      this->previous_mapping = this->mapping;  
       this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
     }
 }
