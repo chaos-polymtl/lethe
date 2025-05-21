@@ -361,13 +361,22 @@ public:
   compute_inverse_diagonal(VectorType &diagonal) const;
 
   /**
-   * @brief Store relevant values of the vector of the last newton step to use it
-   * in the Jacobian and pre-calculate the stabilization parameter tau.
+   * @brief Precompute relevant quantities related to the last newton step solution
+   * needed for the cell computation: previous values, gradients and tau.
    *
    * @param[in] newton_step Vector of the last newton step.
    */
   virtual void
-  evaluate_non_linear_term_and_calculate_tau(const VectorType &newton_step);
+  precompute_for_cell(const VectorType &newton_step);
+
+  /**
+   * @brief Precompute relevant quantities related to the last newton step solution
+   * needed for the residual computation: tau.
+   *
+   * @param[in] newton_step Vector of the last newton step.
+   */
+  virtual void
+  precompute_for_residual(const VectorType &newton_step);
 
   /**
    * @brief Store the values of the vector containing the time derivatives of

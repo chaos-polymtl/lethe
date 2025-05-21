@@ -2011,8 +2011,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
       mg_solution[level].update_ghost_values();
-      this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
-        mg_solution[level]);
+      this->mg_operators[level]->precompute_for_cell(mg_solution[level]);
 
       if (is_bdf(simulation_control->get_assembly_method()))
         {
@@ -2520,8 +2519,12 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   // due to a wrong evaluation of the residual and, consequently, a wrong
   // evaluation of the step length.
   this->evaluation_point.update_ghost_values();
-  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
-    this->evaluation_point);
+
+  this->computing_timer.enter_subsection("Precompute for residual");
+
+  this->system_operator->precompute_for_residual(this->evaluation_point);
+
+  this->computing_timer.enter_subsection("Precompute for residual");
 
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
@@ -2805,12 +2808,11 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 {
   this->present_solution.update_ghost_values();
 
-  this->computing_timer.enter_subsection("Evaluate non linear term and tau");
+  this->computing_timer.enter_subsection("Precompute for cell");
 
-  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
-    this->present_solution);
+  this->system_operator->precompute_for_cell(this->present_solution);
 
-  this->computing_timer.leave_subsection("Evaluate non linear term and tau");
+  this->computing_timer.leave_subsection("Precompute for cell");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)

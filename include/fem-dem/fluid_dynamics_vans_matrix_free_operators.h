@@ -58,15 +58,22 @@ public:
 
 protected:
   /**
-   * @brief Store relevant values of the vector of the last newton step to use it
-   * in the Jacobian and pre-calculate the stabilization parameters tau and
-   * gamma.
+   * @brief Precompute relevant quantities related to the last newton step solution
+   * needed for the cell computation: previous values, gradients, tau and gamma.
    *
    * @param[in] newton_step Vector of the last newton step.
    */
   virtual void
-  evaluate_non_linear_term_and_calculate_tau(
-    const VectorType &newton_step) override;
+  precompute_for_cell(const VectorType &newton_step) override;
+
+  /**
+   * @brief Precompute relevant quantities related to the last newton step solution
+   * needed for the residual computation: tau and gamma.
+   *
+   * @param[in] newton_step Vector of the last newton step.
+   */
+  virtual void
+  precompute_for_residual(const VectorType &newton_step) override;
 
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering

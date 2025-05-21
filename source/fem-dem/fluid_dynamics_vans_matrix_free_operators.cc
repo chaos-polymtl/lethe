@@ -6,7 +6,52 @@
 
 template <int dim, typename number>
 void
-VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
+VANSOperator<dim, number>::precompute_for_cell(const VectorType &newton_step)
+{
+  // Assert that a correct stabilization method is used
+  // Currently the VANS solver only supports pspg_supg
+  AssertThrow(this->stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
+              ExcMessage(
+                "PSPG-SUPG stabilization is the only stabilization method"
+                " currently supported by the VANS matrix-free solver"));
+
+  NavierStokesOperatorBase<dim, number>::precompute_for_cell(newton_step);
+
+  // Evaluate the grad-div stabilization constant
+  const unsigned int n_cells = this->matrix_free.n_cell_batches();
+  FECellIntegrator   integrator(this->matrix_free);
+
+  grad_div_gamma.reinit(n_cells, integrator.n_q_points);
+
+  const double kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      integrator.reinit(cell);
+      integrator.read_dof_values_plain(newton_step);
+
+      // Integrator must update the values since the velocity
+      // magnitude is used to calculate the grad-div stabilization constant.
+      integrator.evaluate(EvaluationFlags::values);
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          // Get the velocity magnitude to calculate the grad_div constant
+          VectorizedArray<number> u_mag_squared = 0;
+          for (unsigned int k = 0; k < dim; ++k)
+            u_mag_squared +=
+              Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+          VectorizedArray<number> u = std::sqrt(u_mag_squared);
+          grad_div_gamma(cell, q) =
+            kinematic_viscosity + cfd_dem_parameters.cstar * u;
+        }
+    }
+}
+
+template <int dim, typename number>
+void
+VANSOperator<dim, number>::precompute_for_residual(
   const VectorType &newton_step)
 {
   // Assert that a correct stabilization method is used
@@ -17,8 +62,7 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
                 "PSPG-SUPG stabilization is the only stabilization method"
                 " currently supported by the VANS matrix-free solver"));
 
-  NavierStokesOperatorBase<dim, number>::
-    evaluate_non_linear_term_and_calculate_tau(newton_step);
+  NavierStokesOperatorBase<dim, number>::precompute_for_residual(newton_step);
 
   // Evaluate the grad-div stabilization constant
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
