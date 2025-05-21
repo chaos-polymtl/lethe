@@ -185,11 +185,6 @@ public:
                       const double            radius,
                       const double            rotation_angle);
 
-  template <typename MeshType, int dim2>
-  MortarManagerCircle(const MeshType                &mesh,
-                      const Quadrature<dim2>        &quadrature,
-                      const Parameters::Mortar<dim> &mortar_parameters);
-
 protected:
   Point<dim>
   from_1D(const double rad) const override;
@@ -199,22 +194,6 @@ protected:
 
   Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const override;
-
-private:
-  /**
-   * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
-   * @param[in] triangulation Mesh
-   * @param[in] mortar_parameters The information about the mortar method
-   * control, including the rotor mesh parameters
-   *
-   * @return n_subdivisions Number of cells at the interface between inner
-   * and outer domains
-   * @return radius Radius at the interface between inner and outer domains
-   */
-  static std::pair<unsigned int, double>
-  compute_n_subdivisions_and_radius(
-    const Triangulation<dim>      &triangulation,
-    const Parameters::Mortar<dim> &mortar_parameters);
 };
 
 
@@ -240,24 +219,6 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const double            radius,
   const double            rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions, quadrature, radius, rotation_angle)
-{}
-
-
-template <int dim>
-template <typename MeshType, int dim2>
-MortarManagerCircle<dim>::MortarManagerCircle(
-  const MeshType                &mesh,
-  const Quadrature<dim2>        &quadrature,
-  const Parameters::Mortar<dim> &mortar_parameters)
-  : MortarManagerCircle(
-      compute_n_subdivisions_and_radius(mesh.get_triangulation(),
-                                        mortar_parameters)
-        .first,
-      quadrature,
-      compute_n_subdivisions_and_radius(mesh.get_triangulation(),
-                                        mortar_parameters)
-        .second,
-      mortar_parameters.rotor_mesh->rotation_angle)
 {}
 
 

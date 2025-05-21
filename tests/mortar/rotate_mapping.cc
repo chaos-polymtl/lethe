@@ -112,7 +112,8 @@ test()
   if (Utilities::MPI::this_mpi_process(comm) == 0)
     {
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
-      deallog << "Number of subdivisions at interface : " << n_subdivisions << std::endl;
+      deallog << "Number of subdivisions at interface : " << n_subdivisions
+              << std::endl;
       deallog << "Radius : " << radius << std::endl;
     }
 

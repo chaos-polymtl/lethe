@@ -362,11 +362,10 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 
 /*-------------- MortarManagerCircle -------------------------------*/
 
-
 template <int dim>
 std::pair<unsigned int, double>
-MortarManagerCircle<dim>::compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
+compute_n_subdivisions_and_radius(
+  const DoFHandler<dim>         &dof_handler,
   const Parameters::Mortar<dim> &mortar_parameters)
 {
   // Number of subdivisions per process
@@ -380,7 +379,8 @@ MortarManagerCircle<dim>::compute_n_subdivisions_and_radius(
   double radius_max = 1e-12;
 
   // Check number of faces and vertices at the rotor-stator interface
-  for (const auto &cell : triangulation.active_cell_iterators())
+  for (const auto &cell :
+       dof_handler.get_triangulation().active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -412,13 +412,13 @@ MortarManagerCircle<dim>::compute_n_subdivisions_and_radius(
   // Total number of faces
   const unsigned int n_subdivisions =
     Utilities::MPI::sum(n_subdivisions_local,
-                        triangulation.get_mpi_communicator());
+                        dof_handler.get_mpi_communicator());
 
   // Min and max values over all processes
   radius_min =
-    Utilities::MPI::min(radius_min, triangulation.get_mpi_communicator());
+    Utilities::MPI::min(radius_min, dof_handler.get_mpi_communicator());
   radius_max =
-    Utilities::MPI::max(radius_max, triangulation.get_mpi_communicator());
+    Utilities::MPI::max(radius_max, dof_handler.get_mpi_communicator());
 
   AssertThrow(
     std::abs(radius_max - radius_min) < tolerance,
@@ -1092,15 +1092,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
 
-/**
- * @brief Construct oversampled quadrature
- *
- * @param[in] quadrature Quadrature for local cell operations
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return Quadrature oversampled
- */
 template <int dim>
 static Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
@@ -1254,5 +1245,15 @@ template class CouplingEvaluationSIPG<2, 3, double>;
 template class CouplingEvaluationSIPG<3, 1, double>;
 template class CouplingEvaluationSIPG<3, 3, double>;
 template class CouplingEvaluationSIPG<3, 4, double>;
+
+template std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius<2>(
+  const DoFHandler<2>         &dof_handler,
+  const Parameters::Mortar<2> &mortar_parameters);
+
+template std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius<3>(
+  const DoFHandler<3>         &dof_handler,
+  const Parameters::Mortar<3> &mortar_parameters);
 
 #endif
