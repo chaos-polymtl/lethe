@@ -1791,15 +1791,15 @@ LetheGridTools::find_line_sphere_intersection(
 template <int dim>
 void
 LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
-                               MappingQCache<dim>    &mapping,
-                               const Mapping<dim>    &mapping_q,
+                               MappingQCache<dim>    &mapping_cache,
+                               const Mapping<dim>    &mapping,
                                const double           radius,
                                const double           rotation_angle)
 {
   if constexpr (dim == 2)
     {
-      mapping.initialize(
-        mapping_q,
+      mapping_cache.initialize(
+        mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
           if (cell->center().norm() > radius)
@@ -1821,14 +1821,14 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
 
 template void
 LetheGridTools::rotate_mapping(const DoFHandler<2> &dof_handler,
-                               MappingQCache<2>    &mapping,
-                               const Mapping<2>    &mapping_q,
+                               MappingQCache<2>    &mapping_cache,
+                               const Mapping<2>    &mapping,
                                const double         radius,
                                const double         rotation_angle);
 
 template void
 LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
-                               MappingQCache<3>    &mapping,
-                               const Mapping<3>    &mapping_q,
+                               MappingQCache<3>    &mapping_cache,
+                               const Mapping<3>    &mapping,
                                const double         radius,
                                const double         rotation_angle);

@@ -405,8 +405,8 @@ namespace LetheGridTools
   template <int dim>
   void
   rotate_mapping(const DoFHandler<dim> &dof_handler,
-                 MappingQCache<dim>    &mapping,
-                 const Mapping<dim>    &mapping_q,
+                 MappingQCache<dim>    &mapping_cache,
+                 const Mapping<dim>    &mapping,
                  const double           radius,
                  const double           rotation_angle);
 
