@@ -358,11 +358,82 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 
 /*-------------- MortarManagerCircle -------------------------------*/
 
+
+template <int dim>
+std::pair<unsigned int, double>
+MortarManagerCircle<dim>::compute_n_subdivisions_and_radius(
+  const Triangulation<dim>      &triangulation,
+  const Parameters::Mortar<dim> &mortar_parameters)
+{
+  // Number of subdivisions per process
+  unsigned int n_subdivisions_local = 0;
+  // Number of vertices at the boundary per process
+  unsigned int n_vertices_local = 0;
+  // Tolerance for rotor radius computation
+  const double tolerance = 1e-8;
+  // Min and max values for rotor radius computation
+  double radius_min = 1e12;
+  double radius_max = 1e-12;
+
+  // Check number of faces and vertices at the rotor-stator interface
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (const auto &face : cell->face_iterators())
+            {
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      n_subdivisions_local++;
+                      for (unsigned int vertex_index = 0;
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
+                        {
+                          n_vertices_local++;
+                          auto   v = face->vertex(vertex_index);
+                          double radius_current =
+                            v.distance(mortar_parameters.center_of_rotation);
+                          radius_min = std::min(radius_min, radius_current);
+                          radius_max = std::max(radius_max, radius_current);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  // Total number of faces
+  const unsigned int n_subdivisions =
+    Utilities::MPI::sum(n_subdivisions_local,
+                        triangulation.get_mpi_communicator());
+
+  // Min and max values over all processes
+  radius_min =
+    Utilities::MPI::min(radius_min, triangulation.get_mpi_communicator());
+  radius_max =
+    Utilities::MPI::max(radius_max, triangulation.get_mpi_communicator());
+
+  AssertThrow(
+    std::abs(radius_max - radius_min) < tolerance,
+    ExcMessage(
+      "The computed radius of the rotor mesh has a variation greater than "
+      "the tolerance across the rotor domain, meaning that the prescribed "
+      "center of rotation and the rotor geometry are not in accordance."));
+
+  // Final radius value
+  const double radius = radius_min;
+
+  return {n_subdivisions, radius};
+}
+
 template <int dim>
 Point<dim>
-MortarManagerCircle<dim>::from_1D(const double rad) const
+MortarManagerCircle<dim>::from_1D(const double radiant) const
 {
-  return radius_to_point<dim>(this->radius, rad);
+  return radius_to_point<dim>(this->radius, radiant);
 }
 
 template <int dim>
@@ -390,18 +461,18 @@ CouplingOperator<dim, Number>::CouplingOperator(
   const AffineConstraints<Number>                           &constraints,
   const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
   const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-  const unsigned int                                         bid_rotor,
-  const unsigned int                                         bid_stator,
+  const unsigned int                                         bid_m,
+  const unsigned int                                         bid_p,
   const double                                               sip_factor)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , constraints(constraints)
-  , bid_rotor(bid_rotor)
-  , bid_stator(bid_stator)
+  , bid_m(bid_m)
+  , bid_p(bid_p)
   , evaluator(evaluator)
   , mortar_manager(mortar_manager)
 {
-  this->N                    = evaluator->data_size();
+  this->q_data_size          = evaluator->data_size();
   this->relevant_dof_indices = evaluator->get_relevant_dof_indices();
   this->n_dofs_per_cell      = this->relevant_dof_indices.size();
 
@@ -421,8 +492,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto face_no : cell->face_indices())
-        if ((cell->face(face_no)->boundary_id() == bid_rotor) ||
-            (cell->face(face_no)->boundary_id() == bid_stator))
+        if ((cell->face(face_no)->boundary_id() == bid_m) ||
+            (cell->face(face_no)->boundary_id() == bid_p))
           {
             const auto face = cell->face(face_no);
 
@@ -438,12 +509,12 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 unsigned int i = indices_q[ii];
                 unsigned int id_local, id_ghost;
 
-                if (face->boundary_id() == bid_rotor)
+                if (face->boundary_id() == bid_m)
                   {
                     id_local = i;
                     id_ghost = i + n_points;
                   }
-                else if (face->boundary_id() == bid_stator)
+                else if (face->boundary_id() == bid_p)
                   {
                     id_local = i + n_points;
                     id_ghost = i;
@@ -467,12 +538,12 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 unsigned int i = indices[ii];
                 unsigned int id_local, id_ghost;
 
-                if (face->boundary_id() == bid_rotor)
+                if (face->boundary_id() == bid_m)
                   {
                     id_local = i;
                     id_ghost = i + n_sub_cells;
                   }
-                else if (face->boundary_id() == bid_stator)
+                else if (face->boundary_id() == bid_p)
                   {
                     id_local = i + n_sub_cells;
                     id_ghost = i;
@@ -539,7 +610,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
               {
                 auto normals =
                   mortar_manager->get_normals(get_face_center(cell, face));
-                if (face->boundary_id() == bid_stator)
+                if (face->boundary_id() == bid_p)
                   for (auto &normal : normals)
                     normal *= -1.0;
                 data.all_normals.insert(data.all_normals.end(),
@@ -717,14 +788,13 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
 
   Vector<Number> buffer;
 
-  std::vector<Number> all_value_m(data.all_normals.size() * N);
-  std::vector<Number> all_value_p(data.all_normals.size() * N);
+  std::vector<Number> all_value_m(data.all_normals.size() * q_data_size);
+  std::vector<Number> all_value_p(data.all_normals.size() * q_data_size);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_rotor) ||
-            (face->boundary_id() == bid_stator))
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
             /* Number of quadrature points at the cell(rotor)/cell(stator)
              * interaction. For non-aligned meshes, this value indicates the
@@ -744,7 +814,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
               buffer[i] = src[local_dofs[i]];
 
             evaluator->local_evaluate(
-              data, buffer, ptr_q, 1, all_value_m.data() + ptr_q * N);
+              data, buffer, ptr_q, 1, all_value_m.data() + ptr_q * q_data_size);
 
             ptr_q += n_q_points;
           }
@@ -755,15 +825,14 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                             all_value_m.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
                       all_value_p.size()),
-    N);
+    q_data_size);
 
   // 3) Integrate
   ptr_q = 0;
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_rotor) ||
-            (face->boundary_id() == bid_stator))
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points = mortar_manager->get_n_points();
@@ -778,8 +847,9 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                        buffer,
                                        ptr_q,
                                        1,
-                                       all_value_m.data() + ptr_q * N,
-                                       all_value_p.data() + ptr_q * N);
+                                       all_value_m.data() + ptr_q * q_data_size,
+                                       all_value_p.data() +
+                                         ptr_q * q_data_size);
 
             const auto local_dofs = this->get_dof_indices(cell);
             constraints.distribute_local_to_global(buffer, local_dofs, dst);
@@ -802,8 +872,7 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_rotor) ||
-            (face->boundary_id() == bid_stator))
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points = mortar_manager->get_n_points();
@@ -815,8 +884,8 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
 
             buffer.reinit(n_dofs_per_cell);
             diagonal_local.reinit(n_dofs_per_cell);
-            all_value_m.resize(n_q_points * N);
-            all_value_p.resize(n_q_points * N);
+            all_value_m.resize(n_q_points * q_data_size);
+            all_value_p.resize(n_q_points * q_data_size);
 
             for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
               {
@@ -877,9 +946,9 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   const auto constraints = &constraints_extended;
 
   std::vector<Number> all_value_m(data.all_normals.size() * n_dofs_per_cell *
-                                  N);
+                                  q_data_size);
   std::vector<Number> all_value_p(data.all_normals.size() * n_dofs_per_cell *
-                                  N);
+                                  q_data_size);
 
   unsigned int ptr_q = 0;
 
@@ -889,8 +958,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_rotor) ||
-            (face->boundary_id() == bid_stator))
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points = mortar_manager->get_n_points();
@@ -912,7 +980,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                                           ptr_q,
                                           n_dofs_per_cell,
                                           all_value_m.data() +
-                                            (ptr_q * n_dofs_per_cell + i) * N);
+                                            (ptr_q * n_dofs_per_cell + i) *
+                                              q_data_size);
               }
 
             ptr_q += n_q_points;
@@ -927,7 +996,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                             all_value_m.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
                       all_value_p.size()),
-    n_dofs_per_cell * n_q_points * N);
+    n_dofs_per_cell * n_q_points * q_data_size);
 
 
   ptr_q                 = 0;
@@ -937,8 +1006,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_rotor) ||
-            (face->boundary_id() == bid_stator))
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
             const unsigned int n_sub_cells = mortar_manager->get_n_mortars();
 
@@ -949,7 +1017,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                                           all_points_ref.data() + ptr_q,
                                           n_q_points));
 
-                for (unsigned int bb = 0; bb < 2; ++bb)
+                for (unsigned int b = 0; b < 2; ++b)
                   {
                     FullMatrix<Number> cell_matrix(n_dofs_per_cell,
                                                    n_dofs_per_cell);
@@ -957,14 +1025,14 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                     for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
                       {
                         buffer.reinit(n_dofs_per_cell);
-                        if (bb == 0)
+                        if (b == 0)
                           evaluator->local_integrate(
                             data,
                             buffer,
                             ptr_q,
                             n_dofs_per_cell,
                             all_value_m.data() +
-                              (ptr_q * n_dofs_per_cell + i) * N,
+                              (ptr_q * n_dofs_per_cell + i) * q_data_size,
                             nullptr);
                         else
                           evaluator->local_integrate(
@@ -974,34 +1042,35 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                             n_dofs_per_cell,
                             nullptr,
                             all_value_p.data() +
-                              (ptr_q * n_dofs_per_cell + i) * N);
+                              (ptr_q * n_dofs_per_cell + i) * q_data_size);
 
                         for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                           cell_matrix[j][i] = buffer[j];
                       }
 
 
-                    std::vector<types::global_dof_index> a(
+                    std::vector<types::global_dof_index> local_dof_indices_m(
                       dof_indices.begin() + ptr_dofs,
                       dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
 
-                    if (bb == 0)
+                    if (b == 0)
                       {
-                        constraints->distribute_local_to_global(cell_matrix,
-                                                                a,
-                                                                system_matrix);
+                        constraints->distribute_local_to_global(
+                          cell_matrix, local_dof_indices_m, system_matrix);
                       }
                     else
                       {
-                        std::vector<types::global_dof_index> b(
-                          dof_indices_ghost.begin() + ptr_dofs,
-                          dof_indices_ghost.begin() + ptr_dofs +
-                            n_dofs_per_cell);
+                        std::vector<types::global_dof_index>
+                          local_dof_indices_p(dof_indices_ghost.begin() +
+                                                ptr_dofs,
+                                              dof_indices_ghost.begin() +
+                                                ptr_dofs + n_dofs_per_cell);
 
-                        constraints->distribute_local_to_global(cell_matrix,
-                                                                a,
-                                                                b,
-                                                                system_matrix);
+                        constraints->distribute_local_to_global(
+                          cell_matrix,
+                          local_dof_indices_m,
+                          local_dof_indices_p,
+                          system_matrix);
                       }
                   }
 
@@ -1018,89 +1087,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
-
-
-
-/**
- * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
- * @param[in] dof_handler DoFHandler associated to the triangulation
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return n_subdivisions Number of cells at the interface between inner
- * and outer domains
- * @return radius Radius at the interface between inner and outer domains
- */
-template <int dim>
-std::pair<unsigned int, double>
-compute_n_subdivisions_and_radius(
-  const DoFHandler<dim>         &dof_handler,
-  const Parameters::Mortar<dim> &mortar_parameters)
-{
-  // Number of subdivisions per process
-  unsigned int n_subdivisions_local = 0;
-  // Number of vertices at the boundary per process
-  unsigned int n_vertices_local = 0;
-  // Tolerance for rotor radius computation
-  const double tolerance = 1e-8;
-  // Min and max values for rotor radius computation
-  double radius_min = 1e12;
-  double radius_max = 1e-12;
-
-  // Check number of faces and vertices at the rotor-stator interface
-  for (const auto &cell :
-       dof_handler.get_triangulation().active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          for (const auto &face : cell->face_iterators())
-            {
-              if (face->at_boundary())
-                {
-                  if (face->boundary_id() ==
-                      mortar_parameters.rotor_boundary_id)
-                    {
-                      n_subdivisions_local++;
-                      for (unsigned int vertex_index = 0;
-                           vertex_index < face->n_vertices();
-                           vertex_index++)
-                        {
-                          n_vertices_local++;
-                          auto   v = face->vertex(vertex_index);
-                          double radius_current =
-                            v.distance(mortar_parameters.center_of_rotation);
-                          radius_min = std::min(radius_min, radius_current);
-                          radius_max = std::max(radius_max, radius_current);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-  // Total number of faces
-  const unsigned int n_subdivisions =
-    Utilities::MPI::sum(n_subdivisions_local,
-                        dof_handler.get_mpi_communicator());
-
-  // Min and max values over all processes
-  radius_min =
-    Utilities::MPI::min(radius_min, dof_handler.get_mpi_communicator());
-  radius_max =
-    Utilities::MPI::max(radius_max, dof_handler.get_mpi_communicator());
-
-  AssertThrow(
-    std::abs(radius_max - radius_min) < tolerance,
-    ExcMessage(
-      "The computed radius of the rotor mesh has a variation greater than "
-      "the tolerance across the rotor domain, meaning that the prescribed "
-      "center of rotation and the rotor geometry are not in accordance."));
-
-  // Final radius value
-  const double radius = radius_min;
-
-  return {n_subdivisions, radius};
-}
 
 /**
  * @brief Construct oversampled quadrature

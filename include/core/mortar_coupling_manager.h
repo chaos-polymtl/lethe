@@ -152,12 +152,21 @@ protected:
   get_indices_internal(const Point<dim>  &face_center,
                        const unsigned int n_quadrature_points) const;
 
+  /**
+   * @brief Convert radiant to quadrature point in real space.
+   */
   virtual Point<dim>
-  from_1D(const double rad) const = 0;
+  from_1D(const double radiant) const = 0;
 
+  /**
+   * @brief Convert quadrature point in real space to radiant.
+   */
   virtual double
   to_1D(const Point<dim> &point) const = 0;
 
+  /**
+   * @brief Return the normal for a given quadrature point.
+   */
   virtual Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const = 0;
 
@@ -183,6 +192,11 @@ public:
                       const double            radius,
                       const double            rotation_angle);
 
+  template <typename MeshType, int dim2>
+  MortarManagerCircle(const MeshType                &mesh,
+                      const Quadrature<dim2>        &quadrature,
+                      const Parameters::Mortar<dim> &mortar_parameters);
+
 protected:
   Point<dim>
   from_1D(const double rad) const override;
@@ -192,6 +206,22 @@ protected:
 
   Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const override;
+
+private:
+  /**
+   * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+   * @param[in] triangulation Mesh
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
+   *
+   * @return n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @return radius Radius at the interface between inner and outer domains
+   */
+  static std::pair<unsigned int, double>
+  compute_n_subdivisions_and_radius(
+    const Triangulation<dim>      &triangulation,
+    const Parameters::Mortar<dim> &mortar_parameters);
 };
 
 
@@ -217,6 +247,24 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const double            radius,
   const double            rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions, quadrature, radius, rotation_angle)
+{}
+
+
+template <int dim>
+template <typename MeshType, int dim2>
+MortarManagerCircle<dim>::MortarManagerCircle(
+  const MeshType                &mesh,
+  const Quadrature<dim2>        &quadrature,
+  const Parameters::Mortar<dim> &mortar_parameters)
+  : MortarManagerCircle(
+      compute_n_subdivisions_and_radius(mesh.get_triangulation(),
+                                        mortar_parameters)
+        .first,
+      quadrature,
+      compute_n_subdivisions_and_radius(mesh.get_triangulation(),
+                                        mortar_parameters)
+        .second,
+      mortar_parameters.rotor_mesh->rotation_angle)
 {}
 
 
@@ -403,6 +451,9 @@ template <int dim, typename Number>
 class CouplingEvaluationBase
 {
 public:
+  /**
+   * Number of data points of type Number associated to a quadrature point.
+   */
   virtual unsigned int
   data_size() const = 0;
 
@@ -482,8 +533,8 @@ public:
     const AffineConstraints<Number>                           &constraints,
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
     const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-    const unsigned int                                         bid_rotor,
-    const unsigned int                                         bid_stator,
+    const unsigned int                                         bid_m,
+    const unsigned int                                         bid_p,
     const double                                               sip_factor);
 
   /**
@@ -593,12 +644,12 @@ private:
 
 protected:
   /// Number of data points per quadrature point
-  unsigned int N;
+  unsigned int q_data_size;
 
   /// Boundary ID of the inner domain (rotor)
-  const unsigned int bid_rotor;
+  const unsigned int bid_m;
   /// Boundary ID of the outer domain (stator)
-  const unsigned int bid_stator;
+  const unsigned int bid_p;
 
   /// List of relevant DoF indices per cell
   std::vector<unsigned int> relevant_dof_indices;
@@ -722,10 +773,14 @@ public:
                   Number                                    *all_value_m,
                   Number *all_value_p) const override;
 
+  /// Finite element that matches the components `n_components` components
+  /// starting at component with index `first_selected_component`.
   const FESystem<dim> fe_sub;
+
   /// Interface to the evaluation of mortar coupling interpolated solution
   mutable FEPointIntegrator phi_m;
 
+  /// Relevant dof indices.
   std::vector<unsigned int> relevant_dof_indices;
 };
 

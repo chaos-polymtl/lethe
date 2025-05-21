@@ -39,7 +39,7 @@ main()
             std::cout << "Shift: " << shift << std::endl;
             std::cout << "Cell center at " << rad << ": " << std::endl;
 
-            const auto p = radius_to_point<dim>(1.0, rad);
+            const auto p = radius_to_point<dim>(radius, rad);
 
             const auto indices = manager.get_indices(p);
             const auto weights = manager.get_weights(p);
