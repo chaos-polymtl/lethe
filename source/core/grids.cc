@@ -425,8 +425,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       Triangulation<dim> rotor_temp_tria;
       attach_grid_to_triangulation(rotor_temp_tria,
                                    *mortar_parameters.rotor_mesh);
-      GridTools::rotate(mortar_parameters.rotor_mesh->rotation_angle,
-                        rotor_temp_tria);
 
       // Get stator manifold ids without flat id
       unsigned int stator_ids_no_flat = 0;

@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-05-21
+
+### Fixed
+
+- MINOR The rotor mesh rotation in the mortar method context was being done by rotating the triangulation. This PR changes this so that the mapping is rotated instead. [#1536](https://github.com/chaos-polymtl/lethe/pull/1536)
+
 ## [Master] - 2025-05-20
 
 ### Fixed

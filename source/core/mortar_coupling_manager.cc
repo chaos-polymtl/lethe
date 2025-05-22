@@ -362,10 +362,9 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 
 /*-------------- MortarManagerCircle -------------------------------*/
 
-
 template <int dim>
 std::pair<unsigned int, double>
-MortarManagerCircle<dim>::compute_n_subdivisions_and_radius(
+compute_n_subdivisions_and_radius(
   const Triangulation<dim>      &triangulation,
   const Parameters::Mortar<dim> &mortar_parameters)
 {
@@ -1092,15 +1091,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
 
-/**
- * @brief Construct oversampled quadrature
- *
- * @param[in] quadrature Quadrature for local cell operations
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return Quadrature oversampled
- */
 template <int dim>
 static Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
@@ -1254,5 +1244,15 @@ template class CouplingEvaluationSIPG<2, 3, double>;
 template class CouplingEvaluationSIPG<3, 1, double>;
 template class CouplingEvaluationSIPG<3, 3, double>;
 template class CouplingEvaluationSIPG<3, 4, double>;
+
+template std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius<2>(
+  const Triangulation<2>      &triangulation,
+  const Parameters::Mortar<2> &mortar_parameters);
+
+template std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius<3>(
+  const Triangulation<3>      &triangulation,
+  const Parameters::Mortar<3> &mortar_parameters);
 
 #endif
