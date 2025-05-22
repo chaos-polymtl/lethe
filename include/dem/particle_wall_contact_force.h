@@ -1157,6 +1157,7 @@ private:
     auto properties = dem_parameters.lagrangian_physical_properties;
 
     n_particle_types = properties.particle_type_number;
+    effective_real_youngs_modulus.resize(n_particle_types);
     equivalent_surface_roughness.resize(n_particle_types);
     equivalent_surface_slope.resize(n_particle_types);
     effective_microhardness.resize(n_particle_types);
@@ -1165,9 +1166,11 @@ private:
     this->gas_thermal_conductivity = properties.thermal_conductivity_gas;
 
     // Wall properties
-    const double wall_surface_roughness = properties.surface_roughness_wall;
-    const double wall_surface_slope     = properties.surface_slope_wall;
-    const double wall_microhardness     = properties.microhardness_wall;
+    const double wall_real_youngs_modulus = properties.real_youngs_modulus_wall;
+    const double wall_poisson_ratio       = properties.poisson_ratio_wall;
+    const double wall_surface_roughness   = properties.surface_roughness_wall;
+    const double wall_surface_slope       = properties.surface_slope_wall;
+    const double wall_microhardness       = properties.microhardness_wall;
     const double wall_thermal_accommodation =
       properties.thermal_accommodation_wall;
     this->wall_thermal_conductivity = properties.thermal_conductivity_wall;
@@ -1175,6 +1178,10 @@ private:
     for (unsigned int i = 0; i < n_particle_types; ++i)
       {
         // Particle properties
+        const double particle_real_youngs_modulus =
+          properties.real_youngs_modulus_particle.at(i);
+        const double particle_poisson_ratio =
+          properties.poisson_ratio_particle.at(i);
         const double particle_surface_roughness =
           properties.surface_roughness_particle.at(i);
         const double particle_surface_slope =
@@ -1187,6 +1194,13 @@ private:
           properties.thermal_conductivity_particle.at(i);
 
         // Effective particle-wall properties
+        this->effective_real_youngs_modulus[i] =
+          (particle_real_youngs_modulus * wall_real_youngs_modulus) /
+          (wall_real_youngs_modulus *
+             (1. - particle_poisson_ratio * particle_poisson_ratio) +
+           particle_real_youngs_modulus *
+             (1. - wall_poisson_ratio * wall_poisson_ratio) +
+           DBL_MIN);
         this->equivalent_surface_roughness[i] =
           sqrt(particle_surface_roughness * particle_surface_roughness +
                wall_surface_roughness * wall_surface_roughness);
@@ -1211,6 +1225,7 @@ private:
 
   unsigned int        n_particle_types;
   std::vector<double> effective_youngs_modulus;
+  std::vector<double> effective_real_youngs_modulus;
   std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
   std::vector<double> effective_coefficient_of_friction;

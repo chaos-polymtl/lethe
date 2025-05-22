@@ -87,6 +87,9 @@ namespace Parameters
       // Young's modulus of each particle type
       std::unordered_map<unsigned int, double> youngs_modulus_particle;
 
+      // Real Young's modulus of each particle type
+      std::unordered_map<unsigned int, double> real_youngs_modulus_particle;
+
       // Poisson's ratio of each particle type
       std::unordered_map<unsigned int, double> poisson_ratio_particle;
 
@@ -130,6 +133,9 @@ namespace Parameters
 
       // Young's modulus of wall
       double youngs_modulus_wall;
+
+      // Real Young's modulus of wall
+      double real_youngs_modulus_wall;
 
       // Poisson's ratio of wall
       double poisson_ratio_wall;
@@ -208,6 +214,7 @@ namespace Parameters
         std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
+        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle,
         std::unordered_map<unsigned int, double> &poisson_ratio_particle,
         std::unordered_map<unsigned int, double>
           &restitution_coefficient_particle,

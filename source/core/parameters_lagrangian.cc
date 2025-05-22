@@ -51,6 +51,10 @@ namespace Parameters
                         "1000000",
                         Patterns::Double(),
                         "Particle Young's modulus");
+      prm.declare_entry("real young modulus particles",
+                        "1000000000",
+                        Patterns::Double(),
+                        "Particle real Young's modulus");
       prm.declare_entry("poisson ratio particles",
                         "0.3",
                         Patterns::Double(),
@@ -153,6 +157,8 @@ namespace Parameters
       density_particle.at(particle_type) = prm.get_double("density particles");
       youngs_modulus_particle.at(particle_type) =
         prm.get_double("young modulus particles");
+      real_youngs_modulus_particle.at(particle_type) =
+        prm.get_double("real young modulus particles");
       poisson_ratio_particle.at(particle_type) =
         prm.get_double("poisson ratio particles");
       restitution_coefficient_particle.at(particle_type) =
@@ -224,6 +230,10 @@ namespace Parameters
                           "1000000.",
                           Patterns::Double(),
                           "Young's modulus of wall");
+        prm.declare_entry("real young modulus wall",
+                          "1000000000.",
+                          Patterns::Double(),
+                          "Real Young's modulus of wall");
         prm.declare_entry("poisson ratio wall",
                           "0.3",
                           Patterns::Double(),
@@ -310,6 +320,7 @@ namespace Parameters
                             number,
                             density_particle,
                             youngs_modulus_particle,
+                            real_youngs_modulus_particle,
                             poisson_ratio_particle,
                             restitution_coefficient_particle,
                             friction_coefficient_particle,
@@ -343,8 +354,9 @@ namespace Parameters
           prm.leave_subsection();
         }
 
-      youngs_modulus_wall = prm.get_double("young modulus wall");
-      poisson_ratio_wall  = prm.get_double("poisson ratio wall");
+      youngs_modulus_wall      = prm.get_double("young modulus wall");
+      real_youngs_modulus_wall = prm.get_double("real young modulus wall");
+      poisson_ratio_wall       = prm.get_double("poisson ratio wall");
       restitution_coefficient_wall =
         prm.get_double("restitution coefficient wall");
       friction_coefficient_wall = prm.get_double("friction coefficient wall");
@@ -382,6 +394,7 @@ namespace Parameters
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
+      std::unordered_map<unsigned int, double> &real_youngs_modulus_particle,
       std::unordered_map<unsigned int, double> &poisson_ratio_particle,
       std::unordered_map<unsigned int, double>
         &restitution_coefficient_particle,
@@ -410,6 +423,7 @@ namespace Parameters
           number.insert({counter, 0});
           density_particle.insert({counter, 0.});
           youngs_modulus_particle.insert({counter, 0.});
+          real_youngs_modulus_particle.insert({counter, 0.});
           poisson_ratio_particle.insert({counter, 0.});
           restitution_coefficient_particle.insert({counter, 0.});
           friction_coefficient_particle.insert({counter, 0.});
