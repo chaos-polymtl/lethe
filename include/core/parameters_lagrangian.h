@@ -152,6 +152,21 @@ namespace Parameters
       // Hamaker constant wall
       double hamaker_constant_wall;
 
+      // Thermal conductivity wall
+      double thermal_conductivity_wall;
+
+      // Microhardness wall
+      double microhardness_wall;
+
+      // Surface slope wall
+      double surface_slope_wall;
+
+      // Surface roughness wall
+      double surface_roughness_wall;
+
+      // Thermal accommodation wall
+      double thermal_accommodation_wall;
+
       // Thermal conductivity of interstitial gas
       double thermal_conductivity_gas;
 

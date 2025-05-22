@@ -144,6 +144,11 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
   properties.rolling_viscous_damping_wall = 0.1;
   properties.surface_energy_wall          = 0.0;
   properties.hamaker_constant_wall        = 4.e-19;
+  properties.thermal_conductivity_wall    = 100;
+  properties.microhardness_wall           = 1.e9;
+  properties.surface_slope_wall           = 0.1;
+  properties.surface_roughness_wall       = 1.e-10;
+  properties.thermal_accommodation_wall   = 0.7;
 
   // Interstitial gas parameters
   properties.thermal_conductivity_gas     = 0.01;

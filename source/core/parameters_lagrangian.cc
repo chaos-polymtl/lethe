@@ -252,6 +252,26 @@ namespace Parameters
                           "4.e-19",
                           Patterns::Double(),
                           "Hamaker constant of wall");
+        prm.declare_entry("thermal conductivity wall",
+                          "100",
+                          Patterns::Double(),
+                          "Thermal conductivity of wall");
+        prm.declare_entry("microhardness wall",
+                          "1.e9",
+                          Patterns::Double(),
+                          "Microhardness of wall");
+        prm.declare_entry("surface slope wall",
+                          "0.1",
+                          Patterns::Double(),
+                          "Surface slope of wall");
+        prm.declare_entry("surface roughness wall",
+                          "1.e-10",
+                          Patterns::Double(),
+                          "Surface roughness of wall");
+        prm.declare_entry("thermal accommodation wall",
+                          "0.7",
+                          Patterns::Double(),
+                          "Thermal accommodation of wall");
 
         prm.declare_entry("thermal conductivity gas",
                           "0.01",
@@ -331,8 +351,13 @@ namespace Parameters
       rolling_friction_wall     = prm.get_double("rolling friction wall");
       rolling_viscous_damping_wall =
         prm.get_double("rolling viscous damping wall");
-      surface_energy_wall   = prm.get_double("surface energy wall");
-      hamaker_constant_wall = prm.get_double("hamaker constant wall");
+      surface_energy_wall        = prm.get_double("surface energy wall");
+      hamaker_constant_wall      = prm.get_double("hamaker constant wall");
+      thermal_conductivity_wall  = prm.get_double("thermal conductivity wall");
+      microhardness_wall         = prm.get_double("microhardness wall");
+      surface_slope_wall         = prm.get_double("surface slope wall");
+      surface_roughness_wall     = prm.get_double("surface roughness wall");
+      thermal_accommodation_wall = prm.get_double("thermal accommodation wall");
 
       thermal_conductivity_gas = prm.get_double("thermal conductivity gas");
       specific_heat_gas        = prm.get_double("specific heat gas");

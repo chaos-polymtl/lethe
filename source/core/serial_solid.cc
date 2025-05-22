@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
@@ -34,6 +34,8 @@ SerialSolid<dim, spacedim>::SerialSolid(
   , translational_velocity(param->translational_velocity)
   , angular_velocity(param->angular_velocity)
   , center_of_rotation(param->center_of_rotation)
+  , solid_temperature(param->solid_temperature)
+  , thermal_boundary_type(param->thermal_boundary_type)
 {
   if (param->solid_mesh.simplex)
     {
@@ -306,6 +308,17 @@ void
 SerialSolid<3, 3>::translate_grid(const Tensor<1, 3> translation)
 {
   GridTools::shift(translation, *solid_tria);
+}
+
+template <int dim, int spacedim>
+void
+SerialSolid<dim, spacedim>::update_solid_temperature(const double initial_time)
+{
+  if (thermal_boundary_type == Parameters::ThermalBoundaryType::adiabatic)
+    return;
+
+  solid_temperature->set_time(initial_time);
+  current_solid_temperature = solid_temperature->value(Point<spacedim>());
 }
 
 template <int dim, int spacedim>
