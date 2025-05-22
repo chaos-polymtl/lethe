@@ -61,7 +61,7 @@ In this subsection, contact detection, force models, time integration, load bala
     end
 
     # Solver type
-    # Choices are dem|cfd_dem
+    # Choices are dem|cfd_dem|dem_mp
     set solver type = dem
   end
 
@@ -185,4 +185,4 @@ The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and f
 -----------
 Solver Type
 -----------
-The "solver type" parameter controls the type of physic being solved by lethe. Currently, this parameter should always be set to "dem", which is the default value, even when solving a CFD-DEM problem.
+The ``solver type`` parameter controls the type of physic being solved by lethe. Currently, this parameter should be set to ``dem``, which is the default value, when solving a DEM or CFD-DEM problem. The ``dem_mp`` solver type is used for multiphysic DEM, which includes heat transfer.
