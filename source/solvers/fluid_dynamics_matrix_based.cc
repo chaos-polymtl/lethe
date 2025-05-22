@@ -84,6 +84,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
+  // Create mortar coupling
+  init_mortar_coupling();
+
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
@@ -110,6 +113,11 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                   dsp,
                                   nonzero_constraints,
                                   false);
+
+  // Add sparsity pattern entries
+  add_mortar_sparsity_patterns(dsp);
+  sparsity_pattern.copy_from(dsp);
+
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),
@@ -543,6 +551,15 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
+  std::cout << "matrix before :" << std::endl;
+  this->system_matrix.print(std::cout);
+
+  // Add mortar entries
+  add_mortar_system_matrix_entries();
+
+  std::cout << "\n \n \n matrix after :" << std::endl;
+  this->system_matrix.print(std::cout);
+
   system_matrix.compress(VectorOperation::add);
 }
 
@@ -895,6 +912,61 @@ FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
   constraints_used.distribute_local_to_global(copy_data.local_rhs,
                                               copy_data.local_dof_indices,
                                               this->system_rhs);
+}
+
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::init_mortar_coupling()
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  // Create mortar manager
+  this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+    *this->cell_quadrature,
+    this->dof_handler,
+    this->simulation_parameters.mortar);
+
+  // Create mortar coupling evaluator
+  const std::shared_ptr<CouplingEvaluationBase<dim, double>>
+    mortar_coupling_evaluator =
+      std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+        *this->mapping, this->dof_handler);
+
+  this->mortar_coupling_operator =
+    std::make_shared<CouplingOperator<dim, double>>(
+      *this->mapping,
+      this->dof_handler,
+      this->nonzero_constraints,
+      mortar_coupling_evaluator,
+      this->mortar_manager,
+      this->simulation_parameters.mortar.rotor_boundary_id,
+      this->simulation_parameters.mortar.stator_boundary_id,
+      this->simulation_parameters.mortar.sip_factor);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::add_mortar_sparsity_patterns(
+  DynamicSparsityPattern &dsp)
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+}
+
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::add_mortar_system_matrix_entries()
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  this->mortar_coupling_operator->add_system_matrix_entries(
+    this->system_matrix);
 }
 
 /**

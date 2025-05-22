@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_matrix_based_h
 
 #include <core/exceptions.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/vector.h>
 
 #include <solvers/copy_data.h>
@@ -171,6 +172,25 @@ protected:
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
+  /**
+   * @brief Initialize mortar coupling operator
+   */
+  void
+  init_mortar_coupling();
+
+  /**
+   * @brief add mortar coupling entries to sparsity pattern
+   *
+   * @param[in, out] dsp Dynamic Sparsity Pattern
+   */
+  void
+  add_mortar_sparsity_patterns(DynamicSparsityPattern &dsp);
+
+  /**
+   * @brief add mortar coupling entries to system matrix
+   */
+  void
+  add_mortar_system_matrix_entries();
 
   /**
    * @brief Call for the assembly of the linear system of equation
@@ -249,6 +269,9 @@ private:
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
   int current_preconditioner_fill_level;
   int initial_preconditioner_fill_level;
+
+  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
+  std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
 };
 
 
