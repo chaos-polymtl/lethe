@@ -323,7 +323,8 @@ ParticleWallContactForce<dim,
                                 0.5 * particle_properties[PropertiesIndex::dp],
                                 0,
                                 this->effective_youngs_modulus[particle_type],
-                                this->effective_youngs_modulus[particle_type],
+                                this->effective_real_youngs_modulus
+                                  [particle_type],
                                 this
                                   ->equivalent_surface_roughness[particle_type],
                                 this->equivalent_surface_slope[particle_type],
