@@ -1605,7 +1605,7 @@ private:
     auto properties = dem_parameters.lagrangian_physical_properties;
 
     n_particle_types = properties.particle_type_number;
-    effective_real_youngs_modulus.resize(n_particle_types * n_particles_types);
+    effective_real_youngs_modulus.resize(n_particle_types * n_particle_types);
     equivalent_surface_roughness.resize(n_particle_types * n_particle_types);
     equivalent_surface_slope.resize(n_particle_types * n_particle_types);
     effective_microhardness.resize(n_particle_types * n_particle_types);
