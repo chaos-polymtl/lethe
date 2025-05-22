@@ -185,6 +185,11 @@ public:
                       const double            radius,
                       const double            rotation_angle);
 
+  template <int dim2>
+  MortarManagerCircle(const Quadrature<dim2>        &quadrature,
+                      const DoFHandler<dim2>        &dof_handler,
+                      const Parameters::Mortar<dim> &mortar_parameters);
+
 protected:
   Point<dim>
   from_1D(const double rad) const override;
@@ -219,6 +224,24 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const double            radius,
   const double            rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions, quadrature, radius, rotation_angle)
+{}
+
+
+template <int dim>
+template <int dim2>
+MortarManagerCircle<dim>::MortarManagerCircle(
+  const Quadrature<dim2>        &quadrature,
+  const DoFHandler<dim2>        &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters)
+  : MortarManagerCircle(
+      compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                        mortar_parameters)
+        .first,
+      quadrature,
+      compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                        mortar_parameters)
+        .second,
+      mortar_parameters.rotor_mesh->rotation_angle)
 {}
 
 
@@ -779,6 +802,204 @@ public:
   mutable FEPointIntegrator phi_m;
 
   /// Relevant dof indices.
+  std::vector<unsigned int> relevant_dof_indices;
+};
+
+
+template <int dim, typename Number>
+class NavierStokesCouplingEvaluation
+  : public CouplingEvaluationBase<dim, Number>
+{
+public:
+  using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
+  using FEPointIntegratorP = FEPointEvaluation<1, dim, dim, Number>;
+
+  using u_value_type = typename FEPointIntegratorU::value_type;
+
+  NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
+                                 const DoFHandler<dim> &dof_handler,
+                                 const bool do_pressure_gradient_term   = true,
+                                 const bool do_velocity_divergence_term = true)
+    : fe_sub_u(dof_handler.get_fe().base_element(
+                 dof_handler.get_fe().component_to_base_index(0).first),
+               dim)
+    , fe_sub_p(dof_handler.get_fe().base_element(
+                 dof_handler.get_fe().component_to_base_index(dim).first),
+               1)
+    , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
+    , phi_p_m(mapping, fe_sub_p, update_values)
+    , do_pressure_gradient_term(do_pressure_gradient_term)
+    , do_velocity_divergence_term(do_velocity_divergence_term)
+  {
+    for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+      if (dof_handler.get_fe().system_to_component_index(i).first < dim)
+        relevant_dof_indices.push_back(i);
+
+    for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+      if (dof_handler.get_fe().system_to_component_index(i).first == dim)
+        relevant_dof_indices.push_back(i);
+
+    AssertDimension(dof_handler.get_fe().n_dofs_per_cell(),
+                    relevant_dof_indices.size());
+  }
+
+  unsigned int
+  data_size() const override
+  {
+    return 4 * dim;
+  }
+
+  const std::vector<unsigned int> &
+  get_relevant_dof_indices() const override
+  {
+    return relevant_dof_indices;
+  }
+
+  void
+  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
+               const ArrayView<const Point<dim, Number>> &points) const override
+  {
+    this->phi_u_m.reinit(cell, points);
+    this->phi_p_m.reinit(cell, points);
+  }
+
+  void
+  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
+                 const Vector<Number>                      &buffer,
+                 const unsigned int                         ptr_q,
+                 const unsigned int                         q_stride,
+                 Number *all_value_m) const override
+  {
+    AssertDimension(buffer.size(),
+                    fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+    ArrayView<const Number> buffer_u(buffer.data() + 0,
+                                     fe_sub_u.n_dofs_per_cell());
+    ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                                     fe_sub_p.n_dofs_per_cell());
+
+    this->phi_u_m.evaluate(buffer_u,
+                           EvaluationFlags::values |
+                             EvaluationFlags::gradients);
+    this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
+
+    for (const auto q : this->phi_u_m.quadrature_point_indices())
+      {
+        const unsigned int q_index = ptr_q + q;
+
+        const auto normal = data.all_normals[q_index];
+
+        const auto value_m    = this->phi_u_m.get_value(q);
+        const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
+        const auto p_value_m  = this->phi_p_m.get_value(q) * normal;
+
+        BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+
+        buffer_m.write(value_m);
+        buffer_m.write(gradient_m);
+        buffer_m.write(p_value_m);
+      }
+  }
+
+  void
+  local_integrate(const CouplingEvaluationData<dim, Number> &data,
+                  Vector<Number>                            &buffer,
+                  const unsigned int                         ptr_q,
+                  const unsigned int                         q_stride,
+                  Number                                    *all_value_m,
+                  Number *all_value_p) const override
+  {
+    for (const auto q : this->phi_u_m.quadrature_point_indices())
+      {
+        const unsigned int q_index = ptr_q + q;
+
+        BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+        BufferRW<Number> buffer_p(all_value_p, q * 4 * dim * q_stride);
+
+        const auto value_m           = buffer_m.template read<u_value_type>();
+        const auto value_p           = buffer_p.template read<u_value_type>();
+        const auto normal_gradient_m = buffer_m.template read<u_value_type>();
+        const auto normal_gradient_p = buffer_p.template read<u_value_type>();
+        const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
+        const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
+
+        const auto JxW               = data.all_weights[q_index];
+        const auto penalty_parameter = data.all_penalty_parameter[q_index];
+        const auto normal            = data.all_normals[q_index];
+
+        const auto u_value_avg  = (value_m + value_p) * 0.5;
+        const auto u_value_jump = value_m - value_p;
+        const auto u_gradient_avg =
+          (normal_gradient_m - normal_gradient_p) * 0.5;
+        const auto p_value_avg = (normal_p_value_m - normal_p_value_p) * 0.5;
+
+        typename FEPointIntegratorU::value_type u_normal_gradient_avg_result =
+          {};
+        typename FEPointIntegratorU::value_type u_value_jump_result = {};
+        typename FEPointIntegratorP::value_type p_value_jump_result = {};
+
+        const double sigma = penalty_parameter * data.penalty_factor;
+
+        if (true /*Laplace term*/)
+          {
+            // - (n avg(∇v), jump(u))
+            u_normal_gradient_avg_result -= u_value_jump;
+
+            // - (jump(v), avg(∇u) n)
+            u_value_jump_result -= u_gradient_avg;
+
+            // + (jump(v), σ jump(u))
+            u_value_jump_result += sigma * u_value_jump;
+          }
+
+        if (do_pressure_gradient_term)
+          {
+            // + (jump(v), avg(p) n)
+            u_value_jump_result += p_value_avg;
+          }
+        else
+          {
+            // nothing to do
+          }
+
+        if (do_velocity_divergence_term)
+          {
+            // + (jump(q), avg(u) n)
+            p_value_jump_result += u_value_avg * normal;
+          }
+        else
+          {
+            // nothing to do
+          }
+
+        phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
+                                  0.5 * JxW,
+                                q);
+        phi_u_m.submit_value(u_value_jump_result * JxW, q);
+        phi_p_m.submit_value(p_value_jump_result * JxW, q);
+      }
+
+    AssertDimension(buffer.size(),
+                    fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+    ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
+    ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                               fe_sub_p.n_dofs_per_cell());
+
+    this->phi_u_m.test_and_sum(buffer_u,
+                               EvaluationFlags::values |
+                                 EvaluationFlags::gradients);
+    this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
+  }
+
+  const FESystem<dim>        fe_sub_u;
+  const FESystem<dim>        fe_sub_p;
+  mutable FEPointIntegratorU phi_u_m;
+  mutable FEPointIntegratorP phi_p_m;
+
+  const bool do_pressure_gradient_term;
+  const bool do_velocity_divergence_term;
+
   std::vector<unsigned int> relevant_dof_indices;
 };
 
