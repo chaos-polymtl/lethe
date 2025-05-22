@@ -115,13 +115,13 @@ The following properties are chosen according to the Anand et al. paper :
         set poisson ratio particles           = 0.3
         set restitution coefficient particles = 0.94
         set friction coefficient particles    = 0.2
-        set rolling friction particles        = 0.09
+        set rolling friction particles        = 0.1786
       end
       set young modulus wall           = 1e6
       set poisson ratio wall           = 0.3
       set friction coefficient wall    = 0.2
       set restitution coefficient wall = 0.9
-      set rolling friction wall        = 0.09
+      set rolling friction wall        = 0.1786
     end
 
 
@@ -328,13 +328,13 @@ The total number of particles of this simulation is 6790: 6 times less than the 
             set poisson ratio particles           = 0.3
             set restitution coefficient particles = 0.94
             set friction coefficient particles    = 0.2
-            set rolling friction particles        = 0.09
+            set rolling friction particles        = 0.1786
         end
         set young modulus wall           = 1e6
         set poisson ratio wall           = 0.3
         set friction coefficient wall    = 0.2
         set restitution coefficient wall = 0.9
-        set rolling friction wall        = 0.09
+        set rolling friction wall        = 0.1786
     end
 
 Insertion Info
