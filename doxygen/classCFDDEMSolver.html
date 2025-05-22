@@ -499,6 +499,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a1733bf24b0ca53cd549f88e6b773c3a6 inherit pro_attribs_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a490b6390dbe8b3ad9b045f6127e5406e inherit pro_attribs_classNavierStokesBase" id="r_a490b6390dbe8b3ad9b045f6127e5406e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Quadrature&lt; dim - 1 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a490b6390dbe8b3ad9b045f6127e5406e">face_quadrature</a></td></tr>
 <tr class="separator:a490b6390dbe8b3ad9b045f6127e5406e inherit pro_attribs_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ea1d4eec56c10677df5908ba59e7de0 inherit pro_attribs_classNavierStokesBase" id="r_a2ea1d4eec56c10677df5908ba59e7de0"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Mapping&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a2ea1d4eec56c10677df5908ba59e7de0">previous_mapping</a></td></tr>
+<tr class="separator:a2ea1d4eec56c10677df5908ba59e7de0 inherit pro_attribs_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc40827c7d61b7a25e4066d31a0a4274 inherit pro_attribs_classNavierStokesBase" id="r_acc40827c7d61b7a25e4066d31a0a4274"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="navier__stokes__assemblers_8h.html#a26641e967456860ca3880098d2769ce5">NavierStokesAssemblerBase</a>&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#acc40827c7d61b7a25e4066d31a0a4274">assemblers</a></td></tr>
 <tr class="separator:acc40827c7d61b7a25e4066d31a0a4274 inherit pro_attribs_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accd6ec2d22ee6e6d789948d4ead4e681 inherit pro_attribs_classNavierStokesBase" id="r_accd6ec2d22ee6e6d789948d4ead4e681"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#accd6ec2d22ee6e6d789948d4ead4e681">multiphysics</a></td></tr>
@@ -996,7 +998,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01107">1107</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l01245">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l01246">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd()</a>.</p>
 
 </div>
 </div>
@@ -1228,7 +1230,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01429">1429</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00423">announce_string()</a>, <a class="el" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::mobility_status</a>, <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00598">FluidDynamicsVANS&lt; dim &gt;::monitor_mass_conservation()</a>, <a class="el" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::particles</a>, <a class="el" href="grids_8cc_source.html#l00321">read_mesh_and_manifolds()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l00674">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00423">announce_string()</a>, <a class="el" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::mobility_status</a>, <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00598">FluidDynamicsVANS&lt; dim &gt;::monitor_mass_conservation()</a>, <a class="el" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::particles</a>, <a class="el" href="grids_8cc_source.html#l00321">read_mesh_and_manifolds()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l00675">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>.</p>
 
 </div>
 </div>

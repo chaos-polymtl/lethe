@@ -95,25 +95,28 @@ $(function() {
 <code>#include &lt;deal.II/dofs/dof_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/fe/mapping_manifold.h&gt;</code><br />
 <code>#include &lt;deal.II/fe/mapping_q1.h&gt;</code><br />
+<code>#include &lt;deal.II/fe/mapping_q_cache.h&gt;</code><br />
 <code>#include &lt;unordered_set&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for lethe_grid_tools.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="lethe__grid__tools_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2lethe__grid__tools_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2lethe__grid__tools_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2lethe__grid__tools_8h">
-<area shape="rect" title=" " alt="" coords="2718,5,2901,60"/>
+<area shape="rect" title=" " alt="" coords="2773,5,2955,60"/>
 <area shape="rect" href="serial__solid_8h.html" title=" " alt="" coords="1398,115,1538,141"/>
-<area shape="poly" title=" " alt="" coords="2718,43,1552,124,1551,118,2717,38"/>
+<area shape="poly" title=" " alt="" coords="2773,43,1552,124,1552,118,2772,37"/>
 <area shape="rect" title=" " alt="" coords="226,717,379,742"/>
-<area shape="poly" title=" " alt="" coords="2718,38,2100,49,1666,61,1208,79,772,102,405,133,261,151,151,171,82,193,64,204,59,215,59,554,63,585,77,613,96,636,122,657,181,689,240,710,238,715,178,694,119,661,93,640,72,616,58,587,53,555,53,214,60,200,80,188,150,165,260,145,404,127,772,97,1208,73,1666,56,2100,44,2718,32"/>
+<area shape="poly" title=" " alt="" coords="2773,38,2144,49,1701,60,1233,77,788,101,413,131,266,149,154,170,82,192,64,204,59,215,59,554,63,585,77,613,96,636,122,657,181,689,240,710,238,715,178,694,119,661,93,640,72,616,58,587,53,555,53,214,60,200,80,187,152,165,265,144,412,126,788,95,1233,72,1701,55,2144,43,2773,32"/>
 <area shape="rect" title=" " alt="" coords="2440,717,2627,742"/>
-<area shape="poly" title=" " alt="" coords="2799,61,2773,130,2763,172,2759,215,2759,555,2754,586,2741,613,2722,638,2698,659,2643,692,2588,715,2586,710,2640,688,2695,655,2718,634,2737,611,2749,584,2753,554,2753,215,2757,171,2768,128,2794,59"/>
+<area shape="poly" title=" " alt="" coords="2828,62,2805,84,2785,109,2770,137,2763,159,2759,215,2759,555,2754,586,2741,613,2722,638,2698,659,2643,692,2588,715,2586,710,2640,688,2695,655,2718,634,2737,611,2749,584,2753,554,2753,215,2757,158,2765,134,2780,107,2801,80,2825,58"/>
 <area shape="rect" title=" " alt="" coords="2794,108,2934,148"/>
-<area shape="poly" title=" " alt="" coords="2827,59,2848,95,2844,97,2823,62"/>
+<area shape="poly" title=" " alt="" coords="2867,60,2867,94,2861,94,2861,60"/>
 <area shape="rect" title=" " alt="" coords="2958,115,3133,141"/>
-<area shape="poly" title=" " alt="" coords="2877,58,3005,108,3003,113,2875,63"/>
-<area shape="rect" title=" " alt="" coords="3157,115,3272,141"/>
-<area shape="poly" title=" " alt="" coords="2901,50,3146,105,3161,109,3160,114,3145,111,2900,56"/>
+<area shape="poly" title=" " alt="" coords="2916,58,3012,107,3010,112,2914,62"/>
+<area shape="rect" title=" " alt="" coords="3157,108,3297,148"/>
+<area shape="poly" title=" " alt="" coords="2956,55,3144,103,3143,108,2955,60"/>
+<area shape="rect" title=" " alt="" coords="3321,115,3436,141"/>
+<area shape="poly" title=" " alt="" coords="2956,44,3121,70,3310,105,3327,109,3326,115,3309,111,3120,75,2955,49"/>
 <area shape="rect" href="parameters_8h.html" title=" " alt="" coords="537,372,679,397"/>
 <area shape="poly" title=" " alt="" coords="1398,134,1139,141,799,154,497,173,398,185,368,192,354,198,344,212,339,225,338,238,342,250,361,275,391,298,430,319,473,337,554,366,552,371,471,342,428,324,389,302,357,278,337,252,333,238,333,224,339,209,350,194,366,187,397,180,497,168,799,149,1138,135,1398,128"/>
 <area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="331,621,533,661"/>
@@ -350,9 +353,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6" id="r_a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">LetheGridTools::find_point_line_distance</a> (const Point&lt; dim &gt; &amp;line_origin, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a90583db59423ee4e85fff79df1cb0bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6561314fe88185a0dd30654c131de0d3" id="r_a6561314fe88185a0dd30654c131de0d3"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a6561314fe88185a0dd30654c131de0d3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a6561314fe88185a0dd30654c131de0d3">LetheGridTools::rotate_mapping</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const MappingQ&lt; dim &gt; &amp;mapping, const double radius, const double rotation_angle)</td></tr>
-<tr class="separator:a6561314fe88185a0dd30654c131de0d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83b35afef5de27197e1efee785aae40f" id="r_a83b35afef5de27197e1efee785aae40f"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a83b35afef5de27197e1efee785aae40f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a83b35afef5de27197e1efee785aae40f">LetheGridTools::rotate_mapping</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, MappingQCache&lt; dim &gt; &amp;mapping_cache, const Mapping&lt; dim &gt; &amp;mapping, const double radius, const double rotation_angle)</td></tr>
+<tr class="separator:a83b35afef5de27197e1efee785aae40f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

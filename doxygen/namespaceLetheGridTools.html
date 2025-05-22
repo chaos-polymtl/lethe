@@ -149,9 +149,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6" id="r_a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">find_point_line_distance</a> (const Point&lt; dim &gt; &amp;line_origin, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a90583db59423ee4e85fff79df1cb0bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6561314fe88185a0dd30654c131de0d3" id="r_a6561314fe88185a0dd30654c131de0d3"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a6561314fe88185a0dd30654c131de0d3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a6561314fe88185a0dd30654c131de0d3">rotate_mapping</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const MappingQ&lt; dim &gt; &amp;mapping, const double radius, const double rotation_angle)</td></tr>
-<tr class="separator:a6561314fe88185a0dd30654c131de0d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83b35afef5de27197e1efee785aae40f" id="r_a83b35afef5de27197e1efee785aae40f"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a83b35afef5de27197e1efee785aae40f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a83b35afef5de27197e1efee785aae40f">rotate_mapping</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, MappingQCache&lt; dim &gt; &amp;mapping_cache, const Mapping&lt; dim &gt; &amp;mapping, const double radius, const double rotation_angle)</td></tr>
+<tr class="separator:a83b35afef5de27197e1efee785aae40f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ac39192d5fabd9d06ba64a2a7150c5693" name="ac39192d5fabd9d06ba64a2a7150c5693"></a>
@@ -840,7 +840,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <p>return distance </p>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00366">366</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00367">367</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
 
 </div>
 </div>
@@ -929,8 +929,8 @@ template&lt;int spacedim, int structdim&gt; </div>
 
 </div>
 </div>
-<a id="a6561314fe88185a0dd30654c131de0d3" name="a6561314fe88185a0dd30654c131de0d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6561314fe88185a0dd30654c131de0d3">&#9670;&#160;</a></span>rotate_mapping()</h2>
+<a id="a83b35afef5de27197e1efee785aae40f" name="a83b35afef5de27197e1efee785aae40f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83b35afef5de27197e1efee785aae40f">&#9670;&#160;</a></span>rotate_mapping()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -946,7 +946,13 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const MappingQ&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">MappingQCache&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping_cache</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>mapping</em>, </td>
         </tr>
         <tr>
@@ -979,6 +985,8 @@ template&lt;int dim&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01793">1793</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 </div>
 </div>
