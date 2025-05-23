@@ -202,8 +202,8 @@ public:
 
   CouplingEvaluationStokes(const Mapping<dim>    &mapping,
                            const DoFHandler<dim> &dof_handler,
-                           const bool do_pressure_gradient_term   = true,
-                           const bool do_velocity_divergence_term = true)
+                           const bool weak_pressure_gradient_term   = true,
+                           const bool weak_velocity_divergence_term = true)
     : fe_sub_u(dof_handler.get_fe().base_element(
                  dof_handler.get_fe().component_to_base_index(0).first),
                dim)
@@ -212,8 +212,8 @@ public:
                1)
     , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
     , phi_p_m(mapping, fe_sub_p, update_values)
-    , do_pressure_gradient_term(do_pressure_gradient_term)
-    , do_velocity_divergence_term(do_velocity_divergence_term)
+    , weak_pressure_gradient_term(weak_pressure_gradient_term)
+    , weak_velocity_divergence_term(weak_velocity_divergence_term)
   {
     for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
       if (dof_handler.get_fe().system_to_component_index(i).first < dim)
@@ -336,7 +336,7 @@ public:
             u_value_jump_result += sigma * u_value_jump;
           }
 
-        if (do_pressure_gradient_term)
+        if (weak_pressure_gradient_term)
           {
             // + (jump(v), avg(p) n)
             u_value_jump_result += p_value_avg;
@@ -346,14 +346,15 @@ public:
             // nothing to do
           }
 
-        if (do_velocity_divergence_term)
+        if (weak_velocity_divergence_term)
           {
             // + (jump(q), avg(u) n)
             p_value_jump_result += u_value_avg * normal;
           }
         else
           {
-            // nothing to do
+            // - (avg(q), jump(u) n)
+            p_value_jump_result -= 0.5 * u_value_jump * normal;
           }
 
         phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
@@ -381,8 +382,8 @@ public:
   mutable FEPointIntegratorU phi_u_m;
   mutable FEPointIntegratorP phi_p_m;
 
-  const bool do_pressure_gradient_term;
-  const bool do_velocity_divergence_term;
+  const bool weak_pressure_gradient_term;
+  const bool weak_velocity_divergence_term;
 
   std::vector<unsigned int> relevant_dof_indices;
 };
