@@ -4173,6 +4173,12 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Oversampling factor for quadrature points");
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the mortar information should be printed "
+        "Choices are <quiet|verbose>.");
     }
     prm.leave_subsection();
   }
@@ -4197,6 +4203,13 @@ namespace Parameters
       this->sip_factor = prm.get_double("penalty factor");
 
       this->oversampling_factor = prm.get_integer("oversampling factor");
+
+      // Enable printing of mortar information
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Verbosity::verbose;
+      if (op == "quiet")
+        verbosity = Verbosity::quiet;
     }
     prm.leave_subsection();
   }
