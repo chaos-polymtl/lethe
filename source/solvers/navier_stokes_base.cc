@@ -1953,6 +1953,38 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
 {
+  // Rotate mapping for rotor-stator configuration
+  if (this->simulation_parameters.mortar.enable)
+    {
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+      MappingQCache<dim> mapping_cache(this->velocity_fem_degree);
+
+      if (simulation_parameters.mortar.verbosity ==
+          Parameters::Verbosity::verbose)
+        this->pcout
+          << "   Rotating rotor grid:          "
+          << this->simulation_parameters.mortar.rotor_mesh->rotation_angle
+          << " degrees" << std::endl;
+
+      LetheGridTools::rotate_mapping(
+        this->dof_handler,
+        mapping_cache,
+        *this->mapping,
+        compute_n_subdivisions_and_radius(*this->triangulation,
+                                          this->simulation_parameters.mortar)
+          .second,
+        this->simulation_parameters.mortar.rotor_mesh->rotation_angle);
+
+      this->previous_mapping = this->mapping;
+      this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The mapping rotation requires a more recent version of deal.II."));
+#endif
+    }
+
   if (!this->simulation_parameters.boundary_conditions.time_dependent)
     return;
 
@@ -1992,31 +2024,6 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
-
-  // Rotate mapping for rotor-stator configuration
-  if (this->simulation_parameters.mortar.enable)
-    {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-      MappingQCache<dim> mapping_cache(this->velocity_fem_degree);
-
-      LetheGridTools::rotate_mapping(
-        this->dof_handler,
-        mapping_cache,
-        *this->mapping,
-        compute_n_subdivisions_and_radius(*this->triangulation,
-                                          this->simulation_parameters.mortar)
-          .second,
-        this->simulation_parameters.mortar.rotor_mesh->rotation_angle);
-
-      this->previous_mapping = this->mapping;
-      this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
-#else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "The mapping rotation requires a more recent version of deal.II."));
-#endif
-    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
