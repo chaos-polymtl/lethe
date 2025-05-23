@@ -551,14 +551,8 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
-  std::cout << "matrix before :" << std::endl;
-  this->system_matrix.print(std::cout);
-
   // Add mortar entries
   add_mortar_system_matrix_entries();
-
-  std::cout << "\n \n \n matrix after :" << std::endl;
-  this->system_matrix.print(std::cout);
 
   system_matrix.compress(VectorOperation::add);
 }
@@ -938,7 +932,7 @@ FluidDynamicsMatrixBased<dim>::init_mortar_coupling()
     std::make_shared<CouplingOperator<dim, double>>(
       *this->mapping,
       this->dof_handler,
-      this->nonzero_constraints,
+      this->zero_constraints,
       mortar_coupling_evaluator,
       this->mortar_manager,
       this->simulation_parameters.mortar.rotor_boundary_id,
