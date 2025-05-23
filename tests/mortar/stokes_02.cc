@@ -35,6 +35,46 @@
 
 using namespace dealii;
 
+template <int dim>
+class MyMortarManager : public MortarManagerBase<dim>
+{
+public:
+  template <int dim2>
+  MyMortarManager(const unsigned int      n_subdivisions,
+                  const Quadrature<dim2> &quadrature,
+                  const double            left,
+                  const double            right)
+    : MortarManagerBase<dim>(n_subdivisions,
+                             quadrature,
+                             (right - left) / (2.0 * numbers::PI),
+                             0.0)
+    , left(left)
+    , right(right)
+  {}
+
+protected:
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &) const override
+  {
+    return Point<dim>(1.0, 0.0);
+  }
+
+  Point<dim>
+  from_1D(const double rad) const override
+  {
+    return Point<dim>(0.5, rad / (2.0 * numbers::PI) * (right - left) + left);
+  }
+
+  double
+  to_1D(const Point<dim> &face_center) const override
+  {
+    return (2.0 * numbers::PI) * (face_center[1] - left) / (right - left);
+  }
+
+  const double left;
+  const double right;
+};
+
 void
 run(const std::string formulation)
 {
@@ -52,7 +92,7 @@ run(const std::string formulation)
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
-  const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
+  const std::string  grid                 = "split_hyper_cube";
   const double       sip_factor           = 10.0;
 
   ConditionalOStream pcout(std::cout,
@@ -102,6 +142,8 @@ run(const std::string formulation)
                                                     outer_radius,
                                                     0.0,
                                                     tria);
+  else if (grid == "split_hyper_cube")
+    split_hyper_cube(tria, -outer_radius, +outer_radius);
   else
     AssertThrow(false, ExcNotImplemented());
   tria.refine_global(n_global_refinements);
@@ -144,6 +186,15 @@ run(const std::string formulation)
       DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
       DoFTools::make_zero_boundary_constraints(dof_handler, 4, constraints);
     }
+  else if (grid == "split_hyper_cube")
+    {
+      DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
+      DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
+      DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
+      DoFTools::make_zero_boundary_constraints(dof_handler, 5, constraints);
+      DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
+      DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
+    }
   else
     {
       AssertThrow(false, ExcNotImplemented());
@@ -154,12 +205,27 @@ run(const std::string formulation)
     mapping, dof_handler, constraints, quadrature, delta_1_scaling);
 
   if (grid == "hyper_cube_with_cylindrical_hole")
-    op.add_coupling(4 * Utilities::pow(2, n_global_refinements + 1),
-                    radius,
-                    rotate_pi,
-                    0,
-                    5,
-                    sip_factor);
+    {
+      const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
+        std::make_shared<MortarManagerCircle<dim>>(
+          4 * Utilities::pow(2, n_global_refinements + 1),
+          quadrature,
+          radius,
+          rotate_pi);
+
+      op.add_coupling(mortar_manager, 0, 5, sip_factor);
+    }
+  else if (grid == "split_hyper_cube")
+    {
+      const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
+        std::make_shared<MyMortarManager<dim>>(
+          2 * Utilities::pow(2, n_global_refinements),
+          quadrature,
+          -outer_radius,
+          +outer_radius);
+
+      op.add_coupling(mortar_manager, 1, 4, sip_factor);
+    }
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
   op.initialize_dof_vector(rhs);

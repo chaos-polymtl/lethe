@@ -147,22 +147,26 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
  */
 template <int dim>
 void
-split_hyper_cube(Triangulation<dim> &tria)
+split_hyper_cube(Triangulation<dim> &tria,
+                 const double        left  = 0.0,
+                 const double        right = 1.0)
 {
   Triangulation<dim> tria_0, tria_1;
+
+  const double mid = (right + left) / 2.0;
 
   // inner domain triangulation
   GridGenerator::subdivided_hyper_rectangle(tria_0,
                                             std::vector<unsigned int>{1, 2},
-                                            Point<dim>(0.0, 0.0),
-                                            Point<dim>(0.5, 1.0),
+                                            Point<dim>(left, left),
+                                            Point<dim>(mid, right),
                                             true);
 
   // outer domain triangulation
   GridGenerator::subdivided_hyper_rectangle(tria_1,
                                             std::vector<unsigned int>{1, 2},
-                                            Point<dim>(0.5, 0.0),
-                                            Point<dim>(1.0, 1.0),
+                                            Point<dim>(mid, left),
+                                            Point<dim>(right, right),
                                             true);
 
   // shift boundary IDs # in outer grid
@@ -800,12 +804,10 @@ public:
    * factor in SIPG)
    */
   void
-  add_coupling(const unsigned int n_subdivisions,
-               const double       radius,
-               const double       rotate_pi,
-               const unsigned int bid_0,
-               const unsigned int bid_1,
-               const double       sip_factor = 1.0)
+  add_coupling(const std::shared_ptr<MortarManagerBase<dim>> mortar_manager,
+               const unsigned int                            bid_0,
+               const unsigned int                            bid_1,
+               const double                                  sip_factor = 1.0)
   {
     const bool is_p_disc = matrix_free.get_dof_handler()
                              .get_fe()
@@ -814,12 +816,6 @@ public:
                                              .component_to_base_index(dim)
                                              .first)
                              .n_dofs_per_vertex() == 0;
-
-    const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
-                                                 matrix_free.get_quadrature(),
-                                                 radius,
-                                                 rotate_pi);
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
