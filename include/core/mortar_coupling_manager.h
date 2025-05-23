@@ -175,6 +175,37 @@ protected:
   const double rotation_angle;
 };
 
+/**
+ * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+ * @param[in] dof_handler DoFHandler associated to the triangulation
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return n_subdivisions Number of cells at the interface between inner
+ * and outer domains
+ * @return radius Radius at the interface between inner and outer domains
+ */
+template <int dim>
+std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius(
+  const Triangulation<dim>      &triangulation,
+  const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
+ * @brief Construct oversampled quadrature
+ *
+ * @param[in] quadrature Quadrature for local cell operations
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return Quadrature oversampled
+ */
+template <int dim>
+static Quadrature<dim>
+construct_quadrature(const Quadrature<dim>         &quadrature,
+                     const Parameters::Mortar<dim> &mortar_parameters);
+
+
 template <int dim>
 class MortarManagerCircle : public MortarManagerBase<dim>
 {
@@ -667,35 +698,6 @@ protected:
   std::shared_ptr<MortarManagerBase<dim>>              mortar_manager;
 };
 
-/**
- * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
- * @param[in] dof_handler DoFHandler associated to the triangulation
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return n_subdivisions Number of cells at the interface between inner
- * and outer domains
- * @return radius Radius at the interface between inner and outer domains
- */
-template <int dim>
-std::pair<unsigned int, double>
-compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
-  const Parameters::Mortar<dim> &mortar_parameters);
-
-/**
- * @brief Construct oversampled quadrature
- *
- * @param[in] quadrature Quadrature for local cell operations
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return Quadrature oversampled
- */
-template <int dim>
-static Quadrature<dim>
-construct_quadrature(const Quadrature<dim>         &quadrature,
-                     const Parameters::Mortar<dim> &mortar_parameters);
 
 template <typename T>
 class BufferRW
@@ -795,13 +797,13 @@ public:
                   Number *all_value_p) const override;
 
   /// Finite element that matches the components `n_components` components
-  /// starting at component with index `first_selected_component`.
+  /// starting at component with index `first_selected_component`
   const FESystem<dim> fe_sub;
 
   /// Interface to the evaluation of mortar coupling interpolated solution
   mutable FEPointIntegrator phi_m;
 
-  /// Relevant dof indices.
+  /// Relevant dof indices
   std::vector<unsigned int> relevant_dof_indices;
 };
 
@@ -819,87 +821,25 @@ public:
   NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
                                  const DoFHandler<dim> &dof_handler,
                                  const bool do_pressure_gradient_term   = true,
-                                 const bool do_velocity_divergence_term = true)
-    : fe_sub_u(dof_handler.get_fe().base_element(
-                 dof_handler.get_fe().component_to_base_index(0).first),
-               dim)
-    , fe_sub_p(dof_handler.get_fe().base_element(
-                 dof_handler.get_fe().component_to_base_index(dim).first),
-               1)
-    , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
-    , phi_p_m(mapping, fe_sub_p, update_values)
-    , do_pressure_gradient_term(do_pressure_gradient_term)
-    , do_velocity_divergence_term(do_velocity_divergence_term)
-  {
-    for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
-      if (dof_handler.get_fe().system_to_component_index(i).first < dim)
-        relevant_dof_indices.push_back(i);
-
-    for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
-      if (dof_handler.get_fe().system_to_component_index(i).first == dim)
-        relevant_dof_indices.push_back(i);
-
-    AssertDimension(dof_handler.get_fe().n_dofs_per_cell(),
-                    relevant_dof_indices.size());
-  }
+                                 const bool do_velocity_divergence_term = true);
 
   unsigned int
-  data_size() const override
-  {
-    return 4 * dim;
-  }
+  data_size() const override;
 
   const std::vector<unsigned int> &
-  get_relevant_dof_indices() const override
-  {
-    return relevant_dof_indices;
-  }
+  get_relevant_dof_indices() const override;
 
   void
-  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
-               const ArrayView<const Point<dim, Number>> &points) const override
-  {
-    this->phi_u_m.reinit(cell, points);
-    this->phi_p_m.reinit(cell, points);
-  }
+  local_reinit(
+    const typename Triangulation<dim>::cell_iterator &cell,
+    const ArrayView<const Point<dim, Number>>        &points) const override;
 
   void
   local_evaluate(const CouplingEvaluationData<dim, Number> &data,
                  const Vector<Number>                      &buffer,
                  const unsigned int                         ptr_q,
                  const unsigned int                         q_stride,
-                 Number *all_value_m) const override
-  {
-    AssertDimension(buffer.size(),
-                    fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
-
-    ArrayView<const Number> buffer_u(buffer.data() + 0,
-                                     fe_sub_u.n_dofs_per_cell());
-    ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
-                                     fe_sub_p.n_dofs_per_cell());
-
-    this->phi_u_m.evaluate(buffer_u,
-                           EvaluationFlags::values |
-                             EvaluationFlags::gradients);
-    this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
-
-    for (const auto q : this->phi_u_m.quadrature_point_indices())
-      {
-        const unsigned int q_index = ptr_q + q;
-
-        const auto normal = data.all_normals[q_index];
-
-        const auto value_m    = this->phi_u_m.get_value(q);
-        const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
-        const auto p_value_m  = this->phi_p_m.get_value(q) * normal;
-
-        BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
-
-        buffer_m.write(value_m);
-        buffer_m.write(gradient_m);
-        buffer_m.write(p_value_m);
-      }
-  }
+                 Number *all_value_m) const override;
 
   void
   local_integrate(const CouplingEvaluationData<dim, Number> &data,
@@ -907,99 +847,21 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number *all_value_p) const override
-  {
-    for (const auto q : this->phi_u_m.quadrature_point_indices())
-      {
-        const unsigned int q_index = ptr_q + q;
+                  Number *all_value_p) const override;
 
-        BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
-        BufferRW<Number> buffer_p(all_value_p, q * 4 * dim * q_stride);
+  /// Finite element that matches the components `n_components` components
+  /// starting at component with index `first_selected_component`.
+  const FESystem<dim> fe_sub_u;
+  const FESystem<dim> fe_sub_p;
 
-        const auto value_m           = buffer_m.template read<u_value_type>();
-        const auto value_p           = buffer_p.template read<u_value_type>();
-        const auto normal_gradient_m = buffer_m.template read<u_value_type>();
-        const auto normal_gradient_p = buffer_p.template read<u_value_type>();
-        const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
-        const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
-
-        const auto JxW               = data.all_weights[q_index];
-        const auto penalty_parameter = data.all_penalty_parameter[q_index];
-        const auto normal            = data.all_normals[q_index];
-
-        const auto u_value_avg  = (value_m + value_p) * 0.5;
-        const auto u_value_jump = value_m - value_p;
-        const auto u_gradient_avg =
-          (normal_gradient_m - normal_gradient_p) * 0.5;
-        const auto p_value_avg = (normal_p_value_m - normal_p_value_p) * 0.5;
-
-        typename FEPointIntegratorU::value_type u_normal_gradient_avg_result =
-          {};
-        typename FEPointIntegratorU::value_type u_value_jump_result = {};
-        typename FEPointIntegratorP::value_type p_value_jump_result = {};
-
-        const double sigma = penalty_parameter * data.penalty_factor;
-
-        if (true /*Laplace term*/)
-          {
-            // - (n avg(∇v), jump(u))
-            u_normal_gradient_avg_result -= u_value_jump;
-
-            // - (jump(v), avg(∇u) n)
-            u_value_jump_result -= u_gradient_avg;
-
-            // + (jump(v), σ jump(u))
-            u_value_jump_result += sigma * u_value_jump;
-          }
-
-        if (do_pressure_gradient_term)
-          {
-            // + (jump(v), avg(p) n)
-            u_value_jump_result += p_value_avg;
-          }
-        else
-          {
-            // nothing to do
-          }
-
-        if (do_velocity_divergence_term)
-          {
-            // + (jump(q), avg(u) n)
-            p_value_jump_result += u_value_avg * normal;
-          }
-        else
-          {
-            // nothing to do
-          }
-
-        phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
-                                  0.5 * JxW,
-                                q);
-        phi_u_m.submit_value(u_value_jump_result * JxW, q);
-        phi_p_m.submit_value(p_value_jump_result * JxW, q);
-      }
-
-    AssertDimension(buffer.size(),
-                    fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
-
-    ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
-    ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
-                               fe_sub_p.n_dofs_per_cell());
-
-    this->phi_u_m.test_and_sum(buffer_u,
-                               EvaluationFlags::values |
-                                 EvaluationFlags::gradients);
-    this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
-  }
-
-  const FESystem<dim>        fe_sub_u;
-  const FESystem<dim>        fe_sub_p;
+  /// Interface to the evaluation of mortar coupling interpolated solution
   mutable FEPointIntegratorU phi_u_m;
   mutable FEPointIntegratorP phi_p_m;
 
   const bool do_pressure_gradient_term;
   const bool do_velocity_divergence_term;
 
+  /// Relevant dof indices
   std::vector<unsigned int> relevant_dof_indices;
 };
 
