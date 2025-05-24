@@ -148,12 +148,11 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
 template <int dim>
 void
 split_hyper_cube(Triangulation<dim> &tria,
-                 const double        left  = 0.0,
-                 const double        right = 1.0)
+                 const double        left,
+                 const double        right,
+                 const double        mid)
 {
   Triangulation<dim> tria_0, tria_1;
-
-  const double mid = (right + left) / 2.0;
 
   // inner domain triangulation
   GridGenerator::subdivided_hyper_rectangle(tria_0,
@@ -178,6 +177,18 @@ split_hyper_cube(Triangulation<dim> &tria,
 
   // create unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
+}
+
+/**
+ * @brief TODO
+ */
+template <int dim>
+void
+split_hyper_cube(Triangulation<dim> &tria,
+                 const double        left  = 0.0,
+                 const double        right = 1.0)
+{
+  split_hyper_cube(tria, left, right, (left + right) / 2.0);
 }
 
 template <int dim>

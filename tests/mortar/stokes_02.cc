@@ -103,7 +103,7 @@ run(const std::string formulation)
 
   if (formulation == "equal")
     {
-      delta_1_scaling = 0.0001;
+      delta_1_scaling = 0.01;
       fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
                                            dim,
                                            FE_Q<dim>(fe_degree),
@@ -143,7 +143,7 @@ run(const std::string formulation)
                                                     0.0,
                                                     tria);
   else if (grid == "split_hyper_cube")
-    split_hyper_cube(tria, -outer_radius, +outer_radius);
+    split_hyper_cube(tria, -outer_radius, +outer_radius, outer_radius / 3.0);
   else
     AssertThrow(false, ExcNotImplemented());
   tria.refine_global(n_global_refinements);
