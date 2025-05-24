@@ -780,8 +780,10 @@ public:
                         const DoFHandler<dim>           &dof_handler,
                         const AffineConstraints<Number> &constraints,
                         const Quadrature<dim>           &quadrature,
-                        const double                     delta_1_scaling)
+                        const double                     delta_1_scaling,
+                        const bool weak_velocity_divergence_term = false)
     : delta_1_scaling(delta_1_scaling)
+    , weak_velocity_divergence_term(weak_velocity_divergence_term)
   {
     reinit(mapping, dof_handler, constraints, quadrature);
   }
@@ -834,7 +836,7 @@ public:
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler(),
           !is_p_disc,
-          false);
+          weak_velocity_divergence_term);
 
     coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
@@ -1099,9 +1101,10 @@ private:
         const auto p_value    = phi_p.get_value(q);
         const auto p_gradient = phi_p.get_gradient(q);
 
+        const auto u_value    = phi_u.get_value(q);
         const auto u_gradient = phi_u.get_gradient(q);
 
-        // a)     (ε(v), 2νε(u))
+        // (ε(v), 2νε(u))
         if (false)
           {
             symm_scalar_product_add(u_gradient_result,
@@ -1113,17 +1116,25 @@ private:
             u_gradient_result = u_gradient;
           }
 
-        // b)   - (div(v), p)
+        // - (div(v), p)
         for (unsigned int d = 0; d < dim; ++d)
           u_gradient_result[d][d] -= p_value;
 
-        // c)     (q, div(u))
-        for (unsigned int d = 0; d < dim; ++d)
-          p_value_result += u_gradient[d][d];
+        if (weak_velocity_divergence_term)
+          {
+            // - (∇q, u)
+            p_gradient_result -= u_value;
+          }
+        else
+          {
+            // + (q, div(u))
+            for (unsigned int d = 0; d < dim; ++d)
+              p_value_result += u_gradient[d][d];
+          }
 
-        // d) δ_1 (∇q, ∇p)
+        // δ_1 (∇q, ∇p)
         if (delta_1_scaling != 0.0)
-          p_gradient_result = delta_1 * p_gradient;
+          p_gradient_result += delta_1 * p_gradient;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
@@ -1143,6 +1154,7 @@ private:
   std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 
   const double delta_1_scaling;
+  const bool   weak_velocity_divergence_term;
 };
 
 

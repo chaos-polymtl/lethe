@@ -85,7 +85,7 @@ run(const std::string formulation)
   const unsigned int fe_degree            = 3;
   const unsigned int mapping_degree       = 3;
   const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 2;
+  const unsigned int n_global_refinements = 4;
   const double       radius               = 0.75;
   const double       outer_radius         = 1.0;
   const double       rotate               = 0.0;
@@ -103,7 +103,7 @@ run(const std::string formulation)
 
   if (formulation == "equal")
     {
-      delta_1_scaling = 0.01;
+      delta_1_scaling = 0.001;
       fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
                                            dim,
                                            FE_Q<dim>(fe_degree),
@@ -202,7 +202,7 @@ run(const std::string formulation)
   constraints.close();
 
   GeneralStokesOperator<dim, double> op(
-    mapping, dof_handler, constraints, quadrature, delta_1_scaling);
+    mapping, dof_handler, constraints, quadrature, delta_1_scaling, false);
 
   if (grid == "hyper_cube_with_cylindrical_hole")
     {
@@ -289,9 +289,6 @@ run(const std::string formulation)
         },
         dim + 1);
 
-      VectorTools::create_right_hand_side(
-        mapping, dof_handler, quadrature, *rhs_func, rhs, constraints);
-
       FEValues<dim>              fe_values(mapping,
                               *fe,
                               quadrature,
@@ -323,8 +320,9 @@ run(const std::string formulation)
                   source[d] = rhs_func->value(point, d);
 
                 for (const unsigned int i : fe_values.dof_indices())
-                  rhs_local(i) +=
-                    delta_1 * source * pressure.gradient(i, q) * JxW;
+                  rhs_local(i) += (source * velocities.value(i, q) +
+                                   delta_1 * source * pressure.gradient(i, q)) *
+                                  JxW;
               }
 
             constraints.distribute_local_to_global(rhs_local, indices, rhs);
