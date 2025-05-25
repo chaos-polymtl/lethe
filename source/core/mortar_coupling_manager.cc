@@ -708,7 +708,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
     data.all_penalty_parameter, all_penalty_parameter_ghost);
   for (unsigned int i = 0; i < data.all_penalty_parameter.size(); ++i)
     data.all_penalty_parameter[i] =
-      std::min(data.all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
+      std::max(data.all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
 
   // Finialize DoF indices and update constraints
   dof_indices_ghost.resize(dof_indices.size());
@@ -786,7 +786,14 @@ CouplingOperator<dim, Number>::compute_penalty_parameter(
   for (const auto f : cell->face_indices())
     {
       fe_face_values.reinit(cell, f);
-      const Number factor = 0.5; /*Assuming that we are within the domain*/
+
+      const Number factor =
+        (cell->at_boundary(f) && !cell->has_periodic_neighbor(f) &&
+         (cell->face(f)->boundary_id() != bid_m &&
+          cell->face(f)->boundary_id() != bid_p)) ?
+          1. :
+          0.5;
+
       for (unsigned int q = 0; q < face_quadrature.size(); ++q)
         surface_area += fe_face_values.JxW(q) * factor;
     }

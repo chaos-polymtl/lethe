@@ -46,7 +46,7 @@ public:
                   const double            right)
     : MortarManagerBase<dim>(n_subdivisions,
                              quadrature,
-                             (right - left) / numbers::PI,
+                             (right - left) / (2.0 * numbers::PI),
                              0.0)
     , left(left)
     , right(right)
@@ -62,7 +62,7 @@ protected:
   Point<dim>
   from_1D(const double rad) const override
   {
-    return Point<dim>(0.5, rad / (2.0 * numbers::PI) * (right - left) + left);
+    return Point<dim>(0.0, rad / (2.0 * numbers::PI) * (right - left) + left);
   }
 
   double
@@ -83,14 +83,10 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
   using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
   const unsigned int fe_degree            = 5;
-  const unsigned int mapping_degree       = 5;
+  const unsigned int mapping_degree       = 1;
   const unsigned int dim                  = 2;
   const unsigned int n_global_refinements = 0;
-  const double       radius               = 0.75;
   const double       outer_radius         = 1.0;
-  const double       rotate               = 0.0;
-  const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
-  const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const double       sip_factor           = 10.0;
 
@@ -112,7 +108,7 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
   else if (formulation == "th")
     {
       delta_1_scaling = 0.0;
-      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+      fe              = std::make_shared<FESystem<dim>>(FE_DGQ<dim>(fe_degree),
                                            dim,
                                            FE_DGQ<dim>(fe_degree - 1),
                                            1);
@@ -142,22 +138,7 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
   tria.refine_global(n_global_refinements);
 
   MappingQCache<dim> mapping(mapping_degree);
-
-  if (grid != "hyper_cube_with_cylindrical_hole" || rotate_triangulation)
-    mapping.initialize(mapping_q, tria);
-  else
-    mapping.initialize(
-      mapping_q,
-      tria,
-      [&](const auto &cell, const auto &point) {
-        if (cell->center().norm() > radius)
-          return point;
-
-        return static_cast<Point<dim>>(
-          Physics::Transformations::Rotations::rotation_matrix_2d(rotate_pi) *
-          point);
-      },
-      false);
+  mapping.initialize(mapping_q, tria);
 
   DoFHandler<dim> dof_handler(tria);
   dof_handler.distribute_dofs(*fe);
@@ -183,14 +164,14 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
           cell->get_dof_indices(local_dofs);
 
           for (unsigned int i = 0; i < local_dofs.size(); ++i)
-            if (std::abs(fe_values.quadrature_point(i)[0] - (-outer_radius)) <
-                  1.e-8 ||
-                std::abs(fe_values.quadrature_point(i)[0] - (+outer_radius)) <
-                  1.e-8 ||
-                std::abs(fe_values.quadrature_point(i)[1] - (-outer_radius)) <
-                  1.e-8 ||
-                std::abs(fe_values.quadrature_point(i)[1] - (+outer_radius)) <
-                  1.e-8)
+            if ((std::abs(fe_values.quadrature_point(i)[0] - (-outer_radius)) <
+                 1.e-8) ||
+                (std::abs(fe_values.quadrature_point(i)[0] - (+outer_radius)) <
+                 1.e-8) ||
+                (std::abs(fe_values.quadrature_point(i)[1] - (-outer_radius)) <
+                 1.e-8) ||
+                (std::abs(fe_values.quadrature_point(i)[1] - (+outer_radius)) <
+                 1.e-8))
               constraints.constrain_dof_to_zero(local_dofs[i]);
         }
     }
@@ -218,7 +199,7 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
           -outer_radius,
           +outer_radius);
 
-      // op.add_coupling(mortar_manager, 1, 4);
+      op.add_coupling(mortar_manager, 1, 4);
     }
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
