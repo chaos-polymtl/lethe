@@ -364,12 +364,18 @@ public:
         if (weak_velocity_divergence_term)
           {
             // + (jump(q), avg(u) n)
-            p_value_jump_result += u_value_avg * normal;
+            if constexpr (dim == 1)
+              p_value_jump_result += u_value_avg * normal[0];
+            else
+              p_value_jump_result += u_value_avg * normal;
           }
         else
           {
             // - (avg(q), jump(u) n)
-            p_value_jump_result -= 0.5 * u_value_jump * normal;
+            if constexpr (dim == 1)
+              p_value_jump_result -= 0.5 * u_value_jump * normal[0];
+            else
+              p_value_jump_result -= 0.5 * u_value_jump * normal;
           }
 
         phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
@@ -1117,13 +1123,19 @@ private:
           }
 
         // - (div(v), p)
-        for (unsigned int d = 0; d < dim; ++d)
-          u_gradient_result[d][d] -= p_value;
+        if constexpr (dim == 1)
+          u_gradient_result[0] -= p_value;
+        else
+          for (unsigned int d = 0; d < dim; ++d)
+            u_gradient_result[d][d] -= p_value;
 
         if (weak_velocity_divergence_term)
           {
             // - (∇q, u)
-            p_gradient_result -= u_value;
+            if constexpr (dim == 1)
+              p_gradient_result[0] -= u_value;
+            else
+              p_gradient_result -= u_value;
           }
         else
           {

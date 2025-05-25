@@ -1229,15 +1229,20 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
 
 
 /*-------------- Explicit Instantiations -------------------------------*/
+template class MortarManagerBase<1>;
 template class MortarManagerBase<2>;
 template class MortarManagerBase<3>;
 
+template class MortarManagerCircle<1>;
 template class MortarManagerCircle<2>;
 template class MortarManagerCircle<3>;
 
+template class CouplingOperator<1, double>;
 template class CouplingOperator<2, double>;
 template class CouplingOperator<3, double>;
 
+template class CouplingEvaluationSIPG<1, 1, double>;
+template class CouplingEvaluationSIPG<1, 2, double>;
 template class CouplingEvaluationSIPG<2, 1, double>;
 template class CouplingEvaluationSIPG<2, 2, double>;
 template class CouplingEvaluationSIPG<2, 3, double>;
