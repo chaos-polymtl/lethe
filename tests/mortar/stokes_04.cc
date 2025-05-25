@@ -76,7 +76,7 @@ protected:
 };
 
 void
-run(const std::string formulation)
+run(const std::string formulation, const std::string grid = "hyper_cube")
 {
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;
@@ -92,7 +92,6 @@ run(const std::string formulation)
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
-  const std::string  grid                 = "split_hyper_cube";
   const double       sip_factor           = 10.0;
 
   ConditionalOStream pcout(std::cout,
@@ -105,9 +104,9 @@ run(const std::string formulation)
     {
       delta_1_scaling =
         std::pow(9.0 * std::pow(4.0 * fe_degree * fe_degree, 2.0), -0.5);
-      fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+      fe = std::make_shared<FESystem<dim>>(FE_DGQ<dim>(fe_degree),
                                            dim,
-                                           FE_Q<dim>(fe_degree),
+                                           FE_DGQ<dim>(fe_degree),
                                            1);
     }
   else if (formulation == "th")
@@ -115,13 +114,13 @@ run(const std::string formulation)
       delta_1_scaling = 0.0;
       fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
                                            dim,
-                                           FE_Q<dim>(fe_degree - 1),
+                                           FE_DGQ<dim>(fe_degree - 1),
                                            1);
     }
   else if (formulation == "pdisc")
     {
       delta_1_scaling = 0.0;
-      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+      fe              = std::make_shared<FESystem<dim>>(FE_DGQ<dim>(fe_degree),
                                            dim,
                                            FE_DGP<dim>(fe_degree - 1),
                                            1);
@@ -131,18 +130,11 @@ run(const std::string formulation)
   QGauss<dim>   quadrature(fe_degree + 1);
 
   parallel::distributed::Triangulation<dim> tria(comm);
-  if (grid == "hyper_cube_with_cylindrical_hole")
-    hyper_cube_with_cylindrical_hole(radius,
-                                     outer_radius,
-                                     rotate_triangulation ? rotate_pi : 0.0,
-                                     tria);
-  else if (grid == "hyper_cube")
-    GridGenerator::hyper_cube(tria, -outer_radius, +outer_radius);
-  else if (grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
-    hyper_cube_with_cylindrical_hole_with_tolerance(radius,
-                                                    outer_radius,
-                                                    0.0,
-                                                    tria);
+  if (grid == "hyper_cube")
+    {
+      split_hyper_cube(
+        tria, -outer_radius, +outer_radius, outer_radius / 3.0, 1e-6);
+    }
   else if (grid == "split_hyper_cube")
     split_hyper_cube(tria, -outer_radius, +outer_radius, outer_radius / 3.0);
   else
@@ -175,26 +167,32 @@ run(const std::string formulation)
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
 
-  if (grid == "hyper_cube" ||
-      grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
+  if (grid == "hyper_cube" || grid == "split_hyper_cube")
     {
-      DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
-    }
-  else if (grid == "hyper_cube_with_cylindrical_hole")
-    {
-      DoFTools::make_zero_boundary_constraints(dof_handler, 1, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 4, constraints);
-    }
-  else if (grid == "split_hyper_cube")
-    {
-      DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 5, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
+      FEValues<dim> fe_values(mapping,
+                              *fe,
+                              fe->get_unit_support_points(),
+                              update_quadrature_points);
+
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          fe_values.reinit(cell);
+
+          std::vector<types::global_dof_index> local_dofs(
+            dof_handler.get_fe().n_dofs_per_cell());
+          cell->get_dof_indices(local_dofs);
+
+          for (unsigned int i = 0; i < local_dofs.size(); ++i)
+            if (std::abs(fe_values.quadrature_point(i)[0] - (-outer_radius)) <
+                  1.e-8 ||
+                std::abs(fe_values.quadrature_point(i)[0] - (+outer_radius)) <
+                  1.e-8 ||
+                std::abs(fe_values.quadrature_point(i)[1] - (-outer_radius)) <
+                  1.e-8 ||
+                std::abs(fe_values.quadrature_point(i)[1] - (+outer_radius)) <
+                  1.e-8)
+              constraints.constrain_dof_to_zero(local_dofs[i]);
+        }
     }
   else
     {
@@ -202,21 +200,10 @@ run(const std::string formulation)
     }
   constraints.close();
 
-  GeneralStokesOperator<dim, double> op(
-    mapping, dof_handler, constraints, quadrature, delta_1_scaling, true);
+  GeneralStokesOperatorDG<dim, double> op(
+    mapping, dof_handler, constraints, quadrature, sip_factor);
 
-  if (grid == "hyper_cube_with_cylindrical_hole")
-    {
-      const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-        std::make_shared<MortarManagerCircle<dim>>(
-          4 * Utilities::pow(2, n_global_refinements + 1),
-          quadrature,
-          radius,
-          rotate_pi);
-
-      op.add_coupling(mortar_manager, 0, 5, sip_factor);
-    }
-  else if (grid == "split_hyper_cube")
+  if (grid == "split_hyper_cube")
     {
       const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
         std::make_shared<MyMortarManager<dim>>(
@@ -225,7 +212,7 @@ run(const std::string formulation)
           -outer_radius,
           +outer_radius);
 
-      op.add_coupling(mortar_manager, 1, 4, sip_factor);
+      op.add_coupling(mortar_manager, 1, 4);
     }
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
@@ -470,8 +457,10 @@ main(int argc, char **argv)
 {
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  run("equal");
-  run("th");
+  run("equal", "hyper_cube");
+  run("equal", "split_hyper_cube");
+  run("th", "hyper_cube");
+  run("th", "split_hyper_cube");
 
   if (false) // TODO: disabled since p solution is not unique
     run("pdisc");
