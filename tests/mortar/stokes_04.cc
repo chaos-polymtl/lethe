@@ -85,7 +85,7 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
   const unsigned int fe_degree            = 5;
   const unsigned int mapping_degree       = 1;
   const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 0;
+  const unsigned int n_global_refinements = 3;
   const double       outer_radius         = 1.0;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const double       sip_factor           = 10.0;
@@ -155,6 +155,8 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
                               fe->get_unit_support_points(),
                               update_quadrature_points);
 
+      std::set<unsigned int> indices;
+
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
           fe_values.reinit(cell);
@@ -172,7 +174,74 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
                  1.e-8) ||
                 (std::abs(fe_values.quadrature_point(i)[1] - (+outer_radius)) <
                  1.e-8))
-              constraints.constrain_dof_to_zero(local_dofs[i]);
+              {
+                indices.insert(local_dofs[i]);
+                constraints.constrain_dof_to_zero(local_dofs[i]);
+              }
+        }
+
+      std::shared_ptr<FiniteElement<dim>> fe_q;
+
+      if (formulation == "equal")
+        {
+          fe_q = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                                 dim,
+                                                 FE_Q<dim>(fe_degree),
+                                                 1);
+        }
+      else if (formulation == "th")
+        {
+          fe_q = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                                 dim,
+                                                 FE_Q<dim>(fe_degree - 1),
+                                                 1);
+        }
+
+      DoFHandler<dim> dof_handler_q(tria);
+      dof_handler_q.distribute_dofs(*fe_q);
+
+      std::map<std::pair<unsigned int, unsigned int>, std::vector<unsigned int>>
+        map;
+
+      for (const auto &cell : tria.active_cell_iterators())
+        {
+          std::vector<types::global_dof_index> local_dofs_dg(
+            dof_handler.get_fe().n_dofs_per_cell());
+          cell->as_dof_handler_iterator(dof_handler)
+            ->get_dof_indices(local_dofs_dg);
+
+          std::vector<types::global_dof_index> local_dofs_q(
+            dof_handler.get_fe().n_dofs_per_cell());
+          cell->as_dof_handler_iterator(dof_handler_q)
+            ->get_dof_indices(local_dofs_q);
+
+          for (unsigned int i = 0; i < local_dofs_dg.size(); ++i)
+            {
+              const auto [comp, comp_i] = fe->system_to_component_index(i);
+              const auto l2h =
+                FETools::lexicographic_to_hierarchic_numbering<dim>(
+                  fe->get_sub_fe(comp, 1).degree);
+
+              const auto ii =
+                fe_q->component_to_system_index(comp, l2h[comp_i]);
+
+              map[std::pair<unsigned int, unsigned int>{
+                    local_dofs_q[ii], cell->center()[0] < outer_radius / 3.0}]
+                .push_back(local_dofs_dg[i]);
+            }
+        }
+
+      for (auto &[k, vec] : map)
+        {
+          std::sort(vec.begin(), vec.end());
+          vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+
+          for (unsigned int i = 1; i < vec.size(); ++i)
+            if (indices.find(vec[i]) == indices.end())
+              {
+                constraints.add_line(vec[i]);
+                constraints.add_entry(vec[i], vec[0], 1.0);
+              }
         }
     }
   else
@@ -345,6 +414,7 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
       preconditioner.initialize(matrix);
       solution = 0.0;
       solver.solve(op, solution, rhs, preconditioner);
+      constraints.distribute(solution);
       pcout << reduction_control.last_step();
     }
 
