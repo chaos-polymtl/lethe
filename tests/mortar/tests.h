@@ -145,35 +145,61 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
 /**
  * @brief TODO
  */
-template <int dim>
 void
-split_hyper_cube(Triangulation<dim> &tria,
-                 const double        left,
-                 const double        right,
-                 const double        mid)
+split_hyper_cube(Triangulation<2> &tria,
+                 const double      left,
+                 const double      right,
+                 const double      mid)
 {
-  Triangulation<dim> tria_0, tria_1;
+  Triangulation<2> tria_0, tria_1;
 
   // inner domain triangulation
   GridGenerator::subdivided_hyper_rectangle(tria_0,
                                             std::vector<unsigned int>{1, 2},
-                                            Point<dim>(left, left),
-                                            Point<dim>(mid, right),
+                                            Point<2>(left, left),
+                                            Point<2>(mid, right),
                                             true);
 
   // outer domain triangulation
   GridGenerator::subdivided_hyper_rectangle(tria_1,
                                             std::vector<unsigned int>{1, 2},
-                                            Point<dim>(mid, left),
-                                            Point<dim>(right, right),
+                                            Point<2>(mid, left),
+                                            Point<2>(right, right),
                                             true);
 
   // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
-      {
-        face->set_boundary_id(face->boundary_id() + 4);
-      }
+      face->set_boundary_id(face->boundary_id() + 4);
+
+  // create unique triangulation
+  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
+}
+
+/**
+ * @brief TODO
+ */
+void
+split_hyper_cube(Triangulation<1> &tria,
+                 const double      left,
+                 const double      right,
+                 const double      mid)
+{
+  Triangulation<1> tria_0, tria_1;
+
+  // inner domain triangulation
+  GridGenerator::subdivided_hyper_rectangle(
+    tria_0, std::vector<unsigned int>{1}, Point<1>(left), Point<1>(mid), true);
+
+  // outer domain triangulation
+  GridGenerator::subdivided_hyper_rectangle(
+    tria_1, std::vector<unsigned int>{1}, Point<1>(mid), Point<1>(right), true);
+
+  // shift boundary IDs # in outer grid
+  for (const auto &cell : tria_1.active_cell_iterators())
+    for (const auto &face : cell->face_iterators())
+      if (face->at_boundary())
+        face->set_boundary_id(face->boundary_id() + 2);
 
   // create unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
@@ -1140,8 +1166,11 @@ private:
         else
           {
             // + (q, div(u))
-            for (unsigned int d = 0; d < dim; ++d)
-              p_value_result += u_gradient[d][d];
+            if constexpr (dim == 1)
+              p_value_result += u_gradient[0];
+            else
+              for (unsigned int d = 0; d < dim; ++d)
+                p_value_result += u_gradient[d][d];
           }
 
         // δ_1 (∇q, ∇p)

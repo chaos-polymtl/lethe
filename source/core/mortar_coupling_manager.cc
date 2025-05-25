@@ -18,6 +18,8 @@ template <int dim>
 bool
 MortarManagerBase<dim>::is_mesh_aligned() const
 {
+  AssertThrow(dim != 1, ExcInternalError());
+
   const double tolerance = 1e-8;
   const double delta     = 2 * numbers::PI / n_subdivisions;
 
@@ -29,6 +31,9 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_total_mortars() const
 {
+  if (dim == 1)
+    return 1;
+
   if (this->is_mesh_aligned()) // aligned
     {
       return n_subdivisions;
@@ -43,6 +48,9 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_mortars() const
 {
+  if (dim == 1)
+    return 1;
+
   if (this->is_mesh_aligned()) // aligned
     {
       return 1;
@@ -64,6 +72,9 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_total_points() const
 {
+  if (dim == 1)
+    return 1;
+
   if (this->is_mesh_aligned()) // aligned
     {
       return n_subdivisions * n_quadrature_points;
@@ -78,6 +89,9 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_points() const
 {
+  if (dim == 1)
+    return 1;
+
   if (this->is_mesh_aligned()) // aligned
     {
       return n_quadrature_points;
@@ -101,6 +115,9 @@ MortarManagerBase<dim>::get_indices_internal(
   const Point<dim> &face_center,
   unsigned int      n_quadrature_points) const
 {
+  if (dim == 1)
+    return std::vector<unsigned int>{0};
+
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(face_center);
 
@@ -157,6 +174,9 @@ template <int dim>
 std::vector<Point<dim>>
 MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
 {
+  if (dim == 1)
+    return std::vector<Point<dim>>{face_center};
+
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(face_center);
   // Angle variation within each cell
@@ -213,6 +233,9 @@ template <int dim>
 std::vector<Point<1>>
 MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center) const
 {
+  if (dim == 1)
+    return std::vector<Point<1>>{Point<1>(0)};
+
   const auto [type, id] = get_config(face_center);
 
   const double delta = 2 * numbers::PI / n_subdivisions;
@@ -262,6 +285,9 @@ template <int dim>
 std::vector<double>
 MortarManagerBase<dim>::get_weights(const Point<dim> &face_center) const
 {
+  if (dim == 1)
+    return std::vector<double>{1.0};
+
   // Mesh alignment type and cell index
   const auto [type, id] = get_config(face_center);
   // Angle variation within each cell
@@ -620,31 +646,45 @@ CouplingOperator<dim, Number>::CouplingOperator(
                                         normals.begin(),
                                         normals.end());
 
-                auto points =
-                  mortar_manager->get_points_ref(get_face_center(cell, face));
-
-                const bool flip =
-                  (face->vertex(0)[0] * face->vertex(1)[1] -
-                   face->vertex(0)[1] * face->vertex(1)[0]) < 0.0;
-
-                if (flip)
-                  for (auto &p : points)
-                    p[0] = 1.0 - p[0];
-
-                if (face_no / 2 == 0)
+                if (dim == 1)
                   {
-                    for (auto &p : points)
-                      all_points_ref.emplace_back(face_no % 2, p[0]);
+                    if (face_no == 0)
+                      all_points_ref.emplace_back(0.0);
+                    else if (face_no == 1)
+                      all_points_ref.emplace_back(1.0);
+                    else
+                      AssertThrow(false, ExcNotImplemented());
                   }
-                else if (face_no / 2 == 1)
+                else if (dim == 2)
                   {
-                    for (auto &p : points)
-                      all_points_ref.emplace_back(p[0], face_no % 2);
+                    auto points = mortar_manager->get_points_ref(
+                      get_face_center(cell, face));
+
+                    const bool flip =
+                      (face->vertex(0)[0] * face->vertex(1)[1] -
+                       face->vertex(0)[1] * face->vertex(1)[0]) < 0.0;
+
+                    if (flip)
+                      for (auto &p : points)
+                        p[0] = 1.0 - p[0];
+
+                    if (face_no / 2 == 0)
+                      {
+                        for (auto &p : points)
+                          all_points_ref.emplace_back(face_no % 2, p[0]);
+                      }
+                    else if (face_no / 2 == 1)
+                      {
+                        for (auto &p : points)
+                          all_points_ref.emplace_back(p[0], face_no % 2);
+                      }
+                    else
+                      {
+                        AssertThrow(false, ExcNotImplemented());
+                      }
                   }
                 else
-                  {
-                    AssertThrow(false, ExcNotImplemented());
-                  }
+                  AssertThrow(false, ExcNotImplemented());
               }
 
             // Penalty parmeter

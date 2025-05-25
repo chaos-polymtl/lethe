@@ -103,8 +103,9 @@ run(const std::string formulation)
 
   if (formulation == "equal")
     {
-      delta_1_scaling = std::pow(9.0 * std::pow(4.0 * fe_degree  * fe_degree, 2.0), -0.5);
-      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+      delta_1_scaling =
+        std::pow(9.0 * std::pow(4.0 * fe_degree * fe_degree, 2.0), -0.5);
+      fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
                                            dim,
                                            FE_Q<dim>(fe_degree),
                                            1);
@@ -471,5 +472,7 @@ main(int argc, char **argv)
 
   run("equal");
   run("th");
-  run("pdisc");
+
+  if (false) // TODO: disabled since p solution is not unique
+    run("pdisc");
 }

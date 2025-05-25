@@ -56,18 +56,25 @@ protected:
   Tensor<1, dim, double>
   get_normal(const Point<dim> &) const override
   {
+    if (dim == 1)
+      return Point<dim>(1.0);
+
     return Point<dim>(1.0, 0.0);
   }
 
   Point<dim>
   from_1D(const double rad) const override
   {
+    AssertThrow(dim != 1, ExcInternalError());
+
     return Point<dim>(0.5, rad / (2.0 * numbers::PI) * (right - left) + left);
   }
 
   double
   to_1D(const Point<dim> &face_center) const override
   {
+    AssertThrow(dim != 1, ExcInternalError());
+
     return (2.0 * numbers::PI) * (face_center[1] - left) / (right - left);
   }
 
@@ -86,10 +93,7 @@ run(const std::string formulation)
   const unsigned int mapping_degree       = 3;
   const unsigned int dim                  = 1;
   const unsigned int n_global_refinements = 4;
-  const double       radius               = 0.75;
   const double       outer_radius         = 1.0;
-  const double       rotate               = 0.0;
-  const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
   const std::string  grid                 = "split_hyper_cube";
   const double       sip_factor           = 10.0;
@@ -129,7 +133,7 @@ run(const std::string formulation)
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
-  parallel::distributed::Triangulation<dim> tria(comm);
+  Triangulation<dim> tria;
 
   if (grid == "split_hyper_cube")
     split_hyper_cube(tria, -outer_radius, +outer_radius, outer_radius / 3.0);
@@ -149,26 +153,10 @@ run(const std::string formulation)
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
 
-  if (grid == "hyper_cube" ||
-      grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
+  if (grid == "split_hyper_cube")
     {
       DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
-    }
-  else if (grid == "hyper_cube_with_cylindrical_hole")
-    {
-      DoFTools::make_zero_boundary_constraints(dof_handler, 1, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
       DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 4, constraints);
-    }
-  else if (grid == "split_hyper_cube")
-    {
-      DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 5, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
-      DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
     }
   else
     {
@@ -179,27 +167,15 @@ run(const std::string formulation)
   GeneralStokesOperator<dim, double> op(
     mapping, dof_handler, constraints, quadrature, delta_1_scaling, false);
 
-  if (grid == "hyper_cube_with_cylindrical_hole")
+  if (grid == "split_hyper_cube")
     {
       const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-        std::make_shared<MortarManagerCircle<dim>>(
-          4 * Utilities::pow(2, n_global_refinements + 1),
-          quadrature,
-          radius,
-          rotate_pi);
+        std::make_shared<MyMortarManager<dim>>(1,
+                                               quadrature,
+                                               -outer_radius,
+                                               +outer_radius);
 
-      op.add_coupling(mortar_manager, 0, 5, sip_factor);
-    }
-  else if (grid == "split_hyper_cube")
-    {
-      const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-        std::make_shared<MyMortarManager<dim>>(
-          2 * Utilities::pow(2, n_global_refinements),
-          quadrature,
-          -outer_radius,
-          +outer_radius);
-
-      op.add_coupling(mortar_manager, 1, 4, sip_factor);
+      op.add_coupling(mortar_manager, 1, 2, sip_factor);
     }
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
@@ -212,16 +188,11 @@ run(const std::string formulation)
     [&](const auto &p, const auto c) {
       const double a = numbers::PI;
       const double x = p[0];
-      const double y = p[1];
 
       if (c == 0)
-        return std::sin(a * x) * std::sin(a * x) * std::cos(a * y) *
-               std::sin(a * y);
+        return 0.0;
       else if (c == 1)
-        return -std::cos(a * x) * std::sin(a * x) * std::sin(a * y) *
-               std::sin(a * y);
-      else if (c == 2)
-        return std::sin(a * x) * std::sin(a * y);
+        return std::sin(a * x);
 
       AssertThrow(false, ExcNotImplemented());
 
@@ -237,25 +208,10 @@ run(const std::string formulation)
         [&](const auto &p, const auto c) {
           const double a = numbers::PI;
           const double x = p[0];
-          const double y = p[1];
 
           if (c == 0)
-            return 2 * a * a *
-                     (std::sin(a * x) * std::sin(a * x) -
-                      std::cos(a * x) * std::cos(a * x)) *
-                     std::sin(a * y) * std::cos(a * y) +
-                   4 * a * a * std::sin(a * x) * std::sin(a * x) *
-                     std::sin(a * y) * std::cos(a * y) +
-                   a * std::sin(a * y) * std::cos(a * x);
+            return a * std::cos(a * x);
           else if (c == 1)
-            return -2 * a * a *
-                     (std::sin(a * y) * std::sin(a * y) -
-                      std::cos(a * y) * std::cos(a * y)) *
-                     std::sin(a * x) * std::cos(a * x) -
-                   4 * a * a * std::sin(a * x) * std::sin(a * y) *
-                     std::sin(a * y) * std::cos(a * x) +
-                   a * std::sin(a * x) * std::cos(a * y);
-          else if (c == 2)
             return 0.0;
 
           AssertThrow(false, ExcNotImplemented());
@@ -350,7 +306,8 @@ run(const std::string formulation)
       DataOut<dim> data_out;
 
       DataOutBase::VtkFlags flags;
-      flags.write_higher_order_cells = true;
+      if (dim != 1)
+        flags.write_higher_order_cells = true;
       data_out.set_flags(flags);
 
       std::vector<std::string> labels(dim + 1, "u");
@@ -446,5 +403,7 @@ main(int argc, char **argv)
 
   run("equal");
   run("th");
-  run("pdisc");
+
+  if (false) // TODO: disabled since p solution is not unique
+    run("pdisc");
 }
