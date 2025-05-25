@@ -46,7 +46,7 @@ public:
                   const double            right)
     : MortarManagerBase<dim>(n_subdivisions,
                              quadrature,
-                             (right - left) / (2.0 * numbers::PI),
+                             (right - left) / numbers::PI,
                              0.0)
     , left(left)
     , right(right)
@@ -76,7 +76,7 @@ protected:
 };
 
 void
-run(const std::string formulation)
+run(const std::string formulation, const std::string grid = "split_hyper_cube")
 {
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;
@@ -85,14 +85,13 @@ run(const std::string formulation)
   const unsigned int fe_degree            = 5;
   const unsigned int mapping_degree       = 5;
   const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 0;
+  const unsigned int n_global_refinements = 3;
   const double       radius               = 0.75;
   const double       outer_radius         = 1.0;
   const double       rotate               = 0.0;
   const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
   const bool         rotate_triangulation = true;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
-  const std::string  grid                 = "split_hyper_cube";
   const double       sip_factor           = 10.0;
 
   ConditionalOStream pcout(std::cout,
@@ -137,7 +136,8 @@ run(const std::string formulation)
                                      rotate_triangulation ? rotate_pi : 0.0,
                                      tria);
   else if (grid == "hyper_cube")
-    GridGenerator::hyper_cube(tria, -outer_radius, +outer_radius);
+    split_hyper_cube(
+      tria, -outer_radius, +outer_radius, outer_radius / 3.0, 1e-6);
   else if (grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
     hyper_cube_with_cylindrical_hole_with_tolerance(radius,
                                                     outer_radius,
@@ -175,8 +175,7 @@ run(const std::string formulation)
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
 
-  if (grid == "hyper_cube" ||
-      grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
+  if (grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
     {
       DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
     }
@@ -187,7 +186,7 @@ run(const std::string formulation)
       DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
       DoFTools::make_zero_boundary_constraints(dof_handler, 4, constraints);
     }
-  else if (grid == "split_hyper_cube")
+  else if (grid == "hyper_cube" || grid == "split_hyper_cube")
     {
       DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
       DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
@@ -203,7 +202,7 @@ run(const std::string formulation)
   constraints.close();
 
   GeneralStokesOperator<dim, double> op(
-    mapping, dof_handler, constraints, quadrature, delta_1_scaling, true);
+    mapping, dof_handler, constraints, quadrature, delta_1_scaling, false);
 
   if (grid == "hyper_cube_with_cylindrical_hole")
     {
@@ -220,7 +219,7 @@ run(const std::string formulation)
     {
       const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
         std::make_shared<MyMortarManager<dim>>(
-          2 * Utilities::pow(2, n_global_refinements),
+          Utilities::pow(2, n_global_refinements),
           quadrature,
           -outer_radius,
           +outer_radius);
@@ -470,8 +469,10 @@ main(int argc, char **argv)
 {
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  run("equal");
-  run("th");
+  run("equal", "hyper_cube");
+  run("equal", "split_hyper_cube");
+  run("th", "hyper_cube");
+  run("th", "split_hyper_cube");
 
   if (false) // TODO: disabled since p solution is not unique
     run("pdisc");

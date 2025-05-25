@@ -46,7 +46,7 @@ public:
                   const double            right)
     : MortarManagerBase<dim>(n_subdivisions,
                              quadrature,
-                             (right - left) / (2.0 * numbers::PI),
+                             (right - left) / numbers::PI,
                              0.0)
     , left(left)
     , right(right)

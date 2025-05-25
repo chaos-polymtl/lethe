@@ -1652,10 +1652,12 @@ public:
                           const AffineConstraints<Number> &constraints,
                           const Quadrature<dim>           &quadrature,
                           const double                     sip_factor = 1.0,
-                          const bool weak_pressure_gradient_term      = true,
-                          const bool weak_velocity_divergence_term    = true)
+                          const bool   weak_pressure_gradient_term    = true,
+                          const bool   weak_velocity_divergence_term  = true,
+                          const double delta_1_scaling                = 0.0)
     : weak_pressure_gradient_term(weak_pressure_gradient_term)
     , weak_velocity_divergence_term(weak_velocity_divergence_term)
+    , delta_1_scaling(delta_1_scaling)
   {
     reinit(mapping, dof_handler, constraints, quadrature, sip_factor);
   }
@@ -2044,6 +2046,16 @@ private:
     phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
+    const auto cell = phi_u.get_current_cell_index();
+
+    VectorizedArrayType delta_1;
+    for (unsigned int v = 0;
+         v < this->matrix_free.n_active_entries_per_cell_batch(cell);
+         ++v)
+      delta_1[v] =
+        delta_1_scaling *
+        this->matrix_free.get_cell_iterator(cell, v)->minimum_vertex_distance();
+
     for (unsigned int q = 0; q < phi_u.n_q_points; ++q)
       {
         typename FECellIntegratorP::value_type    p_value_result    = {};
@@ -2085,6 +2097,10 @@ private:
             for (unsigned int d = 0; d < dim; ++d)
               p_value_result += u_gradient[d][d] * vel_div_sign;
           }
+
+        // δ_1 (∇q, ∇p)
+        if (delta_1_scaling != 0.0)
+          p_gradient_result += delta_1 * p_gradient;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
@@ -2167,7 +2183,8 @@ private:
           }
         else
           {
-            // nothing to do
+            // - (avg(q), jump(u) n)
+            p_value_jump_result -= 0.5 * u_value_jump * normal;
           }
 
         phi_u_m.submit_normal_derivative(u_normal_gradient_avg_result * 0.5, q);
@@ -2321,8 +2338,9 @@ private:
     return factor * (degree + 1.0) * (degree + 1.0);
   }
 
-  const bool weak_pressure_gradient_term;
-  const bool weak_velocity_divergence_term;
+  const bool   weak_pressure_gradient_term;
+  const bool   weak_velocity_divergence_term;
+  const double delta_1_scaling;
 
   const double vel_div_sign = +1.0;
 

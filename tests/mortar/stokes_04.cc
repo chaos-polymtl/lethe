@@ -46,7 +46,7 @@ public:
                   const double            right)
     : MortarManagerBase<dim>(n_subdivisions,
                              quadrature,
-                             (right - left) / (2.0 * numbers::PI),
+                             (right - left) / numbers::PI,
                              0.0)
     , left(left)
     , right(right)
@@ -200,19 +200,25 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
     }
   constraints.close();
 
-  GeneralStokesOperatorDG<dim, double> op(
-    mapping, dof_handler, constraints, quadrature, sip_factor);
+  GeneralStokesOperatorDG<dim, double> op(mapping,
+                                          dof_handler,
+                                          constraints,
+                                          quadrature,
+                                          sip_factor,
+                                          true,
+                                          false,
+                                          delta_1_scaling);
 
   if (grid == "split_hyper_cube")
     {
       const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
         std::make_shared<MyMortarManager<dim>>(
-          2 * Utilities::pow(2, n_global_refinements),
+          Utilities::pow(2, n_global_refinements),
           quadrature,
           -outer_radius,
           +outer_radius);
 
-      op.add_coupling(mortar_manager, 1, 4);
+      // op.add_coupling(mortar_manager, 1, 4);
     }
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
@@ -351,8 +357,11 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
   if (true)
     {
       // 3) with preconditioner: direct solver
+      const auto &matrix = op.get_system_matrix();
+      std::cout << matrix.frobenius_norm() << std::endl;
+
       TrilinosWrappers::SolverDirect preconditioner;
-      preconditioner.initialize(op.get_system_matrix());
+      preconditioner.initialize(matrix);
       solution = 0.0;
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step();
