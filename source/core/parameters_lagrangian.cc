@@ -1145,7 +1145,7 @@ namespace Parameters
           }
 
         disable_position_integration =
-          prm.get_bool("disable position integration")
+          prm.get_bool("disable position integration");
       }
       prm.leave_subsection();
     }
