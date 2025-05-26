@@ -418,6 +418,9 @@ namespace Parameters
       // Center of mass
       Point<3> point_center_mass;
 
+      // Disable position integration
+      bool disable_position_integration;
+
       void
       declare_parameters(ParameterHandler &prm);
       void
