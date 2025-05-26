@@ -390,6 +390,9 @@ namespace Parameters
       // considered no matter the granular temperature
       double solid_fraction_threshold;
 
+      // Disable position integration
+      bool disable_position_integration;
+
       static void
       declare_parameters(ParameterHandler &prm);
       void
@@ -417,9 +420,6 @@ namespace Parameters
 
       // Center of mass
       Point<3> point_center_mass;
-
-      // Disable position integration
-      bool disable_position_integration;
 
       void
       declare_parameters(ParameterHandler &prm);
