@@ -515,6 +515,12 @@ private:
    * contact search is required.
    */
   std::function<void()> contact_detection_iteration_check_function;
+
+  /**
+   * @brief Disable position integration, useful for multiphysic simulations
+   * with a packed bed, loaded with another prm.
+   */
+  bool disable_position_integration;
 };
 
 #endif

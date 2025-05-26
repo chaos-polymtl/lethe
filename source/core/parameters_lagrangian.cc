@@ -928,6 +928,12 @@ namespace Parameters
             "no matter the granular temperature");
         }
         prm.leave_subsection();
+
+        prm.declare_entry("disable position integration",
+                          "false",
+                          Patterns::Selection("true|false"),
+                          "Disable the integration of position and velocity"
+                          "Choices are <true|false>.");
       }
       prm.leave_subsection();
     }
@@ -1137,6 +1143,9 @@ namespace Parameters
           {
             throw(std::runtime_error("Invalid solver type"));
           }
+
+        disable_position_integration =
+          prm.get_bool("disable position integration")
       }
       prm.leave_subsection();
     }

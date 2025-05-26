@@ -148,6 +148,10 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
           Parameters::Lagrangian::ModelParameters<dim>::LoadBalanceMethod::none)
         action_manager->load_balance_step();
     }
+
+  // Disable position integration
+  disable_position_integration =
+    parameters.model_parameters.disable_position_integration;
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1034,26 +1038,30 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Integration of force and velocity for new location of particles
       // The half step is calculated at the first iteration
-      if (simulation_control->get_step_number() == 0)
+
+      if (!disable_position_integration)
         {
-          integrator_object->integrate_half_step_location(
-            particle_handler,
-            g,
-            simulation_control->get_time_step(),
-            torque,
-            force,
-            MOI);
-        }
-      else
-        {
-          integrator_object->integrate(particle_handler,
-                                       g,
-                                       simulation_control->get_time_step(),
-                                       torque,
-                                       force,
-                                       MOI,
-                                       triangulation,
-                                       sparse_contacts_object);
+          if (simulation_control->get_step_number() == 0)
+            {
+              integrator_object->integrate_half_step_location(
+                particle_handler,
+                g,
+                simulation_control->get_time_step(),
+                torque,
+                force,
+                MOI);
+            }
+          else
+            {
+              integrator_object->integrate(particle_handler,
+                                           g,
+                                           simulation_control->get_time_step(),
+                                           torque,
+                                           force,
+                                           MOI,
+                                           triangulation,
+                                           sparse_contacts_object);
+            }
         }
 
       // Visualization
