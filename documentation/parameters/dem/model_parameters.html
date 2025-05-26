@@ -497,7 +497,7 @@
   end
 
   # Solver type
-  # Choices are dem|cfd_dem
+  # Choices are dem|cfd_dem|dem_mp
   set solver type = dem
 end
 </pre></div>
@@ -610,7 +610,7 @@ The <code class="docutils literal notranslate"><span class="pre">load</span> <sp
 </section>
 <section id="solver-type">
 <h2>Solver Type<a class="headerlink" href="#solver-type" title="Link to this heading">#</a></h2>
-<p>The “solver type” parameter controls the type of physic being solved by lethe. Currently, this parameter should always be set to “dem”, which is the default value, even when solving a CFD-DEM problem.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">solver</span> <span class="pre">type</span></code> parameter controls the type of physic being solved by lethe. Currently, this parameter should be set to <code class="docutils literal notranslate"><span class="pre">dem</span></code>, which is the default value, when solving a DEM or CFD-DEM problem. The <code class="docutils literal notranslate"><span class="pre">dem_mp</span></code> solver type is used for multiphysic DEM, which includes heat transfer.</p>
 </section>
 </section>
 
