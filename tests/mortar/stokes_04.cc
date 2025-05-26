@@ -113,24 +113,14 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
                                            FE_DGQ<dim>(fe_degree - 1),
                                            1);
     }
-  else if (formulation == "pdisc")
-    {
-      delta_1_scaling = 0.0;
-      fe              = std::make_shared<FESystem<dim>>(FE_DGQ<dim>(fe_degree),
-                                           dim,
-                                           FE_DGP<dim>(fe_degree - 1),
-                                           1);
-    }
 
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
   parallel::distributed::Triangulation<dim> tria(comm);
   if (grid == "hyper_cube")
-    {
-      split_hyper_cube(
-        tria, -outer_radius, +outer_radius, outer_radius / 3.0, 1e-6);
-    }
+    split_hyper_cube(
+      tria, -outer_radius, +outer_radius, outer_radius / 3.0, 1e-6);
   else if (grid == "split_hyper_cube")
     split_hyper_cube(tria, -outer_radius, +outer_radius, outer_radius / 3.0);
   else
@@ -150,6 +140,8 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
 
   if (grid == "hyper_cube" || grid == "split_hyper_cube")
     {
+      // constrain: 1) boundary dofs and 2) multiple DoFs related to DG
+
       FEValues<dim> fe_values(mapping,
                               *fe,
                               fe->get_unit_support_points(),
@@ -250,14 +242,15 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
     }
   constraints.close();
 
-  GeneralStokesOperatorDG<dim, double> op(mapping,
-                                          dof_handler,
-                                          constraints,
-                                          quadrature,
-                                          sip_factor,
-                                          true,
-                                          false,
-                                          delta_1_scaling);
+  GeneralStokesOperatorDG<dim, double> op(
+    mapping,
+    dof_handler,
+    constraints,
+    quadrature,
+    sip_factor,
+    true /*weak_pressure_gradient_term*/,
+    false /*weak_velocity_divergence_term*/,
+    delta_1_scaling);
 
   if (grid == "split_hyper_cube")
     {
@@ -450,11 +443,6 @@ run(const std::string formulation, const std::string grid = "hyper_cube")
 
       LinearAlgebra::distributed::Vector<double> analytical_solution;
       op.initialize_dof_vector(analytical_solution);
-      if (formulation != "pdisc") // TODO
-        VectorTools::interpolate(mapping,
-                                 dof_handler,
-                                 *exact_solution,
-                                 analytical_solution);
       data_out.add_data_vector(dof_handler,
                                analytical_solution,
                                labels_ana,
@@ -521,7 +509,4 @@ main(int argc, char **argv)
   run("equal", "split_hyper_cube");
   run("th", "hyper_cube");
   run("th", "split_hyper_cube");
-
-  if (false) // TODO: disabled since p solution is not unique
-    run("pdisc");
 }
