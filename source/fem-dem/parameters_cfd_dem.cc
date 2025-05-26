@@ -161,7 +161,7 @@ namespace Parameters
                       "dem-cfd coupling frequency");
     prm.declare_entry("vans model",
                       "modelA",
-                      Patterns::Selection("modelA|modelB"),
+                      Patterns::Selection("modelA|modelB|modelAs"),
                       "The volume averaged Navier Stokes model to be solved.");
     prm.declare_entry(
       "grad-div length scale",

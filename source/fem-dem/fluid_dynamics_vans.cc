@@ -363,6 +363,11 @@ FluidDynamicsVANS<dim>::setup_assemblers()
       Parameters::VANSModel::modelB)
     this->assemblers.push_back(std::make_shared<VANSAssemblerCoreModelB<dim>>(
       this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
+      Parameters::VANSModel::modelAs)
+    this->assemblers.push_back(std::make_shared<VANSAssemblerCoreModelAs<dim>>(
+      this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
 template <int dim>

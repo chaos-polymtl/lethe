@@ -731,6 +731,8 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
                              div_phi_u_i;
             }
 
+
+
           local_rhs_i *= JxW;
           local_rhs(i) += local_rhs_i;
         }
@@ -762,7 +764,8 @@ VANSAssemblerCoreModelAs<dim>::assemble_matrix(
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
-  // Time steps and inverse time steps which is used for stabilization constant
+  // Time steps and inverse time steps which is used for stabilization
+  // constant
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   const double dt  = time_steps_vector[0];
@@ -785,6 +788,8 @@ VANSAssemblerCoreModelAs<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
+
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
 
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -832,12 +837,18 @@ VANSAssemblerCoreModelAs<dim>::assemble_matrix(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
-        velocity_gradient * velocity / void_fraction +
+        // u_j/ε  ∂_j u_i
+        velocity_gradient * velocity / void_fraction
+        // u_i/ε  ∂_j u_j
+        + velocity / void_fraction * velocity_divergence
+        // -u_j u_i / ε² ∂_j ε
+        - (velocity * void_fraction_gradients) /
+            (void_fraction * void_fraction) * velocity
         // Mass Source
-        mass_source * velocity
+        // mass_source *velocity
         // Pressure
         + void_fraction * pressure_gradient -
-        // Kinematic viscosity and Force
+        // Kinematic viscosity and Force, to finalize
         void_fraction * kinematic_viscosity * velocity_laplacian -
         force * void_fraction + strong_residual_vec[q];
 
@@ -894,36 +905,38 @@ VANSAssemblerCoreModelAs<dim>::assemble_matrix(
 
               if (component_i == dim)
                 {
-                  local_matrix_ij +=
-                    phi_p_i * ((void_fraction * div_phi_u_j) +
-                               (phi_u_j * void_fraction_gradients));
+                  local_matrix_ij += phi_p_i * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  if (PSPG)
+                    local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
                 }
 
               if (component_i < dim && component_j < dim)
                 {
                   // Convection
                   local_matrix_ij +=
-                    ((phi_u_j / void_fraction * velocity_gradient * phi_u_i) +
-                     (grad_phi_u_j / void_fraction * velocity * phi_u_i));
+                    // u_j/ε  ∂_i u_i
+                    grad_phi_u_j * velocity / void_fraction * phi_u_i +
+                    velocity_gradient * phi_u_j / void_fraction * phi_u_i
+                    // u_i/ε  ∂_j u_j
+                    + phi_u_j / void_fraction * velocity_divergence * phi_u_i +
+                    velocity / void_fraction * div_phi_u_j * phi_u_i
+                    // -u_j u_i / ε² ∂_j ε
+                    - phi_u_j / (void_fraction * void_fraction) *
+                        void_fraction_gradients * (velocity * phi_u_i) -
+                    velocity / (void_fraction * void_fraction) *
+                      void_fraction_gradients * (phi_u_j * phi_u_i);
 
                   if (component_i == component_j)
                     {
-                      local_matrix_ij += void_fraction * kinematic_viscosity *
-                                           (grad_phi_u_j[component_j] *
-                                            grad_phi_u_i[component_i]) +
-                                         kinematic_viscosity * grad_phi_u_j *
-                                           void_fraction_gradients * phi_u_i +
-                                         mass_source * phi_u_j * phi_u_i;
                     }
                 }
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
-              // parameter tau. Our experience has shown that does not alter the
-              // number of newton iteration for convergence, but greatly
+              // parameter tau. Our experience has shown that does not alter
+              // the number of newton iteration for convergence, but greatly
               // simplifies assembly.
               if (SUPG && component_i < dim)
                 {
@@ -932,12 +945,11 @@ VANSAssemblerCoreModelAs<dim>::assemble_matrix(
                            strong_residual * grad_phi_u_i * phi_u_j);
                 }
 
+
               // Grad-div stabilization
               if (cfd_dem.grad_div == true)
                 {
-                  local_matrix_ij += gamma *
-                                     (div_phi_u_j) *
-                                     div_phi_u_i;
+                  local_matrix_ij += gamma * (div_phi_u_j)*div_phi_u_i;
                 }
 
               local_matrix_ij *= JxW;
@@ -967,7 +979,8 @@ VANSAssemblerCoreModelAs<dim>::assemble_rhs(
   auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
-  // Time steps and inverse time steps which is used for stabilization constant
+  // Time steps and inverse time steps which is used for stabilization
+  // constant
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   const double dt  = time_steps_vector[0];
@@ -1038,12 +1051,18 @@ VANSAssemblerCoreModelAs<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
-        velocity_gradient * velocity * void_fraction +
+        // u_j/ε  ∂_j u_i
+        velocity_gradient * velocity / void_fraction
+        // u_i/ε  ∂_j u_j
+        + velocity / void_fraction * velocity_divergence
+        // -u_j u_i / ε² ∂_j ε
+        - (velocity * void_fraction_gradients) /
+            (void_fraction * void_fraction) * velocity
         // Mass Source
-        mass_source * velocity
+        // mass_source *velocity
         // Pressure
         + void_fraction * pressure_gradient -
-        // Kinematic viscosity and Force
+        // Kinematic viscosity and Force, to finalize
         void_fraction * kinematic_viscosity * velocity_laplacian -
         force * void_fraction + strong_residual_vec[q];
 
@@ -1062,28 +1081,24 @@ VANSAssemblerCoreModelAs<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           if (component_i < dim)
-            local_rhs_i += (
-              // Momentum
-              -(void_fraction * kinematic_viscosity *
-                  scalar_product(velocity_gradient, grad_phi_u_i) +
-                kinematic_viscosity * velocity_gradient *
-                  void_fraction_gradients * phi_u_i) -
-              velocity_gradient * velocity * void_fraction * phi_u_i
-              // Mass Source
-              - mass_source * velocity * phi_u_i
-              // Pressure and Force
+            local_rhs_i +=
+              // u_j/ε  ∂_j u_i + u_i/ε  ∂_j u_j - u_j u_i / ε² dj ε
+              -(velocity_gradient * velocity / void_fraction +
+                velocity / void_fraction * velocity_divergence -
+                velocity * void_fraction_gradients /
+                  (void_fraction * void_fraction) * velocity) *
+                phi_u_i
+              // Pressure
               + (void_fraction * pressure * div_phi_u_i +
-                 pressure * void_fraction_gradients * phi_u_i) +
-              force * void_fraction * phi_u_i);
+                 pressure * void_fraction_gradients * phi_u_i);
 
           if (component_i == dim)
             // Continuity
-            local_rhs_i -= (velocity_divergence * void_fraction +
-                            velocity * void_fraction_gradients - mass_source) *
-                           phi_p_i;
+            local_rhs_i -= (velocity_divergence - mass_source) * phi_p_i;
 
           // PSPG GLS term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i);
+          if (PSPG)
+            local_rhs_i += -tau * (strong_residual * grad_phi_p_i);
 
           // SUPG GLS term
           if (SUPG)
@@ -1095,10 +1110,7 @@ VANSAssemblerCoreModelAs<dim>::assemble_rhs(
           // Grad-div stabilization
           if (cfd_dem.grad_div == true)
             {
-              local_rhs_i -= gamma *
-                             (void_fraction * velocity_divergence +
-                              velocity * void_fraction_gradients) *
-                             div_phi_u_i;
+              local_rhs_i -= gamma * (velocity_divergence)*div_phi_u_i;
             }
 
           local_rhs_i *= JxW;

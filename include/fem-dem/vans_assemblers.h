@@ -163,7 +163,9 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool SUPG = true;
+  const bool SUPG = false;
+  const bool PSPG = true;
+
 
   const std::shared_ptr<SimulationControl> simulation_control;
   const Parameters::CFDDEM                 cfd_dem;
