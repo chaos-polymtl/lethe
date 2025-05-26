@@ -131,8 +131,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``Hamaker constant wall`` defines the Hamaker constant of the walls. This parameter is used with the DMT force model.
 
-.. warning::
-    The following DEM parameters are used for multiphysic DEM simulations, which are currently not supported.
+.. note::
+    The following DEM parameters are used for multiphysic DEM simulations. All parameters should be specified in a consistent set of units (ideally SI).
 
 * The ``thermal conductivity particles`` defines the thermal conductivity of particles for each type.
 
