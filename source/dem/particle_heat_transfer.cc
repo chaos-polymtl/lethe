@@ -28,6 +28,10 @@ calculate_macrocontact_resistance(const double harmonic_conductivity,
                                   const double contact_radius)
 {
   return 0.5 / (contact_radius * harmonic_conductivity + DBL_MIN);
+
+  // G. K. Batchelor and R. W. O’Brien, “Thermal or electrical conduction
+  // through a granular material,” Proc. R. Soc. Lond. A Math. Phys. Sci., vol.
+  // 355, no. 1682, pp. 313–333, Jul. 1977
 }
 
 double
@@ -61,6 +65,9 @@ calculate_solid_macrogap_resistance(const double radius,
   return 0.25 * M_PI * radius /
          (M_PI * (radius * radius - contact_radius_squared) *
           thermal_conductivity);
+
+  // C. Beaulieu, “Impact de la ségrégation granulaire sur le transfert de
+  // chaleur dans un lit rotatif”, Ph.D. thesis, Polytechnique Montréal, 2020.
 }
 
 double
@@ -91,9 +98,13 @@ calculate_interstitial_gas_microgap_resistance(
   // 2.82842712475 = 2*sqrt(2)
   return (2.82842712475 * equivalent_surface_roughness * a_2) /
          (M_PI * thermal_conductivity_gas * contact_radius_squared *
-          std::log(1 + a_2 / (a_1 + gas_parameter_m /
-                                      (2.82842712475 *
-                                       equivalent_surface_roughness))));
+          std::log(abs(1 + a_2 / (a_1 + gas_parameter_m /
+                                          (2.82842712475 *
+                                           equivalent_surface_roughness)))));
+
+  // M. Bahrami, M. M. Yovanovich, and J. R. Culham, “Effective thermal
+  // conductivity of rough spherical packed beds,” Int. J. Heat Mass Transfer,
+  // vol. 49, no. 19–20, pp. 3691–3701, Sep. 2006
 }
 
 double
@@ -109,6 +120,10 @@ calculate_interstitial_gas_macrogap_resistance(
                    contact_radius_squared / harmonic_radius + gas_parameter_m;
 
   return 2.0 / (M_PI * thermal_conductivity_gas * (S * log(S / (S - A)) - A));
+
+  // M. Bahrami, M. M. Yovanovich, and J. R. Culham, “Effective thermal
+  // conductivity of rough spherical packed beds,” Int. J. Heat Mass Transfer,
+  // vol. 49, no. 19–20, pp. 3691–3701, Sep. 2006
 }
 
 template <ContactType contact_type>
@@ -132,12 +147,10 @@ calculate_contact_thermal_conductance(
   const double harmonic_conductivity =
     harmonic_mean(thermal_conductivity_one, thermal_conductivity_two);
   // For particle-wall contacts, it is as if the radius of the wall is infinite.
-  const double harmonic_radius = [&]() {
-    if constexpr (contact_type == ContactType::particle_floating_mesh)
-      return 2. * radius_one;
-    else
-      return harmonic_mean(radius_one, radius_two);
-  }();
+  const double harmonic_radius =
+    (contact_type == ContactType::particle_floating_mesh) ?
+      2. * radius_one :
+      harmonic_mean(radius_one, radius_two);
 
   // Calculation of contact radius
   const double contact_radius =
