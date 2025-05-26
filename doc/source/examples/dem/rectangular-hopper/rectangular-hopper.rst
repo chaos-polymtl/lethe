@@ -92,7 +92,7 @@ Lagrangian Physical Properties
 
 The total number of particles in this simulation is 40740. All particles have a diameter of 2.24 mm.
 
-The following properties are chosen according to the Anand et al. paper :
+The following properties are chosen according to the Anand *et al.* paper :
 
 * Uniform distribution of spherical particles
 * Diameter (2.24 mm)
@@ -249,7 +249,7 @@ Results
 -------
 As seen in the following figure, the simulation was not run until all the particles are discharged in the bottom part.
 Since the mass flow rate is constant during the discharge, simulating the very end is not necessary.
-The simulated mass discharging rate is 84.94 g/s.
+The simulated mass discharging rate is 82.79 g/s.
 
 .. figure:: images/simulation_end.png
     :width: 300
@@ -374,7 +374,7 @@ Similarly to the non-periodic rectangular hopper simulation, the mesh must first
 
 Results Comparison
 ~~~~~~~~~~~~~~~~~~
-Here is the comparison of the results between the original simulation with Lethe, the periodic boundary conditions simulation with Lethe and the results from Anand et al. paper. The simulated mass discharging rate is 82.79 g/s from the original simulation and 87.43 g/s with PBC. Also, the run time of the simulation goes from about 26 minutes to 1 minute 42 seconds on 16 cores with an Ryzen 7950X processor.
+Here is the comparison of the results between the original simulation with Lethe, the periodic boundary conditions simulation with Lethe and the results from Anand *et al.*. paper. The simulated mass discharging rate is 82.79 g/s from the original simulation and 87.43 g/s from the one with PBC which is in better agreement with Anand *et al.* results. The run time of the simulation goes from about 26 minutes to 1 minute 42 seconds when using PBC on 16 cores with an AMD Ryzen 7950X processor.
 
 .. figure:: images/figure_hopper_comparison.png
     :width: 600
