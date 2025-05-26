@@ -384,6 +384,22 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
       }
 }
 
+/**
+ * @brief Compute scalar product
+ *
+ * @param[in, out] v_gradient Rank-2 tensor where result is stored
+ * @param[in] u_gradient Rank-2 tensor
+ * @param[in] factor Scalar factor
+ */
+template <typename Number>
+inline DEAL_II_ALWAYS_INLINE void
+symm_scalar_product_add(Tensor<1, 1, Number>       &v_gradient,
+                        const Tensor<1, 1, Number> &u_gradient,
+                        const Number               &factor)
+{
+  v_gradient[0] += u_gradient[0] * factor;
+}
+
 
 
 template <int dim, typename Number>

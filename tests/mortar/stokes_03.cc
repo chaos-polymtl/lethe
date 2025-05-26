@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief StokesOperator: test on rotated hypercube-cylinder geometry.
+ * @brief GeneralStokesOperator: test on rotated hypercube-cylinder geometry.
  */
 
 #include <deal.II/base/conditional_ostream.h>
@@ -10,7 +10,6 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_dgp.h>
-#include <deal.II/fe/fe_dgq.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_q.h>
@@ -36,137 +35,147 @@
 
 using namespace dealii;
 
-int
-main(int argc, char **argv)
+template <int dim>
+class MyMortarManager : public MortarManagerBase<dim>
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+public:
+  template <int dim2>
+  MyMortarManager(const unsigned int      n_subdivisions,
+                  const Quadrature<dim2> &quadrature,
+                  const double            left,
+                  const double            right)
+    : MortarManagerBase<dim>(n_subdivisions,
+                             quadrature,
+                             (right - left) / numbers::PI,
+                             0.0)
+    , left(left)
+    , right(right)
+  {}
 
+protected:
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &) const override
+  {
+    if (dim == 1)
+      return Point<dim>(1.0);
+
+    return Point<dim>(1.0, 0.0);
+  }
+
+  Point<dim>
+  from_1D(const double rad) const override
+  {
+    AssertThrow(dim != 1, ExcInternalError());
+
+    return Point<dim>(0.5, rad / (2.0 * numbers::PI) * (right - left) + left);
+  }
+
+  double
+  to_1D(const Point<dim> &face_center) const override
+  {
+    AssertThrow(dim != 1, ExcInternalError());
+
+    return (2.0 * numbers::PI) * (face_center[1] - left) / (right - left);
+  }
+
+  const double left;
+  const double right;
+};
+
+void
+run(const std::string formulation)
+{
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;
   using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
   const unsigned int fe_degree            = 3;
   const unsigned int mapping_degree       = 3;
-  const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 2;
-  const double       radius               = 0.75;
+  const unsigned int dim                  = 1;
+  const unsigned int n_global_refinements = 4;
   const double       outer_radius         = 1.0;
-  const double       rotate               = 3.0;
-  const double       rotate_pi            = 2 * numbers::PI * rotate / 360.0;
-  const bool         rotate_triangulation = false;
   const MPI_Comm     comm                 = MPI_COMM_WORLD;
-  const std::string  grid                 = "hyper_cube_with_cylindrical_hole";
-  const double       sip_factor           = 1.0;
+  const std::string  grid                 = "split_hyper_cube";
+  const double       sip_factor           = 10.0;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(comm) == 0);
 
-  FESystem<dim> fe(FE_DGQ<dim>(fe_degree), dim, FE_DGQ<dim>(fe_degree - 1), 1);
+  std::shared_ptr<FiniteElement<dim>> fe;
+  double                              delta_1_scaling = 0.0;
+
+  if (formulation == "equal")
+    {
+      delta_1_scaling =
+        std::pow(9.0 * std::pow(4.0 * fe_degree * fe_degree, 2.0), -0.5);
+      fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                           dim,
+                                           FE_Q<dim>(fe_degree),
+                                           1);
+    }
+  else if (formulation == "th")
+    {
+      delta_1_scaling = 0.0;
+      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                           dim,
+                                           FE_Q<dim>(fe_degree - 1),
+                                           1);
+    }
+  else if (formulation == "pdisc")
+    {
+      delta_1_scaling = 0.0;
+      fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe_degree),
+                                           dim,
+                                           FE_DGP<dim>(fe_degree - 1),
+                                           1);
+    }
+
   MappingQ<dim> mapping_q(mapping_degree);
   QGauss<dim>   quadrature(fe_degree + 1);
 
-  parallel::distributed::Triangulation<dim> tria(comm);
-  if (grid == "hyper_cube_with_cylindrical_hole")
-    {
-      hyper_cube_with_cylindrical_hole(radius, outer_radius, 0.0, tria);
-    }
-  else if (grid == "hyper_cube")
-    GridGenerator::hyper_cube(tria, -outer_radius, +outer_radius);
-  else if (grid == "hyper_cube_with_cylindrical_hole_with_tolerance")
-    {
-      hyper_cube_with_cylindrical_hole_with_tolerance(radius,
-                                                      outer_radius,
-                                                      0.0,
-                                                      tria);
-    }
+  Triangulation<dim> tria;
+
+  if (grid == "split_hyper_cube")
+    split_hyper_cube(tria, -outer_radius, +outer_radius, outer_radius / 3.0);
   else
     AssertThrow(false, ExcNotImplemented());
-
   tria.refine_global(n_global_refinements);
 
   MappingQCache<dim> mapping(mapping_degree);
 
-  if (grid != "hyper_cube_with_cylindrical_hole" || rotate_triangulation)
-    mapping.initialize(mapping_q, tria);
-  else
-    mapping.initialize(
-      mapping_q,
-      tria,
-      [&](const auto &cell, const auto &point) {
-        if (cell->center().norm() > radius)
-          return point;
-
-        return static_cast<Point<dim>>(
-          Physics::Transformations::Rotations::rotation_matrix_2d(rotate_pi) *
-          point);
-      },
-      false);
+  mapping.initialize(mapping_q, tria);
 
   DoFHandler<dim> dof_handler(tria);
-  dof_handler.distribute_dofs(fe);
+  dof_handler.distribute_dofs(*fe);
 
   AffineConstraints<double> constraints;
   const IndexSet            locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(dof_handler);
   constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
 
-  if (true /*TODO: better solution!*/)
+  if (grid == "split_hyper_cube")
     {
-      std::set<unsigned int> min_index;
-
-      std::vector<types::global_dof_index> dof_indices;
-
-      FEValues<dim> fe_values(mapping,
-                              fe,
-                              fe.get_unit_support_points(),
-                              update_quadrature_points);
-
-      // Loop over the cells to identify the min index
-      for (const auto &cell : dof_handler.active_cell_iterators())
-        {
-          if (cell->is_locally_owned())
-            {
-              fe_values.reinit(cell);
-
-              const auto &fe = cell->get_fe();
-
-              dof_indices.resize(fe.n_dofs_per_cell());
-              cell->get_dof_indices(dof_indices);
-
-              for (unsigned int i = 0; i < dof_indices.size(); ++i)
-                if (fe.system_to_component_index(i).first == dim)
-                  if (fe_values.quadrature_point(i).distance(
-                        Point<dim>{-outer_radius, -outer_radius}) < 1.e-7)
-                    {
-                      std::cout << fe_values.quadrature_point(i) << " -> "
-                                << dof_indices[i] << std::endl;
-                      min_index.insert(dof_indices[i]);
-                    }
-            }
-        }
-
-      // TODO: communicate
-
-
-      for (const auto &i : min_index)
-        if (locally_relevant_dofs.is_element(i))
-          constraints.add_line(i);
+      DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
+      DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
     }
-
+  else
+    {
+      AssertThrow(false, ExcNotImplemented());
+    }
   constraints.close();
 
-  GeneralStokesOperatorDG<dim, double> op(
-    mapping, dof_handler, constraints, quadrature, sip_factor);
+  GeneralStokesOperator<dim, double> op(
+    mapping, dof_handler, constraints, quadrature, delta_1_scaling, false);
 
-  if (grid == "hyper_cube_with_cylindrical_hole")
+  if (grid == "split_hyper_cube")
     {
-      const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-        4 * Utilities::pow(2, n_global_refinements + 1),
-        construct_quadrature(quadrature),
-        radius,
-        rotate_pi);
+      const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
+        std::make_shared<MyMortarManager<dim>>(1,
+                                               quadrature,
+                                               -outer_radius,
+                                               +outer_radius);
 
-      op.add_coupling(mortar_manager, 0, 5);
+      op.add_coupling(mortar_manager, 1, 2, sip_factor);
     }
 
   LinearAlgebra::distributed::Vector<double> rhs, solution;
@@ -179,16 +188,11 @@ main(int argc, char **argv)
     [&](const auto &p, const auto c) {
       const double a = numbers::PI;
       const double x = p[0];
-      const double y = p[1];
 
       if (c == 0)
-        return std::sin(a * x) * std::sin(a * x) * std::cos(a * y) *
-               std::sin(a * y);
+        return 0.0;
       else if (c == 1)
-        return -std::cos(a * x) * std::sin(a * x) * std::sin(a * y) *
-               std::sin(a * y);
-      else if (c == 2)
-        return std::sin(a * x) * std::sin(a * y);
+        return std::sin(a * x);
 
       AssertThrow(false, ExcNotImplemented());
 
@@ -204,25 +208,10 @@ main(int argc, char **argv)
         [&](const auto &p, const auto c) {
           const double a = numbers::PI;
           const double x = p[0];
-          const double y = p[1];
 
           if (c == 0)
-            return 2 * a * a *
-                     (std::sin(a * x) * std::sin(a * x) -
-                      std::cos(a * x) * std::cos(a * x)) *
-                     std::sin(a * y) * std::cos(a * y) +
-                   4 * a * a * std::sin(a * x) * std::sin(a * x) *
-                     std::sin(a * y) * std::cos(a * y) +
-                   a * std::sin(a * y) * std::cos(a * x);
+            return a * std::cos(a * x);
           else if (c == 1)
-            return -2 * a * a *
-                     (std::sin(a * y) * std::sin(a * y) -
-                      std::cos(a * y) * std::cos(a * y)) *
-                     std::sin(a * x) * std::cos(a * x) -
-                   4 * a * a * std::sin(a * x) * std::sin(a * y) *
-                     std::sin(a * y) * std::cos(a * x) +
-                   a * std::sin(a * x) * std::cos(a * y);
-          else if (c == 2)
             return 0.0;
 
           AssertThrow(false, ExcNotImplemented());
@@ -231,8 +220,44 @@ main(int argc, char **argv)
         },
         dim + 1);
 
-      VectorTools::create_right_hand_side(
-        mapping, dof_handler, quadrature, *rhs_func, rhs, constraints);
+      FEValues<dim>              fe_values(mapping,
+                              *fe,
+                              quadrature,
+                              update_values | update_gradients |
+                                update_JxW_values | update_quadrature_points);
+      FEValuesViews::Vector<dim> velocities(fe_values, 0);
+      FEValuesViews::Scalar<dim> pressure(fe_values, dim);
+
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        if (cell->is_locally_owned())
+          {
+            fe_values.reinit(cell);
+
+            const double delta_1 =
+              delta_1_scaling * cell->minimum_vertex_distance();
+
+            Vector<double> rhs_local(fe->n_dofs_per_cell());
+            std::vector<types::global_dof_index> indices(fe->n_dofs_per_cell());
+
+            cell->get_dof_indices(indices);
+
+            for (const unsigned int q : fe_values.quadrature_point_indices())
+              {
+                const auto JxW   = fe_values.JxW(q);
+                const auto point = fe_values.quadrature_point(q);
+
+                Tensor<1, dim> source;
+                for (unsigned int d = 0; d < dim; ++d)
+                  source[d] = rhs_func->value(point, d);
+
+                for (const unsigned int i : fe_values.dof_indices())
+                  rhs_local(i) += (source * velocities.value(i, q) +
+                                   delta_1 * source * pressure.gradient(i, q)) *
+                                  JxW;
+              }
+
+            constraints.distribute_local_to_global(rhs_local, indices, rhs);
+          }
     }
 
   rhs.compress(VectorOperation::add);
@@ -266,29 +291,13 @@ main(int argc, char **argv)
       solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step();
     }
-  if (false)
-    {
-      // 3) with preconditioner: direct solver
-      TrilinosWrappers::SolverDirect preconditioner;
-      const auto                    &matrix = op.get_system_matrix();
-      std::cout << matrix.frobenius_norm() << std::endl;
-      // matrix.print(std::cout);
-      // return 0;
-      preconditioner.initialize(matrix);
-      solution = 0.0;
-      solver.solve(op, solution, rhs, preconditioner);
-      pcout << reduction_control.last_step();
-    }
   if (true)
     {
       // 3) with preconditioner: direct solver
       TrilinosWrappers::SolverDirect preconditioner;
-      const auto                    &matrix = op.get_system_matrix();
-      std::cout << matrix.frobenius_norm() << std::endl;
-      // matrix.print(std::cout);
-      // return 0;
-      preconditioner.initialize(matrix);
-      preconditioner.vmult(solution, rhs);
+      preconditioner.initialize(op.get_system_matrix());
+      solution = 0.0;
+      solver.solve(op, solution, rhs, preconditioner);
       pcout << reduction_control.last_step();
     }
 
@@ -297,7 +306,8 @@ main(int argc, char **argv)
       DataOut<dim> data_out;
 
       DataOutBase::VtkFlags flags;
-      flags.write_higher_order_cells = true;
+      if (dim != 1)
+        flags.write_higher_order_cells = true;
       data_out.set_flags(flags);
 
       std::vector<std::string> labels(dim + 1, "u");
@@ -324,10 +334,11 @@ main(int argc, char **argv)
 
       LinearAlgebra::distributed::Vector<double> analytical_solution;
       op.initialize_dof_vector(analytical_solution);
-      VectorTools::interpolate(mapping,
-                               dof_handler,
-                               *exact_solution,
-                               analytical_solution);
+      if (formulation != "pdisc") // TODO
+        VectorTools::interpolate(mapping,
+                                 dof_handler,
+                                 *exact_solution,
+                                 analytical_solution);
       data_out.add_data_vector(dof_handler,
                                analytical_solution,
                                labels_ana,
@@ -337,7 +348,12 @@ main(int argc, char **argv)
         mapping,
         fe_degree + 1,
         DataOut<dim>::CurvedCellRegion::curved_inner_cells);
-      data_out.write_vtu_in_parallel("poisson_dg.vtu", MPI_COMM_WORLD);
+
+      static unsigned int counter = 0;
+      data_out.write_vtu_in_parallel("poisson_dg." + std::to_string(counter) +
+                                       ".vtu",
+                                     MPI_COMM_WORLD);
+      counter++;
     }
 
   if (true)
@@ -353,7 +369,7 @@ main(int argc, char **argv)
                                         solution,
                                         *exact_solution,
                                         norm_per_cell,
-                                        QGauss<dim>(fe.degree + 2),
+                                        QGauss<dim>(fe->degree + 2),
                                         VectorTools::L2_norm,
                                         &u_mask);
       const double error_L2_norm_u =
@@ -365,7 +381,7 @@ main(int argc, char **argv)
                                         solution,
                                         *exact_solution,
                                         norm_per_cell,
-                                        QGauss<dim>(fe.degree + 2),
+                                        QGauss<dim>(fe->degree + 2),
                                         VectorTools::L2_norm,
                                         &p_mask);
       const double error_L2_norm_p =
@@ -377,4 +393,17 @@ main(int argc, char **argv)
     }
 
   pcout << std::endl;
+}
+
+
+int
+main(int argc, char **argv)
+{
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+
+  run("equal");
+  run("th");
+
+  if (false) // TODO: disabled since p solution is not unique
+    run("pdisc");
 }

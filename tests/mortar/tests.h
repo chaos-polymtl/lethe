@@ -145,35 +145,81 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
 /**
  * @brief TODO
  */
-template <int dim>
 void
-split_hyper_cube(Triangulation<dim> &tria)
+split_hyper_cube(Triangulation<2> &tria,
+                 const double      left,
+                 const double      right,
+                 const double      mid,
+                 const double      tolerance = 0.0)
 {
-  Triangulation<dim> tria_0, tria_1;
+  Triangulation<2> tria_0, tria_1;
 
   // inner domain triangulation
   GridGenerator::subdivided_hyper_rectangle(tria_0,
-                                            std::vector<unsigned int>{1, 2},
-                                            Point<dim>(0.0, 0.0),
-                                            Point<dim>(0.5, 1.0),
+                                            std::vector<unsigned int>{1, 1},
+                                            Point<2>(left, left),
+                                            Point<2>(mid, right),
                                             true);
 
   // outer domain triangulation
   GridGenerator::subdivided_hyper_rectangle(tria_1,
-                                            std::vector<unsigned int>{1, 2},
-                                            Point<dim>(0.5, 0.0),
-                                            Point<dim>(1.0, 1.0),
+                                            std::vector<unsigned int>{1, 1},
+                                            Point<2>(mid, left),
+                                            Point<2>(right, right),
                                             true);
 
   // shift boundary IDs # in outer grid
   for (const auto &face : tria_1.active_face_iterators())
     if (face->at_boundary())
-      {
-        face->set_boundary_id(face->boundary_id() + 4);
-      }
+      face->set_boundary_id(face->boundary_id() + 4);
 
   // create unique triangulation
-  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
+  GridGenerator::merge_triangulations(
+    tria_0, tria_1, tria, tolerance, true, true);
+}
+
+/**
+ * @brief TODO
+ */
+void
+split_hyper_cube(Triangulation<1> &tria,
+                 const double      left,
+                 const double      right,
+                 const double      mid,
+                 const double      tolerance = 0.0)
+{
+  Triangulation<1> tria_0, tria_1;
+
+  // inner domain triangulation
+  GridGenerator::subdivided_hyper_rectangle(
+    tria_0, std::vector<unsigned int>{1}, Point<1>(left), Point<1>(mid), true);
+
+  // outer domain triangulation
+  GridGenerator::subdivided_hyper_rectangle(
+    tria_1, std::vector<unsigned int>{1}, Point<1>(mid), Point<1>(right), true);
+
+  // shift boundary IDs # in outer grid
+  for (const auto &cell : tria_1.active_cell_iterators())
+    for (const auto &face : cell->face_iterators())
+      if (face->at_boundary())
+        face->set_boundary_id(face->boundary_id() + 2);
+
+  // create unique triangulation
+  GridGenerator::merge_triangulations(
+    tria_0, tria_1, tria, tolerance, true, true);
+}
+
+/**
+ * @brief TODO
+ */
+template <int dim>
+void
+split_hyper_cube(Triangulation<dim> &tria,
+                 const double        left      = 0.0,
+                 const double        right     = 1.0,
+                 const double        tolerance = 0.0)
+{
+  split_hyper_cube(tria, left, right, (left + right) / 2.0, tolerance);
 }
 
 template <int dim>
@@ -202,8 +248,8 @@ public:
 
   CouplingEvaluationStokes(const Mapping<dim>    &mapping,
                            const DoFHandler<dim> &dof_handler,
-                           const bool do_pressure_gradient_term   = true,
-                           const bool do_velocity_divergence_term = true)
+                           const bool weak_pressure_gradient_term   = true,
+                           const bool weak_velocity_divergence_term = true)
     : fe_sub_u(dof_handler.get_fe().base_element(
                  dof_handler.get_fe().component_to_base_index(0).first),
                dim)
@@ -212,8 +258,8 @@ public:
                1)
     , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
     , phi_p_m(mapping, fe_sub_p, update_values)
-    , do_pressure_gradient_term(do_pressure_gradient_term)
-    , do_velocity_divergence_term(do_velocity_divergence_term)
+    , weak_pressure_gradient_term(weak_pressure_gradient_term)
+    , weak_velocity_divergence_term(weak_velocity_divergence_term)
   {
     for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
       if (dof_handler.get_fe().system_to_component_index(i).first < dim)
@@ -336,7 +382,7 @@ public:
             u_value_jump_result += sigma * u_value_jump;
           }
 
-        if (do_pressure_gradient_term)
+        if (weak_pressure_gradient_term)
           {
             // + (jump(v), avg(p) n)
             u_value_jump_result += p_value_avg;
@@ -346,14 +392,21 @@ public:
             // nothing to do
           }
 
-        if (do_velocity_divergence_term)
+        if (weak_velocity_divergence_term)
           {
             // + (jump(q), avg(u) n)
-            p_value_jump_result += u_value_avg * normal;
+            if constexpr (dim == 1)
+              p_value_jump_result += u_value_avg * normal[0];
+            else
+              p_value_jump_result += u_value_avg * normal;
           }
         else
           {
-            // nothing to do
+            // - (avg(q), jump(u) n)
+            if constexpr (dim == 1)
+              p_value_jump_result -= 0.5 * u_value_jump * normal[0];
+            else
+              p_value_jump_result -= 0.5 * u_value_jump * normal;
           }
 
         phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
@@ -381,8 +434,8 @@ public:
   mutable FEPointIntegratorU phi_u_m;
   mutable FEPointIntegratorP phi_p_m;
 
-  const bool do_pressure_gradient_term;
-  const bool do_velocity_divergence_term;
+  const bool weak_pressure_gradient_term;
+  const bool weak_velocity_divergence_term;
 
   std::vector<unsigned int> relevant_dof_indices;
 };
@@ -764,8 +817,10 @@ public:
                         const DoFHandler<dim>           &dof_handler,
                         const AffineConstraints<Number> &constraints,
                         const Quadrature<dim>           &quadrature,
-                        const double                     delta_1_scaling)
+                        const double                     delta_1_scaling,
+                        const bool weak_velocity_divergence_term = false)
     : delta_1_scaling(delta_1_scaling)
+    , weak_velocity_divergence_term(weak_velocity_divergence_term)
   {
     reinit(mapping, dof_handler, constraints, quadrature);
   }
@@ -799,12 +854,10 @@ public:
    * factor in SIPG)
    */
   void
-  add_coupling(const unsigned int n_subdivisions,
-               const double       radius,
-               const double       rotate_pi,
-               const unsigned int bid_0,
-               const unsigned int bid_1,
-               const double       sip_factor = 1.0)
+  add_coupling(const std::shared_ptr<MortarManagerBase<dim>> mortar_manager,
+               const unsigned int                            bid_0,
+               const unsigned int                            bid_1,
+               const double                                  sip_factor = 1.0)
   {
     const bool is_p_disc = matrix_free.get_dof_handler()
                              .get_fe()
@@ -814,19 +867,13 @@ public:
                                              .first)
                              .n_dofs_per_vertex() == 0;
 
-    const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
-                                                 matrix_free.get_quadrature(),
-                                                 radius,
-                                                 rotate_pi);
-
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
         std::make_shared<CouplingEvaluationStokes<dim, Number>>(
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler(),
           !is_p_disc,
-          false);
+          weak_velocity_divergence_term);
 
     coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
@@ -1091,9 +1138,10 @@ private:
         const auto p_value    = phi_p.get_value(q);
         const auto p_gradient = phi_p.get_gradient(q);
 
+        const auto u_value    = phi_u.get_value(q);
         const auto u_gradient = phi_u.get_gradient(q);
 
-        // a)     (ε(v), 2νε(u))
+        // (ε(v), 2νε(u))
         if (false)
           {
             symm_scalar_product_add(u_gradient_result,
@@ -1105,17 +1153,34 @@ private:
             u_gradient_result = u_gradient;
           }
 
-        // b)   - (div(v), p)
-        for (unsigned int d = 0; d < dim; ++d)
-          u_gradient_result[d][d] -= p_value;
+        // - (div(v), p)
+        if constexpr (dim == 1)
+          u_gradient_result[0] -= p_value;
+        else
+          for (unsigned int d = 0; d < dim; ++d)
+            u_gradient_result[d][d] -= p_value;
 
-        // c)     (q, div(u))
-        for (unsigned int d = 0; d < dim; ++d)
-          p_value_result += u_gradient[d][d];
+        if (weak_velocity_divergence_term)
+          {
+            // - (∇q, u)
+            if constexpr (dim == 1)
+              p_gradient_result[0] -= u_value;
+            else
+              p_gradient_result -= u_value;
+          }
+        else
+          {
+            // + (q, div(u))
+            if constexpr (dim == 1)
+              p_value_result += u_gradient[0];
+            else
+              for (unsigned int d = 0; d < dim; ++d)
+                p_value_result += u_gradient[d][d];
+          }
 
-        // d) δ_1 (∇q, ∇p)
+        // δ_1 (∇q, ∇p)
         if (delta_1_scaling != 0.0)
-          p_gradient_result = delta_1 * p_gradient;
+          p_gradient_result += delta_1 * p_gradient;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
@@ -1135,6 +1200,7 @@ private:
   std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 
   const double delta_1_scaling;
+  const bool   weak_velocity_divergence_term;
 };
 
 
@@ -1585,7 +1651,13 @@ public:
                           const DoFHandler<dim>           &dof_handler,
                           const AffineConstraints<Number> &constraints,
                           const Quadrature<dim>           &quadrature,
-                          const double                     sip_factor = 1.0)
+                          const double                     sip_factor = 1.0,
+                          const bool   weak_pressure_gradient_term    = true,
+                          const bool   weak_velocity_divergence_term  = true,
+                          const double delta_1_scaling                = 0.0)
+    : weak_pressure_gradient_term(weak_pressure_gradient_term)
+    , weak_velocity_divergence_term(weak_velocity_divergence_term)
+    , delta_1_scaling(delta_1_scaling)
   {
     reinit(mapping, dof_handler, constraints, quadrature, sip_factor);
   }
@@ -1621,23 +1693,17 @@ public:
    * @brief Create coupling operator
    */
   void
-  add_coupling(const unsigned int n_subdivisions,
-               const double       radius,
-               const double       rotate_pi,
-               const unsigned int bid_0,
-               const unsigned int bid_1)
+  add_coupling(const std::shared_ptr<MortarManagerBase<dim>> mortar_manager,
+               const unsigned int                            bid_0,
+               const unsigned int                            bid_1)
   {
-    const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
-                                                 matrix_free.get_quadrature(),
-                                                 radius,
-                                                 rotate_pi);
-
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
         std::make_shared<CouplingEvaluationStokes<dim, Number>>(
           *matrix_free.get_mapping_info().mapping,
-          matrix_free.get_dof_handler());
+          matrix_free.get_dof_handler(),
+          weak_pressure_gradient_term,
+          weak_velocity_divergence_term);
 
     coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
@@ -1696,7 +1762,18 @@ public:
 
     // apply coupling terms
     if (coupling_operator)
-      coupling_operator->vmult_add(dst, src);
+      {
+        // apply constraints
+        // TODO: only apply relevant constraints
+        const auto &constraints = coupling_operator->get_affine_constraints();
+        constraints.distribute(const_cast<VectorType &>(src));
+        src.update_ghost_values();
+
+        coupling_operator->vmult_add(dst, src);
+
+        constraints.set_zero(const_cast<VectorType &>(src));
+        constraints.set_zero(dst);
+      }
 
     src.zero_out_ghost_values();
   }
@@ -1980,6 +2057,16 @@ private:
     phi_u.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
     phi_p.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
+    const auto cell = phi_u.get_current_cell_index();
+
+    VectorizedArrayType delta_1;
+    for (unsigned int v = 0;
+         v < this->matrix_free.n_active_entries_per_cell_batch(cell);
+         ++v)
+      delta_1[v] =
+        delta_1_scaling *
+        this->matrix_free.get_cell_iterator(cell, v)->minimum_vertex_distance();
+
     for (unsigned int q = 0; q < phi_u.n_q_points; ++q)
       {
         typename FECellIntegratorP::value_type    p_value_result    = {};
@@ -1998,7 +2085,7 @@ private:
             u_gradient_result += u_gradient;
           }
 
-        if (true /*Pressure gradient term*/)
+        if (weak_pressure_gradient_term)
           {
             // - (div(v), p)
             for (unsigned int d = 0; d < dim; ++d)
@@ -2010,7 +2097,7 @@ private:
             u_value_result += p_gradient;
           }
 
-        if (true /*Velocity divergence term*/)
+        if (weak_velocity_divergence_term)
           {
             // - (∇q, u)
             p_gradient_result -= u_value * vel_div_sign;
@@ -2021,6 +2108,10 @@ private:
             for (unsigned int d = 0; d < dim; ++d)
               p_value_result += u_gradient[d][d] * vel_div_sign;
           }
+
+        // δ_1 (∇q, ∇p)
+        if (delta_1_scaling != 0.0)
+          p_gradient_result += delta_1 * p_gradient;
 
         phi_p.submit_value(p_value_result, q);
         phi_p.submit_gradient(p_gradient_result, q);
@@ -2086,7 +2177,7 @@ private:
             u_value_jump_result += sigma * u_value_jump;
           }
 
-        if (true /*Pressure gradient term*/)
+        if (weak_pressure_gradient_term)
           {
             // + (jump(v), avg(p) n)
             u_value_jump_result += p_value_avg * normal;
@@ -2096,14 +2187,15 @@ private:
             // nothing to do
           }
 
-        if (true /*Velocity divergence term*/)
+        if (weak_velocity_divergence_term)
           {
             // + (jump(q), avg(u) n)
             p_value_jump_result += u_value_avg * normal * vel_div_sign;
           }
         else
           {
-            // nothing to do
+            // - (avg(q), jump(u) n)
+            p_value_jump_result -= 0.5 * u_value_jump * normal;
           }
 
         phi_u_m.submit_normal_derivative(u_normal_gradient_avg_result * 0.5, q);
@@ -2167,7 +2259,7 @@ private:
             u_value_jump_result += sigma * u_value_jump;
           }
 
-        if (true /*Pressure gradient term*/)
+        if (weak_pressure_gradient_term)
           {
             // + (jump(v), avg(p) n)
             u_value_jump_result += p_value_avg * normal;
@@ -2177,7 +2269,7 @@ private:
             // nothing to do
           }
 
-        if (true /*Velocity divergence term*/)
+        if (weak_velocity_divergence_term)
           {
             // + (jump(q), avg(u) n)
             p_value_jump_result += u_value_avg * normal * vel_div_sign;
@@ -2256,6 +2348,10 @@ private:
   {
     return factor * (degree + 1.0) * (degree + 1.0);
   }
+
+  const bool   weak_pressure_gradient_term;
+  const bool   weak_velocity_divergence_term;
+  const double delta_1_scaling;
 
   const double vel_div_sign = +1.0;
 
