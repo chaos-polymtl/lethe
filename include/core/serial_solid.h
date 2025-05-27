@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_serial_solid_h
@@ -156,6 +156,28 @@ public:
   }
 
   /**
+   * @brief Returns the temperature of the solid object
+   *
+   * @return The temperature of the solid object
+   */
+  inline double
+  get_temperature() const
+  {
+    return this->current_solid_temperature;
+  }
+
+  /**
+   * @brief Returns the thermal boundary type of the solid object
+   *
+   * @return The thermal boundary type of the solid object
+   */
+  inline Parameters::ThermalBoundaryType
+  get_thermal_boundary_type() const
+  {
+    return this->thermal_boundary_type;
+  }
+
+  /**
    * @brief Returns the solid id of the solid object.
    * This ID is an unsigned integer which is given to the solid object at
    * compile time and is mostly used when writing files.
@@ -167,6 +189,15 @@ public:
   {
     return id;
   }
+
+  /**
+   * @brief Update the temperature of the solid object, which is a function of time.
+   *
+   * @param initial_time The initial time (time t) of the timestep. This is used to
+   * set the time of the temperature function.
+   */
+  void
+  update_solid_temperature(const double initial_time);
 
   /**
    * @brief Moves the vertices of the solid triangulation. This function
@@ -288,6 +319,9 @@ private:
   Point<spacedim>                     center_of_rotation;
   Tensor<1, spacedim>                 current_translational_velocity;
   Tensor<1, 3>                        current_angular_velocity;
+  std::shared_ptr<Function<spacedim>> solid_temperature;
+  Parameters::ThermalBoundaryType     thermal_boundary_type;
+  double                              current_solid_temperature;
 };
 
 #endif

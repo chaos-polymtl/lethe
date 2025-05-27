@@ -60,6 +60,11 @@ In this subsection, gravitational acceleration, and the physical properties of t
     set rolling viscous damping wall = 0.1
     set surface energy wall          = 0.0
     set Hamaker constant wall        = 4.e-19
+    set thermal conductivity wall    = 100
+    set microhardness wall           = 1.e9
+    set surface slope wall           = 0.1
+    set surface roughness wall       = 1.e-10
+    set thermal accommodation wall   = 0.7
 
     # Interstitial gas properties
     set thermal conductivity gas     = 0.01
@@ -140,11 +145,11 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``microhardness particles`` defines the microhardness of particles for each type.
 
-* The ``surface slope particles`` defines the surface slope of particles for each type.
+* The ``surface slope particles`` defines the surface slope of particles for each type. It is a non-dimensional parameter related to roughness and more precisely to the angle of the asperities on the surface. A higher surface slope entails a smaller microcontact resistance, as there are more microcontacts.
 
 * The ``surface roughness particles`` defines the surface roughness of particles for each type.
 
-* The ``thermal accommodation particles`` defines the thermal accommodation coefficient of particles for each type.
+* The ``thermal accommodation particles`` defines the thermal accommodation coefficient of particles for each type. The thermal accommodation coefficient characterizes the quality of thermal energy exchange between gas molecules and a solid surface.
 
 * The ``thermal conductivity gas`` defines the thermal conductivity of the interstitial gas.
 
@@ -154,4 +159,14 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``specific heats ratio gas`` defines the specific heats ratio of the interstitial gas.
 
-* The ``molecular mean free path gas`` defines the molecular mean free path of the interstitial gas.
+* The ``molecular mean free path gas`` defines the molecular mean free path of the interstitial gas. It is the average distance a gas molecule will travel between collisions with other gas molecules.
+
+* The ``thermal conductivity wall`` defines the thermal conductivity of the wall.
+
+* The ``microhardness wall`` defines the microhardness of the wall.
+
+* The ``surface slope wall`` defines the surface slope of the wall.
+
+* The ``surface roughness wall`` defines the surface roughness of the wall.
+
+* The ``thermal accommodation wall`` defines the thermal accommodation coefficient of the wall.
