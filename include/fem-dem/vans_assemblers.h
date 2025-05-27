@@ -163,8 +163,9 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool SUPG = false;
-  const bool PSPG = true;
+  const bool SUPG      = true;
+  const bool PSPG      = true;
+  const bool flux_form = false;
 
 
   const std::shared_ptr<SimulationControl> simulation_control;
@@ -753,7 +754,7 @@ public:
 inline double
 calculate_gamma(double velocity,
                 double kinematic_viscosity,
-                double /*h*/,
+                double h,
                 double c_star)
 {
   return kinematic_viscosity + c_star * velocity;

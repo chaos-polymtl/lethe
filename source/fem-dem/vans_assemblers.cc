@@ -914,19 +914,27 @@ VANSAssemblerCoreModelAs<dim>::assemble_matrix(
 
               if (component_i < dim && component_j < dim)
                 {
-                  // Convection
-                  local_matrix_ij +=
-                    // u_j/ε  ∂_i u_i
-                    grad_phi_u_j * velocity / void_fraction * phi_u_i +
-                    velocity_gradient * phi_u_j / void_fraction * phi_u_i
-                    // u_i/ε  ∂_j u_j
-                    + phi_u_j / void_fraction * velocity_divergence * phi_u_i +
-                    velocity / void_fraction * div_phi_u_j * phi_u_i
-                    // -u_j u_i / ε² ∂_j ε
-                    - phi_u_j / (void_fraction * void_fraction) *
-                        void_fraction_gradients * (velocity * phi_u_i) -
-                    velocity / (void_fraction * void_fraction) *
-                      void_fraction_gradients * (phi_u_j * phi_u_i);
+                  if (!flux_form)
+                    // Convection
+                    local_matrix_ij +=
+                      // u_j/ε  ∂_i u_i
+                      grad_phi_u_j * velocity / void_fraction * phi_u_i +
+                      velocity_gradient * phi_u_j / void_fraction * phi_u_i
+                      // u_i/ε  ∂_j u_j
+                      +
+                      phi_u_j / void_fraction * velocity_divergence * phi_u_i +
+                      velocity / void_fraction * div_phi_u_j * phi_u_i
+                      // -u_j u_i / ε² ∂_j ε
+                      - phi_u_j / (void_fraction * void_fraction) *
+                          void_fraction_gradients * (velocity * phi_u_i) -
+                      velocity / (void_fraction * void_fraction) *
+                        void_fraction_gradients * (phi_u_j * phi_u_i);
+                  else
+                    // Convection
+                    local_matrix_ij +=
+                      -velocity * grad_phi_u_i * phi_u_j / void_fraction -
+                      phi_u_j * grad_phi_u_i * velocity / void_fraction;
+
 
                   if (component_i == component_j)
                     {
@@ -940,16 +948,16 @@ VANSAssemblerCoreModelAs<dim>::assemble_matrix(
               // simplifies assembly.
               if (SUPG && component_i < dim)
                 {
-                  local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i * velocity +
-                           strong_residual * grad_phi_u_i * phi_u_j);
+                  local_matrix_ij += tau / void_fraction *
+                                     (strong_jac * grad_phi_u_i * velocity +
+                                      strong_residual * grad_phi_u_i * phi_u_j);
                 }
 
 
               // Grad-div stabilization
               if (cfd_dem.grad_div == true)
                 {
-                  local_matrix_ij += gamma * (div_phi_u_j)*div_phi_u_i;
+                  local_matrix_ij += (gamma * (div_phi_u_j)*div_phi_u_i);
                 }
 
               local_matrix_ij *= JxW;
@@ -1030,6 +1038,7 @@ VANSAssemblerCoreModelAs<dim>::assemble_rhs(
             u_mag = std::max(previous_velocity.norm(), 1e-12);
         }
 
+
       // Grad-div weight factor
       const double gamma =
         calculate_gamma(u_mag, kinematic_viscosity, h, cfd_dem.cstar);
@@ -1081,13 +1090,21 @@ VANSAssemblerCoreModelAs<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           if (component_i < dim)
+            if (!flux_form)
+              local_rhs_i +=
+                // u_j/ε  ∂_j u_i + u_i/ε  ∂_j u_j - u_j u_i / ε² dj ε
+                -(velocity_gradient * velocity / void_fraction +
+                  velocity / void_fraction * velocity_divergence -
+                  velocity * void_fraction_gradients /
+                    (void_fraction * void_fraction) * velocity) *
+                  phi_u_i
+                // Pressure
+                + (void_fraction * pressure * div_phi_u_i +
+                   pressure * void_fraction_gradients * phi_u_i);
+          if (flux_form)
             local_rhs_i +=
               // u_j/ε  ∂_j u_i + u_i/ε  ∂_j u_j - u_j u_i / ε² dj ε
-              -(velocity_gradient * velocity / void_fraction +
-                velocity / void_fraction * velocity_divergence -
-                velocity * void_fraction_gradients /
-                  (void_fraction * void_fraction) * velocity) *
-                phi_u_i
+              (velocity * grad_phi_u_i * velocity / void_fraction)
               // Pressure
               + (void_fraction * pressure * div_phi_u_i +
                  pressure * void_fraction_gradients * phi_u_i);
@@ -1103,8 +1120,8 @@ VANSAssemblerCoreModelAs<dim>::assemble_rhs(
           // SUPG GLS term
           if (SUPG)
             {
-              local_rhs_i +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity));
+              local_rhs_i += -tau * (strong_residual *
+                                     (grad_phi_u_i * velocity / void_fraction));
             }
 
           // Grad-div stabilization
