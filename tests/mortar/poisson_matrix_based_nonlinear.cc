@@ -229,6 +229,82 @@ public:
     system_rhs.compress(VectorOperation::add);
   }
 
+  double
+  compute_residual()
+  {
+    TrilinosWrappers::MPI::Vector residual;
+    TrilinosWrappers::MPI::Vector evaluation_point(system_rhs);
+    TrilinosWrappers::MPI::Vector local_newton_update(system_rhs);
+    local_newton_update = delta_solution;
+    TrilinosWrappers::MPI::Vector local_evaluation_point;
+
+    const IndexSet locally_relevant_dofs =
+      DoFTools::extract_locally_relevant_dofs(dof_handler);
+    const IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
+
+    residual.reinit(locally_owned_dofs, comm);
+    local_evaluation_point.reinit(locally_owned_dofs,
+                                  locally_relevant_dofs,
+                                  comm);
+
+    evaluation_point = solution;
+
+    local_evaluation_point = solution;
+
+    FEValues<dim> fe_values(fe,
+                            quadrature,
+                            update_values | update_gradients |
+                              update_JxW_values | update_quadrature_points);
+
+    const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
+    const unsigned int n_q_points    = fe_values.n_quadrature_points;
+
+    Vector<double> cell_residual(dofs_per_cell);
+
+    std::vector<double>         values(n_q_points);
+    std::vector<Tensor<1, dim>> gradients(n_q_points);
+
+    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+    for (const auto &cell : dof_handler.active_cell_iterators())
+      {
+        if (cell->is_locally_owned())
+          {
+            cell_residual = 0.0;
+            fe_values.reinit(cell);
+
+            fe_values.get_function_values(local_evaluation_point, values);
+            fe_values.get_function_gradients(local_evaluation_point, gradients);
+
+            for (unsigned int q = 0; q < n_q_points; ++q)
+              {
+                const double nonlinearity = std::exp(values[q]);
+                const double dx           = fe_values.JxW(q);
+
+                for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                  {
+                    const double         phi_i = fe_values.shape_value(i, q);
+                    const Tensor<1, dim> grad_phi_i =
+                      fe_values.shape_grad(i, q);
+
+                    cell_residual(i) +=
+                      (grad_phi_i * gradients[q] - phi_i * nonlinearity) * dx;
+                  }
+              }
+
+            cell->get_dof_indices(local_dof_indices);
+            constraints.distribute_local_to_global(cell_residual,
+                                                   local_dof_indices,
+                                                   residual);
+          }
+      }
+
+    residual.compress(VectorOperation::add);
+    residual.update_ghost_values();
+
+    return residual.l2_norm();
+  }
+
   void
   solve_linear()
   {
