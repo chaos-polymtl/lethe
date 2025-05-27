@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The rolling friction used in the hopper example as been change from 0.09 to 0.1776 to be equivalent to the one used in the reference article. This change will slightly affect the results from the validation script. [#1539](https://github.com/chaos-polymtl/lethe/pull/1539)
 
+- MINOR The particle_particle_heat_transfer files are changed to calculate heat transfer for both particle-particle and particle-wall contacts with the same functions, as the calculation is very similar. [#1534](https://github.com/chaos-polymtl/lethe/pull/1534)
+
 ## [Master] - 2025-05-21
 
 ### Fixed

@@ -11,8 +11,8 @@
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/particle_interaction_outcomes.h>
-#include <dem/particle_particle_heat_transfer.h>
 #include <dem/rolling_resistance_torque_models.h>
 
 #include <boost/range/adaptor/map.hpp>
@@ -1913,7 +1913,7 @@ private:
                   contact_outcome.heat_transfer_rate[particle_two_id];
 
                 double thermal_conductance;
-                calculate_contact_thermal_conductance(
+                calculate_contact_thermal_conductance<contact_type>(
                   0.5 * particle_one_properties[PropertiesIndex::dp],
                   0.5 * particle_two_properties[PropertiesIndex::dp],
                   this->effective_youngs_modulus[pair_index],
