@@ -349,12 +349,18 @@ public:
         solution += delta_solution;
         constraints.distribute(solution);
 
+        // for (unsigned int i = 0; i < solution.size(); i++)
+        //   std::cout << "Solution " << i << ": " << solution[i] << std::endl;
+          
         // calculate error
         pcout << "   Iter " << iter << " - Delta solution norm, Linfty norm: "
               << delta_solution.linfty_norm()
               << " L2 norm: " << delta_solution.l2_norm() << std::endl;
 
         error = delta_solution.linfty_norm();
+
+        // error = compute_residual();
+        // pcout << "   Residual:  " << error << std::endl;
 
         // output iteration results
         output_results(iter);
