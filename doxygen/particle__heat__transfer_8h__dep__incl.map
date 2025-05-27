@@ -1,8 +1,8 @@
-<map id="/home/runner/work/lethe/lethe/include/dem/particle_particle_heat_transfer.h" name="/home/runner/work/lethe/lethe/include/dem/particle_particle_heat_transfer.h">
+<map id="/home/runner/work/lethe/lethe/include/dem/particle_heat_transfer.h" name="/home/runner/work/lethe/lethe/include/dem/particle_heat_transfer.h">
 <area shape="rect" id="Node000001" title=" " alt="" coords="673,5,869,60"/>
 <area shape="rect" id="Node000002" href="$particle__particle__contact__force_8h.html" title=" " alt="" coords="564,108,760,163"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="734,72,692,110,689,106,731,68"/>
-<area shape="rect" id="Node000018" href="$particle__particle__heat__transfer_8cc.html" title=" " alt="" coords="785,108,977,163"/>
+<area shape="rect" id="Node000018" href="$particle__heat__transfer_8cc.html" title=" " alt="" coords="785,108,977,163"/>
 <area shape="poly" id="edge23_Node000001_Node000018" title=" " alt="" coords="812,68,854,106,850,110,808,72"/>
 <area shape="rect" id="Node000003" href="$dem_8h.html" title=" " alt="" coords="224,328,412,368"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="604,172,534,213,348,330,345,326,531,208,602,167"/>
