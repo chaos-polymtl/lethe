@@ -475,6 +475,13 @@
 
       set center of rotation    = 0., 0., 0.
       set output solid object = true
+
+      # Choices are adiabatic|isothermal
+      set thermal boundary type = adiabatic
+      # If type = isothermal
+      subsection temperature
+        set Function expression = 0
+      end
     end
   end
 end
@@ -487,6 +494,8 @@ end
 <li><p>In the subsection <code class="docutils literal notranslate"><span class="pre">angular</span> <span class="pre">velocity</span></code>, we define the angular velocity function of the solid object.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> defines the center of rotation of the solid object (in the case of rotational motion) in the <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> directions. This center of rotation will move according to the <code class="docutils literal notranslate"><span class="pre">translational</span> <span class="pre">velocity</span></code> parameter.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">solid</span> <span class="pre">object</span></code> defines if we want an output file to be generated for the solid object at every output time step.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">boundary</span> <span class="pre">type</span></code> defines whether the solid object should be adiabatic or isothermal when launching a multiphysic DEM simulation.</p></li>
+<li><p>In the subsection <code class="docutils literal notranslate"><span class="pre">temperature</span></code>, we define the temperature of the solid object as a function of time. It is used only if the solid object is not adiabatic.</p></li>
 </ul>
 </section>
 
