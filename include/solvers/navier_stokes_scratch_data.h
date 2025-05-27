@@ -1060,7 +1060,10 @@ public:
     region_update_flags.outside = update_values | update_gradients |
                                   update_JxW_values | update_quadrature_points |
                                   update_hessians;
-
+   region_update_flags.surface = update_values | update_gradients |
+                                  update_JxW_values | update_quadrature_points |
+                                  update_normal_vectors;
+                                  
     this->non_matching_fe_values =
       std::make_shared<NonMatching::FEValues<dim>>(*this->fe_collection,
                                                    quadrature_1D,
@@ -1489,7 +1492,15 @@ public:
 
       if (outside_fe_values)
         outside_n_q_points = outside_fe_values->get_quadrature().size();
+        
+      unsigned int surface_n_q_points = 0;
+      
+      const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+        &surface_fe_values = this->non_matching_fe_values->get_surface_fe_values();
 
+      if (outside_fe_values)
+        surface_n_q_points = surface_fe_values->get_quadrature().size();
+              
       new_n_q_points = inside_n_q_points + outside_n_q_points;
       // std::cout << "new_n_q_points = " << new_n_q_points << std::endl;
 
@@ -1542,6 +1553,11 @@ public:
                          grad_M_0_x_q);
 
 
+
+      if (surface_fe_values)
+      {
+        
+      }
       // reinit_boundary_face_values(cell, current_solution);
       
       // std::cout << "reinit_intersected end n_dofs = " << this->n_dofs << std::endl;
