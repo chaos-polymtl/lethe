@@ -1152,7 +1152,146 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   AssertDimension(ptr_dofs, dof_indices.size());
 }
 
+template <int dim, typename Number>
+void
+CouplingOperator<dim, Number>::add_system_rhs_entries(
+  TrilinosWrappers::MPI::Vector &system_rhs) const
+{
+  const auto constraints = &constraints_extended;
 
+  std::vector<Number> all_value_m(data.all_normals.size() * n_dofs_per_cell *
+                                  q_data_size);
+  std::vector<Number> all_value_p(data.all_normals.size() * n_dofs_per_cell *
+                                  q_data_size);
+
+  unsigned int ptr_q = 0;
+
+  Vector<Number> buffer;
+
+  // 1) Evaluate
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto &face : cell->face_iterators())
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
+          {
+            // Quadrature points at the cell(rotor)/cell(stator) interaction
+            const unsigned int n_q_points = mortar_manager->get_n_points();
+
+            evaluator->local_reinit(
+              cell,
+              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
+                                                  n_q_points));
+
+            buffer.reinit(n_dofs_per_cell);
+
+            for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+              {
+                for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
+                  buffer[j] = static_cast<Number>(i == j);
+
+                evaluator->local_evaluate(data,
+                                          buffer,
+                                          ptr_q,
+                                          n_dofs_per_cell,
+                                          all_value_m.data() +
+                                            (ptr_q * n_dofs_per_cell + i) *
+                                              q_data_size);
+              }
+
+            ptr_q += n_q_points;
+          }
+
+  const unsigned n_q_points =
+    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
+
+  // 2) Communicate
+  partitioner_cell.template export_to_ghosted_array<Number, 0>(
+    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
+                            all_value_m.size()),
+    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
+                      all_value_p.size()),
+    n_dofs_per_cell * n_q_points * q_data_size);
+
+
+  ptr_q                 = 0;
+  unsigned int ptr_dofs = 0;
+
+  // 3) Integrate
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto &face : cell->face_iterators())
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
+          {
+            const unsigned int n_sub_cells = mortar_manager->get_n_mortars();
+
+            for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
+              {
+                evaluator->local_reinit(cell,
+                                        ArrayView<const Point<dim, Number>>(
+                                          all_points_ref.data() + ptr_q,
+                                          n_q_points));
+
+                for (unsigned int b = 0; b < 2; ++b)
+                  {
+                    Vector<Number> cell_rhs(n_dofs_per_cell);
+
+                    for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+                      {
+                        buffer.reinit(n_dofs_per_cell);
+                        if (b == 0)
+                          evaluator->local_integrate(
+                            data,
+                            buffer,
+                            ptr_q,
+                            n_dofs_per_cell,
+                            all_value_m.data() +
+                              (ptr_q * n_dofs_per_cell + i) * q_data_size,
+                            nullptr);
+                        else
+                          evaluator->local_integrate(
+                            data,
+                            buffer,
+                            ptr_q,
+                            n_dofs_per_cell,
+                            nullptr,
+                            all_value_p.data() +
+                              (ptr_q * n_dofs_per_cell + i) * q_data_size);
+
+                        cell_rhs[i] = buffer[i];
+                      }
+
+
+                    std::vector<types::global_dof_index> local_dof_indices_m(
+                      dof_indices.begin() + ptr_dofs,
+                      dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
+
+                    if (b == 0)
+                      {
+                        constraints->distribute_local_to_global(
+                          cell_rhs, local_dof_indices_m, system_rhs);
+                      }
+                    else
+                      {
+                        std::vector<types::global_dof_index>
+                          local_dof_indices_p(dof_indices_ghost.begin() +
+                                                ptr_dofs,
+                                              dof_indices_ghost.begin() +
+                                                ptr_dofs + n_dofs_per_cell);
+
+                        constraints->distribute_local_to_global(
+                          cell_rhs, local_dof_indices_m, system_rhs);
+                      }
+                  }
+
+                ptr_dofs += n_dofs_per_cell;
+
+                ptr_q += n_q_points;
+              }
+          }
+
+  AssertDimension(ptr_q, data.all_normals.size());
+  AssertDimension(ptr_dofs, dof_indices.size());
+}
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
 
