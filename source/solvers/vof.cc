@@ -1266,7 +1266,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 {
                   volume_column_name           = "volume_" + fluid_id;
                   mass_column_name             = "mass_" + fluid_id;
-                  geometric_volume_column_name = "geometric_" + fluid_id;
+                  geometric_volume_column_name = "geometric_volume_" + fluid_id;
                 }
 
               // Add "surface" or "volume" column
