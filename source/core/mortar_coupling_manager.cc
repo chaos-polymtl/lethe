@@ -1140,6 +1140,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                           local_dof_indices_p,
                           system_matrix);
                       }
+                      // std::cout << "cell matrix " << std::endl;
+                      // cell_matrix.print(std::cout);
                   }
 
                 ptr_dofs += n_dofs_per_cell;
@@ -1279,8 +1281,11 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
                                                 ptr_dofs + n_dofs_per_cell);
 
                         constraints->distribute_local_to_global(
-                          cell_rhs, local_dof_indices_m, system_rhs);
+                          cell_rhs, local_dof_indices_p, system_rhs);
                       }
+
+                      // std::cout << "cell RHS " << std::endl;
+                      // cell_rhs.print(std::cout);
                   }
 
                 ptr_dofs += n_dofs_per_cell;
