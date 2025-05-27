@@ -65,25 +65,17 @@ public:
   void
   setup_system()
   {
-    system_matrix.clear();
-
     // distribute dofs
     dof_handler.distribute_dofs(fe);
 
-    // get locally relevant dofs
+    // get dofs sets
     const IndexSet locally_relevant_dofs =
       DoFTools::extract_locally_relevant_dofs(dof_handler);
-
-    // initialize vectors
-    delta_solution.reinit(dof_handler.locally_owned_dofs(), comm);
-    solution.reinit(dof_handler.locally_owned_dofs(),
-                    locally_relevant_dofs,
-                    comm);
-    system_rhs.reinit(dof_handler.locally_owned_dofs(), comm);
+    const IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
 
     // setup constraints
     constraints.clear();
-    constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
+    constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
     DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
     DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
     constraints.close();
@@ -110,7 +102,7 @@ public:
                                                       mortar_manager,
                                                       1,
                                                       2,
-                                                      1.0);
+                                                      1000.0);
 
     // create sparsity pattern
     DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -127,15 +119,15 @@ public:
 
     // distribute sparsity pattern in MPI
     SparsityTools::distribute_sparsity_pattern(dsp,
-                                               dof_handler.locally_owned_dofs(),
+                                               locally_owned_dofs,
                                                comm,
                                                locally_relevant_dofs);
 
     // initialze matrices
-    system_matrix.reinit(dof_handler.locally_owned_dofs(),
-                         dof_handler.locally_owned_dofs(),
-                         dsp,
-                         comm);
+    system_matrix.reinit(locally_owned_dofs, locally_owned_dofs, dsp, comm);
+    solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
+    delta_solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
+    system_rhs.reinit(locally_owned_dofs, comm);
     previous_solution = solution;
 
     // apply BCs to solution vector for first iteration
@@ -143,12 +135,13 @@ public:
   }
 
   void
-  assemble_matrix()
+  assemble_system()
   {
-    /* Matrix assembly for the nonlinear Poisson equation of the form
-    -∇.(exp(u) ∇(u)) = f */
+    /* Matrix assembly for the nonlinear Poisson equation of the form -∇.(exp(u)
+     * ∇(u)) = f */
 
     system_matrix = 0;
+    system_rhs    = 0;
 
     FEValues<dim> fe_values(fe,
                             quadrature,
@@ -162,26 +155,33 @@ public:
     // quadrature points
     const unsigned int n_q_points = fe_values.n_quadrature_points;
 
-    // initialize cell matrix
+    // initialize cell matrix and RHS
     FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+    Vector<double>     cell_rhs(dofs_per_cell);
 
-    std::vector<double> newton_step_values(n_q_points);
+    // initialize vectors for previous solution
+    std::vector<double>         previous_values(n_q_points);
+    std::vector<Tensor<1, dim>> previous_gradients(n_q_points);
 
     // loop over locally owned cells
     for (const auto &cell : dof_handler.active_cell_iterators())
       {
         if (cell->subdomain_id() == this_mpi_process)
           {
-            fe_values.reinit(cell);
-            cell_matrix = 0;
+            cell_matrix = 0.;
+            cell_rhs    = 0.;
 
-            fe_values.get_function_values(solution, newton_step_values);
+            fe_values.reinit(cell);
+
+            // get previous values and gradients
+            fe_values.get_function_values(solution, previous_values);
+            fe_values.get_function_gradients(solution, previous_gradients);
 
             // loop over quadrature points
             for (unsigned int q = 0; q < n_q_points; q++)
               {
                 // exp(u)
-                const double nonlinearity = std::exp(newton_step_values[q]);
+                const double nonlinearity = std::exp(previous_values[q]);
                 // Jacobian determinant
                 const double dx = fe_values.JxW(q);
 
@@ -204,120 +204,60 @@ public:
                                               phi_i * nonlinearity * phi_j) *
                                              dx;
                       }
-                  }
-              }
 
-            cell->get_dof_indices(local_dof_indices);
-            constraints.distribute_local_to_global(cell_matrix,
-                                                   local_dof_indices,
-                                                   system_matrix);
-          }
-      }
-    // add coupling entries in stiffness matrix
-    mortar_coupling_operator->add_system_matrix_entries(system_matrix);
-
-    system_matrix.compress(VectorOperation::add);
-  }
-
-  void
-  assemble_rhs()
-  {
-    /* Right-hand side assembly for the nonlinear Poisson equation of the form
-    -∇.(exp(u) ∇(u)) = f */
-
-    system_rhs = 0;
-    FEValues<dim> fe_values(fe,
-                            quadrature,
-                            update_values | update_gradients |
-                              update_quadrature_points | update_JxW_values);
-
-    // dofs per cell
-    const unsigned int                   dofs_per_cell = fe.n_dofs_per_cell();
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-    // quadrature points
-    const unsigned int n_q_points = fe_values.n_quadrature_points;
-
-    // initialize cell RHS
-    Vector<double> cell_rhs(dofs_per_cell);
-
-    std::vector<double>         newton_step_values(n_q_points);
-    std::vector<Tensor<1, dim>> newton_step_gradients(n_q_points);
-
-    // loop over locally owned cells
-    for (const auto &cell : dof_handler.active_cell_iterators())
-      {
-        if (cell->subdomain_id() == this_mpi_process)
-          {
-            fe_values.reinit(cell);
-            cell_rhs = 0;
-
-            fe_values.get_function_values(solution, newton_step_values);
-            fe_values.get_function_gradients(solution, newton_step_gradients);
-
-            // loop over quadrature points
-            for (unsigned int q = 0; q < n_q_points; q++)
-              {
-                // exp(u)
-                const double nonlinearity = std::exp(newton_step_values[q]);
-                // Jacobian determinant
-                const double dx           = fe_values.JxW(q);
-
-                for (const unsigned int i : fe_values.dof_indices())
-                  {
-                    // shape function values and gradients
-                    const double         phi_i = fe_values.shape_value(i, q);
-                    const Tensor<1, dim> grad_phi_i =
-                      fe_values.shape_grad(i, q);
-
-                    // - (∇v, ∇u) + (v, exp(u))
-                    cell_rhs(i) += (-grad_phi_i * newton_step_gradients[q] +
+                    // -(∇v, ∇u) + (v, exp(u))
+                    cell_rhs(i) += (-grad_phi_i * previous_gradients[q] +
                                     phi_i * nonlinearity) *
                                    dx;
                   }
               }
 
             cell->get_dof_indices(local_dof_indices);
-            constraints.distribute_local_to_global(cell_rhs,
+            constraints.distribute_local_to_global(cell_matrix,
+                                                   cell_rhs,
                                                    local_dof_indices,
+                                                   system_matrix,
                                                    system_rhs);
           }
       }
 
-    // add coupling entries
+    // add coupling entries in stiffness matrix
+    mortar_coupling_operator->add_system_matrix_entries(system_matrix);
     mortar_coupling_operator->add_system_rhs_entries(system_rhs);
 
+    system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
   }
 
   void
   solve_linear()
   {
+    // initialize GMRES solver
     ReductionControl reduction_control(10000, 1e-10, 1e-6);
     SolverGMRES<TrilinosWrappers::MPI::Vector> solver(reduction_control);
 
+    // initialize ILU preconditioner
     TrilinosWrappers::PreconditionILU preconditioner;
     preconditioner.initialize(system_matrix);
 
+    // solve linear system
     solver.solve(system_matrix, delta_solution, system_rhs, preconditioner);
-
-    constraints.distribute(delta_solution);
   }
 
   void
   solve_non_linear()
   {
+    // conditional output stream for MPI run
     ConditionalOStream pcout(std::cout,
                              Utilities::MPI::this_mpi_process(comm) == 0);
 
     // iteration parameters
-    double error = 1e10;
-    double tol   = 1e-10;
-    unsigned int iter = 0;
-    // const unsigned int itmax = 10;
+    double       error = 1e6;
+    double       tol   = 1e-6;
+    unsigned int iter  = 0;
 
     // output results on first iteration
-    output_results(0);
+    output_results(iter);
 
     // iteration loop
     while (error > tol)
@@ -326,12 +266,12 @@ public:
         iter++;
 
         // assemble and solve system
-        assemble_matrix();
-        assemble_rhs();
+        assemble_system();
         solve_linear();
 
         // update solution
         solution += delta_solution;
+        constraints.distribute(solution);
 
         // calculate error
         pcout << "   Iter " << iter << " - Delta solution norm, Linfty norm: "
@@ -353,7 +293,7 @@ public:
   {
     DataOut<dim> data_out;
     std::string  filename =
-      "poisson_MB-" + Utilities::int_to_string(iter) + ".vtu";
+      "poisson_nonlinear_MB-" + Utilities::int_to_string(iter) + ".vtu";
 
     DataOutBase::VtkFlags flags;
     flags.write_higher_order_cells = true;
@@ -391,7 +331,7 @@ private:
   AffineConstraints<double> constraints;
 
   TrilinosWrappers::SparseMatrix                 system_matrix;
-  TrilinosWrappers::SparsityPattern              sparsity_pattern;
+  SparsityPattern                                sparsity_pattern;
   TrilinosWrappers::MPI::Vector                  solution;
   TrilinosWrappers::MPI::Vector                  delta_solution;
   TrilinosWrappers::MPI::Vector                  previous_solution;
@@ -405,7 +345,7 @@ main(int argc, char **argv)
 {
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  PoissonMatrixBased<2> problem(1, 1, 2, 1);
+  PoissonMatrixBased<2> problem(1, 1, 4, 1);
 
   // generate grid and setup dofs
   problem.generate_grid();
