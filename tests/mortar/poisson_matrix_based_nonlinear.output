@@ -1,5 +1,3 @@
-   Iter 1 - Delta solution norm, Linfty norm: 0.108343 L2 norm: 0.906616
-   Iter 2 - Delta solution norm, Linfty norm: 0.000439381 L2 norm: 0.00327667
-   Iter 3 - Delta solution norm, Linfty norm: 6.47887e-08 L2 norm: 2.5862e-07
-   Iter 4 - Delta solution norm, Linfty norm: 4.41043e-10 L2 norm: 2.41818e-09
-   Iter 5 - Delta solution norm, Linfty norm: 8.31885e-12 L2 norm: 5.31972e-11
+   Iter 1 - Delta solution norm, Linfty norm: 0.0784579 L2 norm: 3.20387
+   Iter 2 - Delta solution norm, Linfty norm: 0.000181308 L2 norm: 0.00710056
+   Iter 3 - Delta solution norm, Linfty norm: 1.93173e-07 L2 norm: 4.27364e-06
