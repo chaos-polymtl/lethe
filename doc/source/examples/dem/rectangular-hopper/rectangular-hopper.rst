@@ -92,7 +92,7 @@ Lagrangian Physical Properties
 
 The total number of particles in this simulation is 40740. All particles have a diameter of 2.24 mm.
 
-The following properties are chosen according to the Anand et al. paper :
+The following properties are chosen according to the Anand *et al.* paper :
 
 * Uniform distribution of spherical particles
 * Diameter (2.24 mm)
@@ -115,13 +115,13 @@ The following properties are chosen according to the Anand et al. paper :
         set poisson ratio particles           = 0.3
         set restitution coefficient particles = 0.94
         set friction coefficient particles    = 0.2
-        set rolling friction particles        = 0.09
+        set rolling friction particles        = 0.1786
       end
       set young modulus wall           = 1e6
       set poisson ratio wall           = 0.3
       set friction coefficient wall    = 0.2
       set restitution coefficient wall = 0.9
-      set rolling friction wall        = 0.09
+      set rolling friction wall        = 0.1786
     end
 
 
@@ -249,7 +249,7 @@ Results
 -------
 As seen in the following figure, the simulation was not run until all the particles are discharged in the bottom part.
 Since the mass flow rate is constant during the discharge, simulating the very end is not necessary.
-The simulated mass discharging rate is 84.94 g/s.
+The simulated mass discharging rate is 82.79 g/s.
 
 .. figure:: images/simulation_end.png
     :width: 300
@@ -328,13 +328,13 @@ The total number of particles of this simulation is 6790: 6 times less than the 
             set poisson ratio particles           = 0.3
             set restitution coefficient particles = 0.94
             set friction coefficient particles    = 0.2
-            set rolling friction particles        = 0.09
+            set rolling friction particles        = 0.1786
         end
         set young modulus wall           = 1e6
         set poisson ratio wall           = 0.3
         set friction coefficient wall    = 0.2
         set restitution coefficient wall = 0.9
-        set rolling friction wall        = 0.09
+        set rolling friction wall        = 0.1786
     end
 
 Insertion Info
@@ -374,8 +374,7 @@ Similarly to the non-periodic rectangular hopper simulation, the mesh must first
 
 Results Comparison
 ~~~~~~~~~~~~~~~~~~
-Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
-The simulated mass discharging rate is 85.09 g/s from the original simulation and 91.73 g/s with PBC. Also, the run time of the simulation goes from about 1 hours and 30 minutes to 10 minutes on 8 cores with an Intel i7-11700K.
+Here is the comparison of the results between the original simulation with Lethe, the periodic boundary conditions simulation with Lethe and the results from Anand *et al.*. paper. The simulated mass discharging rate is 82.79 g/s from the original simulation and 87.43 g/s from the one with PBC which is in better agreement with Anand *et al.* results. The run time of the simulation goes from about 26 minutes to 1 minute 42 seconds when using PBC on 16 cores with an AMD Ryzen 7950X processor.
 
 .. figure:: images/figure_hopper_comparison.png
     :width: 600
