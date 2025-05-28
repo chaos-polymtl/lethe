@@ -79,7 +79,7 @@ end
 subsection insertion info
   set insertion method                               = file
   set insertion frequency                            = 10000
-  set list of input files                            = particles.input-two-temperatures
+  set list of input files                            = particles-two-temperatures.input
 end
 
 #---------------------------------------------------
