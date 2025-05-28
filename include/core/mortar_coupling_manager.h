@@ -533,6 +533,9 @@ public:
    * interface
    * @param[in] all_value_p Number of values stored in the non-mortar side of
    * the interface
+   * 
+   * Notation referring to quantities on both mortar sides: 
+   * {{.}} = avg(.), and [.]   = jump(.)   *
    */
   virtual void
   local_integrate(const CouplingEvaluationData<dim, Number> &data,

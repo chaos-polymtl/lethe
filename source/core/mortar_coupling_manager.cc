@@ -1405,6 +1405,7 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
 
+      // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
 
       // - (n avg(∇v), jump(u))
@@ -1543,15 +1544,20 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       const auto penalty_parameter = data.all_penalty_parameter[q_index];
       const auto normal            = data.all_normals[q_index];
 
+      // {{u}} = (u_m + u_p)/2
       const auto u_value_avg    = (value_m + value_p) * 0.5;
+      // [u] = (u_m - u_p)
       const auto u_value_jump   = value_m - value_p;
+      // {{∇u}} = (∇u_m + ∇u_p)/2
       const auto u_gradient_avg = (normal_gradient_m - normal_gradient_p) * 0.5;
+      // {{p}} = (∇p_m + ∇p_p)/2
       const auto p_value_avg    = (normal_p_value_m - normal_p_value_p) * 0.5;
 
       typename FEPointIntegratorU::value_type u_normal_gradient_avg_result = {};
       typename FEPointIntegratorU::value_type u_value_jump_result          = {};
       typename FEPointIntegratorP::value_type p_value_jump_result          = {};
 
+      // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
 
       if (true /*Laplace term*/)
