@@ -175,6 +175,13 @@ private:
   move_solid_objects();
 
   /**
+   * @brief Update solid objects temperatures.
+   */
+  void
+  update_temperature_solid_objects();
+
+
+  /**
    * @brief Execute the last post-processing at the end of the simulation and
    * output test results if necessary.
    */

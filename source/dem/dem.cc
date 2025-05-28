@@ -583,6 +583,28 @@ DEMSolver<dim, PropertiesIndex>::move_solid_objects()
 
 template <int dim, typename PropertiesIndex>
 void
+DEMSolver<dim, PropertiesIndex>::update_temperature_solid_objects()
+{
+  // Update temperature, previous time must be used here
+  // instead of current time.
+  if constexpr (std::is_same_v<PropertiesIndex,
+                               DEM::DEMMPProperties::PropertiesIndex>)
+    {
+      if (!action_manager->check_solid_objects_enabled())
+        return;
+
+      for (auto &solid_object : solid_surfaces)
+        solid_object->update_solid_temperature(
+          simulation_control->get_previous_time());
+
+      for (auto &solid_object : solid_volumes)
+        solid_object->update_solid_temperature(
+          simulation_control->get_previous_time());
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
 DEMSolver<dim, PropertiesIndex>::finish_simulation()
 {
   // Timer output
@@ -1021,6 +1043,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Move solid objects (if solid object)
       move_solid_objects();
+
+      // Update solid objects temperatures
+      update_temperature_solid_objects();
 
       // Particle-wall contact force
       particle_wall_contact_force();
