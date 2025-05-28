@@ -459,10 +459,13 @@ symm_scalar_product_add(Tensor<1, 1, Number>       &v_gradient,
 template <int dim, typename Number>
 struct CouplingEvaluationData
 {
-  /// Penalty factor (akin to symmetric interior penalty factor in SIPG)
-  Number                              penalty_factor;
-  std::vector<Number>                 all_penalty_parameter;
-  std::vector<Number>                 all_weights;
+  /// Penalty factor (akin to penalty factor in SIPG)
+  Number penalty_factor;
+  /// Penalty parameter in symmetric interior penalty Galerkin (SIPG) method
+  std::vector<Number> all_penalty_parameter;
+  /// Weights of quadrature points
+  std::vector<Number> all_weights;
+  // Normal vectors of quadrature points
   std::vector<Tensor<1, dim, Number>> all_normals;
 };
 
@@ -616,10 +619,10 @@ private:
    * @brief Compute penalty factor used in weak imposition of coupling at the rotor-stator interface
    *
    * @param[in] degree Polynomial degree of the FE approximation
-   * @param[in] factor Penalty factor (akin to symmetric interior penalty factor
-   * in SIPG)
+   * @param[in] factor Penalty factor (akin to penalty factor in SIPG)
    *
    * @return penalty factor value
+   * penalty_factor = (degree + 1)^2
    */
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
@@ -630,7 +633,8 @@ private:
    * @param[in] cell Cell iterator
    * @return Penalty parameter
    *
-   * @return penalty parameter value
+   * @return penalty parameter value from SIPG method
+   * penalty_parameter = (A(∂Ω_e \ Γ_h)/2 + A(∂Ω_e ∩ Γ_h))/V(Ω_e)
    */
   Number
   compute_penalty_parameter(
