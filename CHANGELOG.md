@@ -3,6 +3,16 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## Release of Lethe v1.0.1 - 2024-05-28
+The Lethe v1.0.1 release introduces some key new features including:
+
+A new DEM rolling friction model
+- Two new VOF redistanciation/sharpening algorithm based on geometric and algebraic redistantiation
+- Improvement to the matrix-free algorithm enabling their coupling with heat transfer, but also non-Newtonian flows
+- Minor bug fixes and improvement
+
+The Lethe v1.0.1 release comes with a structured and stable syntax. All of the examples and test provided with lethe were re-ran with this v1.0.1 release to ensure that all of the results provided online are up to date. This version is production-ready and has been tested and validated extensively.
+
 ## [Master] - 2025-05-27
 
 ### Fixed
