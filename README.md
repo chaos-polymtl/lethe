@@ -67,6 +67,7 @@ Contributors (in alphabetical order):
 - Lucka Barbeau
 - Valérie Bibeau
 - Bianca Bugeaud
+- Bruna Campos
 - Audrey Collard-Daigneault
 - Carole-Anne Daunais
 - Toni El Geitani
@@ -75,6 +76,7 @@ Contributors (in alphabetical order):
 - Shahab Golshan
 - Olivier Guévremont
 - Marion Hanne
+- Marine Harel
 - Jeanne Joachim
 - Rajeshwari Kamble
 - Martin Kronbichler
