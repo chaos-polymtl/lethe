@@ -87,9 +87,6 @@ namespace Parameters
       // Young's modulus of each particle type
       std::unordered_map<unsigned int, double> youngs_modulus_particle;
 
-      // Real Young's modulus of each particle type
-      std::unordered_map<unsigned int, double> real_youngs_modulus_particle;
-
       // Poisson's ratio of each particle type
       std::unordered_map<unsigned int, double> poisson_ratio_particle;
 
@@ -131,11 +128,11 @@ namespace Parameters
       // Thermal accommodation coefficient of each particle type
       std::unordered_map<unsigned int, double> thermal_accommodation_particle;
 
+      // Real Young's modulus of each particle type
+      std::unordered_map<unsigned int, double> real_youngs_modulus_particle;
+
       // Young's modulus of wall
       double youngs_modulus_wall;
-
-      // Real Young's modulus of wall
-      double real_youngs_modulus_wall;
 
       // Poisson's ratio of wall
       double poisson_ratio_wall;
@@ -172,6 +169,9 @@ namespace Parameters
 
       // Thermal accommodation wall
       double thermal_accommodation_wall;
+
+      // Real Young's modulus of wall
+      double real_youngs_modulus_wall;
 
       // Thermal conductivity of interstitial gas
       double thermal_conductivity_gas;
@@ -214,7 +214,6 @@ namespace Parameters
         std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
-        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle,
         std::unordered_map<unsigned int, double> &poisson_ratio_particle,
         std::unordered_map<unsigned int, double>
           &restitution_coefficient_particle,
@@ -231,7 +230,8 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &surface_slope_particle,
         std::unordered_map<unsigned int, double> &surface_roughness_particle,
         std::unordered_map<unsigned int, double>
-          &thermal_accommodation_particle);
+          &thermal_accommodation_particle,
+        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle);
     };
 
     template <int dim>
