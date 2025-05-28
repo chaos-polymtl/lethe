@@ -972,7 +972,8 @@ FluidDynamicsMatrixBased<dim>::add_mortar_system_rhs_entries()
   if (!this->simulation_parameters.mortar.enable)
     return;
 
-  this->mortar_coupling_operator->add_system_rhs_entries(this->system_rhs);
+  this->mortar_coupling_operator->add_system_rhs_entries(
+    this->system_rhs, this->present_solution);
 }
 
 /**

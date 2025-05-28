@@ -504,8 +504,8 @@ public:
   /**
    * @brief Evaluate values and gradients at the coupling entries
    *
-   * @param[in] buffer Temporary vector where data is stored before being passes
-   * to the system matrix
+   * @param[in,out] buffer Temporary vector where data is stored before being
+   * passes to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
    * rotor-stator interface
    * @param[in] q_stride Pointer for the cell index in which the quadrature
@@ -521,6 +521,28 @@ public:
                  Number *all_value_m) const = 0;
 
   /**
+   * @brief Evaluate previous values and gradients at the coupling entries
+   *
+   * @param[in,out] buffer Temporary vector where data is stored before being
+   * passes to the system matrix
+   * @param[in] ptr_q Pointer for the quadrature point index related to the
+   * rotor-stator interface
+   * @param[in] q_stride Pointer for the cell index in which the quadrature
+   * point lies in
+   * @param[in] all_value_m Number of values stored in the mortar side of the
+   * interface
+   * @param[in] present_solution Current solution vector
+   */
+  virtual void
+  local_evaluate_residual(
+    const CouplingEvaluationData<dim, Number> &data,
+    const Vector<Number>                      &buffer,
+    const unsigned int                         ptr_q,
+    const unsigned int                         q_stride,
+    Number                                    *all_value_m,
+    const TrilinosWrappers::MPI::Vector       &present_solution) const = 0;
+
+  /**
    * @brief Perform integral of mortar elements at the rotor-stator interface
    *
    * @param[in] buffer Temporary vector where data is stored before being passes
@@ -533,8 +555,8 @@ public:
    * interface
    * @param[in] all_value_p Number of values stored in the non-mortar side of
    * the interface
-   * 
-   * Notation referring to quantities on both mortar sides: 
+   *
+   * Notation referring to quantities on both mortar sides:
    * {{.}} = avg(.), and [.]   = jump(.)   *
    */
   virtual void
@@ -544,6 +566,28 @@ public:
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
                   Number *all_value_p) const = 0;
+
+  /**
+   * @brief Perform integral of mortar elements at the rotor-stator interface
+   *
+   * @param[in] buffer Temporary vector where data is stored before being passes
+   * to the system matrix
+   * @param[in] ptr_q Pointer for the quadrature point index related to the
+   * rotor-stator interface
+   * @param[in] q_stride Pointer for the cell index in which the quadrature
+   * point lies in
+   * @param[in] all_value_m Number of values stored in the mortar side of the
+   * interface
+   * @param[in] all_value_p Number of values stored in the non-mortar side of
+   * the interface
+   */
+  virtual void
+  local_integrate_residual(const CouplingEvaluationData<dim, Number> &data,
+                           Vector<Number>                            &buffer,
+                           const unsigned int                         ptr_q,
+                           const unsigned int                         q_stride,
+                           Number *all_value_m,
+                           Number *all_value_p) const = 0;
 };
 
 
@@ -613,9 +657,12 @@ public:
    * @brief Add mortar coupling terms in the RHS
    *
    * @param[in, out] system_rhs RHS vector
+   * @param[in] present_solution Current solution vector
    */
   void
-  add_system_rhs_entries(TrilinosWrappers::MPI::Vector &system_rhs) const;
+  add_system_rhs_entries(
+    TrilinosWrappers::MPI::Vector       &system_rhs,
+    const TrilinosWrappers::MPI::Vector &present_solution) const;
 
 private:
   /**
@@ -857,12 +904,29 @@ public:
                  Number *all_value_m) const override;
 
   void
+  local_evaluate_residual(
+    const CouplingEvaluationData<dim, Number> &data,
+    const Vector<Number>                      &buffer,
+    const unsigned int                         ptr_q,
+    const unsigned int                         q_stride,
+    Number                                    *all_value_m,
+    const TrilinosWrappers::MPI::Vector       &present_solution) const override;
+
+  void
   local_integrate(const CouplingEvaluationData<dim, Number> &data,
                   Vector<Number>                            &buffer,
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
                   Number *all_value_p) const override;
+
+  void
+  local_integrate_residual(const CouplingEvaluationData<dim, Number> &data,
+                           Vector<Number>                            &buffer,
+                           const unsigned int                         ptr_q,
+                           const unsigned int                         q_stride,
+                           Number *all_value_m,
+                           Number *all_value_p) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`.
