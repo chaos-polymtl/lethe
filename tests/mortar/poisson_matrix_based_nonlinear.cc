@@ -351,7 +351,7 @@ public:
 
         // for (unsigned int i = 0; i < solution.size(); i++)
         //   std::cout << "Solution " << i << ": " << solution[i] << std::endl;
-          
+
         // calculate error
         pcout << "   Iter " << iter << " - Delta solution norm, Linfty norm: "
               << delta_solution.linfty_norm()

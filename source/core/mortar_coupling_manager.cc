@@ -1157,7 +1157,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 template <int dim, typename Number>
 void
 CouplingOperator<dim, Number>::add_system_rhs_entries(
-  TrilinosWrappers::MPI::Vector &system_rhs) const
+  TrilinosWrappers::MPI::Vector       &system_rhs,
+  const TrilinosWrappers::MPI::Vector &present_solution) const
 {
   const auto constraints = &constraints_extended;
 
@@ -1191,13 +1192,14 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
-                evaluator->local_evaluate(data,
-                                          buffer,
-                                          ptr_q,
-                                          n_dofs_per_cell,
-                                          all_value_m.data() +
-                                            (ptr_q * n_dofs_per_cell + i) *
-                                              q_data_size);
+                evaluator->local_evaluate_residual(
+                  data,
+                  buffer,
+                  ptr_q,
+                  n_dofs_per_cell,
+                  all_value_m.data() +
+                    (ptr_q * n_dofs_per_cell + i) * q_data_size,
+                  present_solution);
               }
 
             ptr_q += n_q_points;
@@ -1241,7 +1243,7 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
                       {
                         buffer.reinit(n_dofs_per_cell);
                         if (b == 0)
-                          evaluator->local_integrate(
+                          evaluator->local_integrate_residual(
                             data,
                             buffer,
                             ptr_q,
@@ -1250,7 +1252,7 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
                               (ptr_q * n_dofs_per_cell + i) * q_data_size,
                             nullptr);
                         else
-                          evaluator->local_integrate(
+                          evaluator->local_integrate_residual(
                             data,
                             buffer,
                             ptr_q,
@@ -1518,6 +1520,50 @@ NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
 
 template <int dim, typename Number>
 void
+NavierStokesCouplingEvaluation<dim, Number>::local_evaluate_residual(
+  const CouplingEvaluationData<dim, Number> &data,
+  const Vector<Number>                      &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_value_m,
+  const TrilinosWrappers::MPI::Vector       &present_solution) const
+{
+  AssertDimension(buffer.size(),
+                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<const Number> buffer_u(buffer.data() + 0,
+                                   fe_sub_u.n_dofs_per_cell());
+  ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                                   fe_sub_p.n_dofs_per_cell());
+
+  // read data from present solution
+  // TODO this is done through a cell integrator in the matrix free code,
+  // so that we use get_value and get_gradient
+
+  this->phi_u_m.evaluate(buffer_u,
+                         EvaluationFlags::values | EvaluationFlags::gradients);
+  this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
+
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      const unsigned int q_index = ptr_q + q;
+
+      const auto normal = data.all_normals[q_index];
+
+      const auto value_m    = this->phi_u_m.get_value(q);
+      const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
+      const auto p_value_m  = this->phi_p_m.get_value(q) * normal;
+
+      BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+
+      buffer_m.write(value_m);
+      buffer_m.write(gradient_m);
+      buffer_m.write(p_value_m);
+    }
+}
+
+template <int dim, typename Number>
+void
 NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
   const CouplingEvaluationData<dim, Number> &data,
   Vector<Number>                            &buffer,
@@ -1528,6 +1574,10 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
 {
   for (const auto q : this->phi_u_m.quadrature_point_indices())
     {
+      // get information from properties manager
+      const double kinematic_viscosity = 0.;
+      // this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
       const unsigned int q_index = ptr_q + q;
 
       BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
@@ -1540,18 +1590,27 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
       const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
 
+      const auto previous_value_m = buffer_m.template read<u_value_type>();
+      const auto previous_value_p = buffer_p.template read<u_value_type>();
+      // TODO how to get these values
+      const auto u_value          = buffer_m.template read<u_value_type>();
+      const auto u_previous_value = buffer_m.template read<u_value_type>();
+
+
       const auto JxW               = data.all_weights[q_index];
       const auto penalty_parameter = data.all_penalty_parameter[q_index];
       const auto normal            = data.all_normals[q_index];
 
       // {{u}} = (u_m + u_p)/2
-      const auto u_value_avg    = (value_m + value_p) * 0.5;
+      const auto u_value_avg = (value_m + value_p) * 0.5;
+      const auto u_previous_value_avg =
+        (previous_value_m + previous_value_p) * 0.5;
       // [u] = (u_m - u_p)
-      const auto u_value_jump   = value_m - value_p;
+      const auto u_value_jump = value_m - value_p;
       // {{∇u}} = (∇u_m + ∇u_p)/2
       const auto u_gradient_avg = (normal_gradient_m - normal_gradient_p) * 0.5;
       // {{p}} = (∇p_m + ∇p_p)/2
-      const auto p_value_avg    = (normal_p_value_m - normal_p_value_p) * 0.5;
+      const auto p_value_avg = (normal_p_value_m - normal_p_value_p) * 0.5;
 
       typename FEPointIntegratorU::value_type u_normal_gradient_avg_result = {};
       typename FEPointIntegratorU::value_type u_value_jump_result          = {};
@@ -1560,40 +1619,48 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
 
-      if (true /*Laplace term*/)
-        {
-          // - (n avg(∇v), jump(u))
-          u_normal_gradient_avg_result -= u_value_jump;
+      /* Contributions from viscous term */
+      // - (n avg(∇v), jump(δu))
+      u_normal_gradient_avg_result -= u_value_jump;
 
-          // - (jump(v), avg(∇u) n)
-          u_value_jump_result -= u_gradient_avg;
+      // - (jump(v), ν avg(∇δu) n)
+      u_value_jump_result -= kinematic_viscosity * u_gradient_avg;
 
-          // + (jump(v), σ jump(u))
-          u_value_jump_result += sigma * u_value_jump;
-        }
+      // + (jump(v), ν σ jump(δu))
+      u_value_jump_result += kinematic_viscosity * sigma * u_value_jump;
 
-      if (do_pressure_gradient_term)
-        {
-          // + (jump(v), avg(p) n)
-          u_value_jump_result += p_value_avg;
-        }
-      else
-        {
-          // nothing to do
-        }
 
-      if (do_velocity_divergence_term)
-        {
-          // + (jump(q), avg(u) n)
-          p_value_jump_result += u_value_avg * normal;
-        }
-      else
-        {
-          // nothing to do
-        }
+      /* Contribution from pressure term*/
+      // + (jump(v), avg(δp) n)
+      u_value_jump_result += p_value_avg;
 
+
+      /* Contributions from convective term */
+      // - (jump(v), (avg(u)·n) δu)
+      u_value_jump_result -=
+        outer(contract(u_previous_value_avg, normal), u_value);
+
+      // - (jump(v), (avg(δu)·n) u)
+      u_value_jump_result -=
+        outer(contract(u_value_avg, normal), u_previous_value);
+
+      // + (jump(v), (avg(u)·n) avg(δu))
+      u_value_jump_result +=
+        outer(contract(u_previous_value_avg, normal), u_value_avg);
+
+      // + (jump(v), (avg(δu)·n) avg(u))
+      u_value_jump_result +=
+        outer(contract(u_value_avg, normal), u_previous_value_avg);
+
+      // + (jump(v), 1/2 abs[avg(u)·n] jump(δu))
+      u_value_jump_result +=
+        0.5 *
+        outer(std::abs(contract(u_previous_value_avg, normal)), u_value_jump);
+
+
+      // - (n avg(∇v), ν/2 jump(δu))
       phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
-                                0.5 * JxW,
+                                0.5 * kinematic_viscosity * JxW,
                               q);
       phi_u_m.submit_value(u_value_jump_result * JxW, q);
       phi_p_m.submit_value(p_value_jump_result * JxW, q);
@@ -1612,6 +1679,116 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
   this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
 }
 
+template <int dim, typename Number>
+void
+NavierStokesCouplingEvaluation<dim, Number>::local_integrate_residual(
+  const CouplingEvaluationData<dim, Number> &data,
+  Vector<Number>                            &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_value_m,
+  Number                                    *all_value_p) const
+{
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      // get information from properties manager
+      const double kinematic_viscosity = 0.;
+      // this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
+      const unsigned int q_index = ptr_q + q;
+
+      BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_p(all_value_p, q * 4 * dim * q_stride);
+
+      const auto previous_value_m = buffer_m.template read<u_value_type>();
+      const auto previous_value_p = buffer_p.template read<u_value_type>();
+      const auto normal_previous_gradient_m =
+        buffer_m.template read<u_value_type>();
+      const auto normal_previous_gradient_p =
+        buffer_p.template read<u_value_type>();
+      const auto normal_previous_p_value_m =
+        buffer_m.template read<u_value_type>();
+      const auto normal_previous_p_value_p =
+        buffer_p.template read<u_value_type>();
+
+      // TODO how to get these values
+      const auto u_previous_value = buffer_m.template read<u_value_type>();
+
+      const auto JxW               = data.all_weights[q_index];
+      const auto penalty_parameter = data.all_penalty_parameter[q_index];
+      const auto normal            = data.all_normals[q_index];
+
+      // {{u}} = (u_m + u_p)/2
+      const auto u_previous_value_avg =
+        (previous_value_m + previous_value_p) * 0.5;
+      // [u] = (u_m - u_p)
+      const auto u_previous_value_jump = previous_value_m - previous_value_p;
+      // {{∇u}} = (∇u_m + ∇u_p)/2
+      const auto u_previous_gradient_avg =
+        (normal_previous_gradient_m - normal_previous_gradient_p) * 0.5;
+      // {{p}} = (∇p_m + ∇p_p)/2
+      const auto p_previous_value_avg =
+        (normal_previous_p_value_m - normal_previous_p_value_p) * 0.5;
+
+      typename FEPointIntegratorU::value_type u_normal_gradient_avg_result = {};
+      typename FEPointIntegratorU::value_type u_value_jump_result          = {};
+      typename FEPointIntegratorP::value_type p_value_jump_result          = {};
+
+      // SIPG penalty parameter
+      const double sigma = penalty_parameter * data.penalty_factor;
+
+      /* Contributions from viscous term */
+      // + (n avg(∇v), jump(u))
+      u_normal_gradient_avg_result += u_previous_value_jump;
+
+      // + (jump(v), ν avg(∇u) n)
+      u_value_jump_result += kinematic_viscosity * u_previous_gradient_avg;
+
+      // - (jump(v), ν σ jump(u))
+      u_value_jump_result -=
+        kinematic_viscosity * sigma * u_previous_value_jump;
+
+
+      /* Contribution from pressure term */
+      // - (jump(v), avg(p) n)
+      u_value_jump_result -= p_previous_value_avg;
+
+
+      /* Contributions from convective term */
+      // + (jump(v), (avg(u)·n) u)
+      u_value_jump_result +=
+        outer(contract(u_previous_value_avg, normal), u_previous_value);
+
+      // - (jump(v), (avg(u)·n) avg(u))
+      u_value_jump_result -=
+        outer(contract(u_previous_value_avg, normal), u_previous_value_avg);
+
+      // - (jump(v), 1/2 abs[avg(u)·n] jump(u))
+      u_value_jump_result -=
+        0.5 * outer(std::abs(contract(u_previous_value_avg, normal)),
+                    u_previous_value_jump);
+
+
+      // - (n avg(∇v), ν/2 jump(u))
+      phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
+                                0.5 * kinematic_viscosity * JxW,
+                              q);
+      phi_u_m.submit_value(u_value_jump_result * JxW, q);
+      phi_p_m.submit_value(p_value_jump_result * JxW, q);
+    }
+
+  AssertDimension(buffer.size(),
+                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
+  ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                             fe_sub_p.n_dofs_per_cell());
+
+  this->phi_u_m.test_and_sum(buffer_u,
+                             EvaluationFlags::values |
+                               EvaluationFlags::gradients);
+  this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
+}
 
 /*-------------- Explicit Instantiations -------------------------------*/
 template class MortarManagerBase<1>;
