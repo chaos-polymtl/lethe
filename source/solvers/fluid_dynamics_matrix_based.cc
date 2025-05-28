@@ -768,6 +768,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
+  // Add mortar entries
+  add_mortar_system_rhs_entries();
+
   this->system_rhs.compress(VectorOperation::add);
 
   if (this->simulation_control->is_first_assembly())
@@ -951,7 +954,6 @@ FluidDynamicsMatrixBased<dim>::add_mortar_sparsity_patterns(
   this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
 }
 
-
 template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::add_mortar_system_matrix_entries()
@@ -961,6 +963,16 @@ FluidDynamicsMatrixBased<dim>::add_mortar_system_matrix_entries()
 
   this->mortar_coupling_operator->add_system_matrix_entries(
     this->system_matrix);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::add_mortar_system_rhs_entries()
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  this->mortar_coupling_operator->add_system_rhs_entries(this->system_rhs);
 }
 
 /**
