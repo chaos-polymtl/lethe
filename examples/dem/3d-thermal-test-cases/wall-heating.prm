@@ -12,10 +12,10 @@ set dimension = 3
 
 subsection simulation control
   set time step         = 5e-5
-  set time end          = 20
+  set time end          = 15
   set log frequency     = 1000
   set output frequency  = 10000
-  set output path       = ./output/
+  set output path       = ./output_wall_heating/
   set output boundaries = true
 end
 
@@ -65,6 +65,11 @@ subsection lagrangian physical properties
   set restitution coefficient wall = 0.3
   set friction coefficient wall    = 0.3
   set rolling friction wall        = 0.3
+  set thermal conductivity wall    = 100
+  set microhardness wall           = 1.e9
+  set surface slope wall           = 0.1
+  set surface roughness wall       = 1.e-10
+  set thermal accommodation wall   = 0.7
   set thermal conductivity gas     = 0.2
   set specific heat gas            = 10000
   set dynamic viscosity gas        = 9.e-6
@@ -79,7 +84,7 @@ end
 subsection insertion info
   set insertion method                               = file
   set insertion frequency                            = 10000
-  set list of input files                            = particles.input
+  set list of input files                            = particles.input-one-temperature
 end
 
 #---------------------------------------------------
@@ -111,29 +116,39 @@ subsection solid objects
     subsection solid object 0
       subsection mesh
         set type               = gmsh
-        set file name          = square_left.msh
+        set file name          = square-left.msh
         set simplex            = true
         set initial refinement = 0
       end
       subsection translational velocity
-        set Function expression = if(t<6.5,0.01,0) ; 0 ; 0
+        set Function expression = if(x<-0.045,0.01,0) ; 0 ; 0
       end
       subsection angular velocity
         set Function expression = 0 ; 0 ; 0
+      end
+      set center of rotation    = -0.11 , 0 , 0
+      set thermal boundary type = isothermal
+      subsection temperature
+        set Function expression = 0
       end
     end
     subsection solid object 1
       subsection mesh
         set type               = gmsh
-        set file name          = square_right.msh
+        set file name          = square-right.msh
         set simplex            = true
         set initial refinement = 0
       end
       subsection translational velocity
-        set Function expression = if(t<6.5,-0.01,0) ; 0 ; 0
+        set Function expression = if(x>0.045,-0.01,0) ; 0 ; 0
       end
       subsection angular velocity
         set Function expression = 0 ; 0 ; 0
+      end
+      set center of rotation    = 0.11 , 0 , 0
+      set thermal boundary type = isothermal
+      subsection temperature
+        set Function expression = if(t>8,50,0)
       end
     end
   end

@@ -79,7 +79,7 @@ end
 subsection insertion info
   set insertion method                               = file
   set insertion frequency                            = 10000
-  set list of input files                            = particles.input_two_temperatures
+  set list of input files                            = particles.input-two-temperatures
 end
 
 #---------------------------------------------------
@@ -111,7 +111,7 @@ subsection solid objects
     subsection solid object 0
       subsection mesh
         set type               = gmsh
-        set file name          = square_left.msh
+        set file name          = square-left.msh
         set simplex            = true
         set initial refinement = 0
       end
@@ -127,7 +127,7 @@ subsection solid objects
     subsection solid object 1
       subsection mesh
         set type               = gmsh
-        set file name          = square_right.msh
+        set file name          = square-right.msh
         set simplex            = true
         set initial refinement = 0
       end
