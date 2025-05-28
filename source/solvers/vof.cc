@@ -1264,8 +1264,9 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 }
               else if constexpr (dim == 3)
                 {
-                  volume_column_name = "volume_" + fluid_id;
-                  mass_column_name   = "mass_" + fluid_id;
+                  volume_column_name           = "volume_" + fluid_id;
+                  mass_column_name             = "mass_" + fluid_id;
+                  geometric_volume_column_name = "geometric_volume_" + fluid_id;
                 }
 
               // Add "surface" or "volume" column

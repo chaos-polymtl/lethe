@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-05-27
+
+### Fixed
+
+- MINOR The output of the mass conservation table in VOF was resulting in a seg fault in 3D. It was permanently fixed by adding the missing column name in 3D. [#1541](https://github.com/chaos-polymtl/lethe/pull/1541)
+
 ## [Master] - 2025-05-26
 
 ### Changed
