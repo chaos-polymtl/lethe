@@ -193,6 +193,12 @@ protected:
   add_mortar_system_matrix_entries();
 
   /**
+   * @brief add mortar coupling entries to system RHS
+   */
+  void
+  add_mortar_system_rhs_entries();
+
+  /**
    * @brief Call for the assembly of the linear system of equation
    *
    * @param initial_step Indicates if this is the first solution of the linear system.
