@@ -91,7 +91,6 @@ plt.plot(x, T_analytical, alpha=0.5, label= "Analytical solution")
 plt.ylim(T_left,T_right)
 plt.legend()
 plt.grid()
-plt.title("Evolution of temperature with position", pad=25)
 plt.xlabel('x (m)')
 plt.ylabel('Temperature (°C)')
 
