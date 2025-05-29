@@ -63,6 +63,7 @@ test()
   properties.specific_heats_ratio_gas          = 1;
   properties.molecular_mean_free_path_gas      = 68e-9;
   properties.thermal_accommodation_particle[0] = 0.7;
+  properties.real_youngs_modulus_particle[0]   = 65e9;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(

@@ -1605,6 +1605,7 @@ private:
     auto properties = dem_parameters.lagrangian_physical_properties;
 
     n_particle_types = properties.particle_type_number;
+    effective_real_youngs_modulus.resize(n_particle_types * n_particle_types);
     equivalent_surface_roughness.resize(n_particle_types * n_particle_types);
     equivalent_surface_slope.resize(n_particle_types * n_particle_types);
     effective_microhardness.resize(n_particle_types * n_particle_types);
@@ -1614,12 +1615,16 @@ private:
 
     for (unsigned int i = 0; i < n_particle_types; ++i)
       {
+        const double real_youngs_modulus_i =
+          properties.real_youngs_modulus_particle.at(i);
+        const double poisson_ratio_i = properties.poisson_ratio_particle.at(i);
         const double surface_roughness_i =
           properties.surface_roughness_particle.at(i);
         const double surface_slope_i = properties.surface_slope_particle.at(i);
         const double microhardness_i = properties.microhardness_particle.at(i);
         const double thermal_accommodation_i =
           properties.thermal_accommodation_particle.at(i);
+
 
         this->thermal_conductivity_particle[i] =
           properties.thermal_conductivity_particle.at(i);
@@ -1628,6 +1633,10 @@ private:
           {
             const unsigned int k = i * n_particle_types + j;
 
+            const double real_youngs_modulus_j =
+              properties.real_youngs_modulus_particle.at(j);
+            const double poisson_ratio_j =
+              properties.poisson_ratio_particle.at(j);
             const double surface_roughness_j =
               properties.surface_roughness_particle.at(j);
             const double surface_slope_j =
@@ -1637,6 +1646,13 @@ private:
             const double thermal_accommodation_j =
               properties.thermal_accommodation_particle.at(j);
 
+            this->effective_real_youngs_modulus[k] =
+              (real_youngs_modulus_i * real_youngs_modulus_j) /
+              ((real_youngs_modulus_j *
+                (1.0 - poisson_ratio_i * poisson_ratio_i)) +
+               (real_youngs_modulus_i *
+                (1.0 - poisson_ratio_j * poisson_ratio_j)) +
+               DBL_MIN);
             this->equivalent_surface_roughness[k] =
               sqrt(surface_roughness_i * surface_roughness_i +
                    surface_roughness_j * surface_roughness_j);
@@ -1917,7 +1933,7 @@ private:
                   0.5 * particle_one_properties[PropertiesIndex::dp],
                   0.5 * particle_two_properties[PropertiesIndex::dp],
                   this->effective_youngs_modulus[pair_index],
-                  this->effective_youngs_modulus[pair_index],
+                  this->effective_real_youngs_modulus[pair_index],
                   this->equivalent_surface_roughness[pair_index],
                   this->equivalent_surface_slope[pair_index],
                   this->effective_microhardness[pair_index],
@@ -1981,6 +1997,7 @@ private:
   // map of map is used to store this variable
   unsigned int        n_particle_types;
   std::vector<double> effective_youngs_modulus;
+  std::vector<double> effective_real_youngs_modulus;
   std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
   std::vector<double> effective_coefficient_of_friction;

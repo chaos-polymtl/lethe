@@ -128,6 +128,9 @@ namespace Parameters
       // Thermal accommodation coefficient of each particle type
       std::unordered_map<unsigned int, double> thermal_accommodation_particle;
 
+      // Real Young's modulus of each particle type
+      std::unordered_map<unsigned int, double> real_youngs_modulus_particle;
+
       // Young's modulus of wall
       double youngs_modulus_wall;
 
@@ -166,6 +169,9 @@ namespace Parameters
 
       // Thermal accommodation wall
       double thermal_accommodation_wall;
+
+      // Real Young's modulus of wall
+      double real_youngs_modulus_wall;
 
       // Thermal conductivity of interstitial gas
       double thermal_conductivity_gas;
@@ -224,7 +230,8 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &surface_slope_particle,
         std::unordered_map<unsigned int, double> &surface_roughness_particle,
         std::unordered_map<unsigned int, double>
-          &thermal_accommodation_particle);
+          &thermal_accommodation_particle,
+        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle);
     };
 
     template <int dim>
@@ -382,6 +389,9 @@ namespace Parameters
       // Maximal solid fraction value of cells where particle contacts are
       // considered no matter the granular temperature
       double solid_fraction_threshold;
+
+      // Disable position integration
+      bool disable_position_integration;
 
       static void
       declare_parameters(ParameterHandler &prm);

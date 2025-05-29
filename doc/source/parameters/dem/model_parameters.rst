@@ -63,6 +63,7 @@ In this subsection, contact detection, force models, time integration, load bala
     # Solver type
     # Choices are dem|cfd_dem|dem_mp
     set solver type = dem
+    set disable position integration = false
   end
 
 
@@ -186,3 +187,5 @@ The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and f
 Solver Type
 -----------
 The ``solver type`` parameter controls the type of physic being solved by lethe. Currently, this parameter should be set to ``dem``, which is the default value, when solving a DEM or CFD-DEM problem. The ``dem_mp`` solver type is used for multiphysic DEM, which includes heat transfer.
+
+The ``disable position integration`` is used to freeze the position of particles. It is useful in multiphysic DEM simulations involving a packed bed. This allows to set a higher time step than in the loading of particles, since the temperature can take a lot more time to vary than the position.
