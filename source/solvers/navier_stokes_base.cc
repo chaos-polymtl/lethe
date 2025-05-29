@@ -1957,14 +1957,19 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   if (this->simulation_parameters.mortar.enable)
     {
 #if DEAL_II_VERSION_GTE(9, 7, 0)
+      // Get updated rotation angle
+      simulation_parameters.mortar.rotor_angular_velocity->set_time(
+        this->simulation_control->get_current_time());
+      const double rotation_angle =
+        simulation_parameters.mortar.rotor_angular_velocity->value(
+          Point<dim>());
+
       MappingQCache<dim> mapping_cache(this->velocity_fem_degree);
 
       if (simulation_parameters.mortar.verbosity ==
           Parameters::Verbosity::verbose)
-        this->pcout
-          << "   Rotating rotor grid:          "
-          << this->simulation_parameters.mortar.rotor_mesh->rotation_angle
-          << " degrees" << std::endl;
+        this->pcout << "   Rotating rotor grid:          " << rotation_angle
+                    << " rad" << std::endl;
 
       LetheGridTools::rotate_mapping(
         this->dof_handler,
@@ -1973,7 +1978,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
         compute_n_subdivisions_and_radius(*this->triangulation,
                                           this->simulation_parameters.mortar)
           .second,
-        this->simulation_parameters.mortar.rotor_mesh->rotation_angle);
+        rotation_angle);
 
       this->previous_mapping = this->mapping;
       this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
