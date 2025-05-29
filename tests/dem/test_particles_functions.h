@@ -133,6 +133,7 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
       properties.surface_slope_particle[i]                       = 0.1;
       properties.surface_roughness_particle[i]                   = 1.e-9;
       properties.thermal_accommodation_particle[i]               = 0.7;
+      properties.real_youngs_modulus_particle[i]                 = 1.e9;
     }
 
   // Wall parameters
@@ -149,6 +150,7 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
   properties.surface_slope_wall           = 0.1;
   properties.surface_roughness_wall       = 1.e-10;
   properties.thermal_accommodation_wall   = 0.7;
+  properties.real_youngs_modulus_wall     = 1.e9;
 
   // Interstitial gas parameters
   properties.thermal_conductivity_gas     = 0.01;
