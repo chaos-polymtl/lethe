@@ -270,27 +270,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   this->cahn_hilliard_filter = cahn_hilliard_filter;
 }
 
-
-template <int dim>
-void
-NavierStokesScratchData<dim>::enable_projected_phase_fraction_gradient(
-  const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
-  const Quadrature<dim>    &quadrature,
-  const Mapping<dim>       &mapping)
-{
-  gather_projected_phase_fraction_gradient = true;
-  fe_values_projected_phase_fraction_gradient =
-    std::make_shared<FEValues<dim>>(mapping,
-                                    fe_projected_phase_fraction_gradient,
-                                    quadrature,
-                                    update_values | update_gradients);
-
-  // phase fraction gradient (PFG)
-  projected_phase_fraction_gradient_values =
-    std::vector<Tensor<1, dim>>(this->n_q_points);
-}
-
-
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_curvature(
