@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-05-29
+
+### Removed
+
+- MINOR Remove deprecated functions `enable_projected_phase_fraction_gradient` and `reinit_projected_phase_fraction_gradient` with their related variables in `NavierStokesScratchData` were removed. [#1543](https://github.com/chaos-polymtl/lethe/pull/1543)
+
 ## Release of Lethe v1.0.1 - 2024-05-28
 The Lethe v1.0.1 release introduces some key new features including:
 
@@ -52,7 +58,7 @@ The particle_wall_contact_info has been changed to a struct instead of a class a
 
 ### Added
 
-- MINOR Mortar: the matrix-based solver is now able to read 'gmsh' files, and a function to compute the rotor radius and the number of subdivisions at the rotor-stator interface has been added. [#1526] (https://github.com/chaos-polymtl/lethe/pull/1526)
+- MINOR Mortar: the matrix-based solver is now able to read 'gmsh' files, and a function to compute the rotor radius and the number of subdivisions at the rotor-stator interface has been added. [#1526](https://github.com/chaos-polymtl/lethe/pull/1526)
 
 ### Added
 
@@ -60,7 +66,7 @@ The particle_wall_contact_info has been changed to a struct instead of a class a
 
 ### Added
 
-- MINOR Some of the functions related to the mortar coupling have been refactored, and new functionalities have been added. For instance, the matrix-based solver is able to read 'gmsh' files, and the matrix-free solver is able to read data from the mortar subsection. A new coupling operator has been added. [#] (https://github.com/chaos-polymtl/lethe/pull/)
+- MINOR Some of the functions related to the mortar coupling have been refactored, and new functionalities have been added. For instance, the matrix-based solver is able to read 'gmsh' files, and the matrix-free solver is able to read data from the mortar subsection. A new coupling operator has been added. [#1526](https://github.com/chaos-polymtl/lethe/pull/1526)
 
 ## [Master] - 2024-05-07
 
