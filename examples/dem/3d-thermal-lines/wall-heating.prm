@@ -13,7 +13,7 @@ set dimension = 3
 subsection simulation control
   set time step         = 5e-5
   set time end          = 15
-  set log frequency     = 1000
+  set log frequency     = 10000
   set output frequency  = 10000
   set output path       = ./output_wall_heating/
   set output boundaries = true
