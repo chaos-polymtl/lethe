@@ -21,7 +21,7 @@ Features
 Files Used in This Example
 ----------------------------
 
-All files mentioned below are located in the example's folder (``examples/dem/3d-thermal-lines``).
+All files mentioned below are located in the example's folder (``examples/dem-mp/3d-thermal-lines``).
 
 - Parameter files: ``equilibrium.prm``, ``wall-heating.prm``
 - Geometry files solid surfaces: ``square-left.geo``, ``square-right.geo``
