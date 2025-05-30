@@ -2772,7 +2772,7 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
     this->simulation_parameters.simulation_control.group_files;
 
   // We only write the particle pvd when outputs are enabled
-  if (this->simulation_control->output_enabled())
+  if (this->simulation_control->output_enabled() && this->simulation_control->is_output_iteration())
     {
       // If the processor id is id=0 we write the particles pvd
       if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
