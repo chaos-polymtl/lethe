@@ -102,7 +102,7 @@ public:
                                                       mortar_manager,
                                                       1,
                                                       2,
-                                                      1000.0);
+                                                      1.0);
 
     // create sparsity pattern
     DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -221,9 +221,9 @@ public:
           }
       }
 
-    // add coupling entries in stiffness matrix
+    // add coupling entries in system matrix and RHS
     mortar_coupling_operator->add_system_matrix_entries(system_matrix);
-    mortar_coupling_operator->add_system_rhs_entries(system_rhs);
+    mortar_coupling_operator->add_system_rhs_entries(system_rhs, solution);
 
     system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
@@ -299,6 +299,14 @@ public:
           }
       }
 
+    mortar_coupling_operator->add_system_rhs_entries(residual, solution);
+
+    std::cout << "Residual " << std::endl;
+    for (auto it = residual.begin(); it != residual.end(); ++it)
+      std::cout << *it << " ";
+
+    std::cout << std::endl;
+    
     residual.compress(VectorOperation::add);
     residual.update_ghost_values();
 
@@ -306,7 +314,7 @@ public:
   }
 
   void
-  solve_linear()
+  compute_update()
   {
     // initialize GMRES solver
     ReductionControl reduction_control(10000, 1e-10, 1e-6);
@@ -318,6 +326,34 @@ public:
 
     // solve linear system
     solver.solve(system_matrix, delta_solution, system_rhs, preconditioner);
+
+    std::cout << "RHS " << std::endl;
+    for (auto it = system_rhs.begin(); it != system_rhs.end(); ++it)
+      std::cout << *it << " ";
+
+    std::cout << std::endl;
+
+    std::cout << "previous solution " << std::endl;
+    for (auto it = previous_solution.begin(); it != previous_solution.end(); ++it)
+      std::cout << *it << " ";
+
+    std::cout << std::endl;
+    
+    std::cout << "delta solution " << std::endl;
+    for (auto it = delta_solution.begin(); it != delta_solution.end(); ++it)
+      std::cout << *it << " ";
+
+    std::cout << std::endl;
+
+    // update solution
+    constraints.distribute(solution);
+    solution += delta_solution;
+
+    std::cout << "updated solution " << std::endl;
+    for (auto it = solution.begin(); it != solution.end(); ++it)
+      std::cout << *it << " ";
+
+    std::cout << std::endl;
   }
 
   void
@@ -341,26 +377,19 @@ public:
         // update iteration
         iter++;
 
-        // assemble and solve system
+        // assemble and solve linear system
         assemble_system();
-        solve_linear();
-
-        // update solution
-        solution += delta_solution;
-        constraints.distribute(solution);
-
-        // for (unsigned int i = 0; i < solution.size(); i++)
-        //   std::cout << "Solution " << i << ": " << solution[i] << std::endl;
+        compute_update();
 
         // calculate error
         pcout << "   Iter " << iter << " - Delta solution norm, Linfty norm: "
               << delta_solution.linfty_norm()
               << " L2 norm: " << delta_solution.l2_norm() << std::endl;
 
-        error = delta_solution.linfty_norm();
+        // error = delta_solution.linfty_norm();
 
-        // error = compute_residual();
-        // pcout << "   Residual:  " << error << std::endl;
+        error = compute_residual();
+        pcout << "   Residual:  " << error << std::endl;
 
         // output iteration results
         output_results(iter);
