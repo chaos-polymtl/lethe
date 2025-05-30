@@ -46,6 +46,19 @@ namespace Parameters
     constant,
     adaptive
   };
+  
+  /**
+   * @brief Different interface regularization method types:
+   *  - none
+   *  - sharpening: projection-based interface sharpening
+   *  - algebraic: PDE-based reinitialization
+   *  - geometric: geometric redistanciation
+   */
+  enum class RedistanciationTransformationType
+  {
+    tanh,
+    piecewise_polynomial
+  };
 
   /**
    * @brief Different phase fraction filtering types:
@@ -241,6 +254,8 @@ namespace Parameters
     bool output_signed_distance;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
+    /// Interface thickness for the tanh transformation
+    RedistanciationTransformationType transformation_type;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
 

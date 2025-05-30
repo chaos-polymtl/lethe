@@ -557,6 +557,12 @@ Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
                       "1.",
                       Patterns::Double(),
                       "Maximum reinitialization distance value");
+    // prm.declare_entry(
+    //   "type",
+    //   "tanh",
+    //   Patterns::Selection(
+    //     "tanh|piecewise polynomial"),
+    //   "Signed distance");
     prm.declare_entry("tanh thickness",
                       "1.",
                       Patterns::Double(),
