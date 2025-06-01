@@ -13,8 +13,8 @@ x1 =L;
 nr=4;
 nt=4;
 nl_front=5;
-nl_back=15;
-n_depth=4;
+nl_back=20;
+n_depth=5;
 
 xc=8;
 yc=H/2;

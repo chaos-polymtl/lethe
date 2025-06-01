@@ -163,10 +163,6 @@ end
 #---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-
-
-# pour cylinder-structured
-
 subsection boundary conditions
   set number = 6
   subsection bc 0
