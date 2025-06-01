@@ -12,7 +12,6 @@ def compute_cp_average(
     cylinder_center: tuple = (8, 25),
     rho: float = 1.0,
     U_inf: float = 1.0,
-    use_last_n_timesteps: int = 1
 ):
     """
     Compute the time-averaged pressure coefficient (Cp) around a cylinder.
@@ -24,7 +23,6 @@ def compute_cp_average(
         cylinder_center (tuple): (x, y) coordinates of the cylinder center.
         rho (float): Fluid density (default: 1.0).
         U_inf (float): Free-stream velocity (default: 1.0).
-        use_last_n_timesteps (int): Number of last time steps to include in the averaging.
 
     Returns:
         tuple:
@@ -42,7 +40,7 @@ def compute_cp_average(
     n_angles = len(theta_array)
     n_timesteps = len(vtu_files)
 
-    r = 0.5001
+    r = 0.501
     xc, yc = cylinder_center
 
     # Determine reference pressure p_inf from the wake
