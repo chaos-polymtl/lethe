@@ -9,20 +9,22 @@ from post_process_turbulent_cylinder_3d import compute_cp_average, compute_strou
 rho = 1.0
 U_inf = 1.0
 center = (8, 25)
-z_array = np.linspace(0,np.pi,20)#[np.pi / 2]
+z_array = np.linspace(0,np.pi,100)
+theta_array = np.linspace(0, 361 * np.pi/360, 362)
 L = np.pi
 n_final_timesteps = 2000
 D = 1.0
 frac = 50
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d turbulent flow around a cylinder')
-parser.add_argument("-f","--folder", type=list, help="Paths the output files of the simulation", required=True)
-parser.add_argument("-l","--label", type=list, help="Label for the plot", required=True)
+parser.add_argument("-f","--folder", type=str, nargs='+', help="Paths the output files of the simulation", required=True)
+parser.add_argument("-l","--label", type=str, nargs='+', help="Label for the plot", required=True)
 args, leftovers=parser.parse_known_args()
 
-folders =- args.folder
+folders = args.folder
 labels = args.label
-
+print(f"Folders: {folders}")
+print(f"Labels: {labels}")
 # Check if the number of folders and labels match
 if len(folders) != len(labels):
     raise ValueError("The number of folders and labels must match.")
@@ -56,7 +58,6 @@ plt.scatter(deg_exp, cp_exp, label='Experimental data', color='black')
 
 # Loop through all simulations
 for folder, label in simulations.items():
-    theta_array = np.linspace(0, 361 * np.pi/360, 362)
     cp_mean, theta_array, p_inf = compute_cp_average(
         folder=folder,
         theta_array=theta_array,
@@ -64,7 +65,6 @@ for folder, label in simulations.items():
         cylinder_center=center,
         rho=rho,
         U_inf=U_inf,
-        use_last_n_timesteps=1
     )
 
     # Align from stagnation point
