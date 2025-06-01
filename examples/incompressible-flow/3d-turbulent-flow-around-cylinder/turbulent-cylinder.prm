@@ -77,7 +77,7 @@ end
 subsection mesh
   set type               = gmsh
   set file name          = cylinder-structured.msh
-  set initial refinement = 3
+  set initial refinement = 2
   set initial boundary refinement = 2
   set boundaries refined = 3
 end
@@ -118,8 +118,8 @@ subsection mesh adaptation
   set variable             = velocity
   set fraction type        = fraction
   set max number elements  = 1000000
-  set max refinement level = 5
-  set min refinement level = 3
+  set max refinement level = 4
+  set min refinement level = 2
   set frequency            = 10
   set fraction refinement  = 0.03
   set fraction coarsening  = 0.00
