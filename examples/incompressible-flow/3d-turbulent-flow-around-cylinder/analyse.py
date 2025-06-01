@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
+
 from post_process_turbulent_cylinder_3d import compute_cp_average, compute_strouhal_from_lift, compute_drag_coefficient
+
 
 # Common parameters
 rho = 1.0
@@ -11,14 +14,24 @@ L = np.pi
 n_final_timesteps = 2000
 D = 1.0
 frac = 50
-# List of folders with labels containing the diffrent simulations
-simulations = {    
-    "./output":"label for the plot"
-}
 
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d turbulent flow around a cylinder')
+parser.add_argument("-f","--folder", type=list, help="Paths the output files of the simulation", required=True)
+parser.add_argument("-l","--label", type=list, help="Label for the plot", required=True)
+args, leftovers=parser.parse_known_args()
 
+folders =- args.folder
+labels = args.label
 
+# Check if the number of folders and labels match
+if len(folders) != len(labels):
+    raise ValueError("The number of folders and labels must match.")
 
+# Populate the simulations dictionary
+simulations = {}
+for folder, label in zip(folders, labels):
+    simulations[folder] = label
+    
 # Loop through all simulations
 for folder, label in simulations.items():
     theta_array = np.linspace(0, 181 * np.pi/180, 182)
