@@ -100,7 +100,7 @@ Line(53)={21,31};
 Transfinite Line {3,22,4,10,34,20,32,13,40,41,42,43,30,31,33,35,63,60,66,64} = Ceil(nt) Using Progression 1.0;
 // Radial direction
 Transfinite Line {50,51,52,53} = Ceil(3*nr) Using Progression 1.1;
-Transfinite Line {5,21,23,6} = Ceil(nl_back) Using Progression 1.2;
+Transfinite Line {5,21,23,6} = Ceil(nl_back) Using Progression 1.0;
 Transfinite Line {1,11,12,2} = Ceil(nl_front) Using Progression 1.0;
 
 //
