@@ -153,7 +153,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``thermal accommodation particles`` defines the thermal accommodation coefficient of particles for each type. The thermal accommodation coefficient characterizes the quality of thermal energy exchange between gas molecules and a solid surface.
 
-* The ``real young modulus particles`` defines the real Young's modulus of particles for each type. It is used in multiphysic DEM when the Young's modulus in the simulation is underestimated. An underestimated Young's modulus would lead to an overestimated thermal contact radius. The real Young's modulus is only used when higher than the Young's modulus.
+* The ``real young modulus particles`` defines the real Young's modulus of particles for each type. It is used in multiphysic DEM to correct the thermal contact radius. This is useful when the Young's modulus in the simulation is lowered to increase the time-step. An artificially low Young's modulus would lead to an overestimated thermal contact radius. The real Young's modulus can only be given a value that is higher than the Young's modulus. Otherwise, the regular Young's modulus will be used in the calculations.
 
 * The ``thermal conductivity gas`` defines the thermal conductivity of the interstitial gas.
 
