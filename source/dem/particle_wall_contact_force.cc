@@ -354,6 +354,201 @@ ParticleWallContactForce<dim,
     }
 }
 
+template <int dim,
+          typename PropertiesIndex,
+          ParticleWallContactForceModel contact_model,
+          RollingResistanceMethod       rolling_friction_model>
+void
+ParticleWallContactForce<dim,
+                         PropertiesIndex,
+                         contact_model,
+                         rolling_friction_model>::
+  set_effective_properties(const DEMSolverParameters<dim> &dem_parameters)
+{
+  auto properties = dem_parameters.lagrangian_physical_properties;
+
+  n_particle_types = properties.particle_type_number;
+  effective_youngs_modulus.resize(n_particle_types);
+  effective_shear_modulus.resize(n_particle_types);
+  effective_coefficient_of_restitution.resize(n_particle_types);
+  effective_coefficient_of_friction.resize(n_particle_types);
+  effective_coefficient_of_rolling_viscous_damping.resize(n_particle_types);
+  effective_coefficient_of_rolling_friction.resize(n_particle_types);
+  model_parameter_beta.resize(n_particle_types);
+  effective_surface_energy.resize(n_particle_types);
+  effective_hamaker_constant.resize(n_particle_types);
+
+  // Intialize wall variables and boundary conditions
+  this->center_mass_container = dem_parameters.forces_torques.point_center_mass;
+  this->boundary_translational_velocity_map =
+    dem_parameters.boundary_conditions.boundary_translational_velocity;
+  this->boundary_rotational_speed_map =
+    dem_parameters.boundary_conditions.boundary_rotational_speed;
+  this->boundary_rotational_vector =
+    dem_parameters.boundary_conditions.boundary_rotational_vector;
+  this->point_on_rotation_vector =
+    dem_parameters.boundary_conditions.point_on_rotation_axis;
+
+  // Wall properties
+  const double wall_youngs_modulus = properties.youngs_modulus_wall;
+  const double wall_poisson_ratio  = properties.poisson_ratio_wall;
+  const double wall_restitution_coefficient =
+    properties.restitution_coefficient_wall;
+  const double wall_friction_coefficient = properties.friction_coefficient_wall;
+  const double wall_rolling_friction_coefficient =
+    properties.rolling_friction_wall;
+  const double wall_rolling_viscous_damping =
+    properties.rolling_viscous_damping_wall;
+  const double wall_surface_energy   = properties.surface_energy_wall;
+  const double wall_hamaker_constant = properties.hamaker_constant_wall;
+
+  for (unsigned int i = 0; i < n_particle_types; ++i)
+    {
+      // Particle properties
+      const double particle_youngs_modulus =
+        properties.youngs_modulus_particle.at(i);
+      const double particle_poisson_ratio =
+        properties.poisson_ratio_particle.at(i);
+      const double particle_restitution_coefficient =
+        properties.restitution_coefficient_particle.at(i);
+      const double particle_friction_coefficient =
+        properties.friction_coefficient_particle.at(i);
+      const double particle_rolling_friction_coefficient =
+        properties.rolling_friction_coefficient_particle.at(i);
+      const double particle_rolling_viscous_damping_coefficient =
+        properties.rolling_viscous_damping_coefficient_particle.at(i);
+      const double particle_surface_energy =
+        properties.surface_energy_particle.at(i);
+      const double particle_hamaker_constant =
+        properties.hamaker_constant_particle.at(i);
+
+      // Effective particle-wall properties.
+      this->effective_youngs_modulus[i] =
+        (particle_youngs_modulus * wall_youngs_modulus) /
+        (wall_youngs_modulus *
+           (1. - particle_poisson_ratio * particle_poisson_ratio) +
+         particle_youngs_modulus *
+           (1. - wall_poisson_ratio * wall_poisson_ratio) +
+         DBL_MIN);
+
+      this->effective_shear_modulus[i] =
+        (particle_youngs_modulus * wall_youngs_modulus) /
+        ((2. * wall_youngs_modulus * (2. - particle_poisson_ratio) *
+          (1. + particle_poisson_ratio)) +
+         (2. * particle_youngs_modulus * (2. - wall_poisson_ratio) *
+          (1. + wall_poisson_ratio)) +
+         DBL_MIN);
+
+      this->effective_coefficient_of_restitution[i] =
+        harmonic_mean(particle_restitution_coefficient,
+                      wall_restitution_coefficient);
+
+      this->effective_coefficient_of_friction[i] =
+        harmonic_mean(particle_friction_coefficient, wall_friction_coefficient);
+
+      this->effective_coefficient_of_rolling_friction[i] =
+        harmonic_mean(particle_rolling_friction_coefficient,
+                      wall_rolling_friction_coefficient);
+
+      this->effective_coefficient_of_rolling_viscous_damping[i] =
+        harmonic_mean(particle_rolling_viscous_damping_coefficient,
+                      wall_rolling_viscous_damping);
+
+      this->effective_surface_energy[i] =
+        particle_surface_energy + wall_surface_energy -
+        std::pow(std::sqrt(particle_surface_energy) -
+                   std::sqrt(wall_surface_energy),
+                 2);
+
+      this->effective_hamaker_constant[i] =
+        0.5 * (particle_hamaker_constant + wall_hamaker_constant);
+
+      const double log_coeff_restitution =
+        std::log(this->effective_coefficient_of_restitution[i]);
+      this->model_parameter_beta[i] =
+        log_coeff_restitution /
+        sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
+    }
+}
+
+template <int dim,
+          typename PropertiesIndex,
+          ParticleWallContactForceModel contact_model,
+          RollingResistanceMethod       rolling_friction_model>
+void
+ParticleWallContactForce<dim,
+                         PropertiesIndex,
+                         contact_model,
+                         rolling_friction_model>::
+  set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters)
+{
+  auto properties = dem_parameters.lagrangian_physical_properties;
+
+  n_particle_types = properties.particle_type_number;
+  effective_real_youngs_modulus.resize(n_particle_types);
+  equivalent_surface_roughness.resize(n_particle_types);
+  equivalent_surface_slope.resize(n_particle_types);
+  effective_microhardness.resize(n_particle_types);
+  particle_thermal_conductivity.resize(n_particle_types);
+  gas_parameter_m.resize(n_particle_types);
+  this->gas_thermal_conductivity = properties.thermal_conductivity_gas;
+
+  // Wall properties
+  const double wall_real_youngs_modulus = properties.real_youngs_modulus_wall;
+  const double wall_poisson_ratio       = properties.poisson_ratio_wall;
+  const double wall_surface_roughness   = properties.surface_roughness_wall;
+  const double wall_surface_slope       = properties.surface_slope_wall;
+  const double wall_microhardness       = properties.microhardness_wall;
+  const double wall_thermal_accommodation =
+    properties.thermal_accommodation_wall;
+  this->wall_thermal_conductivity = properties.thermal_conductivity_wall;
+
+  for (unsigned int i = 0; i < n_particle_types; ++i)
+    {
+      // Particle properties
+      const double particle_real_youngs_modulus =
+        properties.real_youngs_modulus_particle.at(i);
+      const double particle_poisson_ratio =
+        properties.poisson_ratio_particle.at(i);
+      const double particle_surface_roughness =
+        properties.surface_roughness_particle.at(i);
+      const double particle_surface_slope =
+        properties.surface_slope_particle.at(i);
+      const double particle_microhardness =
+        properties.microhardness_particle.at(i);
+      const double particle_thermal_accommodation =
+        properties.thermal_accommodation_particle.at(i);
+      this->particle_thermal_conductivity[i] =
+        properties.thermal_conductivity_particle.at(i);
+
+      // Effective particle-wall properties
+      this->effective_real_youngs_modulus[i] =
+        (particle_real_youngs_modulus * wall_real_youngs_modulus) /
+        (wall_real_youngs_modulus *
+           (1. - particle_poisson_ratio * particle_poisson_ratio) +
+         particle_real_youngs_modulus *
+           (1. - wall_poisson_ratio * wall_poisson_ratio) +
+         DBL_MIN);
+      this->equivalent_surface_roughness[i] =
+        sqrt(particle_surface_roughness * particle_surface_roughness +
+             wall_surface_roughness * wall_surface_roughness);
+      this->equivalent_surface_slope[i] =
+        sqrt(particle_surface_slope * particle_surface_slope +
+             wall_surface_slope * wall_surface_slope);
+      this->effective_microhardness[i] =
+        harmonic_mean(particle_microhardness, wall_microhardness);
+      this->gas_parameter_m[i] =
+        ((2. - particle_thermal_accommodation) /
+           particle_thermal_accommodation +
+         (2. - wall_thermal_accommodation) / wall_thermal_accommodation) *
+        (2. * properties.specific_heats_ratio_gas) /
+        (1. + properties.specific_heats_ratio_gas) *
+        properties.molecular_mean_free_path_gas /
+        (properties.dynamic_viscosity_gas * properties.specific_heat_gas /
+         properties.thermal_conductivity_gas);
+    }
+}
+
 // dem
 // No resistance
 template class ParticleWallContactForce<2,
