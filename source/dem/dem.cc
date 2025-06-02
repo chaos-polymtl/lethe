@@ -585,8 +585,11 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::update_temperature_solid_objects()
 {
-  // Update temperature, previous time must be used here
-  // instead of current time.
+  // Previous time must be used here instead of current time, which is the time
+  // for which we are doing calculations. The solid object is moved and its
+  // temperature is updated before calculating the contact outcomes for the
+  // current time step, so its position should correspond to the
+  // previous time step.
   if constexpr (std::is_same_v<PropertiesIndex,
                                DEM::DEMMPProperties::PropertiesIndex>)
     {
