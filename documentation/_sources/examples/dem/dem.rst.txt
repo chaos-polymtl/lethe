@@ -53,7 +53,7 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_8 [label="Rotation of Box", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/rotation-of-box/rotation-of-box.html"];
 
-      dem_9 [label="Sandpile", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile-formation/sandpile-formation.html"]; 
+      dem_9 [label="Sandpile Formation", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/sandpile-formation/sandpile-formation.html"];
 
       dem_10 [label="Silo", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/silo/silo.html"]; 
 

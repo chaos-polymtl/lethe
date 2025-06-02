@@ -61,6 +61,8 @@ Multiphysics
 
       multiphysics_2_7 [label="Concentric Heat Exchanger", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html"];
 
+      multiphysics_2_8 [label="Cooling of a cylinder", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/cylinder-cooling/cylinder-cooling.html"];
+
       multiphysics_3 [label="Tracer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer.html"];  
 
       multiphysics_3_1 [label="Tracer in Static Mixer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer.html"];
@@ -95,6 +97,7 @@ Multiphysics
       multiphysics_2 -> multiphysics_2_5:w;
       multiphysics_2 -> multiphysics_2_6:w;
       multiphysics_2 -> multiphysics_2_7:w;
+      multiphysics_2 -> multiphysics_2_8:w;
 
       multiphysics_3 -> multiphysics_3_1:w;
 
