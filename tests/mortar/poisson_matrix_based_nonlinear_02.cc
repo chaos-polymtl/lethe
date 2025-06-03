@@ -174,15 +174,14 @@ public:
                 for (const unsigned int i : fe_values.dof_indices())
                   {
                     for (const unsigned int j : fe_values.dof_indices())
-                      cell_matrix(i, j) += (               // a(x_q)
+                      cell_matrix(i, j) += (         // a(x_q)
                         fe_values.shape_grad(i, q) * // grad phi_i(x_q)
                         fe_values.shape_grad(j, q) * // grad phi_j(x_q)
                         fe_values.JxW(q));           // dx
 
-                    cell_rhs(i) +=
-                      (fe_values.shape_value(i, q) * // phi_i(x_q)
-                       1.0 *                               // f(x)
-                       fe_values.JxW(q));            // dx
+                    cell_rhs(i) += (fe_values.shape_value(i, q) * // phi_i(x_q)
+                                    1 *                           // f(x)
+                                    fe_values.JxW(q));            // dx
                   }
               }
 
@@ -197,7 +196,7 @@ public:
 
     // add coupling entries in system matrix and RHS
     mortar_coupling_operator->add_system_matrix_entries(system_matrix);
-    // mortar_coupling_operator->add_system_rhs_entries(system_rhs, solution);
+    mortar_coupling_operator->add_system_rhs_entries(system_rhs, solution);
 
     system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
@@ -273,7 +272,7 @@ public:
     //   std::cout << *it << " ";
 
     std::cout << std::endl;
-    
+
     residual.compress(VectorOperation::add);
     residual.update_ghost_values();
 
@@ -301,11 +300,12 @@ public:
     // std::cout << std::endl;
 
     // std::cout << "previous solution " << std::endl;
-    // for (auto it = previous_solution.begin(); it != previous_solution.end(); ++it)
+    // for (auto it = previous_solution.begin(); it != previous_solution.end();
+    // ++it)
     //   std::cout << *it << " ";
 
     // std::cout << std::endl;
-    
+
     // std::cout << "delta solution " << std::endl;
     // for (auto it = delta_solution.begin(); it != delta_solution.end(); ++it)
     //   std::cout << *it << " ";
@@ -331,10 +331,10 @@ public:
                              Utilities::MPI::this_mpi_process(comm) == 0);
 
     // iteration parameters
-    double       error = 1e10;
-    double       tol   = 1e-10;
-    unsigned int iter  = 0;
-    unsigned int maxiter = 2;
+    double       error   = 1e10;
+    double       tol     = 1e-10;
+    unsigned int iter    = 0;
+    unsigned int maxiter = 10;
 
     // output results on first iteration
     output_results(iter);

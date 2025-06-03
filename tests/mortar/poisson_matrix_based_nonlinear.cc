@@ -128,7 +128,7 @@ public:
     solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     delta_solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     system_rhs.reinit(locally_owned_dofs, comm);
-    solution = 1.0;
+    solution          = 1.0;
     previous_solution = solution;
 
     // apply BCs to solution vector for first iteration
@@ -201,15 +201,16 @@ public:
                           fe_values.shape_grad(j, q);
 
                         // (∇v, ∇δu) - (v, exp(u)*δu)
-                        cell_matrix(i, j) += (grad_phi_i * grad_phi_j -
-                                              phi_i * nonlinearity * phi_j) *
-                                             dx;
+                        cell_matrix(i, j) +=
+                          (grad_phi_i * grad_phi_j) *
+                          //-
+                          //                    phi_i * nonlinearity * phi_j) *
+                          dx;
                       }
 
                     // -(∇v, ∇u) + (v, exp(u))
-                    cell_rhs(i) += (-grad_phi_i * previous_gradients[q] +
-                                    phi_i * nonlinearity) *
-                                   dx;
+                    cell_rhs(i) +=
+                      (-grad_phi_i * previous_gradients[q] + phi_i * 1) * dx;
                   }
               }
 
@@ -224,7 +225,7 @@ public:
 
     // add coupling entries in system matrix and RHS
     mortar_coupling_operator->add_system_matrix_entries(system_matrix);
-    mortar_coupling_operator->add_system_rhs_entries(system_rhs, delta_solution);
+    mortar_coupling_operator->add_system_rhs_entries(system_rhs, solution);
 
     system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
@@ -289,7 +290,7 @@ public:
                       fe_values.shape_grad(i, q);
 
                     cell_residual(i) +=
-                      (grad_phi_i * gradients[q] - phi_i * nonlinearity) * dx;
+                      (grad_phi_i * gradients[q] - phi_i * 1) * dx;
                   }
               }
 
@@ -300,14 +301,14 @@ public:
           }
       }
 
-    mortar_coupling_operator->add_system_rhs_entries(residual, delta_solution);
+    mortar_coupling_operator->add_system_rhs_entries(residual, solution);
 
     // std::cout << "Residual " << std::endl;
     // for (auto it = residual.begin(); it != residual.end(); ++it)
     //   std::cout << *it << " ";
 
     // std::cout << std::endl;
-    
+
     residual.compress(VectorOperation::add);
     residual.update_ghost_values();
 
@@ -335,11 +336,12 @@ public:
     // std::cout << std::endl;
 
     // std::cout << "previous solution " << std::endl;
-    // for (auto it = previous_solution.begin(); it != previous_solution.end(); ++it)
+    // for (auto it = previous_solution.begin(); it != previous_solution.end();
+    // ++it)
     //   std::cout << *it << " ";
 
     // std::cout << std::endl;
-    
+
     // std::cout << "delta solution " << std::endl;
     // for (auto it = delta_solution.begin(); it != delta_solution.end(); ++it)
     //   std::cout << *it << " ";
@@ -365,10 +367,10 @@ public:
                              Utilities::MPI::this_mpi_process(comm) == 0);
 
     // iteration parameters
-    double       error = 1e10;
-    double       tol   = 1e-10;
-    unsigned int iter  = 0;
-    unsigned int itermax = 10;
+    double       error   = 1e10;
+    double       tol     = 1e-10;
+    unsigned int iter    = 0;
+    unsigned int itermax = 200;
 
     // output results on first iteration
     output_results(iter);
