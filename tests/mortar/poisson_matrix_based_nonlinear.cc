@@ -128,6 +128,7 @@ public:
     solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     delta_solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     system_rhs.reinit(locally_owned_dofs, comm);
+    solution = 1.0;
     previous_solution = solution;
 
     // apply BCs to solution vector for first iteration
@@ -223,7 +224,7 @@ public:
 
     // add coupling entries in system matrix and RHS
     mortar_coupling_operator->add_system_matrix_entries(system_matrix);
-    mortar_coupling_operator->add_system_rhs_entries(system_rhs, solution);
+    mortar_coupling_operator->add_system_rhs_entries(system_rhs, delta_solution);
 
     system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
@@ -299,13 +300,13 @@ public:
           }
       }
 
-    mortar_coupling_operator->add_system_rhs_entries(residual, solution);
+    mortar_coupling_operator->add_system_rhs_entries(residual, delta_solution);
 
-    std::cout << "Residual " << std::endl;
-    for (auto it = residual.begin(); it != residual.end(); ++it)
-      std::cout << *it << " ";
+    // std::cout << "Residual " << std::endl;
+    // for (auto it = residual.begin(); it != residual.end(); ++it)
+    //   std::cout << *it << " ";
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
     
     residual.compress(VectorOperation::add);
     residual.update_ghost_values();
@@ -327,33 +328,33 @@ public:
     // solve linear system
     solver.solve(system_matrix, delta_solution, system_rhs, preconditioner);
 
-    std::cout << "RHS " << std::endl;
-    for (auto it = system_rhs.begin(); it != system_rhs.end(); ++it)
-      std::cout << *it << " ";
+    // std::cout << "RHS " << std::endl;
+    // for (auto it = system_rhs.begin(); it != system_rhs.end(); ++it)
+    //   std::cout << *it << " ";
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
 
-    std::cout << "previous solution " << std::endl;
-    for (auto it = previous_solution.begin(); it != previous_solution.end(); ++it)
-      std::cout << *it << " ";
+    // std::cout << "previous solution " << std::endl;
+    // for (auto it = previous_solution.begin(); it != previous_solution.end(); ++it)
+    //   std::cout << *it << " ";
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
     
-    std::cout << "delta solution " << std::endl;
-    for (auto it = delta_solution.begin(); it != delta_solution.end(); ++it)
-      std::cout << *it << " ";
+    // std::cout << "delta solution " << std::endl;
+    // for (auto it = delta_solution.begin(); it != delta_solution.end(); ++it)
+    //   std::cout << *it << " ";
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
 
     // update solution
     constraints.distribute(solution);
     solution += delta_solution;
 
-    std::cout << "updated solution " << std::endl;
-    for (auto it = solution.begin(); it != solution.end(); ++it)
-      std::cout << *it << " ";
+    // std::cout << "updated solution " << std::endl;
+    // for (auto it = solution.begin(); it != solution.end(); ++it)
+    //   std::cout << *it << " ";
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
   }
 
   void
@@ -364,9 +365,10 @@ public:
                              Utilities::MPI::this_mpi_process(comm) == 0);
 
     // iteration parameters
-    double       error = 1e6;
-    double       tol   = 1e-6;
+    double       error = 1e10;
+    double       tol   = 1e-10;
     unsigned int iter  = 0;
+    unsigned int itermax = 10;
 
     // output results on first iteration
     output_results(iter);
@@ -382,20 +384,22 @@ public:
         compute_update();
 
         // calculate error
+        error = delta_solution.l2_norm();
+
+        // print norms and residual
         pcout << "   Iter " << iter << " - Delta solution norm, Linfty norm: "
               << delta_solution.linfty_norm()
               << " L2 norm: " << delta_solution.l2_norm() << std::endl;
-
-        // error = delta_solution.linfty_norm();
-
-        error = compute_residual();
-        pcout << "   Residual:  " << error << std::endl;
+        // pcout << "   Residual:  " << compute_residual() << std::endl;
 
         // output iteration results
         output_results(iter);
 
         // update solution
         previous_solution = solution;
+
+        if (iter == itermax)
+          break;
       }
   }
 
@@ -456,7 +460,7 @@ main(int argc, char **argv)
 {
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  PoissonMatrixBased<2> problem(1, 1, 4, 1);
+  PoissonMatrixBased<2> problem(1, 1, 3, 1);
 
   // generate grid and setup dofs
   problem.generate_grid();
