@@ -67,30 +67,37 @@ VANSOperator<dim, number>::evaluate_void_fraction(
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
 
-  const DoFHandler<dim> &void_fraction_dof_handler=void_fraction_manager.dof_handler;
+  const DoFHandler<dim> &void_fraction_dof_handler =
+    void_fraction_manager.dof_handler;
   void_fraction.reinit(n_cells, integrator.n_q_points);
   void_fraction_gradient.reinit(n_cells, integrator.n_q_points);
 
   FEValues<dim> fe_values(*(this->matrix_free.get_mapping_info().mapping),
-                        void_fraction_manager.dof_handler.get_fe(),
-                        this->matrix_free.get_quadrature(),
-                        update_values | update_gradients);
+                          void_fraction_manager.dof_handler.get_fe(),
+                          this->matrix_free.get_quadrature(),
+                          update_values | update_gradients);
 
-  std::vector<double> cell_void_fraction(fe_values.n_quadrature_points);
-  std::vector<Tensor<1,dim>> cell_void_fraction_gradient(fe_values.n_quadrature_points);
+  std::vector<double>         cell_void_fraction(fe_values.n_quadrature_points);
+  std::vector<Tensor<1, dim>> cell_void_fraction_gradient(
+    fe_values.n_quadrature_points);
 
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
       for (auto lane = 0u;
-          lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
-          lane++)
+           lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
         {
-          fe_values.reinit( this->matrix_free.get_cell_iterator(cell, lane)
-    ->as_dof_handler_iterator(void_fraction_dof_handler));
+          fe_values.reinit(
+            this->matrix_free.get_cell_iterator(cell, lane)
+              ->as_dof_handler_iterator(void_fraction_dof_handler));
 
-          fe_values.get_function_values(void_fraction_manager.void_fraction_locally_relevant,cell_void_fraction);
-          fe_values.get_function_gradients(void_fraction_manager.void_fraction_locally_relevant,cell_void_fraction_gradient);
+          fe_values.get_function_values(
+            void_fraction_manager.void_fraction_locally_relevant,
+            cell_void_fraction);
+          fe_values.get_function_gradients(
+            void_fraction_manager.void_fraction_locally_relevant,
+            cell_void_fraction_gradient);
 
           for (const auto q : fe_values.quadrature_point_indices())
             {
@@ -98,7 +105,7 @@ VANSOperator<dim, number>::evaluate_void_fraction(
                 void_fraction_gradient[cell][q][c][lane] =
                   cell_void_fraction_gradient[q][c];
 
-              void_fraction[cell][q][lane]=cell_void_fraction[q];
+              void_fraction[cell][q][lane] = cell_void_fraction[q];
             }
         }
     }
