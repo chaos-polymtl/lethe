@@ -1105,7 +1105,9 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                       {
                         buffer.reinit(n_dofs_per_cell);
                         if (b == 0) // negative ('mortar') side
-                          evaluator->local_integrate(
+                          {
+                            std::cout << "DOF " << i << ", Matrix -m side" << std::endl;
+                            evaluator->local_integrate(
                             data,
                             buffer,
                             ptr_q,
@@ -1113,8 +1115,11 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                             all_value_m.data() +
                               (ptr_q * n_dofs_per_cell + i) * q_data_size,
                             nullptr);
+                          }
                         else // positive ('non-mortar') side
-                          evaluator->local_integrate(
+                          {
+                            std::cout << "DOF " << i << ", Matrix -p side" << std::endl;
+                            evaluator->local_integrate(
                             data,
                             buffer,
                             ptr_q,
@@ -1122,6 +1127,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                             nullptr,
                             all_value_p.data() +
                               (ptr_q * n_dofs_per_cell + i) * q_data_size);
+                            }
+
                         // Copy data from buffer to cell matrix
                         for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                           cell_matrix[j][i] = buffer[j];
@@ -1264,7 +1271,9 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
                       {
                         buffer.reinit(n_dofs_per_cell);
                         if (b == 0) // negative ('mortar') side
-                          evaluator->local_integrate(
+                          {
+                            std::cout << "RHS -m side" << std::endl;
+                            evaluator->local_integrate_residual(
                             data,
                             buffer,
                             ptr_q,
@@ -1272,8 +1281,11 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
                             all_value_m.data() +
                               (ptr_q * n_dofs_per_cell + i) * q_data_size,
                             nullptr);
+                          }
                         else // positive ('non-mortar') side
-                          evaluator->local_integrate(
+                          {
+                            std::cout << "RHS -p side" << std::endl;
+                            evaluator->local_integrate_residual(
                             data,
                             buffer,
                             ptr_q,
@@ -1281,8 +1293,10 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
                             nullptr,
                             all_value_p.data() +
                               (ptr_q * n_dofs_per_cell + i) * q_data_size);
+                            }
 
-                        cell_rhs[i] = -buffer[i];
+                        // Copy data from buffer to cell matrix
+                        cell_rhs[i] = buffer[i];
                       }
 
 
@@ -1427,20 +1441,37 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
 
+      // // jump(u) = u_m * normal_m + u_p * normal_p
+      // const auto value_jump = outer((value_m - value_p), normal);
+      // // avg(∇u) = (∇u_m + ∇u_p) * 0.5
+      // const auto gradient_normal_avg =
+      //   (normal_gradient_m - normal_gradient_p) * 0.5;
+
+      std::cout << "q_ID " << q_index << ", normal " << normal << ", jump " << value_jump << ", avg " << gradient_normal_avg << std::endl;
       // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
 
       // - (n avg(∇v), jump(u))
       this->phi_m.submit_gradient(outer(-value_jump, normal) * 0.5 * JxW, q);
+      // this->phi_m.submit_gradient(-value_jump * 0.5 * JxW, q);
 
       // + (jump(v), σ jump(u) - avg(∇u) n)
       this->phi_m.submit_value((value_jump * sigma - gradient_normal_avg) * JxW,
                                q);
+      // this->phi_m.submit_value((contract(value_jump, normal) * sigma - gradient_normal_avg) *
+      //                            JxW,
+      //                          q);
     }
   // Multiply previous terms by respective test functions values/gradients
   this->phi_m.test_and_sum(buffer,
                            EvaluationFlags::values |
                              EvaluationFlags::gradients);
+  
+  std::cout << "Buffer entry: " << std::endl;
+  for (unsigned int n = 0; n < buffer.size(); n++)
+    std::cout << buffer[n] << " ";
+
+  std::cout << std::endl;
 }
 
 template <int dim, int n_components, typename Number>
@@ -1474,21 +1505,38 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate_residual(
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
 
+      // jump(u) = u_m * normal_m + u_p * normal_p
+      // const auto value_jump = outer((value_m - value_p), normal);
+      // avg(∇u) = (∇u_m + ∇u_p) * 0.5
+      // const auto gradient_normal_avg =
+      //   (normal_gradient_m - normal_gradient_p) * 0.5;
+
+      std::cout << "q_ID " << q_index << ", normal " << normal << ", jump " << value_jump << ", avg " << gradient_normal_avg << std::endl;
       // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
 
       // + (n avg(∇v), jump(u))
       this->phi_m.submit_gradient(outer(value_jump, normal) * 0.5 * JxW, q);
+      // this->phi_m.submit_gradient(value_jump * 0.5 * JxW, q);
 
       // - (jump(v), σ jump(u) - avg(∇u) n)
       this->phi_m.submit_value(-(value_jump * sigma - gradient_normal_avg) *
                                  JxW,
                                q);
+      // this->phi_m.submit_value(-(contract(value_jump, normal) * sigma - gradient_normal_avg) *
+      //                            JxW,
+      //                          q);
     }
 
   this->phi_m.test_and_sum(buffer,
                            EvaluationFlags::values |
                              EvaluationFlags::gradients);
+    
+  std::cout << "Buffer entry: " << std::endl;
+  for (unsigned int n = 0; n < buffer.size(); n++)
+    std::cout << buffer[n] << " ";
+
+  std::cout << std::endl;
 }
 
 /*----------- NavierStokesCouplingEvaluation -------------------------*/
