@@ -4165,7 +4165,7 @@ namespace Parameters
       prm.enter_subsection("rotor angular velocity");
       rotor_angular_velocity =
         std::make_shared<Functions::ParsedFunction<dim>>();
-      rotor_angular_velocity->declare_parameters(prm, dim);
+      rotor_angular_velocity->declare_parameters(prm);
       prm.leave_subsection();
       prm.declare_entry("penalty factor",
                         "1.",
