@@ -45,6 +45,70 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const VectorType                         &time_derivative_previous_solutions,
   const VoidFractionBase<dim>              &void_fraction_manager)
 {
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    {
+      AssertThrow(false, ExcNotImplemented());
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
+    {
+      const unsigned int min_level = this->minlevel;
+      const unsigned int max_level = this->maxlevel;
+
+      this->void_fraction_dof_handlers.resize(min_level, max_level);
+
+      for (unsigned int l = min_level; l <= max_level; l++)
+        {
+          this->void_fraction_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->temperature_dof_handlers[l].distribute_dofs(
+            void_fraction_manager.dof_handler.get_fe());
+        }
+
+      this->transfers_temperature.resize(min_level, max_level);
+
+      for (unsigned int l = min_level; l < max_level; l++)
+        {
+          this->transfers_temperature[l + 1].reinit(
+            this->temperature_dof_handlers[l + 1],
+            this->temperature_dof_handlers[l],
+            {},
+            {});
+        }
+
+      this->mg_transfer_gc_void_fraction =
+        std::make_shared<GCTransferType>(this->transfers_temperature);
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+      this->mg_transfer_gc_temperature->build(
+        void_fraction_manager.dof_handler, [&](const auto l, auto &vec) {
+          vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
+                     DoFTools::extract_locally_active_dofs(
+                       this->temperature_dof_handlers[l]),
+                     this->temperature_dof_handlers[l].get_mpi_communicator());
+        });
+#endif
+
+      MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
+                                                          this->maxlevel);
+
+      this->mg_transfer_gc_temperature->interpolate_to_mg(
+        void_fraction_manager.dof_handler,
+        mg_temperature_solution,
+        temperature_present_solution);
+
+      for (unsigned int l = min_level; l <= max_level; l++)
+        {
+          mg_temperature_solution[l].update_ghost_values();
+
+          this->mg_operators[l]->compute_buoyancy_term(
+            mg_temperature_solution[l], this->temperature_dof_handlers[l]);
+        }
+    }
+
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     dynamic_cast<VANSOperator<dim, MGNumber> *>(this->mg_operators[level].get())
       ->evaluate_void_fraction(void_fraction_manager);
@@ -148,6 +212,10 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 
   this->setup_dofs();
+
+  void_fraction_manager.calculate_void_fraction(
+    this->simulation_control->get_current_time());
+
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
