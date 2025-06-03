@@ -1030,6 +1030,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points = mortar_manager->get_n_points();
+
             // Initialize coupling evaluator with the correct size
             evaluator->local_reinit(
               cell,
@@ -1063,6 +1064,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
 
   // 2) Communicate
+  /* Export data from the 'mortar' (negative) side to the ghost side, i.e. 'non-mortar' side */
   partitioner_cell.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
                             all_value_m.size()),
@@ -1188,6 +1190,7 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
           {
             // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points = mortar_manager->get_n_points();
+
             // Initialize coupling evaluator with the correct size
             evaluator->local_reinit(
               cell,
@@ -1197,6 +1200,7 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
             buffer.reinit(n_dofs_per_cell);
 
             const auto local_dofs = this->get_dof_indices(cell);
+
             // Use the buffer to store the present solution at the cell dofs
             for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
               buffer[j] = present_solution[local_dofs[j]];
@@ -1221,6 +1225,7 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
 
   // 2) Communicate
+  /* Export data from the 'mortar' (negative) side to the ghost side, i.e. 'non-mortar' side */
   partitioner_cell.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
                             all_value_m.size()),
