@@ -128,8 +128,6 @@ public:
     solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     delta_solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     system_rhs.reinit(locally_owned_dofs, comm);
-    solution          = 1.0;
-    previous_solution = solution;
 
     // apply BCs to solution vector for first iteration
     constraints.distribute(solution);
@@ -201,16 +199,14 @@ public:
                           fe_values.shape_grad(j, q);
 
                         // (∇v, ∇δu) - (v, exp(u)*δu)
-                        cell_matrix(i, j) +=
-                          (grad_phi_i * grad_phi_j) *
-                          //-
-                          //                    phi_i * nonlinearity * phi_j) *
-                          dx;
+                        cell_matrix(i, j) += (grad_phi_i * grad_phi_j -
+                                              phi_i * nonlinearity * phi_j) *
+                                             dx;
                       }
 
                     // -(∇v, ∇u) + (v, exp(u))
                     cell_rhs(i) +=
-                      (-grad_phi_i * previous_gradients[q] + phi_i * 1) * dx;
+                      (-grad_phi_i * previous_gradients[q] + phi_i * nonlinearity) * dx;
                   }
               }
 
@@ -231,90 +227,6 @@ public:
     system_rhs.compress(VectorOperation::add);
   }
 
-  double
-  compute_residual()
-  {
-    TrilinosWrappers::MPI::Vector residual;
-    TrilinosWrappers::MPI::Vector evaluation_point(system_rhs);
-    TrilinosWrappers::MPI::Vector local_newton_update(system_rhs);
-    local_newton_update = delta_solution;
-    TrilinosWrappers::MPI::Vector local_evaluation_point;
-
-    const IndexSet locally_relevant_dofs =
-      DoFTools::extract_locally_relevant_dofs(dof_handler);
-    const IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
-
-    residual.reinit(locally_owned_dofs, comm);
-    local_evaluation_point.reinit(locally_owned_dofs,
-                                  locally_relevant_dofs,
-                                  comm);
-
-    evaluation_point = solution;
-
-    local_evaluation_point = solution;
-
-    FEValues<dim> fe_values(fe,
-                            quadrature,
-                            update_values | update_gradients |
-                              update_JxW_values | update_quadrature_points);
-
-    const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-    const unsigned int n_q_points    = fe_values.n_quadrature_points;
-
-    Vector<double> cell_residual(dofs_per_cell);
-
-    std::vector<double>         values(n_q_points);
-    std::vector<Tensor<1, dim>> gradients(n_q_points);
-
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-    for (const auto &cell : dof_handler.active_cell_iterators())
-      {
-        if (cell->is_locally_owned())
-          {
-            cell_residual = 0.0;
-            fe_values.reinit(cell);
-
-            fe_values.get_function_values(local_evaluation_point, values);
-            fe_values.get_function_gradients(local_evaluation_point, gradients);
-
-            for (unsigned int q = 0; q < n_q_points; ++q)
-              {
-                const double nonlinearity = std::exp(values[q]);
-                const double dx           = fe_values.JxW(q);
-
-                for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                  {
-                    const double         phi_i = fe_values.shape_value(i, q);
-                    const Tensor<1, dim> grad_phi_i =
-                      fe_values.shape_grad(i, q);
-
-                    cell_residual(i) +=
-                      (grad_phi_i * gradients[q] - phi_i * 1) * dx;
-                  }
-              }
-
-            cell->get_dof_indices(local_dof_indices);
-            constraints.distribute_local_to_global(cell_residual,
-                                                   local_dof_indices,
-                                                   residual);
-          }
-      }
-
-    mortar_coupling_operator->add_system_rhs_entries(residual, solution);
-
-    // std::cout << "Residual " << std::endl;
-    // for (auto it = residual.begin(); it != residual.end(); ++it)
-    //   std::cout << *it << " ";
-
-    // std::cout << std::endl;
-
-    residual.compress(VectorOperation::add);
-    residual.update_ghost_values();
-
-    return residual.l2_norm();
-  }
-
   void
   compute_update()
   {
@@ -329,34 +241,9 @@ public:
     // solve linear system
     solver.solve(system_matrix, delta_solution, system_rhs, preconditioner);
 
-    // std::cout << "RHS " << std::endl;
-    // for (auto it = system_rhs.begin(); it != system_rhs.end(); ++it)
-    //   std::cout << *it << " ";
-
-    // std::cout << std::endl;
-
-    // std::cout << "previous solution " << std::endl;
-    // for (auto it = previous_solution.begin(); it != previous_solution.end();
-    // ++it)
-    //   std::cout << *it << " ";
-
-    // std::cout << std::endl;
-
-    // std::cout << "delta solution " << std::endl;
-    // for (auto it = delta_solution.begin(); it != delta_solution.end(); ++it)
-    //   std::cout << *it << " ";
-
-    // std::cout << std::endl;
-
     // update solution
-    constraints.distribute(solution);
     solution += delta_solution;
-
-    // std::cout << "updated solution " << std::endl;
-    // for (auto it = solution.begin(); it != solution.end(); ++it)
-    //   std::cout << *it << " ";
-
-    // std::cout << std::endl;
+    constraints.distribute(solution);
   }
 
   void
@@ -392,13 +279,9 @@ public:
         pcout << "   Iter " << iter << " - Delta solution norm, Linfty norm: "
               << delta_solution.linfty_norm()
               << " L2 norm: " << delta_solution.l2_norm() << std::endl;
-        // pcout << "   Residual:  " << compute_residual() << std::endl;
 
         // output iteration results
         output_results(iter);
-
-        // update solution
-        previous_solution = solution;
 
         if (iter == itermax)
           break;
@@ -451,7 +334,6 @@ private:
   SparsityPattern                                sparsity_pattern;
   TrilinosWrappers::MPI::Vector                  solution;
   TrilinosWrappers::MPI::Vector                  delta_solution;
-  TrilinosWrappers::MPI::Vector                  previous_solution;
   TrilinosWrappers::MPI::Vector                  system_rhs;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
 };
