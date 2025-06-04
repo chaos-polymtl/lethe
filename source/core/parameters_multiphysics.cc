@@ -561,7 +561,8 @@ Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
       "transformation type",
       "tanh",
       Patterns::Selection("tanh|piecewise polynomial"),
-      "Transfomation function used to get the phase indicator from the signed distance");
+      "Transformation function used to get the phase indicator from the signed "
+      "distance");
     prm.declare_entry("tanh thickness",
                       "1.",
                       Patterns::Double(),

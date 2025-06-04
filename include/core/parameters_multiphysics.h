@@ -48,11 +48,9 @@ namespace Parameters
   };
 
   /**
-   * @brief Different interface regularization method types:
-   *  - none
-   *  - sharpening: projection-based interface sharpening
-   *  - algebraic: PDE-based reinitialization
-   *  - geometric: geometric redistanciation
+   * @brief Different transomation function types for the signed distance:
+   *  - tanh: hyperbolic tangent
+   *  - piecewise_polynomial: 4th degree piecewise polynomial
    */
   enum class RedistanciationTransformationType
   {
@@ -254,7 +252,7 @@ namespace Parameters
     bool output_signed_distance;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
-    /// Interface thickness for the tanh transformation
+    /// Transformation type transforming the signed distance to a phase fraction
     RedistanciationTransformationType transformation_type;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
