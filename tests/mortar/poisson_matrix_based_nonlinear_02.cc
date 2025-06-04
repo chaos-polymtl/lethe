@@ -6,6 +6,8 @@
  */
 
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
@@ -23,8 +25,6 @@
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
-#include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parsed_function.h>
 
 #include <fstream>
 
@@ -154,7 +154,8 @@ public:
     // prm.set("Function expression", "x^2 + y^2");
     // Functions::ParsedFunction<dim> initial_condition;
     // initial_condition.parse_parameters(prm);
-    // VectorTools::interpolate(mapping, dof_handler, initial_condition, solution);
+    // VectorTools::interpolate(mapping, dof_handler, initial_condition,
+    // solution);
 
     // apply BCs to solution vector for first iteration
     constraints.distribute(solution);
@@ -267,7 +268,7 @@ public:
     double       error = 1e10;
     double       tol   = 1e-10;
     unsigned int it    = 0;
-    unsigned int itmax = 100;
+    unsigned int itmax = 200;
 
     // output results on first iteration
     output_results(it);
