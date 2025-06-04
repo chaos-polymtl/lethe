@@ -125,9 +125,11 @@ VolumeOfFluid<dim>::VolumeOfFluid(
         fe,
         simulation_parameters.multiphysics.vof_parameters.regularization_method
           .geometric_interface_reinitialization.max_reinitialization_distance,
-        0.0,
+        -0.5,
         simulation_parameters.multiphysics.vof_parameters.regularization_method
           .verbosity);
+      this->signed_distance_transformation = SignedDistanceTransformationBase::model_cast(simulation_parameters.multiphysics.vof_parameters.regularization_method
+            .geometric_interface_reinitialization);
     }
 }
 
@@ -724,8 +726,10 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
           compute_level_set_from_phase_fraction(this->present_solution,
                                                 this->level_set);
 
+          this->present_solution *=-1.0;
+
           signed_distance_solver->set_level_set_from_background_mesh(
-            dof_handler, this->level_set);
+            dof_handler, this->present_solution);
 
           signed_distance_solver->solve();
         }
@@ -2966,10 +2970,7 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
   for (auto p : this->locally_owned_dofs)
     {
       const double phase      = solution[p];
-      double       phase_sign = sgn(0.5 - phase);
-      level_set_owned[p] =
-        tanh_thickness *
-        std::atanh(phase_sign * std::min(abs(0.5 - phase) / 0.5, 1.0 - 1e-12));
+      level_set_owned[p] = (-2.0*phase+1.0);
     }
 
   this->nonzero_constraints.distribute(level_set_owned);
@@ -2995,7 +2996,7 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
   for (auto p : this->locally_owned_dofs)
     {
       const double signed_dist = level_set_solution[p];
-      solution_owned[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
+      solution_owned[p] = signed_distance_transformation->transfom_signed_distance(signed_dist);
     }
   this->nonzero_constraints.distribute(solution_owned);
 
@@ -3025,11 +3026,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .frequency != 1)
     {
-      compute_level_set_from_phase_fraction(this->previous_solutions[0],
-                                            previous_level_set);
-
+      this->previous_solutions[0] *= -1.0;                                    
       signed_distance_solver->set_level_set_from_background_mesh(
-        dof_handler, previous_level_set);
+        dof_handler, this->previous_solutions[0]);
 
       signed_distance_solver->solve();
 
@@ -3054,11 +3053,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
     this->pcout << "In redistanciation of the present solution ..."
                 << std::endl;
 
-  compute_level_set_from_phase_fraction(this->present_solution,
-                                        this->level_set);
-
+  this->present_solution *=-1.0;
   signed_distance_solver->set_level_set_from_background_mesh(dof_handler,
-                                                             this->level_set);
+                                                             this->present_solution);
 
   signed_distance_solver->solve();
 
