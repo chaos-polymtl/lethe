@@ -29,6 +29,7 @@ add_library(lethe-solvers
   postprocessing_velocities.cc
   postprocessing_scalar.cc
   postprocessors_smoothing.cc
+  signed_distance_transformation.cc
   simulation_parameters.cc
   source_terms.cc
   tracer.cc
@@ -79,6 +80,7 @@ add_library(lethe-solvers
   ../../include/solvers/postprocessing_velocities.h
   ../../include/solvers/postprocessors_smoothing.h
   ../../include/solvers/postprocessors.h
+  ../../include/solvers/signed_distance_transformation.h
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/source_terms.h
   ../../include/solvers/stabilization.h
