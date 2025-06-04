@@ -240,6 +240,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                        constraints,
                        tmp_local_level_set);
 
+  tmp_local_level_set *= scaling;
+
   level_set = tmp_local_level_set;
 }
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_signed_distance_transformation_h
@@ -8,15 +8,16 @@
 #include <core/parameters_multiphysics.h>
 
 /**
- * @brief Abstract class for filtering phase fraction in volume of fluid (VOF)
- * simulations.
+ * @brief Abstract class for the transformation of the signed distance to the
+ * phase fraction for the VOF solver when geometric redistanciation is used.
  */
 class SignedDistanceTransformationBase
 {
 public:
   /**
-   * @brief Instantiate and return a pointer to a SignedDistanceTransformationBase
-   * object by casting it to the proper child class.
+   * @brief Instantiate and return a pointer to a
+   * SignedDistanceTransformationBase object by casting it to the proper child
+   * class.
    *
    * @param[in] geometric_redistanciation_parameters VOF geometric
    * redistanciation parameters.
@@ -32,14 +33,16 @@ public:
    *
    * @param[in] signed_distance Value of the signed distance
    *
-   * @return Value of the computed phase fraction after applying the transtion.
+   * @return Value of the computed phase fraction after applying the
+   * transformation.
    */
   virtual double
   transfom_signed_distance(const double signed_distance) = 0;
 };
 
 /**
- * @brief Transforms the signed distance to the phase fraction with a hyperbolic tangent function.
+ * @brief Transforms the signed distance to the phase fraction with a hyperbolic
+ * tangent function.
  *
  * The  phase fraction is defined as:
  *
@@ -67,7 +70,8 @@ public:
    *
    * @param[in] signed_distance Value of the signed distance
    *
-   * @return Value of the computed phase fraction after applying the transtion.
+   * @return Value of the computed phase fraction after applying the
+   * transformation.
    */
   double
   transfom_signed_distance(const double signed_distance) override
@@ -84,9 +88,10 @@ private:
 };
 
 /**
- * @brief Transforms the signed distance to the phase fraction with a piecewise polynomial function (degree 4).
+ * @brief Transforms the signed distance to the phase fraction with a piecewise
+ * polynomial function (degree 4).
  *
- * The  phase fraction is defined as:
+ * The phase fraction is defined as:
  *
  * if \f$d < 0 \f$
  * \f$\phi = 0.5 - 0.5(4d' + 6d'^2 + 4*d'^3 + d'^4)\f$
@@ -105,13 +110,14 @@ class SignedDistanceTransformationPiecewisePolynomial
 {
 public:
   /**
-   * @brief Constructor of the piecewise polynomial signed distance transformation.
+   * @brief Constructor of the piecewise polynomial signed distance
+   * transformation.
    *
    * @param[in] max_reinitialization_distance Value of the maximum distance
    */
   SignedDistanceTransformationPiecewisePolynomial(
     const double max_reinitialization_distance)
-    : max_reinitialization_distance(max_reinitialization_distance)
+    : max_reinitialization_distance_inv(1.0 / max_reinitialization_distance)
   {}
 
   /**
@@ -125,7 +131,7 @@ public:
   transfom_signed_distance(const double signed_distance) override
   {
     const double dimentionless_d =
-      signed_distance / max_reinitialization_distance;
+      signed_distance * max_reinitialization_distance_inv;
 
     double piecewise_polynomial_value;
 
@@ -150,9 +156,9 @@ public:
 
 private:
   /**
-   * Maximum redistanciation distance.
+   * Inverse of the maximum redistanciation distance.
    */
-  const double max_reinitialization_distance;
+  const double max_reinitialization_distance_inv;
 };
 
 #endif

@@ -781,7 +781,7 @@ private:
   std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
     signed_distance_solver;
 
-  // Signed distance transformation function to phase fraction
+  // Signed distance transformation function to a phase fraction
   std::shared_ptr<SignedDistanceTransformationBase>
     signed_distance_transformation;
 };
