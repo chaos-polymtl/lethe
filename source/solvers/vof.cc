@@ -119,13 +119,15 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable)
     {
+      // Instantiation of the signed distance solver. The iso-level is set
       this->signed_distance_solver = std::make_shared<
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
         triangulation,
         fe,
         simulation_parameters.multiphysics.vof_parameters.regularization_method
           .geometric_interface_reinitialization.max_reinitialization_distance,
-        -0.5,
+        0.5,
+        -1.0,
         simulation_parameters.multiphysics.vof_parameters.regularization_method
           .verbosity);
       this->signed_distance_transformation =
@@ -724,11 +726,6 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
           (simulation_control->get_step_number() == 0))
         {
           signed_distance_solver->setup_dofs();
-
-          compute_level_set_from_phase_fraction(this->present_solution,
-                                                this->level_set);
-
-          this->present_solution *= -1.0;
 
           signed_distance_solver->set_level_set_from_background_mesh(
             dof_handler, this->present_solution);
@@ -3029,7 +3026,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .frequency != 1)
     {
-      this->previous_solutions[0] *= -1.0;
       signed_distance_solver->set_level_set_from_background_mesh(
         dof_handler, this->previous_solutions[0]);
 
@@ -3056,7 +3052,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
     this->pcout << "In redistanciation of the present solution ..."
                 << std::endl;
 
-  this->present_solution *= -1.0;
   signed_distance_solver->set_level_set_from_background_mesh(
     dof_handler, this->present_solution);
 
