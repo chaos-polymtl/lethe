@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief PoissonOperator: test matrix-based assembly.
- */
+ * @brief PoissonOperator: test matrix-based assembly for a nonlinear Poisson problem of the form -∇.(exp(u)
+ * ∇(u)) = f . Based on prototypes/matrix_based_non_linear_poisson */
 
 #include <deal.II/base/conditional_ostream.h>
 
@@ -136,9 +136,6 @@ public:
   void
   assemble_system()
   {
-    /* Matrix assembly for the nonlinear Poisson equation of the form -∇.(exp(u)
-     * ∇(u)) = f */
-
     system_matrix = 0;
     system_rhs    = 0;
 
@@ -205,8 +202,9 @@ public:
                       }
 
                     // -(∇v, ∇u) + (v, exp(u))
-                    cell_rhs(i) +=
-                      (-grad_phi_i * previous_gradients[q] + phi_i * nonlinearity) * dx;
+                    cell_rhs(i) += (-grad_phi_i * previous_gradients[q] +
+                                    phi_i * nonlinearity) *
+                                   dx;
                   }
               }
 
