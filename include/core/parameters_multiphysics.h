@@ -46,7 +46,7 @@ namespace Parameters
     constant,
     adaptive
   };
-  
+
   /**
    * @brief Different interface regularization method types:
    *  - none

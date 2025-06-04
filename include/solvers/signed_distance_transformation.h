@@ -18,13 +18,14 @@ public:
    * @brief Instantiate and return a pointer to a SignedDistanceTransformationBase
    * object by casting it to the proper child class.
    *
-   * @param[in] geometric_redistanciation_parameters VOF geometric redistanciation parameters.
+   * @param[in] geometric_redistanciation_parameters VOF geometric
+   * redistanciation parameters.
    *
    * @return Casted SignedDistanceTransformationBase child class object.
    */
   static std::shared_ptr<SignedDistanceTransformationBase>
-  model_cast(
-    const Parameters::VOF_GeometricInterfaceReinitialization &geometric_redistanciation_parameters);
+  model_cast(const Parameters::VOF_GeometricInterfaceReinitialization
+               &geometric_redistanciation_parameters);
 
   /**
    * @brief Compute the value of the phase fraction from the signed distance.
@@ -54,8 +55,8 @@ public:
   /**
    * @brief Constructor of the hyperbolic tangent signed distance transformation.
    *
-   * @param[in] tanh_thickness Value of the \f$\varepsilon\f$ parameter modulating the
-   * interface thickness.
+   * @param[in] tanh_thickness Value of the \f$\varepsilon\f$ parameter
+   * modulating the interface thickness.
    */
   SignedDistanceTransformationTanh(const double tanh_thickness)
     : tanh_thickness(tanh_thickness)
@@ -71,12 +72,13 @@ public:
   double
   transfom_signed_distance(const double signed_distance) override
   {
-    return 0.5 - 0.5 * tanh(signed_distance/tanh_thickness);
+    return 0.5 - 0.5 * tanh(signed_distance / tanh_thickness);
   }
 
 private:
   /**
-   * User-defined parameter that defines the thickness of the interface. It influences its sharpness: a smaller value leads to a sharper interface.
+   * User-defined parameter that defines the thickness of the interface. It
+   * influences its sharpness: a smaller value leads to a sharper interface.
    */
   const double tanh_thickness;
 };
@@ -91,11 +93,15 @@ private:
  *
  * else
  * \f$\phi = 0.5 - 0.5(4d' - 6d'^2 + 4*d'^3 - d'^4)\f$
- * 
- * with \f$d' = d/d_\mathrm{max}\f$, where \f$d\f$ the signed distance and \f$d_\mathrm{max}\f$ the maximum redistanciation distance. This transformation clamps the phase fraction to 0 or 1 when \f$d = \pm d_\mathrm{max}\f$.
+ *
+ * with \f$d' = d/d_\mathrm{max}\f$, where \f$d\f$ the signed distance and
+ * \f$d_\mathrm{max}\f$ the maximum redistanciation distance. This
+ * transformation clamps the phase fraction to 0 or 1 when \f$d = \pm
+ * d_\mathrm{max}\f$.
  *
  */
-class SignedDistanceTransformationPiecewisePolynomial : public SignedDistanceTransformationBase
+class SignedDistanceTransformationPiecewisePolynomial
+  : public SignedDistanceTransformationBase
 {
 public:
   /**
@@ -103,7 +109,8 @@ public:
    *
    * @param[in] max_reinitialization_distance Value of the maximum distance
    */
-  SignedDistanceTransformationPiecewisePolynomial(const double max_reinitialization_distance)
+  SignedDistanceTransformationPiecewisePolynomial(
+    const double max_reinitialization_distance)
     : max_reinitialization_distance(max_reinitialization_distance)
   {}
 
@@ -117,18 +124,27 @@ public:
   double
   transfom_signed_distance(const double signed_distance) override
   {
-    const double dimentionless_d = signed_distance/max_reinitialization_distance;
-    
+    const double dimentionless_d =
+      signed_distance / max_reinitialization_distance;
+
     double piecewise_polynomial_value;
-    
+
     if (dimentionless_d < 0.0)
-    {
-      piecewise_polynomial_value = 4.0*dimentionless_d + 6.0*Utilities::fixed_power<2>(dimentionless_d) + 4.0*Utilities::fixed_power<3>(dimentionless_d) + Utilities::fixed_power<4>(dimentionless_d);
-    }
+      {
+        piecewise_polynomial_value =
+          4.0 * dimentionless_d +
+          6.0 * Utilities::fixed_power<2>(dimentionless_d) +
+          4.0 * Utilities::fixed_power<3>(dimentionless_d) +
+          Utilities::fixed_power<4>(dimentionless_d);
+      }
     else
-    {
-      piecewise_polynomial_value = 4.0*dimentionless_d - 6.0*Utilities::fixed_power<2>(dimentionless_d) + 4.0*Utilities::fixed_power<3>(dimentionless_d) - Utilities::fixed_power<4>(dimentionless_d);
-    }
+      {
+        piecewise_polynomial_value =
+          4.0 * dimentionless_d -
+          6.0 * Utilities::fixed_power<2>(dimentionless_d) +
+          4.0 * Utilities::fixed_power<3>(dimentionless_d) -
+          Utilities::fixed_power<4>(dimentionless_d);
+      }
     return 0.5 - 0.5 * piecewise_polynomial_value;
   }
 
