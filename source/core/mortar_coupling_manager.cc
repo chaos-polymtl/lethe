@@ -1426,7 +1426,8 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
   Number                                    *all_value_m,
-  Number                                    *all_value_p) const
+  Number                                    *all_value_p,
+  const bool                                 mortar_side) const
 {
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
@@ -1445,46 +1446,38 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
       const auto penalty_parameter = data.all_penalty_parameter[q_index];
       const auto normal            = data.all_normals[q_index];
 
-      const auto value_jump = (value_m - value_p);
+      /* The expression for the jump on the mortar interface is
+      jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
+      the value of normal_m, we use a minus sign here because normal_p = -
+      normal_m */
+      const auto value_jump = outer((value_m - value_p), normal);
+
+      /* The expression for the average on the mortar interface is
+      avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
+      above, we include the negative sign here */
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
 
-      // // jump(u) = u_m * normal_m + u_p * normal_p
-      // const auto value_jump = outer((value_m - value_p), normal);
-      // // avg(∇u) = (∇u_m + ∇u_p) * 0.5
-      // const auto gradient_normal_avg =
-      //   (normal_gradient_m - normal_gradient_p) * 0.5;
+      /* Unit normal has opposite signs at interfaces */
+      const double normal_sign = mortar_side ? 1 : -1;
 
-      //  std::cout << "q_ID " << q_index << ", normal " << normal << ", jump "
-      //            << value_jump << ", avg " << gradient_normal_avg <<
-      //            std::endl;
       // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
 
       // - (n avg(∇v), jump(u))
-      this->phi_m.submit_gradient(outer(-value_jump, normal) * 0.5 * JxW, q);
-      // this->phi_m.submit_gradient(-value_jump * 0.5 * JxW, q);
+      this->phi_m.submit_gradient(-value_jump * normal_sign * 0.5 * JxW, q);
 
       // + (jump(v), σ jump(u) - avg(∇u) n)
-      this->phi_m.submit_value((value_jump * sigma - gradient_normal_avg) * JxW,
+      this->phi_m.submit_value((contract(value_jump, normal) * sigma *
+                                  normal_sign -
+                                gradient_normal_avg * normal_sign) *
+                                 JxW,
                                q);
-      // this->phi_m.submit_value((value_jump * sigma) * JxW, q);
-
-      // this->phi_m.submit_value((contract(value_jump, normal) * sigma -
-      // gradient_normal_avg) *
-      //                            JxW,
-      //                          q);
     }
   // Multiply previous terms by respective test functions values/gradients
   this->phi_m.test_and_sum(buffer,
                            EvaluationFlags::values |
                              EvaluationFlags::gradients);
-
-  // std::cout << "Buffer entry: " << std::endl;
-  // for (unsigned int n = 0; n < buffer.size(); n++)
-  //   std::cout << buffer[n] << " ";
-
-  // std::cout << std::endl;
 }
 
 template <int dim, int n_components, typename Number>
@@ -1511,49 +1504,37 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate_residual(
       const auto normal_gradient_m = buffer_m.template read<value_type>();
       const auto normal_gradient_p = buffer_p.template read<value_type>();
 
-      // std::cout << "value_m   " << value_m << ", value_p   " << value_p
-      //           << std::endl;
-
       const auto JxW               = data.all_weights[q_index];
       const auto penalty_parameter = data.all_penalty_parameter[q_index];
       const auto normal            = data.all_normals[q_index];
 
-      const auto value_jump = (value_m - value_p);
+      /* The expression for the jump on the mortar interface is
+      jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
+      the value of normal_m, we use a minus sign here because normal_p = -
+      normal_m */
+      const auto value_jump = outer((value_m - value_p), normal);
+
+      /* The expression for the average on the mortar interface is
+      avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
+      above, we include the negative sign here */
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
 
-      // jump(u) = u_m * normal_m + u_p * normal_p
-      // const auto value_jump = outer((value_m - value_p), normal);
-      // avg(∇u) = (∇u_m + ∇u_p) * 0.5
-      // const auto gradient_normal_avg =
-      //   (normal_gradient_m - normal_gradient_p) * 0.5;
+      /* Unit normal has opposite signs at interfaces */
       const double normal_sign = mortar_side ? 1 : -1;
-
 
       // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
-      // std::cout << "q_ID " << q_index << ", normal " << normal << " , sign"
-      //           << normal_sign << ", jump " << value_jump << ", avg "
-      //           << gradient_normal_avg << " , penalty " << sigma <<
-      //           std::endl;
-      //  + (n avg(∇v), jump(u))
-      this->phi_m.submit_gradient(outer(value_jump, normal) * 0.5 * JxW, q);
-      // this->phi_m.submit_gradient(value_jump * 0.5 * JxW, q);
 
-      // - (jump(v), σ jump(u) - avg(∇u) n)
-      // this->phi_m.submit_value(-(-value_jump * sigma - gradient_normal_avg) *
-      //                           JxW,
-      //                         q);
-      this->phi_m.submit_value(-(normal_sign * value_jump * sigma -
-                                 gradient_normal_avg * normal_sign) *
+      //  + (n avg(∇v), jump(u))
+      this->phi_m.submit_gradient(value_jump * normal_sign * 0.5 * JxW, q);
+
+      // (-jump(v), σ jump(u) + avg(∇u) n)
+      this->phi_m.submit_value((-contract(value_jump, normal) * sigma *
+                                  normal_sign +
+                                gradient_normal_avg * normal_sign) *
                                  JxW,
                                q);
-      // this->phi_m.submit_value(-(value_jump * sigma) * JxW, q);
-
-      // this->phi_m.submit_value(-(contract(value_jump, normal) * sigma -
-      // gradient_normal_avg) *
-      //                            JxW,
-      //                          q);
     }
 
   this->phi_m.test_and_sum(buffer,
@@ -1669,7 +1650,8 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
   Number                                    *all_value_m,
-  Number                                    *all_value_p) const
+  Number                                    *all_value_p,
+  const bool                                 mortar_side) const
 {
   for (const auto q : this->phi_u_m.quadrature_point_indices())
     {
