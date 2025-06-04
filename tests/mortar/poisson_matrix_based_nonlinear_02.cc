@@ -278,7 +278,7 @@ public:
               << " L2 norm: " << delta_solution.l2_norm() << std::endl;
 
         // store error value
-        error = system_rhs.l2_norm();
+        error = delta_solution.l2_norm();
 
         // output iteration results
         output_results(it);
