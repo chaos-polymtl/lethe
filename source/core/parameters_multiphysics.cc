@@ -560,8 +560,7 @@ Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
     prm.declare_entry(
       "transformation type",
       "tanh",
-      Patterns::Selection(
-        "tanh|piecewise polynomial"),
+      Patterns::Selection("tanh|piecewise polynomial"),
       "Transfomation function used to get the phase indicator from the signed distance");
     prm.declare_entry("tanh thickness",
                       "1.",
@@ -590,8 +589,8 @@ Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters(
           Parameters::RedistanciationTransformationType::piecewise_polynomial;
       }
     else
-      throw(
-        std::runtime_error("Invalid transformation type for the geometric interface reinitialization method!"));
+      throw(std::runtime_error(
+        "Invalid transformation type for the geometric interface reinitialization method!"));
     this->tanh_thickness = prm.get_double("tanh thickness");
   }
   prm.leave_subsection();
