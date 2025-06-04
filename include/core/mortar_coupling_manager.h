@@ -543,7 +543,8 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number *all_value_p) const = 0;
+                  Number                                    *all_value_p,
+                  const bool mortar_side = true) const = 0;
 
   /**
    * @brief Perform integral of mortar elements at the rotor-stator interface
@@ -566,7 +567,7 @@ public:
                            const unsigned int                         q_stride,
                            Number    *all_value_m,
                            Number    *all_value_p,
-                           const bool mortar_side) const = 0;
+                           const bool mortar_side = true) const = 0;
 };
 
 
@@ -835,7 +836,8 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number *all_value_p) const override;
+                  Number                                    *all_value_p,
+                  const bool mortar_side = true) const override;
 
   void
   local_integrate_residual(const CouplingEvaluationData<dim, Number> &data,
@@ -844,7 +846,7 @@ public:
                            const unsigned int                         q_stride,
                            Number    *all_value_m,
                            Number    *all_value_p,
-                           const bool mortar_side) const override;
+                           const bool mortar_side = true) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`
@@ -897,7 +899,8 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number *all_value_p) const override;
+                  Number                                    *all_value_p,
+                  const bool mortar_side = true) const override;
 
   void
   local_integrate_residual(const CouplingEvaluationData<dim, Number> &data,
@@ -906,7 +909,7 @@ public:
                            const unsigned int                         q_stride,
                            Number    *all_value_m,
                            Number    *all_value_p,
-                           const bool mortar_side) const override;
+                           const bool mortar_side = true) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`.
