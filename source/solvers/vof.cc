@@ -119,7 +119,6 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable)
     {
-      // Instantiation of the signed distance solver. The iso-level is set
       this->signed_distance_solver = std::make_shared<
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
         triangulation,
@@ -2961,11 +2960,6 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
 
   GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
 
-  const double tanh_thickness =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .regularization_method.geometric_interface_reinitialization
-      .tanh_thickness;
-
   for (auto p : this->locally_owned_dofs)
     {
       const double phase = solution[p];
@@ -2986,11 +2980,6 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
   auto mpi_communicator = this->triangulation->get_communicator();
 
   GlobalVectorType solution_owned(this->locally_owned_dofs, mpi_communicator);
-
-  const double tanh_thickness =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .regularization_method.geometric_interface_reinitialization
-      .tanh_thickness;
 
   for (auto p : this->locally_owned_dofs)
     {
