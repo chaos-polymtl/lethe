@@ -23,6 +23,8 @@
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
 
 #include <fstream>
 
@@ -81,7 +83,7 @@ public:
                                              Functions::ZeroFunction<dim>(),
                                              constraints);
     VectorTools::interpolate_boundary_values(
-      dof_handler, 3, Functions::ConstantFunction<dim>(2.), constraints);
+      dof_handler, 3, Functions::ConstantFunction<dim>(1.), constraints);
     constraints.close();
 
     // setup zero constraints
@@ -145,6 +147,14 @@ public:
     solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     delta_solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     system_rhs.reinit(locally_owned_dofs, comm);
+
+    // Testing: define initial condition
+    // ParameterHandler prm;
+    // Functions::ParsedFunction<dim>::declare_parameters(prm, 1);
+    // prm.set("Function expression", "x^2 + y^2");
+    // Functions::ParsedFunction<dim> initial_condition;
+    // initial_condition.parse_parameters(prm);
+    // VectorTools::interpolate(mapping, dof_handler, initial_condition, solution);
 
     // apply BCs to solution vector for first iteration
     constraints.distribute(solution);
@@ -345,7 +355,7 @@ main(int argc, char **argv)
 {
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  PoissonMatrixBased<2> problem(1, 1, 4, 1);
+  PoissonMatrixBased<2> problem(1, 1, 3, 1);
 
   // generate grid and setup dofs
   problem.generate_grid();
