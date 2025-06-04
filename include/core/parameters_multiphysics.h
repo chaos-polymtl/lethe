@@ -48,6 +48,17 @@ namespace Parameters
   };
 
   /**
+   * @brief Different transomation function types for the signed distance:
+   *  - tanh: hyperbolic tangent
+   *  - piecewise_polynomial: 4th degree piecewise polynomial
+   */
+  enum class RedistanciationTransformationType
+  {
+    tanh,
+    piecewise_polynomial
+  };
+
+  /**
    * @brief Different phase fraction filtering types:
    * - none: no filter wil be applied on the calculated phase fraction
    * - tanh: the tanh filter function will be applied to the phase fraction,
@@ -241,6 +252,8 @@ namespace Parameters
     bool output_signed_distance;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
+    /// Transformation type transforming the signed distance to a phase fraction
+    RedistanciationTransformationType transformation_type;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
 

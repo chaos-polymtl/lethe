@@ -99,6 +99,7 @@ test()
       background_fe,
       max_reinitialization_distance,
       0.0,
+      1.0,
       Parameters::Verbosity::quiet);
 
   signed_distance_solver->setup_dofs();
