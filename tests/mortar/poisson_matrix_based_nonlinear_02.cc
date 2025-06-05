@@ -6,8 +6,6 @@
  */
 
 #include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parsed_function.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
@@ -148,15 +146,6 @@ public:
     delta_solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     system_rhs.reinit(locally_owned_dofs, comm);
 
-    // Testing: define initial condition
-    // ParameterHandler prm;
-    // Functions::ParsedFunction<dim>::declare_parameters(prm, 1);
-    // prm.set("Function expression", "x^2 + y^2");
-    // Functions::ParsedFunction<dim> initial_condition;
-    // initial_condition.parse_parameters(prm);
-    // VectorTools::interpolate(mapping, dof_handler, initial_condition,
-    // solution);
-
     // apply BCs to solution vector for first iteration
     constraints.distribute(solution);
   }
@@ -268,7 +257,6 @@ public:
     double       error = 1e10;
     double       tol   = 1e-10;
     unsigned int it    = 0;
-    unsigned int itmax = 200;
 
     // output results on first iteration
     output_results(it);
@@ -282,20 +270,17 @@ public:
         // assemble and solve linear system
         assemble_system();
         compute_update();
+         
+        // calculate error
+        error = delta_solution.l2_norm();
 
         // print norms
         pcout << "   Iter " << it << " - Delta solution norm, Linfty norm: "
               << delta_solution.linfty_norm()
               << " L2 norm: " << delta_solution.l2_norm() << std::endl;
 
-        // store error value
-        error = delta_solution.l2_norm();
-
         // output iteration results
         output_results(it);
-
-        if (it == itmax)
-          break;
       }
   }
 
