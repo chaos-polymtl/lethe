@@ -1177,22 +1177,55 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 template <int dim, typename Number>
 void
 CouplingOperator<dim, Number>::add_system_rhs_entries(
-  TrilinosWrappers::MPI::Vector       &system_rhs,
-  const TrilinosWrappers::MPI::Vector &present_solution) const
+  TrilinosWrappers::MPI::Vector       &dst,
+  const TrilinosWrappers::MPI::Vector &src) const
 {
-  const auto constraints = &constraints_extended;
-  /* Initialize vector of data for both 'mortar' and 'non-mortar' sides of the
-  interface */
-  std::vector<Number> all_value_m(data.all_normals.size() * n_dofs_per_cell *
-                                  q_data_size);
-  std::vector<Number> all_value_p(data.all_normals.size() * n_dofs_per_cell *
-                                  q_data_size);
-
+  // 1) Evaluate
   unsigned int ptr_q = 0;
 
   Vector<Number> buffer;
 
-  // 1) Evaluate
+  std::vector<Number> all_value_m(data.all_normals.size() * q_data_size);
+  std::vector<Number> all_value_p(data.all_normals.size() * q_data_size);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto &face : cell->face_iterators())
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
+          {
+            /* Number of quadrature points at the cell(rotor)/cell(stator)
+             * interaction. For non-aligned meshes, this value indicates the
+             * number of quadrature points at both rotor and stator cells. */
+            const unsigned int n_q_points = mortar_manager->get_n_points();
+
+            evaluator->local_reinit(
+              cell,
+              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
+                                                  n_q_points));
+
+            buffer.reinit(n_dofs_per_cell);
+
+            const auto local_dofs = this->get_dof_indices(cell);
+
+            for (unsigned int i = 0; i < local_dofs.size(); ++i)
+              buffer[i] = src[local_dofs[i]];
+
+            evaluator->local_evaluate(
+              data, buffer, ptr_q, 1, all_value_m.data() + ptr_q * q_data_size);
+
+            ptr_q += n_q_points;
+          }
+
+  // 2) Communicate
+  partitioner.template export_to_ghosted_array<Number, 0>(
+    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
+                            all_value_m.size()),
+    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
+                      all_value_p.size()),
+    q_data_size);
+
+  // 3) Integrate
+  ptr_q = 0;
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
@@ -1201,143 +1234,29 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
             // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points = mortar_manager->get_n_points();
 
-            // Initialize coupling evaluator with the correct size
             evaluator->local_reinit(
               cell,
               ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
                                                   n_q_points));
-            // Initialize buffer to store information of all cell dofs
+
             buffer.reinit(n_dofs_per_cell);
+            evaluator->local_integrate(data,
+                                       buffer,
+                                       ptr_q,
+                                       1,
+                                       all_value_m.data() + ptr_q * q_data_size,
+                                       all_value_p.data() +
+                                         ptr_q * q_data_size);
+
+            buffer *= -1.0;
 
             const auto local_dofs = this->get_dof_indices(cell);
-
-            // Use the buffer to store the present solution at the cell dofs
-            for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
-              buffer[j] = present_solution[local_dofs[j]];
-
-            /* Interpolate solution at the quadrature points of the interface
-            using the cell dofs values */
-            for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
-              {
-                evaluator->local_evaluate(data,
-                                          buffer,
-                                          ptr_q,
-                                          n_dofs_per_cell,
-                                          all_value_m.data() +
-                                            (ptr_q * n_dofs_per_cell + i) *
-                                              q_data_size);
-              }
+            constraints.distribute_local_to_global(buffer, local_dofs, dst);
 
             ptr_q += n_q_points;
           }
 
-  const unsigned n_q_points =
-    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
-
-  // 2) Communicate
-  /* Export data from the 'mortar' (negative) side to the ghost side, i.e.
-   * 'non-mortar' side */
-  partitioner_cell.template export_to_ghosted_array<Number, 0>(
-    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
-                            all_value_m.size()),
-    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size()),
-    n_dofs_per_cell * n_q_points * q_data_size);
-
-
-  ptr_q                 = 0;
-  unsigned int ptr_dofs = 0;
-
-  // 3) Integrate
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    if (cell->is_locally_owned())
-      for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
-          {
-            /* Number of mortars attached to the current cell (i.e. 1 for
-            aligned rotor-stator meshes and 2 for non-aligned case) */
-            const unsigned int n_sub_cells = mortar_manager->get_n_mortars();
-            // Loop over mortar sub-cells
-            for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
-              {
-                evaluator->local_reinit(cell,
-                                        ArrayView<const Point<dim, Number>>(
-                                          all_points_ref.data() + ptr_q,
-                                          n_q_points));
-                // Loop over negative and positive sides of the mortar interface
-                for (unsigned int b = 0; b < 2; ++b)
-                  {
-                    Vector<Number> cell_rhs(n_dofs_per_cell);
-                    /* Loop over cell dofs and integrate the coupling terms of
-                    the mortar using the interpolated information from the
-                    cell */
-                    for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
-                      {
-                        buffer.reinit(n_dofs_per_cell);
-                        if (b == 0) // negative ('mortar') side
-                          {
-                            // std::cout << "RHS -m side" << std::endl;
-                            evaluator->local_integrate_residual(
-                              data,
-                              buffer,
-                              ptr_q,
-                              n_dofs_per_cell,
-                              all_value_m.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              all_value_p.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              true);
-                          }
-                        else // positive ('non-mortar') side
-                          {
-                            // std::cout << "RHS -p side" << std::endl;
-                            evaluator->local_integrate_residual(
-                              data,
-                              buffer,
-                              ptr_q,
-                              n_dofs_per_cell,
-                              all_value_m.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              all_value_p.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              false);
-                          }
-
-                        // Copy data from buffer to cell matrix
-                        cell_rhs[i] = buffer[i];
-                      }
-
-
-                    std::vector<types::global_dof_index> local_dof_indices_m(
-                      dof_indices.begin() + ptr_dofs,
-                      dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
-
-                    if (b == 0)
-                      {
-                        constraints->distribute_local_to_global(
-                          cell_rhs, local_dof_indices_m, system_rhs);
-                      }
-                    else
-                      {
-                        std::vector<types::global_dof_index>
-                          local_dof_indices_p(dof_indices_ghost.begin() +
-                                                ptr_dofs,
-                                              dof_indices_ghost.begin() +
-                                                ptr_dofs + n_dofs_per_cell);
-
-                        constraints->distribute_local_to_global(
-                          cell_rhs, local_dof_indices_p, system_rhs);
-                      }
-                  }
-
-                ptr_dofs += n_dofs_per_cell;
-
-                ptr_q += n_q_points;
-              }
-          }
-
-  AssertDimension(ptr_q, data.all_normals.size());
-  AssertDimension(ptr_dofs, dof_indices.size());
+  dst.compress(VectorOperation::add);
 }
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
