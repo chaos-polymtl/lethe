@@ -148,6 +148,10 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
           Parameters::Lagrangian::ModelParameters<dim>::LoadBalanceMethod::none)
         action_manager->load_balance_step();
     }
+
+  // Disable position integration
+  disable_position_integration =
+    parameters.model_parameters.disable_position_integration;
 }
 
 template <int dim, typename PropertiesIndex>
@@ -575,6 +579,31 @@ DEMSolver<dim, PropertiesIndex>::move_solid_objects()
     solid_object->move_solid_triangulation(
       simulation_control->get_time_step(),
       simulation_control->get_previous_time());
+}
+
+template <int dim, typename PropertiesIndex>
+void
+DEMSolver<dim, PropertiesIndex>::update_temperature_solid_objects()
+{
+  // Previous time must be used here instead of current time, which is the time
+  // for which we are doing calculations. The solid object is moved and its
+  // temperature is updated before calculating the contact outcomes for the
+  // current time step, so its properties should correspond to the
+  // previous time step.
+  if constexpr (std::is_same_v<PropertiesIndex,
+                               DEM::DEMMPProperties::PropertiesIndex>)
+    {
+      if (!action_manager->check_solid_objects_enabled())
+        return;
+
+      for (auto &solid_object : solid_surfaces)
+        solid_object->update_solid_temperature(
+          simulation_control->get_previous_time());
+
+      for (auto &solid_object : solid_volumes)
+        solid_object->update_solid_temperature(
+          simulation_control->get_previous_time());
+    }
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1018,6 +1047,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // Move solid objects (if solid object)
       move_solid_objects();
 
+      // Update solid objects temperatures
+      update_temperature_solid_objects();
+
       // Particle-wall contact force
       particle_wall_contact_force();
 
@@ -1034,26 +1066,30 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Integration of force and velocity for new location of particles
       // The half step is calculated at the first iteration
-      if (simulation_control->get_step_number() == 0)
+
+      if (!disable_position_integration)
         {
-          integrator_object->integrate_half_step_location(
-            particle_handler,
-            g,
-            simulation_control->get_time_step(),
-            torque,
-            force,
-            MOI);
-        }
-      else
-        {
-          integrator_object->integrate(particle_handler,
-                                       g,
-                                       simulation_control->get_time_step(),
-                                       torque,
-                                       force,
-                                       MOI,
-                                       triangulation,
-                                       sparse_contacts_object);
+          if (simulation_control->get_step_number() == 0)
+            {
+              integrator_object->integrate_half_step_location(
+                particle_handler,
+                g,
+                simulation_control->get_time_step(),
+                torque,
+                force,
+                MOI);
+            }
+          else
+            {
+              integrator_object->integrate(particle_handler,
+                                           g,
+                                           simulation_control->get_time_step(),
+                                           torque,
+                                           force,
+                                           MOI,
+                                           triangulation,
+                                           sparse_contacts_object);
+            }
         }
 
       // Visualization

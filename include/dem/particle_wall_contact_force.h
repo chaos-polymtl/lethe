@@ -14,6 +14,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_wall_rolling_resistance_torque.h>
 
@@ -1032,121 +1033,23 @@ private:
    * @param[in] dem_parameters DEM parameters declared in the .prm file.
    */
   void
-  set_effective_properties(const DEMSolverParameters<dim> &dem_parameters)
-  {
-    auto properties = dem_parameters.lagrangian_physical_properties;
+  set_effective_properties(const DEMSolverParameters<dim> &dem_parameters);
 
-    n_particle_types = properties.particle_type_number;
-    effective_youngs_modulus.resize(n_particle_types);
-    effective_shear_modulus.resize(n_particle_types);
-    effective_coefficient_of_restitution.resize(n_particle_types);
-    effective_coefficient_of_friction.resize(n_particle_types);
-    effective_coefficient_of_rolling_viscous_damping.resize(n_particle_types);
-    effective_coefficient_of_rolling_friction.resize(n_particle_types);
-    model_parameter_beta.resize(n_particle_types);
-    effective_surface_energy.resize(n_particle_types);
-    effective_hamaker_constant.resize(n_particle_types);
-
-    // Intialize wall variables and boundary conditions
-    this->center_mass_container =
-      dem_parameters.forces_torques.point_center_mass;
-    this->boundary_translational_velocity_map =
-      dem_parameters.boundary_conditions.boundary_translational_velocity;
-    this->boundary_rotational_speed_map =
-      dem_parameters.boundary_conditions.boundary_rotational_speed;
-    this->boundary_rotational_vector =
-      dem_parameters.boundary_conditions.boundary_rotational_vector;
-    this->point_on_rotation_vector =
-      dem_parameters.boundary_conditions.point_on_rotation_axis;
-
-    // Wall properties
-    const double wall_youngs_modulus = properties.youngs_modulus_wall;
-    const double wall_poisson_ratio  = properties.poisson_ratio_wall;
-    const double wall_restitution_coefficient =
-      properties.restitution_coefficient_wall;
-    const double wall_friction_coefficient =
-      properties.friction_coefficient_wall;
-    const double wall_rolling_friction_coefficient =
-      properties.rolling_friction_wall;
-    const double wall_rolling_viscous_damping =
-      properties.rolling_viscous_damping_wall;
-    const double wall_surface_energy   = properties.surface_energy_wall;
-    const double wall_hamaker_constant = properties.hamaker_constant_wall;
-
-    for (unsigned int i = 0; i < n_particle_types; ++i)
-      {
-        // Particle properties
-        const double particle_youngs_modulus =
-          properties.youngs_modulus_particle.at(i);
-        const double particle_poisson_ratio =
-          properties.poisson_ratio_particle.at(i);
-        const double particle_restitution_coefficient =
-          properties.restitution_coefficient_particle.at(i);
-        const double particle_friction_coefficient =
-          properties.friction_coefficient_particle.at(i);
-        const double particle_rolling_friction_coefficient =
-          properties.rolling_friction_coefficient_particle.at(i);
-        const double particle_rolling_viscous_damping_coefficient =
-          properties.rolling_viscous_damping_coefficient_particle.at(i);
-        const double particle_surface_energy =
-          properties.surface_energy_particle.at(i);
-        const double particle_hamaker_constant =
-          properties.hamaker_constant_particle.at(i);
-
-        // Effective particle-wall properties.
-        this->effective_youngs_modulus[i] =
-          (particle_youngs_modulus * wall_youngs_modulus) /
-          (wall_youngs_modulus *
-             (1. - particle_poisson_ratio * particle_poisson_ratio) +
-           particle_youngs_modulus *
-             (1. - wall_poisson_ratio * wall_poisson_ratio) +
-           DBL_MIN);
-
-        this->effective_shear_modulus[i] =
-          (particle_youngs_modulus * wall_youngs_modulus) /
-          ((2. * wall_youngs_modulus * (2. - particle_poisson_ratio) *
-            (1. + particle_poisson_ratio)) +
-           (2. * particle_youngs_modulus * (2. - wall_poisson_ratio) *
-            (1. + wall_poisson_ratio)) +
-           DBL_MIN);
-
-        this->effective_coefficient_of_restitution[i] =
-          harmonic_mean(particle_restitution_coefficient,
-                        wall_restitution_coefficient);
-
-        this->effective_coefficient_of_friction[i] =
-          harmonic_mean(particle_friction_coefficient,
-                        wall_friction_coefficient);
-
-        this->effective_coefficient_of_rolling_friction[i] =
-          harmonic_mean(particle_rolling_friction_coefficient,
-                        wall_rolling_friction_coefficient);
-
-        this->effective_coefficient_of_rolling_viscous_damping[i] =
-          harmonic_mean(particle_rolling_viscous_damping_coefficient,
-                        wall_rolling_viscous_damping);
-
-        this->effective_surface_energy[i] =
-          particle_surface_energy + wall_surface_energy -
-          std::pow(std::sqrt(particle_surface_energy) -
-                     std::sqrt(wall_surface_energy),
-                   2);
-
-        this->effective_hamaker_constant[i] =
-          0.5 * (particle_hamaker_constant + wall_hamaker_constant);
-
-        const double log_coeff_restitution =
-          std::log(this->effective_coefficient_of_restitution[i]);
-        this->model_parameter_beta[i] =
-          log_coeff_restitution /
-          sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
-      }
-  }
+  /**
+   * @brief Set every containers needed to carry the heat transfer rate
+   * calculation.
+   *
+   * @param[in] dem_parameters DEM parameters declared in the .prm
+   * file.
+   */
+  void
+  set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters);
 
   // Members of the class
 
   unsigned int        n_particle_types;
   std::vector<double> effective_youngs_modulus;
+  std::vector<double> effective_real_youngs_modulus;
   std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
   std::vector<double> effective_coefficient_of_friction;
@@ -1155,6 +1058,13 @@ private:
   std::vector<double> effective_surface_energy;
   std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
+  std::vector<double> equivalent_surface_roughness;
+  std::vector<double> equivalent_surface_slope;
+  std::vector<double> effective_microhardness;
+  std::vector<double> particle_thermal_conductivity;
+  std::vector<double> gas_parameter_m;
+  double              gas_thermal_conductivity;
+  double              wall_thermal_conductivity;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
 

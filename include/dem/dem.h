@@ -175,6 +175,13 @@ private:
   move_solid_objects();
 
   /**
+   * @brief Update solid objects temperatures.
+   */
+  void
+  update_temperature_solid_objects();
+
+
+  /**
    * @brief Execute the last post-processing at the end of the simulation and
    * output test results if necessary.
    */
@@ -515,6 +522,12 @@ private:
    * contact search is required.
    */
   std::function<void()> contact_detection_iteration_check_function;
+
+  /**
+   * @brief Disable position integration, useful for multiphysic simulations
+   * with a packed bed, loaded with another prm.
+   */
+  bool disable_position_integration;
 };
 
 #endif

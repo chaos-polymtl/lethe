@@ -103,6 +103,10 @@ namespace Parameters
                         "0.7",
                         Patterns::Double(),
                         "Particle thermal accommodation");
+      prm.declare_entry("real young modulus particles",
+                        "0.",
+                        Patterns::Double(),
+                        "Particle real Young's modulus");
     }
 
     void
@@ -179,6 +183,16 @@ namespace Parameters
         prm.get_double("surface roughness particles");
       thermal_accommodation_particle.at(particle_type) =
         prm.get_double("thermal accommodation particles");
+      real_youngs_modulus_particle.at(particle_type) =
+        prm.get_double("real young modulus particles");
+      // Only use the real Young's modulus if it is higher than the Young's
+      // modulus
+      if (real_youngs_modulus_particle.at(particle_type) <
+          youngs_modulus_particle.at(particle_type))
+        {
+          real_youngs_modulus_particle.at(particle_type) =
+            youngs_modulus_particle.at(particle_type);
+        }
     }
 
     void
@@ -272,6 +286,10 @@ namespace Parameters
                           "0.7",
                           Patterns::Double(),
                           "Thermal accommodation of wall");
+        prm.declare_entry("real young modulus wall",
+                          "0.",
+                          Patterns::Double(),
+                          "Real Young's modulus of wall");
 
         prm.declare_entry("thermal conductivity gas",
                           "0.01",
@@ -322,7 +340,8 @@ namespace Parameters
                             microhardness_particle,
                             surface_slope_particle,
                             surface_roughness_particle,
-                            thermal_accommodation_particle);
+                            thermal_accommodation_particle,
+                            real_youngs_modulus_particle);
 
       // Deprecated parameter handling
       // <g> used to be 3 parameters: <gx>, <gy> and <gz>
@@ -358,6 +377,11 @@ namespace Parameters
       surface_slope_wall         = prm.get_double("surface slope wall");
       surface_roughness_wall     = prm.get_double("surface roughness wall");
       thermal_accommodation_wall = prm.get_double("thermal accommodation wall");
+      real_youngs_modulus_wall   = prm.get_double("real young modulus wall");
+      // Only use the real Young's modulus if it is higher than the Young's
+      // modulus
+      if (real_youngs_modulus_wall < youngs_modulus_wall)
+        real_youngs_modulus_wall = youngs_modulus_wall;
 
       thermal_conductivity_gas = prm.get_double("thermal conductivity gas");
       specific_heat_gas        = prm.get_double("specific heat gas");
@@ -397,7 +421,8 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &microhardness_particle,
       std::unordered_map<unsigned int, double> &surface_slope_particle,
       std::unordered_map<unsigned int, double> &surface_roughness_particle,
-      std::unordered_map<unsigned int, double> &thermal_accommodation_particle)
+      std::unordered_map<unsigned int, double> &thermal_accommodation_particle,
+      std::unordered_map<unsigned int, double> &real_youngs_modulus_particle)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -423,6 +448,7 @@ namespace Parameters
           surface_slope_particle.insert({counter, 0.});
           surface_roughness_particle.insert({counter, 0.});
           thermal_accommodation_particle.insert({counter, 0.});
+          real_youngs_modulus_particle.insert({counter, 0.});
         }
       seed_for_distributions.reserve(particle_type_maximum_number);
     }
@@ -914,6 +940,12 @@ namespace Parameters
             "no matter the granular temperature");
         }
         prm.leave_subsection();
+
+        prm.declare_entry("disable position integration",
+                          "false",
+                          Patterns::Selection("true|false"),
+                          "Disable the integration of position and velocity"
+                          "Choices are <true|false>.");
       }
       prm.leave_subsection();
     }
@@ -1123,6 +1155,9 @@ namespace Parameters
           {
             throw(std::runtime_error("Invalid solver type"));
           }
+
+        disable_position_integration =
+          prm.get_bool("disable position integration");
       }
       prm.leave_subsection();
     }

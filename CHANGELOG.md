@@ -3,7 +3,15 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Release of Lethe v1.0.1 - 2024-05-28
+## [Master] - 2025-06-05
+
+### Added
+
+- MAJOR Added the calculation of particle-wall heat transfer and the updating of the temperature of solid objects when needed.
+A parameter real_youngs_modulus is added, to be used for Multiphysic DEM when the Young's modulus is underestimated in the simulation.
+A parameter disable_position_integration is also added to be able to freeze the position of particles. [#1542](https://github.com/chaos-polymtl/lethe/pull/1542)
+
+## Release of Lethe v1.0.1 - 2025-05-28
 The Lethe v1.0.1 release introduces some key new features including:
 
 A new DEM rolling friction model
