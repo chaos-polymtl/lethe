@@ -44,17 +44,18 @@ public:
   }
 
   /**
-   * @brief Evaluate the void fraction and the void fraction gradient
+   * @brief Compute the void fraction and the void fraction gradient
    * at the quadrature points.
    *
-   * @param[in] void_fraction_manager The manager of the void fraction which is
-   * used to gather the void fraction solution. NOTE: At the present time, only
-   * void fractions derived from functions are supported. This is because we
-   * directly use the function instead of using the dof_handler associated
-   * with the void fraction. This will be fixed in future work.
+   * @param[in] void_fraction_solution The solution of the void fraction
+   *
+   * @param[in] void_fraction_dof_handler The dof handler associated with the
+   * void fraction
    */
   void
-  evaluate_void_fraction(const VoidFractionBase<dim> &void_fraction_manager);
+  compute_void_fraction(
+    const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
+    const DoFHandler<dim> &void_fraction_dof_handler);
 
 protected:
   /**
