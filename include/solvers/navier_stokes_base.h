@@ -7,6 +7,7 @@
 
 // Lethe Includes
 #include <core/mesh_controller.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
@@ -434,6 +435,18 @@ protected:
    */
   void
   define_zero_constraints();
+
+  /**
+   * @brief Initialize mortar coupling operator
+   */
+  void
+  init_mortar_coupling();
+
+  /**
+   * @brief Rotate rotor mapping in mortar method
+   */
+  void
+  rotate_mortar_mapping();
 
   /**
    * @brief Update non-zero constraints if the boundary is time dependent.
@@ -909,6 +922,10 @@ protected:
   std::shared_ptr<Mapping<dim>>        mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+
+  // Mortar coupling manager and operator
+  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
+  std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
 
   // Previous mapping for rotor mesh rotation in mortar method
   std::shared_ptr<Mapping<dim>> previous_mapping;
