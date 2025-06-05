@@ -48,6 +48,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set surface slope particles           = 0.1
       set surface roughness particles       = 1.e-9
       set thermal accommodation particles   = 0.7
+      set real young modulus wall           = 0.
 
     end
 
@@ -65,6 +66,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
     set surface slope wall           = 0.1
     set surface roughness wall       = 1.e-10
     set thermal accommodation wall   = 0.7
+    set real young modulus wall      = 0.
 
     # Interstitial gas properties
     set thermal conductivity gas     = 0.01
@@ -151,6 +153,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``thermal accommodation particles`` defines the thermal accommodation coefficient of particles for each type. The thermal accommodation coefficient characterizes the quality of thermal energy exchange between gas molecules and a solid surface.
 
+* The ``real young modulus particles`` defines the real Young's modulus of particles for each type. It is used in multiphysic DEM to correct the thermal contact radius. This is useful when the Young's modulus in the simulation is lowered to increase the time-step. An artificially low Young's modulus would lead to an overestimated thermal contact radius. The real Young's modulus can only be given a value that is higher than the Young's modulus. Otherwise, the regular Young's modulus will be used in the calculations.
+
 * The ``thermal conductivity gas`` defines the thermal conductivity of the interstitial gas.
 
 * The ``specific heat gas`` defines the specific heat capacity of the interstitial gas.
@@ -170,3 +174,5 @@ In this subsection, gravitational acceleration, and the physical properties of t
 * The ``surface roughness wall`` defines the surface roughness of the wall.
 
 * The ``thermal accommodation wall`` defines the thermal accommodation coefficient of the wall.
+
+* The ``real young modulus wall`` defines the real Young's modulus of the wall.

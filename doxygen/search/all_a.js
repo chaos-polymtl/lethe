@@ -65,7 +65,7 @@ var searchData=
   ['initialize_5fall_62',['initialize_all',['../classIBParticle.html#a8e24bfa945f64bf499bfbde33f5391b0',1,'IBParticle']]],
   ['initialize_5fauxiliary_5fphysics_63',['initialize_auxiliary_physics',['../classMFNavierStokesPreconditionGMG.html#af9af94c3cc1f1cc80360f09c9ff806cc',1,'MFNavierStokesPreconditionGMG']]],
   ['initialize_5fbounding_5fbox_64',['initialize_bounding_box',['../classRBFShape.html#a786fc190bff11ee476260842837cdfae',1,'RBFShape']]],
-  ['initialize_5fcontainers_65',['initialize_containers',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a1cb8c6826293edd6e59868a24cf11c98',1,'Parameters::Lagrangian::LagrangianPhysicalProperties::initialize_containers()'],['../structParameters_1_1Lagrangian_1_1BCDEM.html#a693148cc8e422146714dbbee5fd8f27f',1,'Parameters::Lagrangian::BCDEM::initialize_containers()']]],
+  ['initialize_5fcontainers_65',['initialize_containers',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#ae3d1b685e0b236d904d7641d34f61104',1,'Parameters::Lagrangian::LagrangianPhysicalProperties::initialize_containers()'],['../structParameters_1_1Lagrangian_1_1BCDEM.html#a693148cc8e422146714dbbee5fd8f27f',1,'Parameters::Lagrangian::BCDEM::initialize_containers()']]],
   ['initialize_5fdem_5fparameters_66',['initialize_dem_parameters',['../classCFDDEMSolver.html#adcdc56eef545bb81d6359211782fd85b',1,'CFDDEMSolver']]],
   ['initialize_5fdistance_67',['initialize_distance',['../classInterfaceTools_1_1SignedDistanceSolver.html#a6270aa485b1857d5769f691b266715c2',1,'InterfaceTools::SignedDistanceSolver']]],
   ['initialize_5fdof_5fvector_68',['initialize_dof_vector',['../classNavierStokesOperatorBase.html#ac8897ffe280ad2d9c7fc0193191e1219',1,'NavierStokesOperatorBase']]],
