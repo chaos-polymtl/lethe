@@ -426,41 +426,7 @@ private:
   mutable VectorType src_internal;
 };
 
-/**
- * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.
- *
- * @tparam number Abstract type for number across the class (i.e., double).
- * @param out Destination TrilinosWrappers::MPI::Vector vector.
- * @param in Source LinearAlgebra::distributed::Vector<number> vector.
- */
-template <typename number>
-void
-convert_vector_dealii_to_trilinos(
-  TrilinosWrappers::MPI::Vector                    &out,
-  const LinearAlgebra::distributed::Vector<number> &in)
-{
-  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
-  rwv.import_elements(in, VectorOperation::insert);
-  out.import_elements(rwv, VectorOperation::insert);
-}
 
-/**
- * @brief Helper function that allows to convert Trilinos vectors to deal.II vectors.
- *
- * @tparam number Abstract type for number across the class (i.e., double).
- * @param out Destination LinearAlgebra::distributed::Vector<number> vector.
- * @param in Source TrilinosWrappers::MPI::Vector vector.
- */
-template <typename number>
-void
-convert_vector_trilinos_to_dealii(
-  LinearAlgebra::distributed::Vector<number> &out,
-  const TrilinosWrappers::MPI::Vector        &in)
-{
-  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
-  rwv.reinit(in);
-  out.import_elements(rwv, VectorOperation::insert);
-}
 
 namespace dealii
 {

@@ -64,54 +64,59 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         {
           this->void_fraction_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
-          this->temperature_dof_handlers[l].distribute_dofs(
+          this->void_fraction_dof_handlers[l].distribute_dofs(
             void_fraction_manager.dof_handler.get_fe());
         }
 
-      this->transfers_temperature.resize(min_level, max_level);
+      this->transfers_void_fraction.resize(min_level, max_level);
 
       for (unsigned int l = min_level; l < max_level; l++)
         {
-          this->transfers_temperature[l + 1].reinit(
-            this->temperature_dof_handlers[l + 1],
-            this->temperature_dof_handlers[l],
+          this->transfers_void_fraction[l + 1].reinit(
+            this->void_fraction_dof_handlers[l + 1],
+            this->void_fraction_dof_handlers[l],
             {},
             {});
         }
 
       this->mg_transfer_gc_void_fraction =
-        std::make_shared<GCTransferType>(this->transfers_temperature);
+        std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
+          this->transfers_void_fraction);
 
 #if DEAL_II_VERSION_GTE(9, 7, 0)
-      this->mg_transfer_gc_temperature->build(
+      this->mg_transfer_gc_void_fraction->build(
         void_fraction_manager.dof_handler, [&](const auto l, auto &vec) {
-          vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
-                     DoFTools::extract_locally_active_dofs(
-                       this->temperature_dof_handlers[l]),
-                     this->temperature_dof_handlers[l].get_mpi_communicator());
+          vec.reinit(
+            this->void_fraction_dof_handlers[l].locally_owned_dofs(),
+            DoFTools::extract_locally_active_dofs(
+              this->void_fraction_dof_handlers[l]),
+            this->void_fraction_dof_handlers[l].get_mpi_communicator());
         });
 #endif
 
-      MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
-                                                          this->maxlevel);
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_void_fraction_solution(this->minlevel, this->maxlevel);
 
-      this->mg_transfer_gc_temperature->interpolate_to_mg(
+
+      // A deal.II vector is required here, so we take the deal.II vector
+      // solution from the void fraction manager instead of the trilinos vector
+      // one.
+      this->mg_transfer_gc_void_fraction->interpolate_to_mg(
         void_fraction_manager.dof_handler,
-        mg_temperature_solution,
-        temperature_present_solution);
+        mg_void_fraction_solution,
+        void_fraction_manager.void_fraction_solution);
 
       for (unsigned int l = min_level; l <= max_level; l++)
         {
-          mg_temperature_solution[l].update_ghost_values();
+          mg_void_fraction_solution[l].update_ghost_values();
 
-          this->mg_operators[l]->compute_buoyancy_term(
-            mg_temperature_solution[l], this->temperature_dof_handlers[l]);
+          if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
+                &(*this->mg_operators[l])))
+            mf_operator->compute_void_fraction(
+              mg_void_fraction_solution[l],
+              this->void_fraction_dof_handlers[l]);
         }
     }
-
-  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
-    dynamic_cast<VANSOperator<dim, MGNumber> *>(this->mg_operators[level].get())
-      ->evaluate_void_fraction(void_fraction_manager);
 
   MFNavierStokesPreconditionGMG<dim>::initialize(
     simulation_control,
@@ -270,7 +275,9 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         // must do a cast here to ensure that the operator is of the right type
         if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
               this->system_operator.get()))
-          mf_operator->evaluate_void_fraction(void_fraction_manager);
+          mf_operator->compute_void_fraction(
+            void_fraction_manager.void_fraction_solution,
+            void_fraction_manager.dof_handler);
       }
 
       this->iterate();

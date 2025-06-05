@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
+#include <core/vector.h>
 
 #include <fem-dem/void_fraction.h>
 
@@ -57,6 +58,11 @@ VoidFractionBase<dim>::setup_dofs()
   void_fraction_locally_owned.reinit(locally_owned_dofs,
                                      this->triangulation->get_communicator());
 
+  // deal.II vector that will also hold the solution
+  this->void_fraction_solution.reinit(dof_handler.locally_owned_dofs(),
+                                      DoFTools::extract_locally_active_dofs(
+                                        dof_handler),
+                                      this->triangulation->get_communicator());
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler,
@@ -1153,6 +1159,12 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution()
 
   void_fraction_constraints.distribute(completely_distributed_solution);
   void_fraction_locally_relevant = completely_distributed_solution;
+
+
+  // Perform copy between two vector types
+  convert_vector_trilinos_to_dealii(this->void_fraction_solution,
+                                    void_fraction_locally_relevant);
+  
 }
 
 // Pre-compile the 2D and 3D VoidFractionBase solver to ensure that the

@@ -28,7 +28,7 @@ public:
     typename MFNavierStokesPreconditionGMG<dim>::MGVectorType;
   using MGNumber       = typename MFNavierStokesPreconditionGMG<dim>::MGNumber;
   using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
-#
+
   /**
    * @brief Constructor
    * @param[in] param Complete set of parameters for the CFD-DEM or VANS
@@ -71,6 +71,17 @@ public:
 private:
   /// Reference to the simulation parameters
   const CFDDEMSimulationParameters<dim> &cfd_dem_simulation_parameters;
+
+  /// Void Fraction DoF handlers for each of the levels of the global coarsening
+  /// algorithm
+  MGLevelObject<DoFHandler<dim>> void_fraction_dof_handlers;
+
+  /// Temperature transfers for each of the levels of the global coarsening
+  /// algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_void_fraction;
+
+  /// Transfer operator for global coarsening for the temperature
+  std::shared_ptr<GCTransferType> mg_transfer_gc_void_fraction;
 };
 
 /**
@@ -90,11 +101,6 @@ private:
 template <int dim>
 class FluidDynamicsVANSMatrixFree : public FluidDynamicsMatrixFree<dim>
 {
-  using MGVectorType =
-    typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType;
-  using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
-
-
 public:
   /**
    * @brief Constructor that sets the finite element degree and system operator
@@ -159,19 +165,6 @@ protected:
   /// Object that manages the void fraction calculation from functions
   /// or from parameters.
   VoidFractionBase<dim> void_fraction_manager;
-
-  /// Void Fraction DoF handlers for each of the levels of the global coarsening
-  /// algorithm
-  MGLevelObject<DoFHandler<dim>> void_fraction_dof_handlers;
-
-  /// Temperature transfers for each of the levels of the global coarsening
-  /// algorithm
-  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_void_fraction;
-
-  /// Transfer operator for global coarsening for the temperature
-  std::shared_ptr<GCTransferType> mg_transfer_gc_void_fraction;
-
-
 
   /// Member variables which are used to manage boundary conditions
   bool           has_periodic_boundaries;

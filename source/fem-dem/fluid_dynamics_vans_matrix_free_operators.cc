@@ -53,27 +53,20 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
 
 template <int dim, typename number>
 void
-VANSOperator<dim, number>::evaluate_void_fraction(
-  const VoidFractionBase<dim> &void_fraction_manager)
+VANSOperator<dim, number>::compute_void_fraction(
+  const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
+  const DoFHandler<dim>                            &void_fraction_dof_handler)
 {
-  AssertThrow(
-    void_fraction_manager.void_fraction_parameters->mode ==
-      Parameters::VoidFractionMode::function,
-    ExcMessage(
-      "The VANS matrix free solver only supports void fractions established using a function. Void fraction derived from functions will be developed in a future version of Lethe."));
-
-  this->timer.enter_subsection("operator::evaluate_void_fraction");
+  this->timer.enter_subsection("operator::compute_void_fraction");
 
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
 
-  const DoFHandler<dim> &void_fraction_dof_handler =
-    void_fraction_manager.dof_handler;
   void_fraction.reinit(n_cells, integrator.n_q_points);
   void_fraction_gradient.reinit(n_cells, integrator.n_q_points);
 
   FEValues<dim> fe_values(*(this->matrix_free.get_mapping_info().mapping),
-                          void_fraction_manager.dof_handler.get_fe(),
+                          void_fraction_dof_handler.get_fe(),
                           this->matrix_free.get_quadrature(),
                           update_values | update_gradients);
 
@@ -92,12 +85,10 @@ VANSOperator<dim, number>::evaluate_void_fraction(
             this->matrix_free.get_cell_iterator(cell, lane)
               ->as_dof_handler_iterator(void_fraction_dof_handler));
 
-          fe_values.get_function_values(
-            void_fraction_manager.void_fraction_locally_relevant,
-            cell_void_fraction);
-          fe_values.get_function_gradients(
-            void_fraction_manager.void_fraction_locally_relevant,
-            cell_void_fraction_gradient);
+          fe_values.get_function_values(void_fraction_solution,
+                                        cell_void_fraction);
+          fe_values.get_function_gradients(void_fraction_solution,
+                                           cell_void_fraction_gradient);
 
           for (const auto q : fe_values.quadrature_point_indices())
             {
@@ -106,11 +97,14 @@ VANSOperator<dim, number>::evaluate_void_fraction(
                   cell_void_fraction_gradient[q][c];
 
               void_fraction[cell][q][lane] = cell_void_fraction[q];
+
+              std::cout << "Cell void fraction is " << cell_void_fraction[q]
+                        << std::endl;
             }
         }
     }
 
-  this->timer.leave_subsection("operator::evaluate_void_fraction");
+  this->timer.leave_subsection("operator::compute_void_fraction");
 }
 
 /**
