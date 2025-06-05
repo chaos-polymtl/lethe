@@ -1107,8 +1107,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                         buffer.reinit(n_dofs_per_cell);
                         if (b == 0) // negative ('mortar') side
                           {
-                            // std::cout << "DOF " << i << ", Matrix -m side"
-                            //           << std::endl;
                             evaluator->local_integrate(
                               data,
                               buffer,
@@ -1120,8 +1118,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                           }
                         else // positive ('non-mortar') side
                           {
-                            // std::cout << "DOF " << i << ", Matrix -p side"
-                            //           << std::endl;
                             evaluator->local_integrate(
                               data,
                               buffer,
@@ -1180,19 +1176,52 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
   TrilinosWrappers::MPI::Vector       &system_rhs,
   const TrilinosWrappers::MPI::Vector &present_solution) const
 {
-  const auto constraints = &constraints_extended;
-  /* Initialize vector of data for both 'mortar' and 'non-mortar' sides of the
-  interface */
-  std::vector<Number> all_value_m(data.all_normals.size() * n_dofs_per_cell *
-                                  q_data_size);
-  std::vector<Number> all_value_p(data.all_normals.size() * n_dofs_per_cell *
-                                  q_data_size);
-
+  // 1) Evaluate
   unsigned int ptr_q = 0;
 
   Vector<Number> buffer;
 
-  // 1) Evaluate
+  std::vector<Number> all_value_m(data.all_normals.size() * q_data_size);
+  std::vector<Number> all_value_p(data.all_normals.size() * q_data_size);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto &face : cell->face_iterators())
+        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
+          {
+            /* Number of quadrature points at the cell(rotor)/cell(stator)
+             * interaction. For non-aligned meshes, this value indicates the
+             * number of quadrature points at both rotor and stator cells. */
+            const unsigned int n_q_points = mortar_manager->get_n_points();
+
+            evaluator->local_reinit(
+              cell,
+              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
+                                                  n_q_points));
+
+            buffer.reinit(n_dofs_per_cell);
+
+            const auto local_dofs = this->get_dof_indices(cell);
+
+            for (unsigned int i = 0; i < local_dofs.size(); ++i)
+              buffer[i] = present_solution[local_dofs[i]];
+
+            evaluator->local_evaluate(
+              data, buffer, ptr_q, 1, all_value_m.data() + ptr_q * q_data_size);
+
+            ptr_q += n_q_points;
+          }
+
+  // 2) Communicate
+  partitioner.template export_to_ghosted_array<Number, 0>(
+    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
+                            all_value_m.size()),
+    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
+                      all_value_p.size()),
+    q_data_size);
+
+  // 3) Integrate
+  ptr_q = 0;
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
@@ -1201,143 +1230,29 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
             // Quadrature points at the cell(rotor)/cell(stator) interaction
             const unsigned int n_q_points = mortar_manager->get_n_points();
 
-            // Initialize coupling evaluator with the correct size
             evaluator->local_reinit(
               cell,
               ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
                                                   n_q_points));
-            // Initialize buffer to store information of all cell dofs
+
             buffer.reinit(n_dofs_per_cell);
+            evaluator->local_integrate(data,
+                                       buffer,
+                                       ptr_q,
+                                       1,
+                                       all_value_m.data() + ptr_q * q_data_size,
+                                       all_value_p.data() +
+                                         ptr_q * q_data_size);
+
+            buffer *= -1.0;
 
             const auto local_dofs = this->get_dof_indices(cell);
-
-            // Use the buffer to store the present solution at the cell dofs
-            for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
-              buffer[j] = present_solution[local_dofs[j]];
-
-            /* Interpolate solution at the quadrature points of the interface
-            using the cell dofs values */
-            for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
-              {
-                evaluator->local_evaluate(data,
-                                          buffer,
-                                          ptr_q,
-                                          n_dofs_per_cell,
-                                          all_value_m.data() +
-                                            (ptr_q * n_dofs_per_cell + i) *
-                                              q_data_size);
-              }
+            constraints.distribute_local_to_global(buffer, local_dofs, system_rhs);
 
             ptr_q += n_q_points;
           }
 
-  const unsigned n_q_points =
-    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
-
-  // 2) Communicate
-  /* Export data from the 'mortar' (negative) side to the ghost side, i.e.
-   * 'non-mortar' side */
-  partitioner_cell.template export_to_ghosted_array<Number, 0>(
-    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
-                            all_value_m.size()),
-    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size()),
-    n_dofs_per_cell * n_q_points * q_data_size);
-
-
-  ptr_q                 = 0;
-  unsigned int ptr_dofs = 0;
-
-  // 3) Integrate
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    if (cell->is_locally_owned())
-      for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
-          {
-            /* Number of mortars attached to the current cell (i.e. 1 for
-            aligned rotor-stator meshes and 2 for non-aligned case) */
-            const unsigned int n_sub_cells = mortar_manager->get_n_mortars();
-            // Loop over mortar sub-cells
-            for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
-              {
-                evaluator->local_reinit(cell,
-                                        ArrayView<const Point<dim, Number>>(
-                                          all_points_ref.data() + ptr_q,
-                                          n_q_points));
-                // Loop over negative and positive sides of the mortar interface
-                for (unsigned int b = 0; b < 2; ++b)
-                  {
-                    Vector<Number> cell_rhs(n_dofs_per_cell);
-                    /* Loop over cell dofs and integrate the coupling terms of
-                    the mortar using the interpolated information from the
-                    cell */
-                    for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
-                      {
-                        buffer.reinit(n_dofs_per_cell);
-                        if (b == 0) // negative ('mortar') side
-                          {
-                            // std::cout << "RHS -m side" << std::endl;
-                            evaluator->local_integrate_residual(
-                              data,
-                              buffer,
-                              ptr_q,
-                              n_dofs_per_cell,
-                              all_value_m.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              all_value_p.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              true);
-                          }
-                        else // positive ('non-mortar') side
-                          {
-                            // std::cout << "RHS -p side" << std::endl;
-                            evaluator->local_integrate_residual(
-                              data,
-                              buffer,
-                              ptr_q,
-                              n_dofs_per_cell,
-                              all_value_m.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              all_value_p.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              false);
-                          }
-
-                        // Copy data from buffer to cell matrix
-                        cell_rhs[i] = buffer[i];
-                      }
-
-
-                    std::vector<types::global_dof_index> local_dof_indices_m(
-                      dof_indices.begin() + ptr_dofs,
-                      dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
-
-                    if (b == 0)
-                      {
-                        constraints->distribute_local_to_global(
-                          cell_rhs, local_dof_indices_m, system_rhs);
-                      }
-                    else
-                      {
-                        std::vector<types::global_dof_index>
-                          local_dof_indices_p(dof_indices_ghost.begin() +
-                                                ptr_dofs,
-                                              dof_indices_ghost.begin() +
-                                                ptr_dofs + n_dofs_per_cell);
-
-                        constraints->distribute_local_to_global(
-                          cell_rhs, local_dof_indices_p, system_rhs);
-                      }
-                  }
-
-                ptr_dofs += n_dofs_per_cell;
-
-                ptr_q += n_q_points;
-              }
-          }
-
-  AssertDimension(ptr_q, data.all_normals.size());
-  AssertDimension(ptr_dofs, dof_indices.size());
+  system_rhs.compress(VectorOperation::add);
 }
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
@@ -1426,8 +1341,7 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
   Number                                    *all_value_m,
-  Number                                    *all_value_p,
-  const bool                                 mortar_side) const
+  Number                                    *all_value_p) const
 {
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
@@ -1458,19 +1372,16 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
 
-      /* Unit normal has opposite signs at interfaces */
-      const double normal_sign = mortar_side ? 1 : -1;
 
       // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
 
       // - (n avg(∇v), jump(u))
-      this->phi_m.submit_gradient(-value_jump * normal_sign * 0.5 * JxW, q);
+      this->phi_m.submit_gradient(-value_jump * 0.5 * JxW, q);
 
       // + (jump(v), σ jump(u) - avg(∇u) n)
-      this->phi_m.submit_value((contract(value_jump, normal) * sigma *
-                                  normal_sign -
-                                gradient_normal_avg * normal_sign) *
+      this->phi_m.submit_value((contract(value_jump, normal) * sigma -
+                                gradient_normal_avg) *
                                  JxW,
                                q);
     }
@@ -1480,73 +1391,6 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
                              EvaluationFlags::gradients);
 }
 
-template <int dim, int n_components, typename Number>
-void
-CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate_residual(
-  const CouplingEvaluationData<dim, Number> &data,
-  Vector<Number>                            &buffer,
-  const unsigned int                         ptr_q,
-  const unsigned int                         q_stride,
-  Number                                    *all_value_m,
-  Number                                    *all_value_p,
-  const bool                                 mortar_side) const
-{
-  for (const auto q : this->phi_m.quadrature_point_indices())
-    {
-      const unsigned int q_index = ptr_q + q;
-      /* Initialize buffer for both 'mortar' and 'non-mortar' sides of the
-      interface */
-      BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
-      BufferRW<Number> buffer_p(all_value_p, q * 2 * n_components * q_stride);
-      // Read solution values and gradients stored in the buffer
-      const auto value_m           = buffer_m.template read<value_type>();
-      const auto value_p           = buffer_p.template read<value_type>();
-      const auto normal_gradient_m = buffer_m.template read<value_type>();
-      const auto normal_gradient_p = buffer_p.template read<value_type>();
-
-      const auto JxW               = data.all_weights[q_index];
-      const auto penalty_parameter = data.all_penalty_parameter[q_index];
-      const auto normal            = data.all_normals[q_index];
-
-      /* The expression for the jump on the mortar interface is
-      jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
-      the value of normal_m, we use a minus sign here because normal_p = -
-      normal_m */
-      const auto value_jump = outer((value_m - value_p), normal);
-
-      /* The expression for the average on the mortar interface is
-      avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
-      above, we include the negative sign here */
-      const auto gradient_normal_avg =
-        (normal_gradient_m - normal_gradient_p) * 0.5;
-
-      /* Unit normal has opposite signs at interfaces */
-      const double normal_sign = mortar_side ? 1 : -1;
-
-      // SIPG penalty parameter
-      const double sigma = penalty_parameter * data.penalty_factor;
-
-      //  + (n avg(∇v), jump(u))
-      this->phi_m.submit_gradient(value_jump * normal_sign * 0.5 * JxW, q);
-
-      // (-jump(v), σ jump(u) + avg(∇u) n)
-      this->phi_m.submit_value((-contract(value_jump, normal) * sigma *
-                                  normal_sign +
-                                gradient_normal_avg * normal_sign) *
-                                 JxW,
-                               q);
-    }
-
-  this->phi_m.test_and_sum(buffer,
-                           EvaluationFlags::values |
-                             EvaluationFlags::gradients);
-
-  // std::cout << "Buffer entry: " << std::endl;
-  // for (unsigned int n = 0; n < buffer.size(); n++)
-  //   std::cout << buffer[n] << " ";
-  //
-  // std::cout << std::endl;
-}
 
 /*----------- NavierStokesCouplingEvaluation -------------------------*/
 
@@ -1650,8 +1494,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
   Number                                    *all_value_m,
-  Number                                    *all_value_p,
-  const bool                                 mortar_side) const
+  Number                                    *all_value_p) const
 {
   for (const auto q : this->phi_u_m.quadrature_point_indices())
     {
@@ -1722,85 +1565,6 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
   this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
 }
 
-template <int dim, typename Number>
-void
-NavierStokesCouplingEvaluation<dim, Number>::local_integrate_residual(
-  const CouplingEvaluationData<dim, Number> &data,
-  Vector<Number>                            &buffer,
-  const unsigned int                         ptr_q,
-  const unsigned int                         q_stride,
-  Number                                    *all_value_m,
-  Number                                    *all_value_p,
-  const bool                                 mortar_side) const
-{
-  for (const auto q : this->phi_u_m.quadrature_point_indices())
-    {
-      // get kinematic viscosity from rheological model
-      const double kinematic_viscosity = 1.;
-      // this->properties_manager->get_rheology()->get_kinematic_viscosity();
-
-      const unsigned int q_index = ptr_q + q;
-
-      BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
-      BufferRW<Number> buffer_p(all_value_p, q * 4 * dim * q_stride);
-
-      const auto value_m           = buffer_m.template read<u_value_type>();
-      const auto value_p           = buffer_p.template read<u_value_type>();
-      const auto normal_gradient_m = buffer_m.template read<u_value_type>();
-      const auto normal_gradient_p = buffer_p.template read<u_value_type>();
-      const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
-      const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
-
-      const auto JxW               = data.all_weights[q_index];
-      const auto penalty_parameter = data.all_penalty_parameter[q_index];
-      const auto normal            = data.all_normals[q_index];
-
-      // [u] = (u_m - u_p)
-      const auto u_value_jump = value_m - value_p;
-      // {{∇u}} = (∇u_m + ∇u_p)/2
-      const auto u_gradient_avg = (normal_gradient_m - normal_gradient_p) * 0.5;
-      // {{p}} = (∇p_m + ∇p_p)/2
-      const auto p_value_avg = (normal_p_value_m - normal_p_value_p) * 0.5;
-
-      typename FEPointIntegratorU::value_type u_normal_gradient_avg_result = {};
-      typename FEPointIntegratorU::value_type u_value_jump_result          = {};
-      typename FEPointIntegratorP::value_type p_value_jump_result          = {};
-
-      // SIPG penalty parameter
-      const double sigma = penalty_parameter * data.penalty_factor;
-
-      /* Contributions from viscous term */
-      // + (n avg(∇v), jump(δu))
-      u_normal_gradient_avg_result += u_value_jump;
-      // + (jump(v), ν avg(∇δu) n)
-      u_value_jump_result += kinematic_viscosity * u_gradient_avg;
-      // - (jump(v), ν σ jump(δu))
-      u_value_jump_result -= kinematic_viscosity * sigma * u_value_jump;
-
-      /* Contribution from pressure term*/
-      // - (jump(v), avg(δp) n)
-      u_value_jump_result -= p_value_avg;
-
-      // + (n avg(∇v), ν/2 jump(δu))
-      phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
-                                0.5 * kinematic_viscosity * JxW,
-                              q);
-      phi_u_m.submit_value(u_value_jump_result * JxW, q);
-      phi_p_m.submit_value(p_value_jump_result * JxW, q);
-    }
-
-  AssertDimension(buffer.size(),
-                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
-
-  ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
-  ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
-                             fe_sub_p.n_dofs_per_cell());
-
-  this->phi_u_m.test_and_sum(buffer_u,
-                             EvaluationFlags::values |
-                               EvaluationFlags::gradients);
-  this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
-}
 
 /*-------------- Explicit Instantiations -------------------------------*/
 template class MortarManagerBase<1>;
