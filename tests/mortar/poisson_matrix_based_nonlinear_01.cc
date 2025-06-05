@@ -128,9 +128,6 @@ public:
     solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     delta_solution.reinit(locally_owned_dofs, locally_relevant_dofs, comm);
     system_rhs.reinit(locally_owned_dofs, comm);
-
-    // apply BCs to solution vector for first iteration
-    constraints.distribute(solution);
   }
 
   void
@@ -148,7 +145,7 @@ public:
     const unsigned int                   dofs_per_cell = fe.n_dofs_per_cell();
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-    // quadrature points
+    // number of quadrature points
     const unsigned int n_q_points = fe_values.n_quadrature_points;
 
     // initialize cell matrix and RHS
@@ -166,7 +163,6 @@ public:
           {
             cell_matrix = 0.;
             cell_rhs    = 0.;
-
             fe_values.reinit(cell);
 
             // get previous values and gradients
@@ -236,12 +232,19 @@ public:
     TrilinosWrappers::PreconditionILU preconditioner;
     preconditioner.initialize(system_matrix);
 
+    TrilinosWrappers::MPI::Vector completely_distributed_solution(
+      dof_handler.locally_owned_dofs(), comm);
+
     // solve linear system
-    solver.solve(system_matrix, delta_solution, system_rhs, preconditioner);
+    solver.solve(system_matrix,
+                 completely_distributed_solution,
+                 system_rhs,
+                 preconditioner);
 
     // update solution
+    constraints.distribute(completely_distributed_solution);
+    delta_solution = completely_distributed_solution;
     solution += delta_solution;
-    constraints.distribute(solution);
   }
 
   void
@@ -252,46 +255,52 @@ public:
                              Utilities::MPI::this_mpi_process(comm) == 0);
 
     // iteration parameters
-    double       error   = 1e10;
-    double       tol     = 1e-10;
-    unsigned int iter    = 0;
-    unsigned int itermax = 200;
+    double       error = 1e10;
+    double       tol   = 1e-10;
+    unsigned int it    = 0;
 
     // output results on first iteration
-    output_results(iter);
+    output_results(it);
 
     // iteration loop
     while (error > tol)
       {
         // update iteration
-        iter++;
+        it++;
 
         // assemble and solve linear system
         assemble_system();
         compute_update();
 
-        // calculate error
-        error = delta_solution.l2_norm();
+        // get vectors without any ghosts
+        TrilinosWrappers::MPI::Vector local_delta_solution(system_rhs);
+        local_delta_solution = delta_solution;
+        TrilinosWrappers::MPI::Vector local_solution(system_rhs);
+        local_solution = solution;
 
-        // print norms and residual
-        pcout << "   Iter " << iter << " - Delta solution norm, Linfty norm: "
-              << delta_solution.linfty_norm()
-              << " L2 norm: " << delta_solution.l2_norm() << std::endl;
+        // calculate error
+        error = local_delta_solution.l2_norm();
+
+        // print norms
+        pcout << "   Iter " << it << " - Delta solution norm, Linfty norm: "
+              << local_delta_solution.linfty_norm()
+              << " L2 norm: " << local_delta_solution.l2_norm() << std::endl;
+
+        solution = local_solution;
 
         // output iteration results
-        output_results(iter);
-
-        if (iter == itermax)
-          break;
+        output_results(it);
       }
   }
 
   void
-  output_results(unsigned int iter)
+  output_results(unsigned int it)
   {
     DataOut<dim> data_out;
     std::string  filename =
-      "poisson_nonlinear_MB-" + Utilities::int_to_string(iter) + ".vtu";
+      "poisson_nonlinear_MB-" + Utilities::int_to_string(it) + ".vtu";
+
+    solution.update_ghost_values();
 
     DataOutBase::VtkFlags flags;
     flags.write_higher_order_cells = true;
