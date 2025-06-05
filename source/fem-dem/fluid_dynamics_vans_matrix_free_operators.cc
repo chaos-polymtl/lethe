@@ -97,9 +97,6 @@ VANSOperator<dim, number>::compute_void_fraction(
                   cell_void_fraction_gradient[q][c];
 
               void_fraction[cell][q][lane] = cell_void_fraction[q];
-
-              std::cout << "Cell void fraction is " << cell_void_fraction[q]
-                        << std::endl;
             }
         }
     }

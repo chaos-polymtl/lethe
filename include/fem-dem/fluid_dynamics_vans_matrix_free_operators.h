@@ -53,8 +53,9 @@ public:
    * void fraction
    */
   void
-  compute_void_fraction(const LinearAlgebra::distributed::Vector<double>      &void_fraction_solution,
-                        const DoFHandler<dim> &void_fraction_dof_handler);
+  compute_void_fraction(
+    const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
+    const DoFHandler<dim> &void_fraction_dof_handler);
 
 protected:
   /**

@@ -207,6 +207,10 @@ VoidFractionBase<dim>::calculate_void_fraction_function(const double time)
 
   // Propagate ghost values
   void_fraction_locally_relevant = void_fraction_locally_owned;
+
+  // Perform copy between two vector types to ensure there is a deal.II vector
+  convert_vector_trilinos_to_dealii(this->void_fraction_solution,
+                                    void_fraction_locally_relevant);
 }
 
 template <int dim>
@@ -1159,12 +1163,6 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution()
 
   void_fraction_constraints.distribute(completely_distributed_solution);
   void_fraction_locally_relevant = completely_distributed_solution;
-
-
-  // Perform copy between two vector types
-  convert_vector_trilinos_to_dealii(this->void_fraction_solution,
-                                    void_fraction_locally_relevant);
-  
 }
 
 // Pre-compile the 2D and 3D VoidFractionBase solver to ensure that the
