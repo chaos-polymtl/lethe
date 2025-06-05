@@ -272,7 +272,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
       compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
                                         mortar_parameters)
         .second,
-      mortar_parameters.rotor_mesh->rotation_angle)
+      mortar_parameters.rotor_angular_velocity->value(Point<dim>()))
 {}
 
 
@@ -543,31 +543,7 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number                                    *all_value_p,
-                  const bool mortar_side = true) const = 0;
-
-  /**
-   * @brief Perform integral of mortar elements at the rotor-stator interface
-   *
-   * @param[in] buffer Temporary vector where data is stored before being passes
-   * to the system matrix
-   * @param[in] ptr_q Pointer for the quadrature point index related to the
-   * rotor-stator interface
-   * @param[in] q_stride Pointer for the cell index in which the quadrature
-   * point lies in
-   * @param[in] all_value_m Number of values stored in the mortar side of the
-   * interface
-   * @param[in] all_value_p Number of values stored in the non-mortar side of
-   * the interface
-   */
-  virtual void
-  local_integrate_residual(const CouplingEvaluationData<dim, Number> &data,
-                           Vector<Number>                            &buffer,
-                           const unsigned int                         ptr_q,
-                           const unsigned int                         q_stride,
-                           Number    *all_value_m,
-                           Number    *all_value_p,
-                           const bool mortar_side = true) const = 0;
+                  Number                                    *all_value_p) const = 0;
 };
 
 
@@ -836,17 +812,7 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number                                    *all_value_p,
-                  const bool mortar_side = true) const override;
-
-  void
-  local_integrate_residual(const CouplingEvaluationData<dim, Number> &data,
-                           Vector<Number>                            &buffer,
-                           const unsigned int                         ptr_q,
-                           const unsigned int                         q_stride,
-                           Number    *all_value_m,
-                           Number    *all_value_p,
-                           const bool mortar_side = true) const override;
+                  Number                                    *all_value_p) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`
@@ -899,17 +865,7 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number                                    *all_value_p,
-                  const bool mortar_side = true) const override;
-
-  void
-  local_integrate_residual(const CouplingEvaluationData<dim, Number> &data,
-                           Vector<Number>                            &buffer,
-                           const unsigned int                         ptr_q,
-                           const unsigned int                         q_stride,
-                           Number    *all_value_m,
-                           Number    *all_value_p,
-                           const bool mortar_side = true) const override;
+                  Number                                    *all_value_p) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`.
