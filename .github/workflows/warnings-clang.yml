@@ -65,5 +65,5 @@ jobs:
           cd build-warnings
           export CC=/usr/bin/clang
           export CXX=/usr/bin/clang++
-          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_FLAGS="-std=c++17" -G Ninja
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_FLAGS="-stdlib=libc++" -G Ninja
           ninja -j${{ env.COMPILE_JOBS }}
