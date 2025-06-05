@@ -451,9 +451,6 @@ The Young's modulus in the simulation can sometimes be underestimated for comput
 
    r_c' = r_c \, c \quad, \quad c = \left( \frac{Y_{\mathrm{e},Sim}}{Y_{\mathrm{e},Real}} \right)^{1/5}
 
-.. note::
-   For now, the parameter for the real young modulus of the particles is not implemented so the factor c is equal to 1.
-   
 
 The parameters used to calculate the resistances are summed up in the following table:
 
