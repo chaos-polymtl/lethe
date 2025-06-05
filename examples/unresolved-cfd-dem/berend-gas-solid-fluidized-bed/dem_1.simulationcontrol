@@ -1,0 +1,8 @@
+Simulation control
+dt_0 5e-06
+dt_1 5e-06
+dt_2 5e-06
+dt_3 5e-06
+CFL  0
+Time 1.95
+Iter 390000
