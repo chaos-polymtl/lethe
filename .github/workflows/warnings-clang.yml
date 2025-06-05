@@ -1,0 +1,69 @@
+name: CI-Warnings
+
+on: 
+  push:
+    # Runs on every push on master branch
+    branches:
+      - master
+  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
+  pull_request:
+    paths-ignore:
+      - 'doc/**'
+      - 'contrib/**'
+      - 'examples/**'
+
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  COMPILE_JOBS: 4
+  MULTI_CORE_TESTS_REGEX: "mpirun=2"
+
+jobs:
+  build:
+    name: Build (deal.ii:${{ matrix.dealii_version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dealii_version: ["master-jammy", "v9.6.0-jammy"]
+    
+    # Run steps in container of dealii's master branch
+    container:
+      image: dealii/dealii:${{ matrix.dealii_version }}
+      options: --user root
+
+    steps:
+      - name: Setup
+        run: |
+          # Since dealii image doesn't include Node.js, we'll install it
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nodejs
+
+          # Install CLANG
+          sudo apt-get install clang
+          sudo update-alternatives --config c++
+
+
+
+          echo "Github actions is sane!"
+          echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
+
+      # Checks-out Lethe with branch of triggering commit
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      #
+      # Warnings
+      #
+      - name: Compile Lethe to check for warnings (deal.ii:${{ matrix.dealii_version }})
+        run: |
+          mkdir build-warnings
+          cd build-warnings
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_COMPILE_WARNING_AS_ERROR=ON -DBUILD_PROTOTYPES=ON -G Ninja
+          ninja -j${{ env.COMPILE_JOBS }}
