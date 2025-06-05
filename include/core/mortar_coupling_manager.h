@@ -543,7 +543,7 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number                                    *all_value_p) const = 0;
+                  Number *all_value_p) const = 0;
 };
 
 
@@ -812,7 +812,7 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number                                    *all_value_p) const override;
+                  Number *all_value_p) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`
@@ -865,7 +865,7 @@ public:
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
                   Number                                    *all_value_m,
-                  Number                                    *all_value_p) const override;
+                  Number *all_value_p) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`.

@@ -1247,7 +1247,9 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
             buffer *= -1.0;
 
             const auto local_dofs = this->get_dof_indices(cell);
-            constraints.distribute_local_to_global(buffer, local_dofs, system_rhs);
+            constraints.distribute_local_to_global(buffer,
+                                                   local_dofs,
+                                                   system_rhs);
 
             ptr_q += n_q_points;
           }
@@ -1380,10 +1382,8 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
       this->phi_m.submit_gradient(-value_jump * 0.5 * JxW, q);
 
       // + (jump(v), σ jump(u) - avg(∇u) n)
-      this->phi_m.submit_value((contract(value_jump, normal) * sigma -
-                                gradient_normal_avg) *
-                                 JxW,
-                               q);
+      this->phi_m.submit_value(
+        (contract(value_jump, normal) * sigma - gradient_normal_avg) * JxW, q);
     }
   // Multiply previous terms by respective test functions values/gradients
   this->phi_m.test_and_sum(buffer,
