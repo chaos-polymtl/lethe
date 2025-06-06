@@ -110,6 +110,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                   dsp,
                                   nonzero_constraints,
                                   false);
+
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),

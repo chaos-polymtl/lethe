@@ -4146,10 +4146,8 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable mortar interface <true|false>");
-
       rotor_mesh = std::make_shared<Mesh>();
       rotor_mesh->declare_parameters(prm);
-
       prm.declare_entry("rotor boundary id",
                         "1",
                         Patterns::Integer(),
@@ -4164,7 +4162,11 @@ namespace Parameters
                         default_entry_point,
                         Patterns::List(Patterns::Double()),
                         "Center of rotation coordinates of rotor domain");
-
+      prm.enter_subsection("rotor angular velocity");
+      rotor_angular_velocity =
+        std::make_shared<Functions::ParsedFunction<dim>>();
+      rotor_angular_velocity->declare_parameters(prm);
+      prm.leave_subsection();
       prm.declare_entry("penalty factor",
                         "1.",
                         Patterns::Double(),
@@ -4173,6 +4175,12 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Oversampling factor for quadrature points");
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the mortar information should be printed "
+        "Choices are <quiet|verbose>.");
     }
     prm.leave_subsection();
   }
@@ -4183,20 +4191,25 @@ namespace Parameters
   {
     prm.enter_subsection("mortar");
     {
-      this->enable = prm.get_bool("enable");
-
-      this->rotor_mesh->parse_parameters(prm);
-
-      this->rotor_boundary_id = prm.get_integer("rotor boundary id");
-
-      this->stator_boundary_id = prm.get_integer("stator boundary id");
-
-      this->center_of_rotation =
+      enable = prm.get_bool("enable");
+      rotor_mesh->parse_parameters(prm);
+      rotor_boundary_id  = prm.get_integer("rotor boundary id");
+      stator_boundary_id = prm.get_integer("stator boundary id");
+      center_of_rotation =
         value_string_to_tensor<dim>(prm.get("center of rotation"));
+      prm.enter_subsection("rotor angular velocity");
+      rotor_angular_velocity->parse_parameters(prm);
+      rotor_angular_velocity->set_time(0);
+      prm.leave_subsection();
+      sip_factor          = prm.get_double("penalty factor");
+      oversampling_factor = prm.get_integer("oversampling factor");
 
-      this->sip_factor = prm.get_double("penalty factor");
-
-      this->oversampling_factor = prm.get_integer("oversampling factor");
+      // Enable printing of mortar information
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Verbosity::verbose;
+      if (op == "quiet")
+        verbosity = Verbosity::quiet;
     }
     prm.leave_subsection();
   }
