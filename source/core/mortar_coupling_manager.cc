@@ -1602,13 +1602,13 @@ CouplingOperator<3, double>::vmult_add(
 
 template void
 CouplingOperator<1, double>::add_diagonal_entries(
-  TrilinosWrappers::MPI::Vector &) const;
+  LinearAlgebra::distributed::Vector<double> &) const;
 template void
 CouplingOperator<2, double>::add_diagonal_entries(
-  TrilinosWrappers::MPI::Vector &) const;
+  LinearAlgebra::distributed::Vector<double> &) const;
 template void
 CouplingOperator<3, double>::add_diagonal_entries(
-  TrilinosWrappers::MPI::Vector &) const;
+  LinearAlgebra::distributed::Vector<double> &) const;
 
 template class CouplingEvaluationSIPG<1, 1, double>;
 template class CouplingEvaluationSIPG<1, 2, double>;
