@@ -838,10 +838,10 @@ public:
     unsigned int particle_i                  = 0;
     average_fluid_particle_relative_velocity = 0;
 
-    // TODO, get the real viscosity at the particle localtion
+    // TODO, get the real viscosity at the particle location
     double kinematic_viscosity =
       properties_manager.get_kinematic_viscosity_scale();
-
+    
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();

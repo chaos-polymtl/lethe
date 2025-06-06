@@ -382,6 +382,35 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       *this->cell_quadrature,
       *this->mapping,
       *this->face_quadrature);
+    
+
+    if (this->simulation_parameters.multiphysics.VOF)
+      {
+        const DoFHandler<dim> *dof_handler_vof =
+          this->multiphysics->get_dof_handler(PhysicsID::VOF);
+        scratch_data.enable_vof(
+          dof_handler_vof->get_fe(),
+          *this->cell_quadrature,
+          *this->mapping,
+          this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+
+        if (this->simulation_parameters.multiphysics.vof_parameters
+              .surface_tension_force.enable)
+          {
+            const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
+              this->multiphysics
+                ->get_projected_phase_fraction_gradient_dof_handler();
+            const DoFHandler<dim> &curvature_dof_handler =
+              this->multiphysics->get_curvature_dof_handler();
+            scratch_data.enable_projected_phase_fraction_gradient(
+              projected_phase_fraction_gradient_dof_handler.get_fe(),
+              *this->cell_quadrature,
+              *this->mapping);
+            scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
+                                          *this->cell_quadrature,
+                                          *this->mapping);
+          }
+      }
 
     scratch_data.enable_void_fraction(*particle_projector.fe,
                                       *this->cell_quadrature,
@@ -423,6 +452,23 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+    }
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
@@ -492,9 +538,20 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
     *this->mapping,
     *this->face_quadrature);
 
-  scratch_data.enable_void_fraction(*particle_projector.fe,
-                                    *this->cell_quadrature,
-                                    *this->mapping);
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_vof(
+        dof_handler_vof->get_fe(),
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+    }
+      scratch_data.enable_void_fraction(*particle_projector.fe,
+                                        *this->cell_quadrature,
+                                        *this->mapping);
 
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
@@ -535,6 +592,23 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
+  
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+    }
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
