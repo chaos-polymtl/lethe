@@ -1143,27 +1143,23 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                       {
                         buffer.reinit(n_dofs_per_cell);
                         if (b == 0) // negative ('mortar') side
-                          {
-                            evaluator->local_integrate(
-                              data,
-                              buffer,
-                              ptr_q,
-                              n_dofs_per_cell,
-                              all_value_m.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                              nullptr);
-                          }
+                          evaluator->local_integrate(
+                            data,
+                            buffer,
+                            ptr_q,
+                            n_dofs_per_cell,
+                            all_value_m.data() +
+                              (ptr_q * n_dofs_per_cell + i) * q_data_size,
+                            nullptr);
                         else // positive ('non-mortar') side
-                          {
-                            evaluator->local_integrate(
-                              data,
-                              buffer,
-                              ptr_q,
-                              n_dofs_per_cell,
-                              nullptr,
-                              all_value_p.data() +
-                                (ptr_q * n_dofs_per_cell + i) * q_data_size);
-                          }
+                          evaluator->local_integrate(
+                            data,
+                            buffer,
+                            ptr_q,
+                            n_dofs_per_cell,
+                            nullptr,
+                            all_value_p.data() +
+                              (ptr_q * n_dofs_per_cell + i) * q_data_size);
 
                         // Copy data from buffer to cell matrix
                         for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
@@ -1387,180 +1383,6 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
 }
 
 
-/*----------- NavierStokesCouplingEvaluation -------------------------*/
-
-template <int dim, typename Number>
-NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
-  const Mapping<dim>    &mapping,
-  const DoFHandler<dim> &dof_handler,
-  const bool             do_pressure_gradient_term,
-  const bool             do_velocity_divergence_term)
-  : fe_sub_u(dof_handler.get_fe().base_element(
-               dof_handler.get_fe().component_to_base_index(0).first),
-             dim)
-  , fe_sub_p(dof_handler.get_fe().base_element(
-               dof_handler.get_fe().component_to_base_index(dim).first),
-             1)
-  , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
-  , phi_p_m(mapping, fe_sub_p, update_values)
-  , do_pressure_gradient_term(do_pressure_gradient_term)
-  , do_velocity_divergence_term(do_velocity_divergence_term)
-{
-  for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
-    if (dof_handler.get_fe().system_to_component_index(i).first < dim)
-      relevant_dof_indices.push_back(i);
-
-  for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
-    if (dof_handler.get_fe().system_to_component_index(i).first == dim)
-      relevant_dof_indices.push_back(i);
-
-  AssertDimension(dof_handler.get_fe().n_dofs_per_cell(),
-                  relevant_dof_indices.size());
-}
-
-template <int dim, typename Number>
-unsigned int
-NavierStokesCouplingEvaluation<dim, Number>::data_size() const
-{
-  return 4 * dim;
-}
-
-template <int dim, typename Number>
-const std::vector<unsigned int> &
-NavierStokesCouplingEvaluation<dim, Number>::get_relevant_dof_indices() const
-{
-  return relevant_dof_indices;
-}
-
-template <int dim, typename Number>
-void
-NavierStokesCouplingEvaluation<dim, Number>::local_reinit(
-  const typename Triangulation<dim>::cell_iterator &cell,
-  const ArrayView<const Point<dim, Number>>        &points) const
-{
-  this->phi_u_m.reinit(cell, points);
-  this->phi_p_m.reinit(cell, points);
-}
-
-template <int dim, typename Number>
-void
-NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
-  const CouplingEvaluationData<dim, Number> &data,
-  const Vector<Number>                      &buffer,
-  const unsigned int                         ptr_q,
-  const unsigned int                         q_stride,
-  Number                                    *all_value_m) const
-{
-  AssertDimension(buffer.size(),
-                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
-
-  ArrayView<const Number> buffer_u(buffer.data() + 0,
-                                   fe_sub_u.n_dofs_per_cell());
-  ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
-                                   fe_sub_p.n_dofs_per_cell());
-
-  this->phi_u_m.evaluate(buffer_u,
-                         EvaluationFlags::values | EvaluationFlags::gradients);
-  this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
-
-  for (const auto q : this->phi_u_m.quadrature_point_indices())
-    {
-      const unsigned int q_index = ptr_q + q;
-
-      const auto normal = data.all_normals[q_index];
-
-      const auto value_m    = this->phi_u_m.get_value(q);
-      const auto gradient_m = contract(this->phi_u_m.get_gradient(q), normal);
-      const auto p_value_m  = this->phi_p_m.get_value(q) * normal;
-
-      BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
-
-      buffer_m.write(value_m);
-      buffer_m.write(gradient_m);
-      buffer_m.write(p_value_m);
-    }
-}
-
-template <int dim, typename Number>
-void
-NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
-  const CouplingEvaluationData<dim, Number> &data,
-  Vector<Number>                            &buffer,
-  const unsigned int                         ptr_q,
-  const unsigned int                         q_stride,
-  Number                                    *all_value_m,
-  Number                                    *all_value_p) const
-{
-  for (const auto q : this->phi_u_m.quadrature_point_indices())
-    {
-      // get kinematic viscosity from rheological model
-      const double kinematic_viscosity = 1.;
-      // this->properties_manager->get_rheology()->get_kinematic_viscosity();
-
-      const unsigned int q_index = ptr_q + q;
-
-      BufferRW<Number> buffer_m(all_value_m, q * 4 * dim * q_stride);
-      BufferRW<Number> buffer_p(all_value_p, q * 4 * dim * q_stride);
-
-      const auto value_m           = buffer_m.template read<u_value_type>();
-      const auto value_p           = buffer_p.template read<u_value_type>();
-      const auto normal_gradient_m = buffer_m.template read<u_value_type>();
-      const auto normal_gradient_p = buffer_p.template read<u_value_type>();
-      const auto normal_p_value_m  = buffer_m.template read<u_value_type>();
-      const auto normal_p_value_p  = buffer_p.template read<u_value_type>();
-
-      const auto JxW               = data.all_weights[q_index];
-      const auto penalty_parameter = data.all_penalty_parameter[q_index];
-      const auto normal            = data.all_normals[q_index];
-
-      // [u] = (u_m - u_p)
-      const auto u_value_jump = value_m - value_p;
-      // {{∇u}} = (∇u_m + ∇u_p)/2
-      const auto u_gradient_avg = (normal_gradient_m - normal_gradient_p) * 0.5;
-      // {{p}} = (∇p_m + ∇p_p)/2
-      const auto p_value_avg = (normal_p_value_m - normal_p_value_p) * 0.5;
-
-      typename FEPointIntegratorU::value_type u_normal_gradient_avg_result = {};
-      typename FEPointIntegratorU::value_type u_value_jump_result          = {};
-      typename FEPointIntegratorP::value_type p_value_jump_result          = {};
-
-      // SIPG penalty parameter
-      const double sigma = penalty_parameter * data.penalty_factor;
-
-      /* Contributions from viscous term */
-      // - (n avg(∇v), jump(δu))
-      u_normal_gradient_avg_result -= u_value_jump;
-      // - (jump(v), ν avg(∇δu) n)
-      u_value_jump_result -= kinematic_viscosity * u_gradient_avg;
-      // + (jump(v), ν σ jump(δu))
-      u_value_jump_result += kinematic_viscosity * sigma * u_value_jump;
-
-      /* Contribution from pressure term*/
-      // + (jump(v), avg(δp) n)
-      u_value_jump_result += p_value_avg;
-
-      // - (n avg(∇v), ν/2 jump(δu))
-      phi_u_m.submit_gradient(outer(u_normal_gradient_avg_result, normal) *
-                                0.5 * kinematic_viscosity * JxW,
-                              q);
-      phi_u_m.submit_value(u_value_jump_result * JxW, q);
-      phi_p_m.submit_value(p_value_jump_result * JxW, q);
-    }
-
-  AssertDimension(buffer.size(),
-                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
-
-  ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
-  ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
-                             fe_sub_p.n_dofs_per_cell());
-
-  this->phi_u_m.test_and_sum(buffer_u,
-                             EvaluationFlags::values |
-                               EvaluationFlags::gradients);
-  this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
-}
-
-
 /*-------------- Explicit Instantiations -------------------------------*/
 template class MortarManagerBase<1>;
 template class MortarManagerBase<2>;
@@ -1619,8 +1441,6 @@ template class CouplingEvaluationSIPG<3, 1, double>;
 template class CouplingEvaluationSIPG<3, 3, double>;
 template class CouplingEvaluationSIPG<3, 4, double>;
 
-template class NavierStokesCouplingEvaluation<2, double>;
-template class NavierStokesCouplingEvaluation<3, double>;
 
 template std::pair<unsigned int, double>
 compute_n_subdivisions_and_radius<2>(

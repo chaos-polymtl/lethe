@@ -557,11 +557,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
   if (simulation_parameters.multiphysics.fluid_dynamics)
     {
-      // If the mortar method is enabled, update the rotor configuration in the
-      // mortar coupling operator
-      if (this->simulation_parameters.mortar.enable)
-        this->rotate_mortar_mapping();
-
       // Solve and percolate the auxiliary physics that should be treated BEFORE
       // the fluid dynamics
       multiphysics->solve(false,
@@ -1952,80 +1947,6 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
   this->establish_solid_domain(false);
 
   this->zero_constraints.close();
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
-{
-  if (!this->simulation_parameters.mortar.enable)
-    return;
-
-  // Create mortar manager
-  this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-    *this->cell_quadrature,
-    this->dof_handler,
-    this->simulation_parameters.mortar);
-
-  // Create mortar coupling evaluator
-  const std::shared_ptr<CouplingEvaluationBase<dim, double>>
-    mortar_coupling_evaluator =
-      std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-        *this->mapping, this->dof_handler);
-
-  this->mortar_coupling_operator =
-    std::make_shared<CouplingOperator<dim, double>>(
-      *this->mapping,
-      this->dof_handler,
-      this->zero_constraints,
-      mortar_coupling_evaluator,
-      this->mortar_manager,
-      this->simulation_parameters.mortar.rotor_boundary_id,
-      this->simulation_parameters.mortar.stator_boundary_id,
-      this->simulation_parameters.mortar.sip_factor);
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
-{
-  // Rotate mapping for rotor-stator configuration
-  if (this->simulation_parameters.mortar.enable)
-    {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-      // Get updated rotation angle
-      simulation_parameters.mortar.rotor_angular_velocity->set_time(
-        this->simulation_control->get_current_time());
-      const double rotation_angle =
-        simulation_parameters.mortar.rotor_angular_velocity->value(
-          Point<dim>());
-
-      MappingQCache<dim> mapping_cache(this->velocity_fem_degree);
-
-      if (simulation_parameters.mortar.verbosity ==
-          Parameters::Verbosity::verbose)
-        this->pcout << "Mortar - Rotating rotor grid: " << rotation_angle
-                    << " rad \n"
-                    << std::endl;
-
-      LetheGridTools::rotate_mapping(
-        this->dof_handler,
-        mapping_cache,
-        *this->mapping,
-        compute_n_subdivisions_and_radius(*this->triangulation,
-                                          this->simulation_parameters.mortar)
-          .second,
-        rotation_angle);
-
-      this->previous_mapping = this->mapping;
-      this->mapping = std::make_shared<MappingQCache<dim>>(mapping_cache);
-#else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "The mapping rotation requires a more recent version of deal.II."));
-#endif
-    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
