@@ -20,9 +20,9 @@ We organize the DEM-Multiphysics examples from the simplest to the most complica
       rankdir="LR";
       size = "9,9";
       
-      dem_mp [label="DEM-Multiphysics", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem_mp/dem_mp.html"];
+      dem_mp [label="DEM-Multiphysics", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/dem-mp.html"];
 
-      dem_mp_1 [label="Thermal Lines", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem_mp/thermal-lines/thermal-lines.html"];
+      dem_mp_1 [label="Thermal Lines", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/thermal-lines/thermal-lines.html"];
 
       dem_mp -> dem_mp_1:w;
    
