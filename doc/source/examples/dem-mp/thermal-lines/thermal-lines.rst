@@ -35,9 +35,9 @@ Description of the Cases
 
 In the first stage of both simulations, the 10 particles are put in contact. The solid surfaces on the left and right move towards the center to push the particles, until they are all in contact on a line.
 
-In the case of the equilibrium simulation, particles on the left side have a temperature of :math:`-30°C` and particles of the right side have a temperature of :math:`30°C`. When all the particles are in contact on a line, the mean temperatures of the particles on the left and the particles on the right should vary towards the whole mean temperature i.e. :math:`0°C` here.
+In the case of the `equilibrium` simulation, particles on the left side have a temperature of :math:`-30°C` and particles of the right side have a temperature of :math:`30°C`. When all the particles are in contact on a line, the mean temperatures of the particles on the left and the particles on the right should vary towards the whole mean temperature i.e. :math:`0°C` here.
 
-In the case of the wall-heating simulation, all particles start with a temperature of :math:`0°C`. The walls also have a temperature of :math:`0°C`. When all the particles are in contact on a line (:math:`8 s`), the temperature of the right wall is set to :math:`50°C`. After some time, the temperature of the particles should be a linear function of their position.
+In the case of the `wall-heating` simulation, all particles start with a temperature of :math:`0°C`. The walls also have a temperature of :math:`0°C`. When all the particles are in contact on a line (:math:`8 s`), the temperature of the right wall is set to :math:`50°C`. After some time, the temperature of the particles should be a linear function of their position.
 
 
 --------------
