@@ -142,7 +142,7 @@ Since the simulations only involve :math:`10` particles, they were inserted at p
     end
 
 
-Solid objects
+Solid Objects
 ~~~~~~~~~~~~~~~
 
 For the equilibrium simulation, walls are considered ``adiabatic`` and move towards the center until they reach their set location.
