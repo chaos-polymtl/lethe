@@ -555,8 +555,6 @@ template <int dim, typename Number>
 class CouplingOperator
 {
 public:
-  using VectorType = LinearAlgebra::distributed::Vector<Number>;
-
   CouplingOperator(
     const Mapping<dim>                                        &mapping,
     const DoFHandler<dim>                                     &dof_handler,
@@ -581,6 +579,7 @@ public:
    * @param[in, out] dst Destination vector holding the result
    * @param[in] src Input source vector
    */
+  template <typename VectorType>
   void
   vmult_add(VectorType &dst, const VectorType &src) const;
 
@@ -589,6 +588,7 @@ public:
    *
    * @param[in, out] diagonal Matrix diagonal
    */
+  template <typename VectorType>
   void
   add_diagonal_entries(VectorType &diagonal) const;
 

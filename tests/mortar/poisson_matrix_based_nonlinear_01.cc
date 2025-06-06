@@ -197,8 +197,8 @@ public:
                                              dx;
                       }
 
-                    // -(∇v, ∇u) + (v, exp(u))
-                    cell_rhs(i) += (-grad_phi_i * previous_gradients[q] +
+                    // +(∇v, ∇u) - (v, exp(u))
+                    cell_rhs(i) += (grad_phi_i * previous_gradients[q] -
                                     phi_i * nonlinearity) *
                                    dx;
                   }
@@ -215,10 +215,12 @@ public:
 
     // add coupling entries in system matrix and RHS
     mortar_coupling_operator->add_system_matrix_entries(system_matrix);
-    mortar_coupling_operator->add_system_rhs_entries(system_rhs, solution);
+    mortar_coupling_operator->vmult_add(system_rhs, solution);
 
     system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
+
+    system_rhs *= -1.0;
   }
 
   void

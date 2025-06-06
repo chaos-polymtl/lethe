@@ -883,6 +883,7 @@ CouplingOperator<dim, Number>::get_dof_indices(
 }
 
 template <int dim, typename Number>
+template <typename VectorType>
 void
 CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                          const VectorType &src) const
@@ -964,6 +965,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
 }
 
 template <int dim, typename Number>
+template <typename VectorType>
 void
 CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
 {
@@ -1571,6 +1573,42 @@ template class MortarManagerCircle<3>;
 template class CouplingOperator<1, double>;
 template class CouplingOperator<2, double>;
 template class CouplingOperator<3, double>;
+
+template void
+CouplingOperator<1, double>::vmult_add(
+  LinearAlgebra::distributed::Vector<double> &,
+  const LinearAlgebra::distributed::Vector<double> &) const;
+template void
+CouplingOperator<2, double>::vmult_add(
+  LinearAlgebra::distributed::Vector<double> &,
+  const LinearAlgebra::distributed::Vector<double> &) const;
+template void
+CouplingOperator<3, double>::vmult_add(
+  LinearAlgebra::distributed::Vector<double> &,
+  const LinearAlgebra::distributed::Vector<double> &) const;
+
+template void
+CouplingOperator<1, double>::vmult_add(
+  TrilinosWrappers::MPI::Vector &,
+  const TrilinosWrappers::MPI::Vector &) const;
+template void
+CouplingOperator<2, double>::vmult_add(
+  TrilinosWrappers::MPI::Vector &,
+  const TrilinosWrappers::MPI::Vector &) const;
+template void
+CouplingOperator<3, double>::vmult_add(
+  TrilinosWrappers::MPI::Vector &,
+  const TrilinosWrappers::MPI::Vector &) const;
+
+template void
+CouplingOperator<1, double>::add_diagonal_entries(
+  TrilinosWrappers::MPI::Vector &) const;
+template void
+CouplingOperator<2, double>::add_diagonal_entries(
+  TrilinosWrappers::MPI::Vector &) const;
+template void
+CouplingOperator<3, double>::add_diagonal_entries(
+  TrilinosWrappers::MPI::Vector &) const;
 
 template class CouplingEvaluationSIPG<1, 1, double>;
 template class CouplingEvaluationSIPG<1, 2, double>;

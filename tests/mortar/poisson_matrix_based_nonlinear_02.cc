@@ -206,7 +206,7 @@ public:
                         cell_matrix(i, j) += grad_phi_i * grad_phi_j * JxW;
                       }
 
-                    cell_rhs(i) -= (grad_phi_i * previous_gradients[q]) * JxW;
+                    cell_rhs(i) += (grad_phi_i * previous_gradients[q]) * JxW;
                   }
               }
 
@@ -221,10 +221,12 @@ public:
 
     // add coupling entries in system matrix and RHS
     mortar_coupling_operator->add_system_matrix_entries(system_matrix);
-    mortar_coupling_operator->add_system_rhs_entries(system_rhs, solution);
+    mortar_coupling_operator->vmult_add(system_rhs, solution);
 
     system_matrix.compress(VectorOperation::add);
     system_rhs.compress(VectorOperation::add);
+
+    system_rhs *= -1.0;
   }
 
   void
@@ -270,7 +272,7 @@ public:
         // assemble and solve linear system
         assemble_system();
         compute_update();
-         
+
         // calculate error
         error = delta_solution.l2_norm();
 
