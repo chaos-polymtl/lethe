@@ -474,6 +474,42 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
   return quadrature;
 }
 
+/**
+ * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.
+ *
+ * @tparam number Abstract type for number across the class (i.e., double).
+ * @param out Destination TrilinosWrappers::MPI::Vector vector.
+ * @param in Source LinearAlgebra::distributed::Vector<number> vector.
+ */
+template <typename number>
+void
+convert_vector_dealii_to_trilinos(
+  TrilinosWrappers::MPI::Vector                    &out,
+  const LinearAlgebra::distributed::Vector<number> &in)
+{
+  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+  rwv.import_elements(in, VectorOperation::insert);
+  out.import_elements(rwv, VectorOperation::insert);
+}
+
+/**
+ * @brief Helper function that allows to convert Trilinos vectors to deal.II vectors.
+ *
+ * @tparam number Abstract type for number across the class (i.e., double).
+ * @param out Destination LinearAlgebra::distributed::Vector<number> vector.
+ * @param in Source TrilinosWrappers::MPI::Vector vector.
+ */
+template <typename number>
+void
+convert_vector_trilinos_to_dealii(
+  LinearAlgebra::distributed::Vector<number> &out,
+  const TrilinosWrappers::MPI::Vector        &in)
+{
+  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+  rwv.reinit(in);
+  out.import_elements(rwv, VectorOperation::insert);
+}
+
 /*-------------- MortarManagerCircle -------------------------------*/
 
 template <int dim>
@@ -924,7 +960,6 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
 
             ptr_q += n_q_points;
           }
-
   dst.compress(VectorOperation::add);
 }
 
@@ -1176,85 +1211,43 @@ CouplingOperator<dim, Number>::add_system_rhs_entries(
   TrilinosWrappers::MPI::Vector       &system_rhs,
   const TrilinosWrappers::MPI::Vector &present_solution) const
 {
-  // 1) Evaluate
-  unsigned int ptr_q = 0;
+  auto locally_owned_dofs = constraints.get_locally_owned_indices();
+  auto locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(dof_handler);
 
-  Vector<Number> buffer;
+  // use a RHS temporary vector
+  LinearAlgebra::distributed::Vector<double> temp_system_rhs(
+    locally_owned_dofs, dof_handler.get_mpi_communicator());
+  LinearAlgebra::distributed::Vector<double> temp_present_solution(
+    locally_owned_dofs,
+    locally_relevant_dofs,
+    dof_handler.get_mpi_communicator());
 
-  std::vector<Number> all_value_m(data.all_normals.size() * q_data_size);
-  std::vector<Number> all_value_p(data.all_normals.size() * q_data_size);
+  // perform copy between two vector types
+  convert_vector_trilinos_to_dealii(temp_system_rhs, system_rhs);
+  convert_vector_trilinos_to_dealii(temp_present_solution, present_solution);
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    if (cell->is_locally_owned())
-      for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
-          {
-            /* Number of quadrature points at the cell(rotor)/cell(stator)
-             * interaction. For non-aligned meshes, this value indicates the
-             * number of quadrature points at both rotor and stator cells. */
-            const unsigned int n_q_points = mortar_manager->get_n_points();
+  // invert RHS sign to be compatible with mortar entries
+  temp_system_rhs *= -1.0;
 
-            evaluator->local_reinit(
-              cell,
-              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
-                                                  n_q_points));
+  temp_present_solution.update_ghost_values();
 
-            buffer.reinit(n_dofs_per_cell);
+  // add coupling entries
+  this->vmult_add(temp_system_rhs, temp_present_solution);
 
-            const auto local_dofs = this->get_dof_indices(cell);
+  // return to original RHS sign
+  temp_system_rhs *= -1.0;
 
-            for (unsigned int i = 0; i < local_dofs.size(); ++i)
-              buffer[i] = present_solution[local_dofs[i]];
+  // return to Trilinos vector type
+  TrilinosWrappers::MPI::Vector new_system_rhs(
+    locally_owned_dofs,
+    locally_relevant_dofs,
+    dof_handler.get_mpi_communicator());
 
-            evaluator->local_evaluate(
-              data, buffer, ptr_q, 1, all_value_m.data() + ptr_q * q_data_size);
+  convert_vector_dealii_to_trilinos(new_system_rhs, temp_system_rhs);
+  system_rhs = new_system_rhs;
 
-            ptr_q += n_q_points;
-          }
-
-  // 2) Communicate
-  partitioner.template export_to_ghosted_array<Number, 0>(
-    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
-                            all_value_m.size()),
-    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size()),
-    q_data_size);
-
-  // 3) Integrate
-  ptr_q = 0;
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    if (cell->is_locally_owned())
-      for (const auto &face : cell->face_iterators())
-        if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
-          {
-            // Quadrature points at the cell(rotor)/cell(stator) interaction
-            const unsigned int n_q_points = mortar_manager->get_n_points();
-
-            evaluator->local_reinit(
-              cell,
-              ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
-                                                  n_q_points));
-
-            buffer.reinit(n_dofs_per_cell);
-            evaluator->local_integrate(data,
-                                       buffer,
-                                       ptr_q,
-                                       1,
-                                       all_value_m.data() + ptr_q * q_data_size,
-                                       all_value_p.data() +
-                                         ptr_q * q_data_size);
-
-            buffer *= -1.0;
-
-            const auto local_dofs = this->get_dof_indices(cell);
-            constraints.distribute_local_to_global(buffer,
-                                                   local_dofs,
-                                                   system_rhs);
-
-            ptr_q += n_q_points;
-          }
-
-  system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::insert);
 }
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
