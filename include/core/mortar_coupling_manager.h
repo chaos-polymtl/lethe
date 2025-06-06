@@ -609,17 +609,6 @@ public:
   add_system_matrix_entries(
     TrilinosWrappers::SparseMatrix &system_matrix) const;
 
-  /**
-   * @brief Add mortar coupling terms in the RHS
-   *
-   * @param[in, out] system_rhs RHS vector
-   * @param[in] present_solution Current solution vector
-   */
-  void
-  add_system_rhs_entries(
-    TrilinosWrappers::MPI::Vector       &system_rhs,
-    const TrilinosWrappers::MPI::Vector &present_solution) const;
-
 private:
   /**
    * @brief Compute penalty factor used in weak imposition of coupling at the rotor-stator interface

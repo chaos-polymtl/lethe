@@ -1168,50 +1168,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   AssertDimension(ptr_dofs, dof_indices.size());
 }
 
-template <int dim, typename Number>
-void
-CouplingOperator<dim, Number>::add_system_rhs_entries(
-  TrilinosWrappers::MPI::Vector       &system_rhs,
-  const TrilinosWrappers::MPI::Vector &present_solution) const
-{
-  auto locally_owned_dofs = constraints.get_locally_owned_indices();
-  auto locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(dof_handler);
-
-  // use a RHS temporary vector
-  LinearAlgebra::distributed::Vector<double> temp_system_rhs(
-    locally_owned_dofs, dof_handler.get_mpi_communicator());
-  LinearAlgebra::distributed::Vector<double> temp_present_solution(
-    locally_owned_dofs,
-    locally_relevant_dofs,
-    dof_handler.get_mpi_communicator());
-
-  // perform copy between two vector types
-  convert_vector_trilinos_to_dealii(temp_system_rhs, system_rhs);
-  convert_vector_trilinos_to_dealii(temp_present_solution, present_solution);
-
-  // invert RHS sign to be compatible with mortar entries
-  temp_system_rhs *= -1.0;
-
-  temp_present_solution.update_ghost_values();
-
-  // add coupling entries
-  this->vmult_add(temp_system_rhs, temp_present_solution);
-
-  // return to original RHS sign
-  temp_system_rhs *= -1.0;
-
-  // return to Trilinos vector type
-  TrilinosWrappers::MPI::Vector new_system_rhs(
-    locally_owned_dofs,
-    locally_relevant_dofs,
-    dof_handler.get_mpi_communicator());
-
-  convert_vector_dealii_to_trilinos(new_system_rhs, temp_system_rhs);
-  system_rhs = new_system_rhs;
-
-  system_rhs.compress(VectorOperation::insert);
-}
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
 
