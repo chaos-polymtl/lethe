@@ -212,6 +212,7 @@ VoidFractionBase<dim>::calculate_void_fraction_function(const double time)
   // Perform copy between two vector types to ensure there is a deal.II vector
   convert_vector_trilinos_to_dealii(this->void_fraction_solution,
                                     void_fraction_locally_relevant);
+  void_fraction_solution.update_ghost_values();
 #else
   void_fraction_solution = void_fraction_locally_relevant;
 #endif
@@ -1172,6 +1173,7 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution()
   // Perform copy between two vector types to ensure there is a deal.II vector
   convert_vector_trilinos_to_dealii(this->void_fraction_solution,
                                     void_fraction_locally_relevant);
+  void_fraction_solution.update_ghost_values();
 #else
   void_fraction_solution = void_fraction_locally_relevant;
 #endif
