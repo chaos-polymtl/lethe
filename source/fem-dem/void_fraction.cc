@@ -213,7 +213,7 @@ VoidFractionBase<dim>::calculate_void_fraction_function(const double time)
   convert_vector_trilinos_to_dealii(this->void_fraction_solution,
                                     void_fraction_locally_relevant);
 #else
-  void_fraction_solution = lethe_void_fraction_locally_relevant;
+  void_fraction_solution = void_fraction_locally_relevant;
 #endif
 }
 
@@ -1173,7 +1173,7 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution()
   convert_vector_trilinos_to_dealii(this->void_fraction_solution,
                                     void_fraction_locally_relevant);
 #else
-  void_fraction_solution = lethe_void_fraction_locally_relevant;
+  void_fraction_solution = void_fraction_locally_relevant;
 #endif
 }
 
