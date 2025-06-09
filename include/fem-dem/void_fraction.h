@@ -244,6 +244,9 @@ public:
   /// Fully distributed (including locally relevant) solution
   GlobalVectorType void_fraction_locally_relevant;
 
+  /// deal.II vector for the void fraction
+  LinearAlgebra::distributed::Vector<double> void_fraction_solution;
+
   /// Finite element for the void fraction
   std::shared_ptr<FiniteElement<dim>> fe;
 

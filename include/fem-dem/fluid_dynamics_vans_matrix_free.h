@@ -26,7 +26,8 @@ public:
   using VectorType = typename MFNavierStokesPreconditionGMG<dim>::VectorType;
   using MGVectorType =
     typename MFNavierStokesPreconditionGMG<dim>::MGVectorType;
-  using MGNumber = typename MFNavierStokesPreconditionGMG<dim>::MGNumber;
+  using MGNumber       = typename MFNavierStokesPreconditionGMG<dim>::MGNumber;
+  using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
 
   /**
    * @brief Constructor
@@ -70,6 +71,17 @@ public:
 private:
   /// Reference to the simulation parameters
   const CFDDEMSimulationParameters<dim> &cfd_dem_simulation_parameters;
+
+  /// Void Fraction DoF handlers for each of the levels of the global coarsening
+  /// algorithm
+  MGLevelObject<DoFHandler<dim>> void_fraction_dof_handlers;
+
+  /// Void fraction transfers for each of the levels of the global coarsening
+  /// algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_void_fraction;
+
+  /// Transfer operator for global coarsening for the void fraction
+  std::shared_ptr<GCTransferType> mg_transfer_gc_void_fraction;
 };
 
 /**
@@ -153,7 +165,6 @@ protected:
   /// Object that manages the void fraction calculation from functions
   /// or from parameters.
   VoidFractionBase<dim> void_fraction_manager;
-
 
   /// Member variables which are used to manage boundary conditions
   bool           has_periodic_boundaries;

@@ -2,6 +2,9 @@ Running on 1 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 867
    Volume of triangulation:      4
+--------------
+Void Fraction
+--------------
 
 *****************************
 Steady iteration:        1/4
@@ -9,7 +12,7 @@ Steady iteration:        1/4
 --------------
 Void Fraction
 --------------
-L2 error velocity: 0.0612697
+L2 error velocity: 0.0591198
 
 *****************************
 Steady iteration:        2/4
@@ -20,7 +23,7 @@ Steady iteration:        2/4
 --------------
 Void Fraction
 --------------
-L2 error velocity: 0.0156164
+L2 error velocity: 0.0150464
 
 *****************************
 Steady iteration:        3/4
@@ -31,7 +34,7 @@ Steady iteration:        3/4
 --------------
 Void Fraction
 --------------
-L2 error velocity: 0.00393128
+L2 error velocity: 0.00378709
 
 *****************************
 Steady iteration:        4/4
@@ -42,9 +45,9 @@ Steady iteration:        4/4
 --------------
 Void Fraction
 --------------
-L2 error velocity: 0.000985121
+L2 error velocity: 0.000948997
 cells  error_velocity    error_pressure   
-  256 6.126967e-02    - 2.184331e-01    - 
- 1024 1.561639e-02 1.97 6.617199e-02 1.72 
- 4096 3.931278e-03 1.99 1.825587e-02 1.86 
-16384 9.851213e-04 2.00 5.060478e-03 1.85 
+  256 5.911985e-02    - 2.088606e-01    - 
+ 1024 1.504643e-02 1.97 6.410821e-02 1.70 
+ 4096 3.787092e-03 1.99 1.778138e-02 1.85 
+16384 9.489968e-04 2.00 4.953122e-03 1.84 
