@@ -33,6 +33,9 @@ InterfaceTools::compute_cell_wise_volume(
   signed_distance_function.set_active_cell(cell_dof_level_set_values);
   quadrature_generator.generate(signed_distance_function, unit_box);
 
+  const ImmersedSurfaceQuadrature<dim> surface_quadrature =
+    quadrature_generator.get_surface_quadrature();
+    
   const Quadrature<dim> inside_quadrature =
     quadrature_generator.get_inside_quadrature();
 
