@@ -76,11 +76,11 @@ private:
   /// algorithm
   MGLevelObject<DoFHandler<dim>> void_fraction_dof_handlers;
 
-  /// Temperature transfers for each of the levels of the global coarsening
+  /// Void fraction transfers for each of the levels of the global coarsening
   /// algorithm
   MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_void_fraction;
 
-  /// Transfer operator for global coarsening for the temperature
+  /// Transfer operator for global coarsening for the void fraction
   std::shared_ptr<GCTransferType> mg_transfer_gc_void_fraction;
 };
 
