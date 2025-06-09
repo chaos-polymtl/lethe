@@ -175,6 +175,37 @@ protected:
   const double rotation_angle;
 };
 
+/**
+ * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+ * @param[in] dof_handler DoFHandler associated to the triangulation
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return n_subdivisions Number of cells at the interface between inner
+ * and outer domains
+ * @return radius Radius at the interface between inner and outer domains
+ */
+template <int dim>
+std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius(
+  const Triangulation<dim>      &triangulation,
+  const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
+ * @brief Construct oversampled quadrature
+ *
+ * @param[in] quadrature Quadrature for local cell operations
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return Quadrature oversampled
+ */
+template <int dim>
+Quadrature<dim>
+construct_quadrature(const Quadrature<dim>         &quadrature,
+                     const Parameters::Mortar<dim> &mortar_parameters);
+
+
 template <int dim>
 class MortarManagerCircle : public MortarManagerBase<dim>
 {
@@ -184,6 +215,11 @@ public:
                       const Quadrature<dim2> &quadrature,
                       const double            radius,
                       const double            rotation_angle);
+
+  template <int dim2>
+  MortarManagerCircle(const Quadrature<dim2>        &quadrature,
+                      const DoFHandler<dim2>        &dof_handler,
+                      const Parameters::Mortar<dim> &mortar_parameters);
 
 protected:
   Point<dim>
@@ -219,6 +255,24 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const double            radius,
   const double            rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions, quadrature, radius, rotation_angle)
+{}
+
+
+template <int dim>
+template <int dim2>
+MortarManagerCircle<dim>::MortarManagerCircle(
+  const Quadrature<dim2>        &quadrature,
+  const DoFHandler<dim2>        &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters)
+  : MortarManagerCircle(
+      compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                        mortar_parameters)
+        .first,
+      quadrature,
+      compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                        mortar_parameters)
+        .second,
+      mortar_parameters.rotor_angular_velocity->value(Point<dim>()))
 {}
 
 
@@ -405,10 +459,13 @@ symm_scalar_product_add(Tensor<1, 1, Number>       &v_gradient,
 template <int dim, typename Number>
 struct CouplingEvaluationData
 {
-  /// Penalty factor (akin to symmetric interior penalty factor in SIPG)
-  Number                              penalty_factor;
-  std::vector<Number>                 all_penalty_parameter;
-  std::vector<Number>                 all_weights;
+  /// Penalty factor (akin to penalty factor in SIPG)
+  Number penalty_factor;
+  /// Penalty parameter in symmetric interior penalty Galerkin (SIPG) method
+  std::vector<Number> all_penalty_parameter;
+  /// Weights of quadrature points
+  std::vector<Number> all_weights;
+  // Normal vectors of quadrature points
   std::vector<Tensor<1, dim, Number>> all_normals;
 };
 
@@ -447,8 +504,8 @@ public:
   /**
    * @brief Evaluate values and gradients at the coupling entries
    *
-   * @param[in] buffer Temporary vector where data is stored before being passes
-   * to the system matrix
+   * @param[in,out] buffer Temporary vector where data is stored before being
+   * passes to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
    * rotor-stator interface
    * @param[in] q_stride Pointer for the cell index in which the quadrature
@@ -476,6 +533,9 @@ public:
    * interface
    * @param[in] all_value_p Number of values stored in the non-mortar side of
    * the interface
+   *
+   * Notation referring to quantities on both mortar sides:
+   * {{.}} = avg(.), and [.]   = jump(.)   *
    */
   virtual void
   local_integrate(const CouplingEvaluationData<dim, Number> &data,
@@ -495,8 +555,6 @@ template <int dim, typename Number>
 class CouplingOperator
 {
 public:
-  using VectorType = LinearAlgebra::distributed::Vector<Number>;
-
   CouplingOperator(
     const Mapping<dim>                                        &mapping,
     const DoFHandler<dim>                                     &dof_handler,
@@ -521,6 +579,7 @@ public:
    * @param[in, out] dst Destination vector holding the result
    * @param[in] src Input source vector
    */
+  template <typename VectorType>
   void
   vmult_add(VectorType &dst, const VectorType &src) const;
 
@@ -529,6 +588,7 @@ public:
    *
    * @param[in, out] diagonal Matrix diagonal
    */
+  template <typename VectorType>
   void
   add_diagonal_entries(VectorType &diagonal) const;
 
@@ -554,10 +614,10 @@ private:
    * @brief Compute penalty factor used in weak imposition of coupling at the rotor-stator interface
    *
    * @param[in] degree Polynomial degree of the FE approximation
-   * @param[in] factor Penalty factor (akin to symmetric interior penalty factor
-   * in SIPG)
+   * @param[in] factor Penalty factor (akin to penalty factor in SIPG)
    *
    * @return penalty factor value
+   * penalty_factor = (degree + 1)^2
    */
   Number
   compute_penalty_factor(const unsigned int degree, const Number factor) const;
@@ -568,7 +628,8 @@ private:
    * @param[in] cell Cell iterator
    * @return Penalty parameter
    *
-   * @return penalty parameter value
+   * @return penalty parameter value from SIPG method
+   * penalty_parameter = (A(∂Ω_e \ Γ_h)/2 + A(∂Ω_e ∩ Γ_h))/V(Ω_e)
    */
   Number
   compute_penalty_parameter(
@@ -644,35 +705,6 @@ protected:
   std::shared_ptr<MortarManagerBase<dim>>              mortar_manager;
 };
 
-/**
- * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
- * @param[in] dof_handler DoFHandler associated to the triangulation
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return n_subdivisions Number of cells at the interface between inner
- * and outer domains
- * @return radius Radius at the interface between inner and outer domains
- */
-template <int dim>
-std::pair<unsigned int, double>
-compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
-  const Parameters::Mortar<dim> &mortar_parameters);
-
-/**
- * @brief Construct oversampled quadrature
- *
- * @param[in] quadrature Quadrature for local cell operations
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return Quadrature oversampled
- */
-template <int dim>
-static Quadrature<dim>
-construct_quadrature(const Quadrature<dim>         &quadrature,
-                     const Parameters::Mortar<dim> &mortar_parameters);
 
 template <typename T>
 class BufferRW
@@ -772,13 +804,13 @@ public:
                   Number *all_value_p) const override;
 
   /// Finite element that matches the components `n_components` components
-  /// starting at component with index `first_selected_component`.
+  /// starting at component with index `first_selected_component`
   const FESystem<dim> fe_sub;
 
   /// Interface to the evaluation of mortar coupling interpolated solution
   mutable FEPointIntegrator phi_m;
 
-  /// Relevant dof indices.
+  /// Relevant dof indices
   std::vector<unsigned int> relevant_dof_indices;
 };
 

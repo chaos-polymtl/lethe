@@ -171,7 +171,6 @@ protected:
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-
   /**
    * @brief Call for the assembly of the linear system of equation
    *
