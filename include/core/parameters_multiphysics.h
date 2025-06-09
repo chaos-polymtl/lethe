@@ -48,9 +48,21 @@ namespace Parameters
   };
 
   /**
-   * @brief Different transomation function types for the signed distance:
+   * @brief Different transformation function types for the signed distance:
    *  - tanh: hyperbolic tangent
-   *  - piecewise_polynomial: 4th degree piecewise polynomial
+   *  - piecewise_polynomial: 4th degree piecewise polynomial. The latter takes
+   *    the following form:
+   *
+   *    if \f$d < 0 \f$
+   *    \f$\phi = 0.5 - 0.5(4d' + 6d'^2 + 4*d'^3 + d'^4)\f$
+   *
+   *    else
+   *    \f$\phi = 0.5 - 0.5(4d' - 6d'^2 + 4*d'^3 - d'^4)\f$
+   *
+   *    with \f$d' = d/d_\mathrm{max}\f$, where \f$\phi\f$ is the phase
+   *    fraction, \f$d\f$ the signed distance and \f$d_\mathrm{max}\f$ the
+   *    maximum redistanciation distance. This transformation clamps the phase
+   *    fraction to 0 or 1 when \f$d = \pm d_\mathrm{max}\f$.
    */
   enum class RedistanciationTransformationType
   {

@@ -36,15 +36,15 @@ public:
    * @return Value of the computed phase fraction after applying the
    * transformation.
    */
-  virtual double
-  transfom_signed_distance(const double signed_distance) = 0;
+  inline virtual double
+  transform_signed_distance(const double signed_distance) = 0;
 };
 
 /**
  * @brief Transforms the signed distance to the phase fraction with a hyperbolic
  * tangent function.
  *
- * The  phase fraction is defined as:
+ * The phase fraction is defined as:
  *
  * \f$\phi = 0.5 - 0.5 \tanh(d/\varepsilon)\f$
  *
@@ -73,8 +73,8 @@ public:
    * @return Value of the computed phase fraction after applying the
    * transformation.
    */
-  double
-  transfom_signed_distance(const double signed_distance) override
+  inline double
+  transform_signed_distance(const double signed_distance) override
   {
     return 0.5 - 0.5 * tanh(signed_distance / tanh_thickness);
   }
@@ -127,8 +127,8 @@ public:
    *
    * @return Value of the computed phase fraction after applying the transtion.
    */
-  double
-  transfom_signed_distance(const double signed_distance) override
+  inline double
+  transform_signed_distance(const double signed_distance) override
   {
     const double dimentionless_d =
       signed_distance * max_reinitialization_distance_inv;
@@ -142,6 +142,8 @@ public:
           6.0 * Utilities::fixed_power<2>(dimentionless_d) +
           4.0 * Utilities::fixed_power<3>(dimentionless_d) +
           Utilities::fixed_power<4>(dimentionless_d);
+
+        return 0.5 - 0.5 * piecewise_polynomial_value;
       }
     else
       {
@@ -150,8 +152,9 @@ public:
           6.0 * Utilities::fixed_power<2>(dimentionless_d) +
           4.0 * Utilities::fixed_power<3>(dimentionless_d) -
           Utilities::fixed_power<4>(dimentionless_d);
+
+        return 0.5 - 0.5 * piecewise_polynomial_value;
       }
-    return 0.5 - 0.5 * piecewise_polynomial_value;
   }
 
 private:
