@@ -110,6 +110,8 @@ Public Types</h2></td></tr>
 <tr class="separator:a477d58a9e2097e47bc38657dfb6bd80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19e3f11562db4fdf33412f2a2a7b2197" id="r_a19e3f11562db4fdf33412f2a2a7b2197"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a19e3f11562db4fdf33412f2a2a7b2197">MGNumber</a> = typename <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a>&lt; dim &gt;::MGNumber</td></tr>
 <tr class="separator:a19e3f11562db4fdf33412f2a2a7b2197"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab536f8c540d4b73599dbba7be7dd4ab7" id="r_ab536f8c540d4b73599dbba7be7dd4ab7"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a> = MGTransferGlobalCoarsening&lt; dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a> &gt;</td></tr>
+<tr class="separator:ab536f8c540d4b73599dbba7be7dd4ab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classMFNavierStokesPreconditionGMG"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classMFNavierStokesPreconditionGMG')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG&lt; dim &gt;</a></td></tr>
 <tr class="memitem:a4494eb68c041a1d9455ae89292dd690b inherit pub_types_classMFNavierStokesPreconditionGMG" id="r_a4494eb68c041a1d9455ae89292dd690b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMG.html#a4494eb68c041a1d9455ae89292dd690b">VectorType</a> = typename <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt; dim &gt;::VectorType</td></tr>
 <tr class="separator:a4494eb68c041a1d9455ae89292dd690b inherit pub_types_classMFNavierStokesPreconditionGMG"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,6 +157,12 @@ Public Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a004a6194d7b292e3ca03cfdcfc8ddd64" id="r_a004a6194d7b292e3ca03cfdcfc8ddd64"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classCFDDEMSimulationParameters.html">CFDDEMSimulationParameters</a>&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a004a6194d7b292e3ca03cfdcfc8ddd64">cfd_dem_simulation_parameters</a></td></tr>
 <tr class="separator:a004a6194d7b292e3ca03cfdcfc8ddd64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bf6c1defafa5aa535c4104c8bf92835" id="r_a9bf6c1defafa5aa535c4104c8bf92835"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; DoFHandler&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a9bf6c1defafa5aa535c4104c8bf92835">void_fraction_dof_handlers</a></td></tr>
+<tr class="separator:a9bf6c1defafa5aa535c4104c8bf92835"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af439d53f4917aa22debbb3d0f6e9c35b" id="r_af439d53f4917aa22debbb3d0f6e9c35b"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MGTwoLevelTransfer&lt; dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#af439d53f4917aa22debbb3d0f6e9c35b">transfers_void_fraction</a></td></tr>
+<tr class="separator:af439d53f4917aa22debbb3d0f6e9c35b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f54993cb002e75e7b152d94ca753eaf" id="r_a3f54993cb002e75e7b152d94ca753eaf"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a3f54993cb002e75e7b152d94ca753eaf">mg_transfer_gc_void_fraction</a></td></tr>
+<tr class="separator:a3f54993cb002e75e7b152d94ca753eaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -283,6 +291,24 @@ class MFNavierStokesVANSPreconditionGMG&lt; dim &gt;</div><p>A geometric multigr
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00021">21</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="ab536f8c540d4b73599dbba7be7dd4ab7" name="ab536f8c540d4b73599dbba7be7dd4ab7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab536f8c540d4b73599dbba7be7dd4ab7">&#9670;&#160;</a></span>GCTransferType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::GCTransferType =  MGTransferGlobalCoarsening&lt;dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00030">30</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
 <a id="a19e3f11562db4fdf33412f2a2a7b2197" name="a19e3f11562db4fdf33412f2a2a7b2197"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a19e3f11562db4fdf33412f2a2a7b2197">&#9670;&#160;</a></span>MGNumber</h2>
 
@@ -489,7 +515,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00041">41</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00056">VANSOperator&lt; dim, number &gt;::evaluate_void_fraction()</a>, and <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01295">MFNavierStokesPreconditionGMGBase&lt; dim &gt;::initialize()</a>.</p>
+<p class="reference">References <a class="el" href="void__fraction_8h_source.html#l00232">VoidFractionBase&lt; dim &gt;::dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01261">MFNavierStokesPreconditionGMGBase&lt; dim &gt;::initialize()</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, and <a class="el" href="void__fraction_8h_source.html#l00248">VoidFractionBase&lt; dim &gt;::void_fraction_solution</a>.</p>
 
 </div>
 </div>
@@ -518,7 +544,89 @@ template&lt;int dim&gt; </div>
 
 <p>Reference to the simulation parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00072">72</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00073">73</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="a3f54993cb002e75e7b152d94ca753eaf" name="a3f54993cb002e75e7b152d94ca753eaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f54993cb002e75e7b152d94ca753eaf">&#9670;&#160;</a></span>mg_transfer_gc_void_fraction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a>&gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::mg_transfer_gc_void_fraction</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Transfer operator for global coarsening for the void fraction. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00084">84</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="af439d53f4917aa22debbb3d0f6e9c35b" name="af439d53f4917aa22debbb3d0f6e9c35b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af439d53f4917aa22debbb3d0f6e9c35b">&#9670;&#160;</a></span>transfers_void_fraction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MGLevelObject&lt;MGTwoLevelTransfer&lt;dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::transfers_void_fraction</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Void fraction transfers for each of the levels of the global coarsening algorithm </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00081">81</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="a9bf6c1defafa5aa535c4104c8bf92835" name="a9bf6c1defafa5aa535c4104c8bf92835"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bf6c1defafa5aa535c4104c8bf92835">&#9670;&#160;</a></span>void_fraction_dof_handlers</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MGLevelObject&lt;DoFHandler&lt;dim&gt; &gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::void_fraction_dof_handlers</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Void Fraction DoF handlers for each of the levels of the global coarsening algorithm </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00077">77</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
