@@ -840,7 +840,7 @@ public:
 
     // TODO, get the real viscosity at the particle location
     double kinematic_viscosity =
-      properties_manager.get_kinematic_viscosity_scale();
+      std::accumulate(this -> kinematic_viscosity.begin(), this -> kinematic_viscosity.end(), 0.0) / this -> kinematic_viscosity.size();
     
     for (auto &particle : pic)
       {
