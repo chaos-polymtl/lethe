@@ -480,6 +480,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     void_fraction_manager.void_fraction_locally_relevant,
     void_fraction_manager.previous_void_fraction);
 
+  scratch_data.calculate_physical_properties();
+  
   scratch_data.reinit_particle_fluid_interactions(
     cell,
     this->evaluation_point,
@@ -489,7 +491,6 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     this->dof_handler,
     void_fraction_manager.dof_handler);
 
-  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -619,6 +620,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     void_fraction_manager.void_fraction_locally_relevant,
     void_fraction_manager.previous_void_fraction);
 
+  scratch_data.calculate_physical_properties();
+
   scratch_data.reinit_particle_fluid_interactions(
     cell,
     this->evaluation_point,
@@ -628,7 +631,6 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     this->dof_handler,
     void_fraction_manager.dof_handler);
 
-  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
