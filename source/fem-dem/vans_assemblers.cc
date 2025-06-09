@@ -405,7 +405,6 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
       // Physical properties
       const double kinematic_viscosity = viscosity_vector[q];
 
-
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
       const Tensor<1, dim> previous_velocity =
@@ -997,22 +996,11 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
            "VANSAssemblerRong<dim>::calculate_particle_fluid_interactions"));
-  double density, k_vis_ratio, kinematic_viscosity;  
 
-  if (scratch_data.gather_vof) {
-    double kinematic_viscosity_ref = scratch_data.properties_manager.get_kinematic_viscosity_scale();
-    double dynamic_viscosity = std::accumulate(scratch_data.dynamic_viscosity.begin(), scratch_data.dynamic_viscosity.end(), 0.0) / scratch_data.dynamic_viscosity.size();
-    density = std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
-    kinematic_viscosity = dynamic_viscosity / density;
-    k_vis_ratio = (kinematic_viscosity_ref + DBL_MIN) / (kinematic_viscosity + DBL_MIN);
-    }  
-  else {
-    density = scratch_data.properties_manager.get_density_scale();  
-    k_vis_ratio = 1;
-  }
-  
-  // cout << "kinematic_viscosity: " << kinematic_viscosity<< ", density rong: " << density << std::endl;
+  double density;
 
+  density = std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
+           
   const auto pic               = scratch_data.pic;
   beta_drag                    = 0;
   unsigned int particle_number = 0;
@@ -1026,12 +1014,12 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
         std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Rong Drag Model CD Calculation
-      C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number]* k_vis_ratio)), 2) *
+      C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2) *
             pow(cell_void_fraction,
                 2 - (2.65 * (cell_void_fraction + 1) -
                      (5.3 - (3.5 * cell_void_fraction)) *
                        pow(cell_void_fraction, 2) *
-                       exp(-pow(1.5 - log10(Re_p[particle_number]* k_vis_ratio), 2) / 2)));
+                       exp(-pow(1.5 - log10(Re_p[particle_number]), 2) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
@@ -1834,14 +1822,9 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
 
-  double density;
+  const double density;
 
-  if (scratch_data.gather_vof)
-    density = std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
-  else
-    density = scratch_data.properties_manager.get_density_scale();
- 
-  // cout << "Density buoyancy: " << density << endl;
+  density = std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
 
   // Loop over particles in cell
   for (auto &particle : pic)

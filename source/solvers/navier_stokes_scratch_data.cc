@@ -576,6 +576,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                              this->dynamic_viscosity_0[q],
                                              this->dynamic_viscosity_1[q]);
 
+                  kinematic_viscosity[q] = dynamic_viscosity[q] / density[q];
+
                   dynamic_viscosity_for_stabilization[q] =
                     calculate_point_property(
                       filtered_phase_value,
