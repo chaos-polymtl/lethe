@@ -459,7 +459,7 @@ compute_n_subdivisions_and_radius(
 }
 
 template <int dim>
-static Quadrature<dim>
+Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters)
 {
@@ -549,9 +549,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
             const auto indices_q =
               mortar_manager->get_indices(get_face_center(cell, face));
 
-            /* Loop over the quadrature points, storing indices for both sides.
-             * We assume that the rotor side is the 'local' reference, and the
-             * stator side is the 'ghost reference. */
+            // Loop over the quadrature points, storing indices for both sides.
+            // We assume that the rotor side is the 'local' reference, and the
+            // stator side is the 'ghost reference.
             for (unsigned int ii = 0; ii < indices_q.size(); ++ii)
               {
                 unsigned int i = indices_q[ii];
@@ -578,9 +578,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
             const auto local_dofs = this->get_dof_indices(cell);
 
-            /* Loop over the DoFs indices of the cells at the rotor-stator
-             * interface. The logic of local (rotor) and ghost (stator) is the
-             * same as in the previous loop. */
+            // Loop over the DoFs indices of the cells at the rotor-stator
+            // interface. The logic of local (rotor) and ghost (stator) is the
+            // same as in the previous loop.
             for (unsigned int ii = 0; ii < indices.size(); ++ii)
               {
                 unsigned int i = indices[ii];
@@ -866,9 +866,9 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            /* Number of quadrature points at the cell(rotor)/cell(stator)
-             * interaction. For non-aligned meshes, this value indicates the
-             * number of quadrature points at both rotor and stator cells. */
+            // Number of quadrature points at the cell(rotor)/cell(stator)
+            // interaction. For non-aligned meshes, this value indicates the
+            // number of quadrature points at both rotor and stator cells.
             const unsigned int n_q_points = mortar_manager->get_n_points();
 
             evaluator->local_reinit(
@@ -1043,13 +1043,13 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
             for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
               {
-                /* Use the buffer to get the interpolation of the shape
-                functions */
+                // Use the buffer to get the interpolation of the shape
+                // functions
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
-                /* Interpolate shape functions at the quadrature points of the
-                mortar element using the interpolation of the cell dofs*/
+                // Interpolate shape functions at the quadrature points of the
+                // mortar element using the interpolation of the cell dofs
                 evaluator->local_evaluate(data,
                                           buffer,
                                           ptr_q,
@@ -1066,8 +1066,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
 
   // 2) Communicate
-  /* Export data from the 'mortar' (negative) side to the ghost side, i.e.
-   * 'non-mortar' side */
+  // Export data from the 'mortar' (negative) side to the ghost side, i.e.
+  // 'non-mortar' side
   partitioner_cell.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
                             all_value_m.size()),
@@ -1085,8 +1085,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            /* Number of mortars attached to the current cell (i.e. 1 for
-            aligned rotor-stator meshes and 2 for non-aligned case) */
+            // Number of mortars attached to the current cell (i.e. 1 for
+            // aligned rotor-stator meshes and 2 for non-aligned case)
             const unsigned int n_sub_cells = mortar_manager->get_n_mortars();
             // Loop over mortar sub-cells
             for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
@@ -1101,9 +1101,9 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                   {
                     FullMatrix<Number> cell_matrix(n_dofs_per_cell,
                                                    n_dofs_per_cell);
-                    /* Loop over cell dofs and integrate the coupling terms of
-                    the mortar using the interpolated information from the
-                    cell */
+                    // Loop over cell dofs and integrate the coupling terms of
+                    // the mortar using the interpolated information from the
+                    // cell
                     for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
                       {
                         buffer.reinit(n_dofs_per_cell);
@@ -1131,8 +1131,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                           cell_matrix[j][i] = buffer[j];
                       }
 
-                    /* Vector of local dof indices from the cell in the negative
-                    ('mortar') side */
+                    // Vector of local dof indices from the cell in the negative
+                    // ('mortar') side
                     std::vector<types::global_dof_index> local_dof_indices_m(
                       dof_indices.begin() + ptr_dofs,
                       dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
@@ -1229,8 +1229,8 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_evaluate(
 
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
-      /* Quadrature point index ('global' index within the rotor-stator
-      interface) */
+      // Quadrature point index ('global' index within the rotor-stator
+      // interface)
       const unsigned int q_index = ptr_q + q;
 
       // Normal, value, and gradient referring to the quadrature point
@@ -1238,8 +1238,8 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_evaluate(
       const auto value_m    = this->phi_m.get_value(q);
       const auto gradient_m = contract(this->phi_m.get_gradient(q), normal);
 
-      /* Initialize buffer for 'negative' side of the interface (i.e. rotor),
-       * where information is evaluated */
+      // Initialize buffer for 'negative' side of the interface (i.e. rotor),
+      // where information is evaluated
       BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
       // Store values and gradients at the created buffer
       buffer_m.write(value_m);
@@ -1260,8 +1260,8 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
       const unsigned int q_index = ptr_q + q;
-      /* Initialize buffer for both 'mortar' and 'non-mortar' sides of the
-      interface */
+      // Initialize buffer for both 'mortar' and 'non-mortar' sides of the
+      // interface
       BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
       BufferRW<Number> buffer_p(all_value_p, q * 2 * n_components * q_stride);
       // Read shape functions values and gradients stored in the buffer
@@ -1274,18 +1274,17 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
       const auto penalty_parameter = data.all_penalty_parameter[q_index];
       const auto normal            = data.all_normals[q_index];
 
-      /* The expression for the jump on the mortar interface is
-      jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
-      the value of normal_m, we use a minus sign here because normal_p = -
-      normal_m */
+      // The expression for the jump on the mortar interface is
+      // jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
+      // the value of normal_m, we use a minus sign here because normal_p = -
+      // normal_m
       const auto value_jump = outer((value_m - value_p), normal);
 
-      /* The expression for the average on the mortar interface is
-      avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
-      above, we include the negative sign here */
+      // The expression for the average on the mortar interface is
+      // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
+      // above, we include the negative sign here
       const auto gradient_normal_avg =
         (normal_gradient_m - normal_gradient_p) * 0.5;
-
 
       // SIPG penalty parameter
       const double sigma = penalty_parameter * data.penalty_factor;
@@ -1373,11 +1372,11 @@ compute_n_subdivisions_and_radius<3>(
   const Triangulation<3>      &triangulation,
   const Parameters::Mortar<3> &mortar_parameters);
 
-template static Quadrature<2>
+template Quadrature<2>
 construct_quadrature(const Quadrature<2>         &quadrature,
                      const Parameters::Mortar<2> &mortar_parameters);
 
-template static Quadrature<3>
+template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
 

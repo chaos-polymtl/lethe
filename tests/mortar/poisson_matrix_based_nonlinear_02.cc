@@ -233,7 +233,7 @@ public:
   compute_update()
   {
     // initialize GMRES solver
-    ReductionControl reduction_control(10000, 1e-20, 1e-6);
+    ReductionControl reduction_control(10000, 1e-13, 1e-12);
     SolverGMRES<TrilinosWrappers::MPI::Vector> solver(reduction_control);
 
     // initialize ILU preconditioner

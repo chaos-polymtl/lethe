@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief PoissonOperator: test matrix-based assembly for a nonlinear Poisson problem of the form -∇.(exp(u)
- * ∇(u)) = f . Based on prototypes/matrix_based_non_linear_poisson */
+ * @brief PoissonOperator: test matrix-based assembly for a nonlinear Poisson problem of the form
+ * -∇.(∇u) = exp(u). Based on prototypes/matrix_based_non_linear_poisson */
 
 #include <deal.II/base/conditional_ostream.h>
 

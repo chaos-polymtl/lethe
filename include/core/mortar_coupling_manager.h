@@ -201,7 +201,7 @@ compute_n_subdivisions_and_radius(
  * @return Quadrature oversampled
  */
 template <int dim>
-static Quadrature<dim>
+Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
