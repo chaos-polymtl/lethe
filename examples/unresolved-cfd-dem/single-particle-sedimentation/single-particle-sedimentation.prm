@@ -16,7 +16,7 @@ subsection simulation control
   set output frequency = 10
   set time end         = 2
   set time step        = 0.005
-  set output path      = ./output_low_density/
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
@@ -45,10 +45,8 @@ end
 
 subsection physical properties
   subsection fluid 0
-    #set kinematic viscosity = 0.0000008379
-    #set density             = 996.7775
-    set density             = 1.204
-    set kinematic viscosity = 0.01516
+    set kinematic viscosity = 0.0000008379
+    set density             = 996.7775
   end
 end
 
