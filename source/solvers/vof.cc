@@ -119,6 +119,12 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable)
     {
+      /* For the VOF solver, the interface is defined as the iso-contour
+         \f$\phi\f = 0.5$. Hence, for the  SignedDistanceSolver, we set the
+         iso-level to 0.5. We also define the inside part of the domain as
+         \f$\phi>0.5\f$. Since the SignedDistanceSolver considers the inside
+         of the domain as \f$d<0\f$, we scale the phase fraction with a factor
+         of -1.*/
       this->signed_distance_solver = std::make_shared<
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
         triangulation,
@@ -2985,7 +2991,7 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
     {
       const double signed_dist = level_set_solution[p];
       solution_owned[p] =
-        signed_distance_transformation->transfom_signed_distance(signed_dist);
+        signed_distance_transformation->transform_signed_distance(signed_dist);
     }
   this->nonzero_constraints.distribute(solution_owned);
 

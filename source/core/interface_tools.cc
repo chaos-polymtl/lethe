@@ -77,7 +77,7 @@ InterfaceTools::compute_volume(const Mapping<dim>       &mapping,
                                cell_dof_level_set_values.begin(),
                                cell_dof_level_set_values.end());
 
-          const double level_set_correction = -1.0 * iso_level;
+          const double level_set_correction = -iso_level;
           volume += compute_cell_wise_volume(fe_point_evaluation,
                                              cell,
                                              cell_dof_level_set_values,
@@ -310,9 +310,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
       distance(p)            = max_distance;
       distance_with_ghost(p) = max_distance;
 
-      auto sgn_level_set_value      = sgn(level_set(p) - iso_level);
-      signed_distance(p)            = max_distance * sgn_level_set_value;
-      signed_distance_with_ghost(p) = max_distance * sgn_level_set_value;
+      const double sgn_level_set_value = sgn(level_set(p) - iso_level);
+      signed_distance(p)               = max_distance * sgn_level_set_value;
+      signed_distance_with_ghost(p)    = max_distance * sgn_level_set_value;
     }
 }
 
