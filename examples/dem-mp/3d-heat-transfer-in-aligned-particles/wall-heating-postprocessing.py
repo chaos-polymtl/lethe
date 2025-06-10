@@ -93,12 +93,5 @@ plt.legend()
 plt.grid()
 plt.xlabel('x (m)')
 plt.ylabel('Temperature (°C)')
-
 plt.savefig('temperature-linear')
 plt.show()
-
-
-
-
-
-

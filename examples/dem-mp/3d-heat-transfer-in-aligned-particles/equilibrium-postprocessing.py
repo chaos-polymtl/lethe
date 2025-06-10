@@ -113,9 +113,3 @@ plt.xlabel('Time (s)')
 plt.ylabel('Temperature (°C)')
 plt.savefig('mean-temperatures')
 plt.show()
-
-
-
-
-
-
