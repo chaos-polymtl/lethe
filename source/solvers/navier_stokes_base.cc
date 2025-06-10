@@ -1961,6 +1961,37 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  // Create mortar manager
+  this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+    *this->cell_quadrature,
+    this->dof_handler,
+    this->simulation_parameters.mortar);
+
+  // Create mortar coupling evaluator
+  const std::shared_ptr<CouplingEvaluationBase<dim, double>>
+    mortar_coupling_evaluator =
+      std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+        *this->mapping, this->dof_handler);
+
+  this->mortar_coupling_operator =
+    std::make_shared<CouplingOperator<dim, double>>(
+      *this->mapping,
+      this->dof_handler,
+      this->zero_constraints,
+      mortar_coupling_evaluator,
+      this->mortar_manager,
+      this->simulation_parameters.mortar.rotor_boundary_id,
+      this->simulation_parameters.mortar.stator_boundary_id,
+      this->simulation_parameters.mortar.sip_factor);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
   if (this->simulation_parameters.mortar.enable)
