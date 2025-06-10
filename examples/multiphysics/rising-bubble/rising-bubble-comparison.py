@@ -54,17 +54,27 @@ plt.rcParams.update({
 
 #############################################################################
 
-parser = argparse.ArgumentParser(description='Arguments for the rising bubble example')
+parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
 parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
-parser.add_argument("-f", "--folder", type=str, help="Path to the output folder. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=True)
+parser.add_argument("-s", "--sharp", type=str, help="Path to the output folder for the sharpening results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=True)
+parser.add_argument("-g", "--geo", type=str, help="Path to the output folder for the geometric results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=True)
+parser.add_argument("-a", "--alge", type=str, help="Path to the output folder for the algebraic results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=True)
 
 parser.add_argument("-c", "--case", type=int, choices=[1, 2], help="Test case number. Can be either 1 or 2", required=True)
 args, leftovers=parser.parse_known_args()
 case_number = args.case
 
-output_dir = args.folder
-filename_barycenter = output_dir + "/vof_barycenter_information.dat"
-filename_mass = output_dir + "/mass_conservation_information.dat"
+output_dir_sharp =args.sharp
+filename_barycenter_sharp = output_dir_sharp + "/vof_barycenter_information.dat"
+filename_mass_sharp = output_dir_sharp + "/mass_conservation_information.dat"
+
+output_dir_geo =args.geo
+filename_barycenter_geo = output_dir_geo + "/vof_barycenter_information.dat"
+filename_mass_geo = output_dir_geo + "/mass_conservation_information.dat"
+
+output_dir_alge =args.alge
+filename_barycenter_alge = output_dir_alge + "/vof_barycenter_information.dat"
+filename_mass_alge = output_dir_alge + "/mass_conservation_information.dat"
 
 # Get the data from the references for test case 1
 #Data from Zahedi, Kronbichler and Kreiss (2012)
@@ -74,7 +84,7 @@ x_vel_ZKR = [0.001 ,0.03 ,0.056 ,0.081 ,0.106 ,0.136 ,0.17 ,0.203 ,0.237 ,0.271 
 y_vel_ZKR = [0.004 ,0.017 ,0.029 ,0.041 ,0.053 ,0.066 ,0.081 ,0.095 ,0.109 ,0.122 ,0.135 ,0.147 ,0.158 ,0.17 ,0.182 ,0.194 ,0.205 ,0.218 ,0.229 ,0.237 ,0.24 ,0.241 ,0.239 ,0.236 ,0.231 ,0.227 ,0.222 ,0.217 ,0.213 ,0.208 ,0.205 ,0.201 ,0.198 ,0.196 ,0.194 ,0.192 ,0.192 ,0.191 ,0.191 ,0.192 ,0.192 ,0.193 ,0.193 ,0.194]
 df_contour_ZKR = pd.read_csv("reference_contour/case1_contour_ZKR.csv", header=0)
 
-# Data from Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.
+#Data Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.
 x_ref_H = [0.24476 , 0.49894 , 0.75132 , 0.99538 , 1.2466  , 1.49797 , 1.75014 , 1.99467 , 2.24561 , 2.49821 ,2.74912 ]
 y_ref_H = [0.514646, 0.554469, 0.608872, 0.670196, 0.728744, 0.785978, 0.838403, 0.888369, 0.936482, 0.984353, 1.032372]
 x_vel_H = [0.24535, 0.49537, 0.74679   ,0.99191   ,1.2424,   1.49542   ,1.74728   ,1.99275   ,2.24447   ,2.49706,   2.74796]
@@ -103,13 +113,20 @@ x_vel_MooNMD = [0.246, 0.487, 0.735, 0.986, 1.231, 1.482, 1.728, 1.973, 2.226, 2
 y_vel_MooNMD = [0.137, 0.226, 0.250, 0.239, 0.226, 0.222, 0.228, 0.238, 0.231, 0.218, 0.215, 0.001, 0.213]
 df_contour_MooNMD = pd.read_csv("reference_contour/case2_contour_MooNMD.csv", header=0)
 
+
 # Load position and velocity of the barycenter
-t,x,y,vx,vy=np.loadtxt(filename_barycenter,skiprows=1,unpack=True)
+t_sharp,x_sharp,y_sharp,vx_sharp,vy_sharp=np.loadtxt(filename_barycenter_sharp,skiprows=1,unpack=True)
+t_geo,x_geo,y_geo,vx_geo,vy_geo=np.loadtxt(filename_barycenter_geo,skiprows=1,unpack=True)
+t_alge,x_alge,y_alge,vx_alge,vy_alge=np.loadtxt(filename_barycenter_alge,skiprows=1,unpack=True)
+
 
 # Plot the position of the barycenter
 fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
-ax0.plot(t, y, '-', lw=2, label="Lethe")
+ax0.plot(t_sharp, y_sharp, '-', lw=2, label="Projection")
+ax0.plot(t_geo, y_geo, '-', lw=2, label="Geometric")
+ax0.plot(t_alge, y_alge, '-', lw=2, label="PDE-based")
+
 
 if case_number == 1 :
 
@@ -131,7 +148,9 @@ plt.show()
 # Plot the velocity
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
-ax1.plot(t, vy, '-', lw=2, label="Lethe")
+ax1.plot(t_sharp, vy_sharp, '-', lw=2, label="Projection")
+ax1.plot(t_geo, vy_geo, '-', lw=2, label="Geometric")
+ax1.plot(t_alge, vy_alge, '-', lw=2, label="PDE-based")
 
 if case_number == 1 :
 
@@ -151,8 +170,8 @@ fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.png',dpi=300)
 plt.show()
 
 # Plot the contour of the bubble in the last frame
-list_vtu = os.listdir(output_dir)
-list_vtu = [(output_dir+"/"+x) for x in list_vtu if  ("vtu" in x)]
+list_vtu = os.listdir(output_dir_sharp)
+list_vtu = [(output_dir_sharp+"/"+x) for x in list_vtu if  ("vtu" in x)]
 latest_file = max(list_vtu, key=os.path.getctime)
 if(not args.validate): print("Opening file: ", latest_file)
 sim = pv.read(latest_file)
@@ -160,60 +179,93 @@ sim.set_active_scalars("filtered_phase")
 
 contour_val = np.array([0.5])
 contours = sim.contour(contour_val)
-x, y = contours.points[:, 0], contours.points[:, 1]
+x_sharp, y_sharp = contours.points[:, 0], contours.points[:, 1]
 
-fig2 = plt.figure()
-ax2 = fig2.add_subplot(111)
+list_vtu = os.listdir(output_dir_geo)
+list_vtu = [(output_dir_geo+"/"+x) for x in list_vtu if  ("vtu" in x)]
+latest_file = max(list_vtu, key=os.path.getctime)
+if(not args.validate): print("Opening file: ", latest_file)
+sim = pv.read(latest_file)
+sim.set_active_scalars("filtered_phase")
 
-ax2.scatter(x, y, s=2, marker="s", color=colors[0], label="Lethe", linewidths=1)
+contour_val = np.array([0.5])
+contours = sim.contour(contour_val)
+x_geo, y_geo = contours.points[:, 0], contours.points[:, 1]
 
-if case_number == 1 :
+list_vtu = os.listdir(output_dir_alge)
+list_vtu = [(output_dir_alge+"/"+x) for x in list_vtu if  ("vtu" in x)]
+latest_file = max(list_vtu, key=os.path.getctime)
+if(not args.validate): print("Opening file: ", latest_file)
+sim = pv.read(latest_file)
+sim.set_active_scalars("filtered_phase")
 
-  ax2.plot(df_contour_ZKR['x'], df_contour_ZKR['y'], '-k',
-    alpha=0.8,label="Zahedi et al. (2012)", linewidth=1)
-  ax2.set_ylim([0.8,1.4])
+contour_val = np.array([0.5])
+contours = sim.contour(contour_val)
+x_alge, y_alge = contours.points[:, 0], contours.points[:, 1]
 
-elif case_number == 2 :
-  ax2.plot(df_contour_MooNMD['x'], df_contour_MooNMD['y'], '-k',
-          alpha=0.8,label="MooNMD, Hysing et al. (2009)", linewidth=1)
-          
-  ax2.plot(df_contour_FreeLIFE['x'], df_contour_FreeLIFE['y'], '--k',
-          alpha=0.8,label="FreeLIFE, Hysing et al. (2009)", linewidth=1)
-  ax2.plot(df_contour_FreeLIFE['x_1'], df_contour_FreeLIFE['y_1'], '--k',
-          alpha=0.8,linewidth=1)
-  ax2.plot(df_contour_FreeLIFE['x_2'], df_contour_FreeLIFE['y_2'], '--k',
-          alpha=0.8,linewidth=1)
-          
-  ax2.plot(df_contour_TP2D['x'], df_contour_TP2D['y'], '-.k',
-          alpha=0.8,label="TP2D, Hysing et al. (2009)", linewidth=1)
-  ax2.plot(df_contour_TP2D['x_1'], df_contour_TP2D['y_1'], '-.k',
-          alpha=0.8,linewidth=1)
-  ax2.plot(df_contour_TP2D['x_2'], df_contour_TP2D['y_2'], '-.k',
-          alpha=0.8,linewidth=1)
-  ax2.set_xlim([0,1])
-  ax2.set_ylim([0.5,1.4])
 
-ax2.set_xlabel(r'x [L]')
-ax2.set_ylabel(r'y [L]')
-ax2.legend(markerscale=1, scatterpoints=20)
-ax2.grid( which='major', color='grey', linestyle='--')
+x = [x_sharp, x_geo, x_alge]
+y = [y_sharp, y_geo, y_alge]
 
-if (args.validate):
-  solution = np.column_stack((x, y))
-  np.savetxt("solution-contour-case" + str(case_number) + ".dat", solution, header="x y")
-  fig2.savefig("bubble-contour-case" + str(case_number) + ".png")
-else:
-  fig2.savefig("bubble-contour-case" + str(case_number) + ".png",dpi=300)
-  plt.show()
+label = ['Projection', 'Geometric', 'PDE-based']
+fig_name = ['sharp', 'geo', 'alge']
+
+
+for i in range(3):
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    
+    ax2.scatter(x[i], y[i], s=2, marker="s", color=colors[i], label=label[i], linewidths=1)
+    
+    if case_number == 1 :
+
+      ax2.plot(df_contour_ZKR['x'], df_contour_ZKR['y'], '-k',
+        alpha=0.8,label="Zahedi et al. (2012)", linewidth=1)
+      ax2.set_ylim([0.8,1.4])
+
+    elif case_number == 2 :
+      ax2.plot(df_contour_MooNMD['x'], df_contour_MooNMD['y'], '-k',
+              alpha=0.8,label="MooNMD, Hysing et al. (2009)", linewidth=1)
+              
+      ax2.plot(df_contour_FreeLIFE['x'], df_contour_FreeLIFE['y'], '--k',
+              alpha=0.8,label="FreeLIFE, Hysing et al. (2009)", linewidth=1)
+      ax2.plot(df_contour_FreeLIFE['x_1'], df_contour_FreeLIFE['y_1'], '--k',
+              alpha=0.8,linewidth=1)
+      ax2.plot(df_contour_FreeLIFE['x_2'], df_contour_FreeLIFE['y_2'], '--k',
+              alpha=0.8,linewidth=1)
+              
+      ax2.plot(df_contour_TP2D['x'], df_contour_TP2D['y'], '-.k',
+              alpha=0.8,label="TP2D, Hysing et al. (2009)", linewidth=1)
+      ax2.plot(df_contour_TP2D['x_1'], df_contour_TP2D['y_1'], '-.k',
+              alpha=0.8,linewidth=1)
+      ax2.plot(df_contour_TP2D['x_2'], df_contour_TP2D['y_2'], '-.k',
+              alpha=0.8,linewidth=1)
+      ax2.set_xlim([0,1])
+      ax2.set_ylim([0.5,1.4])
+
+    ax2.set_xlabel(r'x [L]')
+    ax2.set_ylabel(r'y [L]')
+    ax2.legend(markerscale=1, scatterpoints=20)
+    ax2.grid( which='major', color='grey', linestyle='--')
+
+    if (args.validate):
+      solution = np.column_stack((x, y))
+      np.savetxt("solution-contour-case" + str(case_number) + ".dat", solution, header="x y")
+      fig2.savefig("bubble-contour-case" + str(case_number) + ".png")
+    else:
+      fig2.savefig(fig_name[i] + "-bubble-contour-case" + str(case_number) + ".png",dpi=300)
+      plt.show()
 
 # Plot the mass conservation for the global and local mass
-df_mass = pd.read_csv(filename_mass, header=0, sep=r'\s+')
-
+df_mass_sharp = pd.read_csv(filename_mass_sharp, header=0, sep=r'\s+')
+df_mass_geo = pd.read_csv(filename_mass_geo, header=0, sep=r'\s+')
+df_mass_alge = pd.read_csv(filename_mass_alge, header=0, sep=r'\s+')
 
 fig3 = plt.figure()
 ax3 = fig3.add_subplot(111)
-ax3.plot(df_mass['time'], df_mass['surface_fluid_1']/df_mass['surface_fluid_1'].iloc[0], "-", label=r'Lethe', linewidth=2)
-
+ax3.plot(df_mass_sharp['time'], df_mass_sharp['surface_fluid_1']/df_mass_sharp['surface_fluid_1'].iloc[0], "-", label=r'Projection', linewidth=2)
+ax3.plot(df_mass_geo['time'], df_mass_geo['surface_fluid_1']/df_mass_geo['surface_fluid_1'].iloc[0], "-", label=r'Geometric', linewidth=2)
+ax3.plot(df_mass_alge['time'], df_mass_alge['surface_fluid_1']/df_mass_alge['surface_fluid_1'].iloc[0], "-", label=r'PDE-based', linewidth=2)
 
 ax3.set_ylabel(r'$V/{V_\mathrm{0}}[-]$')
 ax3.set_xlabel(r'Rising time [T]')
@@ -224,11 +276,15 @@ plt.show()
 
 fig4 = plt.figure()
 ax4 = fig4.add_subplot(111)
-ax4.plot(df_mass['time'], df_mass['geometric_surface_fluid_1']/df_mass['geometric_surface_fluid_1'].iloc[0], "-", label=r'Lethe',linewidth=2)
-
+ax4.plot(df_mass_sharp['time'], df_mass_sharp['geometric_surface_fluid_1']/df_mass_sharp['geometric_surface_fluid_1'].iloc[0], "-", label=r'Projection',linewidth=2)
+ax4.plot(df_mass_geo['time'], df_mass_geo['geometric_surface_fluid_1']/df_mass_geo['geometric_surface_fluid_1'].iloc[0], "-", label=r'Geometric',linewidth=2)
+ax4.plot(df_mass_alge['time'], df_mass_alge['geometric_surface_fluid_1']/df_mass_alge['geometric_surface_fluid_1'].iloc[0], "-", label=r'PDE-based',linewidth=2)
 ax4.set_ylabel(r'$V/{V_\mathrm{0}}[-]$')
 ax4.set_xlabel(r'Rising time [T]')
 ax4.ticklabel_format(useOffset=False, style='plain', axis='y')
-ax4.legend(loc="lower left")
+ax4.legend(loc="upper left")
 fig4.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.png',dpi=300)
 plt.show()
+
+
+
