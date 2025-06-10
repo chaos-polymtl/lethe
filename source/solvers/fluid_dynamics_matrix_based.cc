@@ -84,7 +84,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
-  // Create mortar coupling
+  // If enabled, create mortar coupling
   this->init_mortar_coupling();
 
   this->present_solution.reinit(this->locally_owned_dofs,
@@ -775,7 +775,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
   // Add mortar entries
   if (this->simulation_parameters.mortar.enable)
     {
-      // Change sign of RHS to be compatible with mortar entries
+      // Change sign of RHS to be compatible with mortar coupling terms
       this->system_rhs *= -1.0;
       this->mortar_coupling_operator->vmult_add(this->system_rhs,
                                                 this->present_solution);
