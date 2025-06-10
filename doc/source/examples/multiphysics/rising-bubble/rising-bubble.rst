@@ -126,7 +126,7 @@ Here, for the first part of this example, the ``projection-based interface sharp
     subsection phase filtration
       set type      = tanh
       set verbosity = quiet
-      set beta      = 10
+      set beta      = 20
     end
 
     subsection surface tension force
@@ -363,7 +363,7 @@ For the methods other than ``projection-based interface sharpening``, the ``.prm
 
 In the ``VOF`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` and ``algebraic interface reinitialization`` in ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively. 
 The subsections are modified according to each regularization method.
-With the geometric method`, the ``max reinitialization distance`` parameter is set to :math:`0.016`, and controls the thickness of the reconstructed interface. This value is chosen to maintain a sharp interface without introducing oscillations during advection.
+With the geometric method`, the ``max reinitialization distance`` parameter is set to :math:`0.032`, and controls the thickness of the reconstructed interface. This value is chosen to maintain a sharp interface without introducing oscillations during advection.
 For the algebraic method, setting the ``steady-state criterion`` to :math:`10^{-3}` yielded good results.
 
 
@@ -374,7 +374,8 @@ For the algebraic method, setting the ``steady-state criterion`` to :math:`10^{-
       set frequency  = 20
       set verbosity  = verbose
       subsection geometric interface reinitialization
-        set max reinitialization distance = 0.016
+        set max reinitialization distance = 0.032
+        set transformation type           = piecewise polynomial
       end
     end
 
@@ -385,7 +386,7 @@ For the algebraic method, setting the ``steady-state criterion`` to :math:`10^{-
       set frequency = 20
       set verbosity = verbose
       subsection algebraic interface reinitialization
-        set steady-state criterion        = 1e-3
+        set steady-state criterion = 1e-3
       end
     end
 
