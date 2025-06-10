@@ -824,5 +824,57 @@ public:
   std::vector<unsigned int> relevant_dof_indices;
 };
 
+template <int dim, typename Number>
+class NavierStokesCouplingEvaluation
+  : public CouplingEvaluationBase<dim, Number>
+{
+public:
+  using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
+  using FEPointIntegratorP = FEPointEvaluation<1, dim, dim, Number>;
+
+  using u_value_type = typename FEPointIntegratorU::value_type;
+
+  NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
+                                 const DoFHandler<dim> &dof_handler);
+
+  unsigned int
+  data_size() const override;
+
+  const std::vector<unsigned int> &
+  get_relevant_dof_indices() const override;
+
+  void
+  local_reinit(
+    const typename Triangulation<dim>::cell_iterator &cell,
+    const ArrayView<const Point<dim, Number>>        &points) const override;
+
+  void
+  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
+                 const Vector<Number>                      &buffer,
+                 const unsigned int                         ptr_q,
+                 const unsigned int                         q_stride,
+                 Number *all_value_m) const override;
+
+  void
+  local_integrate(const CouplingEvaluationData<dim, Number> &data,
+                  Vector<Number>                            &buffer,
+                  const unsigned int                         ptr_q,
+                  const unsigned int                         q_stride,
+                  Number                                    *all_value_m,
+                  Number *all_value_p) const override;
+
+  /// Finite element that matches the components `n_components` components
+  /// starting at component with index `first_selected_component`.
+  const FESystem<dim> fe_sub_u;
+  const FESystem<dim> fe_sub_p;
+
+  /// Interface to the evaluation of mortar coupling interpolated solution
+  mutable FEPointIntegratorU phi_u_m;
+  mutable FEPointIntegratorP phi_p_m;
+
+  /// Relevant dof indices
+  std::vector<unsigned int> relevant_dof_indices;
+};
+
 #endif
 #endif
