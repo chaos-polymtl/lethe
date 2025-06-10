@@ -48,6 +48,29 @@ namespace Parameters
   };
 
   /**
+   * @brief Different transformation function types for the signed distance:
+   *  - tanh: hyperbolic tangent
+   *  - piecewise_polynomial: 4th degree piecewise polynomial. The latter takes
+   *    the following form:
+   *
+   *    if \f$d < 0 \f$
+   *    \f$\phi = 0.5 - 0.5(4d' + 6d'^2 + 4*d'^3 + d'^4)\f$
+   *
+   *    else
+   *    \f$\phi = 0.5 - 0.5(4d' - 6d'^2 + 4*d'^3 - d'^4)\f$
+   *
+   *    with \f$d' = d/d_\mathrm{max}\f$, where \f$\phi\f$ is the phase
+   *    fraction, \f$d\f$ the signed distance and \f$d_\mathrm{max}\f$ the
+   *    maximum redistanciation distance. This transformation clamps the phase
+   *    fraction to 0 or 1 when \f$d = \pm d_\mathrm{max}\f$.
+   */
+  enum class RedistanciationTransformationType
+  {
+    tanh,
+    piecewise_polynomial
+  };
+
+  /**
    * @brief Different phase fraction filtering types:
    * - none: no filter wil be applied on the calculated phase fraction
    * - tanh: the tanh filter function will be applied to the phase fraction,
@@ -241,6 +264,8 @@ namespace Parameters
     bool output_signed_distance;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
+    /// Transformation type transforming the signed distance to a phase fraction
+    RedistanciationTransformationType transformation_type;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
 

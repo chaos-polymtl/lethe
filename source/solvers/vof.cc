@@ -119,15 +119,26 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable)
     {
+      /* For the VOF solver, the interface is defined as the iso-contour
+         \f$\phi\f = 0.5$. Hence, for the  SignedDistanceSolver, we set the
+         iso-level to 0.5. We also define the inside part of the domain as
+         \f$\phi>0.5\f$. Since the SignedDistanceSolver considers the inside
+         of the domain as \f$d<0\f$, we scale the phase fraction with a factor
+         of -1.*/
       this->signed_distance_solver = std::make_shared<
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
         triangulation,
         fe,
         simulation_parameters.multiphysics.vof_parameters.regularization_method
           .geometric_interface_reinitialization.max_reinitialization_distance,
-        0.0,
+        0.5,
+        -1.0,
         simulation_parameters.multiphysics.vof_parameters.regularization_method
           .verbosity);
+      this->signed_distance_transformation =
+        SignedDistanceTransformationBase::model_cast(
+          simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.geometric_interface_reinitialization);
     }
 }
 
@@ -721,11 +732,8 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
         {
           signed_distance_solver->setup_dofs();
 
-          compute_level_set_from_phase_fraction(this->present_solution,
-                                                this->level_set);
-
           signed_distance_solver->set_level_set_from_background_mesh(
-            dof_handler, this->level_set);
+            dof_handler, this->present_solution);
 
           signed_distance_solver->solve();
         }
@@ -2958,18 +2966,10 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
 
   GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
 
-  const double tanh_thickness =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .regularization_method.geometric_interface_reinitialization
-      .tanh_thickness;
-
   for (auto p : this->locally_owned_dofs)
     {
-      const double phase      = solution[p];
-      double       phase_sign = sgn(0.5 - phase);
-      level_set_owned[p] =
-        tanh_thickness *
-        std::atanh(phase_sign * std::min(abs(0.5 - phase) / 0.5, 1.0 - 1e-12));
+      const double phase = solution[p];
+      level_set_owned[p] = (-2.0 * phase + 1.0);
     }
 
   this->nonzero_constraints.distribute(level_set_owned);
@@ -2987,15 +2987,11 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
 
   GlobalVectorType solution_owned(this->locally_owned_dofs, mpi_communicator);
 
-  const double tanh_thickness =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .regularization_method.geometric_interface_reinitialization
-      .tanh_thickness;
-
   for (auto p : this->locally_owned_dofs)
     {
       const double signed_dist = level_set_solution[p];
-      solution_owned[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
+      solution_owned[p] =
+        signed_distance_transformation->transform_signed_distance(signed_dist);
     }
   this->nonzero_constraints.distribute(solution_owned);
 
@@ -3025,11 +3021,8 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .frequency != 1)
     {
-      compute_level_set_from_phase_fraction(this->previous_solutions[0],
-                                            previous_level_set);
-
       signed_distance_solver->set_level_set_from_background_mesh(
-        dof_handler, previous_level_set);
+        dof_handler, this->previous_solutions[0]);
 
       signed_distance_solver->solve();
 
@@ -3054,11 +3047,8 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
     this->pcout << "In redistanciation of the present solution ..."
                 << std::endl;
 
-  compute_level_set_from_phase_fraction(this->present_solution,
-                                        this->level_set);
-
-  signed_distance_solver->set_level_set_from_background_mesh(dof_handler,
-                                                             this->level_set);
+  signed_distance_solver->set_level_set_from_background_mesh(
+    dof_handler, this->present_solution);
 
   signed_distance_solver->solve();
 
