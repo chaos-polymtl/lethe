@@ -104,29 +104,14 @@ print('\n')
 
 # Plot the evolution of the mean temperatures
 plt.figure()
-plt.plot(time, mean_temperature_left_x, label= "mean temperature x<0")
-plt.plot(time, mean_temperature_right_x, label= "mean temperature x>0")
+plt.plot(time, mean_temperature_left_x, label= "Mean temperature x<0")
+plt.plot(time, mean_temperature_right_x, label= "Mean temperature x>0")
 plt.legend()
 plt.grid()
 plt.title("Evolution of the mean temperatures", pad=25)
 plt.xlabel('Time (s)')
 plt.ylabel('Temperature (°C)')
 plt.savefig('mean-temperatures')
-plt.show()
-
-# Plot overlaps at last frame
-plt.figure()
-plt.plot(ids, overlaps, 'x')
-plt.yticks(np.arange(1.88902e-4, 1.88906e-4, 1e-9))
-plt.gca().get_yaxis().get_offset_text().set_visible(True)
-plt.gca().get_yaxis().get_offset_text().set_text("1e-4")
-plt.ticklabel_format(useOffset=False, style='plain', axis='y')
-plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-plt.grid()
-plt.title("Overlaps at last frame", pad=20)
-plt.xlabel('Ids')
-plt.ylabel('Overlap (m)')
-plt.subplots_adjust(left=0.2)
 plt.show()
 
 

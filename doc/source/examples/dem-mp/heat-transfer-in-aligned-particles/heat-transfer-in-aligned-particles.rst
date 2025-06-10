@@ -1,9 +1,8 @@
-==================================
-Thermal Lines
-==================================
+====================================
+Heat Transfer in Aligned Particles
+====================================
 
-This example introduces the use of multiphysic DEM, with lined up particles that are heated by other particles or by a wall. It verifies the models of particle-particle and particle-wall heat transfer with two test cases.
-
+This example introduces the use of multiphysic DEM with a simple example that consists of lined up particles that are heated by others or by a wall. It verifies the models of particle-particle and particle-wall heat transfer using two simple test cases.
 
 ----------------------------------
 Features
@@ -21,11 +20,11 @@ Features
 Files Used in This Example
 ----------------------------
 
-All files mentioned below are located in the example's folder (``examples/dem-mp/3d-thermal-lines``).
+All files mentioned below are located in the example's folder (``examples/dem-mp/3d-heat-transfer-in-aligned-particles``).
 
 - Parameter files: ``equilibrium.prm``, ``wall-heating.prm``
 - Geometry files solid surfaces: ``square-left.geo``, ``square-right.geo``
-- Input files: ``particles-one-temperature.input``, ``particles-two-temperatures.input``
+- Input files: ``particles-equilibrium.input``, ``particles-wall-heating.input``
 - Post-processing Python scripts: ``equilibrium-postprocessing.py``, ``wall-heating-postprocessing.py``
 
 
@@ -33,12 +32,21 @@ All files mentioned below are located in the example's folder (``examples/dem-mp
 Description of the Cases
 -------------------------
 
-In the first stage of both simulations, the 10 particles are put in contact. The solid surfaces on the left and right move towards the center to push the particles, until they are all in contact on a line.
+In the first stage of both simulations, 10 particles are put in contact. The solid surfaces on the left and right move towards the center to compress the particles, until they are all in contact on a line.
 
-In the case of the `equilibrium` simulation, particles on the left side have a temperature of :math:`-30°C` and particles of the right side have a temperature of :math:`30°C`. When all the particles are in contact on a line, the mean temperatures of the particles on the left and the particles on the right should vary towards the whole mean temperature i.e. :math:`0°C` here.
+In the case of the `equilibrium` simulation, particles on the left side have a temperature of :math:`-30°C` and particles on the right side have a temperature of :math:`30°C`. When all the particles are in contact on a line, the mean temperatures of the particles on the left and the particles on the right should vary towards the whole mean temperature, i.e. :math:`0°C` here.
 
-In the case of the `wall-heating` simulation, all particles start with a temperature of :math:`0°C`. The walls also have a temperature of :math:`0°C`. When all the particles are in contact on a line (:math:`8 s`), the temperature of the right wall is set to :math:`50°C`. After some time, the temperature of the particles should be a linear function of their position.
+.. figure:: images/equilibrium-start.png
+    :width: 600
 
+    Temperatures at the start of the equilibrium simulation
+
+In the case of the `wall-heating` simulation, all particles start with a temperature of :math:`0°C`. The walls also have a temperature of :math:`0°C`. When all the particles are in contact on a line (:math:`t=8 s`), the temperature of the right wall is set to :math:`50°C`. After some time, the temperature of the particles should be a linear function of their position.
+
+.. figure:: images/wall-heating-start.png
+    :width: 600
+
+    Temperatures at the start of the wall-heating simulation
 
 --------------
 Parameter File
@@ -47,7 +55,7 @@ Parameter File
 Mesh
 ~~~~
 
-The domain we simulate is a rectangular box which is :math:`0.30\times0.05\times0.5` meters and is made using the deal.ii grid generator.
+The domain we simulate is a rectangular box with dimensions :math:`0.30\times0.05\times0.5` meters and is made using the deal.ii grid generator.
 
 .. code-block:: text
 
@@ -64,7 +72,7 @@ Lagrangian Physical Properties
 
 The :math:`10` particles are mono-dispersed, with a diameter of :math:`10` mm.
 
-Some parameters used in multiphysic DEM like the ``thermal conductivity`` and ``specific heat`` were chosen to ensure the simulations are fast enough, as simulations involving temperature can take up a lot of time to reach a steady state. Since these test cases are focused on temperature and particles are set on a horizontal line, gravity is not taken into account.
+Some parameters used in multiphysic DEM, like the ``thermal conductivity`` and ``specific heat``, were chosen to ensure the simulations are fast enough, as simulations involving temperature can take up a lot of time to reach a steady state. Since these test cases are focused on temperature, and particles are set on a horizontal line, gravity is not taken into account.
 
 .. code-block:: text
 
@@ -123,14 +131,14 @@ Model Parameters
 Particle Insertion
 ~~~~~~~~~~~~~~~~~~
 
-Since the simulations only involve :math:`10` particles, they were inserted at precise locations using the ``file`` insertion method and input files ``particles-one-temperature.input`` for the wall-heating simulation and ``particles-two-temperatures.input`` for the equilibrium simulation.
+Since the simulations only involve :math:`10` particles, they were inserted at precise locations using the ``file`` insertion method and input files ``particles-wall-heating.input`` for the wall-heating simulation and ``particles-equilibrium.input`` for the equilibrium simulation.
 
 .. code-block:: text
 
     subsection insertion info
       set insertion method                               = file
       set insertion frequency                            = 10000
-      set list of input files                            = particles-one-temperature.input
+      set list of input files                            = particles-wall-heating.input
     end
     
 .. code-block:: text
@@ -138,7 +146,7 @@ Since the simulations only involve :math:`10` particles, they were inserted at p
     subsection insertion info
       set insertion method                               = file
       set insertion frequency                            = 10000
-      set list of input files                            = particles-two-temperatures.input
+      set list of input files                            = particles-equilibrium.input
     end
 
 
@@ -187,7 +195,7 @@ For the equilibrium simulation, walls are considered ``adiabatic`` and move towa
       end
     end
 
-For the wall-heating simulation, walls have a temperature (``isothermal``) and move towards the center until they reach their set location.
+For the wall-heating simulation, walls have a uniform temperature (``isothermal``) and move towards the center until they reach their set location.
 
 .. code-block:: text
 
@@ -238,7 +246,7 @@ For the wall-heating simulation, walls have a temperature (``isothermal``) and m
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The simulations run for 20 and 15 seconds of real time respectively. We output the simulation results every 10000 iterations.
+The simulations run for 20 and 15 seconds of real time, respectively. We output the simulation results every 10000 iterations.
 
 .. code-block:: text
 
@@ -294,7 +302,7 @@ The first post-processing script is used to check that the two mean temperatures
 
 The second script is used to confirm that the temperature of the particles matches the analytical solution :math:`T(x) = Ax+B`, where :math:`A` and :math:`B` are found using the temperature and position that are set for the left and right walls.
 
-It is possible to run the post-processing codes with the following lines. The argument is the folder which contains the ``.prm`` file.
+It is possible to run the post-processing codes with the following commands. The argument is the folder which contains the ``.prm`` file.
 
 .. code-block:: text
   :class: copy-button
@@ -332,7 +340,7 @@ The following figure shows that the two mean temperatures do converge towards :m
     :width: 500
     :align: center
 
-It was noticed while choosing the parameters for the simulation that the more the walls push the particles toward the center, the faster the mean temperatures reach :math:`0°C`. This highlights the importance of the overlap in the particle-particle and particle-wall heat transfer models.
+It was noticed while choosing the parameters for the simulation that the more the walls compress the particles, the faster the mean temperatures reach :math:`0°C`. This highlights the importance of the overlap in the particle-particle and particle-wall heat transfer models.
 
 
 Results for the Wall-heating Simulation

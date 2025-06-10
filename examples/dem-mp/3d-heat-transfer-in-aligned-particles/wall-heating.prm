@@ -84,7 +84,7 @@ end
 subsection insertion info
   set insertion method                               = file
   set insertion frequency                            = 10000
-  set list of input files                            = particles-one-temperature.input
+  set list of input files                            = particles-wall-heating.input
 end
 
 #---------------------------------------------------

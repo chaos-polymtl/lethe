@@ -9,7 +9,7 @@ We organize the DEM-Multiphysics examples from the simplest to the most complica
     :maxdepth: 1
     :glob:
 
-    thermal-lines/thermal-lines
+    heat-transfer-in-aligned-particles/heat-transfer-in-aligned-particles
 
 .. graphviz:: 
 
@@ -22,7 +22,7 @@ We organize the DEM-Multiphysics examples from the simplest to the most complica
       
       dem_mp [label="DEM-Multiphysics", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/dem-mp.html"];
 
-      dem_mp_1 [label="Thermal Lines", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/thermal-lines/thermal-lines.html"];
+      dem_mp_1 [label="Heat Transfer in Aligned Particles", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/heat-transfer-in-aligned-particles/heat-transfer-in-aligned-particles.html"];
 
       dem_mp -> dem_mp_1:w;
    
