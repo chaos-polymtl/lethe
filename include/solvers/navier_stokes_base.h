@@ -35,6 +35,7 @@
 #include <deal.II/fe/component_mask.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_fe.h>
+#include <deal.II/fe/mapping_q_cache.h>
 
 #include <deal.II/grid/grid_out.h>
 
@@ -434,6 +435,12 @@ protected:
    */
   void
   define_zero_constraints();
+
+  /**
+   * @brief Rotate rotor mapping in mortar method
+   */
+  void
+  rotate_mortar_mapping();
 
   /**
    * @brief Update non-zero constraints if the boundary is time dependent.
@@ -910,8 +917,9 @@ protected:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
-  // Previous mapping for rotor mesh rotation in mortar method
-  std::shared_ptr<Mapping<dim>> previous_mapping;
+  // Initial mapping for rotor mesh rotation in mortar method
+  std::shared_ptr<Mapping<dim>>       initial_mapping;
+  std::shared_ptr<MappingQCache<dim>> mapping_cache;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers;
