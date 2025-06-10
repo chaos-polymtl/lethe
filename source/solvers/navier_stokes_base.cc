@@ -555,6 +555,11 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
+  // If the mortar method is enabled, update the rotor configuration in the
+  // mortar coupling operator
+  if (this->simulation_parameters.mortar.enable)
+    this->rotate_mortar_mapping();
+
   if (simulation_parameters.multiphysics.fluid_dynamics)
     {
       // Solve and percolate the auxiliary physics that should be treated BEFORE
@@ -1952,6 +1957,56 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
   this->establish_solid_domain(false);
 
   this->zero_constraints.close();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
+{
+  if (this->simulation_parameters.mortar.enable)
+    {
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+      // Get updated rotation angle
+      simulation_parameters.mortar.rotor_angular_velocity->set_time(
+        this->simulation_control->get_current_time());
+      const double rotation_angle =
+        simulation_parameters.mortar.rotor_angular_velocity->value(
+          Point<dim>());
+
+      if (simulation_parameters.mortar.verbosity ==
+          Parameters::Verbosity::verbose)
+        this->pcout << "Mortar - Rotating rotor grid: " << rotation_angle
+                    << " rad \n"
+                    << std::endl;
+
+      // If this is the first iteration, store initial mapping and create
+      // mapping cache object. Otherwise, use initalize() function to update
+      // current mapping cache
+      if (this->get_current_newton_iteration() == 0)
+        {
+          this->mapping_cache =
+            std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+          this->initial_mapping = this->mapping;
+        }
+
+      LetheGridTools::rotate_mapping(
+        this->dof_handler,
+        *this->mapping_cache,
+        *this->initial_mapping,
+        compute_n_subdivisions_and_radius(*this->triangulation,
+                                          this->simulation_parameters.mortar)
+          .second,
+        rotation_angle);
+
+        // this->mapping = &this->mapping_cache;
+        // this->mapping = static_cast<Mapping<dim> &>(this->mapping_cache);
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The mapping rotation requires a more recent version of deal.II."));
+#endif
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
