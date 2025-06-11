@@ -2126,6 +2126,7 @@ FluidDynamicsMatrixFree<dim>::solve()
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 
   this->setup_dofs();
+  this->box_refine_mesh(this->simulation_parameters.restart_parameters.restart);
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);

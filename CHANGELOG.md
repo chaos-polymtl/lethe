@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-06-11
+
+### Fixed
+
+- MINOR Added support for the box refinement in the matrix-free solver. [#1551](https://github.com/chaos-polymtl/lethe/pull/1551)
+
 ## [Master] - 2025-06-05
 
 ### Added
