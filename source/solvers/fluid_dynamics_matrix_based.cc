@@ -778,7 +778,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
       // Change sign of RHS to be compatible with mortar coupling terms
       this->system_rhs *= -1.0;
       this->mortar_coupling_operator->vmult_add(this->system_rhs,
-                                                this->present_solution);
+                                                this->evaluation_point);
       // Return RHS to original sign
       this->system_rhs *= -1.0;
     }

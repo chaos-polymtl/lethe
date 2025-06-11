@@ -147,7 +147,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
                   local_matrix_ij += phi_p_i * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  // local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
                 }
 
               if (component_i < dim && component_j < dim)
@@ -173,9 +173,9 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
                   // does not alter the number of newton iteration for
                   // convergence, but greatly simplifies assembly.
 
-                  local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
+                  // local_matrix_ij +=
+                  //   tau * (strong_jac * grad_phi_u_i_x_velocity +
+                  //          strong_residual_x_grad_phi_u_i * phi_u_j);
                 }
 
               local_matrix_ij *= JxW;
@@ -286,11 +286,11 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
             JxW;
 
           // PSPG GLS term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          // local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
-          local_rhs_i +=
-            -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+          // local_rhs_i +=
+          //  -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
 
           local_rhs(i) += local_rhs_i;
         }
