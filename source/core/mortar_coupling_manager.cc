@@ -1455,7 +1455,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       // normal_m
       const auto u_value_jump = u_value_local - u_value_ghost;
 
-      const auto u_value_avg  = (u_value_local + u_value_ghost) * 0.5;
+      const auto u_value_avg = (u_value_local + u_value_ghost) * 0.5;
 
       // The expression for the average on the mortar interface is
       // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason

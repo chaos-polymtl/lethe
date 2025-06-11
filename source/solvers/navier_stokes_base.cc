@@ -1954,6 +1954,40 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
         }
     }
 
+  if constexpr (!std::is_same_v<VectorType, GlobalBlockVectorType>)
+    {
+      if (this->simulation_parameters.boundary_conditions.fix_pressure_constant)
+        {
+          unsigned int min_index = numbers::invalid_unsigned_int;
+
+          std::vector<types::global_dof_index> dof_indices;
+
+          // Loop over the cells to identify the min index
+          for (const auto &cell : this->dof_handler.active_cell_iterators())
+            {
+              if (cell->is_locally_owned())
+                {
+                  const auto &fe = cell->get_fe();
+
+                  dof_indices.resize(fe.n_dofs_per_cell());
+                  cell->get_dof_indices(dof_indices);
+
+                  for (unsigned int i = 0; i < dof_indices.size(); ++i)
+                    if (fe.system_to_component_index(i).first == dim)
+                      min_index = std::min(min_index, dof_indices[i]);
+                }
+            }
+
+
+          // Necessary to find the min across all cores.
+          min_index = Utilities::MPI::min(min_index,
+                                          this->dof_handler.get_communicator());
+
+          if (locally_owned_dofs.is_element(min_index))
+            zero_constraints.add_line(min_index);
+        }
+    }
+
   this->establish_solid_domain(false);
 
   this->zero_constraints.close();
@@ -2044,10 +2078,10 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   if (!this->simulation_parameters.boundary_conditions.time_dependent)
     return;
 
-  // We can never assume in the code anywhere that the local_evaluation_point is
-  // at the right value its value must always be reinitialized from the present
-  // solution. This may appear trivial, but this is extremely important when we
-  // are checkpointing. Trust me future Bruno.
+  // We can never assume in the code anywhere that the local_evaluation_point
+  // is at the right value its value must always be reinitialized from the
+  // present solution. This may appear trivial, but this is extremely
+  // important when we are checkpointing. Trust me future Bruno.
   this->local_evaluation_point = this->present_solution;
 
   double time = this->simulation_control->get_current_time();
@@ -2216,8 +2250,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   // running in debug mode with Trilinos vectors Deal.II vectors require that
   // the vectors used in the checkpointing mechanism have their relevant dofs
   // whereas Trilinos vectors do not allow for this. Right now this code works
-  // well in release mode for both vector types, but will not work in debug mode
-  // for Trilinos vectors because of an assertion. A workaround will be
+  // well in release mode for both vector types, but will not work in debug
+  // mode for Trilinos vectors because of an assertion. A workaround will be
   // implemented in a near future
 
   std::vector<VectorType *> x_system(1 + previous_solutions.size());
@@ -2298,8 +2332,9 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  // We will need to identify which pressure degrees of freedom are connected to
-  // fluid region. For these, we won't establish a zero pressure constraint.
+  // We will need to identify which pressure degrees of freedom are connected
+  // to fluid region. For these, we won't establish a zero pressure
+  // constraint.
   std::unordered_set<types::global_dof_index> dofs_are_connected_to_fluid;
 
   // Loop through all cells to identify which cells are solid. This first step
@@ -2311,8 +2346,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           cell->get_dof_indices(local_dof_indices);
-          // If the material_id is higher than 0, the region is a solid region.
-          // Constrain the velocity DOFs to be zero.
+          // If the material_id is higher than 0, the region is a solid
+          // region. Constrain the velocity DOFs to be zero.
           if (cell->material_id() > 0)
             {
               constrain_solid_cell_velocity_dofs(non_zero_constraints,
@@ -2321,9 +2356,9 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
             }
           else
             {
-              // Cell is a fluid cell and as such all the pressure DOFs of that
-              // cell are connected to the fluid. This will be used later on to
-              // identify which pressure cells to constrain.
+              // Cell is a fluid cell and as such all the pressure DOFs of
+              // that cell are connected to the fluid. This will be used later
+              // on to identify which pressure cells to constrain.
               flag_dofs_connected_to_fluid(local_dof_indices,
                                            dofs_are_connected_to_fluid);
             }
@@ -2341,8 +2376,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
           if (cell->material_id() > 0)
             {
               // First check if the cell is connected to a fluid cell by
-              // checking if one of the DOF of the cell is connected to a fluid
-              // cell.
+              // checking if one of the DOF of the cell is connected to a
+              // fluid cell.
               bool connected_to_fluid =
                 check_cell_is_connected_to_fluid(dofs_are_connected_to_fluid,
                                                  local_dof_indices);
@@ -2444,8 +2479,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
-  // Loop over structs containing fluid id, temperature and phase fraction range
-  // information, and flag containers for DOFs.
+  // Loop over structs containing fluid id, temperature and phase fraction
+  // range information, and flag containers for DOFs.
   for (StasisConstraintWithTemperature &stasis_constraint_struct :
        this->stasis_constraint_structs)
     {
@@ -2455,8 +2490,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
             {
               cell->get_dof_indices(local_dof_indices);
 
-              // If a restriction plane is defined, check if the cell is in the
-              // valid domain.
+              // If a restriction plane is defined, check if the cell is in
+              // the valid domain.
               if (!restrain_domain_with_plane ||
                   cell_in_constraining_domain(cell,
                                               plane_point,
@@ -2469,9 +2504,10 @@ NavierStokesBase<dim, VectorType, DofsType>::
                     filtered_phase_fraction_solution,
                     local_filtered_phase_fraction_values);
 
-                  // Check if cell is only in the fluid of interest. As soon as
-                  // one filtered phase fraction value is outside the tolerated
-                  // range, the cell is perceived as being in the wrong fluid.
+                  // Check if cell is only in the fluid of interest. As soon
+                  // as one filtered phase fraction value is outside the
+                  // tolerated range, the cell is perceived as being in the
+                  // wrong fluid.
                   for (const double &filtered_phase_fraction :
                        local_filtered_phase_fraction_values)
                     {
@@ -2485,9 +2521,9 @@ NavierStokesBase<dim, VectorType, DofsType>::
                         }
                     }
 
-                  // If the cell is not in the right fluid, no solid constraint
-                  // will be applied on the cell's DOFs; we skip to the next
-                  // cell.
+                  // If the cell is not in the right fluid, no solid
+                  // constraint will be applied on the cell's DOFs; we skip to
+                  // the next cell.
                   if (!cell_is_in_right_fluid)
                     continue;
 
@@ -2515,7 +2551,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
 {
   for (const double &temperature : local_temperature_values)
     {
-      // Skip cells with at least 1 DOF that is outbound the temperature limits.
+      // Skip cells with at least 1 DOF that is outbound the temperature
+      // limits.
       if (temperature < stasis_constraint_struct.min_solid_temperature ||
           temperature > stasis_constraint_struct.max_solid_temperature)
         return;
