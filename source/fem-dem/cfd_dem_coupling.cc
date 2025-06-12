@@ -384,7 +384,7 @@ CFDDEMSolver<dim>::write_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
-  std::string prefix_grid      = prefix + "_postprocess_data";
+  std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       this->simulation_control->save(prefix);
