@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-06-12
+
+### Fixed
+
+- MINOR Added initial support for the dynamic flow control in lethe-fluid-sharp. Beta force particle is still missing from the calculation. [#1553] (https://github.com/chaos-polymtl/lethe/pull/1553)
+
 ## [Master] - 2025-06-11
 
 ### Fixed
