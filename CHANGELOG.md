@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR Fixed restarts in CFD-DEM simulatiosn with Langrangian post-processing enabled. The checkpointing file for the pvd file was not named correctly. This is now corrected to be consistent. [#1552](https://github.com/chaos-polymtl/lethe/pull/1552)
+- MINOR Fixed restarts in CFD-DEM simulations with Lagrangian post-processing enabled. The checkpointing file for the pvd file was not named correctly. This has now been corrected to ensure consistency. [#1552](https://github.com/chaos-polymtl/lethe/pull/1552)
 
 ## [Master] - 2025-06-11
 
