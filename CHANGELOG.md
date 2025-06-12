@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Fixed restarts in CFD-DEM simulations with Lagrangian post-processing enabled. The checkpointing file for the pvd file was not named correctly. This has now been corrected to ensure consistency. [#1552](https://github.com/chaos-polymtl/lethe/pull/1552)
 
+### Added
+
+- MINOR Added a simple first multiphysic DEM example that consists of lined up particles that are heated by others or by a wall. It verifies the models of particle-particle and particle-wall heat transfer using two simple test cases. This PR also adds dem-mp in the documentation and examples directories. [#1548](https://github.com/chaos-polymtl/lethe/pull/1548)
+
 ## [Master] - 2025-06-11
 
 ### Fixed
