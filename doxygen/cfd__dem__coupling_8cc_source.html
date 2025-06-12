@@ -490,7 +490,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    this-&gt;simulation_parameters.restart_parameters.filename;</div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>  std::string prefix_particles = prefix + <span class="stringliteral">&quot;_particles&quot;</span>;</div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>  std::string prefix_grid      = prefix + <span class="stringliteral">&quot;_postprocess_data&quot;</span>;</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>  std::string prefix_grid      = prefix + <span class="stringliteral">&quot;_lagrangian_postprocessing&quot;</span>;</div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>  <span class="keywordflow">if</span> (Utilities::MPI::this_mpi_process(this-&gt;mpi_communicator) == 0)</div>
 <div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    {</div>
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>      this-&gt;simulation_control-&gt;save(prefix);</div>
