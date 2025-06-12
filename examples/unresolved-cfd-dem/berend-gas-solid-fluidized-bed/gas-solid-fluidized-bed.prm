@@ -13,7 +13,7 @@ set dimension = 3
 subsection simulation control
   set method           = bdf1
   set output frequency = 100
-  set time end         = 6
+  set time end         = 10
   set time step        = 0.0001
   set output path      = ./output/
 end
@@ -53,10 +53,10 @@ end
 #---------------------------------------------------
 
 subsection void fraction
-  set mode                = pcm
-  set read dem            = true
-  set dem file name       = dem
-  set l2 smoothing length = 0.0022360679774998
+  set mode                         = qcm
+  set qcm sphere equal cell volume = true
+  set read dem                     = true
+  set dem file name                = dem
 end
 
 #---------------------------------------------------
@@ -68,11 +68,11 @@ subsection cfd-dem
   set void fraction time derivative = true
   set drag force                    = true
   set buoyancy force                = true
-  set shear force                   = false
-  set pressure force                = false
+  set shear force                   = true
+  set pressure force                = true
   set drag model                    = difelice
   set coupling frequency            = 100
-  set vans model                    = modelB
+  set vans model                    = modelA
 end
 
 #---------------------------------------------------
@@ -90,7 +90,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = function
@@ -101,7 +101,7 @@ subsection boundary conditions
       set Function expression = 0
     end
     subsection w
-      set Function expression = 3
+      set Function expression = 0.9
     end
   end
   subsection bc 1
@@ -110,6 +110,10 @@ subsection boundary conditions
   end
   subsection bc 2
     set id   = 2
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 3
     set type = noslip
   end
 end
@@ -156,13 +160,13 @@ subsection lagrangian physical properties
     set diameter                          = 0.001545
     set number of particles               = 17562
     set density particles                 = 1150
-    set young modulus particles           = 1e6
+    set young modulus particles           = 100e6
     set poisson ratio particles           = 0.3
     set restitution coefficient particles = 0.9
     set friction coefficient particles    = 0.3
     set rolling friction particles        = 0.2
   end
-  set young modulus wall           = 1e6
+  set young modulus wall           = 100e6
   set poisson ratio wall           = 0.3
   set restitution coefficient wall = 0.9
   set friction coefficient wall    = 0.3
