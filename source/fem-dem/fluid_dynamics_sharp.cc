@@ -4889,6 +4889,8 @@ FluidDynamicsSharp<dim>::solve()
       this->update_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
+      this->dynamic_flow_control();
+
       if (some_particles_are_coupled == false)
         integrate_particles();
 
