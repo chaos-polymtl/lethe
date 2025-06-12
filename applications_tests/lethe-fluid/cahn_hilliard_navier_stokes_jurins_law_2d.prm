@@ -137,7 +137,7 @@ subsection boundary conditions
   end
   subsection bc 2
     set id   = 4 # upper surface
-    set type = none
+    set type = noslip
   end
   subsection bc 3
     set id   = 3 # middle
