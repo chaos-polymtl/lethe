@@ -8,7 +8,7 @@ from post_process_turbulent_cylinder_3d import compute_cp_average, compute_strou
 # Common parameters
 rho = 1.0
 U_inf = 1.0
-center = (8, 25)
+center = (0, 0)
 z_array = np.linspace(0,np.pi,100)
 theta_array = np.linspace(0, 361 * np.pi/360, 362)
 L = np.pi
@@ -38,7 +38,7 @@ for folder, label in zip(folders, labels):
 for folder, label in simulations.items():
     theta_array = np.linspace(0, 181 * np.pi/180, 182)
     # Strouhal number
-    force_file = f"{folder}/force.03.dat"
+    force_file = f"{folder}/force.02.dat"
     st_peak = compute_strouhal_from_lift(force_file, D, U_inf, method="peak", min_peak_distance=10, purcentage=frac)
     st_fft = compute_strouhal_from_lift(force_file, D, U_inf, method="fft", min_peak_distance=10, purcentage=frac)
     print(f"[{label}] Strouhal number (peak): St = {st_peak:.4f}")
