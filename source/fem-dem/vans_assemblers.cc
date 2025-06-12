@@ -1822,7 +1822,7 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
 
-  const double density= std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
+  const double density = std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
 
   // Loop over particles in cell
   for (auto &particle : pic)
