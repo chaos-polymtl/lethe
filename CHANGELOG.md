@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-06-13
+
+### Fixed
+
+- MINOR Fixed bug with constrained indices and edge constrained indices in the functions required by the operator when using local smoothing geometric multigrid in the matrix-free application. Added a cylinder test with kelly error estimator to avoid this in the future. [#1555](https://github.com/chaos-polymtl/lethe/pull/1555)
+
 ## [Master] - 2025-06-12
 
 ### Fixed
