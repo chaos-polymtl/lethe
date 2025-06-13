@@ -503,7 +503,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
 
   // set constrained dofs as the sum of current dst value and src value
   for (const auto i : constrained_indices)
-    dst.local_element(i) += src.local_element(i);
+    dst.local_element(i) = src.local_element(i);
 }
 
 
@@ -1151,8 +1151,8 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
       boundary_function);
 #endif
 
-  for (const auto &i : constrained_indices)
-    diagonal.local_element(i) = 1.0;
+  for (const auto &i : edge_constrained_indices)
+    diagonal.local_element(i) = 0.0;
 
   for (auto &i : diagonal)
     i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;
