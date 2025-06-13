@@ -24,6 +24,9 @@ We organize the DEM-Multiphysics examples from the simplest to the most complica
 
       dem_mp_1 [label="Heat Transfer in Aligned Particles", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/heat-transfer-in-aligned-particles/heat-transfer-in-aligned-particles.html"];
 
+      dem_mp_2 [label="Heated Packed Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/heated-packed-bed/heated-packed-bed.html"];
+
       dem_mp -> dem_mp_1:w;
+      dem_mp -> dem_mp_2:w;
    
     }
