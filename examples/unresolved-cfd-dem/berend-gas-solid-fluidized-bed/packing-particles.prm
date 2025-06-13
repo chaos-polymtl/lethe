@@ -68,13 +68,13 @@ subsection lagrangian physical properties
     set diameter                          = 0.001545
     set number of particles               = 17562
     set density particles                 = 1150
-    set young modulus particles           = 100e6
+    set young modulus particles           = 1e6
     set poisson ratio particles           = 0.3
     set restitution coefficient particles = 0.9
     set friction coefficient particles    = 0.3
     set rolling friction particles        = 0.2
   end
-  set young modulus wall           = 100e6
+  set young modulus wall           = 1e6
   set poisson ratio wall           = 0.3
   set restitution coefficient wall = 0.9
   set friction coefficient wall    = 0.3
@@ -89,9 +89,9 @@ subsection insertion info
   set insertion method                               = volume
   set inserted number of particles at each time step = 5000
   set insertion frequency                            = 100000
-  set insertion box points coordinates               = 0.002, 0.002, 0.15 : 0.088, 0.006, 0.48
+  set insertion box points coordinates               = 0.002, 0.002, 0.15 : 0.089, 0.006, 0.48
   set insertion distance threshold                   = 1.5
-  set insertion maximum offset                       = 0.2
+  set insertion maximum offset                       = 0.5
   set insertion prn seed                             = 19
 end
 
