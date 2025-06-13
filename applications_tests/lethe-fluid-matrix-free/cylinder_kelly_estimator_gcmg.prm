@@ -12,7 +12,7 @@ set dimension = 2
 
 subsection simulation control
   set method            = steady
-  set number mesh adapt = 1
+  set number mesh adapt = 2
   set output name       = output
   set output frequency  = 0
   set log precision     = 3
