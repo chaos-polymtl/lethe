@@ -858,17 +858,16 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
 
   Vector<Number> buffer;
 
-  std::vector<Number> all_value_m(data.all_normals.size() * q_data_size);
-  std::vector<Number> all_value_p(data.all_normals.size() * q_data_size);
+  std::vector<Number> all_values_local(data.all_normals.size() * q_data_size);
+  std::vector<Number> all_values_ghost(data.all_normals.size() * q_data_size);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Number of quadrature points at the cell(rotor)/cell(stator)
-            // interaction. For non-aligned meshes, this value indicates the
-            // number of quadrature points at both rotor and stator cells.
+            // Quadrature points at the current face. Note: we process
+            // all mortars of the face together here.
             const unsigned int n_q_points = mortar_manager->get_n_points();
 
             evaluator->local_reinit(
@@ -883,18 +882,22 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
             for (unsigned int i = 0; i < local_dofs.size(); ++i)
               buffer[i] = src[local_dofs[i]];
 
-            evaluator->local_evaluate(
-              data, buffer, ptr_q, 1, all_value_m.data() + ptr_q * q_data_size);
+            evaluator->local_evaluate(data,
+                                      buffer,
+                                      ptr_q,
+                                      1,
+                                      all_values_local.data() +
+                                        ptr_q * q_data_size);
 
             ptr_q += n_q_points;
           }
 
   // 2) Communicate
   partitioner.template export_to_ghosted_array<Number, 0>(
-    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
-                            all_value_m.size()),
-    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size()),
+    ArrayView<const Number>(reinterpret_cast<Number *>(all_values_local.data()),
+                            all_values_local.size()),
+    ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),
+                      all_values_ghost.size()),
     q_data_size);
 
   // 3) Integrate
@@ -904,7 +907,8 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Quadrature points at the cell(rotor)/cell(stator) interaction
+            // Quadrature points at the current face. Note: we process
+            // all mortars of the face together here.
             const unsigned int n_q_points = mortar_manager->get_n_points();
 
             evaluator->local_reinit(
@@ -917,8 +921,9 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                        buffer,
                                        ptr_q,
                                        1,
-                                       all_value_m.data() + ptr_q * q_data_size,
-                                       all_value_p.data() +
+                                       all_values_local.data() +
+                                         ptr_q * q_data_size,
+                                       all_values_ghost.data() +
                                          ptr_q * q_data_size);
 
             const auto local_dofs = this->get_dof_indices(cell);
@@ -937,14 +942,15 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
   unsigned int ptr_q = 0;
 
   Vector<Number>      buffer, diagonal_local;
-  std::vector<Number> all_value_m, all_value_p;
+  std::vector<Number> all_values_local, all_values_ghost;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Quadrature points at the cell(rotor)/cell(stator) interaction
+            // Quadrature points at the current face. Note: we process
+            // all mortars of the face together here.
             const unsigned int n_q_points = mortar_manager->get_n_points();
 
             evaluator->local_reinit(
@@ -954,24 +960,29 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
 
             buffer.reinit(n_dofs_per_cell);
             diagonal_local.reinit(n_dofs_per_cell);
-            all_value_m.resize(n_q_points * q_data_size);
-            all_value_p.resize(n_q_points * q_data_size);
+            all_values_local.resize(n_q_points * q_data_size);
+            all_values_ghost.resize(n_q_points * q_data_size);
 
             for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
               {
+                // Create i-th basis vector
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
+                // Interpolate i-th basis vector to the quadrature points
                 evaluator->local_evaluate(
-                  data, buffer, ptr_q, 1, all_value_m.data());
+                  data, buffer, ptr_q, 1, all_values_local.data());
 
                 buffer.reinit(n_dofs_per_cell);
+
+                // integrate the coupling terms of the mortar using the
+                // interpolated information from the cell
                 evaluator->local_integrate(data,
                                            buffer,
                                            ptr_q,
                                            1,
-                                           all_value_m.data(),
-                                           all_value_p.data());
+                                           all_values_local.data(),
+                                           all_values_ghost.data());
 
                 diagonal_local[i] = buffer[i];
               }
@@ -1015,10 +1026,10 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 {
   const auto constraints = &constraints_extended;
 
-  std::vector<Number> all_value_m(data.all_normals.size() * n_dofs_per_cell *
-                                  q_data_size);
-  std::vector<Number> all_value_p(data.all_normals.size() * n_dofs_per_cell *
-                                  q_data_size);
+  std::vector<Number> all_values_local(data.all_normals.size() *
+                                       n_dofs_per_cell * q_data_size);
+  std::vector<Number> all_values_ghost(data.all_normals.size() *
+                                       n_dofs_per_cell * q_data_size);
 
   unsigned int ptr_q = 0;
 
@@ -1030,31 +1041,32 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Quadrature points at the cell(rotor)/cell(stator) interaction
+            // Quadrature points at the current face. Note: we process
+            // all mortars of the face together here.
             const unsigned int n_q_points = mortar_manager->get_n_points();
 
-            // Initialize coupling evaluator with the correct size
+            // Initialize coupling evaluator with the current cell and
+            // the relevant quadrature points
             evaluator->local_reinit(
               cell,
               ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
                                                   n_q_points));
-            // Initialize buffer to store information of all cell dofs
+
+            // Initialize buffer to store information at dof level
             buffer.reinit(n_dofs_per_cell);
 
             for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
               {
-                // Use the buffer to get the interpolation of the shape
-                // functions
+                // Create i-th basis vector
                 for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
                   buffer[j] = static_cast<Number>(i == j);
 
-                // Interpolate shape functions at the quadrature points of the
-                // mortar element using the interpolation of the cell dofs
+                // Interpolate i-th basis vector to the quadrature points
                 evaluator->local_evaluate(data,
                                           buffer,
                                           ptr_q,
                                           n_dofs_per_cell,
-                                          all_value_m.data() +
+                                          all_values_local.data() +
                                             (ptr_q * n_dofs_per_cell + i) *
                                               q_data_size);
               }
@@ -1065,14 +1077,12 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   const unsigned n_q_points =
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
 
-  // 2) Communicate
-  // Export data from the 'mortar' (negative) side to the ghost side, i.e.
-  // 'non-mortar' side
+  // 2) Communicate: export data from local to ghost side
   partitioner_cell.template export_to_ghosted_array<Number, 0>(
-    ArrayView<const Number>(reinterpret_cast<Number *>(all_value_m.data()),
-                            all_value_m.size()),
-    ArrayView<Number>(reinterpret_cast<Number *>(all_value_p.data()),
-                      all_value_p.size()),
+    ArrayView<const Number>(reinterpret_cast<Number *>(all_values_local.data()),
+                            all_values_local.size()),
+    ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),
+                      all_values_ghost.size()),
     n_dofs_per_cell * n_q_points * q_data_size);
 
 
@@ -1087,43 +1097,45 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
           {
             // Number of mortars attached to the current cell (i.e. 1 for
             // aligned rotor-stator meshes and 2 for non-aligned case)
-            const unsigned int n_sub_cells = mortar_manager->get_n_mortars();
-            // Loop over mortar sub-cells
-            for (unsigned int sc = 0; sc < n_sub_cells; ++sc)
+            const unsigned int n_mortars = mortar_manager->get_n_mortars();
+
+            // Loop over mortars
+            for (unsigned int m = 0; m < n_mortars; ++m)
               {
                 evaluator->local_reinit(cell,
                                         ArrayView<const Point<dim, Number>>(
                                           all_points_ref.data() + ptr_q,
                                           n_q_points));
 
-                // Loop over negative and positive sides of the mortar interface
+                // Loop over local and ghost cells attached the mortar
                 for (unsigned int b = 0; b < 2; ++b)
                   {
                     FullMatrix<Number> cell_matrix(n_dofs_per_cell,
                                                    n_dofs_per_cell);
+
                     // Loop over cell dofs and integrate the coupling terms of
                     // the mortar using the interpolated information from the
                     // cell
                     for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
                       {
                         buffer.reinit(n_dofs_per_cell);
-                        if (b == 0) // negative ('mortar') side
+                        if (b == 0) // local cell
                           evaluator->local_integrate(
                             data,
                             buffer,
                             ptr_q,
                             n_dofs_per_cell,
-                            all_value_m.data() +
+                            all_values_local.data() +
                               (ptr_q * n_dofs_per_cell + i) * q_data_size,
                             nullptr);
-                        else // positive ('non-mortar') side
+                        else // ghost cell
                           evaluator->local_integrate(
                             data,
                             buffer,
                             ptr_q,
                             n_dofs_per_cell,
                             nullptr,
-                            all_value_p.data() +
+                            all_values_ghost.data() +
                               (ptr_q * n_dofs_per_cell + i) * q_data_size);
 
                         // Copy data from buffer to cell matrix
@@ -1133,27 +1145,27 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
                     // Vector of local dof indices from the cell in the negative
                     // ('mortar') side
-                    std::vector<types::global_dof_index> local_dof_indices_m(
+                    std::vector<types::global_dof_index> local_dof_indices(
                       dof_indices.begin() + ptr_dofs,
                       dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
 
-                    if (b == 0) // negative ('mortar') side
+                    if (b == 0) // local cell -> local-local block
                       {
                         constraints->distribute_local_to_global(
-                          cell_matrix, local_dof_indices_m, system_matrix);
+                          cell_matrix, local_dof_indices, system_matrix);
                       }
-                    else // positive ('non-mortar') side
+                    else // ghost cell -> local-ghost block
                       {
                         std::vector<types::global_dof_index>
-                          local_dof_indices_p(dof_indices_ghost.begin() +
-                                                ptr_dofs,
-                                              dof_indices_ghost.begin() +
-                                                ptr_dofs + n_dofs_per_cell);
+                          local_dof_indices_ghost(dof_indices_ghost.begin() +
+                                                    ptr_dofs,
+                                                  dof_indices_ghost.begin() +
+                                                    ptr_dofs + n_dofs_per_cell);
 
                         constraints->distribute_local_to_global(
                           cell_matrix,
-                          local_dof_indices_m,
-                          local_dof_indices_p,
+                          local_dof_indices,
+                          local_dof_indices_ghost,
                           system_matrix);
                       }
                   }
@@ -1222,7 +1234,7 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_evaluate(
   const Vector<Number>                      &buffer,
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
-  Number                                    *all_value_m) const
+  Number                                    *all_values_m) const
 {
   this->phi_m.evaluate(buffer,
                        EvaluationFlags::values | EvaluationFlags::gradients);
@@ -1240,7 +1252,7 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_evaluate(
 
       // Initialize buffer for 'negative' side of the interface (i.e. rotor),
       // where information is evaluated
-      BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * 2 * n_components * q_stride);
       // Store values and gradients at the created buffer
       buffer_m.write(value_m);
       buffer_m.write(gradient_m);
@@ -1254,16 +1266,16 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
   Vector<Number>                            &buffer,
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
-  Number                                    *all_value_m,
-  Number                                    *all_value_p) const
+  Number                                    *all_values_m,
+  Number                                    *all_values_p) const
 {
   for (const auto q : this->phi_m.quadrature_point_indices())
     {
       const unsigned int q_index = ptr_q + q;
       // Initialize buffer for both 'mortar' and 'non-mortar' sides of the
       // interface
-      BufferRW<Number> buffer_m(all_value_m, q * 2 * n_components * q_stride);
-      BufferRW<Number> buffer_p(all_value_p, q * 2 * n_components * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * 2 * n_components * q_stride);
+      BufferRW<Number> buffer_p(all_values_p, q * 2 * n_components * q_stride);
       // Read shape functions values and gradients stored in the buffer
       const auto value_m           = buffer_m.template read<value_type>();
       const auto value_p           = buffer_p.template read<value_type>();

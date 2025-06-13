@@ -555,6 +555,16 @@ template <int dim, typename Number>
 class CouplingOperator
 {
 public:
+  /**
+   * @brief Constructor.
+   *
+   * @param[in] bid_m Boundary ID of the face whose outwards-pointing
+   *   normal shows in the same direction as the normal provided by
+   *   @p mortar_manager.
+   * @param[in] bid_p Boundary ID of the face whose outwards-pointing
+   *   normal shows in the opposite direction as the normal provided by
+   *   @p mortar_manager.
+   */
   CouplingOperator(
     const Mapping<dim>                                        &mapping,
     const DoFHandler<dim>                                     &dof_handler,
