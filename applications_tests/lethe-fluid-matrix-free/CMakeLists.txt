@@ -2,7 +2,7 @@ set(TEST_TARGET lethe-fluid-matrix-free)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
-file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_kelly_estimator.${_build_type}")
+file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_kelly_estimator_gcmg.${_build_type}")
 file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_kelly_estimator_lsmg.${_build_type}")
 file(COPY cylinder_close_outlet.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_outlet_bc.${_build_type}")
 file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_transient_avg.${_build_type}")
