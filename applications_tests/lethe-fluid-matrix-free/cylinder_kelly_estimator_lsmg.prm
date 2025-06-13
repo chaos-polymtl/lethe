@@ -161,7 +161,7 @@ subsection linear solver
     set max iters          = 400
     set relative residual  = 1e-4
     set minimum residual   = 1e-3
-    set preconditioner     = gcmg
+    set preconditioner     = lsmg
     set verbosity          = quiet
     set max krylov vectors = 200
 
