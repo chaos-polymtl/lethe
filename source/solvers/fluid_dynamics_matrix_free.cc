@@ -232,7 +232,8 @@ public:
     const GlobalSparseMatrixType    &global_sparse_matrix,
     const GlobalSparsityPattern     &global_sparsity_pattern,
     const AffineConstraints<Number> &constraints,
-    const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
+    const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner,
+    const unsigned int                                        mg_level)
   {
     this->timer.enter_subsection("asm::indices");
 
@@ -249,25 +250,44 @@ public:
         patches.push_back(local_dof_indices_temp);
     };
 
-    for (const auto &cell : dof_handler.active_cell_iterators())
-      {
-        if (cell->is_locally_owned() == false)
-          continue;
+    if (mg_level == numbers::invalid_unsigned_int)
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (cell->is_locally_owned() == false)
+            continue;
 
-        std::vector<types::global_dof_index> local_dof_indices(
-          cell->get_fe().n_dofs_per_cell());
-        cell->get_dof_indices(local_dof_indices);
+          std::vector<types::global_dof_index> local_dof_indices(
+            cell->get_fe().n_dofs_per_cell());
+          cell->get_dof_indices(local_dof_indices);
 
-        add_indices(local_dof_indices);
-      }
+          add_indices(local_dof_indices);
+        }
+    else
+      for (const auto &cell : dof_handler.mg_cell_iterators_on_level(mg_level))
+        {
+          if (cell->is_locally_owned() == false)
+            continue;
 
-    IndexSet ghost_dofs(dof_handler.locally_owned_dofs().size());
+          std::vector<types::global_dof_index> local_dof_indices(
+            cell->get_fe().n_dofs_per_cell());
+          cell->get_mg_dof_indices(local_dof_indices);
+
+          add_indices(local_dof_indices);
+        }
+
+    const IndexSet locally_owned_dofs =
+      (mg_level == numbers::invalid_unsigned_int) ?
+        dof_handler.locally_owned_dofs() :
+        dof_handler.locally_owned_mg_dofs(mg_level);
+
+    IndexSet ghost_dofs(locally_owned_dofs.size());
     for (const auto &indices : patches)
       ghost_dofs.add_indices(indices.begin(), indices.end());
 
     std::shared_ptr<const Utilities::MPI::Partitioner> partition =
-      std::make_shared<Utilities::MPI::Partitioner>(
-        dof_handler.locally_owned_dofs(), ghost_dofs, MPI_COMM_WORLD);
+      std::make_shared<Utilities::MPI::Partitioner>(locally_owned_dofs,
+                                                    ghost_dofs,
+                                                    MPI_COMM_WORLD);
 
     if (dealii::internal::is_partitioner_contained(partition, partitioner))
       {
@@ -1333,7 +1353,10 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
                          this->mg_operators[level]
                            ->get_system_matrix_free()
                            .get_affine_constraints(),
-                         this->mg_operators[level]->get_vector_partitioner());
+                         this->mg_operators[level]->get_vector_partitioner(),
+                         this->mg_operators[level]
+                           ->get_system_matrix_free()
+                           .get_mg_level());
         }
 
       smoother_data[level].preconditioner = mg_smoother_preconditioners[level];
