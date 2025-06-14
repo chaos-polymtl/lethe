@@ -868,11 +868,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   temp_constraints.clear();
                   const IndexSet locally_relevant_level_dofs =
                     DoFTools::extract_locally_relevant_level_dofs(
-                      this->dof_handlers[this->dof_handlers.max_level()],
+                      this->dof_handlers[p_map[levels[level].second]],
                       levels[level].first);
                   temp_constraints.reinit(locally_relevant_level_dofs);
                   VectorTools::compute_no_normal_flux_constraints_on_level(
-                    this->dof_handlers[this->dof_handlers.max_level()],
+                    this->dof_handlers[p_map[levels[level].second]],
                     0,
                     no_normal_flux_boundaries,
                     temp_constraints,
@@ -917,10 +917,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           else
             {
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
-              this->mg_constrained_dofs.make_zero_boundary_constraints(
-                this->dof_handlers[this->dof_handlers.max_level()],
-                dirichlet_boundary_id,
-                fe->component_mask(velocities));
+
+              for (const auto [_, l] : p_map)
+                this->mg_constrained_dofs.make_zero_boundary_constraints(
+                  this->dof_handlers[l],
+                  dirichlet_boundary_id,
+                  fe->component_mask(velocities));
             }
         }
 
@@ -933,9 +935,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         {
           level_constraints[level].clear();
 
+          const auto &level_dof_handler =
+            this->dof_handlers[p_map[levels[level].second]];
+
           const IndexSet relevant_dofs =
-            DoFTools::extract_locally_relevant_level_dofs(
-              this->dof_handlers[this->dof_handlers.max_level()], level);
+            DoFTools::extract_locally_relevant_level_dofs(level_dof_handler,
+                                                          level);
 
           level_constraints[level].reinit(relevant_dofs);
 
@@ -962,9 +967,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               std::vector<types::global_dof_index> dof_indices;
 
               // Loop over the cells to identify the min index
-              for (const auto &cell :
-                   this->dof_handlers[this->dof_handlers.max_level()]
-                     .active_cell_iterators())
+              for (const auto &cell : level_dof_handler.active_cell_iterators())
                 {
                   if (cell->is_locally_owned())
                     {
@@ -980,10 +983,9 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 }
 
               // Necessary to find the min across all cores.
-              min_index = Utilities::MPI::min(
-                min_index,
-                this->dof_handlers[this->dof_handlers.max_level()]
-                  .get_communicator());
+              min_index =
+                Utilities::MPI::min(min_index,
+                                    level_dof_handler.get_communicator());
 
               if (relevant_dofs.is_element(min_index))
                 level_constraints[level].add_line(min_index);
@@ -1002,11 +1004,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               level == this->minlevel)
             {
               const auto points =
-                QGaussLobatto<1>(
-                  this->dof_handlers[this->dof_handlers.max_level()]
-                    .get_fe()
-                    .degree +
-                  1)
+                QGaussLobatto<1>(level_dof_handler.get_fe().degree + 1)
                   .get_points();
 
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
@@ -1016,7 +1014,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           this->mg_operators[level]->reinit(
             *mapping,
-            this->dof_handlers[this->dof_handlers.max_level()],
+            level_dof_handler,
             level_constraints[level],
             quadrature_mg,
             forcing_function,
