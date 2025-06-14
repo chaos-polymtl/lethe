@@ -536,16 +536,13 @@ public:
   {}
 
   void
-  initialize_constraints(const MGConstrainedDoFs &mg_constrained_dofs)
-  {
-    ls.initialize_constraints(mg_constrained_dofs);
-  }
-
-  void
-  build(const DoFHandler<dim> &dof_handler,
+  build(const DoFHandler<dim>   &dof_handler,
+        const MGConstrainedDoFs &mg_constrained_dofs,
         const std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
           &external_partitioners_in)
   {
+    ls.initialize_constraints(mg_constrained_dofs);
+
     std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
       external_partitioners(min_h_level + external_partitioners_in.size());
 
@@ -1052,10 +1049,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
       this->mg_transfer_ls = std::make_shared<LSTransferType>(min_h_level);
 
-      this->mg_transfer_ls->initialize_constraints(
-        this->mg_constrained_dofs[this->mg_constrained_dofs.max_level()]);
       this->mg_transfer_ls->build(
-        this->dof_handlers[this->dof_handlers.max_level()], partitioners);
+        this->dof_handlers[this->dof_handlers.max_level()],
+        this->mg_constrained_dofs[this->mg_constrained_dofs.max_level()],
+        partitioners);
 
       this->mg_setup_timer.leave_subsection("Create transfer operator");
     }
