@@ -15,15 +15,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The constructor for some of the particle-fluid force assemblers were taking as an argument the lagrangian particle properties, but never using them. As part of a refactor, these constructors have been cleaned out and streamlined to not take any argument. Furthermore, the buoyancy constructor took the full particle parameters whereas it only needs the particle gravity acceleration. This has also been fixed. [#1633](https://github.com/chaos-polymtl/lethe/pull/1633)
 
-### [Master] - 2025-08-25
+### [Master] - 2025-08-21
 
 ### Added
 
 - MAJOR The void fraction manager has been refactored to become the particle_projector. This class now manages not only the calculation of the void fraction, but it can also project other particle fields onto the triangulation. Right now the only field that can be projected is the particle velocity, but additional fields can be easily added to the method. [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
 
-### Added
-
 - MINOR Update instructions for using new clusters. [#1632](https://github.com/chaos-polymtl/lethe/pull/1632)
+
+- MINOR Local smoothing multigrid now supports hp-multigrid. [#1630](https://github.com/chaos-polymtl/lethe/pull/1630)
 
 ### [Master] - 2025-08-20
 

@@ -1,0 +1,82 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       512
+   Number of degrees of freedom: 19652
+   Volume of triangulation:      8
+
+*****************************
+Steady iteration:        1/1
+*****************************
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0279
+    Minimum eigenvalue: 1.47402
+    Maximum eigenvalue: 1.76883
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 1.21092
+    Minimum eigenvalue: 1.25124
+    Maximum eigenvalue: 1.50148
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 1.23192
+    Minimum eigenvalue: 1.22991
+    Maximum eigenvalue: 1.4759
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 1.24508
+    Minimum eigenvalue: 1.21691
+    Maximum eigenvalue: 1.46029
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0279
+    Minimum eigenvalue: 1.47402
+    Maximum eigenvalue: 1.76883
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 1.21094
+    Minimum eigenvalue: 1.25122
+    Maximum eigenvalue: 1.50147
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 1.23237
+    Minimum eigenvalue: 1.22946
+    Maximum eigenvalue: 1.47535
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 1.2446
+    Minimum eigenvalue: 1.21738
+    Maximum eigenvalue: 1.46086
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0279
+    Minimum eigenvalue: 1.47402
+    Maximum eigenvalue: 1.76883
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 1.21092
+    Minimum eigenvalue: 1.25124
+    Maximum eigenvalue: 1.50148
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 1.23237
+    Minimum eigenvalue: 1.22946
+    Maximum eigenvalue: 1.47535
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 1.2446
+    Minimum eigenvalue: 1.21738
+    Maximum eigenvalue: 1.46086
+
+cells error_velocity error_pressure 
+  512 1.430989e-02 - 9.807594e-02 - 

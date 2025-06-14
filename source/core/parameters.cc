@@ -3008,10 +3008,11 @@ namespace Parameters
                        MultigridCoarseningSequenceType::h),
                     ExcNotImplemented());
 
-        AssertThrow((preconditioner != PreconditionerType::lsmg) ||
-                      (this->mg_coarsening_type ==
-                       MultigridCoarseningSequenceType::h),
-                    ExcNotImplemented());
+        AssertThrow(
+          (preconditioner != PreconditionerType::lsmg) ||
+            (this->mg_coarsening_type == MultigridCoarseningSequenceType::h ||
+             this->mg_coarsening_type == MultigridCoarseningSequenceType::hp),
+          ExcNotImplemented());
 
         mg_gmres_max_iterations = prm.get_integer("mg gmres max iterations");
         mg_gmres_tolerance      = prm.get_double("mg gmres tolerance");
