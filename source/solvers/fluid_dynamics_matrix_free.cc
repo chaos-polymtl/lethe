@@ -849,7 +849,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       this->mg_setup_timer.enter_subsection("Set boundary conditions");
 
       this->mg_constrained_dofs.clear();
-      this->mg_constrained_dofs.initialize(this->dof_handler);
+      this->mg_constrained_dofs.resize(dof_handlers.min_level(),
+                                       dof_handlers.max_level());
+
+      for (unsigned int l = mg_constrained_dofs.min_level();
+           l <= mg_constrained_dofs.max_level();
+           ++l)
+        this->mg_constrained_dofs[l].initialize(this->dof_handlers[l]);
 
       FEValuesExtractors::Vector velocities(0);
       FEValuesExtractors::Scalar pressure(dim);
@@ -864,24 +870,25 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               for (unsigned int level = this->minlevel; level <= this->maxlevel;
                    ++level)
                 {
+                  const unsigned int p_level = p_map[levels[level].second];
+
                   AffineConstraints<double> temp_constraints;
                   temp_constraints.clear();
                   const IndexSet locally_relevant_level_dofs =
                     DoFTools::extract_locally_relevant_level_dofs(
-                      this->dof_handlers[p_map[levels[level].second]],
-                      levels[level].first);
+                      this->dof_handlers[p_level], levels[level].first);
                   temp_constraints.reinit(locally_relevant_level_dofs);
                   VectorTools::compute_no_normal_flux_constraints_on_level(
-                    this->dof_handlers[p_map[levels[level].second]],
+                    this->dof_handlers[p_level],
                     0,
                     no_normal_flux_boundaries,
                     temp_constraints,
                     *mapping,
-                    this->mg_constrained_dofs.get_refinement_edge_indices(
-                      levels[level].first),
+                    this->mg_constrained_dofs[p_level]
+                      .get_refinement_edge_indices(levels[level].first),
                     levels[level].first);
                   temp_constraints.close();
-                  this->mg_constrained_dofs.add_user_constraints(
+                  this->mg_constrained_dofs[p_level].add_user_constraints(
                     levels[level].first, temp_constraints);
                 }
             }
@@ -919,7 +926,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
 
               for (const auto [_, l] : p_map)
-                this->mg_constrained_dofs.make_zero_boundary_constraints(
+                this->mg_constrained_dofs[l].make_zero_boundary_constraints(
                   this->dof_handlers[l],
                   dirichlet_boundary_id,
                   fe->component_mask(velocities));
@@ -933,10 +940,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
         {
+          const unsigned int p_level = p_map[levels[level].second];
+
           level_constraints[level].clear();
 
-          const auto &level_dof_handler =
-            this->dof_handlers[p_map[levels[level].second]];
+          const auto &level_dof_handler = this->dof_handlers[p_level];
 
           const IndexSet relevant_dofs =
             DoFTools::extract_locally_relevant_level_dofs(level_dof_handler,
@@ -945,12 +953,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           level_constraints[level].reinit(relevant_dofs);
 
 #if DEAL_II_VERSION_GTE(9, 6, 0)
-          this->mg_constrained_dofs.merge_constraints(level_constraints[level],
-                                                      levels[level].first,
-                                                      true,
-                                                      false,
-                                                      true,
-                                                      true);
+          this->mg_constrained_dofs[p_level].merge_constraints(
+            level_constraints[level],
+            levels[level].first,
+            true,
+            false,
+            true,
+            true);
 #else
           AssertThrow(
             false,
@@ -1043,7 +1052,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
       this->mg_transfer_ls = std::make_shared<LSTransferType>(min_h_level);
 
-      this->mg_transfer_ls->initialize_constraints(this->mg_constrained_dofs);
+      this->mg_transfer_ls->initialize_constraints(
+        this->mg_constrained_dofs[this->mg_constrained_dofs.max_level()]);
       this->mg_transfer_ls->build(
         this->dof_handlers[this->dof_handlers.max_level()], partitioners);
 

@@ -231,7 +231,7 @@ protected:
 
   /// Collection of boundary constraints and refinement edge constrations for
   /// the different levels in the local smoothing approach.
-  MGConstrainedDoFs mg_constrained_dofs;
+  MGLevelObject<MGConstrainedDoFs> mg_constrained_dofs;
 
   /// Transfer operator for local smoothing
   std::shared_ptr<LSTransferType> mg_transfer_ls;
