@@ -535,6 +535,7 @@ public:
 
   MyMGTransferMatrixFree(const unsigned int min_h_level)
     : min_h_level(min_h_level)
+    , n_gc_levels(0)
   {}
 
   void
@@ -546,6 +547,8 @@ public:
   {
     if (transfers.min_level() != transfers.max_level())
       {
+        this->n_gc_levels = transfers.max_level() - transfers.min_level();
+
         std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
           external_partitioners;
 
@@ -554,16 +557,18 @@ public:
           external_partitioners.emplace_back(external_partitioners_in[l]);
 
         gc.initialize_two_level_transfers(transfers);
-        gc.build(external_partitioners_in);
+        gc.build(external_partitioners);
       }
 
     ls.initialize_constraints(mg_constrained_dofs);
 
     std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
-      external_partitioners(min_h_level + external_partitioners_in.size());
+      external_partitioners(min_h_level + external_partitioners_in.size() -
+                            n_gc_levels);
 
-    for (unsigned int i = 0; i < external_partitioners_in.size(); ++i)
-      external_partitioners[min_h_level + i] = external_partitioners_in[i];
+    for (unsigned int i = n_gc_levels; i < external_partitioners_in.size(); ++i)
+      external_partitioners[min_h_level + i - n_gc_levels] =
+        external_partitioners_in[i];
 
     ls.build(dof_handler, external_partitioners);
   }
@@ -574,6 +579,8 @@ public:
              MGLevelObject<VectorType>       &dst,
              const InVector                  &src) const
   {
+    AssertDimension(this->n_gc_levels, 0);
+
     MGLevelObject<VectorType> dst_(dst.min_level() + min_h_level,
                                    dst.max_level() + min_h_level);
     for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
@@ -591,6 +598,8 @@ public:
                OutVector                       &dst,
                const MGLevelObject<VectorType> &src) const
   {
+    AssertDimension(this->n_gc_levels, 0);
+
     MGLevelObject<VectorType> src_(src.min_level() + min_h_level,
                                    src.max_level() + min_h_level);
     for (unsigned int l = src.min_level(); l <= src.max_level(); ++l)
@@ -605,6 +614,8 @@ public:
                     MGLevelObject<VectorType> &dst,
                     const InVectorType        &src) const
   {
+    AssertDimension(this->n_gc_levels, 0);
+
     MGLevelObject<VectorType> dst_(dst.min_level() + min_h_level,
                                    dst.max_level() + min_h_level);
     for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
@@ -621,7 +632,10 @@ public:
              VectorType        &dst,
              const VectorType  &src) const override
   {
-    ls.prolongate(to_level + min_h_level, dst, src);
+    if (to_level <= n_gc_levels)
+      gc.prolongate(to_level, dst, src);
+
+    ls.prolongate(to_level + min_h_level - n_gc_levels, dst, src);
   }
 
   void
@@ -629,11 +643,15 @@ public:
                    VectorType        &dst,
                    const VectorType  &src) const override
   {
-    ls.restrict_and_add(from_level + min_h_level, dst, src);
+    if (from_level <= n_gc_levels)
+      gc.restrict_and_add(from_level, dst, src);
+
+    ls.restrict_and_add(from_level + min_h_level - n_gc_levels, dst, src);
   }
 
 private:
   const unsigned int min_h_level;
+  unsigned int       n_gc_levels;
 
   MGTransferMatrixFree<dim, Number>           ls;
   MGTransferGlobalCoarsening<dim, VectorType> gc;
@@ -1064,9 +1082,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
       if (p_map.size() > 1)
         {
-          this->transfers.resize(0, p_map.size());
+          this->transfers.resize(0, p_map.size() - 1);
 
-          for (unsigned int level = 0; level < p_map.size(); ++level)
+          for (unsigned int level = transfers.min_level();
+               level < transfers.max_level();
+               ++level)
             this->transfers[level + 1].reinit(this->dof_handlers[level + 1],
                                               this->dof_handlers[level],
                                               level_constraints[level + 1],
