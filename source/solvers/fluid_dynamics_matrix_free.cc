@@ -531,15 +531,15 @@ class MyMGTransferMatrixFree
   : public MGTransferBase<LinearAlgebra::distributed::Vector<Number>>
 {
 public:
+  using VectorType = LinearAlgebra::distributed::Vector<Number>;
+
   MyMGTransferMatrixFree(const unsigned int min_h_level)
     : min_h_level(min_h_level)
   {}
 
   void
-  build(const MGLevelObject<
-          MGTwoLevelTransfer<dim, LinearAlgebra::distributed::Vector<Number>>>
-                                &transfers,
-        const DoFHandler<dim>   &dof_handler,
+  build(const MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> &transfers,
+        const DoFHandler<dim>                                    &dof_handler,
         const MGConstrainedDoFs &mg_constrained_dofs,
         const std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
           &external_partitioners_in)
@@ -571,11 +571,11 @@ public:
   template <class InVector, int spacedim>
   void
   copy_to_mg(const DoFHandler<dim, spacedim> &dof_handler,
-             MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &dst,
-             const InVector &src) const
+             MGLevelObject<VectorType>       &dst,
+             const InVector                  &src) const
   {
-    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> dst_(
-      dst.min_level() + min_h_level, dst.max_level() + min_h_level);
+    MGLevelObject<VectorType> dst_(dst.min_level() + min_h_level,
+                                   dst.max_level() + min_h_level);
     for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
       dst_[l + min_h_level] = dst[l];
 
@@ -587,13 +587,12 @@ public:
 
   template <class OutVector, int spacedim>
   void
-  copy_from_mg(
-    const DoFHandler<dim, spacedim> &dof_handler,
-    OutVector                       &dst,
-    const MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &src) const
+  copy_from_mg(const DoFHandler<dim, spacedim> &dof_handler,
+               OutVector                       &dst,
+               const MGLevelObject<VectorType> &src) const
   {
-    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> src_(
-      src.min_level() + min_h_level, src.max_level() + min_h_level);
+    MGLevelObject<VectorType> src_(src.min_level() + min_h_level,
+                                   src.max_level() + min_h_level);
     for (unsigned int l = src.min_level(); l <= src.max_level(); ++l)
       src_[l + min_h_level] = src[l];
 
@@ -602,13 +601,12 @@ public:
 
   template <typename InVectorType>
   void
-  interpolate_to_mg(
-    const DoFHandler<dim>                                     &dof_handler,
-    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &dst,
-    const InVectorType                                        &src) const
+  interpolate_to_mg(const DoFHandler<dim>     &dof_handler,
+                    MGLevelObject<VectorType> &dst,
+                    const InVectorType        &src) const
   {
-    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> dst_(
-      dst.min_level() + min_h_level, dst.max_level() + min_h_level);
+    MGLevelObject<VectorType> dst_(dst.min_level() + min_h_level,
+                                   dst.max_level() + min_h_level);
     for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
       dst_[l + min_h_level] = dst[l];
 
@@ -619,19 +617,17 @@ public:
   }
 
   void
-  prolongate(
-    const unsigned int                                to_level,
-    LinearAlgebra::distributed::Vector<Number>       &dst,
-    const LinearAlgebra::distributed::Vector<Number> &src) const override
+  prolongate(const unsigned int to_level,
+             VectorType        &dst,
+             const VectorType  &src) const override
   {
     ls.prolongate(to_level + min_h_level, dst, src);
   }
 
   void
-  restrict_and_add(
-    const unsigned int                                from_level,
-    LinearAlgebra::distributed::Vector<Number>       &dst,
-    const LinearAlgebra::distributed::Vector<Number> &src) const override
+  restrict_and_add(const unsigned int from_level,
+                   VectorType        &dst,
+                   const VectorType  &src) const override
   {
     ls.restrict_and_add(from_level + min_h_level, dst, src);
   }
@@ -639,9 +635,8 @@ public:
 private:
   const unsigned int min_h_level;
 
-  MGTransferMatrixFree<dim, Number> ls;
-  MGTransferGlobalCoarsening<dim, LinearAlgebra::distributed::Vector<Number>>
-    gc;
+  MGTransferMatrixFree<dim, Number>           ls;
+  MGTransferGlobalCoarsening<dim, VectorType> gc;
 };
 
 template <int dim>
