@@ -579,17 +579,30 @@ public:
              MGLevelObject<VectorType>       &dst,
              const InVector                  &src) const
   {
-    AssertDimension(this->n_gc_levels, 0);
-
-    MGLevelObject<VectorType> dst_(dst.min_level() + min_h_level,
-                                   dst.max_level() + min_h_level);
-    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
-      dst_[l + min_h_level] = dst[l];
-
-    ls.copy_to_mg(dof_handler, dst_, src);
+    MGLevelObject<VectorType> dst_gc(0, n_gc_levels);
+    MGLevelObject<VectorType> dst_ls(min_h_level,
+                                     dst.max_level() + min_h_level -
+                                       n_gc_levels);
 
     for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
-      dst[l] = dst_[l + min_h_level];
+      {
+        if (l <= n_gc_levels)
+          dst_gc[l] = dst[l];
+
+        if (l >= n_gc_levels)
+          dst_ls[min_h_level + (l - n_gc_levels)] = dst[l];
+      }
+
+    ls.copy_to_mg(dof_handler, dst_ls, src);
+
+    if (n_gc_levels > 0)
+      gc.copy_to_mg(dof_handler, dst_gc, dst_ls[dst_ls.min_level()]);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      if (l < n_gc_levels)
+        dst[l] = dst_gc[l];
+      else
+        dst[l] = dst_ls[min_h_level + (l - n_gc_levels)];
   }
 
   template <class OutVector, int spacedim>
@@ -598,14 +611,13 @@ public:
                OutVector                       &dst,
                const MGLevelObject<VectorType> &src) const
   {
-    AssertDimension(this->n_gc_levels, 0);
+    MGLevelObject<VectorType> src_ls(min_h_level,
+                                     src.max_level() + min_h_level -
+                                       n_gc_levels);
+    for (unsigned int l = n_gc_levels; l <= src.max_level(); ++l)
+      src_ls[min_h_level + (l - n_gc_levels)] = src[l];
 
-    MGLevelObject<VectorType> src_(src.min_level() + min_h_level,
-                                   src.max_level() + min_h_level);
-    for (unsigned int l = src.min_level(); l <= src.max_level(); ++l)
-      src_[l + min_h_level] = src[l];
-
-    ls.copy_from_mg(dof_handler, dst, src_);
+    ls.copy_from_mg(dof_handler, dst, src_ls);
   }
 
   template <typename InVectorType>
@@ -614,17 +626,30 @@ public:
                     MGLevelObject<VectorType> &dst,
                     const InVectorType        &src) const
   {
-    AssertDimension(this->n_gc_levels, 0);
-
-    MGLevelObject<VectorType> dst_(dst.min_level() + min_h_level,
-                                   dst.max_level() + min_h_level);
-    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
-      dst_[l + min_h_level] = dst[l];
-
-    ls.interpolate_to_mg(dof_handler, dst_, src);
+    MGLevelObject<VectorType> dst_gc(0, n_gc_levels);
+    MGLevelObject<VectorType> dst_ls(min_h_level,
+                                     dst.max_level() + min_h_level -
+                                       n_gc_levels);
 
     for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
-      dst[l] = dst_[l + min_h_level];
+      {
+        if (l <= n_gc_levels)
+          dst_gc[l] = dst[l];
+
+        if (l >= n_gc_levels)
+          dst_ls[min_h_level + (l - n_gc_levels)] = dst[l];
+      }
+
+    ls.interpolate_to_mg(dof_handler, dst_ls, src);
+
+    if (n_gc_levels > 0)
+      gc.interpolate_to_mg(dof_handler, dst_gc, dst_ls[dst_ls.min_level()]);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      if (l < n_gc_levels)
+        dst[l] = dst_gc[l];
+      else
+        dst[l] = dst_ls[min_h_level + (l - n_gc_levels)];
   }
 
   void
