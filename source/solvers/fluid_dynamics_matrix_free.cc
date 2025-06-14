@@ -531,6 +531,10 @@ class MyMGTransferMatrixFree
   : public MGTransferBase<LinearAlgebra::distributed::Vector<Number>>
 {
 public:
+  MyMGTransferMatrixFree(const unsigned int min_h_level)
+    : min_h_level(min_h_level)
+  {}
+
   void
   initialize_constraints(const MGConstrainedDoFs &mg_constrained_dofs)
   {
@@ -540,8 +544,14 @@ public:
   void
   build(const DoFHandler<dim> &dof_handler,
         const std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
-          &external_partitioners)
+          &external_partitioners_in)
   {
+    std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
+      external_partitioners(min_h_level + external_partitioners_in.size());
+
+    for (unsigned int i = 0; i < external_partitioners_in.size(); ++i)
+      external_partitioners[min_h_level + i] = external_partitioners_in[i];
+
     ls.build(dof_handler, external_partitioners);
   }
 
@@ -551,7 +561,15 @@ public:
              MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &dst,
              const InVector &src) const
   {
-    ls.copy_to_mg(dof_handler, dst, src);
+    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> dst_(
+      dst.min_level() + min_h_level, dst.max_level() + min_h_level);
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      dst_[l + min_h_level] = dst[l];
+
+    ls.copy_to_mg(dof_handler, dst_, src);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      dst[l] = dst_[l + min_h_level];
   }
 
   template <class OutVector, int spacedim>
@@ -561,7 +579,12 @@ public:
     OutVector                       &dst,
     const MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &src) const
   {
-    ls.copy_from_mg(dof_handler, dst, src);
+    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> src_(
+      src.min_level() + min_h_level, src.max_level() + min_h_level);
+    for (unsigned int l = src.min_level(); l <= src.max_level(); ++l)
+      src_[l + min_h_level] = src[l];
+
+    ls.copy_from_mg(dof_handler, dst, src_);
   }
 
   template <typename InVectorType>
@@ -571,7 +594,15 @@ public:
     MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &dst,
     const InVectorType                                        &src) const
   {
-    ls.interpolate_to_mg(dof_handler, dst, src);
+    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> dst_(
+      dst.min_level() + min_h_level, dst.max_level() + min_h_level);
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      dst_[l + min_h_level] = dst[l];
+
+    ls.interpolate_to_mg(dof_handler, dst_, src);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      dst[l] = dst_[l + min_h_level];
   }
 
   void
@@ -580,7 +611,7 @@ public:
     LinearAlgebra::distributed::Vector<Number>       &dst,
     const LinearAlgebra::distributed::Vector<Number> &src) const override
   {
-    ls.prolongate(to_level, dst, src);
+    ls.prolongate(to_level + min_h_level, dst, src);
   }
 
   void
@@ -589,10 +620,12 @@ public:
     LinearAlgebra::distributed::Vector<Number>       &dst,
     const LinearAlgebra::distributed::Vector<Number> &src) const override
   {
-    ls.restrict_and_add(from_level, dst, src);
+    ls.restrict_and_add(from_level + min_h_level, dst, src);
   }
 
 private:
+  const unsigned int min_h_level;
+
   MGTransferMatrixFree<dim, Number> ls;
 };
 
@@ -767,7 +800,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         }
 
       std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
-        partitioners(this->dof_handler.get_triangulation().n_global_levels());
+        partitioners(this->maxlevel - this->minlevel + 1);
 
       // Local object for constraints of the different levels
       MGLevelObject<AffineConstraints<MGNumber>> level_constraints;
@@ -973,7 +1006,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       // Create transfer operators
       this->mg_setup_timer.enter_subsection("Create transfer operator");
 
-      this->mg_transfer_ls = std::make_shared<LSTransferType>();
+      this->mg_transfer_ls = std::make_shared<LSTransferType>(min_h_level);
 
       this->mg_transfer_ls->initialize_constraints(this->mg_constrained_dofs);
       this->mg_transfer_ls->build(this->dof_handler, partitioners);
