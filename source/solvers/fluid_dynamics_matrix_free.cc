@@ -536,11 +536,16 @@ public:
   {}
 
   void
-  build(const DoFHandler<dim>   &dof_handler,
+  build(const MGLevelObject<
+          MGTwoLevelTransfer<dim, LinearAlgebra::distributed::Vector<Number>>>
+                                &transfers,
+        const DoFHandler<dim>   &dof_handler,
         const MGConstrainedDoFs &mg_constrained_dofs,
         const std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
           &external_partitioners_in)
   {
+    (void)transfers;
+
     ls.initialize_constraints(mg_constrained_dofs);
 
     std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
@@ -1049,7 +1054,21 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
       this->mg_transfer_ls = std::make_shared<LSTransferType>(min_h_level);
 
+      if (p_map.size() > 1)
+        {
+          this->transfers.resize(0, p_map.size());
+
+          for (unsigned int level = 0; level < p_map.size(); ++level)
+            this->transfers[level + 1].reinit(this->dof_handlers[level + 1],
+                                              this->dof_handlers[level],
+                                              level_constraints[level + 1],
+                                              level_constraints[level],
+                                              min_h_level,
+                                              min_h_level);
+        }
+
       this->mg_transfer_ls->build(
+        this->transfers,
         this->dof_handlers[this->dof_handlers.max_level()],
         this->mg_constrained_dofs[this->mg_constrained_dofs.max_level()],
         partitioners);
