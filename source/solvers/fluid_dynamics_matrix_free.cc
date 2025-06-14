@@ -659,8 +659,8 @@ public:
   {
     if (to_level <= n_gc_levels)
       gc.prolongate(to_level, dst, src);
-
-    ls.prolongate(to_level + min_h_level - n_gc_levels, dst, src);
+    else
+      ls.prolongate(to_level + min_h_level - n_gc_levels, dst, src);
   }
 
   void
@@ -670,8 +670,8 @@ public:
   {
     if (from_level <= n_gc_levels)
       gc.restrict_and_add(from_level, dst, src);
-
-    ls.restrict_and_add(from_level + min_h_level - n_gc_levels, dst, src);
+    else
+      ls.restrict_and_add(from_level + min_h_level - n_gc_levels, dst, src);
   }
 
 private:

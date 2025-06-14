@@ -27,6 +27,15 @@ subsection physical properties
 end
 
 #---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 2
+end
+
+#---------------------------------------------------
 # Timer
 #---------------------------------------------------
 
@@ -42,7 +51,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : false
-  set initial refinement = 4
+  set initial refinement = 3
 end
 
 #---------------------------------------------------
@@ -119,6 +128,8 @@ subsection linear solver
     set verbosity         = quiet
 
     #MG parameters
+    set mg min level = 1
     set mg verbosity = quiet
+    set mg coarsening type = hp
   end
 end
