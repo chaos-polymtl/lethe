@@ -655,9 +655,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
+      const auto &triangulation = dof_handler.get_triangulation();
+
       // Define maximum and minimum level according to triangulation
-      const unsigned int n_h_levels =
-        this->dof_handler.get_triangulation().n_global_levels();
+      const unsigned int n_h_levels  = triangulation.n_global_levels();
       unsigned int       min_h_level = 0;
       const unsigned int max_h_level = n_h_levels - 1;
 
@@ -674,13 +675,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
 
       std::vector<unsigned int> n_cells_on_levels(
-        this->dof_handler.get_triangulation().n_global_levels(), 0);
+        triangulation.n_global_levels(), 0);
 
-      for (unsigned int l = 0;
-           l < this->dof_handler.get_triangulation().n_levels();
-           ++l)
-        for (const auto &cell :
-             this->dof_handler.get_triangulation().cell_iterators_on_level(l))
+      for (unsigned int l = 0; l < triangulation.n_levels(); ++l)
+        for (const auto &cell : triangulation.cell_iterators_on_level(l))
           if (cell->is_locally_owned_on_level())
             n_cells_on_levels[l]++;
 
@@ -692,11 +690,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         {
           AssertThrow(
             mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
-                              this->dof_handler.get_triangulation())),
+                              triangulation)),
             ExcMessage(std::string(
               "The maximum level allowed for the coarse mesh (mg min level) is: " +
-              std::to_string(MGTools::max_level_for_coarse_mesh(
-                this->dof_handler.get_triangulation())) +
+              std::to_string(
+                MGTools::max_level_for_coarse_mesh(triangulation)) +
               ".")));
 
           min_h_level = mg_min_level;
@@ -707,7 +705,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             mg_level_min_cells <=
               static_cast<int>(
                 n_cells_on_levels[MGTools::max_level_for_coarse_mesh(
-                  this->dof_handler.get_triangulation())]),
+                  triangulation)]),
             ExcMessage(
               "The mg level min cells specified are larger than the cells of the finest mg level."));
 
@@ -770,6 +768,39 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       this->minlevel = 0;
       this->maxlevel = levels.size() - 1;
 
+      std::map<unsigned int, unsigned int> p_map;
+      for (const auto [_, p] : levels)
+        p_map.insert({p, p_map.size()});
+
+      dof_handlers.resize(0, p_map.size() - 1);
+
+      for (const auto [p, l] : p_map)
+        {
+          this->dof_handlers[l].reinit(dof_handler.get_triangulation());
+
+          // To use elements with linear interpolation for coarse-grid we need
+          // to create the min level dof handler with the appropriate element
+          // type
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_use_fe_q_iso_q1 &&
+              l == 0)
+            {
+              AssertThrow(
+                mg_coarsening_type ==
+                  Parameters::LinearSolver::MultigridCoarseningSequenceType::h,
+                ExcNotImplemented());
+
+              const auto points = QGaussLobatto<1>(p + 1).get_points();
+
+              this->dof_handlers[l].distribute_dofs(
+                FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
+            }
+          else
+            this->dof_handlers[l].distribute_dofs(
+              FESystem<dim>(FE_Q<dim>(p), dim + 1));
+        }
+
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_verbosity != Parameters::Verbosity::quiet)
@@ -790,12 +821,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         {
           this->pcout << "  -MG vertical communication efficiency: "
                       << MGTools::vertical_communication_efficiency(
-                           this->dof_handler.get_triangulation())
+                           triangulation)
                       << std::endl;
 
           this->pcout << "  -MG workload imbalance: "
-                      << MGTools::workload_imbalance(
-                           this->dof_handler.get_triangulation())
+                      << MGTools::workload_imbalance(triangulation)
                       << std::endl;
         }
 
