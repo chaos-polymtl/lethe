@@ -617,8 +617,55 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               }
         }
 
-      this->minlevel = min_h_level;
-      this->maxlevel = max_h_level;
+      // p-multigrid
+      const auto mg_coarsening_type =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_coarsening_type;
+
+      const auto polynomial_coarsening_sequence =
+        MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
+          this->dof_handler.get_fe().degree,
+          this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_p_coarsening_type);
+
+      std::vector<std::pair<unsigned int, unsigned int>> levels;
+
+      if (mg_coarsening_type ==
+          Parameters::LinearSolver::MultigridCoarseningSequenceType::hp)
+        {
+          // p
+          for (const auto i : polynomial_coarsening_sequence)
+            levels.emplace_back(min_h_level, i);
+
+          // h
+          for (unsigned int i = min_h_level + 1; i <= max_h_level; ++i)
+            levels.emplace_back(i, polynomial_coarsening_sequence.back());
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::ph)
+        {
+          AssertThrow(false, ExcNotImplemented());
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::p)
+        {
+          AssertThrow(false, ExcNotImplemented());
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::h)
+        {
+          // h
+          for (unsigned int i = min_h_level; i <= max_h_level; ++i)
+            levels.emplace_back(i, polynomial_coarsening_sequence.back());
+        }
+      else
+        {
+          AssertThrow(false, ExcNotImplemented());
+        }
+
+      this->minlevel = 0;
+      this->maxlevel = levels.size() - 1;
 
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
@@ -684,7 +731,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   temp_constraints.clear();
                   const IndexSet locally_relevant_level_dofs =
                     DoFTools::extract_locally_relevant_level_dofs(
-                      this->dof_handler, level);
+                      this->dof_handler, levels[level].first);
                   temp_constraints.reinit(locally_relevant_level_dofs);
                   VectorTools::compute_no_normal_flux_constraints_on_level(
                     this->dof_handler,
@@ -693,11 +740,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     temp_constraints,
                     *mapping,
                     this->mg_constrained_dofs.get_refinement_edge_indices(
-                      level),
-                    level);
+                      levels[level].first),
+                    levels[level].first);
                   temp_constraints.close();
                   this->mg_constrained_dofs.add_user_constraints(
-                    level, temp_constraints);
+                    levels[level].first, temp_constraints);
                 }
             }
           else if (type == BoundaryConditions::BoundaryType::periodic)
@@ -755,8 +802,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           level_constraints[level].reinit(relevant_dofs);
 
 #if DEAL_II_VERSION_GTE(9, 6, 0)
-          this->mg_constrained_dofs.merge_constraints(
-            level_constraints[level], level, true, false, true, true);
+          this->mg_constrained_dofs.merge_constraints(level_constraints[level],
+                                                      levels[level].first,
+                                                      true,
+                                                      false,
+                                                      true,
+                                                      true);
 #else
           AssertThrow(
             false,
@@ -780,7 +831,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                       const auto &fe = cell->get_fe();
 
                       dof_indices.resize(fe.n_dofs_per_cell());
-                      cell->get_dof_indices(dof_indices);
+                      cell->get_dof_indices(dof_indices); // TODO fix
 
                       for (unsigned int i = 0; i < dof_indices.size(); ++i)
                         if (fe.system_to_component_index(i).first == dim)
@@ -831,7 +882,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             forcing_function,
             physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
-            level,
+            levels[level].first,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
             this->simulation_parameters.linear_solver
