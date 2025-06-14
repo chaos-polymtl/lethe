@@ -555,24 +555,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       // Define maximum and minimum level according to triangulation
       const unsigned int n_h_levels =
         this->dof_handler.get_triangulation().n_global_levels();
-      this->minlevel = 0;
-      this->maxlevel = n_h_levels - 1;
+      unsigned int       min_h_level = 0;
+      const unsigned int max_h_level = n_h_levels - 1;
 
       // If multigrid number of levels or minimum number of cells in level are
-      // specified, change the min level fnd print levels information
+      // specified, change the min level and print levels information
 
       int mg_min_level =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_min_level;
-
-      AssertThrow(
-        mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
-                          this->dof_handler.get_triangulation())),
-        ExcMessage(std::string(
-          "The maximum level allowed for the coarse mesh (mg min level) is: " +
-          std::to_string(MGTools::max_level_for_coarse_mesh(
-            this->dof_handler.get_triangulation())) +
-          ".")));
 
       int mg_level_min_cells =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -593,26 +584,41 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       Utilities::MPI::sum(n_cells_on_levels,
                           this->dof_handler.get_communicator(),
                           n_cells_on_levels);
-      AssertThrow(
-        mg_level_min_cells <= static_cast<int>(n_cells_on_levels[maxlevel]),
-        ExcMessage(
-          "The mg level min cells specified are larger than the cells of the finest mg level."));
-
 
       if (mg_min_level != -1)
-        this->minlevel = mg_min_level;
-
-      if (mg_level_min_cells != -1)
         {
-          for (unsigned int level = this->minlevel; level <= this->maxlevel;
-               ++level)
+          AssertThrow(
+            mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
+                              this->dof_handler.get_triangulation())),
+            ExcMessage(std::string(
+              "The maximum level allowed for the coarse mesh (mg min level) is: " +
+              std::to_string(MGTools::max_level_for_coarse_mesh(
+                this->dof_handler.get_triangulation())) +
+              ".")));
+
+          min_h_level = mg_min_level;
+        }
+      else if (mg_level_min_cells != -1)
+        {
+          AssertThrow(
+            mg_level_min_cells <=
+              static_cast<int>(
+                n_cells_on_levels[MGTools::max_level_for_coarse_mesh(
+                  this->dof_handler.get_triangulation())]),
+            ExcMessage(
+              "The mg level min cells specified are larger than the cells of the finest mg level."));
+
+          for (unsigned int level = min_h_level; level <= max_h_level; ++level)
             if (static_cast<int>(n_cells_on_levels[level]) >=
                 mg_level_min_cells)
               {
-                this->minlevel = level;
+                min_h_level = level;
                 break;
               }
         }
+
+      this->minlevel = min_h_level;
+      this->maxlevel = max_h_level;
 
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
