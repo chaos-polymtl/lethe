@@ -776,7 +776,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
       for (const auto [p, l] : p_map)
         {
-          this->dof_handlers[l].reinit(dof_handler.get_triangulation());
+          this->dof_handlers[l].reinit(triangulation);
 
           // To use elements with linear interpolation for coarse-grid we need
           // to create the min level dof handler with the appropriate element
@@ -799,6 +799,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           else
             this->dof_handlers[l].distribute_dofs(
               FESystem<dim>(FE_Q<dim>(p), dim + 1));
+
+          this->dof_handlers[l].distribute_mg_dofs();
         }
 
       if (this->simulation_parameters.linear_solver
@@ -810,8 +812,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           for (unsigned int level = this->minlevel; level <= this->maxlevel;
                ++level)
             this->pcout << "    Level " << level - this->minlevel << ": "
-                        << this->dof_handler.n_dofs(level) << " DoFs, "
-                        << n_cells_on_levels[level] << " cells" << std::endl;
+                        << this->dof_handlers[p_map[levels[level].second]]
+                             .n_dofs(levels[level].first)
+                        << " DoFs, " << n_cells_on_levels[levels[level].first]
+                        << " cells" << std::endl;
           this->pcout << std::endl;
         }
 
@@ -864,10 +868,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   temp_constraints.clear();
                   const IndexSet locally_relevant_level_dofs =
                     DoFTools::extract_locally_relevant_level_dofs(
-                      this->dof_handler, levels[level].first);
+                      this->dof_handlers[this->dof_handlers.max_level()],
+                      levels[level].first);
                   temp_constraints.reinit(locally_relevant_level_dofs);
                   VectorTools::compute_no_normal_flux_constraints_on_level(
-                    this->dof_handler,
+                    this->dof_handlers[this->dof_handlers.max_level()],
                     0,
                     no_normal_flux_boundaries,
                     temp_constraints,
@@ -913,7 +918,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             {
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
               this->mg_constrained_dofs.make_zero_boundary_constraints(
-                this->dof_handler,
+                this->dof_handlers[this->dof_handlers.max_level()],
                 dirichlet_boundary_id,
                 fe->component_mask(velocities));
             }
@@ -929,8 +934,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           level_constraints[level].clear();
 
           const IndexSet relevant_dofs =
-            DoFTools::extract_locally_relevant_level_dofs(this->dof_handler,
-                                                          level);
+            DoFTools::extract_locally_relevant_level_dofs(
+              this->dof_handlers[this->dof_handlers.max_level()], level);
 
           level_constraints[level].reinit(relevant_dofs);
 
@@ -957,7 +962,9 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               std::vector<types::global_dof_index> dof_indices;
 
               // Loop over the cells to identify the min index
-              for (const auto &cell : this->dof_handler.active_cell_iterators())
+              for (const auto &cell :
+                   this->dof_handlers[this->dof_handlers.max_level()]
+                     .active_cell_iterators())
                 {
                   if (cell->is_locally_owned())
                     {
@@ -973,9 +980,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 }
 
               // Necessary to find the min across all cores.
-              min_index =
-                Utilities::MPI::min(min_index,
-                                    this->dof_handler.get_communicator());
+              min_index = Utilities::MPI::min(
+                min_index,
+                this->dof_handlers[this->dof_handlers.max_level()]
+                  .get_communicator());
 
               if (relevant_dofs.is_element(min_index))
                 level_constraints[level].add_line(min_index);
@@ -994,7 +1002,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               level == this->minlevel)
             {
               const auto points =
-                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                QGaussLobatto<1>(
+                  this->dof_handlers[this->dof_handlers.max_level()]
+                    .get_fe()
+                    .degree +
+                  1)
                   .get_points();
 
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
@@ -1004,12 +1016,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           this->mg_operators[level]->reinit(
             *mapping,
-            (this->simulation_parameters.linear_solver
-               .at(PhysicsID::fluid_dynamics)
-               .mg_use_fe_q_iso_q1 &&
-             level == this->minlevel) ?
-              this->dof_handler_fe_q_iso_q1 :
-              this->dof_handler,
+            this->dof_handlers[this->dof_handlers.max_level()],
             level_constraints[level],
             quadrature_mg,
             forcing_function,
@@ -1039,7 +1046,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       this->mg_transfer_ls = std::make_shared<LSTransferType>(min_h_level);
 
       this->mg_transfer_ls->initialize_constraints(this->mg_constrained_dofs);
-      this->mg_transfer_ls->build(this->dof_handler, partitioners);
+      this->mg_transfer_ls->build(
+        this->dof_handlers[this->dof_handlers.max_level()], partitioners);
 
       this->mg_setup_timer.leave_subsection("Create transfer operator");
     }
@@ -1217,8 +1225,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 ExcNotImplemented());
 
               const auto points =
-                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
-                  .get_points();
+                QGaussLobatto<1>(levels[l].second + 1).get_points();
 
               this->dof_handlers[l].distribute_dofs(
                 FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
@@ -1397,7 +1404,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 ExcNotImplemented());
 
               const auto points =
-                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                QGaussLobatto<1>(level_dof_handler.get_fe().degree + 1)
                   .get_points();
 
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
