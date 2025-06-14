@@ -544,7 +544,18 @@ public:
         const std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
           &external_partitioners_in)
   {
-    (void)transfers;
+    if (transfers.min_level() != transfers.max_level())
+      {
+        std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
+          external_partitioners;
+
+        for (unsigned int l = transfers.min_level(); l <= transfers.max_level();
+             ++l)
+          external_partitioners.emplace_back(external_partitioners_in[l]);
+
+        gc.initialize_two_level_transfers(transfers);
+        gc.build(external_partitioners_in);
+      }
 
     ls.initialize_constraints(mg_constrained_dofs);
 
@@ -629,6 +640,8 @@ private:
   const unsigned int min_h_level;
 
   MGTransferMatrixFree<dim, Number> ls;
+  MGTransferGlobalCoarsening<dim, LinearAlgebra::distributed::Vector<Number>>
+    gc;
 };
 
 template <int dim>
