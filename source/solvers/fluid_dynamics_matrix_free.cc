@@ -1953,10 +1953,15 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
         {
 #if DEAL_II_VERSION_GTE(9, 6, 0)
           // Constant modes for velocity and pressure
-          DoFTools::extract_level_constant_modes(this->minlevel,
-                                                 this->dof_handler,
-                                                 components,
-                                                 constant_modes);
+          DoFTools::extract_level_constant_modes(
+            this->mg_operators[this->minlevel]
+              ->get_system_matrix_free()
+              .get_mg_level(),
+            this->mg_operators[this->minlevel]
+              ->get_system_matrix_free()
+              .get_dof_handler(),
+            components,
+            constant_modes);
 #else
           AssertThrow(
             false,
