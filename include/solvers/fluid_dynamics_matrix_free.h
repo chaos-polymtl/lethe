@@ -36,6 +36,9 @@ namespace dealii
   class MGCoarseGridApplyPreconditioner;
 }
 
+template <int dim, typename MGNumber>
+class MyMGTransferMatrixFree;
+
 /**
  * @brief A geometric multigrid preconditioner compatible with the
  * matrix-free solver.
@@ -62,7 +65,7 @@ protected:
   using VectorType         = LinearAlgebra::distributed::Vector<Number>;
   using MGVectorType       = LinearAlgebra::distributed::Vector<MGNumber>;
   using TrilinosVectorType = LinearAlgebra::distributed::Vector<double>;
-  using LSTransferType     = MGTransferMatrixFree<dim, MGNumber>;
+  using LSTransferType     = MyMGTransferMatrixFree<dim, MGNumber>;
   using GCTransferType     = MGTransferGlobalCoarsening<dim, MGVectorType>;
   using OperatorType       = NavierStokesOperatorBase<dim, MGNumber>;
   using SmootherPreconditionerType = PreconditionBase<MGVectorType>;

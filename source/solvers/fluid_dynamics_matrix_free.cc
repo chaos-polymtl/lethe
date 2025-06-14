@@ -526,6 +526,76 @@ namespace dealii
   }
 } // namespace dealii
 
+template <int dim, typename Number>
+class MyMGTransferMatrixFree
+  : public MGTransferBase<LinearAlgebra::distributed::Vector<Number>>
+{
+public:
+  void
+  initialize_constraints(const MGConstrainedDoFs &mg_constrained_dofs)
+  {
+    ls.initialize_constraints(mg_constrained_dofs);
+  }
+
+  void
+  build(const DoFHandler<dim> &dof_handler,
+        const std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
+          &external_partitioners)
+  {
+    ls.build(dof_handler, external_partitioners);
+  }
+
+  template <class InVector, int spacedim>
+  void
+  copy_to_mg(const DoFHandler<dim, spacedim> &dof_handler,
+             MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &dst,
+             const InVector &src) const
+  {
+    ls.copy_to_mg(dof_handler, dst, src);
+  }
+
+  template <class OutVector, int spacedim>
+  void
+  copy_from_mg(
+    const DoFHandler<dim, spacedim> &dof_handler,
+    OutVector                       &dst,
+    const MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &src) const
+  {
+    ls.copy_from_mg(dof_handler, dst, src);
+  }
+
+  template <typename InVectorType>
+  void
+  interpolate_to_mg(
+    const DoFHandler<dim>                                     &dof_handler,
+    MGLevelObject<LinearAlgebra::distributed::Vector<Number>> &dst,
+    const InVectorType                                        &src) const
+  {
+    ls.interpolate_to_mg(dof_handler, dst, src);
+  }
+
+  void
+  prolongate(
+    const unsigned int                                to_level,
+    LinearAlgebra::distributed::Vector<Number>       &dst,
+    const LinearAlgebra::distributed::Vector<Number> &src) const override
+  {
+    ls.prolongate(to_level, dst, src);
+  }
+
+  void
+  restrict_and_add(
+    const unsigned int                                from_level,
+    LinearAlgebra::distributed::Vector<Number>       &dst,
+    const LinearAlgebra::distributed::Vector<Number> &src) const override
+  {
+    ls.restrict_and_add(from_level, dst, src);
+  }
+
+private:
+  MGTransferMatrixFree<dim, Number> ls;
+};
+
 template <int dim>
 MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   const SimulationParameters<dim> &simulation_parameters,
