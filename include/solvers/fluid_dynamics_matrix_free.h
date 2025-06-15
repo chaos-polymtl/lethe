@@ -292,7 +292,7 @@ protected:
   const DoFHandler<dim> &dof_handler;
 
   /// Describes the layout of DoFs for FE_Q_iso_Q1 elements.
-  const DoFHandler<dim> &dof_handler_fe_q_iso_q1;
+  DoFHandler<dim> dof_handler_fe_q_iso_q1;
 
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;

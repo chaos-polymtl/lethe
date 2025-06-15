@@ -690,10 +690,11 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
-  , dof_handler_fe_q_iso_q1(dof_handler_fe_q_iso_q1)
   , mg_setup_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
   , mg_vmult_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
-{}
+{
+  (void)dof_handler_fe_q_iso_q1; // TODO: remove
+}
 
 template <int dim>
 void
@@ -705,6 +706,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
   const std::shared_ptr<FESystem<dim>>              fe)
 {
+  AssertThrow(*cell_quadrature ==
+                QGauss<dim>(this->dof_handler.get_fe().degree + 1),
+              ExcNotImplemented());
+
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
@@ -846,13 +851,14 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
               const auto points = QGaussLobatto<1>(p + 1).get_points();
 
-              this->dof_handlers[l].distribute_dofs(
+              this->dof_handler_fe_q_iso_q1.reinit(triangulation);
+              this->dof_handler_fe_q_iso_q1.distribute_dofs(
                 FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
+              this->dof_handler_fe_q_iso_q1.distribute_mg_dofs();
             }
-          else
-            this->dof_handlers[l].distribute_dofs(
-              FESystem<dim>(FE_Q<dim>(p), dim + 1));
 
+          this->dof_handlers[l].distribute_dofs(
+            FESystem<dim>(FE_Q<dim>(p), dim + 1));
           this->dof_handlers[l].distribute_mg_dofs();
         }
 
@@ -864,7 +870,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           this->pcout << "  -Levels of MG preconditioner:" << std::endl;
           for (unsigned int level = this->minlevel; level <= this->maxlevel;
                ++level)
-            this->pcout << "    Level " << level - this->minlevel << ": "
+            this->pcout << "    Level " << level << ": "
                         << this->dof_handlers[p_map[levels[level].second]]
                              .n_dofs(levels[level].first)
                         << " DoFs, " << n_cells_on_levels[levels[level].first]
@@ -1029,14 +1035,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               std::vector<types::global_dof_index> dof_indices;
 
               // Loop over the cells to identify the min index
-              for (const auto &cell : level_dof_handler.active_cell_iterators())
+              for (const auto &cell :
+                   level_dof_handler.mg_cell_iterators_on_level(this->minlevel))
                 {
-                  if (cell->is_locally_owned())
+                  if (cell->is_locally_owned_on_level())
                     {
                       const auto &fe = cell->get_fe();
 
                       dof_indices.resize(fe.n_dofs_per_cell());
-                      cell->get_dof_indices(dof_indices); // TODO fix
+                      cell->get_mg_dof_indices(dof_indices);
 
                       for (unsigned int i = 0; i < dof_indices.size(); ++i)
                         if (fe.system_to_component_index(i).first == dim)
@@ -1059,12 +1066,17 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           // Provide appropriate quadrature depending on the type of elements of
           // the level
-          auto quadrature_mg = *cell_quadrature;
+          Quadrature<dim> quadrature_mg = QGauss<dim>(levels[level].second);
           if (this->simulation_parameters.linear_solver
                 .at(PhysicsID::fluid_dynamics)
                 .mg_use_fe_q_iso_q1 &&
               level == this->minlevel)
             {
+              AssertThrow(
+                mg_coarsening_type ==
+                  Parameters::LinearSolver::MultigridCoarseningSequenceType::h,
+                ExcNotImplemented());
+
               const auto points =
                 QGaussLobatto<1>(level_dof_handler.get_fe().degree + 1)
                   .get_points();
@@ -1076,7 +1088,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           this->mg_operators[level]->reinit(
             *mapping,
-            level_dof_handler,
+            (this->simulation_parameters.linear_solver
+               .at(PhysicsID::fluid_dynamics)
+               .mg_use_fe_q_iso_q1 &&
+             level == this->minlevel) ?
+              this->dof_handler_fe_q_iso_q1 :
+              level_dof_handler,
             level_constraints[level],
             quadrature_mg,
             forcing_function,
@@ -1133,10 +1150,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::gcmg)
     {
-      AssertThrow(*cell_quadrature ==
-                    QGauss<dim>(this->dof_handler.get_fe().degree + 1),
-                  ExcNotImplemented());
-
       // Create triangulations
       this->mg_setup_timer.enter_subsection("Create level triangulations");
       this->coarse_grid_triangulations =
