@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-06-15
+
+### Fixed
+
+- MINOR Add capability to calculate the void fraction in the matrix-free vans solver using information drawn from a particle handler instead of just a function. This is a minor extension that re-uses the feature of the regular VANS implementation. [#1556](https://github.com/chaos-polymtl/lethe/pull/1556)
+
 ## [Master] - 2025-06-13
 
 ### Fixed
