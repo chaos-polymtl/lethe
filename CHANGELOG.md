@@ -3,7 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2025-16-09
+## [Master] - 2025-06-16
+
+### Fixed
+
+- MINOR The function defining zero_constraints considered the types noslip, function, and none in the same else case. This has been fixed so that none is indeed a "do-nothing" boundary condition. [#1557](https://github.com/chaos-polymtl/lethe/pull/1557)
+
+## [Master] - 2025-06-16
 
 ### Added
 
