@@ -21,6 +21,7 @@ Incompressible Flow
     3d-taylor-green-vortex/3d-taylor-green-vortex
     3d-turbulent-taylor-couette/3d-turbulent-taylor-couette
     3d-flow-over-periodic-hills/3d-flow-over-periodic-hills
+    3d-flow-over-periodic-hills/3d-flow-over-periodic-hills
     3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame
     3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller
 
