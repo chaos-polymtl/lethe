@@ -1,10 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+from cycler import cycler
 
-from post_process_turbulent_cylinder_3d import compute_cp_average, compute_strouhal_from_lift, compute_drag_coefficient
+from functions import compute_cp_average, compute_strouhal_from_lift, compute_drag_coefficient
 
-
+# Set plot parameters
+plt.rcParams['lines.markersize'] = '11'
+plt.rcParams['lines.markeredgewidth'] = 2
+plt.rcParams['legend.fancybox'] = False
+plt.rcParams['font.size'] = 16
+plt.rcParams['legend.handlelength'] = 2
+plt.rcParams['lines.linewidth'] = 3
+plt.rcParams['figure.figsize'] = (10,8)
+colors = ['#1B9E77','#D95F02','#7570B3','#E7298A','#66A61E','#E6AB02']
+plt.rcParams['axes.prop_cycle'] = cycler(color = colors)
 # Common parameters
 rho = 1.0
 U_inf = 1.0
@@ -53,7 +63,6 @@ deg_exp = [9.158187511596124, 18.482886695571118, 28.806661605164106, 38.9639248
 cp_exp = [0.9245808357735688, 0.7297486303540259, 0.3275138038679759, -0.16270942100085994, -0.5900837898819916, -0.9734637447552554, -1.1682962723995107, -1.092877215581317, -0.9546088731424699, -0.8917600171547664, -0.8603355891609146, -0.8666200451267354, -0.8791898163242766, -0.8666200451267354, -0.8729049307255057, -0.8854749167395213, -0.8854749167395213, -0.8791898163242766]
 
 # Initialize plot
-plt.figure(figsize=(10, 5))
 plt.scatter(deg_exp, cp_exp, label='Experimental data', color='black')
 
 # Loop through all simulations
