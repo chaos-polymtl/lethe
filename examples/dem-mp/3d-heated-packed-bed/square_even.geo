@@ -3,8 +3,8 @@
 
 gap = 0.0001;
 
-Point(0) = {gap-0.007, gap, 0, 1.0};
-Point(1) = {gap-0.007, 0.1-gap, 0, 1.0};
+Point(0) = {gap-0.005, gap, 0, 1.0};
+Point(1) = {gap-0.005, 0.1-gap, 0, 1.0};
 Point(2) = {-0.05+gap, 0.1-gap, 0, 1.0};
 Point(3) = {-0.05+gap, gap, 0, 1.0};
 
