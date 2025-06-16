@@ -1,5 +1,5 @@
 =====================================
-3D Turbulent Flow Around a Cylinder
+Turbulent Flow Around a Cylinder
 =====================================
 
 This example showcases the turbulent flow around a Cylinder at :math:`Re=3900`. . It features the matrix-free solver (``lethe-fluid-matrix-free``) which is more computationally efficient when solving problems using high-order elements and fine meshes. It also demonstrates the usage of static box refinement and boundary condition refinement to statically refine a mesh. 
@@ -48,19 +48,34 @@ Mesh
 The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to create the flow using high-order elements.
 
 .. code-block:: text
-
+  
   subsection mesh
-    set type                        = dealii 
-    set grid type                   = cylinder_shell
-    set grid arguments              = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
-    set initial refinement          = 4
-    set initial boundary refinement = 1
-    set boundaries refined          = 0, 1
+    set type               = dealii
+    set grid type          = custom_channel_with_cylinder
+    set grid arguments     = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
+    set initial boundary refinement = 1 
+    set boundaries refined = 2
   end
 
 .. note::
 
   This mesh generator is only present in the 9.7 version of the deal.II library.
+
+Box refinement
+~~~~~~~~~~~~~~~~
+The ``box refinement`` subsection allows us to refine the mesh in a specific region of the domain. In this case, we refine the mesh around the cylinder to capture the boundary layer and wake region more accurately. The box refinement is defined by its center, size, and refinement level.
+
+.. code-block:: text
+
+  subsection box refinement
+    subsection mesh
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 1,1,1 : -2, -3, 0 : 52,3,4 : false
+      set initial refinement = 0
+    end
+    set initial refinement = 2
+  end
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
