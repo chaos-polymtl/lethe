@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import argparse
 from cycler import cycler
 
-from functions import compute_cp_average, compute_strouhal_from_lift, compute_drag_coefficient
+from functions_cylinder import compute_cp_average, compute_strouhal_from_lift, compute_drag_coefficient
 
 # Set plot parameters
 plt.rcParams['lines.markersize'] = '11'
