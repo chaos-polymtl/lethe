@@ -17,9 +17,10 @@ subsection simulation control
   set time end         = 200                               
   set adapt            = true
   set max cfl          = 1
-  set time step        = 0.001
+  set time step        = 0.002
   set output frequency = 500
-  set subdivision      = 0
+  set subdivision      = 1
+  set startup time scaling = 0.5
 end
 
 #---------------------------------------------------
@@ -72,69 +73,34 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-
-
 subsection mesh
-  set type               = gmsh
-  set file name          = cylinder-structured.msh
-  set initial refinement = 2
-  set initial boundary refinement = 2
-  set boundaries refined = 3
+  set type               = dealii
+  set grid type          = custom_channel_with_cylinder
+  set grid arguments     = 25 : 8 : 52 : 3.14159265359 : 4 : 0.75 : 5 : 1:  false: true
+  set initial boundary refinement = 1 
+  set boundaries refined = 2
 end
 
 #---------------------------------------------------
-# Manifolds
+# Box Refinement
 #---------------------------------------------------
-
-subsection manifolds
-
-  # Sets the total number of specified manifolds
-  set number = 1
-
-  subsection manifold 0
-
-      # Boundary mesh id specified in the .gmsh file
-      set id                 = 3
-
-      # Type of manifold. Choices are <spherical|cylindrical|iges|none>
-      set type               = cylindrical
-
-      # Center of the sphere or a point along the cylinder's axis (x, y, z)
-      set point coordinates  = 8, 25, 0  
-
-      # Direction vector used only for the cylinder (x, y, z)
-      set direction vector   = 0, 0, 1
-
+subsection box refinement
+  subsection mesh
+    set type               = dealii
+    set grid type          = subdivided_hyper_rectangle
+    set grid arguments     = 1,1,1 : -2, -3, 0 : 52,3,4 : false
+    set initial refinement = 0
   end
-
+  set initial refinement = 2
 end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type                 = kelly
-  set variable             = velocity
-  set fraction type        = fraction
-  set max number elements  = 1000000
-  set max refinement level = 4
-  set min refinement level = 2
-  set frequency            = 10
-  set fraction refinement  = 0.03
-  set fraction coarsening  = 0.00
-  set fix boundary refinement = true
-  set boundaries fixed = 3
-end
-
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 1 #3 for Q3
-  set pressure order = 1 #3 for Q3
+  set velocity order = 1 
+  set pressure order = 1 
 end
 
 #---------------------------------------------------
@@ -178,19 +144,22 @@ subsection boundary conditions
     end
   end
   subsection bc 1
-   set type = slip
+   set type = outlet
+   set beta = 1
   end
   subsection bc 2
-    set type = outlet
+    set type = noslip
   end
   subsection bc 3
-    set type = noslip
+    set type = slip
   end
   subsection bc 4
     set type = slip
   end
   subsection bc 5
-    set type = slip
+    set type = periodic
+    set periodic_id = 6
+    set periodic_direction = 2
   end
 end
 
@@ -230,11 +199,12 @@ end
 subsection linear solver
   subsection fluid dynamics
     set method            = gmres
-    set max iters         = 100
+    set max iters         = 500
     set relative residual = 1e-4
     set minimum residual  = 1e-7
     set preconditioner    = gcmg
     set verbosity         = verbose
+    set max krylov vectors = 500
 
     # MG parameters
     set mg verbosity                   = verbose
@@ -243,13 +213,13 @@ subsection linear solver
 
 
     # Smoother
-    set mg smoother iterations          = 5
+    set mg smoother iterations          = 10
     set mg smoother eig estimation      = true
     set mg smoother preconditioner type = inverse diagonal
 
     # Eigenvalue estimation parameters
-    #set eig estimation smoothing range = 5
-    #set eig estimation cg n iterations = 20
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
     set eig estimation verbosity       = verbose
 
     #coarse-grid solver
