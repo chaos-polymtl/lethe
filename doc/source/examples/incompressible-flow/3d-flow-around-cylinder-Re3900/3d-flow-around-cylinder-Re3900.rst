@@ -10,7 +10,7 @@ Features
 
 - Solvers: ``lethe-fluid-matrix-free`` (with Q2-Q2 or Q3-Q3)
 - Transient problem using ``bdf2`` time integrator
-- Static mesh refinement using the ``box refinement`` feature
+- Static mesh refinement using the ``box refinement`` feature :doc:`../../../parameters/cfd/box_refinement`
 
 ---------------------------
 Files Used in This Example
@@ -25,63 +25,18 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 ------------------------
 
-The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see `Taylor-Couette Flow <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation [#wikipedia2024]_ .
+The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involved boundary-layer seperatoions, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder,  the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forcs on the body. Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. In this example, we study the flow around a cylinder at a Reynolds number of 3900 is considered to be in the subcritical turbulent regime.
 
-This example is drawn from a case study by Wang and Jourdan [#wang2021]_. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.
+This example is a canonical benchmark for LES, as explained in the book by Grinstein, Margolin and Rider [#wang2021]_. It also showcases the capabilities of Lethe to statically refine the mesh athe beggining of the simulation using user-defined box refinement. The mesh is refined in the vicinity of the cylinder to capture the boundary layer and the wake region more accurately.
 
-The inner cylinder rotates counterclockwise at a constant angular velocity :math:`\omega`, while the outer cylinder remains fixed. Periodic boundary conditions are applied to the upper and lower openings of the annular section. The following figure illustrates the geometry of this case:
+The simulation set-up as well as the boundary ids are illustrated in the following figure:
 
-
-.. image:: images/geometry.png
+..
+  .. image:: images/3d_cylinder_perspective_schematic.png
     :alt: The geometry and surface ID
     :align: center
     :name: geometry
     :height: 6cm
-
-The initial conditions for velocity and pressure are defined as follows: 
-
-.. math::
-   u_{\theta} &= Ar + \frac{B}{r} + \epsilon U\sin(\theta) \sin \left( \frac{(r-r_i)\pi}{r_i} \right) \sin \left( \frac{z}{d} \right) \\
-   u_{r} &= \epsilon U\cos(\theta) \sin \left( \frac{(r-r_i)\pi}{r_i} \right) \sin \left( \frac{z}{d} \right) \\
-   u_{z} &= 0 \\
-   p &= \frac{1}{2}A^2r^2 + 2AB\ln(r) - \frac{\frac{1}{2}B^2}{r^2} + \frac{1}{2}(\epsilon U)^2 \cos(2\theta) \sin  \left( \frac{2(r-r_i)\pi}{r_i} \right) \sin \left( \frac{2z}{d} \right)
-
-where :math:`A = -\frac{\omega \kappa^2}{1-\kappa^2}`, :math:`B = \frac{\omega r_i^2}{1-\kappa^2}`,  :math:`U = \omega r_i`, :math:`\kappa =  \frac{r_i}{r_o}`, :math:`d = r_o - r_i`, :math:`\epsilon` is a relaxing factor, :math:`r_i` is the inner cylinder radius, :math:`r_o` is the outer cylinder radius, r is the radial coordinate and z is the axial coordinate. 
-
-For this particular case, the value for each variable can be found in the following table: 
-
-.. list-table::
-    :header-rows: 1
-
-    * - Variable
-      - Value 
-      - Variable
-      - Value
-    * - *A*
-      - -0.3333
-      - *B*
-      - 0.3333
-    * - *U*
-      - 0.5
-      - :math:`\kappa`
-      - 0.5
-    * - *d*
-      - 0.5
-      - :math:`\epsilon`
-      - 0.1
-    * - :math:`r_i`
-      - 0.5
-      - :math:`r_o`
-      - 1.0
-
-Since Lethe uses a Cartesian coordinate system, the expressions have been transformed to proceed with the simulation. For an incompressible flow, the enstrophy and the kinetic energy are defined as: 
-
-.. math::
-  \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega \\
-  E_k &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
-
-
-where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` represents the vorticity. The results obtained for both enstrophy and kinetic energy are compared to the benchmark values from the case study. 
 
 --------------
 Parameter File
@@ -106,12 +61,6 @@ The ``mesh`` subsection specifies the computational grid:
 The ``type`` specifies the mesh format used. We use the  ``cylinder_shell`` from deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ that creates a shell from two concentric cylinders with the option to set-up specific boundary conditions to each surface. The arguments are the length (3.14159265359), the inner cylinder radius (0.5), the outer cylinder radius (1.0), the number of azimuthal cells (5) and the number of axial cells (4).
 Indicating an ``initial refinement = 4`` implies that the initial mesh is refined 4 times globally; in 3D each cell is divided by 8 per refinement. However, in addition to this global refinements, the cells next to the walls are refined one more time locally. This is indicated through the ``initial boundary refinement = 1`` parameter and the ``set boundaries refined = 0, 1`` parameter, which indicates the boundaries IDs of the wall of the cylinder. The following figure illustrates the mesh: 
 
-
-.. image:: images/mesh_153kcells.png
-    :alt: The mesh
-    :align: center
-    :name: mesh_taylor_couette
-    :height: 10cm
 
 .. note::
 
@@ -148,8 +97,6 @@ The ``boundary conditions`` subsection establishes the constraints on different 
       set periodic_direction = 2
     end
   end
-
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary (refer to `geometry`_ for details of surface ``id``) as well as its ``type`` must be specified. The inner cylinder (``bc 0``) is rotating at a constant angular velocity (:math:`\omega=1 \ \text{rad/s}`). We use the ``type = function`` and prescribe a function for the components of the velocity. By prescribing :math:`\mathbf{u}=[-y,x,0]^T`, we prescribe the rotation of the inner cylinder at an angular velocity of :math:`1 \ \text{rad/s}` in the trigonometric direction. The outer cylinder (``bc1``) is static and, consequently, a ``noslip`` boundary condition is applied. Finally, a periodic condition is used for the inlet and outlet (``bc 2``). The ``z-`` (``id=2``) is periodic with ``z+`` (``id=3``). For this condition, the periodic direction must be specified. In Lethe, the periodic direction of ``2`` implies that the normal direction is the :math:`\mathbf{e}_z` vector. 
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -245,11 +192,6 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 
   A good practice is to use as many subdivisions as the interpolation order scheme. 
 
-Other Subsections
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the the :doc:`../../../parameters/cfd/linear_solver_control` section.
-
 ----------------------
 Running the Simulation
 ----------------------
@@ -269,54 +211,21 @@ Results and Discussion
 
 The flow patterns generated by the Taylor-Couette flow are quite complex. The following animation displays the evolution of velocity magnitude on the radial-vertical plane (left) and the Q-criterion iso-contours (right), illustrating the vortical structure as the vortex breaks down and generates smaller structures.
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| .. raw:: html                                                                                                                                      |
-|                                                                                                                                                    |
-|    <iframe width="800" height="400" src="https://www.youtube.com/embed/bRa04yMDsXo?si=Q1ppAuakIsrNwFlw"  frameborder="0" allowfullscreen></iframe> |
-|                                                                                                                                                    |
-+----------------------------------------------------------------------------------------------------------------------------------------------------+
+..
+  +----------------------------------------------------------------------------------------------------------------------------------------------------+
+  | .. raw:: html                                                                                                                                      |
+  |                                                                                                                                                    |
+  |    <iframe width="800" height="400" src="https://www.youtube.com/embed/bRa04yMDsXo?si=Q1ppAuakIsrNwFlw"  frameborder="0" allowfullscreen></iframe> |
+  |                                                                                                                                                    |
+  +----------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Using the ``enstrophy.dat`` file generated by Lethe, the history of enstrophy can be monitored and compared to the reference values extracted from the case study. A plot comparing our simulation results to the reference enstrophy data will be generated by using the following command:
+..
+  +-------------------------------------------------------------------------------------------------------------------+
+  |  .. figure:: images/enstrophy_comparison_Q3Q3_942k.png                                                            |
+  |     :width: 620                                                                                                   |
+  |                                                                                                                   |
+  +-------------------------------------------------------------------------------------------------------------------+
 
-.. code-block:: text
-  :class: copy-button
-
-  python3 tc_postprocessing.py -ens output/enstrophy.dat
-
-The enstrophy plot features a zoomed section of the enstrophy cascade. The following plot shows the history of the enstrophy as measured with the Q2 scheme: 
-
-+-------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/enstrophy_comparison_Q2Q2_153k.png                                                            |
-|     :width: 620                                                                                                   |
-|                                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------+
-
-
-We note that the enstrophy history does not match either reference scheme. Increasing the order from Q2 to Q3 leads to the following results, which are quite close to the P4 and P5 solutions:
-
-+-------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/enstrophy_comparison_Q3Q3_153k.png                                                            |
-|     :width: 620                                                                                                   |
-|                                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------+
-
-We then revert the scheme order back to Q2 and refine the mesh by setting the ``initial refinement = 5`` in the mesh subsection resulting in a total of 942,080 cells. This simulation closely matches the references for the first 30 seconds and captures the second peak of enstrophy better than the previous simulations:
-
-+-------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/enstrophy_comparison_Q2Q2_942k.png                                                            |
-|     :width: 620                                                                                                   |
-|                                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------+
-
-Finally, employing the finer mesh with Q3 elements actually yields a more accurate prediction of the second peak and certain values of the enstrophy between 30 and 60 seconds. 
-
-+-------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/enstrophy_comparison_Q3Q3_942k.png                                                            |
-|     :width: 620                                                                                                   |
-|                                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------+
-
-Considering one more refinement could be interesting to observe if the solution begins to be mesh-independent.
 
 ----------------------------
 Possibilities for Extension
