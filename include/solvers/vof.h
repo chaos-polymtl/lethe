@@ -11,6 +11,7 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/signed_distance_transformation.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_filter.h>
 #include <solvers/vof_linear_subequations_solver.h>
@@ -779,6 +780,10 @@ private:
   // Signed distance solver for geometric redistanciation
   std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
     signed_distance_solver;
+
+  // Signed distance transformation function to a phase fraction
+  std::shared_ptr<SignedDistanceTransformationBase>
+    signed_distance_transformation;
 };
 
 

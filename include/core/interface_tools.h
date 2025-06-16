@@ -422,8 +422,11 @@ namespace InterfaceTools
      *
      * @param[in] p_max_distance Maximum reinitialization distance value
      *
-     * @param[in] p_iso_level Iso-level from which the signed distance is
-     * computed
+     * @param[in] p_iso_level Iso-level (before scaling) from which the signed
+     * distance is computed
+     *
+     * @param[in] p_scaling Scaling factor to apply to the input level-set
+     * field. It is used to switch the inside and outside subdomains, if needed.
      *
      * @param[in] p_verbosity Verbosity level
      *
@@ -434,11 +437,13 @@ namespace InterfaceTools
       std::shared_ptr<FiniteElement<dim>> background_fe,
       const double                        p_max_distance,
       const double                        p_iso_level,
+      const double                        p_scaling,
       const Parameters::Verbosity         p_verbosity)
       : dof_handler(*background_triangulation)
       , fe(background_fe)
       , max_distance(p_max_distance)
-      , iso_level(p_iso_level)
+      , iso_level(p_iso_level * p_scaling)
+      , scaling(p_scaling)
       , verbosity(p_verbosity)
       , pcout(std::cout,
               (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
@@ -901,8 +906,11 @@ namespace InterfaceTools
     const double max_distance;
 
     /// Iso-level describing the interface from which the signed distance is
-    /// computed
+    /// computed (after scaling!!)
     const double iso_level;
+
+    /// Scaling factor to apply to the input level-set field
+    const double scaling;
 
     /// Verbosity level
     const Parameters::Verbosity verbosity;

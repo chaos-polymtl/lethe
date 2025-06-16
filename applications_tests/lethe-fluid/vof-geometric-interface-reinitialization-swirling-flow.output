@@ -245,7 +245,7 @@ In redistanciation of the previous solution ...
 Signed Distance Solver
 -----------------------
 Initial volume Volume after redistanciation Remaining error on the volume 
-    7.0543e-02                   7.0543e-02                    1.7987e-12 
+    7.0538e-02                   7.0538e-02                    1.3878e-17 
 Solving signed distance of layer 0
 Solving signed distance of layer 1
 Solving signed distance of layer 2
@@ -265,7 +265,7 @@ In redistanciation of the present solution ...
 Signed Distance Solver
 -----------------------
 Initial volume Volume after redistanciation Remaining error on the volume 
-    7.0541e-02                   7.0541e-02                    3.0767e-13 
+    7.0544e-02                   7.0544e-02                    0.0000e+00 
 Solving signed distance of layer 0
 Solving signed distance of layer 1
 Solving signed distance of layer 2
@@ -285,13 +285,13 @@ Solving signed distance of layer 13
 VOF Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-5.400000e-02    9.253548e-01              9.294546e-01            9.253548e+00      -5.825935e-01       1.023434e-01    7.464517e-02              7.054542e-02            7.464517e-01       5.825935e-01      -1.023434e-01         5.000000e-01 
+5.400000e-02    9.253509e-01              9.294515e-01            9.253509e+00      -5.826042e-01       1.023595e-01    7.464906e-02              7.054845e-02            7.464906e-01       5.826042e-01      -1.023595e-01         5.000000e-01 
 
 ---------------
 VOF Barycenter
 ---------------
     time        x_vof        y_vof        vx_vof       vy_vof     
-5.400000e-02 5.447976e-01 7.459695e-01 7.804839e-01 -1.371066e-01 
+5.400000e-02 5.448024e-01 7.459677e-01 7.804575e-01 -1.371210e-01 
 
 *******************************************************************************
 Transient iteration: 11       Time: 0.06     Time step: 0.006    CFL: 0.338589
@@ -299,19 +299,19 @@ Transient iteration: 11       Time: 0.06     Time step: 0.006    CFL: 0.338589
 ----
 VOF
 ----
-Newton iteration: 0  - Residual:  0.03925
-  -Tolerance of iterative solver is : 3.925e-11
+Newton iteration: 0  - Residual:  0.03928
+  -Tolerance of iterative solver is : 3.928e-11
   -Iterative solver took : 4 steps to reach a residual norm of 1.72e-13
-	alpha =      1 res = 1.72e-13	||dphi||_L2 = 0.6531	||dphi||_Linfty = 0.07028
+	alpha =      1 res = 1.72e-13	||dphi||_L2 = 0.6535	||dphi||_Linfty = 0.07027
 
 ----------------------
 VOF Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.000000e-02    9.253539e-01              9.294408e-01            9.253539e+00      -5.788096e-01       1.133190e-01    7.464610e-02              7.055921e-02            7.464610e-01       5.788096e-01      -1.133190e-01         5.000000e-01 
+6.000000e-02    9.253476e-01              9.294356e-01            9.253476e+00      -5.788345e-01       1.133457e-01    7.465241e-02              7.056436e-02            7.465241e-01       5.788345e-01      -1.133457e-01         5.000000e-01 
 
 ---------------
 VOF Barycenter
 ---------------
     time        x_vof        y_vof        vx_vof       vy_vof     
-6.000000e-02 5.495338e-01 7.450948e-01 7.754051e-01 -1.518083e-01 
+6.000000e-02 5.495419e-01 7.450920e-01 7.753729e-01 -1.518313e-01 
