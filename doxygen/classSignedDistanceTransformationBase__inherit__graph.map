@@ -1,0 +1,7 @@
+<map id="SignedDistanceTransformationBase" name="SignedDistanceTransformationBase">
+<area shape="rect" id="Node000001" title="Abstract class for the transformation of the signed distance to the phase fraction for the VOF solver..." alt="" coords="119,5,372,31"/>
+<area shape="rect" id="Node000002" href="$classSignedDistanceTransformationPiecewisePolynomial.html" title="Transforms the signed distance to the phase fraction with a piecewise polynomial function (degree 4)." alt="" coords="5,79,227,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="216,40,149,81,146,76,213,36"/>
+<area shape="rect" id="Node000003" href="$classSignedDistanceTransformationTanh.html" title="Transforms the signed distance to the phase fraction with a hyperbolic tangent function." alt="" coords="251,86,501,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="278,36,358,83,355,88,275,40"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="SignedDistanceTransformationPiecewisePolynomial" name="SignedDistanceTransformationPiecewisePolynomial">
+<area shape="rect" id="Node000001" title="Transforms the signed distance to the phase fraction with a piecewise polynomial function (degree 4)." alt="" coords="21,79,243,119"/>
+<area shape="rect" id="Node000002" href="$classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase fraction for the VOF solver..." alt="" coords="5,5,259,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="135,44,135,79,129,79,129,44"/>
+</map>

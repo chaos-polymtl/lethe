@@ -1,0 +1,5 @@
+<map id="SignedDistanceTransformationTanh" name="SignedDistanceTransformationTanh">
+<area shape="rect" id="Node000001" title="Transforms the signed distance to the phase fraction with a hyperbolic tangent function." alt="" coords="7,79,257,104"/>
+<area shape="rect" id="Node000002" href="$classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase fraction for the VOF solver..." alt="" coords="5,5,259,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="135,44,135,79,129,79,129,44"/>
+</map>
