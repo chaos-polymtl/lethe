@@ -2959,10 +2959,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 template <int dim>
 void
 VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
-  GlobalVectorType &solution,
+  const GlobalVectorType &solution,
   GlobalVectorType       &level_set_solution)
 {
-  
   auto mpi_communicator = this->triangulation->get_communicator();
 
   GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
@@ -2973,7 +2972,7 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
       level_set_owned[p] = (-2.0 * phase + 1.0);
     }
 
-  // this->nonzero_constraints.distribute(level_set_owned);
+  this->nonzero_constraints.distribute(level_set_owned);
 
   level_set_solution = level_set_owned;
 }
@@ -2997,7 +2996,6 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
   this->nonzero_constraints.distribute(solution_owned);
 
   phase_fraction_solution = solution_owned;
-  
 }
 
 template <int dim>
@@ -3042,8 +3040,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
       compute_phase_fraction_from_level_set(previous_level_set,
                                             this->previous_solutions[0]);
-      // smooth_phase_fraction(this->previous_solutions[0]);
-      
     }
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
@@ -3069,8 +3065,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
   compute_phase_fraction_from_level_set(this->level_set,
                                         this->present_solution);
-  // smooth_phase_fraction(this->present_solution);
-
 }
 
 

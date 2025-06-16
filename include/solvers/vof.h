@@ -628,7 +628,7 @@ private:
    * @param[out] level_set_solution Level-set solution field
    */
   void
-  compute_level_set_from_phase_fraction(GlobalVectorType &solution,
+  compute_level_set_from_phase_fraction(const GlobalVectorType &solution,
                                         GlobalVectorType &level_set_solution);
 
   /**

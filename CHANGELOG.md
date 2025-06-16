@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MINOR This PR extend the rising bubble example with the addition of a second test case and the comparison of the regularization methods implemented in Lethe. It also documents the geometric reinitialization method in the parameters section and the theory guide.  
+
+## [Master] - 2025-16-09
+
+### Added
+
 - MAJOR The geometric redistanciation method had only a tanh transformation to go from the signed distance to the phase fraction. With it, it is difficult (technically impossible) to clamp the value of the phase fraction indicator to 0 and 1 away from the interface. To get close, the max redistanciation distance must be increased leading to higher computational cost. Hence, a 4th degree piecewise polynomial transformation is added in this PR. It clamps the phase fraction to 0 or 1 at +/- the max redistanciation distance and it has a smooth change from 0 to 1. This PR also improves the treatment of the level-set field and the iso-level in the VOF and SignedDistanceSolver implementation. [#1546](https://github.com/chaos-polymtl/lethe/pull/1546)
 
 ## [Master] - 2025-06-15
