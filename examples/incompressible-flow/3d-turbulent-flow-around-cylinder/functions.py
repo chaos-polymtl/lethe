@@ -45,7 +45,7 @@ def compute_cp_average(
 
     # Determine reference pressure p_inf from the wake
     sim0 = pv.read(vtu_files[-1])
-    x_inf = 0.001 #xc + 6 * r
+    x_inf = -7.999999
     y_inf = yc
     z_inf = np.mean(z_array)
     p_inf = sim0.sample_over_line([x_inf, y_inf, z_inf], [x_inf, y_inf, z_inf], resolution=1)[field][0]
@@ -106,7 +106,6 @@ def compute_strouhal_from_lift(file_path: str, D: float, U: float, method: str =
         T = np.mean(periods)
         f = 1 / T
 
-        plt.figure(figsize=(10, 5))
         plt.plot(t, cl, label="Raw Cl", alpha=0.4)
         plt.plot(t, cl_smooth, label="Smoothed Cl", linewidth=2)
         plt.plot(t_peaks, cl_smooth[peaks], "ro", label="Detected Peaks")
