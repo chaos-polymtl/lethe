@@ -31,12 +31,12 @@ This example is a canonical benchmark for LES, as explained in the book by Grins
 
 The simulation set-up as well as the boundary ids are illustrated in the following figure:
 
-..
-  .. image:: images/3d_cylinder_perspective_schematic.png
-    :alt: The geometry and surface ID
-    :align: center
-    :name: geometry
-    :height: 6cm
+
+.. image:: images/3d_cylinder_perspective_schematic.png
+  :alt: The geometry and surface ID
+  :align: center
+  :name: geometry
+  :height: 9cm
 
 --------------
 Parameter File
@@ -45,7 +45,7 @@ Parameter File
 Mesh
 ~~~~
 
-The ``mesh`` subsection specifies the computational grid:
+The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to create the flow using high-order elements.
 
 .. code-block:: text
 
@@ -58,13 +58,9 @@ The ``mesh`` subsection specifies the computational grid:
     set boundaries refined          = 0, 1
   end
 
-The ``type`` specifies the mesh format used. We use the  ``cylinder_shell`` from deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ that creates a shell from two concentric cylinders with the option to set-up specific boundary conditions to each surface. The arguments are the length (3.14159265359), the inner cylinder radius (0.5), the outer cylinder radius (1.0), the number of azimuthal cells (5) and the number of axial cells (4).
-Indicating an ``initial refinement = 4`` implies that the initial mesh is refined 4 times globally; in 3D each cell is divided by 8 per refinement. However, in addition to this global refinements, the cells next to the walls are refined one more time locally. This is indicated through the ``initial boundary refinement = 1`` parameter and the ``set boundaries refined = 0, 1`` parameter, which indicates the boundaries IDs of the wall of the cylinder. The following figure illustrates the mesh: 
-
-
 .. note::
 
-  The mesh resolution used in the case study consists of 153,600 cells. If one more initial refinement is used, 942,080 cells are obtained. 
+  This mesh generator is only present in the 9.7 version of the deal.II library.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
