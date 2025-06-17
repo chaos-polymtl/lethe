@@ -11,12 +11,12 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method               = steady
-  set number mesh adapt    = 0
-  set output frequency     = 1
-  set time end             = 0.004
-  set time step            = 0.002
-  set log precision        = 10
+  set method            = steady
+  set number mesh adapt = 0
+  set output frequency  = 1
+  set time end          = 0.004
+  set time step         = 0.002
+  set log precision     = 10
 end
 
 #---------------------------------------------------
@@ -166,12 +166,12 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-2
-    set minimum residual                      = 1e-11
-    set preconditioner                        = gcmg
-    set verbosity                             = quiet
-    set max krylov vectors                    = 1000
+    set method             = gmres
+    set max iters          = 1000
+    set relative residual  = 1e-2
+    set minimum residual   = 1e-11
+    set preconditioner     = gcmg
+    set verbosity          = quiet
+    set max krylov vectors = 1000
   end
 end
