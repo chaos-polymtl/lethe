@@ -1899,7 +1899,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           type == BoundaryConditions::BoundaryType::function)
         {
           VectorTools::interpolate_boundary_values(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             id,
             dealii::Functions::ZeroFunction<dim>(dim + 1),
