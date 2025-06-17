@@ -7,6 +7,7 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
+#include <dem/particle_handler_conversion.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
 
@@ -183,6 +184,87 @@ FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
 
 template <int dim>
 void
+FluidDynamicsVANSMatrixFree<dim>::read_dem()
+{
+  std::string prefix =
+    this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
+
+  // Load checkpoint controller
+  std::string checkpoint_controller_object_filename =
+    prefix + ".checkpoint_controller";
+  std::ifstream iss_checkpoint_controller_obj(
+    checkpoint_controller_object_filename);
+  boost::archive::text_iarchive ia_checkpoint_controller_obj(
+    iss_checkpoint_controller_obj, boost::archive::no_header);
+
+  unsigned int checkpoint_id;
+  ia_checkpoint_controller_obj >> checkpoint_id;
+
+  // New prefix for the remaining files
+  prefix = prefix + "_" + Utilities::int_to_string(checkpoint_id);
+
+  // Gather particle serialization information
+  std::string   particle_filename = prefix + ".particles";
+  std::ifstream input(particle_filename.c_str());
+  AssertThrow(input, ExcFileNotOpen(particle_filename));
+
+  std::string buffer;
+  std::getline(input, buffer);
+  std::istringstream            iss(buffer);
+  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
+
+  // Create a temporary particle_handler with DEM properties
+  Particles::ParticleHandler<dim> temporary_particle_handler(
+    *this->triangulation, particle_mapping, DEM::DEMProperties::n_properties);
+
+  ia >> temporary_particle_handler;
+
+  const std::string filename = prefix + ".triangulation";
+  std::ifstream     in(filename.c_str());
+  if (!in)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  filename + "> does not appear to exist!"));
+
+  if (auto parallel_triangulation =
+        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+          &*this->triangulation))
+    {
+      try
+        {
+          this->triangulation->load(filename.c_str());
+
+          // Deserialize particles have the triangulation has been read
+          temporary_particle_handler.deserialize();
+        }
+      catch (...)
+        {
+          AssertThrow(false,
+                      ExcMessage("Cannot open snapshot mesh file or read the"
+                                 "triangulation stored there."));
+        }
+
+      // Fill the existing particle handler using the temporary one
+      // This is done during the dynamic cast for the convert_particle_handler
+      // function which requires a pararallel::distributed::triangulation
+      convert_particle_handler<dim,
+                               DEM::DEMProperties::PropertiesIndex,
+                               DEM::CFDDEMProperties::PropertiesIndex>(
+        *parallel_triangulation, temporary_particle_handler, particle_handler);
+    }
+  else
+    {
+      throw std::runtime_error(
+        "The VANS application currently does not support "
+        "triangulations other than parallel::distributed");
+    }
+}
+
+template <int dim>
+void
 FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
@@ -205,16 +287,23 @@ template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::solve()
 {
-  this->computing_timer.enter_subsection("Read mesh and manifolds");
+  this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
 
   read_mesh_and_manifolds(
     *this->triangulation,
-    this->simulation_parameters.mesh,
-    this->simulation_parameters.manifolds_parameters,
-    this->simulation_parameters.restart_parameters.restart,
-    this->simulation_parameters.boundary_conditions);
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+    this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+        .restart ||
+      this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
-  this->computing_timer.leave_subsection("Read mesh and manifolds");
+  if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
+      this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+          .restart == false)
+    read_dem();
+
+  this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 
   this->setup_dofs();
 

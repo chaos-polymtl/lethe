@@ -121,6 +121,12 @@ public:
 
 protected:
   /**
+   * @brief Read particles arising from a DEM simulation
+   */
+  void
+  read_dem();
+
+  /**
    * @brief Setup the degree of freedom of the flow solver and the degrees of freedom
    * and constraints for the void fraction.
    */

@@ -9,11 +9,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The function defining zero_constraints considered the types noslip, function, and none in the same else case. This has been fixed so that none is indeed a "do-nothing" boundary condition. [#1557](https://github.com/chaos-polymtl/lethe/pull/1557)
 
-## [Master] - 2025-06-16
-
 ### Added
 
 - MAJOR The geometric redistanciation method had only a tanh transformation to go from the signed distance to the phase fraction. With it, it is difficult (technically impossible) to clamp the value of the phase fraction indicator to 0 and 1 away from the interface. To get close, the max redistanciation distance must be increased leading to higher computational cost. Hence, a 4th degree piecewise polynomial transformation is added in this PR. It clamps the phase fraction to 0 or 1 at +/- the max redistanciation distance and it has a smooth change from 0 to 1. This PR also improves the treatment of the level-set field and the iso-level in the VOF and SignedDistanceSolver implementation. [#1546](https://github.com/chaos-polymtl/lethe/pull/1546)
+
+## [Master] - 2025-06-15
+
+### Fixed
+
+- MINOR Add capability to calculate the void fraction in the matrix-free vans solver using information drawn from a particle handler instead of just a function. This is a minor extension that re-uses the feature of the regular VANS implementation. [#1556](https://github.com/chaos-polymtl/lethe/pull/1556)
 
 ## [Master] - 2025-06-13
 
