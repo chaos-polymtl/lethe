@@ -259,7 +259,7 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
   else
     {
       throw std::runtime_error(
-        "VANS equations currently do not support "
+        "The VANS application currently does not support "
         "triangulations other than parallel::distributed");
     }
 }
