@@ -1719,10 +1719,8 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
-  const double density = scratch_data.properties_manager.get_density_scale();
-  const double kinematic_viscosity =
-    scratch_data.properties_manager.get_kinematic_viscosity_scale();
-
+  const std::vector<double> density = scratch_data.density_at_particle_location;
+  const std::vector<double> kinematic_viscosity = scratch_data.kinematic_viscosity_at_particle_location;
   const auto pic = scratch_data.pic;
 
   unsigned int particle_number = 0;
@@ -1737,7 +1735,7 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
         M_PI *
         Utilities::fixed_power<3, double>(
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
-        kinematic_viscosity * density * 0.5;
+        kinematic_viscosity[particle_number] * density[particle_number] * 0.5;
 
       for (unsigned int d = 0; d < dim; d++)
         {
@@ -1769,9 +1767,8 @@ VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
 
-  const double density = scratch_data.properties_manager.get_density_scale();
-  const double kinematic_viscosity =
-    scratch_data.properties_manager.get_kinematic_viscosity_scale();
+  const std::vector<double> density = scratch_data.density_at_particle_location;
+  const std::vector<double> kinematic_viscosity = scratch_data.kinematic_viscosity_at_particle_location;
 
   auto &vorticity_3d =
     scratch_data.fluid_velocity_curls_at_particle_location_3d;
@@ -1792,7 +1789,7 @@ VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
         M_PI *
         Utilities::fixed_power<3, double>(
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
-        kinematic_viscosity * density * 0.5;
+        kinematic_viscosity[i_particle] * density[i_particle] * 0.5;
 
       for (unsigned int d = 0; d < dim; d++)
         {
@@ -1822,7 +1819,9 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
 
-  const double density = std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
+  const std::vector<double> density = scratch_data.density_at_particle_location;
+  
+  unsigned int particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1840,8 +1839,9 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            buoyancy_force[d] * density;
+            buoyancy_force[d] * density[particle_number];
         }
+        particle_number += 1;
     }
 }
 
@@ -1868,7 +1868,8 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
       "VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions"));
 
 
-  const double density = scratch_data.properties_manager.get_density_scale();
+  const std::vector<double> density = scratch_data.density_at_particle_location;
+
   // Loop over particles in cell
   for (auto &particle : pic)
     {
@@ -1886,7 +1887,7 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            pressure_force[d] * density;
+            pressure_force[d] * density[particle_number];
 
           // Apply pressure force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the
@@ -1933,7 +1934,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
-  const double density = scratch_data.properties_manager.get_density_scale();
+  const std::vector<double> density = scratch_data.density_at_particle_location;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1952,7 +1953,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            shear_force[d] * density;
+            shear_force[d] * density[particle_number];
 
           // Apply shear force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the shear
