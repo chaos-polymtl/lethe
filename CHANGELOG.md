@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Added a simple first multiphysic DEM example that consists of lined up particles that are heated by others or by a wall. It verifies the models of particle-particle and particle-wall heat transfer using two simple test cases. This PR also adds dem-mp in the documentation and examples directories. [#1548](https://github.com/chaos-polymtl/lethe/pull/1548)
 
+- MINOR Added initial support for the dynamic flow control in lethe-fluid-sharp. Beta force particle is still missing from the calculation. [#1553] (https://github.com/chaos-polymtl/lethe/pull/1553)
+
 ## [Master] - 2025-06-11
 
 ### Fixed
