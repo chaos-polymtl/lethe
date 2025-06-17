@@ -454,7 +454,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
       set_field_vector(field::shear_rate, shear_rate, this->fields);
     }
-    
+
   switch (properties_manager.get_number_of_fluids())
     {
       case 1:
@@ -485,13 +485,13 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               rheology_model->get_dynamic_viscosity_for_stabilization_vector(
                 density_ref, fields, dynamic_viscosity_for_stabilization);
             }
-          else 
-             {
+          else
+            {
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
                   density[q] = properties_manager.get_density_scale();
-                  }
-             } 
+                }
+            }
 
           if (properties_manager.is_non_newtonian())
             {
