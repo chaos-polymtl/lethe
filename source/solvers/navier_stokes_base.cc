@@ -1890,7 +1890,18 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::slip)
+      if (type == BoundaryConditions::BoundaryType::noslip ||
+          type == BoundaryConditions::BoundaryType::function)
+        {
+          VectorTools::interpolate_boundary_values(
+            *this->mapping,
+            this->dof_handler,
+            id,
+            dealii::Functions::ZeroFunction<dim>(dim + 1),
+            this->zero_constraints,
+            this->fe->component_mask(velocities));
+        }
+      else if (type == BoundaryConditions::BoundaryType::slip)
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
@@ -1932,15 +1943,9 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           /*The directional do-nothing boundary condition is implemented
            * in the matrix-based assemblers and the matrix-free operators*/
         }
-      else
+      else if (type == BoundaryConditions::BoundaryType::none)
         {
-          VectorTools::interpolate_boundary_values(
-            *this->mapping,
-            this->dof_handler,
-            id,
-            dealii::Functions::ZeroFunction<dim>(dim + 1),
-            this->zero_constraints,
-            this->fe->component_mask(velocities));
+          /*Default boundary condition*/
         }
     }
 
