@@ -1,9 +1,9 @@
 ==========================
-Heating of a Packed Bed
+Heated Packed Bed
 ==========================
 
 This example simulates the heating of a packed bed using the discrete element method (DEM) and heat transfer models. It is based on the validation case of Beaulieu [#Beaulieu2020]_ with stainless steel.
-More information regarding the DEM parameters are given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
+More information regarding the DEM parameters is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
 
 
 ----------------------------------
@@ -13,7 +13,7 @@ Features
 - Solvers: ``lethe-particles``
 - Multiphysic DEM
 - Three-dimensional problem
-- Moving solid surface
+- Moving solid surfaces
 - Heating solid surface
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
@@ -26,7 +26,7 @@ All files mentioned below are located in the example's folder (``examples/dem-mp
 
 - Parameter file to load particles: ``load-packed-bed.prm``
 - Parameter file for the simulation: ``heat-packed-bed.prm``
-- Geometry file solid surface: ``square-top.geo``
+- Geometry files for solid surfaces: ``square-top.geo``, ``square-side.geo``, ``square-rake.geo``
 - Post-processing Python script: ``bed-postprocessing.py``
 
 
@@ -34,7 +34,10 @@ All files mentioned below are located in the example's folder (``examples/dem-mp
 Description of the Case
 -------------------------
 
-During the loading stage (:math:`0-7` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box to form a packed bed. Then, a moving solid surface is used to even out the height of the particles on top. After several back and forth, the top wall stops at a height of :math:`0.198` m. The height of the top wall is set so that it pushes just enough on the particles to enable heat transfer. At :math:`7` s, the temperature of the top wall is set to :math:`53°C` and the particles are heated through the top wall until :math:`4000` s, to match the experiment led by Beaulieu [#Beaulieu2020]_.
+This example is run in three stages. 
+First, during the loading stage (:math:`0-6` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box. In this part of the simulation, :math:`g = 9.81 \times e_x` because we insert the particles from the side of the box. When particles are still enough, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation.
+The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 e_z` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_ . We let the particles fall into their places for :math:`1` s. 
+Finally, during the heating stage (:math:`7-4000` s), the temperature of a solid surface placed on top on the packed bed is set to :math:`53°C` and the particles are heated through this top wall.
 
 
 --------------
@@ -44,31 +47,31 @@ Parameter File
 Mesh
 ~~~~
 
-The domain we simulate is a rectangular box which is :math:`0.1\times0.1\times0.4` meters and is made using the deal.ii grid generator.
+The domain we simulate is a rectangular box with dimensions :math:`0.3\times0.1\times0.2` meters and is made using the deal.ii grid generator.
 
 .. code-block:: text
 
     subsection mesh
       set type               = dealii
       set grid type          = hyper_rectangle
-      set grid arguments     = 0.0 , 0.0 , 0.0 : 0.1 , 0.1 , 0.4 : false
+      set grid arguments     = -0.2 , 0.0 , 0.0 : 0.1 , 0.1 , 0.2 : false
       set initial refinement = 2
     end
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~
 
-In the loading stage, particles are inserted in an insertion box in the upper part of the domain, with a temperature of :math:`20°C`. :math:`900` particles are inserted at each insertion step.
+In the loading stage, particles are inserted through the side of the box, with a temperature of :math:`20°C`. :math:`3400` particles are inserted at each insertion step (except the last one).
 
 .. code-block:: text
 
     subsection insertion info
       set insertion method                               = volume
-      set inserted number of particles at each time step = 900
+      set inserted number of particles at each time step = 3400
       set insertion frequency                            = 10000
-      set insertion box points coordinates               = 0.001, 0.001, 0.25 : 0.099, 0.099, 0.35
+      set insertion box points coordinates               = -0.199, 0.001, 0.001 : -0.03, 0.099, 0.199
       set insertion distance threshold                   = 1.5
-      set insertion maximum offset                       = 0.1
+      set insertion maximum offset                       = 0.6
       set insertion prn seed                             = 17
       subsection initial temperature function
         set Function expression = 20
@@ -114,7 +117,7 @@ The physical properties of the steel particles, the walls and the interstitial g
       set real young modulus wall      = 100e9
       set thermal conductivity wall    = 250
       set microhardness wall           = 1.8e9
-      set surface slope wall           = 0.117
+      set surface slope wall           = 0.056
       set surface roughness wall       = 0.1e-9
       set thermal accommodation wall   = 0.7
       set thermal conductivity gas     = 0.027
@@ -128,7 +131,7 @@ The physical properties of the steel particles, the walls and the interstitial g
 Model Parameters
 ~~~~~~~~~~~~~~~~
 
-For the loading of the particles, the model parameters are defined as:
+For the loading and the stage where gravity is flipped, the model parameters are defined as:
 
 .. code-block:: text
 
@@ -168,34 +171,65 @@ For the heating of the particles, the parameter ``disable position integration``
     end
 
 
-Solid object
+Solid Objects
 ~~~~~~~~~~~~~~~
 
-From :math:`3` to :math:`7` s, the moving solid surface is used to even out the height of the particles on top of the packed bed and it then stops at a height of :math:`0.198` m. At :math:`7` s, the temperature of the solid object is changed from :math:`20°C`  to :math:`53°C` to heat the packed bed.
+Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from :math:`7` s to :math:`4000` s, with a temperature of :math:`53°C`. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within when the direction of gravity is changed.
 
 .. code-block:: text
 
     subsection solid objects
       subsection solid surfaces
-        set number of solids = 1
+        set number of solids = 3
         subsection solid object 0
           subsection mesh
             set type               = gmsh
-            set file name          = square_top.msh
+            set file name          = square-top.msh
             set simplex            = true
             set initial refinement = 0
           end
           subsection translational velocity
-            set Function expression = 0 ; 0 ; if( (t>3 && t<7), if(t<3.359,-0.5, if(t<3.73,0.5, if (z>0.201,-0.5,if(t>5.3 && z>0.198,-0.5,0)))), 0 )
+            set Function expression = 0 ; 0 ; 0
           end
           subsection angular velocity
             set Function expression = 0 ; 0 ; 0
           end
-          set center of rotation    = 0 , 0 , 0.38
           set thermal boundary type = isothermal
           subsection temperature
             set Function expression = if(t>7,53,20)
           end
+        end
+        subsection solid object 1
+          subsection mesh
+            set type               = gmsh
+            set file name          = square-rake.msh
+            set simplex            = true
+            set initial refinement = 0
+          end
+          subsection translational velocity
+            set Function expression = if(z<0.19,0,if(t<3.6,-0.5,0)) ; 0 ; if(t>1.6 && z<0.19,0.1,0)
+          end
+          subsection angular velocity
+            set Function expression = 0 ; 0 ; 0
+          end
+          set center of rotation    = 0 , 0 , 0
+          set thermal boundary type = adiabatic
+        end
+        subsection solid object 2
+          subsection mesh
+            set type               = gmsh
+            set file name          = square-side.msh
+            set simplex            = true
+            set initial refinement = 0
+          end
+          subsection translational velocity
+            set Function expression = if(t>3.6 && x<-0.001,0.5,0) ; 0 ; 0
+          end
+          subsection angular velocity
+            set Function expression = 0 ; 0 ; 0
+          end
+          set center of rotation    = -0.2 , 0 , 0
+          set thermal boundary type = adiabatic
         end
       end
     end
@@ -204,7 +238,20 @@ From :math:`3` to :math:`7` s, the moving solid surface is used to even out the 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection is the main difference between the two parameter files. While the loading is :math:`7` s long with a time step of :math:`2.5\times10^{-5}`, the heating lasts until :math:`4000` s with a time step of :math:`1` s.
+For the loading stage:
+
+.. code-block:: text
+
+    subsection simulation control
+      set time step         = 2.5e-5
+      set time end          = 6
+      set log frequency     = 2000
+      set output frequency  = 2000
+      set output path       = ./output/
+      set output boundaries = true
+    end
+
+For the stage where gravity is changed:
 
 .. code-block:: text
 
@@ -216,6 +263,8 @@ The ``simulation control`` subsection is the main difference between the two par
       set output path       = ./output/
       set output boundaries = true
     end
+
+For the heating stage:
 
 .. code-block:: text
 
