@@ -382,7 +382,7 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       *this->cell_quadrature,
       *this->mapping,
       *this->face_quadrature);
-    
+
 
     if (this->simulation_parameters.multiphysics.VOF)
       {
@@ -397,9 +397,10 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
         if (this->simulation_parameters.multiphysics.vof_parameters
               .surface_tension_force.enable)
           {
-            const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
-              this->multiphysics
-                ->get_projected_phase_fraction_gradient_dof_handler();
+            const DoFHandler<dim>
+              &projected_phase_fraction_gradient_dof_handler =
+                this->multiphysics
+                  ->get_projected_phase_fraction_gradient_dof_handler();
             const DoFHandler<dim> &curvature_dof_handler =
               this->multiphysics->get_curvature_dof_handler();
             scratch_data.enable_projected_phase_fraction_gradient(
@@ -457,8 +458,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -646,7 +646,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-        scratch_data.reinit_particle_fluid_interactions(
+      scratch_data.reinit_particle_fluid_interactions(
         cell,
         this->evaluation_point,
         this->previous_solutions[0],
