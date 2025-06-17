@@ -999,8 +999,11 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
 
   double density;
 
-  density = std::accumulate(scratch_data.density.begin(), scratch_data.density.end(), 0.0) / scratch_data.density.size();
-           
+  density = std::accumulate(scratch_data.density.begin(),
+                            scratch_data.density.end(),
+                            0.0) /
+            scratch_data.density.size();
+
   const auto pic               = scratch_data.pic;
   beta_drag                    = 0;
   unsigned int particle_number = 0;
@@ -1720,7 +1723,8 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
       "VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
   const std::vector<double> density = scratch_data.density_at_particle_location;
-  const std::vector<double> kinematic_viscosity = scratch_data.kinematic_viscosity_at_particle_location;
+  const std::vector<double> kinematic_viscosity =
+    scratch_data.kinematic_viscosity_at_particle_location;
   const auto pic = scratch_data.pic;
 
   unsigned int particle_number = 0;
@@ -1768,7 +1772,8 @@ VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
       "VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
 
   const std::vector<double> density = scratch_data.density_at_particle_location;
-  const std::vector<double> kinematic_viscosity = scratch_data.kinematic_viscosity_at_particle_location;
+  const std::vector<double> kinematic_viscosity =
+    scratch_data.kinematic_viscosity_at_particle_location;
 
   auto &vorticity_3d =
     scratch_data.fluid_velocity_curls_at_particle_location_3d;
@@ -1820,7 +1825,7 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
       "VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
 
   const std::vector<double> density = scratch_data.density_at_particle_location;
-  
+
   unsigned int particle_number = 0;
 
   // Loop over particles in cell
@@ -1841,7 +1846,7 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
             buoyancy_force[d] * density[particle_number];
         }
-        particle_number += 1;
+      particle_number += 1;
     }
 }
 
