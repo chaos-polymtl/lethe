@@ -217,7 +217,6 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
   Particles::ParticleHandler<dim> temporary_particle_handler(
     *this->triangulation, particle_mapping, DEM::DEMProperties::n_properties);
 
-
   ia >> temporary_particle_handler;
 
   const std::string filename = prefix + ".triangulation";
