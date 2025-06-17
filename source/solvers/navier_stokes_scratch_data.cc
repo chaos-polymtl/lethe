@@ -454,7 +454,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
       set_field_vector(field::shear_rate, shear_rate, this->fields);
     }
-
+    
   switch (properties_manager.get_number_of_fluids())
     {
       case 1:

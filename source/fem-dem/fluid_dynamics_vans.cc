@@ -453,9 +453,11 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
+  DoFHandler<dim> *dof_handler_vof = nullptr;
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
@@ -482,15 +484,32 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     particle_projector.previous_void_fraction);
 
   scratch_data.calculate_physical_properties();
-  
-  scratch_data.reinit_particle_fluid_interactions(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions[0],
-    this->particle_projector.void_fraction_locally_relevant,
-    particle_handler,
-    this->dof_handler,
-    particle_projector.dof_handler);
+
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        this->particle_projector.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        particle_projector.dof_handler,
+        *dof_handler_vof,
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+    }
+  else
+    {
+      scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        this->particle_projector.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        particle_projector.dof_handler);
+    }
 
   copy_data.reset();
 
@@ -593,11 +612,12 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
-  
+
+  DoFHandler<dim> *dof_handler_vof = nullptr;
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -624,14 +644,30 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
   scratch_data.calculate_physical_properties();
 
-  scratch_data.reinit_particle_fluid_interactions(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions[0],
-    particle_projector.void_fraction_locally_relevant,
-    particle_handler,
-    this->dof_handler,
-    particle_projector.dof_handler);
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+        scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        particle_projector.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        particle_projector.dof_handler,
+        *dof_handler_vof,
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+    }
+  else
+    {
+      scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        particle_projector.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        particle_projector.dof_handler);
+    }
 
   copy_data.reset();
 
