@@ -437,6 +437,20 @@ protected:
   define_zero_constraints();
 
   /**
+   * @brief Returns the mapping shared pointer. A MappingQCache is
+   * necessary for prescribed rotation in rotor-stator configurations
+   */
+  inline std::shared_ptr<Mapping<dim>>
+  get_mapping()
+  {
+    if (!this->simulation_parameters.mortar.enable ||
+        this->get_current_newton_iteration() == 0)
+      return this->mapping;
+    else
+      return this->mapping_cache;
+  }
+
+  /**
    * @brief Rotate rotor mapping in mortar method
    */
   void
