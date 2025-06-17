@@ -74,7 +74,7 @@ for i_h, h in enumerate(heights):
 
 # Print packed bed porosity
 particle_volume = 4.0/3.0 * np.pi * (particle_radius)**3
-total_volume = 0.102 * 0.1 * h_top
+total_volume = 0.101 * 0.1 * h_top
 porosity = 1 - (particle_number * particle_volume) / total_volume
 print('\n')
 print('=' * 80)

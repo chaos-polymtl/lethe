@@ -177,7 +177,7 @@ subsection solid objects
         set initial refinement = 0
       end
       subsection translational velocity
-        set Function expression = if(t>3.6 && x<-0.002,0.5,0) ; 0 ; 0
+        set Function expression = if(t>3.6 && x<-0.001,0.5,0) ; 0 ; 0
       end
       subsection angular velocity
         set Function expression = 0 ; 0 ; 0
