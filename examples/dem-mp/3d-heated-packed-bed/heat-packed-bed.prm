@@ -118,7 +118,7 @@ subsection solid objects
     subsection solid object 0
       subsection mesh
         set type               = gmsh
-        set file name          = square_top.msh
+        set file name          = square-top.msh
         set simplex            = true
         set initial refinement = 0
       end
@@ -136,7 +136,7 @@ subsection solid objects
     subsection solid object 1
       subsection mesh
         set type               = gmsh
-        set file name          = square_rake.msh
+        set file name          = square-rake.msh
         set simplex            = true
         set initial refinement = 0
       end
@@ -152,7 +152,7 @@ subsection solid objects
     subsection solid object 2
       subsection mesh
         set type               = gmsh
-        set file name          = square_side.msh
+        set file name          = square-side.msh
         set simplex            = true
         set initial refinement = 0
       end
