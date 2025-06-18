@@ -1191,6 +1191,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       std::string mass_column_name;
 
       std::string geometric_volume_column_name;
+      std::string volume_test_column_name;
+      std::string area_column_name;
 
       // To display when verbose
       std::vector<std::string> dependent_column_names;
@@ -1216,18 +1218,27 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
 
       // Compute geometric outside volume (fluid 0)
-      const double geometric_volume_outside =
-        InterfaceTools::compute_volume(*mapping,
-                                       dof_handler,
-                                       *fe,
-                                       this->present_solution,
-                                       0.5,
-                                       mpi_communicator);
+      // const double geometric_volume_outside =
+      //   InterfaceTools::compute_volume(*mapping,
+      //                                  dof_handler,
+      //                                  *fe,
+      //                                  this->present_solution,
+      //                                  0.5,
+      //                                  mpi_communicator);
+
+      double geometric_volume_outside, surface;
+
+      std::tie(geometric_volume_outside, surface) =
+        InterfaceTools::compute_surface_and_volume(
+          dof_handler, *fe, this->present_solution, 0.5, mpi_communicator);
+
       // Compute geometric inside volume (fluid 1)
       const double global_volume =
         GridTools::volume(*this->triangulation, *this->mapping);
       const double geometric_volume_inside =
         global_volume - geometric_volume_outside;
+
+      // volume_inside_test = global_volume - volume_outside_test;
 
       for (unsigned int i = 0; i < n_fluids; i++)
         {
@@ -1269,12 +1280,16 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   mass_column_name   = "mass_per_length_" + fluid_id;
                   geometric_volume_column_name =
                     "geometric_surface_" + fluid_id;
+                  area_column_name        = "length_" + fluid_id;
+                  volume_test_column_name = "surface_test_" + fluid_id;
                 }
               else if constexpr (dim == 3)
                 {
                   volume_column_name           = "volume_" + fluid_id;
                   mass_column_name             = "mass_" + fluid_id;
                   geometric_volume_column_name = "geometric_volume_" + fluid_id;
+                  area_column_name             = "surface_" + fluid_id;
+                  volume_test_column_name      = "volume_test_" + fluid_id;
                 }
 
               // Add "surface" or "volume" column
@@ -1303,6 +1318,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                    this->mass_monitored);
               this->table_monitoring_vof.set_scientific(mass_column_name, true);
 
+              this->table_monitoring_vof.add_value(area_column_name, surface);
+              this->table_monitoring_vof.set_scientific(area_column_name, true);
               // Add "momentum" columns
               for (unsigned int d = 0; d < dim; ++d)
                 {

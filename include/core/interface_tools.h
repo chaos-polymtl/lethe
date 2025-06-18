@@ -25,10 +25,16 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/hp/fe_collection.h>
+#include <deal.II/hp/q_collection.h>
+
 #include <deal.II/lac/lapack_full_matrix.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
+#include <deal.II/non_matching/fe_immersed_values.h>
+#include <deal.II/non_matching/fe_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
 #include <deal.II/non_matching/quadrature_generator.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -259,6 +265,15 @@ namespace InterfaceTools
                  const VectorType         &level_set_vector,
                  const double              iso_level,
                  const MPI_Comm           &mpi_communicator);
+
+
+  template <int dim, typename VectorType>
+  std::pair<double, double>
+  compute_surface_and_volume(const DoFHandler<dim>    &dof_handler,
+                             const FiniteElement<dim> &fe,
+                             const VectorType         &level_set_vector,
+                             const double              iso_level,
+                             const MPI_Comm           &mpi_communicator);
 
   /**
    * @brief
