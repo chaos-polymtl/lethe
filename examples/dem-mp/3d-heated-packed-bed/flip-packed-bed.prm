@@ -54,7 +54,7 @@ subsection lagrangian physical properties
     set diameter                          = 6.4e-3
     set number of particles               = 8849
     set density particles                 = 7747
-    set young modulus particles           = 5e6
+    set young modulus particles           = 50e6
     set poisson ratio particles           = 0.29
     set restitution coefficient particles = 0.8
     set friction coefficient particles    = 0.7
@@ -67,7 +67,7 @@ subsection lagrangian physical properties
     set surface roughness particles       = 19.e-9
     set thermal accommodation particles   = 0.7
   end
-  set young modulus wall           = 5e6
+  set young modulus wall           = 50e6
   set poisson ratio wall           = 0.33
   set restitution coefficient wall = 0.8
   set friction coefficient wall    = 0.7
@@ -139,7 +139,7 @@ subsection solid objects
     subsection solid object 1
       subsection mesh
         set type               = gmsh
-        set file name          = square_even.msh
+        set file name          = square_rake.msh
         set simplex            = true
         set initial refinement = 0
       end

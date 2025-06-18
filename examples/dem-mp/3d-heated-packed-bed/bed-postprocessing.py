@@ -39,30 +39,26 @@ import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
-parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d-thermal-packed-bed example')
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d-heated-packed-bed example')
 parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
-parser.add_argument("--start", type=int, help="Starting vtu. Last vtu of the loading part of the simulation.", required=True)
 args, leftovers=parser.parse_known_args()
 
 # Simulation folder
 folder=args.folder
 
 # Starting vtu id (heating starts)
-start = args.start # 139 for steel
+start = 139 # 7s
 
-# Height (z) of the heating top wall
+# Height (z) of the heating wall
 h_top = 0.2
 
 # Same fixed parameters as reference
 particle_radius=0.0032
-prm_file = 'heat-packed-bed.prm'
-# Heights for mean temperatures
-heights = [0.040 , 0.060, 0.073]
-# Number of particles
+heights = [0.040 , 0.060, 0.073] # Heights for mean temperatures
 particle_number = 8849
-ylim=(19,34)
-    
+
 # Load lethe data
+prm_file = 'heat-packed-bed.prm'
 pvd_name = 'out.pvd'
 ignore_data = ['type', 'mass', 'velocity' , 'omega']
 particle = lethe_pyvista_tools(folder, prm_file, pvd_name, ignore_data=ignore_data)
@@ -103,7 +99,7 @@ for i_h, h in enumerate(heights):
 
 # Print packed bed porosity
 particle_volume = 4.0/3.0 * np.pi * (particle_radius)**3
-total_volume = 0.102 * 0.1 * h_top
+total_volume = 0.105 * 0.1 * h_top
 porosity = 1 - (particle_number * particle_volume) / total_volume
 print('\n')
 print('=' * 80)
@@ -113,7 +109,6 @@ print('\n')
 
 # Plot the evolution of the temperature of the packed bed at three different heights.
 plt.figure()
-
 for i_h, h in enumerate(heights):
     # Read temperature data from paper
     reference_data_sim = pd.read_csv('reference/steel_Beaulieu_' + f"{h:.3f}" + '_rough.csv')
@@ -135,8 +130,8 @@ legend.legend_handles[1].set_color('k')
 legend.legend_handles[2].set_color('k')
 
 plt.grid()
-plt.ylim(ylim)
-plt.title("Evolution of the temperature of the packed bed \n at three different heights.", pad=20)
+plt.ylim(19,34)
+plt.title("Evolution of the temperature of the steel packed bed \n at three different heights.", pad=20)
 plt.xlabel('Time (s) after packing')
 plt.ylabel('Temperature (°C)')
 plt.savefig('mean-temperatures')
