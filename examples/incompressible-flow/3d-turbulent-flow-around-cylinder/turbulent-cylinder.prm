@@ -20,7 +20,6 @@ subsection simulation control
   set time step        = 0.002
   set output frequency = 500
   set subdivision      = 1
-  set startup time scaling = 0.5
 end
 
 #---------------------------------------------------
@@ -45,7 +44,7 @@ end
 
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity = 2.564e-04
+    set kinematic viscosity = 2.5641025e-04
   end
 end
 
@@ -88,7 +87,7 @@ subsection box refinement
   subsection mesh
     set type               = dealii
     set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 1,1,1 : -2, -3, 0 : 52,3,4 : false
+    set grid arguments     = 1,1,1 : -2, -3, -1 : 52,3,5 : false
     set initial refinement = 0
   end
   set initial refinement = 2
@@ -110,10 +109,8 @@ end
 subsection forces
   set verbosity             = verbose
   set calculate force       = true
-  set calculate torque      = false
   set force name            = force
   set output precision      = 10
-  set calculation frequency = 1
   set output frequency      = 10
 end
 
@@ -187,6 +184,7 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
+    set solver = inexact_newton
     set tolerance = 1e-5
     set verbosity = verbose
   end
@@ -201,7 +199,7 @@ subsection linear solver
     set method            = gmres
     set max iters         = 500
     set relative residual = 1e-3
-    set minimum residual  = 1e-6
+    set minimum residual  = 5e-6
     set preconditioner    = gcmg
     set verbosity         = verbose
     set max krylov vectors = 500

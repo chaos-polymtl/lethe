@@ -19,9 +19,9 @@ plt.rcParams['axes.prop_cycle'] = cycler(color = colors)
 rho = 1.0
 U_inf = 1.0
 center = (0, 0)
-z_array = np.linspace(0,np.pi,100)
 theta_array = np.linspace(0, 361 * np.pi/360, 362)
-L = np.pi
+L = 1.5*np.pi
+z_array = np.linspace(0,L,200)
 n_final_timesteps = 2000
 D = 1.0
 frac = 50
