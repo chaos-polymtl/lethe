@@ -33,9 +33,6 @@ InterfaceTools::compute_cell_wise_volume(
   signed_distance_function.set_active_cell(cell_dof_level_set_values);
   quadrature_generator.generate(signed_distance_function, unit_box);
 
-  const ImmersedSurfaceQuadrature<dim> surface_quadrature =
-    quadrature_generator.get_surface_quadrature();
-    
   const Quadrature<dim> inside_quadrature =
     quadrature_generator.get_inside_quadrature();
 
@@ -97,6 +94,21 @@ template double
 InterfaceTools::compute_volume(const Mapping<2>       &mapping,
                                const DoFHandler<2>    &dof_handler,
                                const FiniteElement<2> &fe,
+                               const GlobalVectorType &level_set_vector,
+                               const double            iso_level,
+                               const MPI_Comm         &mpi_communicator);
+template double
+InterfaceTools::compute_volume(const Mapping<3>       &mapping,
+                               const DoFHandler<3>    &dof_handler,
+                               const FiniteElement<3> &fe,
+                               const GlobalVectorType &level_set_vector,
+                               const double            iso_level,
+                               const MPI_Comm         &mpi_communicator);
+
+template double
+InterfaceTools::compute_volume(const Mapping<2>       &mapping,
+                               const DoFHandler<2>    &dof_handler,
+                               const FiniteElement<2> &fe,
                                const Vector<double>   &level_set_vector,
                                const double            iso_level,
                                const MPI_Comm         &mpi_communicator);
@@ -107,6 +119,98 @@ InterfaceTools::compute_volume(const Mapping<3>       &mapping,
                                const Vector<double>   &level_set_vector,
                                const double            iso_level,
                                const MPI_Comm         &mpi_communicator);
+
+template <int dim, typename VectorType>
+std::pair<double, double>
+InterfaceTools::compute_surface_and_volume(const DoFHandler<dim> &dof_handler,
+                                           const FiniteElement<dim> &fe,
+                                           const VectorType &level_set_vector,
+                                           const double      iso_level,
+                                           const MPI_Comm   &mpi_communicator)
+{
+  VectorType level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),
+                                         mpi_communicator);
+
+  level_set_vector_owned_copy = level_set_vector;
+
+  level_set_vector_owned_copy.add(-iso_level);
+
+  VectorType level_set_vector_relevant_copy(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler),
+    mpi_communicator);
+
+  level_set_vector_relevant_copy = level_set_vector_owned_copy;
+
+  NonMatching::MeshClassifier<dim> mesh_classifier(
+    dof_handler, level_set_vector_relevant_copy);
+  mesh_classifier.reclassify();
+
+  const hp::FECollection<dim> fe_collection(fe);
+
+  const QGauss<1> quadrature_1D(fe.degree + 1);
+
+  NonMatching::RegionUpdateFlags region_update_flags;
+  region_update_flags.inside  = update_JxW_values | update_quadrature_points;
+  region_update_flags.surface = update_JxW_values | update_quadrature_points;
+
+  NonMatching::FEValues<dim> non_matching_fe_values(
+    fe_collection,
+    quadrature_1D,
+    region_update_flags,
+    mesh_classifier,
+    dof_handler,
+    level_set_vector_relevant_copy);
+
+  double volume  = 0.0;
+  double surface = 0.0;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          non_matching_fe_values.reinit(cell);
+
+          const std::optional<FEValues<dim>> &inside_fe_values =
+            non_matching_fe_values.get_inside_fe_values();
+
+          if (inside_fe_values)
+            for (const unsigned int q :
+                 inside_fe_values->quadrature_point_indices())
+              {
+                volume += inside_fe_values->JxW(q);
+              }
+
+          const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+            &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+
+          if (surface_fe_values)
+            for (const unsigned int q :
+                 surface_fe_values->quadrature_point_indices())
+              {
+                surface += surface_fe_values->JxW(q);
+              }
+        }
+    }
+  volume  = Utilities::MPI::sum(volume, mpi_communicator);
+  surface = Utilities::MPI::sum(surface, mpi_communicator);
+
+  return {volume, surface};
+}
+
+template std::pair<double, double>
+InterfaceTools::compute_surface_and_volume(
+  const DoFHandler<2>    &dof_handler,
+  const FiniteElement<2> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  const MPI_Comm         &mpi_communicator);
+template std::pair<double, double>
+InterfaceTools::compute_surface_and_volume(
+  const DoFHandler<3>    &dof_handler,
+  const FiniteElement<3> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  const MPI_Comm         &mpi_communicator);
 
 template <int dim, typename VectorType>
 void
@@ -162,6 +266,32 @@ InterfaceTools::reconstruct_interface(
         }
     }
 }
+
+template void
+InterfaceTools::reconstruct_interface(
+  const Mapping<2>       &mapping,
+  const DoFHandler<2>    &dof_handler,
+  const FiniteElement<2> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  std::map<types::global_cell_index, std::vector<Point<2>>>
+    &interface_reconstruction_vertices,
+  std::map<types::global_cell_index, std::vector<CellData<1>>>
+                                    &interface_reconstruction_cells,
+  std::set<types::global_dof_index> &intersected_dofs);
+
+template void
+InterfaceTools::reconstruct_interface(
+  const Mapping<3>       &mapping,
+  const DoFHandler<3>    &dof_handler,
+  const FiniteElement<3> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  std::map<types::global_cell_index, std::vector<Point<3>>>
+    &interface_reconstruction_vertices,
+  std::map<types::global_cell_index, std::vector<CellData<2>>>
+                                    &interface_reconstruction_cells,
+  std::set<types::global_dof_index> &intersected_dofs);
 
 template void
 InterfaceTools::reconstruct_interface(
