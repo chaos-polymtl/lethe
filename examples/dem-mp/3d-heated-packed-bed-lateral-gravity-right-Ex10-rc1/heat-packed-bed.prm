@@ -1,0 +1,169 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step         = 1
+  set time end          = 4000
+  set log frequency     = 1
+  set output frequency  = 1
+  set output path       = ./output/
+  set output boundaries = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant_resistance
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set solver type                            = dem_mp
+  set disable position integration           = true
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+# For steel
+
+subsection lagrangian physical properties
+  set g                        = 0.0 , 0.0 , -9.81
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 6.4e-3
+    set number of particles               = 8849
+    set density particles                 = 7747
+    set young modulus particles           = 50e6
+    set poisson ratio particles           = 0.29
+    set restitution coefficient particles = 0.8
+    set friction coefficient particles    = 0.7
+    set rolling friction particles        = 0.02
+    set real young modulus particles      = 200e9
+    set thermal conductivity particles    = 42
+    set specific heat particles           = 464
+    set microhardness particles           = 3e9
+    set surface slope particles           = 0.056
+    set surface roughness particles       = 19.e-9
+    set thermal accommodation particles   = 0.7
+  end
+  set young modulus wall           = 50e6
+  set poisson ratio wall           = 0.33
+  set restitution coefficient wall = 0.8
+  set friction coefficient wall    = 0.7
+  set rolling friction wall        = 0.02
+  set real young modulus wall      = 100e9
+  set thermal conductivity wall    = 250
+  set microhardness wall           = 1.8e9
+  set surface slope wall           = 0.056
+  set surface roughness wall       = 0.1e-9
+  set thermal accommodation wall   = 0.7
+  set thermal conductivity gas     = 0.027
+  set specific heat gas            = 1006
+  set dynamic viscosity gas        = 1.85e-5
+  set specific heats ratio gas     = 1
+  set molecular mean free path gas = 68.e-9
+end
+
+subsection restart
+  set checkpoint = false
+  set frequency  = 10000
+  set restart    = true
+  set filename   = dem_mp
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -0.2 , 0.0 , 0.0 : 0.1 , 0.1 , 0.2 : false
+  set initial refinement = 2
+end
+
+#---------------------------------------------------
+# Lagrangian Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set lagrangian post-processing = true
+end
+
+#---------------------------------------------------
+# Solid Objects
+#---------------------------------------------------
+
+subsection solid objects
+  subsection solid surfaces
+    set number of solids = 3
+    subsection solid object 0
+      subsection mesh
+        set type               = gmsh
+        set file name          = square_top.msh
+        set simplex            = true
+        set initial refinement = 0
+      end
+      subsection translational velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      set thermal boundary type = isothermal
+      subsection temperature
+        set Function expression = if(t>7,53,20)
+      end
+    end
+    subsection solid object 1
+      subsection mesh
+        set type               = gmsh
+        set file name          = square_even.msh
+        set simplex            = true
+        set initial refinement = 0
+      end
+      subsection translational velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      set center of rotation    = 0 , 0 , 0
+      set thermal boundary type = adiabatic
+    end
+    subsection solid object 2
+      subsection mesh
+        set type               = gmsh
+        set file name          = square_side.msh
+        set simplex            = true
+        set initial refinement = 0
+      end
+      subsection translational velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      set center of rotation    = 0 , 0 , 0
+      set thermal boundary type = adiabatic
+    end
+  end
+end
