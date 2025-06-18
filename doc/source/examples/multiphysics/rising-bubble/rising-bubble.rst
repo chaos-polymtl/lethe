@@ -297,25 +297,25 @@ Run
 .. code-block:: text
   :class: copy-button
 
-  python3 ./rising-bubble.py -f rising-bubble-proj -c 1
+  python3 ./rising-bubble.py -p rising-bubble-proj -c 1
 
 to execute this post-processing code, where ``rising-bubble-proj`` is the directory that contains the simulation results and ``-c 1`` is used for test case 1. 
 
 The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares them with results of Zahedi *et al.* [#zahedi2012]_
 
-.. image:: images/sharp-bubble-contour-case1.png
+.. image:: images/proj-bubble-contour-case1.png
     :alt: bubble
     :align: center
     :width: 500
 
 The evolution of the position and velocity of the barycenter of the bubble is compared with the results of Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_ The following images show the results of these comparisons. The agreement between the simulations is remarkable considering the coarse mesh used within this example.
 
-.. image:: images/sharp-ymean-t-case1.png
+.. image:: images/proj-ymean-t-case1.png
     :alt: ymean_t
     :align: center
     :width: 500
 
-.. image:: images/sharp-bubble-rise-velocity-case1.png
+.. image:: images/proj-bubble-rise-velocity-case1.png
     :alt: bubble_rise_velocity
     :align: center
     :width: 500
@@ -339,19 +339,19 @@ The same python post-processing code (``rising-bubble.py``) is used for test cas
   
 The following image shows the shape of the bubble after :math:`3` seconds of simulation, and compares it with results obtained by three different codes reported in the work of Hysing *et al.* [#hysing2009]_: TP2D, FreeLIFE and MooNMD.
 
-.. image:: images/sharp-bubble-contour-case2.png
+.. image:: images/proj-bubble-contour-case2.png
     :alt: bubble
     :align: center
     :width: 500
 
 The evolution of the position and velocity of the barycenter of the bubble is also compared with the results from [#hysing2009]_. The following figures show good agreement with the reference.
 
-.. image:: images/sharp-ymean-t-case2.png
+.. image:: images/proj-ymean-t-case2.png
     :alt: ymean_t
     :align: center
     :width: 500
 
-.. image:: images/sharp-bubble-rise-velocity-case2.png
+.. image:: images/proj-bubble-rise-velocity-case2.png
     :alt: bubble_rise_velocity
     :align: center
     :width: 500
@@ -436,18 +436,20 @@ Case 1
 
 * Bubble Contour
 
-  For the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from [#zahedi2012]_ more accurately than the projection-based method.
+  For the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Zahedi *et al.* [#zahedi2012]_ more accurately than the projection-based method. 
 
-  .. image:: images/sharp-bubble-contour-case1.png
+  .. image:: images/proj-bubble-contour-case1.png
       :width: 350
       
   .. image:: images/geo-bubble-contour-case1.png
       :width: 350
 
   .. image:: images/alge-bubble-contour-case1.png
-      :align: center
       :width: 350
-
+      
+  .. image:: images/bubble-contour-case1.png
+      :width: 350
+      
 * Volume Conservation
 
   The following two definitions of the volume of the bubble are considered for this comparison:
@@ -481,16 +483,18 @@ Case 2
 
 * Bubble Contour
 
-  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric and projection-based methods result, respectively, in a continuous and discontinuous skirt, while the PDE-based does not capture this feature.
+  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric and projection-based methods result, respectively, in a continuous and discontinuous skirt, while the PDE-based does not capture this feature.
 
-  .. image:: images/sharp-bubble-contour-case2.png
+  .. image:: images/proj-bubble-contour-case2.png
       :width: 350
 
   .. image:: images/geo-bubble-contour-case2.png
       :width: 350
 
   .. image:: images/alge-bubble-contour-case2.png
-      :align: center
+      :width: 350
+      
+  .. image:: images/bubble-contour-case2.png
       :width: 350
 
 * Volume Conservation
