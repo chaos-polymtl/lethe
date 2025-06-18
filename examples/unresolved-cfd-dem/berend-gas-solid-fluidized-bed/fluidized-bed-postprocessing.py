@@ -48,8 +48,9 @@ args, leftovers=parser.parse_known_args()
 # Simulation folder
 folder=args.folder
 
-# Starting vtu id (~2s at least, 5s better)
+# Starting vtu id (~2s at least)
 start = 200
+end = 1000
 
 # Load lethe data
 pvd_particles = 'out_particles.pvd'
@@ -60,12 +61,12 @@ fluid = lethe_pyvista_tools(folder, prm_file, pvd_fluid)
 time = np.array(particles.time_list)
 
 # Get mean pressures and void fractions on the plane at 45mm above the floating wall
-pressure = np.zeros(len(time)-start)
-void_fraction = np.zeros(len(time)-start)
-bed_height = np.zeros(len(time)-start)
+pressure = np.zeros(end-start)
+void_fraction = np.zeros(end-start)
+bed_height = np.zeros(end-start)
 y_values = [0.001, 0.003, 0.005, 0.007]
 
-for i in range(start, len(time)):
+for i in range(start, end):
 
     df_fluid = fluid.get_df(i)
     sampled_pressures = []
@@ -88,13 +89,11 @@ for i in range(start, len(time)):
 # Plot mean pressure and void fraction over time
 reference_pressure = pd.read_csv('reference/relative_pressure.csv')
 plt.figure()
-plt.plot(time[start:],pressure-np.mean(pressure),label='Lethe')
+plt.plot(time[start:end],pressure-np.mean(pressure),label='Lethe')
 plt.plot(reference_pressure['t'],reference_pressure['p'], label='Ref')
 plt.legend()
 plt.xlabel('Time (s)')
 plt.ylabel('Relative pressure (Pa)')
-plt.yticks(np.arange(-300, 500, 100))
-plt.xticks(np.arange(3, 6, 0.5))
 plt.xlim(3,6)
 plt.ylim(-300,300)
 plt.grid()
@@ -104,7 +103,7 @@ plt.show()
 
 reference_voidage = pd.read_csv('reference/voidage.csv')
 plt.figure()
-plt.plot(time[start:],void_fraction, label='Lethe')
+plt.plot(time[start:end],void_fraction, label='Lethe')
 plt.plot(reference_voidage['t'],reference_voidage['voidage'], label='Ref')
 plt.legend()
 plt.xlabel('Time (s)')
@@ -121,8 +120,10 @@ plt.show()
 # Calculate Power Spectral Density of pressure
 reference_psd = pd.read_csv('reference/psd.csv')
 plt.figure()
-fs = 1000
-f, P = signal.periodogram(pressure,fs)
+dt = time[1] - time[0]
+fs = 1 / dt
+print(fs)
+f, P = signal.periodogram(pressure-np.mean(pressure),fs)
 plt.loglog(f, P, label='Lethe')
 plt.loglog(reference_psd['f'],reference_psd['PSD'], label='Ref')
 plt.legend()
@@ -132,10 +133,11 @@ plt.xlabel('frequency [Hz]')
 plt.ylabel(f'PSD $[Pa^2/Hz]$')
 plt.grid()
 plt.subplots_adjust(left=0.2)
+plt.savefig('pressure-psd')
+plt.show()
 
-# fs = 1000  # Sampling frequency (Hz)
 # N = len(pressure)
-# fft_vals = np.fft.fft(pressure)
+# fft_vals = np.fft.fft(pressure-np.mean(pressure))
 # fft_freqs = np.fft.fftfreq(N, 1/fs)
 # psd = (1 / (fs * N)) * np.abs(fft_vals)**2
 # psd[1:N//2] *= 2 
@@ -148,21 +150,20 @@ plt.subplots_adjust(left=0.2)
 # plt.ylabel(f'PSD $[Pa^2/Hz]$')
 # plt.grid()
 # plt.subplots_adjust(left=0.2)
-plt.savefig('pressure-psd')
-plt.show()
+# plt.show()
 
-reference_height = pd.read_csv('reference/height.csv')
-plt.figure()
-plt.plot(time[start:],bed_height, label='Lethe')
-plt.plot(reference_height['t'],reference_height['h'], label='Ref')
-plt.legend()
-plt.xlabel('Time (s)')
-plt.ylabel('Bed height (m)')
-plt.yticks(np.arange(0.05, 0.25, 0.05))
-plt.xticks(np.arange(2, 4, 0.25))
-plt.xlim(2,4)
-plt.ylim(0.05,0.25)
-plt.grid()
-plt.subplots_adjust(left=0.2)
-plt.savefig('bed-height')
-plt.show()
+# reference_height = pd.read_csv('reference/height.csv')
+# plt.figure()
+# plt.plot(time[start:end],bed_height, label='Lethe')
+# plt.plot(reference_height['t'],reference_height['h'], label='Ref')
+# plt.legend()
+# plt.xlabel('Time (s)')
+# plt.ylabel('Bed height (m)')
+# plt.yticks(np.arange(0.05, 0.25, 0.05))
+# plt.xticks(np.arange(2, 4, 0.25))
+# plt.xlim(2,4)
+# plt.ylim(0.05,0.25)
+# plt.grid()
+# plt.subplots_adjust(left=0.2)
+# plt.savefig('bed-height')
+# plt.show()

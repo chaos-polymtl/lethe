@@ -191,7 +191,7 @@ subsection floating walls
       set nz = 1
     end
     set start time = 0
-    set end time   = 10
+    set end time   = 30
   end
 end
 
