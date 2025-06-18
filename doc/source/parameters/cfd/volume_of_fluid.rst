@@ -90,7 +90,7 @@ Interface Regularization Method
 
 The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step. 
 
-* ``type``: sets the method of regularization. There are three methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
+* ``type``: sets the method of regularization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
 
 * ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
@@ -145,13 +145,13 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 Geometric Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = geometric interface reinitialization`` reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted to back a phase fraction using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``geometric interface reinitialization`` defines the relevant parameters.
+The ``type = geometric interface reinitialization`` reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
 
-* ``max reinitialization distance``: the maximum distance up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
+* ``max reinitialization distance``: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
 
 * ``transformation type``: type of the transformation function used to convert the signed distance to a phase fraction. The choices are: ``tanh`` and ``piecewise polynomial``.
   
-  * ``tanh``: the regularized phase fraction is given by :math:`\phi = 0.5-0.5\tanh(d/\varepsilon)`, where :math:`d` is the signed distance and :math:`\varepsilon` is a measure of the interface thickness and is set by the parameter ``tanh thickness``.
+  * ``tanh``: the regularized phase fraction is given by :math:`\phi = 0.5-0.5\tanh(d/\varepsilon)`, where :math:`d` is the signed distance to the interface and :math:`\varepsilon` is a measure of the interface thickness and is set by the parameter ``tanh thickness``.
   
   * ``piecewise polynomial``: this transformation uses a piecewise polynomial function of degree 4. It takes the form:
   
@@ -162,7 +162,7 @@ The ``type = geometric interface reinitialization`` reinitializes the phase frac
         0.5 - 0.5(4d' - 6d'^2 + 4d'^3 - d'^4) \text{ if } d' > 0.0
       \end{cases}
     
-    where :math:`d' = d/d_\mathrm{max}` is the dimensionless distance and :math:`d_\mathrm{max}` is the ``max reinitialization distance``.
+    where :math:`d' = d/d_\mathrm{max}` is the dimensionless distance to the interface and :math:`d_\mathrm{max}` is the ``max reinitialization distance``.
   
 Algebraic Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++

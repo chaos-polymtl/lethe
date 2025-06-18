@@ -23,7 +23,7 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/multiphysics/rising-bubble``).
 
-- Parameter files: ``rising-bubble-sharp.prm``, ``rising-bubble-alge.prm``, ``rising-bubble-geo.prm``
+- Parameter files: ``rising-bubble-proj.prm``, ``rising-bubble-alge.prm``, ``rising-bubble-geo.prm``
 - Postprocessing Python script: ``rising-bubble.py``
 
 
@@ -31,7 +31,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -----------------------
 
-The two test cases simulated by Hysing et al. [#hysing2009]_ are reproduced in this example. In the first test case, a circular bubble with a density of :math:`100` and a kinematic viscosity of :math:`0.01` is defined at an initial location :math:`(0.5, 0.5)` in a rectangular column filled with a denser fluid. The density of the latter is :math:`1000` and its is kinematic viscosity :math:`0.01`. The surface tension coefficient is taken as :math:`24.5`. The second test case corresponds to a bubble density of :math:`1` and a kinematic viscosity of :math:`0.1`, and a surface tension value of :math:`1.96`. The remaining properties are kept the same as in the first test case.
+The two test cases simulated by Hysing et al. [#hysing2009]_ are reproduced in this example. In the first test case, a circular bubble with a density of :math:`100` and a kinematic viscosity of :math:`0.01` is initialized with its centroid at :math:`(0.5, 0.5)` in a rectangular column filled with a denser fluid. The density of the latter is :math:`1000` and its is kinematic viscosity is :math:`0.01`. The surface tension coefficient is taken as :math:`24.5`. The second test case corresponds to a bubble density of :math:`1`, a kinematic viscosity of :math:`0.1`, and a surface tension value of :math:`1.96`. The remaining properties are kept the same as in the first test case.
 
 At :math:`t = 0` the bubble is released and rises inside the denser fluid column.
 
@@ -70,7 +70,7 @@ Time integration is handled by a 2nd order backward differentiation scheme (``bd
       set max cfl          = 0.8
       set output name      = rising-bubble
       set output frequency = 20
-      set output path      = ./rising-bubble-sharp/
+      set output path      = ./rising-bubble-proj/
     end
 
 Multiphysics
@@ -109,7 +109,7 @@ This is addressed in the ``interface regularization method`` subsection. Lethe p
 
 We refer the reader to :doc:`../../../theory/multiphase/cfd/vof` theory guide for more explanation on phase filtration and the interface regularization methods.
 
-For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other regularization methods avaible are described in the second part of this example (:ref:`Interface Regularization Methods Comparison`).
+For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other regularization methods available are described in the second part of this example (:ref:`Interface Regularization Methods Comparison`).
 
 
 .. code-block:: text
@@ -153,7 +153,7 @@ The ``vof dcdd stabilization`` is turned off as it had a negative impact on volu
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` at :math:`(x,y)=(0.5, 0.5)`. We enable the use of a projection step to ensure that the initial phase distribution is sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` example.
+In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` and a center located at :math:`(x,y)=(0.5, 0.5)`. We enable the use of a projection step to ensure that the initial phase distribution is sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` example.
 
 .. code-block:: text
 
@@ -180,7 +180,7 @@ We define two fluids simply by setting the number of fluids to be :math:`2`. In 
 
 Then a ``fluid-fluid`` type of ``material interaction`` is added to specify the ``surface tension model``. In this example, it is set to ``constant`` with the ``surface tension coefficient`` depending on the test case [#hysing2009]_.
 
-The values already in the provided parameter files are the ones for the case 1. When launching the case 2, the density and the kinematic viscosity of ``fluid 1`` and the ``surface tension coefficient`` for the case 1 should be commented to use the ones for the case 2 instead.
+The values in the provided parameter files correspond to case 1. When launching case 2, the density and the kinematic viscosity of ``fluid 1`` and the ``surface tension coefficient`` for case 1 should be commented to use the ones for case 2 instead.
 
 .. code-block:: text
 
@@ -273,7 +273,7 @@ Call ``lethe-fluid`` by invoking:
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid rising-bubble-sharp.prm
+  mpirun -np 8 lethe-fluid rising-bubble-proj.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 
@@ -297,9 +297,9 @@ Run
 .. code-block:: text
   :class: copy-button
 
-  python3 ./rising-bubble.py -f rising-bubble-sharp -c 1
+  python3 ./rising-bubble.py -f rising-bubble-proj -c 1
 
-to execute this post-processing code, where ``rising-bubble-sharp`` is the directory that contains the simulation results and ``-c 1`` is used for test case 1. 
+to execute this post-processing code, where ``rising-bubble-proj`` is the directory that contains the simulation results and ``-c 1`` is used for test case 1. 
 
 The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares them with results of Zahedi *et al.* [#zahedi2012]_
 
@@ -308,7 +308,7 @@ The following image shows the shape and dimensions of the bubble after :math:`3`
     :align: center
     :width: 500
 
-The results for the barycenter position and velocity of the bubble are compared with the simulations of Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_ The following images show the results of these comparisons. The agreement between the simulations is remarkable considering the coarse mesh used within this example.
+The evolution of the position and velocity of the barycenter of the bubble is compared with the results of Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_ The following images show the results of these comparisons. The agreement between the simulations is remarkable considering the coarse mesh used within this example.
 
 .. image:: images/sharp-ymean-t-case1.png
     :alt: ymean_t
@@ -335,7 +335,7 @@ The same python post-processing code (``rising-bubble.py``) is used for test cas
 .. code-block:: text
   :class: copy-button
 
-  python3 ./rising-bubble.py -f rising-bubble-sharp -c 2
+  python3 ./rising-bubble.py -f rising-bubble-proj -c 2
   
 The following image shows the shape of the bubble after :math:`3` seconds of simulation, and compares it with results obtained by three different codes reported in the work of Hysing *et al.* [#hysing2009]_: TP2D, FreeLIFE and MooNMD.
 
@@ -344,7 +344,7 @@ The following image shows the shape of the bubble after :math:`3` seconds of sim
     :align: center
     :width: 500
 
-The barycenter position and velocity of the bubble are also compared to the results from [#hysing2009]_. The following figures show good agreement with the reference.
+The evolution of the position and velocity of the barycenter of the bubble is also compared with the results from [#hysing2009]_. The following figures show good agreement with the reference.
 
 .. image:: images/sharp-ymean-t-case2.png
     :alt: ymean_t
@@ -365,7 +365,7 @@ Interface Regularization Methods Comparison
 Parameter Files
 ~~~~~~~~~~~~~~~~
 
-For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``VOF`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are avaible in the example's folder. The subsections are modified according to each regularization method: 
+For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``VOF`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
 
 * With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. The ``max reinitialization distance`` parameter is set to :math:`0.032` and we select the ``piecewise polynomial`` function to transform the signed distance in a phase fraction field.
 
@@ -381,7 +381,7 @@ For the methods other than ``projection-based interface sharpening``, the ``.prm
       end
     end
 
-* For the algebraic method, a intermidiary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. Setting the ``steady-state criterion`` to :math:`10^{-3}` yielded good results.
+* For the algebraic method, an intermidiary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. Setting the ``steady-state criterion`` to :math:`10^{-3}` yields good results.
 
 .. code-block:: text
 
@@ -415,9 +415,9 @@ We are interested in four metrics for this comparison: the barycenter position a
 .. code-block:: text
   :class: copy-button
 
-  python3 ./rising-bubble.py -s rising-bubble-sharp -g rising-bubble-geo -a rising-bubble-alge -c 1
+  python3 ./rising-bubble-comparison.py -s rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1
   
-where ``rising-bubble-sharp``, ``rising-bubble-geo``, and ``rising-bubble-alge`` are the folders that contain the simulation results and ``-c 1`` is used for test case 1 and ``-c 2`` for test case 2. 
+where ``rising-bubble-proj``, ``rising-bubble-geo``, and ``rising-bubble-alge`` are the folders that contain the simulation results. Additionally, ``-c 1`` is used for test case 1 and ``-c 2`` for test case 2. 
   
 Case 1
 ~~~~~~~
@@ -450,12 +450,13 @@ Case 1
 
 * Volume Conservation
 
-  Two definitions of the volume of the bubble are considered for this comparison:
+  The following two definitions of the volume of the bubble are considered for this comparison:
 
   * :math:`V =\int_\Omega \phi \, d\Omega`, denoted the global volume
   * :math:`V =\int_{\Omega_\mathrm{1}} 1 \, d\Omega`, denoted the geometric volume
-
-  The following images show their evolution over the initial volume throughout the simulation, with the global volume on the left and the geometric volume on the right. The PDE-based method has the less volume variation, while the projection-based method has a maximum volume variation of about :math:`0.25 %` and the geometric method has a maximum volume loss of :math:`0.6%` at the end of the simulation.
+    where :math:`\Omega_1` represents the domain occupied by fluid 1, corresponding to the bubble in this case.
+    
+  The following images show the evolution of their ratio to the initial volume throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. The PDE-based method has a smaller volume variation, while the projection-based method has a maximum volume variation of about :math:`0.25 %` and the geometric method has a maximum volume loss of :math:`0.6%` at the end of the simulation.
 
   .. image:: images/global-mass-conservation-case1.png
       :width: 350
@@ -480,7 +481,7 @@ Case 2
 
 * Bubble Contour
 
-  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric and projection-based methods result respectively in a continuous and discontinuous skirt, while the PDE-based does not capture this feature.
+  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric and projection-based methods result, respectively, in a continuous and discontinuous skirt, while the PDE-based does not capture this feature.
 
   .. image:: images/sharp-bubble-contour-case2.png
       :width: 350
@@ -494,7 +495,7 @@ Case 2
 
 * Volume Conservation
 
-  The following images show the evolution of the volume over the initial volume throughout the simulation, with the global volume on the left and the geometric volume on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of filaments where the phase is not close enough to 1.
+  The following images show the evolution of the ratio of the bubble volume over its initial counterpart throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of unresolved filaments that are thin enough to prevent the phase fraction from attaining a value of 1 within them.
 
   .. image:: images/global-mass-conservation-case2.png
       :width: 350

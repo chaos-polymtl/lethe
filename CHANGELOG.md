@@ -8,12 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MINOR The function defining zero_constraints considered the types noslip, function, and none in the same else case. This has been fixed so that none is indeed a "do-nothing" boundary condition. [#1557](https://github.com/chaos-polymtl/lethe/pull/1557)
+## [Master] - 2025-18-06
 
 ### Added
 
 - MINOR This PR extends the rising bubble example with the addition of a second test case and the comparison of the regularization methods implemented in Lethe. It also documents the geometric reinitialization method in the parameters section and the theory guide.  
 
-## [Master] - 2025-16-09
+## [Master] - 2025-06-16
 
 ### Added
 

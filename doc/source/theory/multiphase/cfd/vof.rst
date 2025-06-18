@@ -148,11 +148,11 @@ Geometric Interface Reinitialization
 
 The geometric interface reinitialization implemented in Lethe uses the signed distance :math:`d` from the interface to regularize the phase fraction field.  The method is based on the work of Ausas *et al.* (2011) [#ausas2011]_, originaly proposed in a level-set framework. Once computed, the signed distance is transformed into a phase fraction field using a transformation function :math:`g` such as :math:`\phi = g(d)`.
 
-To compute the signed distance, the interface is linearly reconstructed from the iso-contour :math:`\phi=0.5` using the `Marching Cube algorithm implemented in deal.II <https://dealii.org/current/doxygen/deal.II/classGridTools_1_1MarchingCubeAlgorithm.html>`_. Then, the signed distance is computed layer-by-layer, from the interface until reaching the user-defined maximum distance :math:`d_\mathrm{max}` on each side of the interface. 
+To compute the signed distance, the interface is linearly reconstructed from the iso-contour :math:`\phi=0.5` using the `Marching Cube algorithm implemented in deal.II <https://dealii.org/current/doxygen/deal.II/classGridTools_1_1MarchingCubeAlgorithm.html>`_. Then, the signed distance is computed layer-by-layer, from the interface until the user-defined maximum distance :math:`d_\mathrm{max}` is reached on each side of the interface. 
 
-For the first layer, the analytical minimun distance between the DoFs of the cut cells and the interface reconstruction is computed. It comes down to the computation of the distance between points (i.e., the DoFs) and the line segments in 2D or triangles in 3D approximating the interface. 
+For the first layer, the analytical minimum distance between the DoFs of the cells cut by the interface and the reconstructed interface is computed. It comes down to the computation of the distance between points (i.e., the DoFs) and the line segments in 2D or triangles in 3D that approximate the interface.
 
-For the subsequent layers, the signed distance for the remaining DoFs in the narrow band defined by :math:`d \in [-d_\mathrm{max}, d_\mathrm{max}]` is computed iteratively by the resolution of a minimization problem. We refer the reader to the work of Ausas *et al.* (2011) [#ausas2011]_ for more details. The signed distance for the DoFs outside the narrow band is set to :math:`\pm d_\mathrm{max}`, where the sign corresponds to the side of the interface on which they are located.
+For the subsequent layers, the signed distance for the remaining DoFs is computed iteratively in the narrow band defined by :math:`d \in [-d_\mathrm{max}, d_\mathrm{max}]`, by solving a minimization problem. We refer the reader to the work of Ausas *et al.* (2011) [#ausas2011]_ for more details. The signed distance for the DoFs outside of the narrow band is set to :math:`\pm d_\mathrm{max}`, where the sign depends on the side of the interface on which they are located.
 
 Finally, the signed distance field is transformed to a phase fraction field. Here, we want that:
 
@@ -164,7 +164,7 @@ Finally, the signed distance field is transformed to a phase fraction field. Her
     0 \quad \text{if } d > d_\mathrm{max} \\
   \end{cases}
 
-In Lethe, two functions are available to achieve that: an hyperbolic tangent function or a 4th degree, piece-wise polynomial. 
+In Lethe, two functions are available to achieve that: a hyperbolic tangent function or a 4th degree, piecewise polynomial. 
 
 * hyperbolic tangent: the regularized phase fraction is given by
 
