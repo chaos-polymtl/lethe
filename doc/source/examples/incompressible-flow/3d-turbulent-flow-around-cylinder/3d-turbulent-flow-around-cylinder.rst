@@ -63,7 +63,7 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
 
 Box refinement
 ~~~~~~~~~~~~~~~~
-The ``box refinement`` subsection allows us to refine the mesh in a specific region of the domain. In this case, we refine the mesh around the cylinder to capture the boundary layer and wake region more accurately. The box refinement is defined by its center, size, and refinement level.
+The ``box refinement`` subsection allows us to refine the mesh in a specific region of the domain. In this case, we refine the mesh around the cylinder to capture the boundary layer and wake region more accurately. The box refinement is defined by its center, size, and refinement level. The mesh is refined by the box refinement twice by setting ``ìnitial refinement = 2``.
 
 .. code-block:: text
 
@@ -71,7 +71,7 @@ The ``box refinement`` subsection allows us to refine the mesh in a specific reg
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
-      set grid arguments     = 1,1,1 : -2, -3, 0 : 52,3,4 : false
+      set grid arguments     = 1,1,1 : -2, -3, -1 : 52,3,5 : false
       set initial refinement = 0
     end
     set initial refinement = 2
@@ -80,39 +80,51 @@ The ``box refinement`` subsection allows us to refine the mesh in a specific reg
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The ``boundary conditions`` subsection establishes the constraints on different parts of the domain:
+The ``boundary conditions`` subsection establishes the constraints on different parts of the domain: 
 
 .. code-block:: text
 
   subsection boundary conditions
-    set number = 3 
-    subsection bc 0          
+    set number = 6
+    subsection bc 0
       set type = function
       subsection u
-        set Function expression = -y
+        set Function expression = 1
       end
       subsection v
-        set Function expression = x
+        set Function expression = 0
       end
       subsection w
         set Function expression = 0
       end
     end
-    subsection bc 1       
+    subsection bc 1
+     set type = outlet
+     set beta = 1
+    end
+    subsection bc 2
       set type = noslip
     end
-    subsection bc 2            
-      set type               = periodic
-      set id                 = 2
-      set periodic_id        = 3
+    subsection bc 3
+      set type = slip
+    end
+    subsection bc 4
+      set type = slip
+    end
+    subsection bc 5
+      set type = periodic
+      set periodic_id = 6
       set periodic_direction = 2
     end
   end
 
+
+Periodic boundary conditions are applied to the front (``id=5``) and the back (``id=6``) of the domain to mimic an infinite domain in the axial direction.
+
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-In the present case, the Reynolds number is defined as: :math:`Re = \frac{Ud}{\nu}`. Since we set the values of :math:`U` and :math:`d`, the Reynold number of 4000 can be set solely using the kinematic viscosity: 
+In the present case, the Reynolds number is defined as: :math:`Re = \frac{UD}{\nu}`. Since we set the values of :math:`U` and :math:`D`, the Reynold number of 3900 can be set solely using the kinematic viscosity: 
 
 
 .. code-block:: text
@@ -120,40 +132,21 @@ In the present case, the Reynolds number is defined as: :math:`Re = \frac{Ud}{\n
   subsection physical properties
     set number of fluids = 1
     subsection fluid 0
-      set kinematic viscosity = 6.25e-5
+      set kinematic viscosity = 2.5641025e-04
     end
   end
 
 
-Initial Conditions 
-~~~~~~~~~~~~~~~~~~
-
-The ``initial conditions`` subsection lets us set-up the velocity and pressure of the flow at :math:`t = 0 \ \text{s}`:  
-
-.. code-block:: text
-
-    subsection initial conditions
-      set type = nodal
-      subsection uvwp
-        # A= -(kappa * kappa) / (1. - kappa * kappa);
-        # B= ri * ri / (1. - kappa * kappa);
-        set Function constants = epsilon=0.1, ri=0.5, omega=1.0, d=0.5 , A= -0.3333333333333333, B= 0.3333333333333333
-        set Function expression = cos(atan2(y,x))*(epsilon*omega*ri*cos(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)) - sin(atan2(y,x))*(A*(sqrt(x*x+y*y)) + B/(sqrt(x*x+y*y)) + epsilon*omega*ri*sin(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)); sin(atan2(y,x))*(epsilon*omega*ri*cos(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)) + cos(atan2(y,x))*(A*(sqrt(x*x+y*y)) + B/(sqrt(x*x+y*y)) + epsilon*omega*ri*sin(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)); 0.0; ((0.5*A*A*(x*x+y*y)) + (2*A*B*ln(sqrt(x*x+y*y)))) - (0.5*B*B/(x*x+y*y)) + (0.5*(epsilon*omega*ri)*(epsilon*omega*ri)*cos(2*atan2(y,x))*sin((2*(sqrt(x*x+y*y)-ri)*pi)/ri)*sin(2*z/d))
-      end
-    end
-
-The ``type`` is set to ``nodal``. Then we choose the ``uvwp subsection`` which allows us to respectively set the :math:`u_x;u_y;u_z;p` expressions under the ``function expression``. Switching from cylindrical to Cartesian coordinates results in a quite complex expression. To help with that matter, we use the ``Function constant``. 
-
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The results obtained for the turbulent Taylor-Couette flow are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will compare the usage of second (Q2) and third degree (Q3) polynomial.
+The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present eaxmples consider both :math:`Q_1Q_1` and :math:`Q_2Q_2` elements.
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 2  #3 for Q3
-      set pressure order = 2  #3 for Q3
+      set velocity order = 1  #2 for Q3
+      set pressure order = 1  #2 for Q3
     end
 
 Forces
@@ -163,11 +156,15 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 
 .. code-block:: text
 
-    subsection forces
-      set calculate torque = true
-    end
+  subsection forces
+    set verbosity             = verbose
+    set calculate force       = true
+    set force name            = force
+    set output precision      = 10
+    set output frequency      = 10
+  end
 
-By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbosity = quiet`` will disable the print out on the terminal for each time step.
+By setting ``calculate force = true``, the calculation of the force resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. 
 
 
 Post-processing
@@ -175,33 +172,31 @@ Post-processing
 
 .. code-block:: text
 
-    subsection post-processing
-      set calculate kinetic energy = true
-      set calculate enstrophy      = true
-    end
+  subsection post-processing
+    set calculate average velocities      = true
+    set initial time for average velocity = 25
+  end
 
-To monitor the kinetic energy and the enstrophy, we set calculation to ``true`` in the post-processing section.  
+To monitor the average velocity and pressure, we set ``calculate average velocities = true``. The average velocity is computed starting from the time step specified by ``initial time for average velocity = 25``. This allows us to focus on the statistically steady state of the flow. 
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 10 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 2``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 500 time-steps. 
 
 .. code-block:: text
 
-    subsection simulation control
-      set method            = bdf2
-      set time step         = 0.01
-      set adapt             = true
-      set max cfl           = 1
-      set time end          = 60  
-      set output frequency  = 10    
-      set subdivision       = 2
-    end
+  subsection simulation control
+    set method           = bdf2
+    set output name      = cylinder-Re3900
+    set output path      = ./output/
+    set time end         = 200                               
+    set adapt            = true
+    set max cfl          = 1
+    set time step        = 0.002
+    set output frequency = 500
+  end
 
-.. tip::
-
-  A good practice is to use as many subdivisions as the interpolation order scheme. 
 
 ----------------------
 Running the Simulation
@@ -212,13 +207,44 @@ Launching the simulation is as simple as specifying the executable name and the 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np n_proc lethe-fluid-matrix-free tc-matrix-free.prm 
+  mpirun -np n_proc lethe-fluid-matrix-free turbulent-cylinder.prm 
 
 and choosing the number of processes ``n_proc`` according to the resources you have available.
+
+.. note::
+
+  THe simulation takes approximatively 10 hours on 16 cores of a AMD Ryzen 9 7950X 16-Core Processor.
 
 ----------------------
 Results and Discussion
 ----------------------
+
+In the following, results obtained with a box refinement of 2 as well a 3 and using 
+
+The turbulent flow around a cylinder is quite complex. The following animation displays the evolution of the velocity magnitude on a slice of the domain as a function.
+
+
+.. list-table::
+   :widths: 20 20 20 20
+   :header-rows: 1
+
+   * - Study
+     - :math:`C_D`
+     - :math:`C_L`
+     - :math:`S_t`
+   * - Lethe example
+     - 1.396 :math:`\pm` 0.048
+     - -0.003 :math:`\pm` 0.72
+     - 0.2
+   * - Lethe Sharp [#barbeau2022]_
+     - 1.395 :math:`\pm` 0.047
+     - :math:`\pm` 0.71
+     - 0.2
+   * - Braza et al. [#braza1986]_
+     - 1.400 :math:`\pm` 0.050
+     - :math:`\pm` 0.75
+     - 0.2
+
 
 The flow patterns generated by the Taylor-Couette flow are quite complex. The following animation displays the evolution of velocity magnitude on the radial-vertical plane (left) and the Q-criterion iso-contours (right), illustrating the vortical structure as the vortex breaks down and generates smaller structures.
 
