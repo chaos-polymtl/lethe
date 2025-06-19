@@ -50,9 +50,10 @@ test()
       dof_handler.reinit(triangulation);
       dof_handler.distribute_dofs(fe);
 
-      Vector<double> signed_distance;
+      dealii::TrilinosWrappers::MPI::Vector signed_distance;
 
-      signed_distance.reinit(dof_handler.n_dofs());
+      signed_distance.reinit(dof_handler.locally_owned_dofs(),
+                                             triangulation.get_communicator());
 
       // Set the level-set field of the sphere
       VectorTools::interpolate(
@@ -62,9 +63,10 @@ test()
         signed_distance);
 
       // Compute the volume of the sphere
-      const double volume =
-        InterfaceTools::compute_volume(mapping,
-                                       dof_handler,
+      double volume, surface;
+
+      std::tie(volume, surface) =
+        InterfaceTools::compute_surface_and_volume(dof_handler,
                                        fe,
                                        signed_distance,
                                        iso_level,
