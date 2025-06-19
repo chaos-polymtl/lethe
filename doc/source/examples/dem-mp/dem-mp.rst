@@ -10,6 +10,7 @@ We organize the DEM-Multiphysics examples from the simplest to the most complica
     :glob:
 
     heat-transfer-in-aligned-particles/heat-transfer-in-aligned-particles
+    heated-packed-bed/heated-packed-bed
 
 .. graphviz:: 
 

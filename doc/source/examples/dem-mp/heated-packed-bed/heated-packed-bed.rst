@@ -3,7 +3,7 @@ Heated Packed Bed
 ==========================
 
 This example simulates the heating of a packed bed using the discrete element method (DEM) and heat transfer models. It is based on the validation case of Beaulieu [#Beaulieu2020]_ with stainless steel.
-More information regarding the DEM parameters is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
+More information regarding the Multiphysic DEM parameters is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
 
 
 ----------------------------------
@@ -25,8 +25,9 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/dem-mp/3d-heated-packed-bed``).
 
 - Parameter file to load particles: ``load-packed-bed.prm``
-- Parameter file for the simulation: ``heat-packed-bed.prm``
-- Geometry files for solid surfaces: ``square-top.geo``, ``square-side.geo``, ``square-rake.geo``
+- Parameter file to flip gravity: ``flip-packed-bed.prm``
+- Parameter file for the heating: ``heat-packed-bed.prm``
+- Geometry files for solid surfaces: ``square-top.geo``, ``square-rake.geo``, ``square-side.geo``
 - Post-processing Python script: ``bed-postprocessing.py``
 
 
@@ -36,9 +37,18 @@ Description of the Case
 
 This example is run in three stages. 
 First, during the loading stage (:math:`0-6` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box. In this part of the simulation, :math:`g = 9.81 \times e_x` because we insert the particles from the side of the box. When particles are still enough, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation.
-The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 e_z` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_ . We let the particles fall into their places for :math:`1` s. 
+The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 e_z` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_. We let the particles fall into their places for :math:`1` s. 
 Finally, during the heating stage (:math:`7-4000` s), the temperature of a solid surface placed on top on the packed bed is set to :math:`53°C` and the particles are heated through this top wall.
 
+.. image:: images/heated-steel-rake.png
+    :width: 350
+
+.. image:: images/heated-steel-side.png
+    :width: 350
+
+.. image:: images/heated-steel-final.png
+    :width: 350
+    :align: center
 
 --------------
 Parameter File
@@ -47,21 +57,21 @@ Parameter File
 Mesh
 ~~~~
 
-The domain we simulate is a rectangular box with dimensions :math:`0.3\times0.1\times0.2` meters and is made using the deal.ii grid generator.
+The domain is a rectangular box with dimensions :math:`0.3\times0.1\times0.2` meters and is made using the deal.ii grid generator.
 
 .. code-block:: text
 
     subsection mesh
       set type               = dealii
-      set grid type          = hyper_rectangle
-      set grid arguments     = -0.2 , 0.0 , 0.0 : 0.1 , 0.1 , 0.2 : false
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 3,1,2 : -0.2 , 0.0 , 0.0 : 0.1 , 0.1 , 0.2 : false
       set initial refinement = 2
     end
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~
 
-In the loading stage, particles are inserted through the side of the box, with a temperature of :math:`20°C`. :math:`3400` particles are inserted at each insertion step (except the last one).
+In the loading stage, particles are inserted through the side of the box, with a temperature of :math:`20°C`. This initial temperature was chosen to match the experimental data, even though Beaulieu seems to have chosen an initial temperature of :math:`19.8°C` for her simulation.
 
 .. code-block:: text
 
@@ -84,7 +94,7 @@ Lagrangian Physical Properties
 
 The :math:`8849` particles are mono-dispersed, with a diameter of :math:`6.4` mm.
 
-The physical properties of the steel particles, the walls and the interstitial gas were all chosen to match those used by Beaulieu in her experiment and simulation.
+The physical properties of the steel particles, the walls and the interstitial gas were chosen to match those used by Beaulieu in her simulation. Only the wall and particles Young's modulus were chosen :math:`10` times as high as the ones used by Beaulieu, to be able to match the experimental porosity of :math:`42%` for the packed bed.
 
 .. code-block:: text
 
@@ -96,7 +106,7 @@ The physical properties of the steel particles, the walls and the interstitial g
         set diameter                          = 6.4e-3
         set number of particles               = 8849
         set density particles                 = 7747
-        set young modulus particles           = 5e6
+        set young modulus particles           = 50e6
         set poisson ratio particles           = 0.29
         set restitution coefficient particles = 0.8
         set friction coefficient particles    = 0.7
@@ -109,7 +119,7 @@ The physical properties of the steel particles, the walls and the interstitial g
         set surface roughness particles       = 19.e-9
         set thermal accommodation particles   = 0.7
       end
-      set young modulus wall           = 5e6
+      set young modulus wall           = 50e6
       set poisson ratio wall           = 0.33
       set restitution coefficient wall = 0.8
       set friction coefficient wall    = 0.7
@@ -131,7 +141,7 @@ The physical properties of the steel particles, the walls and the interstitial g
 Model Parameters
 ~~~~~~~~~~~~~~~~
 
-For the loading and the stage where gravity is flipped, the model parameters are defined as:
+For the first two stages, the model parameters are defined as:
 
 .. code-block:: text
 
@@ -174,7 +184,7 @@ For the heating of the particles, the parameter ``disable position integration``
 Solid Objects
 ~~~~~~~~~~~~~~~
 
-Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from :math:`7` s to :math:`4000` s, with a temperature of :math:`53°C`. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within when the direction of gravity is changed.
+Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from :math:`7` s to :math:`4000` s, with a temperature of :math:`53°C`. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within it when the direction of the gravity is changed. The last two walls are both set to ``adiabatic``, meaning that they are not conductive.
 
 .. code-block:: text
 
@@ -223,7 +233,7 @@ Three solid surfaces are used in this example. The first one is the one used to 
             set initial refinement = 0
           end
           subsection translational velocity
-            set Function expression = if(t>3.6 && x<-0.001,0.5,0) ; 0 ; 0
+            set Function expression = if(t>3.6 && x<-0.005,0.5,0) ; 0 ; 0
           end
           subsection angular velocity
             set Function expression = 0 ; 0 ; 0
@@ -233,6 +243,10 @@ Three solid surfaces are used in this example. The first one is the one used to 
         end
       end
     end
+
+.. note::
+
+  The results are quite sensitive to the position of the side wall (``square-side.msh``), so it could probably by set more precisely for more accurate results.
 
 
 Simulation Control
@@ -270,9 +284,9 @@ For the heating stage:
 
     subsection simulation control
       set time step         = 1
-      set time end          = 4000
-      set log frequency     = 1
-      set output frequency  = 1
+      set time end          = 4007
+      set log frequency     = 10
+      set output frequency  = 10
       set output path       = ./output/
       set output boundaries = true
     end
@@ -282,14 +296,21 @@ For the heating stage:
 Running the Simulation
 -----------------------
 
-This simulation is launched in two steps. First the particles are loaded with:
+This simulation is launched in three steps. First the particles are loaded with:
 
 .. code-block:: text
   :class: copy-button
 
   mpirun -np 4 lethe-particles load-packed-bed.prm
 
-Then we run the simulation to heat the particles:
+Then, the direction of gravity is changed with:
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 4 lethe-particles flip-packed-bed.prm
+
+Finally, we run the simulation to heat the particles:
 
 .. code-block:: text
   :class: copy-button
@@ -297,29 +318,25 @@ Then we run the simulation to heat the particles:
   mpirun -np 4 lethe-particles heat-packed-bed.prm
 
 .. note::
-  In this example, the loading requires approximately 16 minutes, while simulating the temperature evolution requires 3 minutes on 4 cores.
+  In this example, the three stages require respectively around 16 minutes, 2 minutes and 2 minutes on 4 cores.
 
 
 ---------------
 Post-processing
 ---------------
 
-A Python post-processing code ``bed-postprocessing.py`` is provided with this example. It is used to compare the temperature of the packed-bed at three different heights :math:`h_1 = 4.0` cm, :math:`h_2 = 6.0` cm and :math:`h_3 = 7.3` cm (:math:`h = 0.0` cm corresponds to the top wall), with the results obtained by Beaulieu for stainless steel.
+A Python post-processing code ``bed-postprocessing.py`` is provided with this example. It is used to compare the temperature of the packed-bed at three different heights :math:`h_1 = 4.0` cm, :math:`h_2 = 6.0` cm and :math:`h_3 = 7.3` cm (:math:`h = 0.0` cm corresponds to the top wall), with the results obtained experimentally and numerically by Beaulieu for stainless steel.
 
 .. figure:: images/heights.png
     :height: 400
     :align: center
 
-The post-processing code can be run with the following line. The argument are the folder which contains the ``.prm`` file, the vtu id at which the loading ends (corresponding to :math:`7` s) and the height of the top wall when it has stopped.
+The post-processing code can be run with the following command. The argument is the folder which contains the ``.prm`` file.
 
 .. code-block:: text
   :class: copy-button
 
-    python3 bed-postprocessing.py  --folder ./ --start 139 --htop 0.198
-
-.. note::
-
-  The post-processing code may take a bit of time to run.
+    python3 bed-postprocessing.py  --folder ./
 
 .. important::
 
@@ -330,22 +347,22 @@ The post-processing code can be run with the following line. The argument are th
 Results
 -------
 
-The simulation can be visualised using Paraview as seen below.
-
-.. figure:: images/heated-steel.png
-    :width: 500
-    :align: center
-
-    Temperatures at the end of the simulation
-
 The following figure compares the temperature of the packed-bed at three different heights :math:`h_1 = 4.0` cm, :math:`h_2 = 6.0` cm and :math:`h_3 = 7.3` cm, with the results obtained by Beaulieu for stainless steel.
 
 .. figure:: images/mean-temperatures.png
     :width: 500
     :align: center
 
-The results show good agreement with the experimental data. However, since the heat transfer is very sensitive to the overlap, pushing the top wall more or less against the particles affects the results a lot and particularly the speed at which heat transfer propagates from the top wall. So the position of the top wall could be set more precisely to get even better results.
+The results show good agreement with the experimental and numerical results of Beaulieu but still undershoot a bit the temperature at :math:`h_1 = 4.0` cm compared to the experimental data. Our temperature curves are slightly higher than the ones numerically obtained by Beaulieu due to using the hertz contact radius instead of the analytical one. The higher Young's modulus also gives better results.
 
+It has been noticed while trying different methods to load the particles that the results change a lot according to the loading method but also depending on the walls friction coefficient.
+The following figure shows the results of the simulation with the ``friction coefficient wall`` set to :math:`1.0` instead of :math:`0.7`.
+
+.. figure:: images/mean-temperatures-friction.png
+    :width: 500
+    :align: center
+
+This ``friction coefficient wall`` allows to fit the experimental data better but it comes into question whether a friction coefficient of :math:`1.0` is realistic to model the Styrofoam walls used in the experiment. Also, other parameters like the ``rolling friction`` should have maybe been adjusted better to fit the experimental properties.
 
 ---------
 Reference
