@@ -105,21 +105,6 @@ InterfaceTools::compute_volume(const Mapping<3>       &mapping,
                                const double            iso_level,
                                const MPI_Comm         &mpi_communicator);
 
-template double
-InterfaceTools::compute_volume(const Mapping<2>       &mapping,
-                               const DoFHandler<2>    &dof_handler,
-                               const FiniteElement<2> &fe,
-                               const Vector<double>   &level_set_vector,
-                               const double            iso_level,
-                               const MPI_Comm         &mpi_communicator);
-template double
-InterfaceTools::compute_volume(const Mapping<3>       &mapping,
-                               const DoFHandler<3>    &dof_handler,
-                               const FiniteElement<3> &fe,
-                               const Vector<double>   &level_set_vector,
-                               const double            iso_level,
-                               const MPI_Comm         &mpi_communicator);
-
 template <int dim, typename VectorType>
 std::pair<double, double>
 InterfaceTools::compute_surface_and_volume(const DoFHandler<dim> &dof_handler,
