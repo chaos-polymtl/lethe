@@ -115,8 +115,8 @@ end
 
 subsection mesh
   set type               = dealii
-  set grid type          = hyper_rectangle
-  set grid arguments     = -0.2 , 0.0 , 0.0 : 0.1 , 0.1 , 0.2 : false
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 3,1,2 : -0.2 , 0.0 , 0.0 : 0.1 , 0.1 , 0.2 : false
   set initial refinement = 2
 end
 

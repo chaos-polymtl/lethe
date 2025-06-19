@@ -74,8 +74,8 @@ y_sample = 0.05
 temperature = np.zeros((len(time)-start,3))
 
 # Distance to define which particles are considered around the sampling points 
-# (diameter of the particles)
-D = 2*particle_radius 
+# (radius of the particles)
+D = particle_radius 
 
 for i_h, h in enumerate(heights):
     for i in range(start, len(time)):
@@ -113,8 +113,15 @@ for i_h, h in enumerate(heights):
     # Read temperature data from paper
     reference_data_sim = pd.read_csv('reference/steel_Beaulieu_' + f"{h:.3f}" + '_rough.csv')
     reference_data_exp = pd.read_csv('reference/steel_Beaulieu_' + f"{h:.3f}" + '_experiment.csv')
-    reference_data_sim = reference_data_sim[reference_data_sim['t']<=time[-1]]
-    reference_data_exp = reference_data_exp[reference_data_exp['t']<=time[-1]]
+
+    # Read and draw error
+    reference_data_error_1 = pd.read_csv('reference/steel_Beaulieu_' + f"{h:.3f}" + '_error1.csv')
+    reference_data_error_2 = pd.read_csv('reference/steel_Beaulieu_' + f"{h:.3f}" + '_error2.csv')
+    t1, T1 = reference_data_error_1['t'], reference_data_error_1['T']
+    t2, T2 = reference_data_error_2['t'], reference_data_error_2['T']
+    T2_interp = np.interp(t1, t2, T2)
+    plt.fill_between(t1, T1, T2_interp, color=colors[i_h], alpha=0.2, linewidth=0.7)
+
     # Plot
     line1, = plt.plot(time[start:],temperature[:, i_h], color=colors[i_h],label= f"Lethe")
     line2, = plt.plot(reference_data_sim['t'],reference_data_sim['T'], '--', color=colors[i_h], label= f"Beaulieu simulation")
@@ -124,7 +131,7 @@ for i_h, h in enumerate(heights):
 color_one   = mlines.Line2D([], [], color=colors[0], marker='s', linestyle='None', label=f"$h_1 = {heights[0]:.3f}$ m")
 color_two   = mlines.Line2D([], [], color=colors[1], marker='s', linestyle='None', label=f"$h_2 = {heights[1]:.3f}$ m")
 color_three = mlines.Line2D([], [], color=colors[2], marker='s', linestyle='None', label=f"$h_3 = {heights[2]:.3f}$ m")
-legend = plt.legend(handles=[line1, line2, line3, color_one, color_two, color_three],loc='upper left',fontsize=20)
+legend = plt.legend(handles=[line1, line2, line3, color_one, color_two, color_three],loc='upper left',fontsize=18)
 legend.legend_handles[0].set_color('k')
 legend.legend_handles[1].set_color('k')
 legend.legend_handles[2].set_color('k')
@@ -136,11 +143,3 @@ plt.xlabel('Time (s) after packing')
 plt.ylabel('Temperature (°C)')
 plt.savefig('mean-temperatures')
 plt.show()
-
-
-
-
-
-
-
-
