@@ -54,58 +54,6 @@ InterfaceTools::compute_cell_wise_volume(
 }
 
 template <int dim, typename VectorType>
-double
-InterfaceTools::compute_volume(const Mapping<dim>       &mapping,
-                               const DoFHandler<dim>    &dof_handler,
-                               const FiniteElement<dim> &fe,
-                               const VectorType         &level_set_vector,
-                               const double              iso_level,
-                               const MPI_Comm           &mpi_communicator)
-{
-  FEPointEvaluation<1, dim> fe_point_evaluation(
-    mapping, fe, update_jacobians | update_JxW_values);
-
-  double volume = 0.0;
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          const unsigned int n_dofs_per_cell = cell->get_fe().n_dofs_per_cell();
-          Vector<double>     cell_dof_level_set_values(n_dofs_per_cell);
-
-          cell->get_dof_values(level_set_vector,
-                               cell_dof_level_set_values.begin(),
-                               cell_dof_level_set_values.end());
-
-          const double level_set_correction = -iso_level;
-          volume += compute_cell_wise_volume(fe_point_evaluation,
-                                             cell,
-                                             cell_dof_level_set_values,
-                                             level_set_correction,
-                                             cell->get_fe().degree + 1);
-        }
-    }
-  volume = Utilities::MPI::sum(volume, mpi_communicator);
-
-  return volume;
-}
-
-template double
-InterfaceTools::compute_volume(const Mapping<2>       &mapping,
-                               const DoFHandler<2>    &dof_handler,
-                               const FiniteElement<2> &fe,
-                               const GlobalVectorType &level_set_vector,
-                               const double            iso_level,
-                               const MPI_Comm         &mpi_communicator);
-template double
-InterfaceTools::compute_volume(const Mapping<3>       &mapping,
-                               const DoFHandler<3>    &dof_handler,
-                               const FiniteElement<3> &fe,
-                               const GlobalVectorType &level_set_vector,
-                               const double            iso_level,
-                               const MPI_Comm         &mpi_communicator);
-
-template <int dim, typename VectorType>
 std::pair<double, double>
 InterfaceTools::compute_surface_and_volume(const DoFHandler<dim> &dof_handler,
                                            const FiniteElement<dim> &fe,
