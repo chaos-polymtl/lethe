@@ -192,7 +192,7 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
         this->present_solution,
         simulation_parameters.flow_control.boundary_flow_id,
         *this->face_quadrature,
-        *this->mapping);
+        *this->get_mapping());
 
       this->flow_control.calculate_beta(average_velocity,
                                         simulation_control->get_time_step(),
@@ -248,7 +248,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
                      simulation_parameters.physical_properties_manager,
                      simulation_parameters.boundary_conditions,
                      *this->face_quadrature,
-                     *this->mapping);
+                     *this->get_mapping());
 
   if (simulation_parameters.forces_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
@@ -384,7 +384,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
                       simulation_parameters.physical_properties_manager,
                       simulation_parameters.boundary_conditions,
                       *this->face_quadrature,
-                      *this->mapping);
+                      *this->get_mapping());
 
   if (simulation_parameters.forces_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
@@ -524,7 +524,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
                                        this->present_solution,
                                        simulation_control->get_time_step(),
                                        *this->cell_quadrature,
-                                       *this->mapping);
+                                       *this->get_mapping());
       this->simulation_control->set_CFL(CFL);
     }
   if (this->simulation_parameters.restart_parameters.checkpoint &&
@@ -554,6 +554,11 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
+
+  // If the mortar method is enabled, update the rotor configuration in the
+  // mortar coupling operator
+  if (this->simulation_parameters.mortar.enable)
+    this->rotate_mortar_mapping();
 
   if (simulation_parameters.multiphysics.fluid_dynamics)
     {
@@ -651,7 +656,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
   this->fe_values_temperature =
-    std::make_shared<FEValues<dim>>(*this->mapping,
+    std::make_shared<FEValues<dim>>(*this->get_mapping(),
                                     dof_handler_ht->get_fe(),
                                     *this->cell_quadrature,
                                     update_values);
@@ -663,7 +668,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
       this->fe_values_vof =
-        std::make_shared<FEValues<dim>>(*this->mapping,
+        std::make_shared<FEValues<dim>>(*this->get_mapping(),
                                         dof_handler_vof->get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
@@ -963,7 +968,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       if (ivar.first == Variable::pressure)
         {
           KellyErrorEstimator<dim>::estimate(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             *this->face_quadrature,
             typename std::map<types::boundary_id,
@@ -975,7 +980,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       else if (ivar.first == Variable::velocity)
         {
           KellyErrorEstimator<dim>::estimate(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             *this->face_quadrature,
             typename std::map<types::boundary_id,
@@ -1255,7 +1260,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       double enstrophy = calculate_enstrophy(this->dof_handler,
                                              present_solution,
                                              *this->cell_quadrature,
-                                             *this->mapping);
+                                             *this->get_mapping());
 
       this->enstrophy_table.add_value("time",
                                       simulation_control->get_current_time());
@@ -1294,7 +1299,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         calculate_pressure_power(this->dof_handler,
                                  present_solution,
                                  *this->cell_quadrature,
-                                 *this->mapping);
+                                 *this->get_mapping());
 
       this->pressure_power_table.add_value(
         "time", simulation_control->get_current_time());
@@ -1335,7 +1340,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         this->dof_handler,
         present_solution,
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         simulation_parameters.physical_properties_manager);
 
       this->viscous_dissipation_table.add_value(
@@ -1390,7 +1395,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       double kE = calculate_kinetic_energy(this->dof_handler,
                                            present_solution,
                                            *this->cell_quadrature,
-                                           *this->mapping);
+                                           *this->get_mapping());
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);
@@ -1427,7 +1432,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         this->dof_handler,
         this->present_solution,
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         this->simulation_parameters.physical_properties_manager);
 
       this->apparent_viscosity_table.add_value(
@@ -1467,7 +1472,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       double pressure_drop, total_pressure_drop;
       std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
         this->dof_handler,
-        *this->mapping,
+        *this->get_mapping(),
         this->evaluation_point,
         *this->cell_quadrature,
         *this->face_quadrature,
@@ -1538,7 +1543,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                 this->present_solution,
                                 boundary_id,
                                 *this->face_quadrature,
-                                *this->mapping);
+                                *this->get_mapping());
 
           this->flow_rate_table.add_value(
             "flow-rate-" + Utilities::int_to_string(boundary_id, 2),
@@ -1625,7 +1630,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                present_solution,
                                exact_solution,
                                *this->cell_quadrature,
-                               *this->mapping);
+                               *this->get_mapping());
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
           if (simulation_parameters.simulation_control.method ==
@@ -1694,12 +1699,12 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 {
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  VectorTools::interpolate(*this->mapping,
+  VectorTools::interpolate(*this->get_mapping(),
                            this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
                            this->newton_update,
                            this->fe->component_mask(velocities));
-  VectorTools::interpolate(*this->mapping,
+  VectorTools::interpolate(*this->get_mapping(),
                            this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
                            this->newton_update,
@@ -1718,13 +1723,13 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
           const FEValuesExtractors::Vector velocities(0);
           const FEValuesExtractors::Scalar pressure(dim);
           VectorTools::interpolate(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             this->simulation_parameters.initial_condition->uvwp,
             this->newton_update,
             this->fe->component_mask(velocities));
           VectorTools::interpolate(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             this->simulation_parameters.initial_condition->uvwp,
             this->newton_update,
@@ -1782,7 +1787,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
       if (type == BoundaryConditions::BoundaryType::noslip)
         {
           VectorTools::interpolate_boundary_values(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             id,
             dealii::Functions::ZeroFunction<dim>(dim + 1),
@@ -1798,7 +1803,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             0,
             no_normal_flux_boundaries,
             nonzero_constraints,
-            *this->mapping);
+            *this->get_mapping());
         }
       else if (type == BoundaryConditions::BoundaryType::function)
         {
@@ -1812,7 +1817,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             .navier_stokes_functions.at(id)
             ->w.set_time(time);
           VectorTools::interpolate_boundary_values(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             id,
             NavierStokesFunctionDefined<dim>(
@@ -1894,7 +1899,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           type == BoundaryConditions::BoundaryType::function)
         {
           VectorTools::interpolate_boundary_values(
-            *this->mapping,
+            *this->get_mapping(),
             this->dof_handler,
             id,
             dealii::Functions::ZeroFunction<dim>(dim + 1),
@@ -1910,7 +1915,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
             0,
             no_normal_flux_boundaries,
             this->zero_constraints,
-            *this->mapping);
+            *this->get_mapping());
         }
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {
@@ -1952,6 +1957,53 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
   this->establish_solid_domain(false);
 
   this->zero_constraints.close();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
+{
+  if (this->simulation_parameters.mortar.enable)
+    {
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+      // Get updated rotation angle
+      simulation_parameters.mortar.rotor_angular_velocity->set_time(
+        this->simulation_control->get_current_time());
+      const double rotation_angle =
+        simulation_parameters.mortar.rotor_angular_velocity->value(
+          Point<dim>());
+
+      if (simulation_parameters.mortar.verbosity ==
+          Parameters::Verbosity::verbose)
+        this->pcout << "Mortar - Rotating rotor grid: " << rotation_angle
+                    << " rad \n"
+                    << std::endl;
+
+      // If this is the first iteration, store initial mapping and create
+      // mapping cache object. Otherwise, use initalize() function to update
+      // current mapping cache
+      if (this->get_current_newton_iteration() == 0)
+        {
+          this->mapping_cache =
+            std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+          this->initial_mapping = this->mapping;
+        }
+
+      LetheGridTools::rotate_mapping(
+        this->dof_handler,
+        *this->mapping_cache,
+        *this->initial_mapping,
+        compute_n_subdivisions_and_radius(*this->triangulation,
+                                          this->simulation_parameters.mortar)
+          .second,
+        rotation_angle);
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The mapping rotation requires a more recent version of deal.II."));
+#endif
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2650,7 +2702,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         qcriterion_field =
           qcriterion_smoothing.calculate_smoothed_field(solution,
                                                         this->dof_handler,
-                                                        this->mapping);
+                                                        this->get_mapping());
 
         std::vector<DataComponentInterpretation::DataComponentInterpretation>
           data_component_interpretation(
@@ -2669,7 +2721,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         continuity_field =
           continuity_smoothing.calculate_smoothed_field(solution,
                                                         this->dof_handler,
-                                                        this->mapping);
+                                                        this->get_mapping());
 
         std::vector<DataComponentInterpretation::DataComponentInterpretation>
           data_component_interpretation(
@@ -2706,7 +2758,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   // Build the patches and write the output
 
-  data_out.build_patches(*this->mapping,
+  data_out.build_patches(*this->get_mapping(),
                          subdivision,
                          DataOut<dim>::curved_inner_cells);
 
@@ -2734,7 +2786,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       BoundaryPostprocessor<dim> boundary_id;
       data_out_faces.attach_dof_handler(this->dof_handler);
       data_out_faces.add_data_vector(solution, boundary_id);
-      data_out_faces.build_patches(*this->mapping, subdivision);
+      data_out_faces.build_patches(*this->get_mapping(), subdivision);
 
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);

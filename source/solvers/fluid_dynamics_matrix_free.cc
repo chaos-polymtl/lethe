@@ -2263,7 +2263,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // Initialize matrix-free object
   unsigned int mg_level = numbers::invalid_unsigned_int;
   this->system_operator->reinit(
-    *this->mapping,
+    *this->get_mapping(),
     this->dof_handler,
     this->zero_constraints,
     *this->cell_quadrature,
@@ -2310,7 +2310,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     }
 
   double global_volume =
-    GridTools::volume(*this->triangulation, *this->mapping);
+    GridTools::volume(*this->triangulation, *this->get_mapping());
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
@@ -2556,7 +2556,7 @@ FluidDynamicsMatrixFree<dim>::create_GMG()
     this->dof_handler,
     this->dof_handler_fe_q_iso_q1);
 
-  gmg_preconditioner->reinit(this->mapping,
+  gmg_preconditioner->reinit(this->get_mapping(),
                              this->cell_quadrature,
                              this->forcing_function,
                              this->simulation_control,

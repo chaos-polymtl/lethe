@@ -134,7 +134,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
     }
 
   double global_volume =
-    GridTools::volume(*this->triangulation, *this->mapping);
+    GridTools::volume(*this->triangulation, *this->get_mapping());
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
@@ -483,7 +483,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.VOF)
@@ -493,7 +493,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
       scratch_data.enable_vof(
         dof_handler_vof->get_fe(),
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
       if (this->simulation_parameters.multiphysics.vof_parameters
@@ -507,10 +507,10 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
           scratch_data.enable_projected_phase_fraction_gradient(
             projected_phase_fraction_gradient_dof_handler.get_fe(),
             *this->cell_quadrature,
-            *this->mapping);
+            *this->get_mapping());
           scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
                                         *this->cell_quadrature,
-                                        *this->mapping);
+                                        *this->get_mapping());
         }
     }
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
@@ -520,7 +520,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
       scratch_data.enable_cahn_hilliard(
         dof_handler_cahn_hilliard->get_fe(),
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 
@@ -530,7 +530,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
       scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
                                         *this->cell_quadrature,
-                                        *this->mapping);
+                                        *this->get_mapping());
     }
 
   WorkStream::run(
@@ -695,7 +695,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.VOF)
@@ -705,7 +705,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
       scratch_data.enable_vof(
         dof_handler_vof->get_fe(),
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
       if (this->simulation_parameters.multiphysics.vof_parameters
@@ -720,10 +720,10 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
           scratch_data.enable_projected_phase_fraction_gradient(
             projected_phase_fraction_gradient_dof_handler.get_fe(),
             *this->cell_quadrature,
-            *this->mapping);
+            *this->get_mapping());
           scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
                                         *this->cell_quadrature,
-                                        *this->mapping);
+                                        *this->get_mapping());
         }
     }
 
@@ -734,7 +734,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
       scratch_data.enable_cahn_hilliard(
         dof_handler_cahn_hilliard->get_fe(),
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 
@@ -744,7 +744,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
       scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
                                         *this->cell_quadrature,
-                                        *this->mapping);
+                                        *this->get_mapping());
     }
 
   WorkStream::run(
@@ -1096,7 +1096,7 @@ FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
-  FEValues<dim>               fe_values(*this->mapping,
+  FEValues<dim>               fe_values(*this->get_mapping(),
                           *this->fe,
                           *this->cell_quadrature,
                           update_values | update_quadrature_points |
