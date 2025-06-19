@@ -212,6 +212,7 @@ InterfaceTools::compute_surface_and_volume(
   const double            iso_level,
   const MPI_Comm         &mpi_communicator);
 
+
 template <int dim, typename VectorType>
 void
 InterfaceTools::reconstruct_interface(
@@ -1167,8 +1168,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   /* Compute targeted global volume. It corresponds to the one enclosed by
   the level 0 of the level_set vector (same volume as the one enclosed
   by iso-contour 0.5 of the phase fraction).*/
-  const double global_volume = compute_volume(
-    *mapping, dof_handler, *fe, level_set, iso_level, mpi_communicator);
+  double global_volume, surface;
+
+  std::tie(global_volume, surface) = compute_surface_and_volume(dof_handler, *fe, level_set, 0.0, mpi_communicator);
 
   /* Initialization of values for the secant method. The subscript nm1 (or n
   minus 1) stands for the previous secant iteration (it = n-1), the
@@ -1200,8 +1202,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   // Update_ghost_values is required for cell-wise volume computations
   signed_distance_0.update_ghost_values();
 
-  global_volume_nm1 = compute_volume(
-    *mapping, dof_handler, *fe, signed_distance_0, 0.0, mpi_communicator);
+    std::tie(global_volume_nm1, surface) = compute_surface_and_volume(
+    dof_handler, *fe, signed_distance_0, 0.0, mpi_communicator);
 
   global_delta_volume_nm1 = global_volume - global_volume_nm1;
 
@@ -1229,8 +1231,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
       signed_distance_n.add(C_n, volume_correction);
       signed_distance_n.update_ghost_values();
 
-      global_volume_n = compute_volume(
-        *mapping, dof_handler, *fe, signed_distance_n, 0.0, mpi_communicator);
+      std::tie(global_volume_n, surface) = compute_surface_and_volume(
+      dof_handler, *fe, signed_distance_n, 0.0, mpi_communicator);
 
       global_delta_volume_n = global_volume - global_volume_n;
 
