@@ -1843,10 +1843,10 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
 
 template <int dim>
 void
-VolumeOfFluid<dim>::smooth_phase_fraction()
+VolumeOfFluid<dim>::smooth_phase_fraction(GlobalVectorType &solution)
 {
-  assemble_projection_phase_fraction(present_solution);
-  solve_projection_phase_fraction(present_solution);
+  assemble_projection_phase_fraction(solution);
+  solve_projection_phase_fraction(solution);
 }
 
 
@@ -2442,7 +2442,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->present_solution = this->newton_update;
 
   if (simulation_parameters.initial_condition->enable_projection_step)
-    smooth_phase_fraction();
+    smooth_phase_fraction(this->present_solution);
 
   apply_phase_filter(this->present_solution, this->filtered_solution);
 

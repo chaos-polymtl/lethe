@@ -582,7 +582,7 @@ private:
    * @brief Carries out the smoothing phase fraction with a projection step (to avoid a staircase interface).
    */
   void
-  smooth_phase_fraction();
+  smooth_phase_fraction(GlobalVectorType &solution);
 
   /**
    * @brief Assembles the matrix and rhs for calculation of a smooth phase fraction using a projection.

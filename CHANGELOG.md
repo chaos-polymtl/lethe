@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-06-19
+
+### Added
+
+- MINOR This PR extends the rising bubble example with the addition of a second test case and the comparison of the regularization methods implemented in Lethe. It also documents the geometric reinitialization method in the parameters section and the theory guide.  
+
 ## [Master] - 2025-06-16
 
 ### Fixed

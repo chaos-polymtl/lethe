@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
@@ -15,22 +15,89 @@ import matplotlib.pyplot as plt
 import pyvista as pv
 import argparse
 import os
+import pandas as pd
 #############################################################################
 
-#Take case path as argument and store it
-parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
-parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
-parser.add_argument("-f", "--folder", type=str, help="Path to the output folder. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=True)
-args, leftovers=parser.parse_known_args()
-output_dir =args.folder
-filename = output_dir + "/vof_barycenter_information.dat"
-t,x,y,vx,vy=np.loadtxt(filename,skiprows=1,unpack=True)
+'''Plot formating'''
 
+from cycler import cycler
+
+colors=['#008c66','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+
+plt.rcParams['axes.prop_cycle'] = cycler(color = colors)
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['figure.figsize'] = (10,8)
+plt.rcParams['lines.linewidth'] = 4
+plt.rcParams['lines.markersize'] = '11'
+plt.rcParams['markers.fillstyle'] = "none"
+plt.rcParams['lines.markeredgewidth'] = 2
+plt.rcParams['legend.columnspacing'] = 2
+plt.rcParams['legend.handlelength'] = 2.8
+plt.rcParams['legend.handletextpad'] = 0.2
+plt.rcParams['legend.frameon'] = True
+plt.rcParams['legend.fancybox'] = False
+plt.rcParams['legend.fontsize'] = '18'
+plt.rcParams['xtick.major.width'] = 2
+plt.rcParams['xtick.major.size'] = 5
+plt.rcParams['ytick.major.size'] = 5
+plt.rcParams['ytick.major.width'] = 2
+plt.rcParams['font.size'] = '25'
+plt.rcParams['font.family']='DejaVu Serif'
+plt.rcParams['font.serif']='cm'
+plt.rcParams['savefig.bbox']='tight'
+
+plt.rcParams.update({
+    'text.usetex': True,
+    'text.latex.preamble': r'\usepackage{amsfonts}'
+})
+
+#############################################################################
+
+parser = argparse.ArgumentParser(description='Arguments for the validation of the 2D rising bubble benchmark')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+parser.add_argument("-p", "--proj", type=str, help="Path to the output folder for the projening results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
+parser.add_argument("-g", "--geo", type=str, help="Path to the output folder for the geometric results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
+parser.add_argument("-a", "--alge", type=str, help="Path to the output folder for the algebraic results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
+
+parser.add_argument("-c", "--case", type=int, choices=[1, 2], help="Test case number. Can be either 1 or 2", required=True)
+args, leftovers=parser.parse_known_args()
+case_number = args.case
+
+has_proj = args.proj is not None
+has_geo  = args.geo  is not None
+has_alge = args.alge is not None
+
+# Number of datasets
+n = 0;
+
+if has_proj:
+  output_dir_proj = args.proj
+  filename_barycenter_proj = output_dir_proj + "/vof_barycenter_information.dat"
+  filename_mass_proj = output_dir_proj + "/mass_conservation_information.dat"
+  t_proj, x_proj, y_proj, vx_proj, vy_proj = np.loadtxt(filename_barycenter_proj, skiprows=1, unpack=True)
+  n += 1
+
+if has_geo:
+  output_dir_geo = args.geo
+  filename_barycenter_geo = output_dir_geo + "/vof_barycenter_information.dat"
+  filename_mass_geo = output_dir_geo + "/mass_conservation_information.dat"
+  t_geo, x_geo, y_geo, vx_geo, vy_geo = np.loadtxt(filename_barycenter_geo, skiprows=1, unpack=True)
+  n += 1
+
+if has_alge:
+  output_dir_alge = args.alge
+  filename_barycenter_alge = output_dir_alge + "/vof_barycenter_information.dat"
+  filename_mass_alge = output_dir_alge + "/mass_conservation_information.dat"
+  t_alge, x_alge, y_alge, vx_alge, vy_alge = np.loadtxt(filename_barycenter_alge, skiprows=1, unpack=True)
+  n += 1
+
+# Get the data from the references for test case 1
 #Data from Zahedi, Kronbichler and Kreiss (2012)
 x_ref_ZKR = [0.047, 0.139, 0.232 ,0.324 ,0.416 ,0.508 ,0.601 ,0.693 ,0.785 ,0.878 ,0.97 ,1.062 ,1.154 ,1.247 ,1.339 ,1.431 ,1.524 ,1.616 ,1.708 ,1.8 ,1.893 ,1.985 ,2.077 ,2.17 ,2.262 ,2.354 ,2.446 ,2.539 ,2.631 ,2.723 ,2.816 ,2.908 ,2.979]
 y_ref_ZKR = [0.501 ,0.505 ,0.513 ,0.525 ,0.54 ,0.557 ,0.576 ,0.597 ,0.618 ,0.641 ,0.663 ,0.685 ,0.707 ,0.729 ,0.75 ,0.77 ,0.791 ,0.811 ,0.83 ,0.849 ,0.868 ,0.886 ,0.904 ,0.922 ,0.94 ,0.958 ,0.976 ,0.993 ,1.011 ,1.029 ,1.047 ,1.064 ,1.078]
 x_vel_ZKR = [0.001 ,0.03 ,0.056 ,0.081 ,0.106 ,0.136 ,0.17 ,0.203 ,0.237 ,0.271 ,0.304 ,0.338 ,0.372 ,0.41 ,0.452 ,0.494 ,0.544 ,0.607 ,0.687 ,0.779 ,0.872 ,0.964 ,1.056 ,1.149 ,1.241 ,1.333 ,1.426 ,1.518 ,1.61 ,1.702 ,1.795 ,1.887 ,1.979 ,2.072 ,2.164 ,2.256 ,2.348 ,2.441 ,2.533 ,2.625 ,2.718 ,2.81 ,2.902 ,2.978]
 y_vel_ZKR = [0.004 ,0.017 ,0.029 ,0.041 ,0.053 ,0.066 ,0.081 ,0.095 ,0.109 ,0.122 ,0.135 ,0.147 ,0.158 ,0.17 ,0.182 ,0.194 ,0.205 ,0.218 ,0.229 ,0.237 ,0.24 ,0.241 ,0.239 ,0.236 ,0.231 ,0.227 ,0.222 ,0.217 ,0.213 ,0.208 ,0.205 ,0.201 ,0.198 ,0.196 ,0.194 ,0.192 ,0.192 ,0.191 ,0.191 ,0.192 ,0.192 ,0.193 ,0.193 ,0.194]
+df_contour_ZKR = pd.read_csv("reference_contour/case1_contour_ZKR.csv", header=0)
 
 #Data Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.
 x_ref_H = [0.24476 , 0.49894 , 0.75132 , 0.99538 , 1.2466  , 1.49797 , 1.75014 , 1.99467 , 2.24561 , 2.49821 ,2.74912 ]
@@ -38,74 +105,252 @@ y_ref_H = [0.514646, 0.554469, 0.608872, 0.670196, 0.728744, 0.785978, 0.838403,
 x_vel_H = [0.24535, 0.49537, 0.74679   ,0.99191   ,1.2424,   1.49542   ,1.74728   ,1.99275   ,2.24447   ,2.49706,   2.74796]
 y_vel_H = [0.114461, 0.196094, 0.23631, 0.241153, 0.231292, 0.218334, 0.206795, 0.197974, 0.193075, 0.191356, 0.192096]
 
-#Data ref for contour
-x_contour_ref = [0.15772151898734177, 0.15772151898734177, 0.15873417721518987, 0.159746835443038, 0.1607594936708861, 0.1627848101265823, 0.16379746835443038, 0.1668354430379747, 0.16987341772151895, 0.17291139240506326, 0.1749367088607595, 0.1779746835443038, 0.1820253164556962, 0.18607594936708866, 0.18911392405063296, 0.19215189873417726, 0.1962025316455696, 0.20126582278481014, 0.20430379746835445, 0.20936708860759493, 0.21341772151898739, 0.219493670886076, 0.22354430379746834, 0.22759493670886072, 0.23265822784810125, 0.2377215189873418, 0.2427848101265823, 0.24784810126582282, 0.25189873417721526, 0.25797468354430386, 0.2630379746835443, 0.270126582278481, 0.2751898734177215, 0.28025316455696203, 0.28430379746835444, 0.28936708860759497, 0.2944303797468355, 0.3005063291139241, 0.3065822784810127, 0.3116455696202532, 0.3177215189873417, 0.3248101265822785, 0.3308860759493671, 0.3379746835443038, 0.3440506329113925, 0.35113924050632916, 0.359240506329114, 0.3683544303797468, 0.3754430379746835, 0.38151898734177214, 0.38962025316455695, 0.3987341772151899, 0.4068354430379747, 0.4139240506329115, 0.4220253164556962, 0.42911392405063287, 0.4372151898734177, 0.4422784810126583, 0.4493670886075949, 0.4564556962025317, 0.4645569620253165, 0.47164556962025317, 0.47873417721518985, 0.4848101265822785, 0.4929113924050633, 0.49797468354430374, 0.5030379746835444, 0.5101265822784811, 0.5162025316455696, 0.5232911392405063, 0.5313924050632911, 0.5384810126582278, 0.5435443037974683, 0.5506329113924051, 0.5567088607594937, 0.5637974683544305, 0.5698734177215191, 0.5769620253164557, 0.5830379746835443, 0.590126582278481, 0.5972151898734177, 0.6043037974683545, 0.6113924050632912, 0.6144303797468355, 0.6235443037974683, 0.630632911392405, 0.6387341772151898, 0.6458227848101266, 0.6529113924050634, 0.6599999999999999, 0.6670886075949367, 0.6731645569620254, 0.6792405063291138, 0.6832911392405063, 0.6903797468354429, 0.6974683544303797, 0.7025316455696202, 0.7075949367088608, 0.7136708860759494, 0.7207594936708862, 0.7268354430379748, 0.7339240506329114, 0.7400000000000001, 0.7450632911392406, 0.7521518987341773, 0.7592405063291138, 0.7663291139240506, 0.7724050632911392, 0.7784810126582278, 0.7845569620253164, 0.7906329113924051, 0.7956962025316455, 0.8017721518987342, 0.8058227848101265, 0.8088607594936709, 0.8129113924050633, 0.8179746835443037, 0.8240506329113924, 0.8270886075949367, 0.830126582278481, 0.8321518987341773, 0.8362025316455696, 0.8392405063291141, 0.8402531645569622, 0.8422784810126582, 0.8443037974683545, 0.8443037974683545, 0.8453164556962026, 0.8443037974683545, 0.8412658227848103, 0.8392405063291141, 0.8362025316455696, 0.8321518987341773, 0.8291139240506331, 0.8250632911392405, 0.8189873417721518, 0.8139240506329114, 0.8068354430379746, 0.8027848101265823, 0.7946835443037974, 0.7875949367088607, 0.7815189873417722, 0.7724050632911392, 0.7632911392405063, 0.7541772151898734, 0.7460759493670887, 0.7359493670886077, 0.7268354430379748, 0.7167088607594937, 0.7055696202531645, 0.6994936708860758, 0.6913924050632911, 0.6832911392405063, 0.6751898734177214, 0.6681012658227848, 0.6610126582278482, 0.6559493670886076, 0.6478481012658227, 0.6387341772151898, 0.630632911392405, 0.6235443037974683, 0.6154430379746836, 0.6073417721518988, 0.600253164556962, 0.5941772151898734, 0.5860759493670886, 0.5779746835443037, 0.5678481012658227, 0.5607594936708862, 0.549620253164557, 0.5384810126582278, 0.5253164556962024, 0.5151898734177216, 0.5313924050632911, 0.5081012658227848, 0.5010126582278481, 0.4929113924050633, 0.4848101265822785, 0.47873417721518985, 0.4726582278481013, 0.46658227848101275, 0.4574683544303798, 0.45139240506329126, 0.44329113924050634, 0.43518987341772153, 0.4270886075949367, 0.4179746835443038, 0.4108860759493672, 0.4027848101265823, 0.3987341772151899, 0.39367088607594936, 0.38962025316455695, 0.3835443037974684, 0.3713924050632912, 0.36126582278481023, 0.37746835443037974, 0.35417721518987344, 0.3491139240506329, 0.34303797468354436, 0.3379746835443038, 0.3308860759493671, 0.3258227848101266, 0.319746835443038, 0.30759493670886084, 0.3136708860759494, 0.2994936708860759, 0.29139240506329117, 0.28531645569620256, 0.2792405063291139, 0.2711392405063291, 0.26607594936708856, 0.258987341772152, 0.2549367088607596, 0.25189873417721526, 0.2427848101265823, 0.23569620253164558, 0.23063291139240505, 0.22354430379746834, 0.219493670886076, 0.2164556962025317, 0.20835443037974682, 0.20126582278481014, 0.1962025316455696, 0.19316455696202534, 0.1881012658227848, 0.1820253164556962, 0.17696202531645572, 0.17189873417721518, 0.1668354430379747, 0.16481012658227848, 0.16177215189873417, 0.159746835443038, 0.15772151898734177, 0.15772151898734177]
-y_contour_ref = [1.0266441821247891, 1.0347386172006745, 1.0408094435075885, 1.047892074198988, 1.0529510961214166, 1.0590219224283306, 1.0650927487352444, 1.0711635750421584, 1.0762225969645869, 1.082293423271501, 1.0893760539629005, 1.0954468802698145, 1.1005059021922428, 1.1065767284991568, 1.1126475548060708, 1.117706576728499, 1.1227655986509275, 1.1278246205733558, 1.1338954468802698, 1.1379426644182125, 1.1440134907251265, 1.1490725126475547, 1.154131534569983, 1.160202360876897, 1.1652613827993255, 1.1703204047217537, 1.1753794266441822, 1.1794266441821246, 1.184485666104553, 1.1885328836424958, 1.193591905564924, 1.1986509274873525, 1.2026981450252952, 1.2067453625632378, 1.2097807757166947, 1.2138279932546374, 1.21787521079258, 1.2219224283305228, 1.2249578414839797, 1.2290050590219224, 1.233052276559865, 1.2370994940978077, 1.2401349072512646, 1.2441821247892073, 1.24822934232715, 1.2512647554806071, 1.2553119730185496, 1.2583473861720067, 1.2593591905564923, 1.2644182124789207, 1.2674536256323776, 1.269477234401349, 1.2704890387858347, 1.275548060708263, 1.275548060708263, 1.2775716694772343, 1.2785834738617199, 1.2785834738617199, 1.2826306913996626, 1.2826306913996626, 1.2826306913996626, 1.2836424957841484, 1.2826306913996626, 1.284654300168634, 1.284654300168634, 1.284654300168634, 1.2856661045531197, 1.284654300168634, 1.2836424957841484, 1.2826306913996626, 1.281618887015177, 1.2826306913996626, 1.281618887015177, 1.281618887015177, 1.2785834738617199, 1.2785834738617199, 1.2775716694772343, 1.275548060708263, 1.2745362563237772, 1.2715008431703203, 1.2704890387858347, 1.2674536256323776, 1.266441821247892, 1.2644182124789207, 1.2623946037099494, 1.2593591905564923, 1.2553119730185496, 1.2532883642495785, 1.2492411467116358, 1.245193929173693, 1.2411467116357504, 1.2381112984822933, 1.2350758853288364, 1.2310286677908937, 1.2279932546374366, 1.2229342327150083, 1.2188870151770657, 1.214839797639123, 1.2107925801011805, 1.2067453625632378, 1.2026981450252952, 1.196627318718381, 1.1915682967959527, 1.1865092748735244, 1.1804384485666104, 1.1753794266441822, 1.1682967959527826, 1.1622259696458683, 1.1551433389544687, 1.1470489038785834, 1.1419898819561551, 1.1349072512647553, 1.1288364249578415, 1.1217537942664417, 1.1156829679595277, 1.1086003372681281, 1.102529510961214, 1.094435075885329, 1.0883642495784147, 1.082293423271501, 1.0721753794266442, 1.0661045531197302, 1.0600337268128162, 1.0519392917369308, 1.0428330522765599, 1.0347386172006745, 1.0286677908937605, 1.0205733558178751, 1.0145025295109613, 1.0053962900505902, 0.9993254637436763, 0.9922428330522766, 0.9851602023608769, 0.9801011804384485, 0.9740303541315346, 0.9699831365935918, 0.9649241146711636, 0.9598650927487353, 0.9558178752107926, 0.9537942664418213, 0.9487352445193928, 0.9467116357504216, 0.9436762225969646, 0.9396290050590218, 0.9365935919055649, 0.9345699831365937, 0.9315345699831366, 0.930522765598651, 0.9295109612141653, 0.9254637436762226, 0.9254637436762226, 0.924451939291737, 0.9224283305227655, 0.9224283305227655, 0.92141652613828, 0.92141652613828, 0.9183811129848228, 0.9183811129848228, 0.9183811129848228, 0.9183811129848228, 0.9173693086003374, 0.9153456998313659, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9153456998313659, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9163575042158516, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9183811129848228, 0.92141652613828, 0.92141652613828, 0.92141652613828, 0.92141652613828, 0.924451939291737, 0.9234401349072513, 0.9254637436762226, 0.924451939291737, 0.9284991568296797, 0.9284991568296797, 0.9295109612141653, 0.9325463743676223, 0.9335581787521079, 0.9335581787521079, 0.9355817875210792, 0.9386172006745364, 0.9396290050590218, 0.9416526138279933, 0.9436762225969646, 0.9477234401349073, 0.9477234401349073, 0.9507588532883643, 0.9558178752107926, 0.9588532883642495, 0.9618887015177066, 0.9649241146711636, 0.9689713322091063, 0.9740303541315346, 0.9811129848229343, 0.9881956155143339, 0.9942664418212479, 1.0023608768971333, 1.0094435075885329, 1.0165261382799324, 1.0205733558178751]
+
+# Get the data from the references for test case 2
+# Data TP2D in Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.
+x_ref_TP2D = [0.002, 0.246, 0.493, 0.736, 0.988, 1.233, 1.485, 1.729, 1.975, 2.226, 2.471, 2.717, 3.000]
+y_ref_TP2D = [0.501, 0.517, 0.563, 0.623, 0.685, 0.741, 0.796, 0.853, 0.909, 0.968, 1.024, 1.077, 1.138]
+x_vel_TP2D = [0.000, 0.245, 0.498, 0.748, 0.992, 1.243, 1.496, 1.748, 1.994, 2.245, 2.495, 2.746, 2.999]
+y_vel_TP2D = [0.001, 0.139, 0.230, 0.253, 0.242, 0.229, 0.226, 0.232, 0.243, 0.232, 0.220, 0.217, 0.217]
+df_contour_TP2D = pd.read_csv("reference_contour/case2_contour_TP2D.csv", header=0)
+
+# Data FreeLIFE in Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.
+x_ref_FreeLIFE = [0.005, 0.246, 0.498, 0.750, 1.000, 1.246, 1.499, 1.750, 2.000, 2.247, 2.496, 2.748, 3.000]
+y_ref_FreeLIFE = [0.501, 0.517, 0.563, 0.625, 0.685, 0.742, 0.797, 0.853, 0.912, 0.969, 1.023, 1.073, 1.125]
+x_vel_FreeLIFE = [0.000, 0.244, 0.496, 0.748, 0.998, 1.245, 1.496, 1.747, 1.999, 2.243, 2.496, 2.747, 2.999]
+y_vel_FreeLIFE = [0.001, 0.138, 0.229, 0.252, 0.239, 0.227, 0.224, 0.232, 0.244, 0.225, 0.212, 0.208, 0.205]
+df_contour_FreeLIFE = pd.read_csv("reference_contour/case2_contour_FreeLIFE.csv", header=0)
+
+# Data MooNMD in Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.
+x_ref_MooNMD = [0.002, 0.246, 0.493, 0.736, 0.988, 1.233, 1.485, 1.729, 1.975, 2.226, 2.471, 2.717, 3.000]
+y_ref_MooNMD = [0.501, 0.517, 0.563, 0.623, 0.685, 0.741, 0.796, 0.853, 0.909, 0.968, 1.024, 1.077, 1.138]
+x_vel_MooNMD = [0.246, 0.487, 0.735, 0.986, 1.231, 1.482, 1.728, 1.973, 2.226, 2.471, 2.715, 0.002, 2.999]
+y_vel_MooNMD = [0.137, 0.226, 0.250, 0.239, 0.226, 0.222, 0.228, 0.238, 0.231, 0.218, 0.215, 0.001, 0.213]
+df_contour_MooNMD = pd.read_csv("reference_contour/case2_contour_MooNMD.csv", header=0)
 
 
+# Plot the position of the barycenter
 fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
-ax0.plot(t, y, '-k', lw=2, label="Lethe")
-ax0.plot(x_ref_ZKR, y_ref_ZKR, 'o',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
-ax0.plot(x_ref_H, y_ref_H, 's',alpha=0.8,label="Reference - Hysing et al. (2009)")
 
-ax0.set_ylabel(r'Bubble barycenter height')
-ax0.set_xlabel(r'$t$')
+line_width = 2.0
+if n == 1:
+    line_width = 3.0
+    
+if has_proj:
+  ax0.plot(t_proj, y_proj, '-', lw=line_width, label="Projection")
+if has_geo:
+  ax0.plot(t_geo, y_geo, '-', lw=line_width, label="Geometric")
+if has_alge:
+  ax0.plot(t_alge, y_alge, '-', lw=line_width, label="PDE-based")
+
+if case_number == 1 :
+  ax0.plot(x_ref_ZKR, y_ref_ZKR, 'ok',label="Zahedi et al. (2012)")
+  ax0.plot(x_ref_H, y_ref_H, 'sk',alpha=0.8,label="Hysing et al. (2009)")
+
+elif case_number ==2 :
+  ax0.plot(x_ref_MooNMD, y_ref_MooNMD, '^k',alpha=0.8,label="MooNMD, Hysing et al. (2009)")
+  ax0.plot(x_ref_FreeLIFE, y_ref_FreeLIFE, 'sk',alpha=0.8,label="FreeLIFE, Hysing et al. (2009)")
+  ax0.plot(x_ref_TP2D, y_ref_TP2D, 'ok',alpha=0.8, label="TP2D, Hysing et al. (2009)")
+
+ax0.set_ylabel(r'Barycenter height [L]')
+ax0.set_xlabel(r'Rising time [T]')
 ax0.legend(loc="upper left")
-if (args.validate):
-  solution = np.column_stack((t, y))
-  np.savetxt("solution-barycenter.dat",solution, header="t y")
-  fig0.savefig(f'./bubble-rise-barycenter.pdf')
-else:
-  fig0.savefig(f'./ymean-t.png',dpi=300)
-  plt.show()
+fig0.savefig(f'./ymean-t-case' + str(case_number) + '.png',dpi=300)
+plt.show()
 
+# Plot the velocity
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
-ax1.plot(t, vy , '-k', lw=2, label="Lethe")
-ax1.plot(x_vel_ZKR, y_vel_ZKR, 'o',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
-ax1.plot(x_vel_H, y_vel_H, 's',alpha=0.8,label="Reference - Hysing et al. (2009)")
+    
+if has_proj:
+  ax1.plot(t_proj, vy_proj, '-', lw=line_width, label="Projection")
+if has_geo:
+  ax1.plot(t_geo, vy_geo, '-', lw=line_width, label="Geometric")
+if has_alge:
+  ax1.plot(t_alge, vy_alge, '-', lw=line_width, label="PDE-based")
 
-ax1.set_ylabel(r'Rise velocity')
-ax1.set_xlabel(r'$t$')
-ax1.legend(loc="upper left")
+if case_number == 1 :
+
+  ax1.plot(x_vel_ZKR, y_vel_ZKR, 'ok',label="Zahedi et al. (2012)")
+  ax1.plot(x_vel_H, y_vel_H, 'sk',alpha=0.8,label="Hysing et al. (2009)")
+
+elif case_number == 2 :
+
+  ax1.plot(x_vel_MooNMD, y_vel_MooNMD, '^k',alpha=0.8,label="MooNMD, Hysing et al. (2009)")
+  ax1.plot(x_vel_FreeLIFE, y_vel_FreeLIFE, 'sk',alpha=0.8,label="FreeLIFE, Hysing et al. (2009)")
+  ax1.plot(x_vel_TP2D, y_vel_TP2D, 'ok', alpha=0.8,label="TP2D, Hysing et al. (2009)")
+  
+ax1.set_ylabel(r'Rise velocity [LT$^{-1}$]')
+ax1.set_xlabel(r'Rising time [T]')
 ax1.legend(loc=4)
-if (args.validate):
-  solution = np.column_stack((t, vy))
-  np.savetxt("solution-velocity.dat",solution, header="t vy")
-  fig1.savefig(f'./bubble-rise-velocity.pdf')
+fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.png',dpi=300)
+plt.show()
 
-else:
-  fig1.savefig(f'./bubble-rise-velocity.png',dpi=300)
-  plt.show()
+# Plot the contour of the bubble in the last frame
+if has_proj:
+  list_vtu = os.listdir(output_dir_proj)
+  list_vtu = [(output_dir_proj+"/"+x) for x in list_vtu if  ("vtu" in x)]
+  latest_file = max(list_vtu, key=os.path.getctime)
+  if(not args.validate): print("Opening file: ", latest_file)
+  sim = pv.read(latest_file)
+  sim.set_active_scalars("filtered_phase")
+  contour_val = np.array([0.5])
+  contours = sim.contour(contour_val)
+  x_proj, y_proj = contours.points[:, 0], contours.points[:, 1]
 
+if has_geo:
+  list_vtu = os.listdir(output_dir_geo)
+  list_vtu = [(output_dir_geo+"/"+x) for x in list_vtu if  ("vtu" in x)]
+  latest_file = max(list_vtu, key=os.path.getctime)
+  if(not args.validate): print("Opening file: ", latest_file)
+  sim = pv.read(latest_file)
+  sim.set_active_scalars("filtered_phase")
+  contour_val = np.array([0.5])
+  contours = sim.contour(contour_val)
+  x_geo, y_geo = contours.points[:, 0], contours.points[:, 1]
 
-# Make the plot of the contour of the bubble
-list_vtu = os.listdir(output_dir)
-list_vtu = [(output_dir+"/"+x) for x in list_vtu if  ("vtu" in x)]
-latest_file = max(list_vtu, key=os.path.getctime)
-if(not args.validate): print("Opening file: ", latest_file)
-sim = pv.read(latest_file)
-sim.set_active_scalars("filtered_phase")
+if has_alge:
+  list_vtu = os.listdir(output_dir_alge)
+  list_vtu = [(output_dir_alge+"/"+x) for x in list_vtu if  ("vtu" in x)]
+  latest_file = max(list_vtu, key=os.path.getctime)
+  if(not args.validate): print("Opening file: ", latest_file)
+  sim = pv.read(latest_file)
+  sim.set_active_scalars("filtered_phase")
+  contour_val = np.array([0.5])
+  contours = sim.contour(contour_val)
+  x_alge, y_alge = contours.points[:, 0], contours.points[:, 1]
 
-contour_val = np.array([0.5])
-contours = sim.contour(contour_val)
-x, y = contours.points[:, 0], contours.points[:, 1]
+# Keep only the defined values
+x, y, label, fig_name = [], [], [], []
 
-fig2 = plt.figure()
-ax2 = fig2.add_subplot(111)
+if has_proj:
+    x.append(x_proj)
+    y.append(y_proj)
+    label.append('Projection')
+    fig_name.append('proj')
+if has_geo:
+    x.append(x_geo)
+    y.append(y_geo)
+    label.append('Geometric')
+    fig_name.append('geo')    
+if has_alge:
+    x.append(x_alge)
+    y.append(y_alge)
+    label.append('PDE-based')
+    fig_name.append('alge')  
 
-ax2.scatter(x, y, s=2, marker=".", label="Lethe")
-ax2.scatter(x_contour_ref, y_contour_ref,alpha=0.8, s=2,marker="s", label="Zahedi et al. (2012)")
-ax2.legend()
-ax2.grid( which='major', color='grey', linestyle='--')
-ax2.set_xlim([0.1,0.9])
-ax2.set_ylim([0.8,1.4])
-if (args.validate):
-  solution = np.column_stack((x, y))
-  np.savetxt("solution-contour.dat", solution, header="x y")
-  fig2.savefig("bubble-contour.pdf")
+# Plot bubble contour comparison with exp for each method
+for i in range(n):
+    fig2 = plt.figure()
+    
+    ax2= fig2.add_subplot(111)
+    
+    ax2.scatter(x[i], y[i], s=2, marker="s", color=colors[i], label=label[i], linewidths=1)
+    
+    if case_number == 1 :
 
-else:
-  fig2.savefig("bubble-contour.png",dpi=300)
-  plt.show()
+        ax2.plot(df_contour_ZKR['x'], df_contour_ZKR['y'], '-k',
+            alpha=0.8,label="Zahedi et al. (2012)", linewidth=1)
+        ax2.set_ylim([0.8,1.4])
+
+    elif case_number == 2 :
+        ax2.plot(df_contour_MooNMD['x'], df_contour_MooNMD['y'], '-k',
+                        alpha=0.8,label="MooNMD, Hysing et al. (2009)", linewidth=1)
+                        
+        ax2.plot(df_contour_FreeLIFE['x'], df_contour_FreeLIFE['y'], '--k',
+                        alpha=0.8,label="FreeLIFE, Hysing et al. (2009)", linewidth=1)
+        ax2.plot(df_contour_FreeLIFE['x_1'], df_contour_FreeLIFE['y_1'], '--k',
+                        alpha=0.8,linewidth=1)
+        ax2.plot(df_contour_FreeLIFE['x_2'], df_contour_FreeLIFE['y_2'], '--k',
+                        alpha=0.8,linewidth=1)
+                        
+        ax2.plot(df_contour_TP2D['x'], df_contour_TP2D['y'], '-.k',
+                        alpha=0.8,label="TP2D, Hysing et al. (2009)", linewidth=1)
+        ax2.plot(df_contour_TP2D['x_1'], df_contour_TP2D['y_1'], '-.k',
+                        alpha=0.8,linewidth=1)
+        ax2.plot(df_contour_TP2D['x_2'], df_contour_TP2D['y_2'], '-.k',
+                        alpha=0.8,linewidth=1)
+        ax2.set_xlim([0,1])
+        ax2.set_ylim([0.5,1.4])
+
+    ax2.set_xlabel(r'x [L]')
+    ax2.set_ylabel(r'y [L]')
+    ax2.legend(markerscale=1, scatterpoints=20)
+    ax2.grid( which='major', color='grey', linestyle='--')
+
+    if (args.validate):
+        solution = np.column_stack((x, y))
+        np.savetxt("solution-contour-case" + str(case_number) + ".dat", solution, header="x y")
+        fig2.savefig("bubble-contour-case" + str(case_number) + ".png")
+    else:
+        fig2.savefig(fig_name[i] + "-bubble-contour-case" + str(case_number) + ".png",dpi=300)
+        plt.show()
+
+# Plot bubble contour comparison between the three methods (only if more than 1 method)
+if n > 1:
+    fig2 = plt.figure()
+    ax2= fig2.add_subplot(111)
+    for i in range(len(x)):
+        ax2.scatter(x[i], y[i], s=1, marker="s", color=colors[i], label=label[i], linewidths=1)
+
+    ax2.set_xlabel(r'x [L]')
+    ax2.set_ylabel(r'y [L]')
+    ax2.legend(markerscale=2, scatterpoints=20)
+    ax2.grid( which='major', color='grey', linestyle='--')
+
+    if case_number == 1 :
+        ax2.set_ylim([0.8,1.4])
+    if case_number == 2 :
+        ax2.set_xlim([0,1])
+        ax2.set_ylim([0.5,1.4])    
+        
+    fig2.savefig("bubble-contour-case" + str(case_number) + ".png",dpi=300)
+    plt.show()
+    
+# Plot the mass conservation for the global and local mass
+fig3 = plt.figure()
+ax3 = fig3.add_subplot(111)
+
+if has_proj:
+  df_mass_proj = pd.read_csv(filename_mass_proj, header=0, sep=r'\s+')
+  ax3.plot(df_mass_proj['time'], df_mass_proj['surface_fluid_1'] / df_mass_proj['surface_fluid_1'].iloc[0],
+           "-", label=r'Projection', linewidth=2)
+if has_geo:
+  df_mass_geo = pd.read_csv(filename_mass_geo, header=0, sep=r'\s+')
+  ax3.plot(df_mass_geo['time'], df_mass_geo['surface_fluid_1'] / df_mass_geo['surface_fluid_1'].iloc[0],
+           "-", label=r'Geometric', linewidth=2)
+if has_alge:
+  df_mass_alge = pd.read_csv(filename_mass_alge, header=0, sep=r'\s+')
+  ax3.plot(df_mass_alge['time'], df_mass_alge['surface_fluid_1'] / df_mass_alge['surface_fluid_1'].iloc[0],
+           "-", label=r'PDE-based', linewidth=2)
+
+ax3.set_ylabel(r'$V/{V_\mathrm{0}}[-]$')
+ax3.set_xlabel(r'Rising time [T]')
+ax3.ticklabel_format(useOffset=False, style='plain', axis='y')
+ax3.legend(loc="upper left")
+fig3.savefig(f'./global-mass-conservation-case' + str(case_number) + '.png',dpi=300)
+plt.show()
+
+fig4 = plt.figure()
+ax4 = fig4.add_subplot(111)
+
+if has_proj:
+  ax4.plot(df_mass_proj['time'],
+           df_mass_proj['geometric_surface_fluid_1'] / df_mass_proj['geometric_surface_fluid_1'].iloc[0],
+           "-", label=r'Projection', linewidth=2)
+if has_geo:
+  ax4.plot(df_mass_geo['time'],
+           df_mass_geo['geometric_surface_fluid_1'] / df_mass_geo['geometric_surface_fluid_1'].iloc[0],
+           "-", label=r'Geometric', linewidth=2)
+if has_alge:
+  ax4.plot(df_mass_alge['time'],
+           df_mass_alge['geometric_surface_fluid_1'] / df_mass_alge['geometric_surface_fluid_1'].iloc[0],
+           "-", label=r'PDE-based', linewidth=2)
+
+ax4.set_ylabel(r'$V/{V_\mathrm{0}}[-]$')
+ax4.set_xlabel(r'Rising time [T]')
+ax4.ticklabel_format(useOffset=False, style='plain', axis='y')
+ax4.legend(loc="upper left")
+fig4.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.png',dpi=300)
+plt.show()

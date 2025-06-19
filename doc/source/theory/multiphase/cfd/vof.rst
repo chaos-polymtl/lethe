@@ -142,6 +142,47 @@ The phase fraction limiter above will update the phase fraction if it failed to 
 where :math:`c` denotes the sharpening threshold, which defines
 a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This projection-based interface sharpening method was proposed by Aliabadi and Tezduyar (2000) [#aliabadi2000]_.
 
+""""""""""""""""""""""""""""""""""""""""
+Geometric Interface Reinitialization
+""""""""""""""""""""""""""""""""""""""""
+
+The geometric interface reinitialization implemented in Lethe uses the signed distance :math:`d` from the interface to regularize the phase fraction field.  The method is based on the work of Ausas *et al.* (2011) [#ausas2011]_, originaly proposed in a level-set framework. Once computed, the signed distance is transformed into a phase fraction field using a transformation function :math:`g` such as :math:`\phi = g(d)`.
+
+To compute the signed distance, the interface is linearly reconstructed from the iso-contour :math:`\phi=0.5` using the `Marching Cube algorithm implemented in deal.II <https://dealii.org/current/doxygen/deal.II/classGridTools_1_1MarchingCubeAlgorithm.html>`_. Then, the signed distance is computed layer-by-layer, from the interface until the user-defined maximum distance :math:`d_\mathrm{max}` is reached on each side of the interface. 
+
+For the first layer, the analytical minimum distance between the DoFs of the cells cut by the interface and the reconstructed interface is computed. It comes down to the computation of the distance between points (i.e., the DoFs) and the line segments in 2D or triangles in 3D that approximate the interface.
+
+For the subsequent layers, the signed distance for the remaining DoFs is computed iteratively in the narrow band defined by :math:`d \in [-d_\mathrm{max}, d_\mathrm{max}]`, by solving a minimization problem. We refer the reader to the work of Ausas *et al.* (2011) [#ausas2011]_ for more details. The signed distance for the DoFs outside of the narrow band is set to :math:`\pm d_\mathrm{max}`, where the sign depends on the side of the interface on which they are located.
+
+Finally, the signed distance field is transformed to a phase fraction field. Here, we want that:
+
+.. math::
+  \phi \approx
+  \begin{cases}
+    1 \quad \text{if } d < -d_\mathrm{max} \\
+    0.5 \quad \text{if } d = 0\\
+    0 \quad \text{if } d > d_\mathrm{max} \\
+  \end{cases}
+
+In Lethe, two functions are available to achieve that: a hyperbolic tangent function or a 4th degree, piecewise polynomial. 
+
+* hyperbolic tangent: the regularized phase fraction is given by
+
+  .. math::
+    \phi = 0.5-0.5\tanh(d/\varepsilon)
+    
+  where :math:`\varepsilon` is a measure of the interface thickness. Note that this transformation does not ensure that :math:`\phi=0` or :math:`1` when :math:`d = \pm d_\mathrm{max}`. The value of :math:`\phi` at :math:`\pm d_\mathrm{max}` depends on :math:`d_\mathrm{max}` and :math:`\varepsilon`.
+
+* piece-wise polynomial: this transformation takes the form
+
+  .. math::
+    \phi =
+    \begin{cases}
+      0.5 - 0.5(4d' + 6d'^2 + 4d'^3 + d'^4) \text{ if } d' < 0.0 \\
+      0.5 - 0.5(4d' - 6d'^2 + 4d'^3 - d'^4) \text{ if } d' > 0.0
+    \end{cases}
+  
+  where :math:`d' = d/d_\mathrm{max}` is the dimensionless distance. Contrary to the hyperbolic tangent function, it ensures that :math:`\phi=0` or :math:`1` when :math:`d = \pm d_\mathrm{max}`.
 
 """"""""""""""""""""""""""""""""""""""""
 Algebraic Interface Reinitialization
@@ -313,8 +354,10 @@ References
 
 .. [#aliabadi2000] \S. Aliabadi and T. E. Tezduyar, “Stabilized-finite-element/interface-capturing technique for parallel computation of unsteady flows with interfaces,” *Comput. Methods Appl. Mech. Eng.*, vol. 190, no. 3, pp. 243–261, Oct. 2000, doi: `10.1016/S0045-7825(00)00200-0 <https://doi.org/10.1016/S0045-7825(00)00200-0>`_\.
 
-.. [#olsson2007] \E.Olsson, G. Kreiss, and S. Zahedi, "A conservative level set method for two phase flow II," *J. Comput. Phys.*, vol. 225, no. 1, pp. 785–807, Jul. 2007, doi: `10.1016/j.jcp.2006.12.027 <https://doi.org/10.1016/j.jcp.2006.12.027>`_\.
+.. [#olsson2007] \E. Olsson, G. Kreiss, and S. Zahedi, "A conservative level set method for two phase flow II," *J. Comput. Phys.*, vol. 225, no. 1, pp. 785–807, Jul. 2007, doi: `10.1016/j.jcp.2006.12.027 <https://doi.org/10.1016/j.jcp.2006.12.027>`_\.
 
 .. [#brackbill1992] \J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: `10.1016/0021-9991(92)90240-Y <https://doi.org/10.1016/0021-9991(92)90240-Y>`_\.
 
 .. [#zahedi2012] \S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” *Int. J. Numer. Methods Fluids*, vol. 69, no. 9, pp. 1433–1456, 2012, doi: `10.1002/fld.2643 <https://doi.org/10.1002/fld.2643>`_\.
+
+.. [#ausas2011] \R.F. Ausas, E.A. Dari, and G.C. Buscaglia, “A geometric mass-preserving redistancing scheme for the level set function,” *Int. J. Numer. Methods Fluids*, vol. 65, no. 8, pp. 989-1010, 2011, doi: `10.1002/fld.2227 <https://doi.org/10.1002/fld.2227>`_\.
