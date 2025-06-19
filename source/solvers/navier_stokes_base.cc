@@ -2010,11 +2010,11 @@ NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
   const std::shared_ptr<CouplingEvaluationBase<dim, double>>
     mortar_coupling_evaluator =
       std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-        *this->mapping, this->dof_handler);
+        *this->get_mapping(), this->dof_handler);
 
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(
-      *this->mapping,
+      *this->get_mapping(),
       this->dof_handler,
       this->zero_constraints,
       mortar_coupling_evaluator,
