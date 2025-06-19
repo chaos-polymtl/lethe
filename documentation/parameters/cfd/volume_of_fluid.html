@@ -477,6 +477,12 @@
       set monitored fluid         = fluid 1
     end
 
+    subsection geometric interface reinitialization
+      set max reinitialization distance = 1.0
+      set transformation type           = tanh
+      set tanh thickness                = 1.0
+    end
+
     subsection algebraic interface reinitialization
       set output reinitialization steps = false
       set steady-state criterion        = 1e-2
@@ -522,7 +528,7 @@ end
 <h2>Interface Regularization Method<a class="headerlink" href="#interface-regularization-method" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: sets the method of regularization. There are three methods available:<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> and <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. If <code class="docutils literal notranslate"><span class="pre">none</span></code> is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: sets the method of regularization. There are four methods available:<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, and <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. If <code class="docutils literal notranslate"><span class="pre">none</span></code> is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be regularized once every <span class="math notranslate nohighlight">\(2\)</span> time-steps.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: displays the solution process of the regularization method. The different levels of verbosity are:</p>
 <ul>
@@ -573,9 +579,32 @@ number of iterations to reach the mass conservation tolerance.
 <p>The <a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example discussed the interface sharperning mechanism.</p>
 </div>
 </section>
+<section id="geometric-interface-reinitialization">
+<h3>Geometric Interface Reinitialization<a class="headerlink" href="#geometric-interface-reinitialization" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the <em>Geometric Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> sunsection defines the relevant parameters.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code>: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">transformation</span> <span class="pre">type</span></code>: type of the transformation function used to convert the signed distance to a phase fraction. The choices are: <code class="docutils literal notranslate"><span class="pre">tanh</span></code> and <code class="docutils literal notranslate"><span class="pre">piecewise</span> <span class="pre">polynomial</span></code>.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">tanh</span></code>: the regularized phase fraction is given by <span class="math notranslate nohighlight">\(\phi = 0.5-0.5\tanh(d/\varepsilon)\)</span>, where <span class="math notranslate nohighlight">\(d\)</span> is the signed distance to the interface and <span class="math notranslate nohighlight">\(\varepsilon\)</span> is a measure of the interface thickness and is set by the parameter <code class="docutils literal notranslate"><span class="pre">tanh</span> <span class="pre">thickness</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">piecewise</span> <span class="pre">polynomial</span></code>: this transformation uses a piecewise polynomial function of degree 4. It takes the form:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\phi =
+\begin{cases}
+  0.5 - 0.5(4d' + 6d'^2 + 4d'^3 + d'^4) \text{ if } d' &lt; 0.0 \\
+  0.5 - 0.5(4d' - 6d'^2 + 4d'^3 - d'^4) \text{ if } d' &gt; 0.0
+\end{cases}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(d' = d/d_\mathrm{max}\)</span> is the dimensionless distance to the interface and <span class="math notranslate nohighlight">\(d_\mathrm{max}\)</span> is the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code>.</p>
+</li>
+</ul>
+</li>
+</ul>
+</section>
 <section id="algebraic-interface-reinitialization">
 <h3>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">algebraic</span></code> corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the <em>Algebraic Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> defines parameters used to reinitialize the interface in VOF simulations.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the <em>Algebraic Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> defines parameters used to reinitialize the interface in VOF simulations.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">reinitialization</span> <span class="pre">steps</span></code>: when set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named <code class="docutils literal notranslate"><span class="pre">algebraic-reinitialization-steps-output</span></code> located inside the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">path</span></code> directory specified in the <a class="reference internal" href="simulation_control.html"><span class="doc">simulation control</span></a> subsection.</p>
 <dl class="simple">
@@ -748,6 +777,7 @@ number of iterations to reach the mass conservation tolerance.
 <li><a class="reference internal" href="#">Volume of Fluid (Multiphase Flow)</a><ul>
 <li><a class="reference internal" href="#interface-regularization-method">Interface Regularization Method</a><ul>
 <li><a class="reference internal" href="#projection-based-interface-sharpening">Projection-Based Interface Sharpening</a></li>
+<li><a class="reference internal" href="#geometric-interface-reinitialization">Geometric Interface Reinitialization</a></li>
 <li><a class="reference internal" href="#algebraic-interface-reinitialization">Algebraic Interface Reinitialization</a></li>
 </ul>
 </li>

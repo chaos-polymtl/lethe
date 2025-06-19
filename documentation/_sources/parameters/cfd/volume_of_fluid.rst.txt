@@ -39,6 +39,12 @@ The default values of the VOF parameters are given in the text box below.
         set tolerance               = 1e-6
         set monitored fluid         = fluid 1
       end
+      
+      subsection geometric interface reinitialization
+        set max reinitialization distance = 1.0
+        set transformation type           = tanh
+        set tanh thickness                = 1.0
+      end
 
       subsection algebraic interface reinitialization
         set output reinitialization steps = false
@@ -84,7 +90,7 @@ Interface Regularization Method
 
 The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step. 
 
-* ``type``: sets the method of regularization. There are three methods available:``none``, ``projection-based interface sharpening`` and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The two other types are described bellow along with their corresponding subsection.
+* ``type``: sets the method of regularization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
 
 * ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
@@ -136,10 +142,32 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 
   The :doc:`../../examples/multiphysics/dam-break/dam-break` example discussed the interface sharperning mechanism.
 
+Geometric Interface Reinitialization
+++++++++++++++++++++++++++++++++++++
+
+The ``type = geometric interface reinitialization`` reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
+
+* ``max reinitialization distance``: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
+
+* ``transformation type``: type of the transformation function used to convert the signed distance to a phase fraction. The choices are: ``tanh`` and ``piecewise polynomial``.
+  
+  * ``tanh``: the regularized phase fraction is given by :math:`\phi = 0.5-0.5\tanh(d/\varepsilon)`, where :math:`d` is the signed distance to the interface and :math:`\varepsilon` is a measure of the interface thickness and is set by the parameter ``tanh thickness``.
+  
+  * ``piecewise polynomial``: this transformation uses a piecewise polynomial function of degree 4. It takes the form:
+  
+    .. math::
+      \phi =
+      \begin{cases}
+        0.5 - 0.5(4d' + 6d'^2 + 4d'^3 + d'^4) \text{ if } d' < 0.0 \\
+        0.5 - 0.5(4d' - 6d'^2 + 4d'^3 - d'^4) \text{ if } d' > 0.0
+      \end{cases}
+    
+    where :math:`d' = d/d_\mathrm{max}` is the dimensionless distance to the interface and :math:`d_\mathrm{max}` is the ``max reinitialization distance``.
+  
 Algebraic Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = algebraic`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in VOF simulations. 
+The ``type = algebraic interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in VOF simulations. 
 
 * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 

@@ -242,7 +242,7 @@ var searchData=
   ['smallest_5fcontact_5fsearch_5fcriterion_239',['smallest_contact_search_criterion',['../classCFDDEMSolver.html#ae65d7a65752793150ba2f3a33e7e3cf8',1,'CFDDEMSolver::smallest_contact_search_criterion'],['../classDEMSolver.html#acf24e82bd10b66e96e5b36993e2bd7f3',1,'DEMSolver::smallest_contact_search_criterion']]],
   ['smallest_5fsolid_5fobject_5fmapping_5fcriterion_240',['smallest_solid_object_mapping_criterion',['../classDEMSolver.html#a4964702f6cefb801cd613f042a6d56f6',1,'DEMSolver']]],
   ['smooth_5fmax_241',['smooth_max',['../classShape.html#a3beacb4994e184b9cf5c7d5719d1ab94',1,'Shape']]],
-  ['smooth_5fphase_5ffraction_242',['smooth_phase_fraction',['../classVolumeOfFluid.html#a31a63b403298bb51892a368eb48c5b8b',1,'VolumeOfFluid']]],
+  ['smooth_5fphase_5ffraction_242',['smooth_phase_fraction',['../classVolumeOfFluid.html#a0b845f34101650255fbe8f0d0df4279a',1,'VolumeOfFluid']]],
   ['smoothed_5foutput_5ffields_243',['smoothed_output_fields',['../structParameters_1_1PostProcessing.html#adb4949254bb60243667ce97e53444b62',1,'Parameters::PostProcessing']]],
   ['smootherpreconditionertype_244',['SmootherPreconditionerType',['../classMFNavierStokesPreconditionGMGBase.html#a7b3203e280f8d5dfa56f1a573a96eb97',1,'MFNavierStokesPreconditionGMGBase']]],
   ['smoothertype_245',['SmootherType',['../classMFNavierStokesPreconditionGMGBase.html#a2590c8291bb1077a78669394cffa8e5c',1,'MFNavierStokesPreconditionGMGBase']]],
