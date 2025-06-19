@@ -1217,15 +1217,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             }
         }
 
-      // Compute geometric outside volume (fluid 0)
-      // const double geometric_volume_outside =
-      //   InterfaceTools::compute_volume(*mapping,
-      //                                  dof_handler,
-      //                                  *fe,
-      //                                  this->present_solution,
-      //                                  0.5,
-      //                                  mpi_communicator);
-
       double geometric_volume_outside, surface;
 
       std::tie(geometric_volume_outside, surface) =
