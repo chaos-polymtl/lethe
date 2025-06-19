@@ -21,12 +21,11 @@
 void
 test()
 {
-  /* This test checks the computation of the surface area of the level 0.1 of
-  a level-set field and the volume enclosed by it using the
-  InterfaceTools::compute_surface_and_volume function. The level-set field of
-  interest is the one describing a sphere. The surface and volume are computed
-  for 3 mesh refinements and the test checks the error on these metriics and the
-  convergence rate of the method (formally 2).
+  /* This test checks the computation of the volume enclosed by the level 0.1 of
+  a level-set field using the InterfaceTools::compute_cell_wise_volume function.
+  The level-set field of interest is the one describing a sphere. The volume is
+  computed for 3 mesh refinements and the test checks the error on the volume
+  and the convergence rate of the method (formally 2).
   */
   Triangulation<3> triangulation;
   DoFHandler<3>    dof_handler;
@@ -44,7 +43,6 @@ test()
   const double   iso_level     = 0.1;
 
   Vector<double> error_volume(3);
-  Vector<double> error_surface(3);
 
   // Loop for the mesh convergence study
   for (unsigned int n = 0; n < 3; n++)
@@ -66,43 +64,52 @@ test()
 
       // Compute the surface and volume of the sphere with the NonMatching
       // FEValues
-      double volume, surface;
+      double volume = 0.0;
 
-      std::tie(volume, surface) = InterfaceTools::compute_surface_and_volume(
-        dof_handler,
-        fe,
-        signed_distance,
-        iso_level,
-        triangulation.get_communicator());
+      // Compute the volume with the cell-wise routine of InterfaceTools
+      FEPointEvaluation<1, 3> fe_point_evaluation(
+        mapping, fe, update_jacobians | update_JxW_values);
 
-      // Analytical surface and volume
-      const double analytical_surface =
-        4.0 * M_PI * std::pow(sphere_radius + iso_level, 2);
+      double volume_cell_wise_sum = 0.0;
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              const unsigned int n_dofs_per_cell =
+                cell->get_fe().n_dofs_per_cell();
+              Vector<double> cell_dof_level_set_values(n_dofs_per_cell);
+
+              cell->get_dof_values(signed_distance,
+                                   cell_dof_level_set_values.begin(),
+                                   cell_dof_level_set_values.end());
+
+              const double level_set_correction = -iso_level;
+              volume += InterfaceTools::compute_cell_wise_volume(
+                fe_point_evaluation,
+                cell,
+                cell_dof_level_set_values,
+                level_set_correction,
+                cell->get_fe().degree + 1);
+            }
+        }
+
+      // Analytical volume
       const double analytical_volume =
         4.0 * M_PI * std::pow(sphere_radius + iso_level, 3) / 3.0;
 
-      // Compute and store the surface and volume errors
-      error_surface[n] = abs(analytical_surface - surface);
-      error_volume[n]  = abs(analytical_volume - volume);
+      // Compute and store the volume error
+      error_volume[n] = abs(analytical_volume - volume);
 
-      deallog << "The surface error for ref. lev. " << n + 3
-              << " is: " << error_surface[n] << std::endl;
       deallog << "The volume error for ref. lev. " << n + 3
               << " is: " << error_volume[n] << std::endl;
       triangulation.refine_global(1);
     }
 
-  // Compute the rates of convergence
-  const double convergence_order_surface =
-    log(error_surface[2] / error_surface[1]) / log(0.5);
-  const double convergence_order_volume =
+  // Compute the rate of convergence
+  const double convergence_order =
     log(error_volume[2] / error_volume[1]) / log(0.5);
 
-  deallog << "The convergence rate for the surface is: "
-          << convergence_order_surface << std::endl;
-
-  deallog << "The convergence rate for the volume is: "
-          << convergence_order_volume << std::endl;
+  deallog << "The convergence rate is: " << convergence_order << std::endl;
 }
 
 int
