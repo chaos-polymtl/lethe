@@ -487,10 +487,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
           else
             {
-              for (unsigned int q = 0; q < this->n_q_points; ++q)
-                {
-                  density[q] = properties_manager.get_density_scale();
-                }
+              density_scale = properties_manager.get_density_scale();
             }
 
           if (properties_manager.is_non_newtonian())
