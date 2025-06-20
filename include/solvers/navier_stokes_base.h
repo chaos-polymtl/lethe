@@ -940,6 +940,7 @@ protected:
 
   // Mortar coupling manager and operator
   std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
+  // std::shared_ptr<MortarManagerRectangle<dim>>      mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
 
   // Initial mapping for rotor mesh rotation in mortar method

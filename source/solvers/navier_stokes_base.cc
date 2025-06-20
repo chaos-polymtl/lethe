@@ -2006,6 +2006,12 @@ NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
     this->dof_handler,
     this->simulation_parameters.mortar);
 
+  // this->mortar_manager = std::make_shared<MortarManagerRectangle<dim>>(
+  //   *this->cell_quadrature,
+  //   this->dof_handler,
+  //   this->simulation_parameters.mortar,
+  //   0.0, 2.0);
+  
   // Create mortar coupling evaluator
   const std::shared_ptr<CouplingEvaluationBase<dim, double>>
     mortar_coupling_evaluator =
