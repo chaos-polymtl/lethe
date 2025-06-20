@@ -113,19 +113,19 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                   dsp,
                                   nonzero_constraints,
                                   false);
-
+                                  std::cout << __LINE__ << std::endl;
   // Add sparsity pattern entries
   if (this->simulation_parameters.mortar.enable)
     this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
-
+  std::cout << __LINE__ << std::endl;
   sparsity_pattern.copy_from(dsp);
-
+  std::cout << __LINE__ << std::endl;
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),
     this->mpi_communicator,
     this->locally_relevant_dofs);
-
+    std::cout << __LINE__ << std::endl;
   system_matrix.reinit(this->locally_owned_dofs,
                        this->locally_owned_dofs,
                        dsp,

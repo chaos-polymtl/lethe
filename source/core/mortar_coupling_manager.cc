@@ -1026,7 +1026,7 @@ CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
   SparsityPatternBase &dsp) const
 {
   const auto constraints = &constraints_extended;
-
+  std::cout << __LINE__ << std::endl;
   for (unsigned int i = 0; i < dof_indices.size(); i += n_dofs_per_cell)
     {
       std::vector<types::global_dof_index> a(dof_indices.begin() + i,
@@ -1035,9 +1035,11 @@ CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
       std::vector<types::global_dof_index> b(dof_indices_ghost.begin() + i,
                                              dof_indices_ghost.begin() + i +
                                                n_dofs_per_cell);
-
+                                               std::cout << __LINE__ << std::endl;
       constraints->add_entries_local_to_global(a, b, dsp);
+      std::cout << __LINE__ << std::endl;
       constraints->add_entries_local_to_global(b, a, dsp);
+      std::cout << __LINE__ << std::endl;
     }
 }
 
