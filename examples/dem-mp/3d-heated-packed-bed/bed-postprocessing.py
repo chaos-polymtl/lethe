@@ -138,7 +138,6 @@ legend.legend_handles[2].set_color('k')
 
 plt.grid()
 plt.ylim(19,34)
-plt.title("Evolution of the temperature of the steel packed bed \n at three different heights.", pad=20)
 plt.xlabel('Time (s) after packing')
 plt.ylabel('Temperature (°C)')
 plt.savefig('mean-temperatures')
