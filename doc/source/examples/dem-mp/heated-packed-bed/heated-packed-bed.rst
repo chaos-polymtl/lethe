@@ -2,8 +2,8 @@
 Heated Packed Bed
 ==========================
 
-This example simulates the heating of a packed bed using the discrete element method (DEM) and heat transfer models. It is based on the validation case of Beaulieu [#Beaulieu2020]_ with stainless steel.
-More information regarding the Multiphysic DEM parameters is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
+This example simulates the heating of a packed bed using the discrete element method (DEM) and a heat transfer model. It is based on Beaulieu's validation case [#Beaulieu2020]_ with stainless steel.
+More information regarding the Multiphysic DEM parameters and the heat transfer model is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_ and `Heat transfer model <../../../theory/multiphase/cfd_dem/dem.html#thermal-dem-in-a-stagnant-gas>`_.
 
 
 ----------------------------------
@@ -36,18 +36,18 @@ Description of the Case
 -------------------------
 
 This example is run in three stages. 
-First, during the loading stage (:math:`0-6` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box. In this part of the simulation, :math:`g = 9.81 \times e_x` because we insert the particles from the side of the box. When particles are still enough, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation.
-The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 e_z` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_. We let the particles fall into their places for :math:`1` s. 
+First, during the loading stage (:math:`0-6` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box. In this part of the simulation, :math:`g = 9.81 \mathbf{e_x}` because we insert the particles from the side of the box. When particles are still enough, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation.
+The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 \mathbf{e_z}` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_. We let the particles fall into their places for :math:`1` s. 
 Finally, during the heating stage (:math:`7-4000` s), the temperature of a solid surface placed on top on the packed bed is set to :math:`53°C` and the particles are heated through this top wall.
 
 .. image:: images/heated-steel-rake.png
-    :width: 350
+    :width: 400
 
 .. image:: images/heated-steel-side.png
-    :width: 350
+    :width: 400
 
 .. image:: images/heated-steel-final.png
-    :width: 350
+    :width: 400
     :align: center
 
 --------------
@@ -94,7 +94,7 @@ Lagrangian Physical Properties
 
 The :math:`8849` particles are mono-dispersed, with a diameter of :math:`6.4` mm.
 
-The physical properties of the steel particles, the walls and the interstitial gas were chosen to match those used by Beaulieu in her simulation. Only the wall and particles Young's modulus were chosen :math:`10` times as high as the ones used by Beaulieu, to be able to match the experimental porosity of :math:`42%` for the packed bed.
+The physical properties of the steel particles, the walls and the interstitial gas were chosen to match those used by Beaulieu in her simulation. Only the wall and particles Young's modulus were chosen :math:`10` times as high as the ones used by Beaulieu, to be able to match the experimental porosity of :math:`42\%` for the packed bed.
 
 .. code-block:: text
 
@@ -246,7 +246,7 @@ Three solid surfaces are used in this example. The first one is the one used to 
 
 .. note::
 
-  The results are quite sensitive to the position of the side wall (``square-side.msh``), so it could probably by set more precisely for more accurate results.
+  The results are quite sensitive to the position of the side wall (``square-side.msh``), so it could probably be set more precisely for more accurate results.
 
 
 Simulation Control
@@ -362,7 +362,7 @@ The following figure shows the results of the simulation with the ``friction coe
     :width: 500
     :align: center
 
-This ``friction coefficient wall`` allows to fit the experimental data better but it comes into question whether a friction coefficient of :math:`1.0` is realistic to model the Styrofoam walls used in the experiment. Also, other parameters like the ``rolling friction`` should have maybe been adjusted better to fit the experimental properties.
+This ``friction coefficient wall`` allows to fit the experimental data better but it is debatable whether a friction coefficient of :math:`1.0` is realistic to model the Styrofoam walls used in the experiment. Also, other parameters like the ``rolling friction`` should have probably been adjusted as well to fit the experimental properties.
 
 ---------
 Reference
