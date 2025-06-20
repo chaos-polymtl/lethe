@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
@@ -383,6 +383,36 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       *this->mapping,
       *this->face_quadrature);
 
+
+    if (this->simulation_parameters.multiphysics.VOF)
+      {
+        const DoFHandler<dim> *dof_handler_vof =
+          this->multiphysics->get_dof_handler(PhysicsID::VOF);
+        scratch_data.enable_vof(
+          dof_handler_vof->get_fe(),
+          *this->cell_quadrature,
+          *this->mapping,
+          this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+
+        if (this->simulation_parameters.multiphysics.vof_parameters
+              .surface_tension_force.enable)
+          {
+            const DoFHandler<dim>
+              &projected_phase_fraction_gradient_dof_handler =
+                this->multiphysics
+                  ->get_projected_phase_fraction_gradient_dof_handler();
+            const DoFHandler<dim> &curvature_dof_handler =
+              this->multiphysics->get_curvature_dof_handler();
+            scratch_data.enable_projected_phase_fraction_gradient(
+              projected_phase_fraction_gradient_dof_handler.get_fe(),
+              *this->cell_quadrature,
+              *this->mapping);
+            scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
+                                          *this->cell_quadrature,
+                                          *this->mapping);
+          }
+      }
+
     scratch_data.enable_void_fraction(*void_fraction_manager.fe,
                                       *this->cell_quadrature,
                                       *this->mapping);
@@ -423,6 +453,24 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
+  DoFHandler<dim> *dof_handler_vof = nullptr;
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+    }
+
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
     cell->level(),
@@ -434,16 +482,34 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     void_fraction_manager.void_fraction_locally_relevant,
     void_fraction_manager.previous_void_fraction);
 
-  scratch_data.reinit_particle_fluid_interactions(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions[0],
-    this->void_fraction_manager.void_fraction_locally_relevant,
-    particle_handler,
-    this->dof_handler,
-    void_fraction_manager.dof_handler);
-
   scratch_data.calculate_physical_properties();
+
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        this->void_fraction_manager.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        void_fraction_manager.dof_handler,
+        *dof_handler_vof,
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+    }
+  else
+    {
+      scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        this->void_fraction_manager.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        void_fraction_manager.dof_handler);
+    }
+
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -491,6 +557,17 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
     *this->mapping,
     *this->face_quadrature);
 
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_vof(
+        dof_handler_vof->get_fe(),
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+    }
+
   scratch_data.enable_void_fraction(*void_fraction_manager.fe,
                                     *this->cell_quadrature,
                                     *this->mapping);
@@ -534,6 +611,24 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
+  DoFHandler<dim> *dof_handler_vof = nullptr;
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+    }
+
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
     cell->level(),
@@ -545,16 +640,33 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     void_fraction_manager.void_fraction_locally_relevant,
     void_fraction_manager.previous_void_fraction);
 
-  scratch_data.reinit_particle_fluid_interactions(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions[0],
-    void_fraction_manager.void_fraction_locally_relevant,
-    particle_handler,
-    this->dof_handler,
-    void_fraction_manager.dof_handler);
-
   scratch_data.calculate_physical_properties();
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        this->void_fraction_manager.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        void_fraction_manager.dof_handler,
+        *dof_handler_vof,
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+    }
+  else
+    {
+      scratch_data.reinit_particle_fluid_interactions(
+        cell,
+        this->evaluation_point,
+        this->previous_solutions[0],
+        this->void_fraction_manager.void_fraction_locally_relevant,
+        particle_handler,
+        this->dof_handler,
+        void_fraction_manager.dof_handler);
+    }
+
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -789,6 +901,17 @@ FluidDynamicsVANS<dim>::solve()
           .restart == false)
     read_dem();
 
+  // Physical Properties
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+
+  Assert(
+    this->simulation_parameters.physical_properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+      
   this->setup_dofs();
 
   this->set_initial_condition(
