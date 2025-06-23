@@ -114,7 +114,6 @@ FluidDynamicsVANS<dim>::read_dem()
   Particles::ParticleHandler<dim> temporary_particle_handler(
     *this->triangulation, particle_mapping, DEM::DEMProperties::n_properties);
 
-
   ia >> temporary_particle_handler;
 
   const std::string filename = prefix + ".triangulation";
@@ -383,7 +382,6 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       *this->mapping,
       *this->face_quadrature);
 
-
     if (this->simulation_parameters.multiphysics.VOF)
       {
         const DoFHandler<dim> *dof_handler_vof =
@@ -484,7 +482,6 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     particle_projector.previous_void_fraction);
 
   scratch_data.calculate_physical_properties();
-
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -841,7 +838,6 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
               const double present_velocity_divergence =
                 trace(present_velocity_gradients[q]);
 
-
               // Evaluation of global mass conservation
               local_mass_source =
                 (present_velocity_values[q] *
@@ -888,7 +884,6 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
   max_local_continuity =
     Utilities::MPI::max(max_local_continuity, this->mpi_communicator);
 
-
   this->pcout << std::setprecision(
     this->simulation_control->get_log_precision());
 
@@ -923,10 +918,11 @@ FluidDynamicsVANS<dim>::solve()
       "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
-    this->simulation_parameters.physical_properties_manager.density_is_constant(),
+    this->simulation_parameters.physical_properties_manager
+      .density_is_constant(),
     RequiresConstantDensity(
       "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
-      
+
   this->setup_dofs();
 
   this->set_initial_condition(
