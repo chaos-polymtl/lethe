@@ -41,17 +41,18 @@ static unsigned int counter = 0;
 
 
 
-template <int dim, typename Number, typename MemorySpace>
-class MGTransferMFWrapper
+template <int dim, typename Number>
+class MGTransferMF<dim, Number, MemorySpace::Default>
   : public MGTransferBase<
-      LinearAlgebra::distributed::Vector<Number, MemorySpace>>
+      LinearAlgebra::distributed::Vector<Number, MemorySpace::Default>>
 {
 public:
-  using VectorType = LinearAlgebra::distributed::Vector<Number, MemorySpace>;
+  using VectorType =
+    LinearAlgebra::distributed::Vector<Number, MemorySpace::Default>;
   using VectorTypeHost =
     LinearAlgebra::distributed::Vector<Number, dealii::MemorySpace::Host>;
 
-  MGTransferMFWrapper(
+  MGTransferMF(
     const MGLevelObject<MGTwoLevelTransfer<dim, VectorTypeHost>> &mg_transfers,
     const std::function<void(const unsigned int, VectorTypeHost &)>
       &initialize_dof_vector)
@@ -61,9 +62,10 @@ public:
   template <typename Number2>
   void
   copy_to_mg(
-    const DoFHandler<dim>                                          &dof_handler,
-    MGLevelObject<VectorType>                                      &dst,
-    const LinearAlgebra::distributed::Vector<Number2, MemorySpace> &src) const
+    const DoFHandler<dim>     &dof_handler,
+    MGLevelObject<VectorType> &dst,
+    const LinearAlgebra::distributed::Vector<Number2, MemorySpace::Default>
+      &src) const
   {
     MGLevelObject<VectorTypeHost> dst_host(dst.min_level(), dst.max_level());
     LinearAlgebra::distributed::Vector<Number2, dealii::MemorySpace::Host>
@@ -81,9 +83,10 @@ public:
 
   template <typename Number2>
   void
-  copy_from_mg(const DoFHandler<dim> &dof_handler,
-               LinearAlgebra::distributed::Vector<Number2, MemorySpace> &dst,
-               const MGLevelObject<VectorType> &src) const
+  copy_from_mg(
+    const DoFHandler<dim> &dof_handler,
+    LinearAlgebra::distributed::Vector<Number2, MemorySpace::Default> &dst,
+    const MGLevelObject<VectorType> &src) const
   {
     LinearAlgebra::distributed::Vector<Number2, dealii::MemorySpace::Host>
                                   dst_host;
@@ -137,7 +140,8 @@ private:
   void
   copy_to_host(
     LinearAlgebra::distributed::Vector<Number2, dealii::MemorySpace::Host> &dst,
-    const LinearAlgebra::distributed::Vector<Number2, MemorySpace> &src) const
+    const LinearAlgebra::distributed::Vector<Number2, MemorySpace::Default>
+      &src) const
   {
     LinearAlgebra::ReadWriteVector<Number2> rw_vector(
       src.get_partitioner()->locally_owned_range());
@@ -150,7 +154,7 @@ private:
   template <typename Number2>
   void
   copy_from_host(
-    LinearAlgebra::distributed::Vector<Number2, MemorySpace> &dst,
+    LinearAlgebra::distributed::Vector<Number2, MemorySpace::Default> &dst,
     const LinearAlgebra::distributed::Vector<Number2, dealii::MemorySpace::Host>
       &src) const
   {
@@ -522,10 +526,7 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
       using SmootherType               = PreconditionChebyshev<LevelMatrixType,
                                                  VectorType,
                                                  SmootherPreconditionerType>;
-      using MGTransferType             = typename std::conditional<
-        std::is_same_v<MemorySpace, dealii::MemorySpace::Host>,
-        MGTransferMF<dim, Number>,
-        MGTransferMFWrapper<dim, Number, MemorySpace>>::type;
+      using MGTransferType             = MGTransferMF<dim, Number, MemorySpace>;
 
       const auto coarse_grid_triangulations =
         MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
