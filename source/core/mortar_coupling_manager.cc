@@ -1320,7 +1320,8 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
 template <int dim, typename Number>
 NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
   const Mapping<dim>    &mapping,
-  const DoFHandler<dim> &dof_handler)
+  const DoFHandler<dim> &dof_handler,
+  const double           kinematic_viscosity)
   : fe_sub_u(dof_handler.get_fe().base_element(
                dof_handler.get_fe().component_to_base_index(0).first),
              dim)
@@ -1329,6 +1330,7 @@ NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
              1)
   , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
   , phi_p_m(mapping, fe_sub_p, update_values)
+  , kinematic_viscosity(kinematic_viscosity)
 {
   for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
     if (dof_handler.get_fe().system_to_component_index(i).first < dim)
@@ -1424,10 +1426,6 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
 {
   for (const auto q : this->phi_u_m.quadrature_point_indices())
     {
-      // get kinematic viscosity from rheological model
-      const double kinematic_viscosity = 1.;
-      // this->properties_manager->get_rheology()->get_kinematic_viscosity();
-
       const unsigned int q_index = ptr_q + q;
 
       // Initialize buffer for both local and ghost sides
@@ -1486,7 +1484,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
 
       // - (n avg(∇v), ν/2 jump(δu))
       phi_u_m.submit_gradient(outer(u_grad_result, normal) * 0.5 * JxW, q);
-      phi_u_m.submit_value(u_value_result * kinematic_viscosity * JxW, q);
+      phi_u_m.submit_value(u_value_result * this->kinematic_viscosity * JxW, q);
       phi_p_m.submit_value(p_value_result * JxW, q);
     }
 

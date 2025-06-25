@@ -835,7 +835,8 @@ public:
   using u_value_type = typename FEPointIntegratorU::value_type;
 
   NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
-                                 const DoFHandler<dim> &dof_handler);
+                                 const DoFHandler<dim> &dof_handler,
+                                 const double           kinematic_viscosity);
 
   unsigned int
   data_size() const override;
@@ -874,6 +875,9 @@ public:
 
   /// Relevant dof indices
   std::vector<unsigned int> relevant_dof_indices;
+
+  /// Kinematic viscosity
+  const double kinematic_viscosity;
 };
 
 #endif

@@ -1981,7 +1981,10 @@ NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
   const std::shared_ptr<CouplingEvaluationBase<dim, double>>
     mortar_coupling_evaluator =
       std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-        *this->get_mapping(), this->dof_handler);
+        *this->get_mapping(),
+        this->dof_handler,
+        this->simulation_parameters.physical_properties_manager
+          .get_kinematic_viscosity_scale());
 
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(
