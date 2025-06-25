@@ -2055,10 +2055,10 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   if (!this->simulation_parameters.boundary_conditions.time_dependent)
     return;
 
-  // We can never assume in the code anywhere that the local_evaluation_point
-  // is at the right value its value must always be reinitialized from the
-  // present solution. This may appear trivial, but this is extremely
-  // important when we are checkpointing. Trust me future Bruno.
+  // We can never assume in the code anywhere that the local_evaluation_point is
+  // at the right value its value must always be reinitialized from the present
+  // solution. This may appear trivial, but this is extremely important when we
+  // are checkpointing. Trust me future Bruno.
   this->local_evaluation_point = this->present_solution;
 
   double time = this->simulation_control->get_current_time();
@@ -2227,8 +2227,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   // running in debug mode with Trilinos vectors Deal.II vectors require that
   // the vectors used in the checkpointing mechanism have their relevant dofs
   // whereas Trilinos vectors do not allow for this. Right now this code works
-  // well in release mode for both vector types, but will not work in debug
-  // mode for Trilinos vectors because of an assertion. A workaround will be
+  // well in release mode for both vector types, but will not work in debug mode
+  // for Trilinos vectors because of an assertion. A workaround will be
   // implemented in a near future
 
   std::vector<VectorType *> x_system(1 + previous_solutions.size());
@@ -2309,9 +2309,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  // We will need to identify which pressure degrees of freedom are connected
-  // to fluid region. For these, we won't establish a zero pressure
-  // constraint.
+  // We will need to identify which pressure degrees of freedom are connected to
+  // fluid region. For these, we won't establish a zero pressure constraint.
   std::unordered_set<types::global_dof_index> dofs_are_connected_to_fluid;
 
   // Loop through all cells to identify which cells are solid. This first step
@@ -2323,8 +2322,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           cell->get_dof_indices(local_dof_indices);
-          // If the material_id is higher than 0, the region is a solid
-          // region. Constrain the velocity DOFs to be zero.
+          // If the material_id is higher than 0, the region is a solid region.
+          // Constrain the velocity DOFs to be zero.
           if (cell->material_id() > 0)
             {
               constrain_solid_cell_velocity_dofs(non_zero_constraints,
@@ -2333,9 +2332,9 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
             }
           else
             {
-              // Cell is a fluid cell and as such all the pressure DOFs of
-              // that cell are connected to the fluid. This will be used later
-              // on to identify which pressure cells to constrain.
+              // Cell is a fluid cell and as such all the pressure DOFs of that
+              // cell are connected to the fluid. This will be used later on to
+              // identify which pressure cells to constrain.
               flag_dofs_connected_to_fluid(local_dof_indices,
                                            dofs_are_connected_to_fluid);
             }
@@ -2353,8 +2352,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
           if (cell->material_id() > 0)
             {
               // First check if the cell is connected to a fluid cell by
-              // checking if one of the DOF of the cell is connected to a
-              // fluid cell.
+              // checking if one of the DOF of the cell is connected to a fluid
+              // cell.
               bool connected_to_fluid =
                 check_cell_is_connected_to_fluid(dofs_are_connected_to_fluid,
                                                  local_dof_indices);
@@ -2481,7 +2480,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
                     filtered_phase_fraction_solution,
                     local_filtered_phase_fraction_values);
 
-                  // Check if cell is only in the fluid of interest. As soon as 
+                  // Check if cell is only in the fluid of interest. As soon as
                   // one filtered phase fraction value is outside the tolerated
                   // range, the cell is perceived as being in the wrong fluid.
                   for (const double &filtered_phase_fraction :
