@@ -233,42 +233,6 @@ protected:
 };
 
 template <int dim>
-class MortarManagerRectangle : public MortarManagerBase<dim>
-{
-public:
-  template <int dim2>
-  MortarManagerRectangle(
-  const Quadrature<dim2>        &quadrature,
-  const DoFHandler<dim2>        &dof_handler,
-  const Parameters::Mortar<dim> &mortar_parameters,
-  const double left,
-  const double right)
-  : MortarManagerBase<dim>(
-      compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                        mortar_parameters)
-        .first,
-      quadrature,
-      (right - left) / (2.0 * numbers::PI),
-      0.0)
-      , left(left)
-      , right(right)
-{}
-
-protected:
-  Point<dim>
-  from_1D(const double rad) const override;
-
-  double
-  to_1D(const Point<dim> &point) const override;
-
-  Tensor<1, dim, double>
-  get_normal(const Point<dim> &point) const override;
-
-  const double left;
-  const double right;
-};
-
-template <int dim>
 template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(const unsigned int n_subdivisions,
                                           const Quadrature<dim2> &quadrature_in,

@@ -445,12 +445,12 @@ compute_n_subdivisions_and_radius(
   radius_max =
     Utilities::MPI::max(radius_max, triangulation.get_mpi_communicator());
 
-  // AssertThrow(
-  //   std::abs(radius_max - radius_min) < tolerance,
-  //   ExcMessage(
-  //     "The computed radius of the rotor mesh has a variation greater than "
-  //     "the tolerance across the rotor domain, meaning that the prescribed "
-  //     "center of rotation and the rotor geometry are not in accordance."));
+  AssertThrow(
+    std::abs(radius_max - radius_min) < tolerance,
+    ExcMessage(
+      "The computed radius of the rotor mesh has a variation greater than "
+      "the tolerance across the rotor domain, meaning that the prescribed "
+      "center of rotation and the rotor geometry are not in accordance."));
 
   // Final radius value
   const double radius = radius_min;
@@ -496,29 +496,6 @@ Tensor<1, dim, double>
 MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 {
   return point / point.norm();
-}
-
-/*-------------- MortarManagerRectangle -------------------------------*/
-
-template <int dim>
-Point<dim>
-MortarManagerRectangle<dim>::from_1D(const double radiant) const
-{
-  return Point<dim>(0.0, radiant / (2.0 * numbers::PI) * (right - left) + left);
-}
-
-template <int dim>
-double
-MortarManagerRectangle<dim>::to_1D(const Point<dim> &point) const
-{
-  return (2.0 * numbers::PI) * (point[1] - left) / (right - left);
-}
-
-template <int dim>
-Tensor<1, dim, double>
-MortarManagerRectangle<dim>::get_normal(const Point<dim> &) const
-{
-  return Point<dim>(1.0, 0.0);
 }
 
 
@@ -1540,10 +1517,6 @@ template class MortarManagerBase<3>;
 template class MortarManagerCircle<1>;
 template class MortarManagerCircle<2>;
 template class MortarManagerCircle<3>;
-
-template class MortarManagerRectangle<1>;
-template class MortarManagerRectangle<2>;
-template class MortarManagerRectangle<3>;
 
 template class CouplingOperator<1, double>;
 template class CouplingOperator<2, double>;

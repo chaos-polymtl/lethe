@@ -290,7 +290,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
 
           // SUPG GLS term
           local_rhs_i +=
-           -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+            -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
 
           local_rhs(i) += local_rhs_i;
         }

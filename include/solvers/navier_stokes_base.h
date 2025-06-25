@@ -939,7 +939,7 @@ protected:
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
   // Mortar coupling manager and operator
-  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
+  std::shared_ptr<MortarManagerCircle<dim>> mortar_manager;
   // std::shared_ptr<MortarManagerRectangle<dim>>      mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
 
