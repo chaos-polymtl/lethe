@@ -115,10 +115,8 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                   false);
 
   // Add sparsity pattern entries
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   if (this->simulation_parameters.mortar.enable)
     this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
-#endif
 
   sparsity_pattern.copy_from(dsp);
 
@@ -556,11 +554,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                          this->cell_quadrature->size()));
 
   // Add mortar entries
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   if (this->simulation_parameters.mortar.enable)
     this->mortar_coupling_operator->add_system_matrix_entries(
       this->system_matrix);
-#endif
 
   system_matrix.compress(VectorOperation::add);
 }
@@ -777,7 +773,6 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
                                          this->cell_quadrature->size()));
 
   // Add mortar entries
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   if (this->simulation_parameters.mortar.enable)
     {
       // Change sign of RHS to be compatible with mortar coupling terms
@@ -787,7 +782,6 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
       // Return RHS to original sign
       this->system_rhs *= -1.0;
     }
-#endif
 
   this->system_rhs.compress(VectorOperation::add);
 
