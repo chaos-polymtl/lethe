@@ -6,93 +6,27 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/4
 *****************************
----------------
-Fluid Dynamics
----------------
-Newton iteration: 0  - Residual:  3.33266
-  -Tolerance of iterative solver is : 0.000333266
-  -Iterative solver took : 12 steps to reach a residual norm of 0.000223535
-	alpha =      1 res = 0.0028
-	||du||_L2 =    2.7	||du||_Linfty = 0.22
-	||dp||_L2 =    2.3	||dp||_Linfty = 0.18
-Newton iteration: 1  - Residual:  0.0028
-  -Tolerance of iterative solver is : 2.8e-07
-  -Iterative solver took : 24 steps to reach a residual norm of 1e-07
-	alpha =      1 res =  1e-07
-	||du||_L2 = 0.00024	||du||_Linfty = 3.1e-05
-	||dp||_L2 =    2.3	||dp||_Linfty = 0.19
-Newton iteration: 2  - Residual:  1e-07
-  -Tolerance of iterative solver is : 1e-11
-  -Iterative solver took : 24 steps to reach a residual norm of 4.9e-12
-	alpha =      1 res = 4.9e-12
-	||du||_L2 = 7.2e-07	||du||_Linfty = 1.3e-07
-	||dp||_L2 =   0.04	||dp||_Linfty = 0.0032
 
 *****************************
 Steady iteration:        2/4
 *****************************
    Number of active cells:       512
    Number of degrees of freedom: 4928
-   Volume of triangulation:      2.9
----------------
-Fluid Dynamics
----------------
-Newton iteration: 0  - Residual:  0.011
-  -Tolerance of iterative solver is : 1.1e-06
-  -Iterative solver took : 6 steps to reach a residual norm of 8.4e-07
-	alpha =      1 res = 8.4e-07
-	||du||_L2 = 0.0025	||du||_Linfty = 0.00017
-	||dp||_L2 = 0.0056	||dp||_Linfty = 0.00064
-Newton iteration: 1  - Residual:  8.4e-07
-  -Tolerance of iterative solver is : 8.4e-11
-  -Iterative solver took : 8 steps to reach a residual norm of 8.3e-11
-	alpha =      1 res = 8.3e-11
-	||du||_L2 = 6.3e-06	||du||_Linfty = 2.1e-07
-	||dp||_L2 = 5.4e-05	||dp||_Linfty = 9.2e-06
+   Volume of triangulation:      2.94523
 
 *****************************
 Steady iteration:        3/4
 *****************************
    Number of active cells:       2048
    Number of degrees of freedom: 19072
-   Volume of triangulation:      2.9
----------------
-Fluid Dynamics
----------------
-Newton iteration: 0  - Residual:  0.0026
-  -Tolerance of iterative solver is : 2.6e-07
-  -Iterative solver took : 10 steps to reach a residual norm of 1.6e-07
-	alpha =      1 res = 1.6e-07
-	||du||_L2 = 0.00065	||du||_Linfty = 2.4e-05
-	||dp||_L2 = 0.0031	||dp||_Linfty = 0.0002
-Newton iteration: 1  - Residual:  1.6e-07
-  -Tolerance of iterative solver is : 1.6e-11
-  -Iterative solver took : 14 steps to reach a residual norm of 6.6e-12
-	alpha =      1 res = 6.6e-12
-	||du||_L2 = 2.1e-06	||du||_Linfty = 6.8e-08
-	||dp||_L2 = 2.7e-05	||dp||_Linfty = 1.6e-06
+   Volume of triangulation:      2.94524
 
 *****************************
 Steady iteration:        4/4
 *****************************
    Number of active cells:       8192
    Number of degrees of freedom: 75008
-   Volume of triangulation:      2.9
----------------
-Fluid Dynamics
----------------
-Newton iteration: 0  - Residual:  0.00064
-  -Tolerance of iterative solver is : 6.4e-08
-  -Iterative solver took : 15 steps to reach a residual norm of 5.4e-08
-	alpha =      1 res = 5.4e-08
-	||du||_L2 = 0.00016	||du||_Linfty = 3.3e-06
-	||dp||_L2 = 0.0017	||dp||_Linfty = 5.8e-05
-Newton iteration: 1  - Residual:  5.4e-08
-  -Tolerance of iterative solver is : 1e-11
-  -Iterative solver took : 19 steps to reach a residual norm of 9e-12
-	alpha =      1 res =  9e-12
-	||du||_L2 = 1.2e-05	||du||_Linfty = 1.1e-07
-	||dp||_L2 = 6.3e-05	||dp||_Linfty = 1.3e-06
+   Volume of triangulation:      2.94524
 cells  error_velocity    error_pressure   
   128 4.215290e-05    - 1.263591e-04    - 
   512 5.292525e-06 2.99 3.181579e-05 1.99 
