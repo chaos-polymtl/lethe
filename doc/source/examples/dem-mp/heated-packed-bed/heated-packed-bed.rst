@@ -39,7 +39,7 @@ This example is run in three stages.
 
 First, during the loading stage (:math:`0-6` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box. In this part of the simulation, :math:`g = 9.81 \mathbf{e_x}` because we insert the particles from the side of the box. When particles are sufficiently static, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation. Just before the end of this stage, at :math:`t = 5.95` s, the kinetic energy of the packed bed is :math:`3\times10^{-10}` J, which is lower than the :math:`1\times10^{-7}` J criterion used by Beaulieu for a stable packed bed.
 
-The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 \mathbf{e_z}` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_. We let the particle bed restructure for :math:`1` s. At :math:`t = 6.95` s, the kinetic energy of the packed bed is :math:`3\times10^{-9}` J.
+The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 \mathbf{e_z}` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_. We let the particle bed restructure for :math:`1` s. At :math:`t = 6.95` s, the kinetic energy of the packed bed is :math:`1\times10^{-9}` J.
 
 Finally, during the heating stage (:math:`7-4000` s), the temperature of a solid surface placed on top on the packed bed is set to :math:`53°C` and the particles are heated through this top wall. During this last part of the simulation, particle motion is disabled.
 
