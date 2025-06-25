@@ -12,7 +12,7 @@ import matplotlib.lines as mlines
 from cycler import cycler
 
 # Set plot parameters
-colors=['#1B9E77','#D95F02','#7570B3','#E7298A','#66A61E','#E6AB02']
+colors=['#1B9E77','#D95F02','#7570B3']
 plt.rcParams['axes.prop_cycle'] = cycler(color = colors)
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['figure.figsize'] = (10,8)
@@ -60,10 +60,32 @@ particle_number = 8849
 # Load lethe data
 prm_file = 'heat-packed-bed.prm'
 pvd_name = 'out.pvd'
-ignore_data = ['type', 'mass', 'velocity' , 'omega']
+ignore_data = ['type', 'omega','specific_heat']
 particle = lethe_pyvista_tools(folder, prm_file, pvd_name, ignore_data=ignore_data)
 time = np.array(particle.time_list)
-time -= time[start]
+
+# Get kinetic knergy at the end of the first two stages 
+K = []
+for i in [118,138]:
+    df_load = particle.get_df(i)
+    vx = df_load['velocity'][:, 0]
+    vy = df_load['velocity'][:, 1]
+    vz = df_load['velocity'][:, 2]
+    v_squared = vx*vx + vy*vy +vz*vz
+    m = df_load['mass']
+    K.append(0.5*np.sum(m*v_squared))
+
+# Print the kinetic energy and the packed bed porosity
+particle_volume = 4.0/3.0 * np.pi * (particle_radius)**3
+total_volume = 0.105 * 0.1 * h_top
+porosity = 1 - (particle_number * particle_volume) / total_volume
+print('\n')
+print('=' * 80)
+print(f"At t = {time[118]} s, kinetic energy: {K[0]} J")
+print(f"At t = {time[138]} s, kinetic energy: {K[1]} J")
+print(f"Total porosity: {porosity:.4f} %")
+print('=' * 80)
+print('\n')
 
 # Sampling point for the mean temperatures 
 # (chosen in the middle of the packed bed to represent the thermocouples in the experiment)
@@ -71,6 +93,7 @@ x_sample = 0.05
 y_sample = 0.05
 
 # Array where the mean temperatures of the packed bed at each height are stored
+time -= time[start] # remove time for loading stages
 temperature = np.zeros((len(time)-start,3))
 
 # Distance to define which particles are considered around the sampling points 
@@ -96,16 +119,6 @@ for i_h, h in enumerate(heights):
 
         # Get the mean temperature around the sampling point
         temperature[i-start][i_h] = df_to_sample['temperature'].mean()
-
-# Print packed bed porosity
-particle_volume = 4.0/3.0 * np.pi * (particle_radius)**3
-total_volume = 0.105 * 0.1 * h_top
-porosity = 1 - (particle_number * particle_volume) / total_volume
-print('\n')
-print('=' * 80)
-print(f"Total porosity (%) : {porosity:.4f}")
-print('=' * 80)
-print('\n')
 
 # Plot the evolution of the temperature of the packed bed at three different heights.
 plt.figure()
