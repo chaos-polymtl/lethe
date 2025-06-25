@@ -860,8 +860,8 @@ public:
                   Vector<Number>                            &buffer,
                   const unsigned int                         ptr_q,
                   const unsigned int                         q_stride,
-                  Number                                    *all_values_local,
-                  Number *all_values_ghost) const override;
+                  Number                                    *all_values_m,
+                  Number *all_values_p) const override;
 
   /// Finite element that matches the components `n_components` components
   /// starting at component with index `first_selected_component`.
@@ -869,8 +869,8 @@ public:
   const FESystem<dim> fe_sub_p;
 
   /// Interface to the evaluation of mortar coupling interpolated solution
-  mutable FEPointIntegratorU phi_u;
-  mutable FEPointIntegratorP phi_p;
+  mutable FEPointIntegratorU phi_u_m;
+  mutable FEPointIntegratorP phi_p_m;
 
   /// Relevant dof indices
   std::vector<unsigned int> relevant_dof_indices;

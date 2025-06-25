@@ -1327,8 +1327,8 @@ NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
   , fe_sub_p(dof_handler.get_fe().base_element(
                dof_handler.get_fe().component_to_base_index(dim).first),
              1)
-  , phi_u(mapping, fe_sub_u, update_values | update_gradients)
-  , phi_p(mapping, fe_sub_p, update_values)
+  , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
+  , phi_p_m(mapping, fe_sub_p, update_values)
 {
   for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
     if (dof_handler.get_fe().system_to_component_index(i).first < dim)
@@ -1362,8 +1362,8 @@ NavierStokesCouplingEvaluation<dim, Number>::local_reinit(
   const typename Triangulation<dim>::cell_iterator &cell,
   const ArrayView<const Point<dim, Number>>        &points) const
 {
-  this->phi_u.reinit(cell, points);
-  this->phi_p.reinit(cell, points);
+  this->phi_u_m.reinit(cell, points);
+  this->phi_p_m.reinit(cell, points);
 }
 
 template <int dim, typename Number>
@@ -1373,7 +1373,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
   const Vector<Number>                      &buffer,
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
-  Number                                    *all_values) const
+  Number                                    *all_values_m) const
 {
   AssertDimension(buffer.size(),
                   fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
@@ -1383,11 +1383,11 @@ NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
   ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
                                    fe_sub_p.n_dofs_per_cell());
 
-  this->phi_u.evaluate(buffer_u,
-                       EvaluationFlags::values | EvaluationFlags::gradients);
-  this->phi_p.evaluate(buffer_p, EvaluationFlags::values);
+  this->phi_u_m.evaluate(buffer_u,
+                         EvaluationFlags::values | EvaluationFlags::gradients);
+  this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
 
-  for (const auto q : this->phi_u.quadrature_point_indices())
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
     {
       // Quadrature point index ('global' index within the rotor-stator
       // interface)
@@ -1396,13 +1396,14 @@ NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
       // Normal, value, and gradient referring to the quadrature point
       const auto normal = data.all_normals[q_index];
 
-      const auto u_value        = this->phi_u.get_value(q);
-      const auto u_grad_normal  = contract(this->phi_u.get_gradient(q), normal);
-      const auto p_value_normal = this->phi_p.get_value(q) * normal;
+      const auto u_value = this->phi_u_m.get_value(q);
+      const auto u_grad_normal =
+        contract(this->phi_u_m.get_gradient(q), normal);
+      const auto p_value_normal = this->phi_p_m.get_value(q) * normal;
 
       // Initialize buffer for local side of the interface (i.e. rotor),
       // where information is evaluated
-      BufferRW<Number> buffer_m(all_values, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * 4 * dim * q_stride);
 
       // Store values and gradients at the created buffer
       buffer_m.write(u_value);
@@ -1418,10 +1419,10 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
   Vector<Number>                            &buffer,
   const unsigned int                         ptr_q,
   const unsigned int                         q_stride,
-  Number                                    *all_values_local,
-  Number                                    *all_values_ghost) const
+  Number                                    *all_values_m,
+  Number                                    *all_values_p) const
 {
-  for (const auto q : this->phi_u.quadrature_point_indices())
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
     {
       // get kinematic viscosity from rheological model
       const double kinematic_viscosity = 1.;
@@ -1430,20 +1431,16 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       const unsigned int q_index = ptr_q + q;
 
       // Initialize buffer for both local and ghost sides
-      BufferRW<Number> buffer_local(all_values_local, q * 4 * dim * q_stride);
-      BufferRW<Number> buffer_ghost(all_values_ghost, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_p(all_values_p, q * 4 * dim * q_stride);
 
       // Read shape functions values and gradients stored in the buffer
-      const auto u_value_local = buffer_local.template read<u_value_type>();
-      const auto u_value_ghost = buffer_ghost.template read<u_value_type>();
-      const auto u_grad_normal_local =
-        buffer_local.template read<u_value_type>();
-      const auto u_grad_normal_ghost =
-        buffer_ghost.template read<u_value_type>();
-      const auto p_value_normal_local =
-        buffer_local.template read<u_value_type>();
-      const auto p_value_normal_ghost =
-        buffer_ghost.template read<u_value_type>();
+      const auto u_value_m        = buffer_m.template read<u_value_type>();
+      const auto u_value_p        = buffer_p.template read<u_value_type>();
+      const auto u_grad_normal_m  = buffer_m.template read<u_value_type>();
+      const auto u_grad_normal_p  = buffer_p.template read<u_value_type>();
+      const auto p_value_normal_m = buffer_m.template read<u_value_type>();
+      const auto p_value_normal_p = buffer_p.template read<u_value_type>();
 
       const auto JxW               = data.all_weights[q_index];
       const auto penalty_parameter = data.all_penalty_parameter[q_index];
@@ -1453,18 +1450,15 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       // jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
       // the value of normal_m, we use a minus sign here because normal_p = -
       // normal_m
-      const auto u_value_jump = u_value_local - u_value_ghost;
-
-      const auto u_value_avg = (u_value_local + u_value_ghost) * 0.5;
+      const auto u_value_jump = u_value_m - u_value_p;
 
       // The expression for the average on the mortar interface is
       // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
       // above, we include the negative sign here
-      const auto u_grad_avg = (u_grad_normal_local - u_grad_normal_ghost) * 0.5;
+      const auto u_grad_avg = (u_grad_normal_m - u_grad_normal_p) * 0.5;
 
       // {{p}} = (∇p_m + ∇p_p)/2
-      const auto p_value_avg =
-        (p_value_normal_local - p_value_normal_ghost) * 0.5;
+      const auto p_value_avg = (p_value_normal_m - p_value_normal_p) * 0.5;
 
       typename FEPointIntegratorU::value_type u_grad_result  = {};
       typename FEPointIntegratorU::value_type u_value_result = {};
@@ -1491,9 +1485,9 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       // p_value_result += u_value_avg * normal;
 
       // - (n avg(∇v), ν/2 jump(δu))
-      phi_u.submit_gradient(outer(u_grad_result, normal) * 0.5 * JxW, q);
-      phi_u.submit_value(u_value_result * kinematic_viscosity * JxW, q);
-      phi_p.submit_value(p_value_result * JxW, q);
+      phi_u_m.submit_gradient(outer(u_grad_result, normal) * 0.5 * JxW, q);
+      phi_u_m.submit_value(u_value_result * kinematic_viscosity * JxW, q);
+      phi_p_m.submit_value(p_value_result * JxW, q);
     }
 
   AssertDimension(buffer.size(),
@@ -1503,10 +1497,10 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
   ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
                              fe_sub_p.n_dofs_per_cell());
 
-  this->phi_u.test_and_sum(buffer_u,
-                           EvaluationFlags::values |
-                             EvaluationFlags::gradients);
-  this->phi_p.test_and_sum(buffer_p, EvaluationFlags::values);
+  this->phi_u_m.test_and_sum(buffer_u,
+                             EvaluationFlags::values |
+                               EvaluationFlags::gradients);
+  this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
 }
 
 
