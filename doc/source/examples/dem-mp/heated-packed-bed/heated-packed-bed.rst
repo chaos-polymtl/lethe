@@ -2,7 +2,7 @@
 Heated Packed Bed
 ==========================
 
-This example simulates the heating of a packed bed using the discrete element method (DEM) and a heat transfer model. It is based on Beaulieu's validation case [#Beaulieu2020]_ with stainless steel.
+This example simulates the heating of a packed bed using the discrete element method (DEM) including heat transfer. It is based on the experimental and simulation results of Beaulieu [#Beaulieu2020]_ with stainless steel particles.
 More information regarding the Multiphysic DEM parameters and the heat transfer model is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_ and `Heat transfer model <../../../theory/multiphase/cfd_dem/dem.html#thermal-dem-in-a-stagnant-gas>`_.
 
 
@@ -10,7 +10,7 @@ More information regarding the Multiphysic DEM parameters and the heat transfer 
 Features
 ----------------------------------
 
-- Solvers: ``lethe-particles``
+- Solver: ``lethe-particles``
 - Multiphysic DEM
 - Three-dimensional problem
 - Moving solid surfaces
@@ -36,9 +36,9 @@ Description of the Case
 -------------------------
 
 This example is run in three stages. 
-First, during the loading stage (:math:`0-6` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box. In this part of the simulation, :math:`g = 9.81 \mathbf{e_x}` because we insert the particles from the side of the box. When particles are still enough, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation.
-The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 \mathbf{e_z}` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_. We let the particles fall into their places for :math:`1` s. 
-Finally, during the heating stage (:math:`7-4000` s), the temperature of a solid surface placed on top on the packed bed is set to :math:`53°C` and the particles are heated through this top wall.
+First, during the loading stage (:math:`0-6` s), :math:`8849` particles are inserted with a temperature of :math:`20°C` in a rectangular box. In this part of the simulation, :math:`g = 9.81 \mathbf{e_x}` because we insert the particles from the side of the box. When particles are sufficiently static, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation.
+The second stage (:math:`6-7` s) is where gravity is changed to :math:`g = -9.81 \mathbf{e_z}` to be in the same direction as the experiment from Beaulieu [#Beaulieu2020]_. We let the particle bed restructure for :math:`1` s. 
+Finally, during the heating stage (:math:`7-4000` s), the temperature of a solid surface placed on top on the packed bed is set to :math:`53°C` and the particles are heated through this top wall. During this last part of the simulation, particle motion is disabled.
 
 .. image:: images/heated-steel-rake.png
     :width: 400
@@ -162,7 +162,7 @@ For the first two stages, the model parameters are defined as:
       set solver type                            = dem_mp
     end
 
-For the heating of the particles, the parameter ``disable position integration`` is set to ``true`` to freeze the position of the particles. This allows to use a higher time step for the evolution of the temperature. As particles are not moving, ``load balancing`` is no longer necessary.
+For the heating of the particles, the parameter ``disable position integration`` is set to ``true`` to freeze the position of the particles by disabling the time-integration of the particle velocity and position. This allows to use a higher time step for the evolution of the temperature since the collisions are not integrated in time anymore. As particles are not moving, ``load balancing`` is no longer necessary.
 
 .. code-block:: text
 
@@ -184,7 +184,7 @@ For the heating of the particles, the parameter ``disable position integration``
 Solid Objects
 ~~~~~~~~~~~~~~~
 
-Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from :math:`7` s to :math:`4000` s, with a temperature of :math:`53°C`. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within it when the direction of the gravity is changed. The last two walls are both set to ``adiabatic``, meaning that they are not conductive.
+Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from :math:`7` s to :math:`4000` s, with a temperature of :math:`53°C`. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within it when the direction of the gravity is changed. The last two walls are both set to ``adiabatic``, meaning that they are insulated and do not provide any heat transfer.
 
 .. code-block:: text
 
@@ -363,6 +363,14 @@ The following figure shows the results of the simulation with the ``friction coe
     :align: center
 
 This ``friction coefficient wall`` allows to fit the experimental data better but it is debatable whether a friction coefficient of :math:`1.0` is realistic to model the Styrofoam walls used in the experiment. Also, other parameters like the ``rolling friction`` should have probably been adjusted as well to fit the experimental properties.
+
+
+----------------------------
+Possibilities for Extension
+----------------------------
+
+- Reproduce the experimental and numerical results of Beaulieu for other particle types, such as glass beads and aluminum alloys beads.
+
 
 ---------
 Reference
