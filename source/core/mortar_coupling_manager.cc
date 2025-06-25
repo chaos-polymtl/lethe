@@ -499,6 +499,7 @@ MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 }
 
 
+
 /*-------------- CouplingOperator -------------------------------*/
 
 template <int dim, typename Number>

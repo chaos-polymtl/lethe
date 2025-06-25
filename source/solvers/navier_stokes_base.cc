@@ -2456,8 +2456,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
-  // Loop over structs containing fluid id, temperature and phase fraction
-  // range information, and flag containers for DOFs.
+  // Loop over structs containing fluid id, temperature and phase fraction range
+  // information, and flag containers for DOFs.
   for (StasisConstraintWithTemperature &stasis_constraint_struct :
        this->stasis_constraint_structs)
     {
@@ -2467,8 +2467,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
             {
               cell->get_dof_indices(local_dof_indices);
 
-              // If a restriction plane is defined, check if the cell is in
-              // the valid domain.
+              // If a restriction plane is defined, check if the cell is in the
+              // valid domain.
               if (!restrain_domain_with_plane ||
                   cell_in_constraining_domain(cell,
                                               plane_point,
@@ -2481,10 +2481,9 @@ NavierStokesBase<dim, VectorType, DofsType>::
                     filtered_phase_fraction_solution,
                     local_filtered_phase_fraction_values);
 
-                  // Check if cell is only in the fluid of interest. As soon
-                  // as one filtered phase fraction value is outside the
-                  // tolerated range, the cell is perceived as being in the
-                  // wrong fluid.
+                  // Check if cell is only in the fluid of interest. As soon as 
+                  // one filtered phase fraction value is outside the tolerated
+                  // range, the cell is perceived as being in the wrong fluid.
                   for (const double &filtered_phase_fraction :
                        local_filtered_phase_fraction_values)
                     {
@@ -2498,9 +2497,9 @@ NavierStokesBase<dim, VectorType, DofsType>::
                         }
                     }
 
-                  // If the cell is not in the right fluid, no solid
-                  // constraint will be applied on the cell's DOFs; we skip to
-                  // the next cell.
+                  // If the cell is not in the right fluid, no solid constraint
+                  // will be applied on the cell's DOFs; we skip to the next
+                  // cell.
                   if (!cell_is_in_right_fluid)
                     continue;
 
@@ -2528,8 +2527,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 {
   for (const double &temperature : local_temperature_values)
     {
-      // Skip cells with at least 1 DOF that is outbound the temperature
-      // limits.
+      // Skip cells with at least 1 DOF that is outbound the temperature limits.
       if (temperature < stasis_constraint_struct.min_solid_temperature ||
           temperature > stasis_constraint_struct.max_solid_temperature)
         return;

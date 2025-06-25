@@ -232,6 +232,7 @@ protected:
   get_normal(const Point<dim> &point) const override;
 };
 
+
 template <int dim>
 template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(const unsigned int n_subdivisions,
