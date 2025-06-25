@@ -125,6 +125,28 @@ subsection boundary conditions heat transfer
   end
 end
 
+subsection boundary conditions VOF
+  set number = 6
+  subsection bc 0
+    set id = 2
+  end
+  subsection bc 1
+    set id = 5
+  end
+  subsection bc 2
+    set id = 6
+  end
+  subsection bc 3
+    set id = 7
+  end
+  subsection bc 4
+    set id = 4
+  end
+  subsection bc 5
+    set id = 3
+  end
+end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------

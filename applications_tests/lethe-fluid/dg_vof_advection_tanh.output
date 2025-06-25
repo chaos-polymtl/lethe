@@ -1,3 +1,4 @@
+Warning: DG-VOF and the geometric surface and volume computations are not compatible. Only the global volume will be monitored.
 Running on 1 MPI rank(s)...
    Number of active cells:       400
    Number of degrees of freedom: 2406
