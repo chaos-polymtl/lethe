@@ -46,10 +46,13 @@ VolumeOfFluid<dim>::VolumeOfFluid(
                !simulation_parameters.fem_parameters.VOF_uses_dg),
               UnsupportedRegularization());
 
-if (simulation_parameters.fem_parameters.VOF_uses_dg && this->simulation_parameters.post_processing.calculate_mass_conservation)
-{
-    this->pcout << "Warning: DG-VOF and the geometric surface and volume computations are not compatible. Only the global volume will be monitored." << std::endl;
-}
+  if (simulation_parameters.fem_parameters.VOF_uses_dg &&
+      this->simulation_parameters.post_processing.calculate_mass_conservation)
+    {
+      this->pcout
+        << "Warning: DG-VOF and the geometric surface and volume computations are not compatible. Only the global volume will be monitored."
+        << std::endl;
+    }
 
   if (simulation_parameters.mesh.simplex)
     {
@@ -1234,8 +1237,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           // Compute geometric inside volume (fluid 1)
           const double global_volume =
             GridTools::volume(*this->triangulation, *this->mapping);
-          geometric_volume_inside =
-            global_volume - geometric_volume_outside;
+          geometric_volume_inside = global_volume - geometric_volume_outside;
         }
 
       for (unsigned int i = 0; i < n_fluids; i++)
@@ -1340,37 +1342,36 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   Parameters::Verbosity::verbose)
                 {
                   dependent_column_names.emplace_back(volume_column_name);
-                  
-                    if (!simulation_parameters.fem_parameters.VOF_uses_dg)
-                      {
-                          dependent_column_names.emplace_back(
-                            geometric_volume_column_name);
-                      }
+
+                  if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+                    {
+                      dependent_column_names.emplace_back(
+                        geometric_volume_column_name);
+                    }
 
                   dependent_column_names.emplace_back(mass_column_name);
                   if (!simulation_parameters.fem_parameters.VOF_uses_dg)
                     {
-                        dependent_column_names.emplace_back(
-                          area_column_name);
+                      dependent_column_names.emplace_back(area_column_name);
                     }
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->volume_monitored);
                   if (!simulation_parameters.fem_parameters.VOF_uses_dg)
                     {
-                  if (fluid_id == "fluid_1")
-                    volumes_masses_momentum_and_sharpening_threshold
-                      .emplace_back(geometric_volume_inside);
-                  else
-                    volumes_masses_momentum_and_sharpening_threshold
-                      .emplace_back(geometric_volume_outside);
-                  }
+                      if (fluid_id == "fluid_1")
+                        volumes_masses_momentum_and_sharpening_threshold
+                          .emplace_back(geometric_volume_inside);
+                      else
+                        volumes_masses_momentum_and_sharpening_threshold
+                          .emplace_back(geometric_volume_outside);
+                    }
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->mass_monitored);
-                    
-                    if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+
+                  if (!simulation_parameters.fem_parameters.VOF_uses_dg)
                     {
-                        volumes_masses_momentum_and_sharpening_threshold.emplace_back(
-                    surface);
+                      volumes_masses_momentum_and_sharpening_threshold
+                        .emplace_back(surface);
                     }
                   for (unsigned int d = 0; d < dim; ++d)
                     {
