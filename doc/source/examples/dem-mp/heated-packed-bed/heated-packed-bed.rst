@@ -74,7 +74,7 @@ The domain is a rectangular box with dimensions :math:`0.3\times0.1\times0.2` me
 Insertion Info
 ~~~~~~~~~~~~~~~~~
 
-In the loading stage, particles are inserted through the side of the box, with a temperature of :math:`20°C`. This initial temperature was chosen to match the experimental data, even though Beaulieu seems to have chosen an initial temperature of :math:`19.8°C` for her simulation.
+In the loading stage, particles are inserted through the side of the box, with a temperature of :math:`20°C`. This initial temperature was chosen to match the experimental data.
 
 .. code-block:: text
 
@@ -97,7 +97,7 @@ Lagrangian Physical Properties
 
 The :math:`8849` particles are mono-dispersed, with a diameter of :math:`6.4` mm.
 
-The physical properties of the steel particles, the walls and the interstitial gas were chosen to match those used by Beaulieu in her simulation. Only the wall and particles Young's modulus were chosen :math:`10` times as high as the ones used by Beaulieu, to be able to match the experimental porosity of :math:`42\%` for the packed bed.
+The physical properties of the steel particles, the walls, and the interstitial gas were chosen to match those used by Beaulieu in her simulation. However, their Young's moduli were set to be :math:`10` times higher than those used by Beaulieu. This adjustment was made to ensure that our simulation reproduces the experimental porosity of :math:`42\%` observed in the packed bed.
 
 .. code-block:: text
 
@@ -165,7 +165,7 @@ For the first two stages, the model parameters are defined as:
       set solver type                            = dem_mp
     end
 
-For the heating of the particles, the parameter ``disable position integration`` is set to ``true`` to freeze the position of the particles by disabling the time-integration of the particle velocity and position. This allows to use a higher time step for the evolution of the temperature since the collisions are not integrated in time anymore. As particles are not moving, ``load balancing`` is no longer necessary.
+For the heating of the particles, the parameter ``disable position integration`` is set to ``true`` to freeze the particles in place by disabling the time-integration of the particles' velocity and position. This allows for the use of a larger time step for the evolution of the temperature, as collisions no longer need to be resolved. Since the particles remain stationary, ``load balancing`` is also no longer necessary.
 
 .. code-block:: text
 
@@ -187,7 +187,7 @@ For the heating of the particles, the parameter ``disable position integration``
 Solid Objects
 ~~~~~~~~~~~~~~~
 
-Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from :math:`7` s to :math:`4000` s, with a temperature of :math:`53°C`. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within it when the direction of the gravity is changed. The last two walls are both set to ``adiabatic``, meaning that they are insulated and do not provide any heat transfer.
+Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from :math:`7` s to :math:`4000` s, with a temperature of :math:`53°C`. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within it when the direction of the gravity is changed. The second and third walls are both set to ``adiabatic``, meaning that they are insulated and do not provide any heat transfer.
 
 .. code-block:: text
 
@@ -356,9 +356,9 @@ The following figure compares the temperature of the packed-bed at three differe
     :width: 500
     :align: center
 
-The results show good agreement with the experimental and numerical results of Beaulieu but still undershoot a bit the temperature at :math:`h_1 = 4.0` cm compared to the experimental data. Our temperature curves are slightly higher than the ones numerically obtained by Beaulieu due to using the hertz contact radius instead of the analytical one. The higher Young's modulus also gives better results.
+The results show good agreement with the experimental and numerical results of Beaulieu but still undershoot a bit the temperature at :math:`h_1 = 4.0` cm compared to the experimental data. Our temperature curves are slightly higher than the ones numerically obtained by Beaulieu due to the hertz contact radius used instead of the analytical one, as in Beaulieu's work. The higher Young's modulus employed also gives better results.
 
-It has been noticed while trying different methods to load the particles that the results change a lot according to the loading method but also depending on the walls friction coefficient.
+It has been noticed while experimenting with the model that the simulation results are highly sensitive to the loading method and to the wall friction coefficient.
 The following figure shows the results of the simulation with the ``friction coefficient wall`` set to :math:`1.0` instead of :math:`0.7`.
 
 .. figure:: images/mean-temperatures-friction.png

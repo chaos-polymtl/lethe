@@ -169,6 +169,8 @@ calculate_contact_thermal_conductance(
 
   // Geometric contact radius
   // (from analytical contact area between overlapping spheres)
+  // The following lines can be uncommented to use the geometric contact radius
+  // instead of the hertz one used currently.
   // const double contact_radius = [&]() {
   //   if constexpr (contact_type == ContactType::particle_floating_mesh)
   //     return sqrt(corrected_normal_overlap *
