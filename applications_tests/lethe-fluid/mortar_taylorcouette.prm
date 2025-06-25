@@ -13,7 +13,7 @@ set dimension = 2
 subsection simulation control
   set method            = steady
   set output name       = taylor-couette-mortar_output
-  set subdivision 	= 2
+  set subdivision       = 2
   set number mesh adapt = 3
 end
 
@@ -47,9 +47,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type      = dealii
-  set grid type = hyper_shell
-  set grid arguments = 0, 0 : 0.5 : 1.0 : 4 : true
+  set type               = dealii
+  set grid type          = hyper_shell
+  set grid arguments     = 0, 0 : 0.5 : 1.0 : 4 : true
   set initial refinement = 2
 end
 
@@ -66,9 +66,9 @@ subsection mortar
     set initial refinement     = 2
     set initial rotation angle = 0
   end
-  set rotor boundary id   = 3
-  set stator boundary id  = 0
-  set penalty factor      = 1
+  set rotor boundary id  = 3
+  set stator boundary id = 0
+  set penalty factor     = 1
 end
 
 #---------------------------------------------------
@@ -85,7 +85,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number                = 4
   set fix pressure constant = false
   subsection bc 0
     set id   = 0
