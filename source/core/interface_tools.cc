@@ -1104,7 +1104,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   double global_volume, surface;
 
   std::tie(global_volume, surface) = compute_surface_and_volume(
-    dof_handler, *fe, level_set, 0.0, mpi_communicator);
+    dof_handler, *fe, level_set, iso_level, mpi_communicator);
 
   /* Initialization of values for the secant method. The subscript nm1 (or n
   minus 1) stands for the previous secant iteration (it = n-1), the
