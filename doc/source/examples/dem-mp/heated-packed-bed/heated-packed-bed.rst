@@ -367,6 +367,8 @@ The following figure shows the results of the simulation with the ``friction coe
 
 This ``friction coefficient wall`` allows to fit the experimental data better but it is debatable whether a friction coefficient of :math:`1.0` is realistic to model the Styrofoam walls used in the experiment. Also, other parameters like the ``rolling friction`` should have probably been adjusted as well to fit the experimental properties.
 
+.. note::
+  Since the simulation results are highly sensitive to the loading, they may vary a bit from one computer to another.
 
 ----------------------------
 Possibilities for Extension
