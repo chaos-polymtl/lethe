@@ -1210,6 +1210,10 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   // Refine
   this->triangulation->refine_global(1);
 
+  // If mortar is enabled, update mapping cache with refined triangulation
+  if (this->simulation_parameters.mortar.enable)
+    this->mapping_cache->initialize(*this->initial_mapping, *this->triangulation);
+
   setup_dofs();
 
   // Set up the vectors for the transfer
@@ -2053,7 +2057,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
       // If this is the first iteration, store initial mapping and create
       // mapping cache object. Otherwise, use initalize() function to update
       // current mapping cache
-      if (this->get_current_newton_iteration() == 0)
+      if (this->simulation_control->is_at_start())
         {
           this->mapping_cache =
             std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);

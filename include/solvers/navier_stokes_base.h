@@ -451,7 +451,7 @@ protected:
   get_mapping()
   {
     if (!this->simulation_parameters.mortar.enable ||
-        this->get_current_newton_iteration() == 0)
+        this->simulation_control->is_at_start())
       return this->mapping;
     else
       return this->mapping_cache;
