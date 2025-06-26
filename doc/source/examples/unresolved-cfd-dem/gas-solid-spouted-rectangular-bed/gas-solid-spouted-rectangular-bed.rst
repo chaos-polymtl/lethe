@@ -32,7 +32,7 @@ The files mentioned below are located in the example's folder (``examples/unreso
 Description of the Case
 -----------------------
 
-This example simulates the spouting of spherical particles in air. First, ``lethe-particles`` is used to fill the bed with particles. Check-pointing is enabled in order to write the DEM checkpoint files to be used as the starting point of the CFD-DEM simulation. Then, the ``lethe-fluid-particles`` solver is used to simulate the spouting of the particles. Using the parameters suggested by Geitani et al. [#geitani2023]_, the simulation is run and the results are then compared to the experimental results from Yue et al. [#yue2020]_
+This example simulates the spouting of spherical particles in air. The ``lethe-particles`` solver is used to fill the bed with particles, then the ``lethe-fluid-particles`` solver is used to simulate the spouting of the particles. Check-pointing is enabled in order to write the DEM checkpoint files to be used as the starting point of the CFD-DEM simulation. Using the parameters suggested by Geitani et al. [#geitani2023]_, the simulation is run and the results are then compared to the experimental results from Yue et al. [#yue2020]_
 
 -------------------
 DEM Parameter File
@@ -61,7 +61,7 @@ The flow is introduced through a channel that is connected to the inlet of the b
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``simulation control`` subsection, the ``time end`` is set to 1.5 s with a ``time step`` of 0.00001 s, which is long enough to allow the particles to come to rest. Additionally, users can specify the output folder for the simulation results in this subsection.
+In the ``Simulation control`` subsection, the ``time end`` is set to 1.5 s with a ``time step`` of 0.00001 s, which is long enough to allow the particles to come to rest. Additionally, users can specify the output folder for the simulation results in this subsection.
 
 .. code-block:: text
 
@@ -76,7 +76,7 @@ In the ``simulation control`` subsection, the ``time end`` is set to 1.5 s with 
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
-The ``lethe-fluid-particles`` solver requires reading several DEM files to start the simulation. This is done by enabling the check-pointing option in the restart subsection.
+The ``lethe-fluid-particles`` solver requires reading several DEM files to start the simulation. The check-pointing option is enabled in the ``Restart`` subsection.
 
 .. code-block:: text
 
@@ -90,7 +90,7 @@ The ``lethe-fluid-particles`` solver requires reading several DEM files to start
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-The model parameters subsection is explained in the DEM examples. The following parameters are chosen. Dynamic load balancing is enabled  in order to achieve better computational performance.
+The following parameters are chosen for the ``Model parameters`` subsection. Dynamic load balancing is enabled  in order to achieve better computational performance.
 
 .. code-block:: text
 
@@ -142,7 +142,7 @@ The gravitational acceleration as well as the physical properties of the particl
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-The ``insertion info`` subsection manages the insertion of particles. The volume of the insertion box is large enough to fit all the particles and the insertion info parameters are set in order to avoid particle collisions during the packing process.
+The ``Insertion info`` subsection manages the insertion of particles. The volume of the insertion box is large enough to fit all the particles and the insertion info parameters are set in order to avoid particle collisions during the packing process.
 
 .. code-block:: text
 
@@ -316,7 +316,7 @@ Since the void fraction is calculated using the packed bed of the DEM simulation
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the CFD-DEM subsection, grad-div stabilization is enabled in order to improve local mass conservation and the void fraction time derivative is enabled to account for the time variation of the void fraction.
+In the ``CFD-DEM`` subsection, grad-div stabilization is enabled in order to improve local mass conservation and the void fraction time derivative is enabled to account for the time variation of the void fraction.
 
 .. code-block:: text
 
