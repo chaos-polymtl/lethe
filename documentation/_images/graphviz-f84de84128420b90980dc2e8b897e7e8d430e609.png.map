@@ -1,0 +1,5 @@
+<map id="dem_mp_diagram" name="dem_mp_diagram">
+<area shape="rect" id="node1" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/dem-mp.html" title="DEM&#45;Multiphysics" alt="" coords="5,41,187,89"/>
+<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/heat-transfer-in-aligned-particles/heat-transfer-in-aligned-particles.html" title="Heat Transfer in Aligned Particles" alt="" coords="331,5,645,53"/>
+<area shape="rect" id="node3" href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem-mp/heated-packed-bed/heated-packed-bed.html" title="Heated Packed Bed" alt="" coords="389,77,587,125"/>
+</map>
