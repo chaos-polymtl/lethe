@@ -781,6 +781,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
   if (this->simulation_parameters.mortar.enable)
     {
       // Change sign of RHS to be compatible with mortar coupling terms
+      this->system_rhs.compress(VectorOperation::add);
       this->system_rhs *= -1.0;
       this->mortar_coupling_operator->vmult_add(this->system_rhs,
                                                 this->evaluation_point);

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -14,7 +14,7 @@ subsection simulation control
   set method            = steady
   set output name       = taylor-couette-mortar_output
   set subdivision       = 2
-  set number mesh adapt = 3
+  set number mesh adapt = 2
 end
 
 #---------------------------------------------------
