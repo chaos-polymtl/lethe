@@ -66,11 +66,11 @@ end
 #---------------------------------------------------
 
 subsection void fraction
-  set mode                         = qcm
-  set read dem                     = true
-  set dem file name                = dem
-  set l2 smoothing length          = 0.0075
-  set particle refinement factor   = 0
+  set mode                       = qcm
+  set read dem                   = true
+  set dem file name              = dem
+  set l2 smoothing length        = 0.0075
+  set particle refinement factor = 0
 end
 
 #---------------------------------------------------
