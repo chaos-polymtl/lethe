@@ -341,6 +341,8 @@ MortarManagerBase<dim>::get_normals(const Point<dim> &face_center) const
 
   std::vector<Tensor<1, dim, double>> result;
 
+  result.reserve(points.size());
+
   for (const auto &point : points)
     result.emplace_back(get_normal(point));
 
@@ -1512,7 +1514,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       // above, we include the negative sign here
       const auto u_grad_avg = (u_grad_normal_m - u_grad_normal_p) * 0.5;
 
-      // {{p}} = (∇p_m + ∇p_p)/2
+      // {{p}} = (p_m + p_p)/2
       const auto p_value_avg = (p_value_normal_m - p_value_normal_p) * 0.5;
 
       typename FEPointIntegratorU::value_type u_grad_result  = {};
