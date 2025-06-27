@@ -911,18 +911,6 @@ FluidDynamicsVANS<dim>::solve()
           .restart == false)
     read_dem();
 
-  // Physical Properties
-  Assert(
-    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
-    RequiresConstantViscosity(
-      "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
-
-  Assert(
-    this->simulation_parameters.physical_properties_manager
-      .density_is_constant(),
-    RequiresConstantDensity(
-      "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
-
   this->setup_dofs();
 
   this->set_initial_condition(
