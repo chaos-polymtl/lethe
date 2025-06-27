@@ -4,7 +4,7 @@
 #ifndef lethe_insertion_file_h
 #define lethe_insertion_file_h
 
-#include <dem/insertion.h>
+#include <fem-dem/insertion.h>
 
 template <int dim, typename PropertiesIndex>
 class InsertionFile : public Insertion<dim, PropertiesIndex>

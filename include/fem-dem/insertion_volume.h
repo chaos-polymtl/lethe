@@ -4,7 +4,7 @@
 #ifndef lethe_insertion_volume_h
 #define lethe_insertion_volume_h
 
-#include <dem/insertion.h>
+#include <fem-dem/insertion.h>
 
 using namespace dealii;
 
