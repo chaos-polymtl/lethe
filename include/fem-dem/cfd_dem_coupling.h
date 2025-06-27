@@ -16,6 +16,7 @@
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
+#include <fem-dem/insertion.h>
 #include <fem-dem/fluid_dynamics_vans.h>
 #include <fem-dem/postprocessing_cfd_dem.h>
 
@@ -66,6 +67,14 @@ private:
    */
   void
   setup_distribution_type();
+
+    /**
+   * @brief Set the insertion method.
+   *
+   * @return The pointer to the insertion object
+   */
+  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+  set_insertion_type();
 
   /**
    * @brief Set the integration method.

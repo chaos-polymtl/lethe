@@ -11,6 +11,10 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
+#include <fem-dem/insertion_file.h>
+#include <fem-dem/insertion_list.h>
+#include <fem-dem/insertion_plane.h>
+#include <fem-dem/insertion_volume.h>
 
 #include <fstream>
 #include <sstream>
@@ -131,6 +135,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
         }
     }
 
+  insertion_object = set_insertion_type();
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
@@ -188,6 +193,44 @@ CFDDEMSolver<dim>::setup_distribution_type()
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
+}
+
+template <int dim>
+std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+CFDDEMSolver<dim>::set_insertion_type()
+{
+  using namespace Parameters::Lagrangian;
+  typename InsertionInfo<dim>::InsertionMethod insertion_method =
+    dem_parameters.insertion_info.insertion_method;
+
+  switch (insertion_method)
+    {
+      case InsertionInfo<dim>::InsertionMethod::file:
+        {
+          return std::make_shared<InsertionFile<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container, triangulation, dem_parameters);
+        }
+      case InsertionInfo<dim>::InsertionMethod::list:
+        {
+          return std::make_shared<InsertionList<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container, triangulation, dem_parameters);
+        }
+      case InsertionInfo<dim>::InsertionMethod::plane:
+        {
+          return std::make_shared<InsertionPlane<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container, triangulation, dem_parameters);
+        }
+      case InsertionInfo<dim>::InsertionMethod::volume:
+        {
+          return std::make_shared<InsertionVolume<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            triangulation,
+            dem_parameters,
+            maximum_particle_diameter);
+        }
+      default:
+        throw(std::runtime_error("Invalid insertion method."));
+    }
 }
 
 template <int dim>
@@ -652,6 +695,20 @@ CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
         }
       default:
         break;
+    }
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::insert_particles()
+{
+  if ((simulation_control->get_step_number() %
+       dem_parameters.insertion_info.insertion_frequency) == 1 ||
+      simulation_control->get_step_number() == 1)
+    {
+      insertion_object->insert(particle_handler, triangulation, dem_parameters);
+
+      action_manager->particle_insertion_step();
     }
 }
 
