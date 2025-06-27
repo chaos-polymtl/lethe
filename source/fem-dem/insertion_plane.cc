@@ -3,7 +3,7 @@
 
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/insertion_plane.h>
+#include <fem-dem/insertion_plane.h>
 
 using namespace DEM;
 

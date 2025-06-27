@@ -4,7 +4,7 @@
 #ifndef lethe_insertion_plane_h
 #define lethe_insertion_plane_h
 
-#include <dem/insertion.h>
+#include <fem-dem/insertion.h>
 
 /**
  * @brief Insertion of particles using cells cut by a plane.
