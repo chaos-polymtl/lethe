@@ -938,11 +938,9 @@ protected:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
-// Mortar coupling manager and operator
-#if DEAL_II_VERSION_GTE(9, 7, 0)
+  // Mortar coupling manager and operator
   std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
-#endif
 
   // Initial mapping for rotor mesh rotation in mortar method
   std::shared_ptr<Mapping<dim>>       initial_mapping;

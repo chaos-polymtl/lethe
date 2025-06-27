@@ -3,13 +3,11 @@
 
 #include <deal.II/base/config.h>
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
+#include <core/mortar_coupling_manager.h>
 
-#  include <core/mortar_coupling_manager.h>
+#include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
 
-#  include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
-
-#  include <deal.II/fe/fe_nothing.h>
+#include <deal.II/fe/fe_nothing.h>
 
 
 /*-------------- MortarManagerBase -------------------------------*/
@@ -388,6 +386,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 
 /*-------------- Auxiliary Functions -------------------------------*/
 
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim>
 std::pair<unsigned int, double>
 compute_n_subdivisions_and_radius(
@@ -457,6 +456,19 @@ compute_n_subdivisions_and_radius(
 
   return {n_subdivisions, radius};
 }
+#else
+template <int dim>
+std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius(const Triangulation<dim> &,
+                                  const Parameters::Mortar<dim> &)
+{
+  AssertThrow(false,
+              ExcMessage(
+                "The mortar coupling requires deal.II 9.7 or more recent."));
+
+  return {1, 1.0};
+}
+#endif
 
 template <int dim>
 Quadrature<dim>
@@ -501,7 +513,7 @@ MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 
 
 /*-------------- CouplingOperator -------------------------------*/
-
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 CouplingOperator<dim, Number>::CouplingOperator(
   const Mapping<dim>                                        &mapping,
@@ -758,6 +770,31 @@ CouplingOperator<dim, Number>::CouplingOperator(
       dof_handler.get_mpi_communicator());
   }
 }
+#else
+template <int dim, typename Number>
+CouplingOperator<dim, Number>::CouplingOperator(
+  const Mapping<dim>                                        &mapping,
+  const DoFHandler<dim>                                     &dof_handler,
+  const AffineConstraints<Number>                           &constraints,
+  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
+  const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
+  const unsigned int                                         bid_m,
+  const unsigned int                                         bid_p,
+  const double)
+  : mapping(mapping)
+  , dof_handler(dof_handler)
+  , constraints(constraints)
+  , bid_m(bid_m)
+  , bid_p(bid_p)
+  , evaluator(evaluator)
+  , mortar_manager(mortar_manager)
+{
+  AssertThrow(false,
+              ExcMessage(
+                "The mortar coupling requires deal.II 9.7 or more recent."));
+}
+#endif
+
 
 template <int dim, typename Number>
 const AffineConstraints<Number> &
@@ -847,6 +884,7 @@ CouplingOperator<dim, Number>::get_dof_indices(
   return local_dofs;
 }
 
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 template <typename VectorType>
 void
@@ -933,6 +971,13 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
           }
   dst.compress(VectorOperation::add);
 }
+#else
+template <int dim, typename Number>
+template <typename VectorType>
+void
+CouplingOperator<dim, Number>::vmult_add(VectorType &, const VectorType &) const
+{}
+#endif
 
 template <int dim, typename Number>
 template <typename VectorType>
@@ -1019,6 +1064,7 @@ CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
     }
 }
 
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 void
 CouplingOperator<dim, Number>::add_system_matrix_entries(
@@ -1179,6 +1225,17 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   AssertDimension(ptr_q, data.all_normals.size());
   AssertDimension(ptr_dofs, dof_indices.size());
 }
+#else
+template <int dim, typename Number>
+void
+CouplingOperator<dim, Number>::add_system_matrix_entries(
+  TrilinosWrappers::SparseMatrix &) const
+{
+  AssertThrow(false,
+              ExcMessage(
+                "The mortar coupling requires deal.II 9.7 or more recent."));
+}
+#endif
 
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
@@ -1580,5 +1637,3 @@ construct_quadrature(const Quadrature<2>         &quadrature,
 template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
-
-#endif

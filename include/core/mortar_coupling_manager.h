@@ -6,19 +6,17 @@
 
 #include <deal.II/base/config.h>
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
+#include <core/parameters.h>
+#include <core/utilities.h>
 
-#  include <core/parameters.h>
-#  include <core/utilities.h>
+#include <deal.II/base/mpi_noncontiguous_partitioner.h>
+#include <deal.II/base/quadrature_lib.h>
 
-#  include <deal.II/base/mpi_noncontiguous_partitioner.h>
-#  include <deal.II/base/quadrature_lib.h>
+#include <deal.II/fe/fe_system.h>
 
-#  include <deal.II/fe/fe_system.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
 
-#  include <deal.II/lac/trilinos_sparse_matrix.h>
-
-#  include <deal.II/matrix_free/fe_point_evaluation.h>
+#include <deal.II/matrix_free/fe_point_evaluation.h>
 
 using namespace dealii;
 
@@ -880,5 +878,4 @@ public:
   const double kinematic_viscosity;
 };
 
-#endif
 #endif

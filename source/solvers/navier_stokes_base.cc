@@ -1971,7 +1971,6 @@ NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
   if (!this->simulation_parameters.mortar.enable)
     return;
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
@@ -1997,13 +1996,6 @@ NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
       this->simulation_parameters.mortar.rotor_boundary_id,
       this->simulation_parameters.mortar.stator_boundary_id,
       this->simulation_parameters.mortar.sip_factor);
-
-#else
-  AssertThrow(
-    false,
-    ExcMessage(
-      "The mortar coupling requires a more recent version of deal.II."));
-#endif
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2012,7 +2004,6 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
   if (this->simulation_parameters.mortar.enable)
     {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
       // Get updated rotation angle
       simulation_parameters.mortar.rotor_angular_velocity->set_time(
         this->simulation_control->get_current_time());
@@ -2044,12 +2035,6 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
                                           this->simulation_parameters.mortar)
           .second,
         rotation_angle);
-#else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "The mapping rotation requires a more recent version of deal.II."));
-#endif
     }
 }
 
