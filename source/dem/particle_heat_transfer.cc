@@ -153,14 +153,12 @@ calculate_contact_thermal_conductance(
       harmonic_mean(radius_one, radius_two);
 
   // Calculation of contact radius
+  // Hertz contact radius
   const double contact_radius =
     calculate_corrected_contact_radius(harmonic_radius * 0.5,
                                        effective_youngs_modulus,
                                        effective_real_youngs_modulus,
                                        normal_force_norm);
-
-  // Squared contact radius, often used in resistances calculations.
-  const double contact_radius_squared = contact_radius * contact_radius;
 
   // In the same way as the contact radius, if the effective Young's modulus is
   // underestimated, the normal overlap is overestimated so a correctional
@@ -168,6 +166,28 @@ calculate_contact_thermal_conductance(
   const double corrected_normal_overlap =
     normal_overlap *
     pow(effective_youngs_modulus / effective_real_youngs_modulus, 2.0 / 3.0);
+
+  // Geometric contact radius
+  // (from analytical contact area between overlapping spheres)
+  // The following lines can be uncommented to use the geometric contact radius
+  // instead of the hertz one used currently.
+  // const double contact_radius = [&]() {
+  //   if constexpr (contact_type == ContactType::particle_floating_mesh)
+  //     return sqrt(corrected_normal_overlap *
+  //                 (2. * radius_one - corrected_normal_overlap));
+  //   else
+  //     return sqrt(
+  //       corrected_normal_overlap *
+  //       (2. * radius_one - corrected_normal_overlap) *
+  //       (2. * radius_two - corrected_normal_overlap) *
+  //       (2. * radius_one + 2. * radius_two - corrected_normal_overlap) /
+  //       ((radius_one + radius_two - corrected_normal_overlap) *
+  //        (radius_one + radius_two - corrected_normal_overlap)));
+  // }();
+
+  // Squared contact radius, often used in resistances calculations.
+  const double contact_radius_squared = contact_radius * contact_radius;
+
   const double maximum_pressure =
     (2.0 * effective_real_youngs_modulus * corrected_normal_overlap) /
     (M_PI * contact_radius + DBL_MIN);

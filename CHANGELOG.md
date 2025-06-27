@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-06-26
+
+### Added
+
+- MINOR This PR adds an Multiphysic DEM example that simulates the heating of a packed bed. It is based on the experimental and simulation results of Beaulieu with stainless steel particles. [#1561](https://github.com/chaos-polymtl/lethe/pull/1561)
+
 ## [Master] - 2025-06-19
 
 ### Added
