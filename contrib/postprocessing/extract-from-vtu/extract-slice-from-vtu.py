@@ -15,7 +15,7 @@ import sys
 import numpy as np
 import pyvista as pv
 import argparse
-import os 
+import os
 import xml.etree.ElementTree as ET
 from multiprocessing import Pool
 from functools import partial
@@ -37,7 +37,7 @@ def get_vtus_path_from_pvd(pvd_file_path: str) -> list:
     tree = ET.parse(pvd_file_path)
     root = tree.getroot()
     pvtu_files = [dataset.get("file") for dataset in root.findall(".//DataSet")]
-    
+
     # Extract .vtu files from each .pvtu file
     vtu_files = []
     for pvtu_file in pvtu_files:
@@ -50,13 +50,14 @@ def get_vtus_path_from_pvd(pvd_file_path: str) -> list:
 
     return vtu_files
 
-def extract_slice(vtu_file_path: list, origin: np.array, normal: np.array) -> None:
+def extract_slice(vtu_file_path: list, origin: np.array, normal: np.array, save_path: str) -> None:
     """
     Create a slice from a .vtu file using the pyvista library and save it in a new .vtk file.
 
     :param vtu_file_path: the path to the .vtu file
     :param origin: the coordinates of a point on the slice
     :param normal: the normal direction to the slice
+    :param save_path: the path to the sliced vtu save folder
     """
 
     # slice the file
@@ -70,8 +71,8 @@ def extract_slice(vtu_file_path: list, origin: np.array, normal: np.array) -> No
 
     # Modify the file name and save the file
     file_name = os.path.basename(vtu_file_path)
-    sliced_solution.save("sliced-" + file_name)
-    
+    sliced_solution.save(save_path+"/sliced-" + file_name)
+
     return
 
 """
@@ -88,17 +89,18 @@ def run()-> None:
     parser.add_argument("--origin", help="The coordinates of a point on the slice", default="0,0,0")
     parser.add_argument("--normal", help="The normal direction to the slide", default="0,1,0")
     parser.add_argument("--np", type=int, help="The number of processes", default="1")
+    parser.add_argument("--save_folder", type=str, help="Path to where the sliced .vtu are saved", default="./")
     args = parser.parse_args()
 
-    # set the origin and normal 
+    # set the origin and normal
     origin = np.array([float(x) for x in args.origin.split(",")])
     normal = np.array([float(x) for x in args.normal.split(",")])
 
     print("Slicing vtus using point: ", origin, " and normal: ", normal)
 
     if args.file.endswith(".vtu"):
-        extract_slice(args.file, origin=origin, normal=normal)
-    elif args.file.endswith(".pvd"):              
+        extract_slice(args.file, origin=origin, normal=normal, save_path=args.save_folder)
+    elif args.file.endswith(".pvd"):
         vtu_files_path = get_vtus_path_from_pvd(args.file)
         if args.np > 1:
             pool = Pool(args.np)
@@ -106,7 +108,7 @@ def run()-> None:
                         total=len(vtu_files_path), desc="Processing VTU files"))
         else:
             for vtu_file_path in tqdm(vtu_files_path, desc="Processing VTU files"):
-                extract_slice(vtu_file_path, origin, normal)
+                extract_slice(vtu_file_path, origin, normal, args.save_folder)
     else:
         print("Invalid file format, please provide a .vtu or a .pvd file")
 
