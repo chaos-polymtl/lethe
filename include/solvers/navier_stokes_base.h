@@ -7,6 +7,7 @@
 
 // Lethe Includes
 #include <core/mesh_controller.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
@@ -437,6 +438,12 @@ protected:
   define_zero_constraints();
 
   /**
+   * @brief Initialize mortar coupling operator
+   */
+  void
+  init_mortar_coupling();
+
+  /**
    * @brief Returns the mapping shared pointer. A MappingQCache is
    * necessary for prescribed rotation in rotor-stator configurations
    */
@@ -444,7 +451,7 @@ protected:
   get_mapping()
   {
     if (!this->simulation_parameters.mortar.enable ||
-        this->get_current_newton_iteration() == 0)
+        this->simulation_control->is_at_start())
       return this->mapping;
     else
       return this->mapping_cache;
@@ -930,6 +937,10 @@ protected:
   std::shared_ptr<Mapping<dim>>        mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+
+  // Mortar coupling manager and operator
+  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
+  std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
 
   // Initial mapping for rotor mesh rotation in mortar method
   std::shared_ptr<Mapping<dim>>       initial_mapping;

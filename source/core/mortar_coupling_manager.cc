@@ -3,13 +3,11 @@
 
 #include <deal.II/base/config.h>
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
+#include <core/mortar_coupling_manager.h>
 
-#  include <core/mortar_coupling_manager.h>
+#include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
 
-#  include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
-
-#  include <deal.II/fe/fe_nothing.h>
+#include <deal.II/fe/fe_nothing.h>
 
 
 /*-------------- MortarManagerBase -------------------------------*/
@@ -343,6 +341,8 @@ MortarManagerBase<dim>::get_normals(const Point<dim> &face_center) const
 
   std::vector<Tensor<1, dim, double>> result;
 
+  result.reserve(points.size());
+
   for (const auto &point : points)
     result.emplace_back(get_normal(point));
 
@@ -388,6 +388,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 
 /*-------------- Auxiliary Functions -------------------------------*/
 
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim>
 std::pair<unsigned int, double>
 compute_n_subdivisions_and_radius(
@@ -457,6 +458,19 @@ compute_n_subdivisions_and_radius(
 
   return {n_subdivisions, radius};
 }
+#else
+template <int dim>
+std::pair<unsigned int, double>
+compute_n_subdivisions_and_radius(const Triangulation<dim> &,
+                                  const Parameters::Mortar<dim> &)
+{
+  AssertThrow(false,
+              ExcMessage(
+                "The mortar coupling requires deal.II 9.7 or more recent."));
+
+  return {1, 1.0};
+}
+#endif
 
 template <int dim>
 Quadrature<dim>
@@ -501,7 +515,7 @@ MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 
 
 /*-------------- CouplingOperator -------------------------------*/
-
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 CouplingOperator<dim, Number>::CouplingOperator(
   const Mapping<dim>                                        &mapping,
@@ -758,6 +772,31 @@ CouplingOperator<dim, Number>::CouplingOperator(
       dof_handler.get_mpi_communicator());
   }
 }
+#else
+template <int dim, typename Number>
+CouplingOperator<dim, Number>::CouplingOperator(
+  const Mapping<dim>                                        &mapping,
+  const DoFHandler<dim>                                     &dof_handler,
+  const AffineConstraints<Number>                           &constraints,
+  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
+  const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
+  const unsigned int                                         bid_m,
+  const unsigned int                                         bid_p,
+  const double)
+  : mapping(mapping)
+  , dof_handler(dof_handler)
+  , constraints(constraints)
+  , bid_m(bid_m)
+  , bid_p(bid_p)
+  , evaluator(evaluator)
+  , mortar_manager(mortar_manager)
+{
+  AssertThrow(false,
+              ExcMessage(
+                "The mortar coupling requires deal.II 9.7 or more recent."));
+}
+#endif
+
 
 template <int dim, typename Number>
 const AffineConstraints<Number> &
@@ -847,6 +886,7 @@ CouplingOperator<dim, Number>::get_dof_indices(
   return local_dofs;
 }
 
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 template <typename VectorType>
 void
@@ -933,6 +973,13 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
           }
   dst.compress(VectorOperation::add);
 }
+#else
+template <int dim, typename Number>
+template <typename VectorType>
+void
+CouplingOperator<dim, Number>::vmult_add(VectorType &, const VectorType &) const
+{}
+#endif
 
 template <int dim, typename Number>
 template <typename VectorType>
@@ -1019,6 +1066,7 @@ CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
     }
 }
 
+#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 void
 CouplingOperator<dim, Number>::add_system_matrix_entries(
@@ -1179,6 +1227,17 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   AssertDimension(ptr_q, data.all_normals.size());
   AssertDimension(ptr_dofs, dof_indices.size());
 }
+#else
+template <int dim, typename Number>
+void
+CouplingOperator<dim, Number>::add_system_matrix_entries(
+  TrilinosWrappers::SparseMatrix &) const
+{
+  AssertThrow(false,
+              ExcMessage(
+                "The mortar coupling requires deal.II 9.7 or more recent."));
+}
+#endif
 
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
@@ -1315,6 +1374,193 @@ CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
 }
 
 
+/*----------- NavierStokesCouplingEvaluation -------------------------*/
+
+template <int dim, typename Number>
+NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
+  const Mapping<dim>    &mapping,
+  const DoFHandler<dim> &dof_handler,
+  const double           kinematic_viscosity)
+  : fe_sub_u(dof_handler.get_fe().base_element(
+               dof_handler.get_fe().component_to_base_index(0).first),
+             dim)
+  , fe_sub_p(dof_handler.get_fe().base_element(
+               dof_handler.get_fe().component_to_base_index(dim).first),
+             1)
+  , phi_u_m(mapping, fe_sub_u, update_values | update_gradients)
+  , phi_p_m(mapping, fe_sub_p, update_values)
+  , kinematic_viscosity(kinematic_viscosity)
+{
+  for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+    if (dof_handler.get_fe().system_to_component_index(i).first < dim)
+      relevant_dof_indices.push_back(i);
+
+  for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
+    if (dof_handler.get_fe().system_to_component_index(i).first == dim)
+      relevant_dof_indices.push_back(i);
+
+  AssertDimension(dof_handler.get_fe().n_dofs_per_cell(),
+                  relevant_dof_indices.size());
+}
+
+template <int dim, typename Number>
+unsigned int
+NavierStokesCouplingEvaluation<dim, Number>::data_size() const
+{
+  return 4 * dim;
+}
+
+template <int dim, typename Number>
+const std::vector<unsigned int> &
+NavierStokesCouplingEvaluation<dim, Number>::get_relevant_dof_indices() const
+{
+  return relevant_dof_indices;
+}
+
+template <int dim, typename Number>
+void
+NavierStokesCouplingEvaluation<dim, Number>::local_reinit(
+  const typename Triangulation<dim>::cell_iterator &cell,
+  const ArrayView<const Point<dim, Number>>        &points) const
+{
+  this->phi_u_m.reinit(cell, points);
+  this->phi_p_m.reinit(cell, points);
+}
+
+template <int dim, typename Number>
+void
+NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
+  const CouplingEvaluationData<dim, Number> &data,
+  const Vector<Number>                      &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_values_m) const
+{
+  AssertDimension(buffer.size(),
+                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<const Number> buffer_u(buffer.data() + 0,
+                                   fe_sub_u.n_dofs_per_cell());
+  ArrayView<const Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                                   fe_sub_p.n_dofs_per_cell());
+
+  this->phi_u_m.evaluate(buffer_u,
+                         EvaluationFlags::values | EvaluationFlags::gradients);
+  this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
+
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      // Quadrature point index ('global' index within the rotor-stator
+      // interface)
+      const unsigned int q_index = ptr_q + q;
+
+      // Normal, value, and gradient referring to the quadrature point
+      const auto normal = data.all_normals[q_index];
+
+      const auto u_value = this->phi_u_m.get_value(q);
+      const auto u_grad_normal =
+        contract(this->phi_u_m.get_gradient(q), normal);
+      const auto p_value_normal = this->phi_p_m.get_value(q) * normal;
+
+      // Initialize buffer for local side of the interface (i.e. rotor),
+      // where information is evaluated
+      BufferRW<Number> buffer_m(all_values_m, q * 4 * dim * q_stride);
+
+      // Store values and gradients at the created buffer
+      buffer_m.write(u_value);
+      buffer_m.write(u_grad_normal);
+      buffer_m.write(p_value_normal);
+    }
+}
+
+template <int dim, typename Number>
+void
+NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
+  const CouplingEvaluationData<dim, Number> &data,
+  Vector<Number>                            &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_values_m,
+  Number                                    *all_values_p) const
+{
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      const unsigned int q_index = ptr_q + q;
+
+      // Initialize buffer for both local and ghost sides
+      BufferRW<Number> buffer_m(all_values_m, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_p(all_values_p, q * 4 * dim * q_stride);
+
+      // Read shape functions values and gradients stored in the buffer
+      const auto u_value_m        = buffer_m.template read<u_value_type>();
+      const auto u_value_p        = buffer_p.template read<u_value_type>();
+      const auto u_grad_normal_m  = buffer_m.template read<u_value_type>();
+      const auto u_grad_normal_p  = buffer_p.template read<u_value_type>();
+      const auto p_value_normal_m = buffer_m.template read<u_value_type>();
+      const auto p_value_normal_p = buffer_p.template read<u_value_type>();
+
+      const auto JxW               = data.all_weights[q_index];
+      const auto penalty_parameter = data.all_penalty_parameter[q_index];
+      const auto normal            = data.all_normals[q_index];
+
+      // The expression for the jump on the mortar interface is
+      // jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
+      // the value of normal_m, we use a minus sign here because normal_p = -
+      // normal_m
+      const auto u_value_jump = u_value_m - u_value_p;
+
+      // The expression for the average on the mortar interface is
+      // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
+      // above, we include the negative sign here
+      const auto u_grad_avg = (u_grad_normal_m - u_grad_normal_p) * 0.5;
+
+      // {{p}} = (p_m + p_p)/2
+      const auto p_value_avg = (p_value_normal_m - p_value_normal_p) * 0.5;
+
+      typename FEPointIntegratorU::value_type u_grad_result  = {};
+      typename FEPointIntegratorU::value_type u_value_result = {};
+      typename FEPointIntegratorP::value_type p_value_result = {};
+
+      // SIPG penalty parameter
+      const double sigma = penalty_parameter * data.penalty_factor;
+
+      /* Contributions from viscous term */
+      // - (n avg(∇v), jump(u))
+      u_grad_result -= u_value_jump;
+      // - (jump(v), ν avg(∇δu) n)
+      u_value_result -= u_grad_avg;
+      // + (jump(v), ν σ jump(δu))
+      u_value_result += sigma * u_value_jump;
+
+      /* Contribution from pressure gradient term */
+      // + (jump(v), avg(δp) n)
+      u_value_result += p_value_avg;
+
+      /* Contribution from velocity divergence term */
+      // - (avg(q), jump(u) n)
+      p_value_result -= 0.5 * u_value_jump * normal;
+      // p_value_result += u_value_avg * normal;
+
+      // - (n avg(∇v), ν/2 jump(δu))
+      phi_u_m.submit_gradient(outer(u_grad_result, normal) * 0.5 * JxW, q);
+      phi_u_m.submit_value(u_value_result * this->kinematic_viscosity * JxW, q);
+      phi_p_m.submit_value(p_value_result * JxW, q);
+    }
+
+  AssertDimension(buffer.size(),
+                  fe_sub_u.n_dofs_per_cell() + fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<Number> buffer_u(buffer.data() + 0, fe_sub_u.n_dofs_per_cell());
+  ArrayView<Number> buffer_p(buffer.data() + fe_sub_u.n_dofs_per_cell(),
+                             fe_sub_p.n_dofs_per_cell());
+
+  this->phi_u_m.test_and_sum(buffer_u,
+                             EvaluationFlags::values |
+                               EvaluationFlags::gradients);
+  this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
+}
+
+
 /*-------------- Explicit Instantiations -------------------------------*/
 template class MortarManagerBase<1>;
 template class MortarManagerBase<2>;
@@ -1373,6 +1619,8 @@ template class CouplingEvaluationSIPG<3, 1, double>;
 template class CouplingEvaluationSIPG<3, 3, double>;
 template class CouplingEvaluationSIPG<3, 4, double>;
 
+template class NavierStokesCouplingEvaluation<2, double>;
+template class NavierStokesCouplingEvaluation<3, double>;
 
 template std::pair<unsigned int, double>
 compute_n_subdivisions_and_radius<2>(
@@ -1391,5 +1639,3 @@ construct_quadrature(const Quadrature<2>         &quadrature,
 template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
-
-#endif
