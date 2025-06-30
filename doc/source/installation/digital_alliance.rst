@@ -19,27 +19,23 @@ After installation is complete, the folder structure will be, for deal.II (and l
 
 * ``$HOME/dealii/dealii`` for deal.ii git,
 * ``$HOME/dealii/build`` for compilation (``cmake`` command),
-* ``$HOME/dealii/inst`` for installation (``make install`` command)
+* ``$HOME/dealii/inst`` for installation (``ninja install`` command)
 
 Folders can be open with the ``cd`` command (``cd $folder_path``).
 
 For the sake of clarity, this is the folder structure considered for the rest of this tutorial.
 
-Installing deal.II
+Installing deal.II 
 ------------------
-
-On Niagara, Beluga, Narval, Graham or Cedar
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All operations must be performed on login nodes.
 
-
-Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules and set the appropriate environment variables:
+Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules and set the appropriate environment variables. It is convenient to create a ``.dealii`` file in your ``$HOME`` directory that contains the following lines to source the appropriate libraries:
 
 .. code-block:: text
   :class: copy-button
   
-  module load CCEnv #if on Niagara
+  module load CCEnv #Only if on the Niagara cluster
   module load StdEnv/2023
   module load trilinos/15.1.1
   module load parmetis/4.0.3
@@ -53,7 +49,14 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules an
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
 
-Then, we can clone and compile ``dealii``. Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the lethe repository. This fork is always tested to make sure it works with lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
+This file will need to be sourced everytime you launch a job or that you compile deal.II or Lethe. Once the file has been created, you can then source it on the terminal with:
+
+.. code-block:: text
+  :class: copy-button
+
+  source $HOME/.dealii
+
+and use it in your ``.sh`` script (see Launching simulations below). Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the Lethe repository. This fork is always tested to make sure it works with Lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
 
 .. code-block:: text
   :class: copy-button
@@ -69,16 +72,20 @@ We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the 
 
 .. tip::
 
-  If you are using Niagara, you can add ``-DCMAKE_CXX_FLAGS="-march=skylake-avx512"`` to enable AVX-512 instructions.
+  If you are using Niagara, you should add ``-DCMAKE_CXX_FLAGS="-march=skylake-avx512"`` to enable AVX-512 instructions.
+
+.. tip::
+
+  If you are using Rorqual, you should add ``-DCMAKE_CXX_FLAGS="-march=znver4"`` to enable AVX-512 instructions.
 
 and:
 
 .. code-block:: text
   :class: copy-button
 
-  ninja -j10 install
+  nice ninja -j6 install
 
-The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 10 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. 
+The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 6 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. If you use more than 6 cores, your compilation may be terminated automatically.
 
 Installing Lethe
 ----------------
@@ -90,7 +97,7 @@ In the ``$HOME/lethe`` directory, download Lethe:
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/chaos-polymtl/lethe.git --single-branch
+  git clone https://github.com/chaos-polymtl/lethe.git 
 
 To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in ``inst/bin``), run in the ``$HOME/lethe/build`` directory:
 
@@ -98,31 +105,7 @@ To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in 
   :class: copy-button
 
   cmake ../lethe  -DDEAL_II_DIR=$HOME/dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -G Ninja
-  ninja -j10 install
-
-
-Installing Numdiff to Enable Tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You will need to have numdiff installed to enable the test suite, otherwise you will have an error at the cmake step of Lethe's installation when using ``-DBUILD_TESTING=ON``, stating that this module is missing. To install the package manually use the following steps:
-
-1. Download the `compressed folder <https://mirror.csclub.uwaterloo.ca/nongnu/numdiff/>`_ (ex/ numdiff-5.9.0.tar.gz)
-2. Unzip it
-3. Copy it with ``scp -r`` to your Compute Canada account on the chosen cluster (see :ref:`copying-local-files` section)
-4. In the numdiff folder on the cluster, execute:
-
-   .. code-block:: text
-     :class: copy-button
-
-     ./configure
-     make
-
-5. Add it to your path environment:
-
-   .. code-block:: text
-     :class: copy-button
-
-     PATH=$PATH:$HOME/path/to/numdiff/folder
+  nice ninja -j6 install
 
 
 .. _copying-local-files:
@@ -147,48 +130,7 @@ Simulation files must be in scratch. To get the address of your scratch folder, 
   cd $SCRATCH
   pwd
 
-On Windows, use third-party, such as ``PuTTY`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_))
-
-
-Creating a .dealii
-------------------
-
-In order to call your deal.II local installation, it is convenient to create a ``.dealii`` file in your ``$HOME`` directory:
-
-.. code-block:: text
-  :class: copy-button
-
-  nano .dealii
-
-In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
-
-.. code-block:: text
-  :class: copy-button
-
-  module load CCEnv #if on Niagara
-  module load StdEnv/2023
-  module load trilinos/15.1.1
-  module load parmetis/4.0.3
-  module load p4est/2.8.6
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTTRILINOS/lib64/
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTP4EST/lib64/
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
-  export DEAL_II_DIR=$HOME/dealii/inst/
-  export PATH=$PATH:$HOME/lethe/inst/bin/
-  export OMP_NUM_THREADS=1  # This prevents Trilinos from using multithreading, which could lead to a drop in performance. 
-
-Exit the nano mode with ``Ctrl+x`` and save the document by hitting ``y`` on the prompt "Save modify buffer?" (in the bottom). The prompt "File Name to Write: .dealii" should then appear, hit ``Enter``.
-
-You can then source it on the terminal with:
-
-.. code-block:: text
-  :class: copy-button
-
-  source $HOME/.dealii
-
-and use it in your ``.sh`` script (see Launching simulations below).
+On Windows, use third-party, such as ``PuTTY`` or ``WSL`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_))
 
 Launching Simulations
 ---------------------
@@ -200,13 +142,12 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
 
   #!/bin/bash
   #SBATCH --account=$yourgroupaccount
-  #SBATCH --ntasks-per-node=$X #number of parallel tasks (as in mpirun -np X)
-  #SBATCH --nodes=1 #number of whole nodes used (each with up to 40 tasks-per-node)
+  #SBATCH --ntasks-per-node=$X #number of parallel tasks per node. When using a full node, this should correspond to the number of cores available on the node. 
+  #SBATCH --nodes=1 #number of whole nodes used 
   #SBATCH --time=1:00:00 #maximum time for the simulation (hh:mm:ss)
   #SBATCH --mem=120G #memory usage per node. See cluster specification for maximal amount.
   #SBATCH --job-name=$yourjobname
-  #SBATCH --mail-type=END #email preferences
-  #SBATCH --mail-type=FAIL
+  #SBATCH --mail-type=ALL
   #SBATCH --mail-user=$your.email.adress@email.provider
 
   source $HOME/.dealii
@@ -228,9 +169,20 @@ Console outputs are written in ``slurm-$jobID.out``. For instance, to display th
 
   tail -n 20 slurm-$jobID.out
 
-.. note::
- If you need to launch multiple simulations, such as with varying parameter, feel free to adapt one of the scripts provided on `lethe-utils <https://github.com/chaos-polymtl/lethe-utils/tree/master/python/cluster>`_.
+Clusters Specifications
+------------------------
 
+Please consult the documentation for the machine you are using for the specification of the nodes: 
+
++-----------------+---------------------+---------------------+---------------------------------------------+
+| Cluster         | Tasks per Node      | Memory per Node     | URL                                         |
++=================+=====================+=====================+=============================================+
+| Narval          | 64                  | 248 Go              | https://docs.alliancecan.ca/wiki/Narval/en  |
++-----------------+---------------------+---------------------+---------------------------------------------+
+| Niagara         | 40                  | 200 Go              | https://docs.alliancecan.ca/wiki/Niagara/en |
++-----------------+---------------------+---------------------+---------------------------------------------+
+| Rorqual         | 192                 | 760 Go              | https://docs.alliancecan.ca/wiki/Rorqual/en |
++-----------------+---------------------+---------------------+---------------------------------------------+
 
 Saving a SSH Key (Linux)
 ------------------------
@@ -250,7 +202,7 @@ which defaults to an RSA key. If you want to specify the key type you want to ge
   ssh-keygen -t ed25519
 
 .. note::
-  ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the `Gitlab Documentation<https://docs.gitlab.com/ee/user/ssh.html>`.
+  ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the `Gitlab Documentation <https://docs.gitlab.com/ee/user/ssh.html>`_.
 
 To upload this local key to your Compute Canada Database account (CCDB) use:
 
