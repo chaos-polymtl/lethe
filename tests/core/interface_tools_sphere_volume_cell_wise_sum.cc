@@ -2,9 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
+#include <deal.II/base/convergence_table.h>
 #include <deal.II/base/function_signed_distance.h>
 
 #include <deal.II/distributed/tria.h>
+
+#include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping.h>
@@ -27,10 +30,12 @@ test()
   computed for 3 mesh refinements and the test checks the error on the volume
   and the convergence rate of the method (formally 2).
   */
-  Triangulation<3> triangulation;
-  DoFHandler<3>    dof_handler;
-  FE_Q<3>          fe(1);
-  MappingQ<3>      mapping(1);
+  const MPI_Comm mpi_communicator(MPI_COMM_WORLD);
+
+  parallel::distributed::Triangulation<3> triangulation(mpi_communicator);
+  DoFHandler<3>                           dof_handler;
+  FE_Q<3>                                 fe(1);
+  MappingQ<3>                             mapping(1);
 
   const Point<3> p_0 = Point<3>({0, 0, 0});
   const Point<3> p_1 = Point<3>({1, 1, 1});
@@ -42,7 +47,7 @@ test()
   const double   sphere_radius = 0.25;
   const double   iso_level     = 0.1;
 
-  Vector<double> error_volume(3);
+  ConvergenceTable error_table;
 
   // Loop for the mesh convergence study
   for (unsigned int n = 0; n < 3; n++)
@@ -53,14 +58,23 @@ test()
       dealii::TrilinosWrappers::MPI::Vector signed_distance;
 
       signed_distance.reinit(dof_handler.locally_owned_dofs(),
-                             triangulation.get_communicator());
+                             DoFTools::extract_locally_relevant_dofs(
+                               dof_handler),
+                             mpi_communicator);
+
+      dealii::TrilinosWrappers::MPI::Vector tmp_signed_distance;
+
+      tmp_signed_distance.reinit(dof_handler.locally_owned_dofs(),
+                                 mpi_communicator);
 
       // Set the level-set field of the sphere
       VectorTools::interpolate(
         mapping,
         dof_handler,
         Functions::SignedDistance::Sphere<3>(sphere_center, sphere_radius),
-        signed_distance);
+        tmp_signed_distance);
+
+      signed_distance = tmp_signed_distance;
 
       // Compute the surface and volume of the sphere with the NonMatching
       // FEValues
@@ -93,23 +107,36 @@ test()
             }
         }
 
+      volume = Utilities::MPI::sum(volume, mpi_communicator);
+
       // Analytical volume
       const double analytical_volume =
         4.0 * M_PI * std::pow(sphere_radius + iso_level, 3) / 3.0;
 
       // Compute and store the volume error
-      error_volume[n] = abs(analytical_volume - volume);
+      error_table.add_value("ref. level", n + 3);
+      error_table.add_value("cells", triangulation.n_global_active_cells());
+      error_table.add_value("dofs", dof_handler.n_dofs());
+      error_table.add_value("error_volume", abs(analytical_volume - volume));
 
-      deallog << "The volume error for ref. lev. " << n + 3
-              << " is: " << error_volume[n] << std::endl;
       triangulation.refine_global(1);
     }
 
-  // Compute the rate of convergence
-  const double convergence_order =
-    log(error_volume[2] / error_volume[1]) / log(0.5);
+  error_table.set_precision("error_volume", 3);
+  error_table.set_scientific("error_volume", true);
 
-  deallog << "The convergence rate is: " << convergence_order << std::endl;
+  error_table.omit_column_from_convergence_rate_evaluation("ref. level");
+  error_table.omit_column_from_convergence_rate_evaluation("cells");
+  error_table.omit_column_from_convergence_rate_evaluation("dofs");
+
+  // Compute the rate of convergence
+  error_table.evaluate_all_convergence_rates(
+    ConvergenceTable::reduction_rate_log2);
+
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+  if (this_mpi_process == 0)
+    error_table.write_text(std::cout);
 }
 
 int
@@ -117,7 +144,6 @@ main(int argc, char *argv[])
 {
   try
     {
-      initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       test();
     }

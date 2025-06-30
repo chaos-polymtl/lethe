@@ -1198,7 +1198,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       std::string mass_column_name;
 
       std::string geometric_volume_column_name;
-      std::string volume_test_column_name;
       std::string area_column_name;
 
       // To display when verbose
@@ -1280,8 +1279,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   mass_column_name   = "mass_per_length_" + fluid_id;
                   geometric_volume_column_name =
                     "geometric_surface_" + fluid_id;
-                  area_column_name        = "length_" + fluid_id;
-                  volume_test_column_name = "surface_test_" + fluid_id;
+                  area_column_name = "length_" + fluid_id;
                 }
               else if constexpr (dim == 3)
                 {
@@ -1289,7 +1287,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   mass_column_name             = "mass_" + fluid_id;
                   geometric_volume_column_name = "geometric_volume_" + fluid_id;
                   area_column_name             = "surface_" + fluid_id;
-                  volume_test_column_name      = "volume_test_" + fluid_id;
                 }
 
               // Add "surface" or "volume" column

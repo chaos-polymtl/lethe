@@ -9,6 +9,6 @@ deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(core/interface_tools_sphere_reconstruction.debug PROPERTIES TIMEOUT 2000)
-  set_tests_properties(core/interface_tools_sphere_volume.debug PROPERTIES TIMEOUT 2000)
+  set_tests_properties(core/interface_tools_sphere_volume.mpirun=1.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(core/interface_tools_signed_distance.debug PROPERTIES TIMEOUT 2000)
 endif()

@@ -1,9 +1,0 @@
-
-DEAL::The surface error for ref. lev. 3 is: 0.0550261
-DEAL::The volume error for ref. lev. 3 is: 0.0114409
-DEAL::The surface error for ref. lev. 4 is: 0.0136088
-DEAL::The volume error for ref. lev. 4 is: 0.00285945
-DEAL::The surface error for ref. lev. 5 is: 0.00339594
-DEAL::The volume error for ref. lev. 5 is: 0.000715903
-DEAL::The convergence rate for the surface is: 2.00266
-DEAL::The convergence rate for the volume is: 1.99790

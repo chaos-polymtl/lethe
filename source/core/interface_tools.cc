@@ -84,8 +84,8 @@ InterfaceTools::compute_surface_and_volume(const DoFHandler<dim> &dof_handler,
   const QGauss<1> quadrature_1D(fe.degree + 1);
 
   NonMatching::RegionUpdateFlags region_update_flags;
-  region_update_flags.inside  = update_JxW_values | update_quadrature_points;
-  region_update_flags.surface = update_JxW_values | update_quadrature_points;
+  region_update_flags.inside  = update_JxW_values;
+  region_update_flags.surface = update_JxW_values;
 
   NonMatching::FEValues<dim> non_matching_fe_values(
     fe_collection,
