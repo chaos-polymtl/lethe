@@ -133,6 +133,7 @@ Simulation files must be in scratch. To get the address of your scratch folder, 
   pwd
 
 On Windows, use third-party, such as ``PuTTY`` or ``WSL`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_).
+.. _Launching Simulations:
 
 Launching Simulations
 ---------------------
