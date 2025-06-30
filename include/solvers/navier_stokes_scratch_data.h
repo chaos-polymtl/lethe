@@ -739,14 +739,15 @@ public:
     // interpolate at the locations of the particles
     std::vector<Point<dim>> particle_reference_location(number_of_particles);
     std::vector<double>     particle_weights(number_of_particles, 1);
-    unsigned int particle_i                  = 0;
+    unsigned int            particle_i = 0;
 
     // Loop over particles in cell and cache their reference location
     for (auto &particle : pic)
       {
         // Store particle positions and weights
         // Reference location of the particle
-        particle_reference_location[particle_i] = particle.get_reference_location();
+        particle_reference_location[particle_i] =
+          particle.get_reference_location();
         particle_i++;
       }
 
@@ -773,7 +774,7 @@ public:
   void
   calculate_fluid_fields_at_particle_location(
     const DoFHandler<dim> &dof_handler,
-    const Quadrature<dim> &q_particles,    
+    const Quadrature<dim> &q_particles,
     const VectorType      &previous_solution)
   {
     FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
@@ -1016,7 +1017,8 @@ public:
     // Calculate the average particle velocity within the cell
     average_particle_velocity = average_particle_velocity / number_of_particles;
 
-    Quadrature<dim> q_particles = calculate_particle_location_quadrature_points();
+    Quadrature<dim> q_particles =
+      calculate_particle_location_quadrature_points();
     calculate_fluid_fields_at_particle_location(dof_handler,
                                                 q_particles,
                                                 previous_solution);
@@ -1081,7 +1083,8 @@ public:
 
     average_particle_velocity = average_particle_velocity / number_of_particles;
 
-    Quadrature<dim> q_particles = calculate_particle_location_quadrature_points();
+    Quadrature<dim> q_particles =
+      calculate_particle_location_quadrature_points();
     calculate_fluid_fields_at_particle_location(dof_handler,
                                                 q_particles,
                                                 previous_solution);
