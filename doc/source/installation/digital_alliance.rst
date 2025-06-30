@@ -56,7 +56,9 @@ This file will need to be sourced everytime you launch a job or that you compile
 
   source $HOME/.dealii
 
-and use it in your ``.sh`` script (see Launching simulations below). Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the Lethe repository. This fork is always tested to make sure it works with Lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
+and use it in your ``.sh`` script (see :ref:`Launching Simulations<Launching Simulations>` below). 
+
+Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the Lethe repository. This fork is always tested to make sure it works with Lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
 
 .. code-block:: text
   :class: copy-button
