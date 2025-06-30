@@ -49,7 +49,7 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules an
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
 
-This file will need to be sourced everytime you launch a job or that you compile deal.II or Lethe. Once the file has been created, you can then source it on the terminal with:
+This file needs to be sourced every time you launch a job or you compile deal.II and/or Lethe. Once the file has been created, you can then source it on the terminal with:
 
 .. code-block:: text
   :class: copy-button
