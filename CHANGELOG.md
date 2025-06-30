@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-06-30
+
+### Added
+
+- MINOR The surface area computation of the interface was added in this PR for VOF simulations when mass conservation monitoring is enable. For that, the NonMatching FEValues features of deal.II are used. Additionally, the geometric volume computation was changed to use the same features. [#1562](https://github.com/chaos-polymtl/lethe/pull/1562)
+
 ## [Master] - 2025-06-26
 
 ### Added
@@ -13,7 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR This PR extends the rising bubble example with the addition of a second test case and the comparison of the regularization methods implemented in Lethe. It also documents the geometric reinitialization method in the parameters section and the theory guide.  
+- MINOR This PR extends the rising bubble example with the addition of a second test case and the comparison of the regularization methods implemented in Lethe. It also documents the geometric reinitialization method in the parameters section and the theory guide. [#1558](https://github.com/chaos-polymtl/lethe/pull/1558)
 
 ## [Master] - 2025-06-16
 

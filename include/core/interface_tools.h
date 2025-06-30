@@ -25,10 +25,16 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/hp/fe_collection.h>
+#include <deal.II/hp/q_collection.h>
+
 #include <deal.II/lac/lapack_full_matrix.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
+#include <deal.II/non_matching/fe_immersed_values.h>
+#include <deal.II/non_matching/fe_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
 #include <deal.II/non_matching/quadrature_generator.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -226,16 +232,14 @@ namespace InterfaceTools
 
   /**
    * @brief
-   * Compute the volume enclosed by a given level of a level set field
-   * in the domain. The inside volume is computed, defined by negative values of
-   * the level-set field.
+   * Compute the surface area of a given level of a level set field and the
+   * volume enclosed by it. The inside volume is computed, defined by negative
+   * values of the level-set field.
    *
    * @tparam dim An integer that denotes the dimension of the space in which
    * the problem is solved.
    *
    * @tparam VectorType The vector type of the solution vector.
-   *
-   * @param[in] mapping Mapping of the domain
    *
    * @param[in] dof_handler DofHandler associated to the triangulation on which
    * the volume is computed
@@ -249,16 +253,15 @@ namespace InterfaceTools
    *
    * @param[in] mpi_communicator MPI communicator
    *
-   * @return Volume enclosed by the specified level
+   * @return Surface area of the specified level and the volume enclosed by it
    */
   template <int dim, typename VectorType>
-  double
-  compute_volume(const Mapping<dim>       &mapping,
-                 const DoFHandler<dim>    &dof_handler,
-                 const FiniteElement<dim> &fe,
-                 const VectorType         &level_set_vector,
-                 const double              iso_level,
-                 const MPI_Comm           &mpi_communicator);
+  std::pair<double, double>
+  compute_surface_and_volume(const DoFHandler<dim>    &dof_handler,
+                             const FiniteElement<dim> &fe,
+                             const VectorType         &level_set_vector,
+                             const double              iso_level,
+                             const MPI_Comm           &mpi_communicator);
 
   /**
    * @brief

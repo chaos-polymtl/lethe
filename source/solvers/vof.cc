@@ -46,6 +46,13 @@ VolumeOfFluid<dim>::VolumeOfFluid(
                !simulation_parameters.fem_parameters.VOF_uses_dg),
               UnsupportedRegularization());
 
+  if (simulation_parameters.fem_parameters.VOF_uses_dg &&
+      this->simulation_parameters.post_processing.calculate_mass_conservation)
+    {
+      this->pcout
+        << "Warning: DG-VOF and the geometric surface and volume computations are not compatible. Only the global volume will be monitored."
+        << std::endl;
+    }
 
   if (simulation_parameters.mesh.simplex)
     {
@@ -1191,6 +1198,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       std::string mass_column_name;
 
       std::string geometric_volume_column_name;
+      std::string area_column_name;
 
       // To display when verbose
       std::vector<std::string> dependent_column_names;
@@ -1215,19 +1223,21 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             }
         }
 
-      // Compute geometric outside volume (fluid 0)
-      const double geometric_volume_outside =
-        InterfaceTools::compute_volume(*mapping,
-                                       dof_handler,
-                                       *fe,
-                                       this->present_solution,
-                                       0.5,
-                                       mpi_communicator);
-      // Compute geometric inside volume (fluid 1)
-      const double global_volume =
-        GridTools::volume(*this->triangulation, *this->mapping);
-      const double geometric_volume_inside =
-        global_volume - geometric_volume_outside;
+      double geometric_volume_outside, geometric_volume_inside, surface;
+
+      // The mesh classifier in the InterfaceTools::compute_surface_and_volume
+      // is not compatible with other FE than FE_Q
+      if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+        {
+          std::tie(geometric_volume_outside, surface) =
+            InterfaceTools::compute_surface_and_volume(
+              dof_handler, *fe, this->present_solution, 0.5, mpi_communicator);
+
+          // Compute geometric inside volume (fluid 1)
+          const double global_volume =
+            GridTools::volume(*this->triangulation, *this->mapping);
+          geometric_volume_inside = global_volume - geometric_volume_outside;
+        }
 
       for (unsigned int i = 0; i < n_fluids; i++)
         {
@@ -1269,12 +1279,14 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   mass_column_name   = "mass_per_length_" + fluid_id;
                   geometric_volume_column_name =
                     "geometric_surface_" + fluid_id;
+                  area_column_name = "length_" + fluid_id;
                 }
               else if constexpr (dim == 3)
                 {
                   volume_column_name           = "volume_" + fluid_id;
                   mass_column_name             = "mass_" + fluid_id;
                   geometric_volume_column_name = "geometric_volume_" + fluid_id;
+                  area_column_name             = "surface_" + fluid_id;
                 }
 
               // Add "surface" or "volume" column
@@ -1282,20 +1294,24 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                    this->volume_monitored);
               this->table_monitoring_vof.set_scientific(volume_column_name,
                                                         true);
-              // Add "geometric surface" or "geometric volume" column
-              if (fluid_id == "fluid_1")
+
+              if (!simulation_parameters.fem_parameters.VOF_uses_dg)
                 {
-                  this->table_monitoring_vof.add_value(
-                    geometric_volume_column_name, geometric_volume_inside);
-                  this->table_monitoring_vof.set_scientific(
-                    geometric_volume_column_name, true);
-                }
-              else
-                {
-                  this->table_monitoring_vof.add_value(
-                    geometric_volume_column_name, geometric_volume_outside);
-                  this->table_monitoring_vof.set_scientific(
-                    geometric_volume_column_name, true);
+                  // Add "geometric surface" or "geometric volume" column
+                  if (fluid_id == "fluid_1")
+                    {
+                      this->table_monitoring_vof.add_value(
+                        geometric_volume_column_name, geometric_volume_inside);
+                      this->table_monitoring_vof.set_scientific(
+                        geometric_volume_column_name, true);
+                    }
+                  else
+                    {
+                      this->table_monitoring_vof.add_value(
+                        geometric_volume_column_name, geometric_volume_outside);
+                      this->table_monitoring_vof.set_scientific(
+                        geometric_volume_column_name, true);
+                    }
                 }
 
               // Add "mass per length" or "mass" column
@@ -1303,6 +1319,13 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                    this->mass_monitored);
               this->table_monitoring_vof.set_scientific(mass_column_name, true);
 
+              if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+                {
+                  this->table_monitoring_vof.add_value(area_column_name,
+                                                       surface);
+                  this->table_monitoring_vof.set_scientific(area_column_name,
+                                                            true);
+                }
               // Add "momentum" columns
               for (unsigned int d = 0; d < dim; ++d)
                 {
@@ -1316,20 +1339,37 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   Parameters::Verbosity::verbose)
                 {
                   dependent_column_names.emplace_back(volume_column_name);
-                  dependent_column_names.emplace_back(
-                    geometric_volume_column_name);
+
+                  if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+                    {
+                      dependent_column_names.emplace_back(
+                        geometric_volume_column_name);
+                    }
 
                   dependent_column_names.emplace_back(mass_column_name);
+                  if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+                    {
+                      dependent_column_names.emplace_back(area_column_name);
+                    }
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->volume_monitored);
-                  if (fluid_id == "fluid_1")
-                    volumes_masses_momentum_and_sharpening_threshold
-                      .emplace_back(geometric_volume_inside);
-                  else
-                    volumes_masses_momentum_and_sharpening_threshold
-                      .emplace_back(geometric_volume_outside);
+                  if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+                    {
+                      if (fluid_id == "fluid_1")
+                        volumes_masses_momentum_and_sharpening_threshold
+                          .emplace_back(geometric_volume_inside);
+                      else
+                        volumes_masses_momentum_and_sharpening_threshold
+                          .emplace_back(geometric_volume_outside);
+                    }
                   volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->mass_monitored);
+
+                  if (!simulation_parameters.fem_parameters.VOF_uses_dg)
+                    {
+                      volumes_masses_momentum_and_sharpening_threshold
+                        .emplace_back(surface);
+                    }
                   for (unsigned int d = 0; d < dim; ++d)
                     {
                       dependent_column_names.emplace_back(momentum_names[d]);

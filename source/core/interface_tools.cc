@@ -54,56 +54,97 @@ InterfaceTools::compute_cell_wise_volume(
 }
 
 template <int dim, typename VectorType>
-double
-InterfaceTools::compute_volume(const Mapping<dim>       &mapping,
-                               const DoFHandler<dim>    &dof_handler,
-                               const FiniteElement<dim> &fe,
-                               const VectorType         &level_set_vector,
-                               const double              iso_level,
-                               const MPI_Comm           &mpi_communicator)
+std::pair<double, double>
+InterfaceTools::compute_surface_and_volume(const DoFHandler<dim> &dof_handler,
+                                           const FiniteElement<dim> &fe,
+                                           const VectorType &level_set_vector,
+                                           const double      iso_level,
+                                           const MPI_Comm   &mpi_communicator)
 {
-  FEPointEvaluation<1, dim> fe_point_evaluation(
-    mapping, fe, update_jacobians | update_JxW_values);
+  VectorType level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),
+                                         mpi_communicator);
 
-  double volume = 0.0;
+  level_set_vector_owned_copy = level_set_vector;
+
+  level_set_vector_owned_copy.add(-iso_level);
+
+  VectorType level_set_vector_relevant_copy(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler),
+    mpi_communicator);
+
+  level_set_vector_relevant_copy = level_set_vector_owned_copy;
+
+  NonMatching::MeshClassifier<dim> mesh_classifier(
+    dof_handler, level_set_vector_relevant_copy);
+  mesh_classifier.reclassify();
+
+  const hp::FECollection<dim> fe_collection(fe);
+
+  const QGauss<1> quadrature_1D(fe.degree + 1);
+
+  NonMatching::RegionUpdateFlags region_update_flags;
+  region_update_flags.inside  = update_JxW_values;
+  region_update_flags.surface = update_JxW_values;
+
+  NonMatching::FEValues<dim> non_matching_fe_values(
+    fe_collection,
+    quadrature_1D,
+    region_update_flags,
+    mesh_classifier,
+    dof_handler,
+    level_set_vector_relevant_copy);
+
+  double volume  = 0.0;
+  double surface = 0.0;
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
-          const unsigned int n_dofs_per_cell = cell->get_fe().n_dofs_per_cell();
-          Vector<double>     cell_dof_level_set_values(n_dofs_per_cell);
+          non_matching_fe_values.reinit(cell);
 
-          cell->get_dof_values(level_set_vector,
-                               cell_dof_level_set_values.begin(),
-                               cell_dof_level_set_values.end());
+          const std::optional<FEValues<dim>> &inside_fe_values =
+            non_matching_fe_values.get_inside_fe_values();
 
-          const double level_set_correction = -iso_level;
-          volume += compute_cell_wise_volume(fe_point_evaluation,
-                                             cell,
-                                             cell_dof_level_set_values,
-                                             level_set_correction,
-                                             cell->get_fe().degree + 1);
+          if (inside_fe_values)
+            for (const unsigned int q :
+                 inside_fe_values->quadrature_point_indices())
+              {
+                volume += inside_fe_values->JxW(q);
+              }
+
+          const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+            &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+
+          if (surface_fe_values)
+            for (const unsigned int q :
+                 surface_fe_values->quadrature_point_indices())
+              {
+                surface += surface_fe_values->JxW(q);
+              }
         }
     }
-  volume = Utilities::MPI::sum(volume, mpi_communicator);
+  volume  = Utilities::MPI::sum(volume, mpi_communicator);
+  surface = Utilities::MPI::sum(surface, mpi_communicator);
 
-  return volume;
+  return {volume, surface};
 }
 
-template double
-InterfaceTools::compute_volume(const Mapping<2>       &mapping,
-                               const DoFHandler<2>    &dof_handler,
-                               const FiniteElement<2> &fe,
-                               const Vector<double>   &level_set_vector,
-                               const double            iso_level,
-                               const MPI_Comm         &mpi_communicator);
-template double
-InterfaceTools::compute_volume(const Mapping<3>       &mapping,
-                               const DoFHandler<3>    &dof_handler,
-                               const FiniteElement<3> &fe,
-                               const Vector<double>   &level_set_vector,
-                               const double            iso_level,
-                               const MPI_Comm         &mpi_communicator);
+template std::pair<double, double>
+InterfaceTools::compute_surface_and_volume(
+  const DoFHandler<2>    &dof_handler,
+  const FiniteElement<2> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  const MPI_Comm         &mpi_communicator);
+template std::pair<double, double>
+InterfaceTools::compute_surface_and_volume(
+  const DoFHandler<3>    &dof_handler,
+  const FiniteElement<3> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  const MPI_Comm         &mpi_communicator);
+
 
 template <int dim, typename VectorType>
 void
@@ -159,6 +200,32 @@ InterfaceTools::reconstruct_interface(
         }
     }
 }
+
+template void
+InterfaceTools::reconstruct_interface(
+  const Mapping<2>       &mapping,
+  const DoFHandler<2>    &dof_handler,
+  const FiniteElement<2> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  std::map<types::global_cell_index, std::vector<Point<2>>>
+    &interface_reconstruction_vertices,
+  std::map<types::global_cell_index, std::vector<CellData<1>>>
+                                    &interface_reconstruction_cells,
+  std::set<types::global_dof_index> &intersected_dofs);
+
+template void
+InterfaceTools::reconstruct_interface(
+  const Mapping<3>       &mapping,
+  const DoFHandler<3>    &dof_handler,
+  const FiniteElement<3> &fe,
+  const GlobalVectorType &level_set_vector,
+  const double            iso_level,
+  std::map<types::global_cell_index, std::vector<Point<3>>>
+    &interface_reconstruction_vertices,
+  std::map<types::global_cell_index, std::vector<CellData<2>>>
+                                    &interface_reconstruction_cells,
+  std::set<types::global_dof_index> &intersected_dofs);
 
 template void
 InterfaceTools::reconstruct_interface(
@@ -1034,8 +1101,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   /* Compute targeted global volume. It corresponds to the one enclosed by
   the level 0 of the level_set vector (same volume as the one enclosed
   by iso-contour 0.5 of the phase fraction).*/
-  const double global_volume = compute_volume(
-    *mapping, dof_handler, *fe, level_set, iso_level, mpi_communicator);
+  double global_volume, surface;
+
+  std::tie(global_volume, surface) = compute_surface_and_volume(
+    dof_handler, *fe, level_set, iso_level, mpi_communicator);
 
   /* Initialization of values for the secant method. The subscript nm1 (or n
   minus 1) stands for the previous secant iteration (it = n-1), the
@@ -1067,8 +1136,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   // Update_ghost_values is required for cell-wise volume computations
   signed_distance_0.update_ghost_values();
 
-  global_volume_nm1 = compute_volume(
-    *mapping, dof_handler, *fe, signed_distance_0, 0.0, mpi_communicator);
+  std::tie(global_volume_nm1, surface) = compute_surface_and_volume(
+    dof_handler, *fe, signed_distance_0, 0.0, mpi_communicator);
 
   global_delta_volume_nm1 = global_volume - global_volume_nm1;
 
@@ -1096,8 +1165,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
       signed_distance_n.add(C_n, volume_correction);
       signed_distance_n.update_ghost_values();
 
-      global_volume_n = compute_volume(
-        *mapping, dof_handler, *fe, signed_distance_n, 0.0, mpi_communicator);
+      std::tie(global_volume_n, surface) = compute_surface_and_volume(
+        dof_handler, *fe, signed_distance_n, 0.0, mpi_communicator);
 
       global_delta_volume_n = global_volume - global_volume_n;
 

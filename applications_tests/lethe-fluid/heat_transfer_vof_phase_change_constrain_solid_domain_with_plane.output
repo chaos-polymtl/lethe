@@ -10,8 +10,8 @@ Total pressure drop: 0 Pa
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-0.000000e+00    5.912813e-01              5.912812e-01            5.912813e-01       0.000000e+00       0.000000e+00    1.227187e-01              1.227188e-01            1.227187e-01       0.000000e+00       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+0.000000e+00    5.912813e-01              5.912813e-01            5.912813e-01   1.000000e+00       0.000000e+00       0.000000e+00    1.227187e-01              1.227188e-01            1.227187e-01   1.000000e+00       0.000000e+00       0.000000e+00         5.000000e-01 
 
 ---------------
 VOF Barycenter
@@ -28,8 +28,8 @@ Total pressure drop: -0.00583401 Pa
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.000000e-02    5.912813e-01              5.912812e-01            5.912813e-01       5.122623e-07      -1.525511e-06    1.227187e-01              1.227188e-01            1.227187e-01      -3.142738e-07      -1.561345e-07         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+1.000000e-02    5.912813e-01              5.912813e-01            5.912813e-01   1.000000e+00       5.122623e-07      -1.525511e-06    1.227187e-01              1.227188e-01            1.227187e-01   1.000000e+00      -3.142738e-07      -1.561345e-07         5.000000e-01 
 
 ---------------
 VOF Barycenter
@@ -46,8 +46,8 @@ Total pressure drop: -0.00497741 Pa
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-2.000000e-02    5.912813e-01              5.912813e-01            5.912813e-01       7.205516e-07      -2.095203e-06    1.227187e-01              1.227187e-01            1.227187e-01      -5.507048e-07      -1.576816e-07         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.000000e-02    5.912813e-01              5.912813e-01            5.912813e-01   1.000000e+00       7.205516e-07      -2.095203e-06    1.227187e-01              1.227187e-01            1.227187e-01   1.000000e+00      -5.507048e-07      -1.576816e-07         5.000000e-01 
 
 ---------------
 VOF Barycenter
@@ -64,8 +64,8 @@ Total pressure drop: -0.00508755 Pa
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-3.000000e-02    5.912813e-01              5.912813e-01            5.912813e-01       7.519369e-07      -2.126180e-06    1.227187e-01              1.227187e-01            1.227187e-01      -5.724564e-07      -1.644793e-07         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+3.000000e-02    5.912813e-01              5.912813e-01            5.912813e-01   1.000000e+00       7.519369e-07      -2.126180e-06    1.227187e-01              1.227187e-01            1.227187e-01   1.000000e+00      -5.724564e-07      -1.644793e-07         5.000000e-01 
 
 ---------------
 VOF Barycenter
@@ -82,8 +82,8 @@ Total pressure drop: -0.00517128 Pa
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-4.000000e-02    5.912813e-01              5.912813e-01            5.912813e-01       7.667819e-07      -2.136667e-06    1.227187e-01              1.227187e-01            1.227187e-01      -5.802978e-07      -1.666305e-07         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+4.000000e-02    5.912813e-01              5.912813e-01            5.912813e-01   1.000000e+00       7.667819e-07      -2.136667e-06    1.227187e-01              1.227187e-01            1.227187e-01   1.000000e+00      -5.802978e-07      -1.666305e-07         5.000000e-01 
 
 ---------------
 VOF Barycenter
