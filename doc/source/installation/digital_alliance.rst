@@ -205,7 +205,7 @@ which defaults to an RSA key. If you want to specify the key type you want to ge
   ssh-keygen -t ed25519
 
 .. note::
-  ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the `Gitlab Documentation <https://docs.gitlab.com/ee/user/ssh.html>`_.
+  ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the `GitLab Documentation <https://docs.gitlab.com/ee/user/ssh.html>`_.
 
 To upload this local key to your Compute Canada Database account (CCDB) use:
 
