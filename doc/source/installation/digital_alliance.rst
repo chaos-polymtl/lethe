@@ -133,6 +133,7 @@ Simulation files must be in scratch. To get the address of your scratch folder, 
   pwd
 
 On Windows, use third-party, such as ``PuTTY`` or ``WSL`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_).
+
 .. _Launching Simulations:
 
 Launching Simulations
@@ -145,7 +146,7 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
 
   #!/bin/bash
   #SBATCH --account=$yourgroupaccount
-  #SBATCH --ntasks-per-node=$X #number of parallel tasks per node. When using a full node, this should correspond to the number of cores available on the node. 
+  #SBATCH --ntasks-per-node=$X #number of parallel tasks per node.
   #SBATCH --nodes=1 #number of whole nodes used 
   #SBATCH --time=1:00:00 #maximum time for the simulation (hh:mm:ss)
   #SBATCH --mem=120G #memory usage per node. See cluster specification for maximal amount.
@@ -155,6 +156,10 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
 
   source $HOME/.dealii
   srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.prm
+
+
+.. tip::
+  The ``--ntasks-per-node`` option is the number of parallel tasks per node. When using a full node, this should correspond to the number of cores available on the node. For example, on Narval, this should be set to 64.
 
 The job is sent using:
 
