@@ -75,7 +75,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = custom_channel_with_cylinder
-  set grid arguments     = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
+  set grid arguments     = 8, 52, 25, 25 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
   set initial boundary refinement = 1 
   set boundaries refined = 2
 end
