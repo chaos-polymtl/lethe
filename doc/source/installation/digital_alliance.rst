@@ -132,7 +132,7 @@ Simulation files must be in scratch. To get the address of your scratch folder, 
   cd $SCRATCH
   pwd
 
-On Windows, use third-party, such as ``PuTTY`` or ``WSL`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_))
+On Windows, use third-party, such as ``PuTTY`` or ``WSL`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_).
 
 Launching Simulations
 ---------------------
