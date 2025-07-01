@@ -84,6 +84,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
+  // If enabled, create mortar coupling
+  this->init_mortar_coupling();
+
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
@@ -110,6 +113,13 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                   dsp,
                                   nonzero_constraints,
                                   false);
+
+  // Add sparsity pattern entries
+  if (this->simulation_parameters.mortar.enable)
+    this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+
+  sparsity_pattern.copy_from(dsp);
+
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),
@@ -543,6 +553,11 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
+  // Add mortar entries
+  if (this->simulation_parameters.mortar.enable)
+    this->mortar_coupling_operator->add_system_matrix_entries(
+      this->system_matrix);
+
   system_matrix.compress(VectorOperation::add);
 }
 
@@ -756,6 +771,18 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
+
+  // Add mortar entries
+  if (this->simulation_parameters.mortar.enable)
+    {
+      // Change sign of RHS to be compatible with mortar coupling terms
+      this->system_rhs.compress(VectorOperation::add);
+      this->system_rhs *= -1.0;
+      this->mortar_coupling_operator->vmult_add(this->system_rhs,
+                                                this->evaluation_point);
+      // Return RHS to original sign
+      this->system_rhs *= -1.0;
+    }
 
   this->system_rhs.compress(VectorOperation::add);
 

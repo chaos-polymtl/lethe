@@ -15,6 +15,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR adds an Multiphysic DEM example that simulates the heating of a packed bed. It is based on the experimental and simulation results of Beaulieu with stainless steel particles. [#1561](https://github.com/chaos-polymtl/lethe/pull/1561)
 
+## [Master] - 2025-06-25
+
+### Added
+
+- MAJOR This PR implements the coupling of the mortar method with the Navier-Stokes matrix-based solver. An application test of a Taylor-Couette flow has been added, where a mortar interface binds two hyper_shell geometries. [#1563](https://github.com/chaos-polymtl/lethe/pull/1563)
+
 ## [Master] - 2025-06-19
 
 ### Added

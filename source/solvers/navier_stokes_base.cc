@@ -1210,6 +1210,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   // Refine
   this->triangulation->refine_global(1);
 
+  // If mortar is enabled, update mapping cache with refined triangulation
+  if (this->simulation_parameters.mortar.enable)
+    this->mapping_cache->initialize(*this->initial_mapping,
+                                    *this->triangulation);
+
   setup_dofs();
 
   // Set up the vectors for the transfer
@@ -1961,11 +1966,44 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
+{
+  if (!this->simulation_parameters.mortar.enable)
+    return;
+
+  // Create mortar manager
+  this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+    *this->cell_quadrature,
+    this->dof_handler,
+    this->simulation_parameters.mortar);
+
+  // Create mortar coupling evaluator
+  const std::shared_ptr<CouplingEvaluationBase<dim, double>>
+    mortar_coupling_evaluator =
+      std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+        *this->get_mapping(),
+        this->dof_handler,
+        this->simulation_parameters.physical_properties_manager
+          .get_kinematic_viscosity_scale());
+
+  this->mortar_coupling_operator =
+    std::make_shared<CouplingOperator<dim, double>>(
+      *this->get_mapping(),
+      this->dof_handler,
+      this->zero_constraints,
+      mortar_coupling_evaluator,
+      this->mortar_manager,
+      this->simulation_parameters.mortar.rotor_boundary_id,
+      this->simulation_parameters.mortar.stator_boundary_id,
+      this->simulation_parameters.mortar.sip_factor);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
   if (this->simulation_parameters.mortar.enable)
     {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
       // Get updated rotation angle
       simulation_parameters.mortar.rotor_angular_velocity->set_time(
         this->simulation_control->get_current_time());
@@ -1982,7 +2020,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
       // If this is the first iteration, store initial mapping and create
       // mapping cache object. Otherwise, use initalize() function to update
       // current mapping cache
-      if (this->get_current_newton_iteration() == 0)
+      if (this->simulation_control->is_at_start())
         {
           this->mapping_cache =
             std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
@@ -1997,12 +2035,6 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
                                           this->simulation_parameters.mortar)
           .second,
         rotation_angle);
-#else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "The mapping rotation requires a more recent version of deal.II."));
-#endif
     }
 }
 
