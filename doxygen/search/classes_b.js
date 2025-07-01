@@ -17,8 +17,10 @@ var searchData=
   ['mobilitycahnhilliardparameters_14',['MobilityCahnHilliardParameters',['../structParameters_1_1MobilityCahnHilliardParameters.html',1,'Parameters']]],
   ['modelparameters_15',['ModelParameters',['../structParameters_1_1Lagrangian_1_1ModelParameters.html',1,'Parameters::Lagrangian']]],
   ['mortar_16',['Mortar',['../structParameters_1_1Mortar.html',1,'Parameters']]],
-  ['multiphysics_17',['Multiphysics',['../structParameters_1_1Multiphysics.html',1,'Parameters']]],
-  ['multiphysicsinterface_18',['MultiphysicsInterface',['../classMultiphysicsInterface.html',1,'']]],
-  ['multipleadaptationparameters_19',['MultipleAdaptationParameters',['../structParameters_1_1MultipleAdaptationParameters.html',1,'Parameters']]],
-  ['mydiagonalmatrix_20',['MyDiagonalMatrix',['../classMyDiagonalMatrix.html',1,'']]]
+  ['mortarmanagerbase_17',['MortarManagerBase',['../classMortarManagerBase.html',1,'']]],
+  ['mortarmanagercircle_18',['MortarManagerCircle',['../classMortarManagerCircle.html',1,'']]],
+  ['multiphysics_19',['Multiphysics',['../structParameters_1_1Multiphysics.html',1,'Parameters']]],
+  ['multiphysicsinterface_20',['MultiphysicsInterface',['../classMultiphysicsInterface.html',1,'']]],
+  ['multipleadaptationparameters_21',['MultipleAdaptationParameters',['../structParameters_1_1MultipleAdaptationParameters.html',1,'Parameters']]],
+  ['mydiagonalmatrix_22',['MyDiagonalMatrix',['../classMyDiagonalMatrix.html',1,'']]]
 ];

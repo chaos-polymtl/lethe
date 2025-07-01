@@ -36,10 +36,14 @@ var searchData=
   ['continuitypostprocessorsmoothing_33',['ContinuityPostProcessorSmoothing',['../classContinuityPostProcessorSmoothing.html',1,'']]],
   ['copydata_34',['CopyData',['../classCopyData.html',1,'']]],
   ['copydataface_35',['CopyDataFace',['../structStabilizedDGMethodsCopyData_1_1CopyDataFace.html',1,'StabilizedDGMethodsCopyData']]],
-  ['customdistribution_36',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
-  ['cut_5fcell_5fcomparison_37',['cut_cell_comparison',['../structDEM_1_1cut__cell__comparison.html',1,'DEM']]],
-  ['cuthollowsphere_38',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
-  ['cylinder_39',['Cylinder',['../classCylinder.html',1,'']]],
-  ['cylindricalhelix_40',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
-  ['cylindricaltube_41',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
+  ['couplingevaluationbase_36',['CouplingEvaluationBase',['../classCouplingEvaluationBase.html',1,'']]],
+  ['couplingevaluationdata_37',['CouplingEvaluationData',['../structCouplingEvaluationData.html',1,'']]],
+  ['couplingevaluationsipg_38',['CouplingEvaluationSIPG',['../classCouplingEvaluationSIPG.html',1,'']]],
+  ['couplingoperator_39',['CouplingOperator',['../classCouplingOperator.html',1,'']]],
+  ['customdistribution_40',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
+  ['cut_5fcell_5fcomparison_41',['cut_cell_comparison',['../structDEM_1_1cut__cell__comparison.html',1,'DEM']]],
+  ['cuthollowsphere_42',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
+  ['cylinder_43',['Cylinder',['../classCylinder.html',1,'']]],
+  ['cylindricalhelix_44',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
+  ['cylindricaltube_45',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
 ];

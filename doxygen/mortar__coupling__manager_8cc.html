@@ -83,22 +83,328 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">mortar_coupling_manager.cc File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;deal.II/base/config.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="mortar__coupling__manager_8h_source.html">core/mortar_coupling_manager.h</a>&gt;</code><br />
+<code>#include &lt;deal.II/base/mpi_noncontiguous_partitioner.templates.h&gt;</code><br />
+<code>#include &lt;deal.II/fe/fe_nothing.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for mortar_coupling_manager.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="mortar__coupling__manager_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2core_2mortar__coupling__manager_8cc" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2source_2core_2mortar__coupling__manager_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2core_2mortar__coupling__manager_8cc">
-<area shape="rect" title=" " alt="" coords="5,5,192,60"/>
-<area shape="rect" title=" " alt="" coords="23,108,175,133"/>
-<area shape="poly" title=" " alt="" coords="101,60,101,94,96,94,96,60"/>
+<area shape="rect" title=" " alt="" coords="698,5,885,60"/>
+<area shape="rect" title=" " alt="" coords="117,203,269,229"/>
+<area shape="poly" title=" " alt="" coords="706,63,244,202,243,197,704,58"/>
+<area shape="rect" href="mortar__coupling__manager_8h.html" title=" " alt="" coords="602,108,762,148"/>
+<area shape="poly" title=" " alt="" coords="762,62,716,101,713,97,759,58"/>
+<area shape="rect" title=" " alt="" coords="787,108,1015,148"/>
+<area shape="poly" title=" " alt="" coords="824,58,870,97,866,101,821,62"/>
+<area shape="rect" title=" " alt="" coords="1039,115,1203,141"/>
+<area shape="poly" title=" " alt="" coords="885,57,1068,109,1066,114,883,63"/>
+<area shape="poly" title=" " alt="" coords="602,145,288,199,263,203,262,198,287,193,601,140"/>
+<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="1330,203,1471,229"/>
+<area shape="poly" title=" " alt="" coords="763,144,774,145,927,162,1046,168,1166,175,1318,193,1343,198,1342,203,1318,199,1165,180,1046,174,926,168,774,151,762,149"/>
+<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="485,467,599,493"/>
+<area shape="poly" title=" " alt="" coords="602,142,437,167,368,183,345,191,333,198,322,215,316,234,314,252,317,271,335,309,364,345,400,380,440,411,511,458,508,463,437,416,397,384,360,349,330,311,312,272,309,252,310,233,317,213,329,194,343,186,366,178,436,162,602,136"/>
+<area shape="rect" title=" " alt="" coords="344,196,572,236"/>
+<area shape="poly" title=" " alt="" coords="634,151,521,194,519,189,632,146"/>
+<area shape="rect" title=" " alt="" coords="596,196,768,236"/>
+<area shape="poly" title=" " alt="" coords="685,148,685,182,679,182,679,148"/>
+<area shape="rect" title=" " alt="" coords="793,203,955,229"/>
+<area shape="poly" title=" " alt="" coords="725,146,837,195,835,200,723,150"/>
+<area shape="rect" title=" " alt="" coords="980,196,1115,236"/>
+<area shape="poly" title=" " alt="" coords="763,145,967,193,966,198,762,151"/>
+<area shape="rect" title=" " alt="" coords="1139,196,1305,236"/>
+<area shape="poly" title=" " alt="" coords="763,143,774,145,948,169,1125,193,1125,198,948,175,774,151,762,149"/>
+<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="5,379,167,405"/>
+<area shape="poly" title=" " alt="" coords="1357,231,1318,239,1169,254,1042,257,930,254,825,248,721,244,610,246,485,259,339,287,276,305,215,329,119,375,117,370,213,324,274,300,337,281,484,254,610,241,721,239,826,243,930,249,1042,252,1169,248,1318,233,1356,226"/>
+<area shape="rect" title=" " alt="" coords="120,548,289,588"/>
+<area shape="poly" title=" " alt="" coords="1354,231,1318,239,1181,260,1062,272,860,283,763,291,661,306,547,332,415,375,370,392,336,408,306,429,271,462,242,499,221,537,216,534,237,496,267,458,302,425,333,403,368,387,413,369,545,327,660,300,762,285,859,278,1062,267,1180,255,1318,233,1353,226"/>
+<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="1265,291,1400,317"/>
+<area shape="poly" title=" " alt="" coords="1394,231,1353,282,1349,278,1389,227"/>
+<area shape="poly" title=" " alt="" coords="1364,231,593,466,592,461,1362,226"/>
+<area shape="rect" title=" " alt="" coords="2347,548,2521,588"/>
+<area shape="poly" title=" " alt="" coords="1472,219,1729,237,2069,269,2234,290,2378,314,2485,340,2521,355,2543,370,2550,384,2551,401,2543,440,2528,477,2515,501,2497,523,2476,542,2472,538,2493,520,2510,499,2524,474,2538,438,2546,401,2544,385,2539,374,2518,359,2483,345,2377,319,2234,295,2069,275,1729,243,1471,224"/>
+<area shape="rect" title=" " alt="" coords="2383,372,2528,412"/>
+<area shape="poly" title=" " alt="" coords="1406,228,1425,276,1442,301,1465,322,1487,330,1523,338,1626,349,1760,356,1908,360,2193,364,2364,369,2369,370,2368,375,2363,375,2193,369,1908,365,1759,361,1626,354,1522,343,1486,336,1462,326,1438,305,1420,278,1401,230"/>
+<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="1475,291,1625,317"/>
+<area shape="poly" title=" " alt="" coords="1422,227,1519,282,1517,287,1419,231"/>
+<area shape="rect" title=" " alt="" coords="1649,284,1867,324"/>
+<area shape="poly" title=" " alt="" coords="1449,226,1667,278,1666,283,1448,231"/>
+<area shape="poly" title=" " alt="" coords="96,403,186,535,182,538,92,406"/>
+<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="293,467,461,493"/>
+<area shape="poly" title=" " alt="" coords="1268,319,473,463,448,467,447,462,472,457,1267,314"/>
+<area shape="rect" title=" " alt="" coords="345,555,408,581"/>
+<area shape="poly" title=" " alt="" coords="1265,313,1027,332,714,365,562,386,431,409,333,435,301,448,283,462,277,473,276,484,289,507,313,528,342,546,339,551,310,533,284,510,271,485,271,471,279,458,298,444,331,430,429,404,561,381,713,360,1026,327,1265,307"/>
+<area shape="rect" href="shape_8h.html" title=" " alt="" coords="1299,379,1404,405"/>
+<area shape="poly" title=" " alt="" coords="1338,316,1348,365,1343,366,1333,317"/>
+<area shape="rect" title=" " alt="" coords="2045,555,2191,581"/>
+<area shape="poly" title=" " alt="" coords="1384,314,1422,321,1535,338,1623,348,1824,369,2166,396,2277,407,2376,421,2451,438,2476,447,2492,458,2499,469,2501,480,2492,502,2478,511,2453,519,2380,535,2205,560,2205,554,2379,529,2452,514,2476,506,2488,498,2496,480,2494,471,2488,462,2474,452,2449,443,2375,426,2277,413,2166,401,1823,375,1622,353,1534,343,1422,327,1383,319"/>
+<area shape="rect" title=" " alt="" coords="2243,467,2478,493"/>
+<area shape="poly" title=" " alt="" coords="1384,314,1420,321,1899,405,2271,463,2270,468,1898,410,1419,327,1383,319"/>
+<area shape="rect" title=" " alt="" coords="1119,372,1274,412"/>
+<area shape="poly" title=" " alt="" coords="1316,319,1240,367,1237,362,1313,315"/>
+<area shape="poly" title=" " alt="" coords="1379,314,1420,321,1563,337,1684,345,1891,346,2099,347,2220,354,2364,369,2369,370,2368,375,2363,375,2220,360,2098,353,1891,352,1684,350,1562,342,1419,327,1378,319"/>
+<area shape="rect" title=" " alt="" coords="473,555,531,581"/>
+<area shape="poly" title=" " alt="" coords="395,491,475,545,472,550,392,495"/>
+<area shape="poly" title=" " alt="" coords="379,493,379,541,374,541,374,493"/>
+<area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="2017,460,2219,500"/>
+<area shape="poly" title=" " alt="" coords="1405,395,1658,418,2003,457,2002,462,1658,423,1404,400"/>
+<area shape="poly" title=" " alt="" coords="1317,407,1287,415,1184,430,1098,437,949,440,800,441,714,448,612,463,593,467,592,461,611,457,713,443,800,436,949,434,1097,432,1184,424,1285,409,1316,402"/>
+<area shape="rect" title=" " alt="" coords="917,555,1103,581"/>
+<area shape="poly" title=" " alt="" coords="1358,405,1364,450,1361,478,1348,502,1333,514,1311,525,1254,542,1186,554,1118,562,1117,557,1185,549,1253,537,1309,520,1330,510,1344,498,1355,476,1359,450,1352,405"/>
+<area shape="rect" title=" " alt="" coords="1409,460,1611,500"/>
+<area shape="poly" title=" " alt="" coords="1374,402,1464,451,1462,456,1371,407"/>
+<area shape="rect" title=" " alt="" coords="1636,467,1803,493"/>
+<area shape="poly" title=" " alt="" coords="1401,402,1658,462,1656,467,1400,407"/>
+<area shape="rect" title=" " alt="" coords="1827,467,1993,493"/>
+<area shape="poly" title=" " alt="" coords="1404,397,1587,422,1816,457,1842,462,1841,467,1815,463,1586,427,1404,403"/>
+<area shape="rect" title=" " alt="" coords="624,460,777,500"/>
+<area shape="poly" title=" " alt="" coords="1317,407,1287,415,1150,435,1041,442,931,447,791,463,791,457,931,442,1041,436,1149,429,1285,409,1315,402"/>
+<area shape="rect" title=" " alt="" coords="801,460,955,500"/>
+<area shape="poly" title=" " alt="" coords="1315,407,1287,415,1199,431,1130,440,968,463,968,457,1129,435,1199,426,1285,409,1314,402"/>
+<area shape="rect" title=" " alt="" coords="979,467,1150,493"/>
+<area shape="poly" title=" " alt="" coords="1313,407,1117,466,1115,461,1312,402"/>
+<area shape="poly" title=" " alt="" coords="1404,393,1752,415,1989,434,2232,457,2275,463,2274,468,2231,463,1989,439,1751,421,1404,399"/>
+<area shape="rect" title=" " alt="" coords="1174,467,1233,493"/>
+<area shape="poly" title=" " alt="" coords="1333,407,1236,463,1234,458,1330,403"/>
+<area shape="rect" title=" " alt="" coords="1257,467,1334,493"/>
+<area shape="poly" title=" " alt="" coords="1346,406,1313,457,1308,454,1342,403"/>
+<area shape="poly" title=" " alt="" coords="2121,500,2121,541,2115,541,2115,500"/>
+<area shape="poly" title=" " alt="" coords="501,495,473,503,296,547,295,542,472,497,500,490"/>
+<area shape="poly" title=" " alt="" coords="539,494,516,544,511,541,534,492"/>
+<area shape="poly" title=" " alt="" coords="521,495,412,551,410,546,518,490"/>
+<area shape="poly" title=" " alt="" coords="579,490,612,497,741,512,911,525,1321,544,1731,556,2031,563,2031,568,1731,562,1321,550,911,530,740,518,611,503,578,495"/>
+<area shape="poly" title=" " alt="" coords="579,490,612,497,766,513,958,524,1406,533,1855,537,2048,540,2203,545,2334,555,2333,560,2203,551,2048,545,1855,542,1406,539,958,529,766,519,611,503,577,495"/>
+<area shape="poly" title=" " alt="" coords="582,490,612,497,771,528,915,551,914,556,770,533,611,503,581,495"/>
 </map>
 </div>
 </div>
 <p><a href="mortar__coupling__manager_8cc_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a62762dcf64d752a004bf8a3a3e859393" id="r_a62762dcf64d752a004bf8a3a3e859393"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a62762dcf64d752a004bf8a3a3e859393"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; unsigned int, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8cc.html#a62762dcf64d752a004bf8a3a3e859393">compute_n_subdivisions_and_radius</a> (const Triangulation&lt; dim &gt; &amp;, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;)</td></tr>
+<tr class="separator:a62762dcf64d752a004bf8a3a3e859393"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae298446639be9369d31b23897648a734" id="r_ae298446639be9369d31b23897648a734"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:ae298446639be9369d31b23897648a734"><td class="memTemplItemLeft" align="right" valign="top">Quadrature&lt; dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8cc.html#ae298446639be9369d31b23897648a734">construct_quadrature</a> (const Quadrature&lt; dim &gt; &amp;quadrature, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:ae298446639be9369d31b23897648a734"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab806ef60a0093535bfeec503d057c4b9" id="r_ab806ef60a0093535bfeec503d057c4b9"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; unsigned int, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8cc.html#ab806ef60a0093535bfeec503d057c4b9">compute_n_subdivisions_and_radius&lt; 2 &gt;</a> (const Triangulation&lt; 2 &gt; &amp;triangulation, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 2 &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:ab806ef60a0093535bfeec503d057c4b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98f4bff3e0a1c5e543cbed1c486d28d7" id="r_a98f4bff3e0a1c5e543cbed1c486d28d7"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; unsigned int, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8cc.html#a98f4bff3e0a1c5e543cbed1c486d28d7">compute_n_subdivisions_and_radius&lt; 3 &gt;</a> (const Triangulation&lt; 3 &gt; &amp;triangulation, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 3 &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:a98f4bff3e0a1c5e543cbed1c486d28d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af51b212b77194b8fa73f3f501b14f81d" id="r_af51b212b77194b8fa73f3f501b14f81d"><td class="memItemLeft" align="right" valign="top">template Quadrature&lt; 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8cc.html#af51b212b77194b8fa73f3f501b14f81d">construct_quadrature</a> (const Quadrature&lt; 2 &gt; &amp;quadrature, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 2 &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:af51b212b77194b8fa73f3f501b14f81d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16443d98db475918d4344c8b8a08f225" id="r_a16443d98db475918d4344c8b8a08f225"><td class="memItemLeft" align="right" valign="top">template Quadrature&lt; 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8cc.html#a16443d98db475918d4344c8b8a08f225">construct_quadrature</a> (const Quadrature&lt; 3 &gt; &amp;quadrature, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 3 &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:a16443d98db475918d4344c8b8a08f225"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a62762dcf64d752a004bf8a3a3e859393" name="a62762dcf64d752a004bf8a3a3e859393"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62762dcf64d752a004bf8a3a3e859393">&#9670;&#160;</a></span>compute_n_subdivisions_and_radius()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt; unsigned int, double &gt; compute_n_subdivisions_and_radius </td>
+          <td>(</td>
+          <td class="paramtype">const Triangulation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the number of subdivisions at the rotor-stator interface and the rotor radius. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DoFHandler associated to the triangulation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mortar_parameters</td><td>The information about the mortar method control, including the rotor mesh parameters</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>n_subdivisions Number of cells at the interface between inner and outer domains </dd>
+<dd>
+radius Radius at the interface between inner and outer domains </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00464">464</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+
+</div>
+</div>
+<a id="ab806ef60a0093535bfeec503d057c4b9" name="ab806ef60a0093535bfeec503d057c4b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab806ef60a0093535bfeec503d057c4b9">&#9670;&#160;</a></span>compute_n_subdivisions_and_radius&lt; 2 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template std::pair&lt; unsigned int, double &gt; <a class="el" href="mortar__coupling__manager_8h.html#ad2538a0d74f0c65aa26ac5960b7490a9">compute_n_subdivisions_and_radius</a>&lt; 2 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Triangulation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a98f4bff3e0a1c5e543cbed1c486d28d7" name="a98f4bff3e0a1c5e543cbed1c486d28d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98f4bff3e0a1c5e543cbed1c486d28d7">&#9670;&#160;</a></span>compute_n_subdivisions_and_radius&lt; 3 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template std::pair&lt; unsigned int, double &gt; <a class="el" href="mortar__coupling__manager_8h.html#ad2538a0d74f0c65aa26ac5960b7490a9">compute_n_subdivisions_and_radius</a>&lt; 3 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Triangulation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af51b212b77194b8fa73f3f501b14f81d" name="af51b212b77194b8fa73f3f501b14f81d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af51b212b77194b8fa73f3f501b14f81d">&#9670;&#160;</a></span>construct_quadrature() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template Quadrature&lt; 2 &gt; construct_quadrature </td>
+          <td>(</td>
+          <td class="paramtype">const Quadrature&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a16443d98db475918d4344c8b8a08f225" name="a16443d98db475918d4344c8b8a08f225"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16443d98db475918d4344c8b8a08f225">&#9670;&#160;</a></span>construct_quadrature() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template Quadrature&lt; 3 &gt; construct_quadrature </td>
+          <td>(</td>
+          <td class="paramtype">const Quadrature&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae298446639be9369d31b23897648a734" name="ae298446639be9369d31b23897648a734"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae298446639be9369d31b23897648a734">&#9670;&#160;</a></span>construct_quadrature() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Quadrature&lt; dim &gt; construct_quadrature </td>
+          <td>(</td>
+          <td class="paramtype">const Quadrature&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct oversampled quadrature. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">quadrature</td><td>Quadrature for local cell operations </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mortar_parameters</td><td>The information about the mortar method control, including the rotor mesh parameters</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Quadrature oversampled </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00477">477</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01808">Parameters::Mortar&lt; dim &gt;::oversampling_factor</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

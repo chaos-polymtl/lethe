@@ -83,18 +83,124 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">mortar_coupling_manager.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;deal.II/base/config.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="parameters_8h_source.html">core/parameters.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
+<code>#include &lt;deal.II/base/mpi_noncontiguous_partitioner.h&gt;</code><br />
+<code>#include &lt;deal.II/base/quadrature_lib.h&gt;</code><br />
+<code>#include &lt;deal.II/fe/fe_system.h&gt;</code><br />
+<code>#include &lt;deal.II/lac/trilinos_sparse_matrix.h&gt;</code><br />
+<code>#include &lt;deal.II/matrix_free/fe_point_evaluation.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for mortar_coupling_manager.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="mortar__coupling__manager_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2mortar__coupling__manager_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2mortar__coupling__manager_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2mortar__coupling__manager_8h">
-<area shape="rect" title=" " alt="" coords="5,5,196,60"/>
-<area shape="rect" title=" " alt="" coords="25,108,177,133"/>
-<area shape="poly" title=" " alt="" coords="103,60,103,94,98,94,98,60"/>
+<area shape="rect" title=" " alt="" coords="2463,5,2653,60"/>
+<area shape="rect" title=" " alt="" coords="1801,115,1953,141"/>
+<area shape="poly" title=" " alt="" coords="2463,47,2238,73,1972,111,1945,115,1944,110,1971,105,2237,68,2462,41"/>
+<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="2166,115,2307,141"/>
+<area shape="poly" title=" " alt="" coords="2468,63,2290,114,2288,109,2467,57"/>
+<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="2149,379,2263,405"/>
+<area shape="poly" title=" " alt="" coords="2463,46,2289,71,2210,89,2155,110,2083,156,2052,180,2025,205,2007,231,1998,260,2001,290,2017,322,2034,332,2068,346,2154,373,2152,378,2066,351,2032,337,2013,326,1996,291,1993,259,2002,229,2021,201,2048,176,2080,151,2153,106,2209,84,2288,66,2462,41"/>
+<area shape="rect" title=" " alt="" coords="2332,108,2560,148"/>
+<area shape="poly" title=" " alt="" coords="2528,62,2481,101,2477,97,2525,58"/>
+<area shape="rect" title=" " alt="" coords="2584,108,2756,148"/>
+<area shape="poly" title=" " alt="" coords="2592,58,2639,97,2635,101,2588,62"/>
+<area shape="rect" title=" " alt="" coords="2781,115,2943,141"/>
+<area shape="poly" title=" " alt="" coords="2644,58,2813,109,2811,114,2643,63"/>
+<area shape="rect" title=" " alt="" coords="2968,108,3103,148"/>
+<area shape="poly" title=" " alt="" coords="2654,48,2955,105,2954,111,2653,53"/>
+<area shape="rect" title=" " alt="" coords="3127,108,3293,148"/>
+<area shape="poly" title=" " alt="" coords="2654,42,2861,68,3114,105,3113,110,2860,73,2653,47"/>
+<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="2389,291,2551,317"/>
+<area shape="poly" title=" " alt="" coords="2242,140,2257,186,2271,212,2289,234,2312,251,2337,265,2391,285,2389,290,2335,270,2309,256,2286,238,2266,215,2252,188,2237,142"/>
+<area shape="rect" title=" " alt="" coords="2644,460,2813,500"/>
+<area shape="poly" title=" " alt="" coords="2284,138,2320,145,2407,150,2520,152,2577,155,2630,162,2673,174,2704,194,2725,223,2740,255,2748,289,2752,325,2749,393,2740,447,2734,447,2744,392,2746,325,2743,290,2735,256,2721,225,2700,198,2671,179,2628,167,2577,160,2520,157,2406,156,2319,151,2283,143"/>
+<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="617,203,752,229"/>
+<area shape="poly" title=" " alt="" coords="2166,137,1965,151,1271,189,766,214,766,208,1271,183,1965,145,2166,132"/>
+<area shape="poly" title=" " alt="" coords="2238,141,2212,366,2206,366,2233,141"/>
+<area shape="rect" title=" " alt="" coords="2838,460,3011,500"/>
+<area shape="poly" title=" " alt="" coords="2283,138,2320,145,2412,153,2532,157,2649,168,2698,178,2735,194,2771,219,2802,250,2830,284,2854,320,2892,389,2916,446,2911,448,2887,392,2850,322,2826,287,2798,254,2767,223,2733,198,2696,183,2648,173,2531,162,2412,158,2319,151,2282,143"/>
+<area shape="rect" title=" " alt="" coords="2028,284,2173,324"/>
+<area shape="poly" title=" " alt="" coords="2230,142,2126,275,2122,272,2226,139"/>
+<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="2299,203,2449,229"/>
+<area shape="poly" title=" " alt="" coords="2257,139,2345,194,2343,198,2254,143"/>
+<area shape="rect" title=" " alt="" coords="2473,196,2691,236"/>
+<area shape="poly" title=" " alt="" coords="2284,138,2494,190,2493,195,2282,143"/>
+<area shape="poly" title=" " alt="" coords="2489,314,2691,450,2688,455,2486,319"/>
+<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="27,379,195,405"/>
+<area shape="poly" title=" " alt="" coords="617,223,480,230,318,243,177,262,129,273,104,286,95,304,93,324,103,366,98,367,88,325,90,302,100,282,127,268,176,256,317,238,480,225,617,217"/>
+<area shape="rect" title=" " alt="" coords="80,467,143,493"/>
+<area shape="poly" title=" " alt="" coords="617,221,489,226,334,236,187,256,129,269,86,286,48,311,20,340,12,355,8,372,10,391,18,411,41,439,71,459,68,463,38,443,13,413,5,392,3,372,7,354,15,337,44,307,84,282,127,264,186,250,333,231,489,220,617,216"/>
+<area shape="rect" href="shape_8h.html" title=" " alt="" coords="975,291,1080,317"/>
+<area shape="poly" title=" " alt="" coords="731,226,969,285,968,291,730,231"/>
+<area shape="rect" title=" " alt="" coords="298,467,445,493"/>
+<area shape="poly" title=" " alt="" coords="617,222,531,232,483,243,432,257,383,277,336,302,295,334,260,373,254,392,260,411,272,427,287,440,322,460,319,464,284,444,268,430,256,413,248,392,256,371,291,330,333,298,381,272,431,252,481,237,531,227,617,217"/>
+<area shape="rect" title=" " alt="" coords="1890,379,2125,405"/>
+<area shape="poly" title=" " alt="" coords="753,223,1877,369,1916,375,1915,380,1876,375,752,228"/>
+<area shape="rect" title=" " alt="" coords="114,284,269,324"/>
+<area shape="poly" title=" " alt="" coords="618,231,288,287,283,288,282,282,287,281,617,225"/>
+<area shape="poly" title=" " alt="" coords="752,219,2015,295,2014,300,752,224"/>
+<area shape="rect" title=" " alt="" coords="191,467,250,493"/>
+<area shape="poly" title=" " alt="" coords="128,403,197,456,193,461,125,407"/>
+<area shape="poly" title=" " alt="" coords="114,405,114,453,109,453,109,405"/>
+<area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="270,372,473,412"/>
+<area shape="poly" title=" " alt="" coords="975,314,766,338,487,374,486,369,765,333,974,308"/>
+<area shape="poly" title=" " alt="" coords="1080,302,1257,303,1518,311,1825,331,1983,348,2137,369,2157,373,2156,379,2136,375,1982,353,1824,336,1518,316,1256,308,1080,307"/>
+<area shape="rect" title=" " alt="" coords="1090,467,1277,493"/>
+<area shape="poly" title=" " alt="" coords="999,319,964,336,930,359,918,371,911,384,910,397,916,410,940,428,979,442,1077,463,1076,468,977,447,938,432,912,414,905,398,906,382,914,368,927,355,961,332,997,314"/>
+<area shape="rect" title=" " alt="" coords="926,372,1129,412"/>
+<area shape="poly" title=" " alt="" coords="1030,317,1030,358,1025,358,1025,317"/>
+<area shape="rect" title=" " alt="" coords="1153,379,1320,405"/>
+<area shape="poly" title=" " alt="" coords="1057,314,1197,372,1195,377,1055,319"/>
+<area shape="rect" title=" " alt="" coords="1345,379,1510,405"/>
+<area shape="poly" title=" " alt="" coords="1081,314,1361,374,1360,379,1080,319"/>
+<area shape="rect" title=" " alt="" coords="1535,372,1688,412"/>
+<area shape="poly" title=" " alt="" coords="1081,309,1271,332,1522,369,1521,375,1270,337,1080,314"/>
+<area shape="rect" title=" " alt="" coords="1712,372,1865,412"/>
+<area shape="poly" title=" " alt="" coords="1081,306,1342,327,1517,345,1699,369,1698,375,1517,351,1342,332,1080,311"/>
+<area shape="rect" title=" " alt="" coords="497,379,667,405"/>
+<area shape="poly" title=" " alt="" coords="975,318,680,375,655,379,654,374,679,369,974,313"/>
+<area shape="poly" title=" " alt="" coords="1080,306,1416,328,1645,346,1877,369,1921,375,1920,380,1876,375,1644,352,1416,333,1080,311"/>
+<area shape="rect" title=" " alt="" coords="691,379,750,405"/>
+<area shape="poly" title=" " alt="" coords="975,318,876,341,763,375,757,377,756,372,761,369,874,336,974,313"/>
+<area shape="rect" title=" " alt="" coords="774,379,851,405"/>
+<area shape="poly" title=" " alt="" coords="999,319,856,377,854,372,998,314"/>
+<area shape="poly" title=" " alt="" coords="374,412,374,453,369,453,369,412"/>
+<area shape="rect" title=" " alt="" coords="617,467,771,493"/>
+<area shape="poly" title=" " alt="" coords="443,409,639,461,637,466,442,415"/>
+<area shape="poly" title=" " alt="" coords="2264,399,2631,457,2630,462,2263,404"/>
+<area shape="poly" title=" " alt="" coords="2171,407,2137,415,1991,433,1857,446,1733,452,1618,455,1408,449,1211,436,1014,424,804,419,689,422,566,430,432,443,287,463,264,467,263,462,286,457,432,438,566,424,689,417,804,414,1015,419,1211,431,1408,444,1618,449,1733,447,1857,440,1990,428,2136,409,2170,402"/>
+<area shape="poly" title=" " alt="" coords="2171,407,2137,415,1983,434,1841,447,1710,455,1589,457,1366,451,1158,438,950,425,727,419,606,422,476,429,334,443,180,463,157,467,156,462,179,457,334,437,475,424,606,417,727,414,950,419,1158,433,1366,446,1589,452,1710,449,1841,442,1982,429,2136,409,2170,402"/>
+<area shape="poly" title=" " alt="" coords="2171,407,2137,415,1988,430,1803,441,1372,450,940,454,605,463,459,473,459,468,605,457,940,449,1372,445,1803,435,1988,425,2136,409,2170,402"/>
+<area shape="poly" title=" " alt="" coords="2170,407,2137,415,1977,437,1841,450,1721,456,1609,457,1377,456,1240,457,1078,463,785,477,784,472,1078,457,1240,452,1377,451,1609,452,1721,450,1841,444,1977,431,2136,409,2169,402"/>
+<area shape="poly" title=" " alt="" coords="2264,395,2504,418,2825,457,2824,462,2504,423,2263,401"/>
+<area shape="rect" title=" " alt="" coords="1949,467,2114,493"/>
+<area shape="poly" title=" " alt="" coords="2184,407,2069,463,2066,459,2181,402"/>
+<area shape="rect" title=" " alt="" coords="2139,460,2273,500"/>
+<area shape="poly" title=" " alt="" coords="2209,405,2209,446,2203,446,2203,405"/>
+<area shape="poly" title=" " alt="" coords="2170,407,2137,415,1942,441,1788,450,1634,453,1437,463,1291,473,1291,468,1437,457,1634,448,1788,444,1941,435,2136,409,2168,402"/>
+<area shape="rect" title=" " alt="" coords="2297,467,2456,493"/>
+<area shape="poly" title=" " alt="" coords="2230,402,2343,459,2340,463,2228,407"/>
+<area shape="rect" title=" " alt="" coords="2480,460,2620,500"/>
+<area shape="poly" title=" " alt="" coords="2253,402,2467,455,2466,461,2252,407"/>
+<area shape="rect" title=" " alt="" coords="1449,460,1589,500"/>
+<area shape="poly" title=" " alt="" coords="2169,407,2137,415,1989,434,1872,440,1754,446,1603,462,1603,457,1753,440,1872,435,1989,429,2136,409,2168,402"/>
+<area shape="rect" title=" " alt="" coords="1613,467,1687,493"/>
+<area shape="poly" title=" " alt="" coords="2168,407,2137,415,2014,431,1917,435,1821,441,1765,449,1700,463,1690,465,1689,460,1699,457,1764,444,1821,436,1917,430,2014,426,2136,409,2167,402"/>
+<area shape="rect" title=" " alt="" coords="1711,467,1762,493"/>
+<area shape="poly" title=" " alt="" coords="2168,407,2137,415,2035,429,1954,433,1874,440,1828,448,1775,463,1770,464,1768,459,1773,457,1827,443,1874,434,1954,427,2034,424,2136,409,2167,402"/>
+<area shape="rect" title=" " alt="" coords="1786,467,1845,493"/>
+<area shape="poly" title=" " alt="" coords="2167,407,2137,415,2058,428,1996,435,1935,443,1858,463,1851,465,1849,460,1856,457,1934,438,1995,430,2058,423,2136,409,2166,402"/>
+<area shape="rect" title=" " alt="" coords="1869,467,1924,493"/>
+<area shape="poly" title=" " alt="" coords="2165,407,2137,415,2036,436,1993,446,1938,463,1933,464,1931,459,1936,457,1991,440,2035,431,2136,409,2164,402"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -102,13 +208,615 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="mortar__coupling__manager_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2mortar__coupling__manager_8hdep" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2mortar__coupling__manager_8hdep" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2mortar__coupling__manager_8hdep">
-<area shape="rect" title=" " alt="" coords="5,5,196,60"/>
-<area shape="rect" href="navier__stokes__base_8cc.html" title=" " alt="" coords="9,108,192,163"/>
-<area shape="poly" title=" " alt="" coords="103,74,103,108,98,108,98,74"/>
+<area shape="rect" title=" " alt="" coords="1145,5,1335,60"/>
+<area shape="rect" href="navier__stokes__base_8h.html" title=" " alt="" coords="971,108,1154,163"/>
+<area shape="poly" title=" " alt="" coords="1183,69,1110,110,1108,105,1181,64"/>
+<area shape="rect" href="navier__stokes__base_8cc.html" title=" " alt="" coords="1197,218,1379,273"/>
+<area shape="poly" title=" " alt="" coords="1250,73,1268,162,1283,217,1278,218,1263,163,1244,74"/>
+<area shape="rect" href="mortar__coupling__manager_8cc.html" title=" " alt="" coords="1277,108,1464,163"/>
+<area shape="poly" title=" " alt="" coords="1286,66,1338,106,1335,110,1283,70"/>
+<area shape="rect" href="fluid__dynamics__block_8h.html" title=" " alt="" coords="215,218,398,273"/>
+<area shape="poly" title=" " alt="" coords="958,154,398,234,398,228,957,149"/>
+<area shape="rect" href="fluid__dynamics__matrix__based_8h.html" title=" " alt="" coords="631,211,814,280"/>
+<area shape="poly" title=" " alt="" coords="968,170,815,218,813,213,966,164"/>
+<area shape="rect" href="fluid__dynamics__matrix__free_8h.html" title=" " alt="" coords="953,218,1172,273"/>
+<area shape="poly" title=" " alt="" coords="1065,177,1065,218,1060,218,1060,177"/>
+<area shape="poly" title=" " alt="" coords="1131,166,1234,215,1232,220,1129,171"/>
+<area shape="rect" href="fluid__dynamics__block_8cc.html" title=" " alt="" coords="5,335,189,390"/>
+<area shape="poly" title=" " alt="" coords="248,282,146,338,144,333,246,277"/>
+<area shape="rect" href="fluid__dynamics__sharp_8h.html" title=" " alt="" coords="214,335,397,390"/>
+<area shape="poly" title=" " alt="" coords="619,275,409,331,385,338,383,333,407,325,617,269"/>
+<area shape="rect" href="fluid__dynamics__vans_8h.html" title=" " alt="" coords="421,335,603,390"/>
+<area shape="poly" title=" " alt="" coords="650,289,561,338,559,333,648,284"/>
+<area shape="rect" href="fluid__dynamics__nitsche_8h.html" title=" " alt="" coords="627,335,818,390"/>
+<area shape="poly" title=" " alt="" coords="725,294,725,335,720,335,720,294"/>
+<area shape="rect" href="fluid__dynamics__matrix__based_8cc.html" title=" " alt="" coords="842,328,1025,397"/>
+<area shape="poly" title=" " alt="" coords="797,284,873,325,870,330,795,289"/>
+<area shape="rect" href="fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="109,453,294,507"/>
+<area shape="poly" title=" " alt="" coords="275,402,227,454,223,451,271,398"/>
+<area shape="rect" href="cfd__dem__coupling_8h.html" title=" " alt="" coords="318,453,501,507"/>
+<area shape="poly" title=" " alt="" coords="482,402,435,454,431,451,478,398"/>
+<area shape="rect" href="fluid__dynamics__vans_8cc.html" title=" " alt="" coords="525,453,707,507"/>
+<area shape="poly" title=" " alt="" coords="547,398,594,451,590,454,543,402"/>
+<area shape="rect" href="cfd__dem__coupling_8cc.html" title=" " alt="" coords="318,563,501,617"/>
+<area shape="poly" title=" " alt="" coords="412,522,412,562,407,562,407,522"/>
+<area shape="rect" href="fluid__dynamics__nitsche_8cc.html" title=" " alt="" coords="731,453,927,507"/>
+<area shape="poly" title=" " alt="" coords="758,398,807,451,803,454,754,402"/>
+<area shape="rect" href="fluid__dynamics__vans__matrix__free_8h.html" title=" " alt="" coords="1049,335,1306,390"/>
+<area shape="poly" title=" " alt="" coords="1100,280,1153,333,1149,337,1096,284"/>
+<area shape="rect" href="fluid__dynamics__matrix__free_8cc.html" title=" " alt="" coords="1330,328,1513,397"/>
+<area shape="poly" title=" " alt="" coords="1159,275,1318,325,1330,329,1329,334,1317,331,1157,280"/>
+<area shape="rect" href="fluid__dynamics__vans__matrix__free_8cc.html" title=" " alt="" coords="1071,445,1283,515"/>
+<area shape="poly" title=" " alt="" coords="1180,403,1180,445,1175,445,1175,403"/>
 </map>
 </div>
 </div>
 <p><a href="mortar__coupling__manager_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html">MortarManagerBase&lt; dim &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerCircle.html">MortarManagerCircle&lt; dim &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCouplingEvaluationData.html">CouplingEvaluationData&lt; dim, Number &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingEvaluationBase.html">CouplingEvaluationBase&lt; dim, Number &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html">CouplingOperator&lt; dim, Number &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBufferRW.html">BufferRW&lt; T &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingEvaluationSIPG.html">CouplingEvaluationSIPG&lt; dim, n_components, Number &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation&lt; dim, Number &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ad2538a0d74f0c65aa26ac5960b7490a9" id="r_ad2538a0d74f0c65aa26ac5960b7490a9"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:ad2538a0d74f0c65aa26ac5960b7490a9"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; unsigned int, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#ad2538a0d74f0c65aa26ac5960b7490a9">compute_n_subdivisions_and_radius</a> (const Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:ad2538a0d74f0c65aa26ac5960b7490a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae298446639be9369d31b23897648a734" id="r_ae298446639be9369d31b23897648a734"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:ae298446639be9369d31b23897648a734"><td class="memTemplItemLeft" align="right" valign="top">Quadrature&lt; dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#ae298446639be9369d31b23897648a734">construct_quadrature</a> (const Quadrature&lt; dim &gt; &amp;quadrature, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;mortar_parameters)</td></tr>
+<tr class="separator:ae298446639be9369d31b23897648a734"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a627e3f2bb88e7c9ef8159c57ddd5f4c7" id="r_a627e3f2bb88e7c9ef8159c57ddd5f4c7"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
+<tr class="memitem:a627e3f2bb88e7c9ef8159c57ddd5f4c7"><td class="memTemplItemLeft" align="right" valign="top">Number&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#a627e3f2bb88e7c9ef8159c57ddd5f4c7">contract</a> (const Tensor&lt; 1, dim, Number &gt; &amp;grad, const Tensor&lt; 1, dim, Number &gt; &amp;normal)</td></tr>
+<tr class="separator:a627e3f2bb88e7c9ef8159c57ddd5f4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accbb89524664f0a4e460527b0f0ef828" id="r_accbb89524664f0a4e460527b0f0ef828"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
+<tr class="memitem:accbb89524664f0a4e460527b0f0ef828"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, dim, Number &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#accbb89524664f0a4e460527b0f0ef828">contract</a> (const Tensor&lt; 2, dim, Number &gt; &amp;grad, const Tensor&lt; 1, dim, Number &gt; &amp;normal)</td></tr>
+<tr class="separator:accbb89524664f0a4e460527b0f0ef828"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cbe58d78ff36dafa3171efa2123c051" id="r_a6cbe58d78ff36dafa3171efa2123c051"><td class="memTemplParams" colspan="2">template&lt;int n_components, int dim, typename Number &gt; </td></tr>
+<tr class="memitem:a6cbe58d78ff36dafa3171efa2123c051"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, n_components, Number &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#a6cbe58d78ff36dafa3171efa2123c051">contract</a> (const Tensor&lt; 1, n_components, Tensor&lt; 1, dim, Number &gt; &gt; &amp;grad, const Tensor&lt; 1, dim, Number &gt; &amp;normal)</td></tr>
+<tr class="separator:a6cbe58d78ff36dafa3171efa2123c051"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e318484840b2fe5134a963ba51caea7" id="r_a3e318484840b2fe5134a963ba51caea7"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
+<tr class="memitem:a3e318484840b2fe5134a963ba51caea7"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, dim, Number &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#a3e318484840b2fe5134a963ba51caea7">outer</a> (const Number &amp;value, const Tensor&lt; 1, dim, Number &gt; &amp;normal)</td></tr>
+<tr class="separator:a3e318484840b2fe5134a963ba51caea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a507f011ba2e50758d4ad888ee7c2e400" id="r_a507f011ba2e50758d4ad888ee7c2e400"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
+<tr class="memitem:a507f011ba2e50758d4ad888ee7c2e400"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 2, dim, Number &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#a507f011ba2e50758d4ad888ee7c2e400">outer</a> (const Tensor&lt; 1, dim, Number &gt; &amp;value, const Tensor&lt; 1, dim, Number &gt; &amp;normal)</td></tr>
+<tr class="separator:a507f011ba2e50758d4ad888ee7c2e400"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3acae975e4a12578068e677adc55f95" id="r_ad3acae975e4a12578068e677adc55f95"><td class="memTemplParams" colspan="2">template&lt;int n_components, int dim, typename Number &gt; </td></tr>
+<tr class="memitem:ad3acae975e4a12578068e677adc55f95"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, n_components, Tensor&lt; 1, dim, Number &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#ad3acae975e4a12578068e677adc55f95">outer</a> (const Tensor&lt; 1, n_components, Number &gt; &amp;value, const Tensor&lt; 1, dim, Number &gt; &amp;normal)</td></tr>
+<tr class="separator:ad3acae975e4a12578068e677adc55f95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff20280e2d21708a6cd2d537b23f907b" id="r_aff20280e2d21708a6cd2d537b23f907b"><td class="memTemplParams" colspan="2">template&lt;int dim, int dim_, typename Number &gt; </td></tr>
+<tr class="memitem:aff20280e2d21708a6cd2d537b23f907b"><td class="memTemplItemLeft" align="right" valign="top">DEAL_II_ALWAYS_INLINE void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#aff20280e2d21708a6cd2d537b23f907b">symm_scalar_product_add</a> (Tensor&lt; 1, dim_, Tensor&lt; 1, dim, Number &gt; &gt; &amp;v_gradient, const Tensor&lt; 2, dim, Number &gt; &amp;u_gradient, const Number &amp;factor)</td></tr>
+<tr class="separator:aff20280e2d21708a6cd2d537b23f907b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99ef0b3778ca9d098dbb1fe894536b08" id="r_a99ef0b3778ca9d098dbb1fe894536b08"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
+<tr class="memitem:a99ef0b3778ca9d098dbb1fe894536b08"><td class="memTemplItemLeft" align="right" valign="top">DEAL_II_ALWAYS_INLINE void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#a99ef0b3778ca9d098dbb1fe894536b08">symm_scalar_product_add</a> (Tensor&lt; 2, dim, Number &gt; &amp;v_gradient, const Tensor&lt; 2, dim, Number &gt; &amp;u_gradient, const Number &amp;factor)</td></tr>
+<tr class="separator:a99ef0b3778ca9d098dbb1fe894536b08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ab56e0b6e30675cb2590377f45d99d9" id="r_a7ab56e0b6e30675cb2590377f45d99d9"><td class="memTemplParams" colspan="2">template&lt;typename Number &gt; </td></tr>
+<tr class="memitem:a7ab56e0b6e30675cb2590377f45d99d9"><td class="memTemplItemLeft" align="right" valign="top">DEAL_II_ALWAYS_INLINE void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="mortar__coupling__manager_8h.html#a7ab56e0b6e30675cb2590377f45d99d9">symm_scalar_product_add</a> (Tensor&lt; 1, 1, Number &gt; &amp;v_gradient, const Tensor&lt; 1, 1, Number &gt; &amp;u_gradient, const Number &amp;factor)</td></tr>
+<tr class="separator:a7ab56e0b6e30675cb2590377f45d99d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ad2538a0d74f0c65aa26ac5960b7490a9" name="ad2538a0d74f0c65aa26ac5960b7490a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2538a0d74f0c65aa26ac5960b7490a9">&#9670;&#160;</a></span>compute_n_subdivisions_and_radius()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt; unsigned int, double &gt; compute_n_subdivisions_and_radius </td>
+          <td>(</td>
+          <td class="paramtype">const Triangulation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the number of subdivisions at the rotor-stator interface and the rotor radius. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DoFHandler associated to the triangulation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mortar_parameters</td><td>The information about the mortar method control, including the rotor mesh parameters</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>n_subdivisions Number of cells at the interface between inner and outer domains </dd>
+<dd>
+radius Radius at the interface between inner and outer domains </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00464">464</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+
+</div>
+</div>
+<a id="ae298446639be9369d31b23897648a734" name="ae298446639be9369d31b23897648a734"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae298446639be9369d31b23897648a734">&#9670;&#160;</a></span>construct_quadrature()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Quadrature&lt; dim &gt; construct_quadrature </td>
+          <td>(</td>
+          <td class="paramtype">const Quadrature&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mortar_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct oversampled quadrature. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">quadrature</td><td>Quadrature for local cell operations </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mortar_parameters</td><td>The information about the mortar method control, including the rotor mesh parameters</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Quadrature oversampled </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00477">477</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01808">Parameters::Mortar&lt; dim &gt;::oversampling_factor</a>.</p>
+
+</div>
+</div>
+<a id="a627e3f2bb88e7c9ef8159c57ddd5f4c7" name="a627e3f2bb88e7c9ef8159c57ddd5f4c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a627e3f2bb88e7c9ef8159c57ddd5f4c7">&#9670;&#160;</a></span>contract() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Number contract </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>grad</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute inner product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">grad</td><td>Rank-1 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Rank-1 tensor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Rank-0 tensor </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00287">287</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a6cbe58d78ff36dafa3171efa2123c051" name="a6cbe58d78ff36dafa3171efa2123c051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cbe58d78ff36dafa3171efa2123c051">&#9670;&#160;</a></span>contract() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int n_components, int dim, typename Number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt; 1, n_components, Number &gt; contract </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, n_components, Tensor&lt; 1, dim, Number &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>grad</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute outer product for the multicomponent case. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">grad</td><td>Rank-1 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Rank-1 tensor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Rank-0 tensor </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00320">320</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="accbb89524664f0a4e460527b0f0ef828" name="accbb89524664f0a4e460527b0f0ef828"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accbb89524664f0a4e460527b0f0ef828">&#9670;&#160;</a></span>contract() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt; 1, dim, Number &gt; contract </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 2, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>grad</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute inner product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">grad</td><td>Rank-2 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Rank-1 tensor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Rank-1 tensor </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00303">303</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a3e318484840b2fe5134a963ba51caea7" name="a3e318484840b2fe5134a963ba51caea7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e318484840b2fe5134a963ba51caea7">&#9670;&#160;</a></span>outer() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt; 1, dim, Number &gt; outer </td>
+          <td>(</td>
+          <td class="paramtype">const Number &amp;&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute outer product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Rank-0 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Rank-1 tensor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Rank-1 tensor </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00341">341</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a507f011ba2e50758d4ad888ee7c2e400" name="a507f011ba2e50758d4ad888ee7c2e400"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a507f011ba2e50758d4ad888ee7c2e400">&#9670;&#160;</a></span>outer() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt; 2, dim, Number &gt; outer </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute outer product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Rank-1 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Rank-1 tensor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Rank-2 tensor </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00357">357</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="ad3acae975e4a12578068e677adc55f95" name="ad3acae975e4a12578068e677adc55f95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3acae975e4a12578068e677adc55f95">&#9670;&#160;</a></span>outer() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int n_components, int dim, typename Number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt; 1, n_components, Tensor&lt; 1, dim, Number &gt; &gt; outer </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, n_components, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute outer product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Rank-1 tensor for n_components </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Rank-1 tensor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Rank-2 tensor for n_components </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00377">377</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a7ab56e0b6e30675cb2590377f45d99d9" name="a7ab56e0b6e30675cb2590377f45d99d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ab56e0b6e30675cb2590377f45d99d9">&#9670;&#160;</a></span>symm_scalar_product_add() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DEAL_II_ALWAYS_INLINE void symm_scalar_product_add </td>
+          <td>(</td>
+          <td class="paramtype">Tensor&lt; 1, 1, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v_gradient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 1, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_gradient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Number &amp;&#160;</td>
+          <td class="paramname"><em>factor</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute scalar product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">v_gradient</td><td>Rank-2 tensor where result is stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">u_gradient</td><td>Rank-2 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Scalar factor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00448">448</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="aff20280e2d21708a6cd2d537b23f907b" name="aff20280e2d21708a6cd2d537b23f907b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff20280e2d21708a6cd2d537b23f907b">&#9670;&#160;</a></span>symm_scalar_product_add() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, int dim_, typename Number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DEAL_II_ALWAYS_INLINE void symm_scalar_product_add </td>
+          <td>(</td>
+          <td class="paramtype">Tensor&lt; 1, dim_, Tensor&lt; 1, dim, Number &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v_gradient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 2, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_gradient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Number &amp;&#160;</td>
+          <td class="paramname"><em>factor</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute scalar product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">v_gradient</td><td>Rank-1 tensor within rank-1 tensor where result is stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">u_gradient</td><td>Rank-2 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Scalar factor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00398">398</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a99ef0b3778ca9d098dbb1fe894536b08" name="a99ef0b3778ca9d098dbb1fe894536b08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99ef0b3778ca9d098dbb1fe894536b08">&#9670;&#160;</a></span>symm_scalar_product_add() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DEAL_II_ALWAYS_INLINE void symm_scalar_product_add </td>
+          <td>(</td>
+          <td class="paramtype">Tensor&lt; 2, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v_gradient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 2, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_gradient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Number &amp;&#160;</td>
+          <td class="paramname"><em>factor</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute scalar product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">v_gradient</td><td>Rank-2 tensor where result is stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">u_gradient</td><td>Rank-2 tensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Scalar factor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00423">423</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
