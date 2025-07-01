@@ -56,7 +56,7 @@ This file needs to be sourced every time you launch a job or you compile deal.II
 
   source $HOME/.dealii
 
-and use it in your ``.sh`` script (see :ref:`Launching Simulations<Launching Simulations>` below). 
+and use it in your ``.sh`` script when launching a job (see :ref:`Launching Simulations<Launching Simulations>` below). 
 
 Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the Lethe repository. This fork is always tested to make sure it works with Lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
 
