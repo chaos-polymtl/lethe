@@ -457,18 +457,16 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">$HOME/dealii/dealii</span></code> for deal.ii git,</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">$HOME/dealii/build</span></code> for compilation (<code class="docutils literal notranslate"><span class="pre">cmake</span></code> command),</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">$HOME/dealii/inst</span></code> for installation (<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> command)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$HOME/dealii/inst</span></code> for installation (<code class="docutils literal notranslate"><span class="pre">ninja</span> <span class="pre">install</span></code> command)</p></li>
 </ul>
 <p>Folders can be open with the <code class="docutils literal notranslate"><span class="pre">cd</span></code> command (<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">$folder_path</span></code>).</p>
 <p>For the sake of clarity, this is the folder structure considered for the rest of this tutorial.</p>
 </section>
 <section id="installing-deal-ii">
 <h2>Installing deal.II<a class="headerlink" href="#installing-deal-ii" title="Link to this heading">#</a></h2>
-<section id="on-niagara-beluga-narval-graham-or-cedar">
-<h3>On Niagara, Beluga, Narval, Graham or Cedar<a class="headerlink" href="#on-niagara-beluga-narval-graham-or-cedar" title="Link to this heading">#</a></h3>
 <p>All operations must be performed on login nodes.</p>
-<p>Load <code class="docutils literal notranslate"><span class="pre">Trilinos</span></code>, <code class="docutils literal notranslate"><span class="pre">Parmetis</span></code> and <code class="docutils literal notranslate"><span class="pre">P4est</span></code>, and their prerequisite modules and set the appropriate environment variables:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>module load CCEnv #if on Niagara
+<p>Load <code class="docutils literal notranslate"><span class="pre">Trilinos</span></code>, <code class="docutils literal notranslate"><span class="pre">Parmetis</span></code> and <code class="docutils literal notranslate"><span class="pre">P4est</span></code>, and their prerequisite modules and set the appropriate environment variables. It is convenient to create a <code class="docutils literal notranslate"><span class="pre">.dealii</span></code> file in your <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory that contains the following lines to source the appropriate libraries:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>module load CCEnv #Only if on the Niagara cluster
 module load StdEnv/2023
 module load trilinos/15.1.1
 module load parmetis/4.0.3
@@ -483,7 +481,12 @@ export DEAL_II_DIR=$HOME/dealii/inst/
 export PATH=$PATH:$HOME/lethe/inst/bin/
 </pre></div>
 </div>
-<p>Then, we can clone and compile <code class="docutils literal notranslate"><span class="pre">dealii</span></code>. Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the lethe repository. This fork is always tested to make sure it works with lethe. To clone the deal.II fork github repository, execute in <code class="docutils literal notranslate"><span class="pre">$HOME/dealii</span></code> directory:</p>
+<p>This file needs to be sourced every time you launch a job or you compile deal.II and/or Lethe. Once the file has been created, you can then source it on the terminal with:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>source $HOME/.dealii
+</pre></div>
+</div>
+<p>and use it in your <code class="docutils literal notranslate"><span class="pre">.sh</span></code> script when launching a job (see <a class="reference internal" href="#launching-simulations"><span class="std std-ref">Launching Simulations</span></a> below).</p>
+<p>Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the CHAOS laboratory organization. This fork is always tested to make sure it works with Lethe. To clone this deal.II fork, execute in <code class="docutils literal notranslate"><span class="pre">$HOME/dealii</span></code> directory:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/chaos-polymtl/dealii.git
 </pre></div>
 </div>
@@ -493,47 +496,30 @@ export PATH=$PATH:$HOME/lethe/inst/bin/
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If you are using Niagara, you can add <code class="docutils literal notranslate"><span class="pre">-DCMAKE_CXX_FLAGS=&quot;-march=skylake-avx512&quot;</span></code> to enable AVX-512 instructions.</p>
+<p>If you are using Niagara, you should add <code class="docutils literal notranslate"><span class="pre">-DCMAKE_CXX_FLAGS=&quot;-march=skylake-avx512&quot;</span></code> to enable AVX-512 instructions.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you are using Rorqual, you should add <code class="docutils literal notranslate"><span class="pre">-DCMAKE_CXX_FLAGS=&quot;-march=znver4&quot;</span></code> to enable AVX-512 instructions.</p>
 </div>
 <p>and:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>ninja -j10 install
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>nice ninja -j6 install
 </pre></div>
 </div>
-<p>The argument <code class="docutils literal notranslate"><span class="pre">-jX</span></code> specifies the number of processors used for the compilation. On login nodes, a maximum of 10 cores should be used in order to ensure that other users can continue using the cluster without slowdowns.</p>
-</section>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">-jX</span></code> specifies the number of processors used for the compilation. On login nodes, a maximum of 6 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. If you use more than 6 cores, your compilation may be terminated automatically.</p>
 </section>
 <section id="installing-lethe">
 <h2>Installing Lethe<a class="headerlink" href="#installing-lethe" title="Link to this heading">#</a></h2>
 <p>After installing deal.II, compiling Lethe is relatively straightforward, especially since all of these clusters share a very similar environment. To compile Lethe, the <code class="docutils literal notranslate"><span class="pre">Trilinos</span></code>, <code class="docutils literal notranslate"><span class="pre">Parmetis</span></code> and <code class="docutils literal notranslate"><span class="pre">P4est</span></code> modules should be loaded.</p>
 <p>In the <code class="docutils literal notranslate"><span class="pre">$HOME/lethe</span></code> directory, download Lethe:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/chaos-polymtl/lethe.git --single-branch
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/chaos-polymtl/lethe.git
 </pre></div>
 </div>
 <p>To install Lethe in the <code class="docutils literal notranslate"><span class="pre">$HOME/lethe/inst</span></code> directory (applications will be in <code class="docutils literal notranslate"><span class="pre">inst/bin</span></code>), run in the <code class="docutils literal notranslate"><span class="pre">$HOME/lethe/build</span></code> directory:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../lethe  -DDEAL_II_DIR=$HOME/dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -G Ninja
-ninja -j10 install
+nice ninja -j6 install
 </pre></div>
 </div>
-<section id="installing-numdiff-to-enable-tests">
-<h3>Installing Numdiff to Enable Tests<a class="headerlink" href="#installing-numdiff-to-enable-tests" title="Link to this heading">#</a></h3>
-<p>You will need to have numdiff installed to enable the test suite, otherwise you will have an error at the cmake step of Lethe’s installation when using <code class="docutils literal notranslate"><span class="pre">-DBUILD_TESTING=ON</span></code>, stating that this module is missing. To install the package manually use the following steps:</p>
-<ol class="arabic">
-<li><p>Download the <a class="reference external" href="https://mirror.csclub.uwaterloo.ca/nongnu/numdiff/">compressed folder</a> (ex/ numdiff-5.9.0.tar.gz)</p></li>
-<li><p>Unzip it</p></li>
-<li><p>Copy it with <code class="docutils literal notranslate"><span class="pre">scp</span> <span class="pre">-r</span></code> to your Compute Canada account on the chosen cluster (see <a class="reference internal" href="#copying-local-files"><span class="std std-ref">Copying Local Files</span></a> section)</p></li>
-<li><p>In the numdiff folder on the cluster, execute:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./configure
-make
-</pre></div>
-</div>
-</li>
-<li><p>Add it to your path environment:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>PATH=$PATH:$HOME/path/to/numdiff/folder
-</pre></div>
-</div>
-</li>
-</ol>
-</section>
 </section>
 <section id="copying-local-files">
 <span id="id1"></span><h2>Copying Local Files<a class="headerlink" href="#copying-local-files" title="Link to this heading">#</a></h2>
@@ -547,54 +533,28 @@ make
 pwd
 </pre></div>
 </div>
-<p>On Windows, use third-party, such as <code class="docutils literal notranslate"><span class="pre">PuTTY</span></code> (see the <a class="reference external" href="https://docs.computecanada.ca/wiki/Transferring_data">wiki page on Transferring data</a>))</p>
-</section>
-<section id="creating-a-dealii">
-<h2>Creating a .dealii<a class="headerlink" href="#creating-a-dealii" title="Link to this heading">#</a></h2>
-<p>In order to call your deal.II local installation, it is convenient to create a <code class="docutils literal notranslate"><span class="pre">.dealii</span></code> file in your <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>nano .dealii
-</pre></div>
-</div>
-<p>In the nano terminal, copy-paste (with <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+V</span></code>):</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>module load CCEnv #if on Niagara
-module load StdEnv/2023
-module load trilinos/15.1.1
-module load parmetis/4.0.3
-module load p4est/2.8.6
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTTRILINOS/lib64/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTP4EST/lib64/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
-export DEAL_II_DIR=$HOME/dealii/inst/
-export PATH=$PATH:$HOME/lethe/inst/bin/
-export OMP_NUM_THREADS=1  # This prevents Trilinos from using multithreading, which could lead to a drop in performance.
-</pre></div>
-</div>
-<p>Exit the nano mode with <code class="docutils literal notranslate"><span class="pre">Ctrl+x</span></code> and save the document by hitting <code class="docutils literal notranslate"><span class="pre">y</span></code> on the prompt “Save modify buffer?” (in the bottom). The prompt “File Name to Write: .dealii” should then appear, hit <code class="docutils literal notranslate"><span class="pre">Enter</span></code>.</p>
-<p>You can then source it on the terminal with:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>source $HOME/.dealii
-</pre></div>
-</div>
-<p>and use it in your <code class="docutils literal notranslate"><span class="pre">.sh</span></code> script (see Launching simulations below).</p>
+<p>On Windows, use third-party, such as <code class="docutils literal notranslate"><span class="pre">PuTTY</span></code> or <code class="docutils literal notranslate"><span class="pre">WSL</span></code> (see the <a class="reference external" href="https://docs.computecanada.ca/wiki/Transferring_data">wiki page on Transferring data</a>).</p>
 </section>
 <section id="launching-simulations">
-<h2>Launching Simulations<a class="headerlink" href="#launching-simulations" title="Link to this heading">#</a></h2>
+<span id="id2"></span><h2>Launching Simulations<a class="headerlink" href="#launching-simulations" title="Link to this heading">#</a></h2>
 <p>Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the <a class="reference external" href="https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F">scheduler</a> and <a class="reference external" href="https://docs.alliancecan.ca/wiki/Running_jobs">running jobs</a>. For your convenience, an example of <code class="docutils literal notranslate"><span class="pre">job.sh</span></code> used on Beluga is given below:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
 #SBATCH --account=$yourgroupaccount
-#SBATCH --ntasks-per-node=$X #number of parallel tasks (as in mpirun -np X)
-#SBATCH --nodes=1 #number of whole nodes used (each with up to 40 tasks-per-node)
+#SBATCH --ntasks-per-node=$X #number of parallel tasks per node.
+#SBATCH --nodes=1 #number of whole nodes used
 #SBATCH --time=1:00:00 #maximum time for the simulation (hh:mm:ss)
 #SBATCH --mem=120G #memory usage per node. See cluster specification for maximal amount.
 #SBATCH --job-name=$yourjobname
-#SBATCH --mail-type=END #email preferences
-#SBATCH --mail-type=FAIL
+#SBATCH --mail-type=ALL
 #SBATCH --mail-user=$your.email.adress@email.provider
 
 source $HOME/.dealii
 srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.prm
 </pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--ntasks-per-node</span></code> option is the number of parallel tasks per node. When using a full node, this should correspond to the number of cores available on the node. For example, on Narval, this should be set to 64.</p>
 </div>
 <p>The job is sent using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sbatch job.sh
@@ -605,9 +565,37 @@ srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.pr
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>tail -n 20 slurm-$jobID.out
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you need to launch multiple simulations, such as with varying parameter, feel free to adapt one of the scripts provided on <a class="reference external" href="https://github.com/chaos-polymtl/lethe-utils/tree/master/python/cluster">lethe-utils</a>.</p>
+</section>
+<section id="clusters-specifications">
+<h2>Clusters Specifications<a class="headerlink" href="#clusters-specifications" title="Link to this heading">#</a></h2>
+<p>Please consult the documentation for the machine you are using for the specification of the nodes:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Cluster</p></th>
+<th class="head"><p>Tasks per Node</p></th>
+<th class="head"><p>Memory per Node</p></th>
+<th class="head"><p>URL</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Narval</p></td>
+<td><p>64</p></td>
+<td><p>248 Go</p></td>
+<td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Narval/en">https://docs.alliancecan.ca/wiki/Narval/en</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Niagara</p></td>
+<td><p>40</p></td>
+<td><p>200 Go</p></td>
+<td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Niagara/en">https://docs.alliancecan.ca/wiki/Niagara/en</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Rorqual</p></td>
+<td><p>192</p></td>
+<td><p>760 Go</p></td>
+<td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Rorqual/en">https://docs.alliancecan.ca/wiki/Rorqual/en</a></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="saving-a-ssh-key-linux">
@@ -622,7 +610,7 @@ srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.pr
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the <cite>Gitlab Documentation&lt;https://docs.gitlab.com/ee/user/ssh.html&gt;</cite>.</p>
+<p>ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the <a class="reference external" href="https://docs.gitlab.com/ee/user/ssh.html">GitLab Documentation</a>.</p>
 </div>
 <p>To upload this local key to your Compute Canada Database account (CCDB) use:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>ssh-copy-id username@clustername.computecanada.ca
@@ -696,17 +684,11 @@ srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.pr
             <ul>
 <li><a class="reference internal" href="#">Running Lethe on Digital Research Alliance of Canada Clusters</a><ul>
 <li><a class="reference internal" href="#setting-up-the-folder-structure">Setting-up the Folder Structure</a></li>
-<li><a class="reference internal" href="#installing-deal-ii">Installing deal.II</a><ul>
-<li><a class="reference internal" href="#on-niagara-beluga-narval-graham-or-cedar">On Niagara, Beluga, Narval, Graham or Cedar</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#installing-lethe">Installing Lethe</a><ul>
-<li><a class="reference internal" href="#installing-numdiff-to-enable-tests">Installing Numdiff to Enable Tests</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#installing-deal-ii">Installing deal.II</a></li>
+<li><a class="reference internal" href="#installing-lethe">Installing Lethe</a></li>
 <li><a class="reference internal" href="#copying-local-files">Copying Local Files</a></li>
-<li><a class="reference internal" href="#creating-a-dealii">Creating a .dealii</a></li>
 <li><a class="reference internal" href="#launching-simulations">Launching Simulations</a></li>
+<li><a class="reference internal" href="#clusters-specifications">Clusters Specifications</a></li>
 <li><a class="reference internal" href="#saving-a-ssh-key-linux">Saving a SSH Key (Linux)</a></li>
 </ul>
 </li>
