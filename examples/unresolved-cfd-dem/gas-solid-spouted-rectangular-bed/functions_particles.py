@@ -41,7 +41,7 @@ def group_velocities_by_x(H, df_positions, velocity_magnitude, x_centers, dx, dy
 
     return grouped 
 
-def welford(H, grouped_data, stats_dict):
+def welford(grouped_data, stats_dict):
     """
     Incrementally compute mean and variance using Welford's algorithm.
     
@@ -69,7 +69,7 @@ def standard_deviation(stats):
     - stats: dict with keys 'count', 'mean', 'sq_diff_accumulator'
     
     Returns:
-    - Standard deviation or 0 if count < 2
+    - Standard deviation or NaN if count < 2
     """
 
     # Returns the standard deviation if there is more than one data point used

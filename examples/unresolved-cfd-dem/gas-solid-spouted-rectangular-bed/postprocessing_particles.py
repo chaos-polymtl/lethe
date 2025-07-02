@@ -78,7 +78,7 @@ for t in range(len(time_list)):
     for H in h_list:
         # Group by x at this height and apply Welford's algorithm
         grouped_by_x = group_velocities_by_x(H, df_positions, velocity_mag, x_centers, dx = dx, dy = dy)
-        welford(H, grouped_by_x, stats)
+        welford(grouped_by_x, stats)
 
 ############################################################
 # Organize results in a dictionary
