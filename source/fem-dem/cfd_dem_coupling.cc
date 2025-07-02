@@ -46,6 +46,8 @@ CFDDEMSolver<dim>::dem_setup_parameters()
   g = dem_parameters.lagrangian_physical_properties.g;
   dem_parameters.boundary_conditions =
     this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
+  dem_parameters.insertion_info =
+    this->cfd_dem_simulation_parameters.dem_parameters.insertion_info;
   dem_parameters.floating_walls =
     this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
   dem_parameters.model_parameters =
@@ -135,7 +137,6 @@ CFDDEMSolver<dim>::dem_setup_parameters()
         }
     }
 
-  insertion_object = set_insertion_type();
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
@@ -203,28 +204,32 @@ CFDDEMSolver<dim>::set_insertion_type()
   typename InsertionInfo<dim>::InsertionMethod insertion_method =
     dem_parameters.insertion_info.insertion_method;
 
+  const auto parallel_triangulation =
+  dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+    &*this->triangulation);
+
   switch (insertion_method)
     {
       case InsertionInfo<dim>::InsertionMethod::file:
         {
           return std::make_shared<InsertionFile<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container, triangulation, dem_parameters);
+            size_distribution_object_container, *parallel_triangulation, dem_parameters);
         }
       case InsertionInfo<dim>::InsertionMethod::list:
         {
           return std::make_shared<InsertionList<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container, triangulation, dem_parameters);
+            size_distribution_object_container, *parallel_triangulation, dem_parameters);
         }
       case InsertionInfo<dim>::InsertionMethod::plane:
         {
           return std::make_shared<InsertionPlane<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container, triangulation, dem_parameters);
+            size_distribution_object_container, *parallel_triangulation, dem_parameters);
         }
       case InsertionInfo<dim>::InsertionMethod::volume:
         {
           return std::make_shared<InsertionVolume<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
             size_distribution_object_container,
-            triangulation,
+            *parallel_triangulation,
             dem_parameters,
             maximum_particle_diameter);
         }
@@ -695,20 +700,6 @@ CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
         }
       default:
         break;
-    }
-}
-
-template <int dim>
-void
-CFDDEMSolver<dim>::insert_particles()
-{
-  if ((simulation_control->get_step_number() %
-       dem_parameters.insertion_info.insertion_frequency) == 1 ||
-      simulation_control->get_step_number() == 1)
-    {
-      insertion_object->insert(particle_handler, triangulation, dem_parameters);
-
-      action_manager->particle_insertion_step();
     }
 }
 
