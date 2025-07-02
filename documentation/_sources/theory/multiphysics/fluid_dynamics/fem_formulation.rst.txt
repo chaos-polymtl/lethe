@@ -31,10 +31,10 @@ Because we want the pressure to be in :math:`\mathcal{L}^2` and the velocity to 
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega 
   \\
-  &  - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  
+  &  - \int_{\Omega} \left( \partial_k  v_k \right) p \mathrm{d}\Omega
  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  
  \\
-  &  + \int_{\Gamma} \left( v_k \right) \left(- \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma
+  &  + \int_{\Gamma} \left( v_k \right) \left(- \nu \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma
    =0
 
 where :math:`\delta_{lk}` is the Kronecker delta and :math:`n_l` is the outward pointing normal vector to a surface. Since we assume Dirichlet boundary conditions or zero stress  conditions 
@@ -42,7 +42,7 @@ on :math:`\Gamma`, this term may be discarded. Thus, when no boundary condition 
 
 .. math::
 
-    \int_{\Gamma} \left( v_k \right) \left(- \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma=0
+    \int_{\Gamma} \left( v_k \right) \left(- \nu \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma=0
 
 which can be seen as an outlet boundary condition where the normal stress is zero. In essence, this can be used to approximately impose an outlet boundary condition with a zero average pressure.
 This weak form is non-linear because of :math:`u_l \partial_l u_k` term. 
