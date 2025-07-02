@@ -50,6 +50,13 @@ main(int argc, char *argv[])
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
+          std::cout << __LINE__ << std::endl;
+          if (options["-R"])
+            {
+              std::cout << __LINE__ << std::endl;
+              delete_vtu_and_pvd_files(NSparam);
+            }
+
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,
                                    "lethe-fluid",

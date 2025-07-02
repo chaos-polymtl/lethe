@@ -3,6 +3,7 @@
 
 #include <core/revision.h>
 #include <core/utilities.h>
+#include <solvers/simulation_parameters.h>
 
 #if __GNUC__ > 7
 #  include <filesystem>
@@ -840,5 +841,28 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                              ParameterHandler::OutputStyle::Short |
                              ParameterHandler::KeepDeclarationOrder);
       pcout << std::endl << std::endl;
+    }
+}
+
+template <int dim>
+void
+delete_vtu_and_pvd_files(const SimulationParameters<dim> &NSparam)
+{
+  std::cout << __LINE__ << std::endl;
+  std::string output_path = NSparam.simulation_control->get_output_path();
+
+  std::cout << __LINE__ << std::endl;
+  
+  for (auto const &filename : std::filesystem::directory_iterator{output_path})
+    {
+      std::cout << __LINE__ << std::endl;
+      if (filename.path().extension() == ".vtu" ||
+          filename.path().extension() == ".pvd" ||
+          filename.path().extension() == ".pvtu")
+        {
+          std::cout << __LINE__ << std::endl;
+          std::filesystem::remove(filename.path());
+          std::cout << __LINE__ << std::endl;
+        }
     }
 }
