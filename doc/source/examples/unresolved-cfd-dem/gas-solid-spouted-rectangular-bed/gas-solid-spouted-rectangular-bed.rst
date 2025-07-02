@@ -9,9 +9,8 @@ Features
 
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
-- Displays the selection of models and physical properties
 - Simulates a gas-solid spouted bed
-- Python post-processing script
+- Compares the simulation results to experimental results
 
 
 ---------------------------
