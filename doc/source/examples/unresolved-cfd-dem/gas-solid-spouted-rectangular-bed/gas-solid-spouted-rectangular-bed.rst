@@ -90,7 +90,7 @@ The ``lethe-fluid-particles`` solver requires reading several DEM files to start
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-The following parameters are chosen for the ``Model parameters`` subsection. Dynamic load balancing is enabled  in order to achieve better computational performance.
+The following parameters are chosen for the ``Model parameters`` subsection. Dynamic load balancing is enabled to achieve better computational performance.
 
 .. code-block:: text
 
@@ -142,7 +142,7 @@ The gravitational acceleration as well as the physical properties of the particl
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-The ``Insertion info`` subsection manages the insertion of particles. The volume of the insertion box is large enough to fit all the particles and the insertion info parameters are set in order to avoid particle collisions during the packing process.
+The ``Insertion info`` subsection manages the insertion of particles. The volume of the insertion box is large enough to fit all the particles. The insertion info parameters are set in order to avoid particle collisions during the packing process.
 
 .. code-block:: text
 
@@ -204,7 +204,7 @@ After the particles have been packed inside the rectangular bed, it is now possi
 CFD-DEM Parameter File
 -----------------------
 
-The CFD simulation is to be carried out using the packed bed simulated in the previous step.
+The CFD-DEM simulation is to be carried out using the packed bed simulated in the previous step.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -316,7 +316,7 @@ Since the void fraction is calculated using the packed bed of the DEM simulation
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``CFD-DEM`` subsection, grad-div stabilization is enabled in order to improve local mass conservation and the void fraction time derivative is enabled to account for the time variation of the void fraction.
+In the ``CFD-DEM`` subsection, grad-div stabilization is enabled to improve local mass conservation, and the void fraction time derivative is enabled to account for the time variation of the void fraction.
 
 .. code-block:: text
 
@@ -339,7 +339,7 @@ In the ``CFD-DEM`` subsection, grad-div stabilization is enabled in order to imp
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The inexact_newton solver is used as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refere to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
+The inexact_newton solver is used to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non-Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
 
 .. code-block:: text
 
