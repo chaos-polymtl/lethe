@@ -29,7 +29,7 @@ import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
-parser = argparse.ArgumentParser(description = 'Arguments for the post-processing of the gas-solid-spouted-bed unresolved CFD-DEM example')
+parser = argparse.ArgumentParser(description = 'Arguments for the post-processing of the gas-solid-spouted-rectangular-bed unresolved CFD-DEM example')
 parser.add_argument("-f", "--folder", type = str, help = "Folder path. This folder is the folder which contains the .prm file.", required = True)
 args, leftovers = parser.parse_known_args()
 
@@ -41,7 +41,7 @@ start = 200
 
 # Load Lethe data
 pvd_name = 'out_lagrangian_postprocessing.pvd'
-prm_file = 'gas-solid-spouted-bed.prm'
+prm_file = 'gas-solid-spouted-rectangular-bed.prm'
 ignore_data = ['subdomain', 'mobility_status', 'granular_temperature', 'average_velocity_x', 'average_velocity_y', 'average_velocity_z']
 particle = lethe_pyvista_tools(folder, prm_file, pvd_name, ignore_data = ignore_data, first = start)
 time_list = particle.time_list

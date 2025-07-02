@@ -21,7 +21,7 @@ The files mentioned below are located in the example's folder (``examples/unreso
 
 - Python functions script using Lagrangian post-processing: ``functions_lagrangian.py``
 - Python functions script using particles: ``functions_particles.py``
-- Parameter file for CFD-DEM simulation of the spouted bed: ``gas-solid-spouted-bed.prm``
+- Parameter file for CFD-DEM simulation of the spouted bed: ``gas-solid-spouted-rectangular-bed.prm``
 - Parameter file for particle generation and packing: ``packing-particles.prm``
 - Python post-processing script using Lagrangian post-processing: ``postprocessing_lagrangian.py``
 - Python post-processing script using particles: ``postprocessing_particles.py``
@@ -385,7 +385,7 @@ Assuming that the ``lethe-fluid-particles`` executable is within your path, the 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 10 lethe-fluid-particles gas-solid-spouted-bed.prm
+  mpirun -np 10 lethe-fluid-particles gas-solid-spouted-rectangular-bed.prm
 
 ----------------
 Post-processing
