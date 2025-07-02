@@ -1,0 +1,14 @@
+
+DEAL::Testing SDIRK2 coefficients
+DEAL::
+Stage 0:
+DEAL::  a_ij: 0.435867     
+  c_i : 0.435867
+DEAL::
+Stage 1:
+DEAL::  a_ij: 0.282067     0.435867     
+  c_i : 0.500000
+DEAL::
+Stage 2:
+DEAL::  a_ij: 1.12827      -0.128267    0.435867     
+  c_i : 1.00000
