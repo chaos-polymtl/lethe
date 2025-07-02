@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 DEAL::Testing SDIRK22 coefficients
 DEAL::
 Stage 1:
@@ -23,3 +24,18 @@ DEAL::
 Stage 3:
 DEAL::  a_ij: -1.208496649500e+00 1.772630128000e+00 4.358665215000e-01 
   c_i : 1.000000000000e+00
+=======
+DEAL::Testing SDIRK2 coefficients
+DEAL::
+Stage 0:
+DEAL::  a_ij: 0.435867     
+  c_i : 0.435867
+DEAL::
+Stage 1:
+DEAL::  a_ij: 0.282067     0.435867     
+  c_i : 0.500000
+DEAL::
+Stage 2:
+DEAL::  a_ij: 1.12827      -0.128267    0.435867     
+  c_i : 1.00000
+>>>>>>> 737d91a8 (sdirk_coefficients function)

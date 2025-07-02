@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 // SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/sdirk_stage_data.h>
+=======
+// SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#include <core/sdirk_table.h>
+#include <core/sdirk_stage_data.h> 
+>>>>>>> 737d91a8 (sdirk_coefficients function)
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -9,6 +17,7 @@
 void
 test()
 {
+<<<<<<< HEAD
   // 12 digits of precision for the output
   deallog << std::setprecision(12) << std::scientific;
 
@@ -45,6 +54,18 @@ test()
   for (unsigned int stage_i = 1; stage_i <= n_stages33; ++stage_i)
     {
       SDIRKStageData data(table33, stage_i);
+=======
+  deallog << "Testing SDIRK2 coefficients" << std::endl;
+
+  SDIRKTable table = sdirk_table("SDIRK3");
+  const unsigned int n_stages = table.A.m();
+
+  // Data printed at each stage
+  for (unsigned int stage_i = 0; stage_i < n_stages; ++stage_i)
+    {
+      SDIRKStageData data =
+        sdirk_stage_data(table.A, table.c, table.b, stage_i);
+>>>>>>> 737d91a8 (sdirk_coefficients function)
 
       deallog << "\nStage " << stage_i << ":" << std::endl;
       deallog << "  a_ij: ";
