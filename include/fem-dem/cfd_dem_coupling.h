@@ -124,7 +124,7 @@ private:
   load_balance();
 
   /**
-   * @brief Check if particles need to be insertedand perform it if necessary.
+   * @brief Check if particles need to be inserted and perform it if necessary.
    */
   void
   insert_particles();

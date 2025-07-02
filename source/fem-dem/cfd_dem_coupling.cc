@@ -137,6 +137,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
         }
     }
 
+  insertion_object = set_insertion_type();
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
@@ -924,6 +925,23 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
 
 template <int dim>
 void
+CFDDEMSolver<dim>::insert_particles()
+{
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+  if ((this->simulation_control->get_step_number() %
+       dem_parameters.insertion_info.insertion_frequency) == 1 ||
+      this->simulation_control->get_step_number() == 1)
+    {
+      insertion_object->insert(this->particle_handler, *parallel_triangulation, dem_parameters);
+
+      dem_action_manager->particle_insertion_step();
+    }
+}
+
+template <int dim>
+void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
@@ -1591,6 +1609,9 @@ CFDDEMSolver<dim>::solve()
             dem_iterator(dem_counter);
           }
       }
+
+      // Insert particle if needed
+      insert_particles();
 
       contact_search_total_number += contact_search_counter;
 
