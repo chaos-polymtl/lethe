@@ -124,6 +124,13 @@ private:
   load_balance();
 
   /**
+   * @brief Check if particles need to be insertedand perform it if necessary.
+   */
+  void
+  insert_particles();
+
+
+  /**
    * @brief Add fluid-particle interaction force to the "force" container.
    */
   void
