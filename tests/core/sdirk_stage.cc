@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/sdirk_stage_data.h>
 #include <core/sdirk_table.h>
-#include <core/sdirk_stage_data.h> 
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -12,7 +12,7 @@ test()
 {
   deallog << "Testing SDIRK2 coefficients" << std::endl;
 
-  SDIRKTable table = sdirk_table("SDIRK3");
+  SDIRKTable         table    = sdirk_table("SDIRK3");
   const unsigned int n_stages = table.A.m();
 
   // Data printed at each stage

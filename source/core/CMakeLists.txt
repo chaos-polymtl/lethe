@@ -20,6 +20,7 @@ add_library(lethe-core
   parameters_multiphysics.cc
   pvd_handler.cc
   rheological_model.cc
+  sdirk_stage_data.cc
   serial_solid.cc
   shape.cc
   shape_parsing.cc
@@ -68,6 +69,8 @@ add_library(lethe-core
   ../../include/core/physics_solver.h
   ../../include/core/pvd_handler.h
   ../../include/core/rheological_model.h
+  ../../include/core/sdirk_stage_data.h
+  ../../include/core/sdirk_table.h
   ../../include/core/serial_solid.h
   ../../include/core/shape.h
   ../../include/core/shape_parsing.h

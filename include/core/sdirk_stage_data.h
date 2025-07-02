@@ -3,8 +3,9 @@
 #define SDIRK_STAGE_DATA_H
 
 #include <deal.II/lac/full_matrix.h>
-#include <vector>
+
 #include <stdexcept>
+#include <vector>
 
 using namespace dealii;
 
@@ -25,7 +26,8 @@ struct SDIRKStageData
  * - c_i: the time coefficient associated with stage i,
  * - b_i: the weight for combining the result of stage i in the final solution.
  *
- * @param[in] butcher_table Full matrix representing the A coefficients (i.e., the lower triangle of the Butcher tableau).
+ * @param[in] butcher_table Full matrix representing the A coefficients (i.e.,
+ * the lower triangle of the Butcher tableau).
  * @param[in] c Vector of c_i coefficients (stage times).
  * @param[in] b Vector of b_i coefficients (final weights).
  * @param[in] stage_i Index of the stage for which the data is to be extracted.
@@ -37,9 +39,8 @@ struct SDIRKStageData
 
 SDIRKStageData
 sdirk_stage_data(const FullMatrix<double>  &butcher_table,
-                     const std::vector<double> &c,
-                     const std::vector<double> &b,
-                     unsigned int               stage_i);
+                 const std::vector<double> &c,
+                 const std::vector<double> &b,
+                 unsigned int               stage_i);
 
 #endif // SDIRK_STAGE_DATA_H
-

@@ -1,19 +1,21 @@
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/base/logstream.h>
-#include <iostream>
-#include <vector>
-#include <tuple>
-#include <iomanip>
-
 #include <core/sdirk_stage_data.h>
+
+#include <deal.II/base/logstream.h>
+
+#include <deal.II/lac/full_matrix.h>
+
+#include <iomanip>
+#include <iostream>
+#include <tuple>
+#include <vector>
 
 using namespace dealii;
 
 SDIRKStageData
-sdirk_stage_data(const FullMatrix<double> &butcher_table,
-                     const std::vector<double> &c,
-                     const std::vector<double> &b,
-                     const unsigned int         stage_i)
+sdirk_stage_data(const FullMatrix<double>  &butcher_table,
+                 const std::vector<double> &c,
+                 const std::vector<double> &b,
+                 const unsigned int         stage_i)
 {
   const unsigned int n_stages = b.size();
 
@@ -31,4 +33,3 @@ sdirk_stage_data(const FullMatrix<double> &butcher_table,
 
   return data;
 }
-
