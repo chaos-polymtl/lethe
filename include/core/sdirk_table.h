@@ -2,15 +2,16 @@
 #define SDIRK_TABLE_H
 
 #include <deal.II/lac/full_matrix.h>
-#include <vector>
-#include <string>
+
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 using namespace dealii;
- 
+
 struct SDIRKTable
 {
-  FullMatrix<double> A;
+  FullMatrix<double>  A;
   std::vector<double> b;
   std::vector<double> c;
 };
@@ -20,16 +21,18 @@ struct SDIRKTable
  * @brief Construct the Butcher tableau (A, b, c) for a given SDIRK method.
  *
  * This function returns the Runge-Kutta coefficients for a diagonally implicit
- * Runge-Kutta (SDIRK) time integration method, such as SDIRK2 (Alexander's method here)
- * or SDIRK3 (Kennedy-Carpenter method here). These coefficients define the time-stepping
- * scheme and are used in implicit time integration of ODEs or PDEs.
+ * Runge-Kutta (SDIRK) time integration method, such as SDIRK2 (Alexander's
+ * method here) or SDIRK3 (Kennedy-Carpenter method here). These coefficients
+ * define the time-stepping scheme and are used in implicit time integration of
+ * ODEs or PDEs.
  *
  * The Butcher tableau is defined as follows:
  * - A: the matrix of coefficients a_ij
  * - b: the weights used in the final combination of stages
  * - c: the time locations of each stage
  *
- * @param[in] method_name A string identifying the SDIRK method (e.g. "SDIRK2", "SDIRK3").
+ * @param[in] method_name A string identifying the SDIRK method (e.g. "SDIRK2",
+ * "SDIRK3").
  *
  * @return SDIRKTable A structure containing the Butcher tableau (A, b, c) for the requested method.
  *
@@ -72,7 +75,7 @@ sdirk_table(const std::string &method_name)
       table.A(1, 0) = (1.0 - gamma) / 2.0;
       table.A(1, 1) = gamma;
       table.A(2, 0) = 2.0 * (1.0 - gamma);
-      table.A(2, 1) = - (1.0 - 2.0 * gamma);
+      table.A(2, 1) = -(1.0 - 2.0 * gamma);
       table.A(2, 2) = gamma;
 
       table.c = {gamma, 0.5, 1.0};
