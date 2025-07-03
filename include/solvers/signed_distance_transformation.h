@@ -150,7 +150,7 @@ public:
           (-d_ref_cubic - 4 * d_ref_squared + 4) *
             Utilities::fixed_power<3>(dimentionless_d) +
           (-d_ref_cubic - 3 * d_ref_squared + 3) *
-            Utilities::fixed_power<4>(dimentionless_d/3.0);
+            Utilities::fixed_power<4>(dimentionless_d)/3.0;
 
         return 0.5 - 0.5 * piecewise_polynomial_value;
       }
@@ -163,7 +163,7 @@ public:
           (d_ref_cubic - 4 * d_ref_squared + 4) *
             Utilities::fixed_power<3>(dimentionless_d) -
           (-d_ref_cubic + 3 * d_ref_squared - 3) *
-            Utilities::fixed_power<4>(dimentionless_d/3.0);
+            Utilities::fixed_power<4>(dimentionless_d)/3.0;
 
         return 0.5 - 0.5 * piecewise_polynomial_value;
       }
