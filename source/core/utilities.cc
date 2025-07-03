@@ -4,7 +4,6 @@
 #include <core/revision.h>
 #include <core/utilities.h>
 
-
 #if __GNUC__ > 7
 #  include <filesystem>
 #endif
