@@ -1,8 +1,7 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/sdirk_stage_data.h>
-#include <core/sdirk_table.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -10,16 +9,42 @@
 void
 test()
 {
-  deallog << "Testing SDIRK2 coefficients" << std::endl;
+  // 12 digits of precision for the output
+  deallog << std::setprecision(12) << std::scientific;
 
-  SDIRKTable         table    = sdirk_table("SDIRK3");
-  const unsigned int n_stages = table.A.m();
+  deallog << "Testing SDIRK22 coefficients" << std::endl;
+
+  // Important note : the nomenclature used for the name of the SDIRK methods
+  // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
+  // means SDIRK with order 3 and 3 stages.
+  SDIRKTable table22 =
+    sdirk_table(Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
+  const unsigned int n_stages22 = table22.A.m();
 
   // Data printed at each stage
-  for (unsigned int stage_i = 0; stage_i < n_stages; ++stage_i)
+  for (unsigned int stage_i = 1; stage_i <= n_stages22; ++stage_i)
     {
-      SDIRKStageData data =
-        sdirk_stage_data(table.A, table.c, table.b, stage_i);
+      SDIRKStageData data(table22, stage_i);
+
+      deallog << "\nStage " << stage_i << ":" << std::endl;
+      deallog << "  a_ij: ";
+      for (const auto &a : data.a_ij)
+        deallog << std::setw(12) << a << " ";
+      deallog << "\n  c_i : " << data.c_i << std::endl;
+    }
+
+  deallog << "<----------------------------->\n" << std::endl;
+
+  deallog << "Testing SDIRK33 coefficients" << std::endl;
+
+  SDIRKTable table33 =
+    sdirk_table(Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
+  const unsigned int n_stages33 = table33.A.m();
+
+  // Data printed at each stage
+  for (unsigned int stage_i = 1; stage_i <= n_stages33; ++stage_i)
+    {
+      SDIRKStageData data(table33, stage_i);
 
       deallog << "\nStage " << stage_i << ":" << std::endl;
       deallog << "  a_ij: ";
