@@ -8,7 +8,7 @@ This example showcases the turbulent flow around a Cylinder at :math:`Re=3900`. 
 Features
 ---------
 
-- Solvers: ``lethe-fluid-matrix-free`` (with Q1-Q1, Q2-Q2 or Q3-Q3)
+- Solvers: ``lethe-fluid-matrix-free`` (with Q1-Q1 and Q2-Q2)
 - Transient problem using ``bdf2`` time integrator
 - Static mesh refinement using the ``box refinement`` feature :doc:`../../../parameters/cfd/box_refinement`
 
