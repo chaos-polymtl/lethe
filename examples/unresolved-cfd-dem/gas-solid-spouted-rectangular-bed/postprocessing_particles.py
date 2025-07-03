@@ -56,11 +56,11 @@ h_list = ratio_h * h0
 # Get min and max x for grid spacing
 first_df = pd.DataFrame(np.copy(particle.get_df(0).points), columns = ['x', 'y', 'z'])
 x_min, x_max = first_df['x'].min(), first_df['x'].max()
-x_centers = np.linspace(x_min, x_max, 100)
+x_centers = np.linspace(x_min, x_max, 200)
 
 # Define search windows
-dx = 0.005
-dy = 0.005
+dx = 0.004
+dy = 0.004
 
 # Initialize stats
 stats = defaultdict(lambda: {'count': 0, 'mean': 0.0, 'sq_diff_accumulator': 0.0})
