@@ -46,7 +46,15 @@ The different subsections of the parameter file ``packing-particles.prm`` needed
 Mesh
 ~~~~~
 
-The flow is introduced through a channel that is connected to the inlet of the bed. The geometry of the bed was created using `GMSH <https://gmsh.info/>`_. The mesh is created using the same dimensions as used by Geitani et al. [#geitani2023]_ in order to compare the simulation results to the experimental results obtained by Yue et al. [#yue2020]_. The mesh file is in the GMSH format and is located in the ``mesh`` folder.
+The following figure shows the geometry of the mesh:
+
+.. image:: images/boundary_conditions.png
+    :alt: Geometry and boundary conditions
+    :align: center
+    :name: ID
+    :height: 15cm
+
+The dimensions shown in the figure are in millimeters, and the bed and the channel both have a depth of 40 mm. The flow is introduced through a channel that is connected to the bed. The geometry of the bed was created using `GMSH <https://gmsh.info/>`_. The mesh is created using the same dimensions as used by Geitani et al. [#geitani2023]_ in order to compare the simulation results to the experimental results obtained by Yue et al. [#yue2020]_. The mesh file is in the GMSH format and is located in the ``mesh`` folder. 
 
 .. code-block:: text
 
@@ -60,7 +68,7 @@ The flow is introduced through a channel that is connected to the inlet of the b
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``Simulation control`` subsection, the ``time end`` is set to 1.5 s with a ``time step`` of 0.00001 s, which is long enough to allow the particles to come to rest. Additionally, users can specify the output folder for the simulation results in this subsection.
+In the ``simulation control`` subsection, the ``time end`` is set to 1.5 s with a ``time step`` of 0.00001 s, which is long enough to allow the particles to come to rest. Additionally, users can specify the output folder for the simulation results in this subsection.
 
 .. code-block:: text
 
@@ -75,7 +83,7 @@ In the ``Simulation control`` subsection, the ``time end`` is set to 1.5 s with 
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
-The ``lethe-fluid-particles`` solver requires reading several DEM files to start the simulation. The check-pointing option is enabled in the ``Restart`` subsection.
+The ``lethe-fluid-particles`` solver requires reading several DEM files to start the simulation. The check-pointing option is enabled in the ``restart`` subsection.
 
 .. code-block:: text
 
@@ -89,7 +97,7 @@ The ``lethe-fluid-particles`` solver requires reading several DEM files to start
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-The following parameters are chosen for the ``Model parameters`` subsection. Dynamic load balancing is enabled to achieve better computational performance.
+The following parameters are chosen for the ``model parameters`` subsection. Dynamic load balancing is enabled to achieve better computational performance.
 
 .. code-block:: text
 
@@ -113,7 +121,7 @@ The following parameters are chosen for the ``Model parameters`` subsection. Dyn
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gravitational acceleration as well as the physical properties of the particles and the walls are specified in the ``Lagrangian physical properties`` subsection. In order to obtain a static bed height of 200 mm, 175800 spherical particles with a diameter of 2.5 mm are inserted into the rectangular bed. All of the particle properties defined in this subsection are the same as those used by Geitani et al. [#geitani2023]_
+The gravitational acceleration as well as the physical properties of the particles and the walls are specified in the ``lagrangian physical properties`` subsection. In order to obtain a static bed height of 200 mm, 175800 spherical particles with a diameter of 2.5 mm are inserted into the rectangular bed. All of the particle properties defined in this subsection are the same as those used by Geitani et al. [#geitani2023]_
 
 .. code-block:: text
 
@@ -141,7 +149,7 @@ The gravitational acceleration as well as the physical properties of the particl
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-The ``Insertion info`` subsection manages the insertion of particles. The volume of the insertion box is large enough to fit all the particles. The insertion info parameters are set in order to avoid particle collisions during the packing process.
+The ``insertion info`` subsection manages the insertion of particles. The volume of the insertion box is large enough to fit all the particles. The insertion info parameters are set in order to avoid particle collisions during the packing process.
 
 .. code-block:: text
 
@@ -159,7 +167,7 @@ The ``Insertion info`` subsection manages the insertion of particles. The volume
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~
 
-A floating wall is used to prevent the particles from falling into the inlet channel. The floating wall is defined at the top of the channel, which is at a y-coordinate of 0, and is set to remain active for the entire simulation time.
+A floating wall is used to prevent the particles from falling into the inlet channel. Its position is shown in the figure in the `mesh <gas-solid-spouted-rectangular-bed.html#mesh>`_ subsection. The floating wall is defined at the top of the channel, which is at a y-coordinate of 0, and is set to remain active for the entire simulation time.
 
 .. code-block:: text
 
@@ -253,13 +261,7 @@ A zero velocity field is used as the initial condition.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the boundary conditions, a slip boundary condition is applied on all the walls of the bed and the channel except the inlet at the bottom of the channel and the outlet on the top of the bed. The following figure shows the ID of each boundary and the position of the floating wall.
-
-.. image:: images/boundary_conditions.png
-    :alt: Geometry and boundary conditions
-    :align: center
-    :name: ID
-    :height: 15cm
+The figure presented in the `mesh <gas-solid-spouted-rectangular-bed.html#mesh>`_ subsection of this example shows the corresponding boundary IDs for each outer surface. A slip boundary condition is applied on all the walls of the bed and the channel (ID 0 and ID 3), except the inlet at the bottom of the channel (ID 1) and the outlet on the top of the bed (ID 2). 
 
 At the base of the channel, a time dependent Dirichlet boundary condition is imposed. To avoid an initial shock from the introduction of high velocity gas in the bed, the inlet is linearly velocity is increased from 0 m/s at t = 0 s until it reaches 20.8 m/s at t = 0.05 s.
 
@@ -315,7 +317,7 @@ Since the void fraction is calculated using the packed bed of the DEM simulation
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``CFD-DEM`` subsection, grad-div stabilization is enabled to improve local mass conservation, and the void fraction time derivative is enabled to account for the time variation of the void fraction.
+In the ``cfd-dem`` subsection, grad-div stabilization is enabled to improve local mass conservation, and the void fraction time derivative is enabled to account for the time variation of the void fraction.
 
 .. code-block:: text
 
