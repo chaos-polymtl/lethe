@@ -95,61 +95,35 @@ def compute_strouhal_from_lift(file_path: str, D: float, U: float, method: str =
     cl = data[fraction:, 2]
     cl -= np.mean(cl)
 
-    if method == "peak":
-        def smooth(signal, window_size=10):
-            return np.convolve(signal, np.ones(window_size)/window_size, mode='same')
+    f_interp = interp1d(t, cl, kind='linear')
+    n_steps = len(t) * 20
+    x_new = np.linspace(t.min(), t.max(), n_steps)
+    y_new = f_interp(x_new)
+    dt = (t.max() - t.min()) / n_steps
 
-        cl_smooth = smooth(cl)
-        peaks, _ = find_peaks(cl_smooth, height=0, distance=min_peak_distance)
-        t_peaks = t[peaks]
-        periods = np.diff(t_peaks)
-        T = np.mean(periods)
-        f = 1 / T
+    Y = rfft(y_new)
+    frequencies = rfftfreq(len(y_new), dt)
+    amplitudes = np.abs(Y)
+    amplitudes[0] = 0  # Ignore DC component
+    freq_dominante = frequencies[np.argmax(amplitudes)]
+    f = freq_dominante
 
-        plt.plot(t, cl, label="Raw Cl", alpha=0.4)
-        plt.plot(t, cl_smooth, label="Smoothed Cl", linewidth=2)
-        plt.plot(t_peaks, cl_smooth[peaks], "ro", label="Detected Peaks")
-        plt.xlabel("Time (s)")
-        plt.ylabel("Cl")
-        plt.title("Lift coefficient peak detection for Strouhal number")
-        plt.legend()
-        plt.grid(True)
-        plt.tight_layout()
-        plt.show()
+    plt.plot(t, cl, 'b.', label='Original data')
+    plt.plot(x_new, y_new, 'r-', label='Cubic interpolation')
+    plt.legend()
+    plt.title("Cubic interpolation of Cl")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
-    elif method == "fft":
-        f_interp = interp1d(t, cl, kind='linear')
-        n_steps = len(t) * 20
-        x_new = np.linspace(t.min(), t.max(), n_steps)
-        y_new = f_interp(x_new)
-        dt = (t.max() - t.min()) / n_steps
-
-        Y = rfft(y_new)
-        frequencies = rfftfreq(len(y_new), dt)
-        amplitudes = np.abs(Y)
-        amplitudes[0] = 0  # Ignore DC component
-        freq_dominante = frequencies[np.argmax(amplitudes)]
-        f = freq_dominante
-
-        plt.plot(t, cl, 'b.', label='Original data')
-        plt.plot(x_new, y_new, 'r-', label='Cubic interpolation')
-        plt.legend()
-        plt.title("Cubic interpolation of Cl")
-        plt.grid(True)
-        plt.tight_layout()
-        plt.show()
-
-        plt.loglog(frequencies, amplitudes)
-        plt.xlabel("Frequency (Hz)")
-        plt.ylabel("Amplitude")
-        plt.title("FFT spectrum of interpolated Cl")
-    
-        plt.grid(True)
-        plt.tight_layout()
-        plt.show()
-
-    else:
-        raise ValueError("Method must be either 'peak' or 'fft'")
+    plt.loglog(frequencies, amplitudes)
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Amplitude")
+    plt.title("FFT spectrum of interpolated Cl")
+   
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
     St = f * D / U
     return St

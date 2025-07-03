@@ -8,7 +8,7 @@ This example showcases the turbulent flow around a Cylinder at :math:`Re=3900`. 
 Features
 ---------
 
-- Solvers: ``lethe-fluid-matrix-free`` (with Q2-Q2 or Q3-Q3)
+- Solvers: ``lethe-fluid-matrix-free`` (with Q1-Q1, Q2-Q2 or Q3-Q3)
 - Transient problem using ``bdf2`` time integrator
 - Static mesh refinement using the ``box refinement`` feature :doc:`../../../parameters/cfd/box_refinement`
 
@@ -25,12 +25,11 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 ------------------------
 
-The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involved boundary-layer seperatoions, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder,  the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forcs on the body. Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. In this example, we study the flow around a cylinder at a Reynolds number of 3900 is considered to be in the subcritical turbulent regime.
+The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involve boundary-layer seperation, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder,  the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forcs on the body. 
 
-This example is a canonical benchmark for LES, as explained in the book by Grinstein, Margolin and Rider . It also showcases the capabilities of Lethe to statically refine the mesh athe beggining of the simulation using user-defined box refinement. The mesh is refined in the vicinity of the cylinder to capture the boundary layer and the wake region more accurately.
+This example is a canonical benchmark for LES, as explained in the book by Grinstein, Margolin and Rider [#Grinstein2007]_. It also showcases the capabilities of Lethe to statically refine the mesh a the beggining of the simulation using user-defined box refinement. The mesh is refined in the vicinity of the cylinder to capture the boundary layer and the wake region more accurately.
 
 The simulation set-up as well as the boundary ids are illustrated in the following figure:
-
 
 .. image:: images/3d_cylinder_perspective_schematic.png
   :alt: The geometry and surface ID
@@ -63,7 +62,7 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
 
 Box refinement
 ~~~~~~~~~~~~~~~~
-The ``box refinement`` subsection allows us to refine the mesh in a specific region of the domain. In this case, we refine the mesh around the cylinder to capture the boundary layer and wake region more accurately. The box refinement is defined by its center, size, and refinement level. The mesh is refined by the box refinement twice by setting ``ìnitial refinement = 2``.
+The ``box refinement`` subsection refines the mesh in a specific region of the domain. In this case, we refine the mesh around the cylinder to capture the boundary layer and wake region more accurately. The box refinement is defined by its center, size, and refinement level. The mesh is refined by the box refinement twice by setting ``ìnitial refinement = 2``.
 
 .. code-block:: text
 
@@ -124,7 +123,7 @@ Periodic boundary conditions are applied to the front (``id=5``) and the back (`
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-In the present case, the Reynolds number is defined as: :math:`Re = \frac{UD}{\nu}`. Since we set the values of :math:`U` and :math:`D`, the Reynold number of 3900 can be set solely using the kinematic viscosity: 
+The Reynolds number is defined as: :math:`Re = \frac{UD}{\nu}`. Since we set the values of :math:`U` and :math:`D`, the Reynold number of 3900 can be set using the kinematic viscosity: 
 
 
 .. code-block:: text
@@ -140,7 +139,7 @@ In the present case, the Reynolds number is defined as: :math:`Re = \frac{UD}{\n
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present eaxmples consider both :math:`Q_1Q_1` and :math:`Q_2Q_2` elements.
+The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present example consider both :math:`Q_1Q_1`, :math:`Q_2Q_2` elements and :math:`Q_3Q_3` elements. The order of the velocity and pressure interpolation can be set in the ``FEM`` subsection.
 
 .. code-block:: text
 
@@ -159,7 +158,6 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
   subsection forces
     set verbosity             = verbose
     set calculate force       = true
-    set force name            = force
     set output precision      = 10
     set output frequency      = 10
   end
@@ -202,7 +200,7 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 Running the Simulation
 ----------------------
 
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid-matrix-free`` executable are within your path, the matrix-free simulation can be launched by typing:
+Assuming that the ``lethe-fluid-matrix-free`` executable are within your path, the simulation can be launched with the following command:
 
 .. code-block:: text
   :class: copy-button
@@ -219,7 +217,7 @@ and choosing the number of processes ``n_proc`` according to the resources you h
 Results and Discussion
 ----------------------
 
-In the following, results obtained with a box refinement of [2,3,4] and using :math:`Q_1Q_1` and :math:`Q_2Q_2` elements are presented. The results are compared with the literature, including the work of Cardell [#Cardell1993]_, Ong and Wallace [#Ong1996]_, and Norberg [#Norbgerg1987]_.
+In the following, results obtained with a box refinement of [2,3,4] and using :math:`Q_1Q_1` and :math:`Q_2Q_2` elements are presented. The results are compared with the literature, including the work of Cardell [#Cardell1993]_, Ong and Wallace [#Ong1996]_, and Norberg [#Norberg1987]_.
 
 First, the following animation displays the evolution of the velocity magnitude on a slice of the domain over time.
 
@@ -267,7 +265,7 @@ The drag coefficient, the Strouhal number, and the pressure coefficient are comp
 
 where the ``-f`` option specifies the output folder and the ``-l`` option specifies the label of the simulation (e.g., ``Q1Q1`` or ``Q2Q2``). This script can be used to visualize a single simulation or to compare multiple simulations by providing a list of folders and labels.
 
-The drag coefficient measured experimentally by Norberg [#Norberg1994]_ is 1.0075. The Strouhal number value reported by Cardell [#Cardell1993]_ is :math:`0.215 \pm 0.005` and the value reported by Ong and Wallace [#Ong1996] is :math:`0.208 \pm 0.002`.
+The drag coefficient measured experimentally by Norberg [#Norberg1994]_ is 1.0075. The Strouhal number value reported by Cardell [#Cardell1993]_ is :math:`0.215 \pm 0.005` and the value reported by Ong and Wallace [#Ong1996]_ is :math:`0.208 \pm 0.002`.
 
 The following table summarizes the results obtained in this example, including the Strouhal number :math:`S_t` and the drag coefficient :math:`C_d`. 
 
@@ -276,7 +274,7 @@ The following table summarizes the results obtained in this example, including t
    :header-rows: 1
 
    * - Element
-     - Mesh refinement
+     - Mesh refinement (l)
      - :math:`C_d`
      - :math:`S_t`
    * - :math:`Q_1Q_1`
@@ -287,14 +285,18 @@ The following table summarizes the results obtained in this example, including t
      - 3
      - 1.0305
      - 0.2110
+   * - :math:`Q_1Q_1`
+     - 4 
+     - 0.9901
+     - 0.2122
    * - :math:`Q_2Q_2`
      - 2
      - 1.0008
      - 0.2134
    * - :math:`Q_2Q_2`
      - 3
-     - 0.9681
-     - 0.2111
+     - 0.9784
+     - 0.2112
 
 Finally, we compare the pressure coefficient :math:`C_p` obtained in this example with the experimental data from Norberg [#Norberg1994]_. The following figure shows the pressure coefficient along the cylinder surface for both :math:`Q_1Q_1` and :math:`Q_2Q_2` elements, compared to the experimental data:
 
@@ -311,7 +313,7 @@ Possibilities for Extension
 ----------------------------
 
 - The Reynolds stress tensor and the average velocity downstream of the cylinder can be used to provide additional validation information.
-- The case could be extended to a higher Reynolds number, such as :math:`Re=1.5\cdot 10^5`, as covered in the book by Grinstein, Margolin and Rider. 
+- The case could be extended to a higher Reynolds number, such as :math:`Re=1.5\cdot 10^5`, as covered in the book by Grinstein, Margolin and Rider [#Grinstein2007]_. 
 
 ------------
 References
@@ -321,6 +323,8 @@ References
 
 .. [#Ong1996] J. Ong and L. Wallace, *The velocity field of the turbulent very near wake of a circular cylinder*, Exp. Fluids 20, 441 (1996).
 
-.. [#Norbgerg1987] C. Norberg, *Effects of Reynolds number and a low-intensity freestream turbulence on the flow around a circular cylinder*, Publication No. 87/2, Department of Applied Thermodynamics and Fluid Mechanics, Chalmers University of Technology, Gothenburg, Sweden, 1987.
+.. [#Norberg1987] C. Norberg, *Effects of Reynolds number and a low-intensity freestream turbulence on the flow around a circular cylinder*, Publication No. 87/2, Department of Applied Thermodynamics and Fluid Mechanics, Chalmers University of Technology, Gothenburg, Sweden, 1987.
 
 .. [#Norberg1994] C. Norberg, *Experimental investigation of the flow around a circular cylinder: influence of aspect ratio*, J. Fluid Mech. 258, 287–316 (1994).
+
+.. [#Grinstein2007] F. Grinstein, L. Margolin, W. J. Rider, *Implicit large eddy simulation*, Cambridge University Press (2007).
