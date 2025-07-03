@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-07-03
+
+### Added
+
+- MINOR Add functionality that allows to delete previous vtu and pvd files by using a flag '-R'. [#1569](https://github.com/chaos-polymtl/lethe/pull/1569)
+
 ## [Master] - 2025-06-30
 
 ### Added
