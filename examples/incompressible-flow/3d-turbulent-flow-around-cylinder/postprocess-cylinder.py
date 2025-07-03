@@ -49,9 +49,7 @@ for folder, label in simulations.items():
     theta_array = np.linspace(0, 181 * np.pi/180, 182)
     # Strouhal number
     force_file = f"{folder}/force.02.dat"
-    st_peak = compute_strouhal_from_lift(force_file, D, U_inf, method="peak", min_peak_distance=10, purcentage=frac)
     st_fft = compute_strouhal_from_lift(force_file, D, U_inf, method="fft", min_peak_distance=10, purcentage=frac)
-    print(f"[{label}] Strouhal number (peak): St = {st_peak:.4f}")
     print(f"[{label}] Strouhal number (fft):  St = {st_fft:.4f}")
 
     # Drag coefficient
@@ -63,7 +61,7 @@ deg_exp = [9.158187511596124, 18.482886695571118, 28.806661605164106, 38.9639248
 cp_exp = [0.9245808357735688, 0.7297486303540259, 0.3275138038679759, -0.16270942100085994, -0.5900837898819916, -0.9734637447552554, -1.1682962723995107, -1.092877215581317, -0.9546088731424699, -0.8917600171547664, -0.8603355891609146, -0.8666200451267354, -0.8791898163242766, -0.8666200451267354, -0.8729049307255057, -0.8854749167395213, -0.8854749167395213, -0.8791898163242766]
 
 # Initialize plot
-plt.scatter(deg_exp, cp_exp, label='Experimental data', color='black')
+plt.scatter(deg_exp, cp_exp, label='Experiments- Norberg (1987)', color='black')
 
 # Loop through all simulations
 for folder, label in simulations.items():
@@ -89,4 +87,5 @@ plt.title("Pressure coefficient comparison across simulations")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
+plt.savefig("pressure_coefficient_comparison.png", dpi=300)
 plt.show()
