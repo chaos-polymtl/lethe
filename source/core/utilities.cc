@@ -3,7 +3,7 @@
 
 #include <core/revision.h>
 #include <core/utilities.h>
-#include <solvers/simulation_parameters.h>
+
 
 #if __GNUC__ > 7
 #  include <filesystem>
@@ -852,6 +852,6 @@ delete_vtu_and_pvd_files(std::string output_path)
       if (filename.path().extension() == ".vtu" ||
           filename.path().extension() == ".pvd" ||
           filename.path().extension() == ".pvtu")
-          std::filesystem::remove(filename.path());
+        std::filesystem::remove(filename.path());
     }
 }

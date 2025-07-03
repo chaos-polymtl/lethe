@@ -53,7 +53,8 @@ main(int argc, char *argv[])
           // Remove old output files
           if (options["-R"])
             {
-              std::string output_path = NSparam.simulation_control.output_folder;
+              std::string output_path =
+                NSparam.simulation_control.output_folder;
               delete_vtu_and_pvd_files(output_path);
             }
 
@@ -78,11 +79,12 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(file_name);
           NSparam.parse(prm);
-          
+
           // Remove old output files
           if (options["-R"])
             {
-              std::string output_path = NSparam.simulation_control.output_folder;
+              std::string output_path =
+                NSparam.simulation_control.output_folder;
               delete_vtu_and_pvd_files(output_path);
             }
 
