@@ -13,7 +13,7 @@ set dimension = 3
 subsection simulation control
   set method           = bdf2
   set output frequency = 50
-  set time end         = 20
+  set time end         = 10
   set time step        = 0.0005
   set subdivision      = 1
   set log precision    = 10

@@ -159,7 +159,7 @@ The ``Insertion info`` subsection manages the insertion of particles. The volume
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~
 
-A floating wall is used to prevent the particles from going down inside the inlet channel. The floating wall is defined at the top of the channel, which is at a y-coordinate of 0, and is set to remain active for the entire simulation time.
+A floating wall is used to prevent the particles from falling into the inlet channel. The floating wall is defined at the top of the channel, which is at a y-coordinate of 0, and is set to remain active for the entire simulation time.
 
 .. code-block:: text
 
@@ -208,14 +208,14 @@ The CFD-DEM simulation is to be carried out using the packed bed simulated in th
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation is run for 20 s with a time step of 0.0005 s. The time scheme chosen for the simulation is second order backward differentiation method (BDF2).
+The simulation is run for 10 s with a time step of 0.0005 s. The time scheme chosen for the simulation is second order backward differentiation method (BDF2).
 
 .. code-block:: text
 
     subsection simulation control
       set method               = bdf2
       set output frequency     = 50
-      set time end             = 20
+      set time end             = 10
       set time step            = 0.0005
       set subdivision          = 1
       set log precision        = 10
@@ -239,7 +239,7 @@ A density of 1 and a viscosity of 0.0000181 are defined in the physical properti
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-For the initial conditions, zero initial conditions are chosen for the velocity.
+A zero velocity field is used as the initial condition.
 
 .. code-block:: text
 
@@ -261,7 +261,7 @@ For the boundary conditions, a slip boundary condition is applied on all the wal
     :name: ID
     :height: 15cm
 
-At the base of the channel, a time dependent Dirichlet boundary condition is imposed. To avoid an initial shock from the introduction of high velocity gas in the bed, the inlet velocity is increased from 0 m/s at t = 0 s until it reaches 20.8 m/s at t = 0.05 s.  At the top of the bed, an outlet boundary condition is imposed.
+At the base of the channel, a time dependent Dirichlet boundary condition is imposed. To avoid an initial shock from the introduction of high velocity gas in the bed, the inlet is linearly velocity is increased from 0 m/s at t = 0 s until it reaches 20.8 m/s at t = 0.05 s.
 
 .. code-block:: text
 
@@ -387,24 +387,31 @@ Assuming that the ``lethe-fluid-particles`` executable is within your path, the 
 
   mpirun -np 10 lethe-fluid-particles gas-solid-spouted-rectangular-bed.prm
 
+.. note::
+    Running the CFD-DEM simulation should take approximately 1.5 days on 10 cores.
+
 ----------------
 Post-processing
 ----------------
 
-It is possible to run the post-processing code using the particle velocities with the following line, with the simulation path as the argument. The functions used in the post-processing script are defined in the ``functions-particles.py`` file. This post-processing script reads the particle velocity data and plots the particle velocities as a function of the x-position in the bed for different y-heights.
+It is possible to run the post-processing code to post-process the particle velocities with the following line, with the simulation path as the argument: 
 
 .. code-block:: text
   :class: copy-button
 
-    python3 postprocessing-particles.py  --folder ./
+    python3 postprocessing_particles.py  --folder ./
 
 
-It is also possible to run the post-processing code using the lagrangian post-processing output with the following line, with the simulation path as the argument. The functions used in the post-processing script are defined in the ``functions-lagrangian.py`` file. This post-processing script uses the average particle velocities at each mesh point to plot the particle velocities as a function of the x-position in the bed for different y-heights.
+The functions used in the post-processing script are defined in the ``functions-particles.py`` file. This post-processing script reads the particle velocity data and plots the particle velocities as a function of the x-position in the bed for different y-heights.
+
+It is also possible to run the post-processing code using the lagrangian post-processing output with the following line, with the simulation path as the argument: 
 
 .. code-block:: text
   :class: copy-button
 
-    python3 postprocessing-lagrangian.py  --folder ./
+    python3 postprocessing_lagrangian.py  --folder ./
+
+The functions used in the post-processing script are defined in the ``functions-lagrangian.py`` file. This post-processing script uses the average particle velocities at each mesh point to plot the particle velocities as a function of the x-position in the bed for different y-heights.
 
 For more information about the Lagrangian post-processing, please refer to the `Post-processing Section <../../../parameters/dem/post-processing.html>`_.
 
