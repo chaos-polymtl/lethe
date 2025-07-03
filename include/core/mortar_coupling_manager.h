@@ -489,6 +489,15 @@ class CouplingEvaluationBase
 {
 public:
   /**
+   * @brief Update coupling evaluation information
+   */
+  virtual void
+  update_evaluator_data(
+    const Mapping<dim>    &mapping,
+    const DoFHandler<dim> &dof_handler,
+    const unsigned int     first_selected_component = 0) const = 0;
+
+  /**
    * Number of data points of type Number associated to a quadrature point.
    */
   virtual unsigned int
@@ -584,6 +593,20 @@ public:
     const unsigned int                                         bid_m,
     const unsigned int                                         bid_p,
     const double                                               sip_factor);
+
+  /**
+   * @brief Update coupling operator information
+   */
+  void
+  update_operator_data(
+    const Mapping<dim>                                        &mapping,
+    const DoFHandler<dim>                                     &dof_handler,
+    const AffineConstraints<Number>                           &constraints,
+    const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
+    const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
+    const unsigned int                                         bid_m,
+    const unsigned int                                         bid_p,
+    const double sip_factor);
 
   /**
    * @brief Return object containing problem constraints
@@ -797,6 +820,12 @@ public:
                          const DoFHandler<dim> &dof_handler,
                          const unsigned int     first_selected_component = 0);
 
+  void
+  update_evaluator_data(
+    const Mapping<dim>    &mapping,
+    const DoFHandler<dim> &dof_handler,
+    const unsigned int     first_selected_component = 0) const override;
+
   unsigned int
   data_size() const override;
 
@@ -831,7 +860,7 @@ public:
   mutable FEPointIntegrator phi_m;
 
   /// Relevant dof indices
-  std::vector<unsigned int> relevant_dof_indices;
+  mutable std::vector<unsigned int> relevant_dof_indices;
 };
 
 template <int dim, typename Number>
@@ -847,6 +876,12 @@ public:
   NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
                                  const DoFHandler<dim> &dof_handler,
                                  const double           kinematic_viscosity);
+
+  void
+  update_evaluator_data(
+    const Mapping<dim>    &mapping,
+    const DoFHandler<dim> &dof_handler,
+    const unsigned int     first_selected_component = 0) const override;
 
   unsigned int
   data_size() const override;
@@ -884,7 +919,7 @@ public:
   mutable FEPointIntegratorP phi_p_m;
 
   /// Relevant dof indices
-  std::vector<unsigned int> relevant_dof_indices;
+  mutable std::vector<unsigned int> relevant_dof_indices;
 
   /// Kinematic viscosity
   const double kinematic_viscosity;

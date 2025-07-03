@@ -1227,6 +1227,20 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
 
+  if (this->simulation_parameters.mortar.enable)
+    {
+      this->mortar_coupling_evaluator->update_evaluator_data(*this->get_mapping(),
+                                                           this->dof_handler);
+      this->mortar_coupling_operator->update_operator_data(*this->get_mapping(),
+      this->dof_handler,
+      this->zero_constraints,
+      this->mortar_coupling_evaluator,
+      this->mortar_manager,
+      this->simulation_parameters.mortar.rotor_boundary_id,
+      this->simulation_parameters.mortar.stator_boundary_id,
+      this->simulation_parameters.mortar.sip_factor);
+    }
+    
   // Fix on the new mesh
   present_solution = tmp;
 
@@ -1978,20 +1992,19 @@ NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
     this->simulation_parameters.mortar);
 
   // Create mortar coupling evaluator
-  const std::shared_ptr<CouplingEvaluationBase<dim, double>>
-    mortar_coupling_evaluator =
-      std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-        *this->get_mapping(),
-        this->dof_handler,
-        this->simulation_parameters.physical_properties_manager
-          .get_kinematic_viscosity_scale());
+  this->mortar_coupling_evaluator =
+    std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+      *this->get_mapping(),
+      this->dof_handler,
+      this->simulation_parameters.physical_properties_manager
+        .get_kinematic_viscosity_scale());
 
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(
       *this->get_mapping(),
       this->dof_handler,
       this->zero_constraints,
-      mortar_coupling_evaluator,
+      this->mortar_coupling_evaluator,
       this->mortar_manager,
       this->simulation_parameters.mortar.rotor_boundary_id,
       this->simulation_parameters.mortar.stator_boundary_id,

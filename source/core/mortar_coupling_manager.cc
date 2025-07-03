@@ -534,11 +534,57 @@ CouplingOperator<dim, Number>::CouplingOperator(
   , evaluator(evaluator)
   , mortar_manager(mortar_manager)
 {
+  this->update_operator_data(mapping,
+                             dof_handler,
+                             constraints,
+                             evaluator,
+                             mortar_manager,
+                             bid_m,
+                             bid_p,
+                             sip_factor);
+}
+#else
+template <int dim, typename Number>
+CouplingOperator<dim, Number>::CouplingOperator(
+  const Mapping<dim>                                        &mapping,
+  const DoFHandler<dim>                                     &dof_handler,
+  const AffineConstraints<Number>                           &constraints,
+  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
+  const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
+  const unsigned int                                         bid_m,
+  const unsigned int                                         bid_p,
+  const double)
+  : mapping(mapping)
+  , dof_handler(dof_handler)
+  , constraints(constraints)
+  , bid_m(bid_m)
+  , bid_p(bid_p)
+  , evaluator(evaluator)
+  , mortar_manager(mortar_manager)
+{
+  AssertThrow(false,
+              ExcMessage(
+                "The mortar coupling requires deal.II 9.7 or more recent."));
+}
+#endif
+
+template <int dim, typename Number>
+void
+CouplingOperator<dim, Number>::update_operator_data(
+  const Mapping<dim>                                        &mapping,
+  const DoFHandler<dim>                                     &dof_handler,
+  const AffineConstraints<Number>                           &constraints,
+  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
+  const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
+  const unsigned int                                         bid_m,
+  const unsigned int                                         bid_p,
+  const double                                               sip_factor)
+{
   this->q_data_size          = evaluator->data_size();
   this->relevant_dof_indices = evaluator->get_relevant_dof_indices();
   this->n_dofs_per_cell      = this->relevant_dof_indices.size();
 
-  data.penalty_factor =
+  this->data.penalty_factor =
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
 
   // Number of quadrature points
@@ -621,7 +667,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
             // Weights of quadrature points
             const auto weights =
               mortar_manager->get_weights(get_face_center(cell, face));
-            data.all_weights.insert(data.all_weights.end(),
+            this->data.all_weights.insert(data.all_weights.end(),
                                     weights.begin(),
                                     weights.end());
 
@@ -634,7 +680,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 mapping.transform_points_real_to_unit_cell(cell,
                                                            points,
                                                            points_ref);
-                all_points_ref.insert(all_points_ref.end(),
+                this->all_points_ref.insert(all_points_ref.end(),
                                       points_ref.begin(),
                                       points_ref.end());
 
@@ -663,8 +709,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
                 fe_face_values.reinit(cell, face_no);
 
-                data.all_normals.insert(
-                  data.all_normals.end(),
+                this->data.all_normals.insert(
+                  this->data.all_normals.end(),
                   fe_face_values.get_normal_vectors().begin(),
                   fe_face_values.get_normal_vectors().end());
               }
@@ -675,7 +721,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 if (face->boundary_id() == bid_p)
                   for (auto &normal : normals)
                     normal *= -1.0;
-                data.all_normals.insert(data.all_normals.end(),
+                this->data.all_normals.insert(this->data.all_normals.end(),
                                         normals.begin(),
                                         normals.end());
 
@@ -704,12 +750,12 @@ CouplingOperator<dim, Number>::CouplingOperator(
                     if (face_no / 2 == 0)
                       {
                         for (auto &p : points)
-                          all_points_ref.emplace_back(face_no % 2, p[0]);
+                          this->all_points_ref.emplace_back(face_no % 2, p[0]);
                       }
                     else if (face_no / 2 == 1)
                       {
                         for (auto &p : points)
-                          all_points_ref.emplace_back(p[0], face_no % 2);
+                          this->all_points_ref.emplace_back(p[0], face_no % 2);
                       }
                     else
                       {
@@ -725,7 +771,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
             // Store penalty parameter for all quadrature points
             for (unsigned int i = 0; i < mortar_manager->get_n_points(); ++i)
-              data.all_penalty_parameter.emplace_back(penalty_parameter);
+              this->data.all_penalty_parameter.emplace_back(penalty_parameter);
           }
 
   // Setup communication
@@ -736,16 +782,16 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
   // Finalized penalty parameters
   std::vector<Number> all_penalty_parameter_ghost(
-    data.all_penalty_parameter.size());
-  partitioner.template export_to_ghosted_array<Number, 1>(
+    this->data.all_penalty_parameter.size());
+  this->partitioner.template export_to_ghosted_array<Number, 1>(
     data.all_penalty_parameter, all_penalty_parameter_ghost);
   for (unsigned int i = 0; i < data.all_penalty_parameter.size(); ++i)
-    data.all_penalty_parameter[i] =
+    this->data.all_penalty_parameter[i] =
       std::max(data.all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
 
   // Finialize DoF indices and update constraints
-  dof_indices_ghost.resize(dof_indices.size());
-  partitioner_cell.template export_to_ghosted_array<types::global_dof_index, 0>(
+  this->dof_indices_ghost.resize(dof_indices.size());
+  this->partitioner_cell.template export_to_ghosted_array<types::global_dof_index, 0>(
     dof_indices, dof_indices_ghost, n_dofs_per_cell);
 
   {
@@ -772,31 +818,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
       dof_handler.get_mpi_communicator());
   }
 }
-#else
-template <int dim, typename Number>
-CouplingOperator<dim, Number>::CouplingOperator(
-  const Mapping<dim>                                        &mapping,
-  const DoFHandler<dim>                                     &dof_handler,
-  const AffineConstraints<Number>                           &constraints,
-  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
-  const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-  const unsigned int                                         bid_m,
-  const unsigned int                                         bid_p,
-  const double)
-  : mapping(mapping)
-  , dof_handler(dof_handler)
-  , constraints(constraints)
-  , bid_m(bid_m)
-  , bid_p(bid_p)
-  , evaluator(evaluator)
-  , mortar_manager(mortar_manager)
-{
-  AssertThrow(false,
-              ExcMessage(
-                "The mortar coupling requires deal.II 9.7 or more recent."));
-}
-#endif
-
 
 template <int dim, typename Number>
 const AffineConstraints<Number> &
@@ -1254,12 +1275,22 @@ CouplingEvaluationSIPG<dim, n_components, Number>::CouplingEvaluationSIPG(
            n_components)
   , phi_m(mapping, fe_sub, update_values | update_gradients)
 {
+  update_evaluator_data(mapping, dof_handler, first_selected_component);
+}
+
+template <int dim, int n_components, typename Number>
+void
+CouplingEvaluationSIPG<dim, n_components, Number>::update_evaluator_data(
+  const Mapping<dim>    &mapping,
+  const DoFHandler<dim> &dof_handler,
+  const unsigned int     first_selected_component) const
+{
   for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
     if ((first_selected_component <=
          dof_handler.get_fe().system_to_component_index(i).first) &&
         (dof_handler.get_fe().system_to_component_index(i).first <
          first_selected_component + n_components))
-      relevant_dof_indices.push_back(i);
+      this->relevant_dof_indices.push_back(i);
 }
 
 template <int dim, int n_components, typename Number>
@@ -1391,13 +1422,23 @@ NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
   , phi_p_m(mapping, fe_sub_p, update_values)
   , kinematic_viscosity(kinematic_viscosity)
 {
+  update_evaluator_data(mapping, dof_handler, 0);
+}
+
+template <int dim, typename Number>
+void
+NavierStokesCouplingEvaluation<dim, Number>::update_evaluator_data(
+  const Mapping<dim>    &mapping,
+  const DoFHandler<dim> &dof_handler,
+  const unsigned int     first_selected_component) const
+{
   for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
     if (dof_handler.get_fe().system_to_component_index(i).first < dim)
-      relevant_dof_indices.push_back(i);
+      this->relevant_dof_indices.push_back(i);
 
   for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
     if (dof_handler.get_fe().system_to_component_index(i).first == dim)
-      relevant_dof_indices.push_back(i);
+      this->relevant_dof_indices.push_back(i);
 
   AssertDimension(dof_handler.get_fe().n_dofs_per_cell(),
                   relevant_dof_indices.size());
@@ -1507,7 +1548,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       // jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
       // the value of normal_m, we use a minus sign here because normal_p = -
       // normal_m
-      const auto u_value_jump = u_value_m - u_value_p;
+      const auto u_value_jump = outer(u_value_m - u_value_p, normal);
 
       // The expression for the average on the mortar interface is
       // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
