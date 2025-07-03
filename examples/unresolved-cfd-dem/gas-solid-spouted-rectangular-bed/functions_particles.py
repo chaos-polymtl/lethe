@@ -16,15 +16,15 @@ def group_velocities_by_x(H, df_positions, velocity_magnitude, x_centers, dx, dy
     Select particles in a window around height H and group them by x-location.
     
     Parameters:
-    - H: target y height
+    - H (float): target y height
     - df_positions: DataFrame with columns ['x', 'y', 'z']
     - velocity_magnitude: 1D array of velocity magnitudes
-    - x_centers: array of target x values
-    - dx: half-width of the x-window
-    - dy: half-width of the y-window
+    - x_centers (array): array of target x values
+    - dx (float): half-width of the x-window
+    - dy (float): half-width of the y-window
     
     Returns:
-    - Dictionary mapping (H, x_center) -> list of velocity magnitudes in z for that height and x-center
+    - grouped (dict): dictionary mapping (H, x_center) -> list of velocity magnitudes in z for that height and x-center
     """
     grouped = {}
     mask_y = (df_positions['y'] >= H - dy) & (df_positions['y'] <= H + dy)
@@ -46,9 +46,8 @@ def welford(grouped_data, stats_dict):
     Incrementally compute mean and variance using Welford's algorithm.
     
     Parameters:
-    - H: height being processed
-    - grouped_data: dict (H, x) -> list of velocity magnitudes
-    - stats_dict: defaultdict to store running statistics
+    - grouped_data (dict): (H, x) -> list of velocity magnitudes
+    - stats_dict (defaultdict): defaultdict to store running statistics
     """
     for (h, x), values in grouped_data.items():
         for value in values:
@@ -66,10 +65,10 @@ def standard_deviation(stats):
     Compute the standard deviation from Welford's statistics.
     
     Parameters:
-    - stats: dict with keys 'count', 'mean', 'sq_diff_accumulator'
+    - stats (dict): dict with keys 'count', 'mean', 'sq_diff_accumulator'
     
     Returns:
-    - Standard deviation or NaN if count < 2
+    - float: standard deviation or NaN if count < 2
     """
 
     # Returns the standard deviation if there is more than one data point used
@@ -82,7 +81,18 @@ def standard_deviation(stats):
 def plot_data(keys, index, simulation_data, paper_data, axs, color_map, custom_lines):
     """
     Plot the experimental and simulation data for a given index.
+    
+    Parameters:
+    - keys (list): list of keys for the experimental datasets (paper data) to plot
+    - index (int): index to select the specific set of keys to plot, corresponds to the index of the subgroup of dataset keys in list 'keys'
+    - simulation_data (dict): dictionary containing simulation data
+    - paper_data (dict): dictionary containing experimental data
+    - axs (list): list of matplotlib axes to plot on
+    - color_map (dict): dictionary assigning keys to colors for plotting
+    - custom_lines (list): list of custom legend lines to add to the plot
 
+    Returns:
+    None: updates the axes with the plotted data
     """
     for key in keys[index]:
         x = paper_data[key]["x"] / 1000 # Divided by 1000 to convert x from mm to m
