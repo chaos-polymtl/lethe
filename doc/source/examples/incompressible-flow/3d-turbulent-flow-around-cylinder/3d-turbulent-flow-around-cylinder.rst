@@ -302,7 +302,7 @@ Finally, we compare the pressure coefficient :math:`C_p` obtained in this exampl
 
 ..
   +-------------------------------------------------------------------------------------------------------------------+
-  |  .. figure:: images/enstrophy_comparison_Q3Q3_942k.png                                                            |
+  |  .. figure:: images/pressure_coefficient_comparison.png                                                           |
   |     :width: 620                                                                                                   |
   |                                                                                                                   |
   +-------------------------------------------------------------------------------------------------------------------+
