@@ -16,7 +16,6 @@
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/insertion.h>
 #include <fem-dem/fluid_dynamics_vans.h>
 #include <fem-dem/postprocessing_cfd_dem.h>
 
