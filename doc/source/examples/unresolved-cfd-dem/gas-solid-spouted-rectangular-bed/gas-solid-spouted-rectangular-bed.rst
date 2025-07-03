@@ -216,7 +216,7 @@ The CFD-DEM simulation is to be carried out using the packed bed simulated in th
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation is run for 10 s with a time step of 0.0005 s. The time scheme chosen for the simulation is second order backward differentiation method (BDF2).
+The simulation is run for 10 s with a ``time step`` of 0.0005 s. The time scheme chosen for the simulation is second order backward differentiation method (BDF2).
 
 .. code-block:: text
 
@@ -233,7 +233,7 @@ The simulation is run for 10 s with a time step of 0.0005 s. The time scheme cho
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A density of 1 and a viscosity of 0.0000181 are defined in the physical properties subsection to simulate the flow of air.
+A ``density`` of 1 and a ``kinematic viscosity`` of 0.0000181 are defined in the ``physical properties`` subsection to simulate the flow of air.
 
 .. code-block:: text
 
@@ -317,7 +317,7 @@ Since the void fraction is calculated using the packed bed of the DEM simulation
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``cfd-dem`` subsection, grad-div stabilization is enabled to improve local mass conservation, and the void fraction time derivative is enabled to account for the time variation of the void fraction.
+In the ``cfd-dem`` subsection, grad-div stabilization is enabled to improve local mass conservation, and the ``void fraction time derivative`` is enabled to account for the time variation of the void fraction.
 
 .. code-block:: text
 
@@ -340,7 +340,7 @@ In the ``cfd-dem`` subsection, grad-div stabilization is enabled to improve loca
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The inexact_newton solver is used to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non-Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
+The ``inexact_newton`` solver is used to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non-Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
 
 .. code-block:: text
 
