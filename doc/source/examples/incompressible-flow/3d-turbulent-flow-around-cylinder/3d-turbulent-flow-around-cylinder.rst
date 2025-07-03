@@ -221,14 +221,13 @@ In the following, results obtained with a box refinement of [2,3,4] and using :m
 
 First, the following animation displays the evolution of the velocity magnitude on a slice of the domain over time.
 
-..
-  +----------------------------------------------------------------------------------------------------------------------------------------------------+
-  | .. raw:: html                                                                                                                                      |
-  |                                                                                                                                                    |
-  |    <iframe width="800" height="400" src="https://www.youtube.com/embed/bRa04yMDsXo?si=Q1ppAuakIsrNwFlw"  frameborder="0" allowfullscreen></iframe> |
-  |                                                                                                                                                    |
-  +----------------------------------------------------------------------------------------------------------------------------------------------------+
 
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+| .. raw:: html                                                                                                                                      |
+|                                                                                                                                                    |
+|    <iframe width="700" height="400" src="https://www.youtube.com/embed/ojhKCPY8Bho?si=wmkUBWQyEQIC3cn"  frameborder="0" allowfullscreen></iframe>  |
+|                                                                                                                                                    |
++----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 The following formulas were used to compute the key validation metrics:
 
@@ -300,13 +299,12 @@ The following table summarizes the results obtained in this example, including t
 
 Finally, we compare the pressure coefficient :math:`C_p` obtained in this example with the experimental data from Norberg [#Norberg1994]_. The following figure shows the pressure coefficient along the cylinder surface for both :math:`Q_1Q_1` and :math:`Q_2Q_2` elements, compared to the experimental data:
 
-..
-  +-------------------------------------------------------------------------------------------------------------------+
-  |  .. figure:: images/pressure_coefficient_comparison.png                                                           |
-  |     :width: 620                                                                                                   |
-  |                                                                                                                   |
-  +-------------------------------------------------------------------------------------------------------------------+
 
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/pressure_coefficient_comparison.png                                                           |
+|     :width: 620                                                                                                   |
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
 
 ----------------------------
 Possibilities for Extension
