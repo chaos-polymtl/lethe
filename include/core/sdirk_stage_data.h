@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+=======
+// SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2025 The Lethe Authors
+>>>>>>> 996dad99 (version 2 après révision de Bruno)
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef SDIRK_STAGE_DATA_H
@@ -16,6 +20,7 @@
 
 using namespace dealii;
 
+<<<<<<< HEAD
 
 /**
  * @brief Structure representing a Butcher tableau for a SDIRK method.
@@ -34,6 +39,8 @@ using namespace dealii;
  * integration method and are specific to each SDIRK variant (e.g., SDIRK22,
  * SDIRK33).
  */
+=======
+>>>>>>> 996dad99 (version 2 après révision de Bruno)
 struct SDIRKTable
 {
   FullMatrix<double>  A;
@@ -62,9 +69,12 @@ struct SDIRKTable
  * @return SDIRKTable A structure containing the Butcher tableau (A, b, c) for the requested method.
  */
 
+<<<<<<< HEAD
 // Important note : the nomenclature used for the name of the SDIRK methods
 // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
 // means SDIRK with order 3 and 3 stages
+=======
+>>>>>>> 996dad99 (version 2 après révision de Bruno)
 SDIRKTable
 sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method);
 
@@ -85,6 +95,7 @@ public:
    * - b_i: the weight for combining the result of stage i in the final
    * solution.
    *
+<<<<<<< HEAD
    * These coefficients are used to compute each stage value \( \boldsymbol{z}_i
    * \) of the Runge-Kutta method according to the formula:
    *
@@ -106,6 +117,8 @@ public:
    * for the matrix and the vectors when coding start from 0.
    *
    *
+=======
+>>>>>>> 996dad99 (version 2 après révision de Bruno)
    * @param[in] table The SDIRK Butcher tableau (structure containing A, b, and
    * c).
    * @param[in] stage_i Index of the stage (starting from 1) for which the data
