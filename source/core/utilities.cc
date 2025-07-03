@@ -844,8 +844,9 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
 }
 
 void
-delete_vtu_and_pvd_files(std::string output_path)
+delete_vtu_and_pvd_files(std::string &output_path)
 {
+#if __GNUC__ > 7
   for (auto const &filename : std::filesystem::directory_iterator{output_path})
     {
       if (filename.path().extension() == ".vtu" ||
@@ -853,4 +854,10 @@ delete_vtu_and_pvd_files(std::string output_path)
           filename.path().extension() == ".pvtu")
         std::filesystem::remove(filename.path());
     }
+#else
+  AssertThrow(
+    false,
+    ExcMessage(
+      "Deleting old vtu files is not possible with the current GNU compiler version."));
+#endif
 }
