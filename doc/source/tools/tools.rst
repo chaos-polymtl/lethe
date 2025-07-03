@@ -8,6 +8,7 @@ Tools
     :titlesonly:
 
     updating-test-results
+    useful-flags
     gmsh/gmsh
     pointwise/pointwise
     automatic_launch/automatic_launch
