@@ -67,7 +67,7 @@ private:
   void
   setup_distribution_type();
 
-    /**
+  /**
    * @brief Set the insertion method.
    *
    * @return The pointer to the insertion object
