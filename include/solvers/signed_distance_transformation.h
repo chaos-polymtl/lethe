@@ -117,7 +117,8 @@ public:
    */
   SignedDistanceTransformationPiecewisePolynomial(
     const double max_reinitialization_distance)
-    : max_reinitialization_distance_inv(1.0 / max_reinitialization_distance)
+    : max_reinitialization_distance(max_reinitialization_distance)
+    , max_reinitialization_distance_inv(1.0 / max_reinitialization_distance)
   {}
 
   /**
@@ -130,6 +131,11 @@ public:
   inline double
   transform_signed_distance(const double signed_distance) override
   {
+    const double d_ref_squared =
+      Utilities::fixed_power<2>(max_reinitialization_distance);
+    const double d_ref_cubic =
+      Utilities::fixed_power<3>(max_reinitialization_distance);
+
     const double dimentionless_d =
       signed_distance * max_reinitialization_distance_inv;
 
@@ -138,26 +144,36 @@ public:
     if (dimentionless_d < 0.0)
       {
         piecewise_polynomial_value =
-          4.0 * dimentionless_d +
-          6.0 * Utilities::fixed_power<2>(dimentionless_d) +
-          4.0 * Utilities::fixed_power<3>(dimentionless_d) +
-          Utilities::fixed_power<4>(dimentionless_d);
+          (-d_ref_cubic - 6 * d_ref_squared + 12) * dimentionless_d +
+          (-d_ref_cubic - 5 * d_ref_squared + 6) *
+            Utilities::fixed_power<2>(dimentionless_d) +
+          (-d_ref_cubic - 4 * d_ref_squared + 4) *
+            Utilities::fixed_power<3>(dimentionless_d) +
+          (-d_ref_cubic - 3 * d_ref_squared + 3) *
+            Utilities::fixed_power<4>(dimentionless_d);
 
         return 0.5 - 0.5 * piecewise_polynomial_value;
       }
     else
       {
         piecewise_polynomial_value =
-          4.0 * dimentionless_d -
-          6.0 * Utilities::fixed_power<2>(dimentionless_d) +
-          4.0 * Utilities::fixed_power<3>(dimentionless_d) -
-          Utilities::fixed_power<4>(dimentionless_d);
+          (d_ref_cubic - 6 * d_ref_squared + 12) * dimentionless_d -
+          (-d_ref_cubic + 5 * d_ref_squared - 6) *
+            Utilities::fixed_power<2>(dimentionless_d) +
+          (d_ref_cubic - 4 * d_ref_squared + 4) *
+            Utilities::fixed_power<3>(dimentionless_d) -
+          (-d_ref_cubic + 3 * d_ref_squared - 3) *
+            Utilities::fixed_power<4>(dimentionless_d);
 
         return 0.5 - 0.5 * piecewise_polynomial_value;
       }
   }
 
 private:
+  /**
+   * Maximum redistanciation distance.
+   */
+  const double max_reinitialization_distance;
   /**
    * Inverse of the maximum redistanciation distance.
    */
