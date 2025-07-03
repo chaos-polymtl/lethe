@@ -206,29 +206,39 @@ CFDDEMSolver<dim>::set_insertion_type()
     dem_parameters.insertion_info.insertion_method;
 
   const auto parallel_triangulation =
-  dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-    &*this->triangulation);
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
 
   switch (insertion_method)
     {
       case InsertionInfo<dim>::InsertionMethod::file:
         {
-          return std::make_shared<InsertionFile<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container, *parallel_triangulation, dem_parameters);
+          return std::make_shared<
+            InsertionFile<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            *parallel_triangulation,
+            dem_parameters);
         }
       case InsertionInfo<dim>::InsertionMethod::list:
         {
-          return std::make_shared<InsertionList<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container, *parallel_triangulation, dem_parameters);
+          return std::make_shared<
+            InsertionList<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            *parallel_triangulation,
+            dem_parameters);
         }
       case InsertionInfo<dim>::InsertionMethod::plane:
         {
-          return std::make_shared<InsertionPlane<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container, *parallel_triangulation, dem_parameters);
+          return std::make_shared<
+            InsertionPlane<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            *parallel_triangulation,
+            dem_parameters);
         }
       case InsertionInfo<dim>::InsertionMethod::volume:
         {
-          return std::make_shared<InsertionVolume<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+          return std::make_shared<
+            InsertionVolume<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
             size_distribution_object_container,
             *parallel_triangulation,
             dem_parameters,
@@ -934,7 +944,9 @@ CFDDEMSolver<dim>::insert_particles()
        dem_parameters.insertion_info.insertion_frequency) == 1 ||
       this->simulation_control->get_step_number() == 1)
     {
-      insertion_object->insert(this->particle_handler, *parallel_triangulation, dem_parameters);
+      insertion_object->insert(this->particle_handler,
+                               *parallel_triangulation,
+                               dem_parameters);
 
       dem_action_manager->particle_insertion_step();
     }
