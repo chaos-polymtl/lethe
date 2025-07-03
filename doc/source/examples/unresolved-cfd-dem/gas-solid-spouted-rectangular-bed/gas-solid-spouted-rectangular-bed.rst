@@ -365,7 +365,7 @@ The linear solver is defined according to the parameters suggested by Geitani et
     subsection linear solver
       subsection fluid dynamics
         set method                                = gmres
-        set max iters                             = 1000
+        set max iters                             = 200
         set relative residual                     = 1e-4
         set minimum residual                      = 1e-8
         set preconditioner                        = ilu
