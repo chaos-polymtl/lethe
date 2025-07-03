@@ -70,7 +70,6 @@ add_library(lethe-core
   ../../include/core/pvd_handler.h
   ../../include/core/rheological_model.h
   ../../include/core/sdirk_stage_data.h
-  ../../include/core/sdirk_table.h
   ../../include/core/serial_solid.h
   ../../include/core/shape.h
   ../../include/core/shape_parsing.h
