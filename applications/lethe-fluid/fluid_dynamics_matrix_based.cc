@@ -50,11 +50,11 @@ main(int argc, char *argv[])
           prm.parse_input(file_name);
           NSparam.parse(prm);
 
-          std::cout << __LINE__ << std::endl;
+          // Remove old output files
           if (options["-R"])
             {
-              std::cout << __LINE__ << std::endl;
-              delete_vtu_and_pvd_files(NSparam);
+              std::string output_path = NSparam.simulation_control.output_folder;
+              delete_vtu_and_pvd_files(output_path);
             }
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
@@ -78,6 +78,13 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(file_name);
           NSparam.parse(prm);
+          
+          // Remove old output files
+          if (options["-R"])
+            {
+              std::string output_path = NSparam.simulation_control.output_folder;
+              delete_vtu_and_pvd_files(output_path);
+            }
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,

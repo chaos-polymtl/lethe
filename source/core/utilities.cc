@@ -844,25 +844,14 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
     }
 }
 
-template <int dim>
 void
-delete_vtu_and_pvd_files(const SimulationParameters<dim> &NSparam)
+delete_vtu_and_pvd_files(std::string output_path)
 {
-  std::cout << __LINE__ << std::endl;
-  std::string output_path = NSparam.simulation_control->get_output_path();
-
-  std::cout << __LINE__ << std::endl;
-  
   for (auto const &filename : std::filesystem::directory_iterator{output_path})
     {
-      std::cout << __LINE__ << std::endl;
       if (filename.path().extension() == ".vtu" ||
           filename.path().extension() == ".pvd" ||
           filename.path().extension() == ".pvtu")
-        {
-          std::cout << __LINE__ << std::endl;
           std::filesystem::remove(filename.path());
-          std::cout << __LINE__ << std::endl;
-        }
     }
 }
