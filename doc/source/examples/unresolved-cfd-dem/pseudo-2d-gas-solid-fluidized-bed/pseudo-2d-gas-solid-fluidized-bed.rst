@@ -20,8 +20,8 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed``).
 
-- Parameter file for particle generation and packing: ``packing-particles.prm``
-- Parameter file for CFD-DEM simulation of the gas-solid fluidized bed: ``gas-solid-fluidized-bed.prm``
+- Parameter file for particle insertion and packing: ``packing-particles.prm``
+- Parameter file for CFD-DEM simulation: ``gas-solid-fluidized-bed.prm``
 - Geometry file: ``structure.geo``
 - Post-processing Python script: ``fluidized-bed-postprocessing.py``
 
@@ -30,16 +30,16 @@ All files mentioned below are located in the example's folder (``examples/unreso
 Description of the Case
 -----------------------
 
-First, ``lethe-particles`` is used to fill the bed with :math:`17562` particles, corresponding to the :math:`39` g sample of particles used in the experiment. Then, the ``lethe-fluid-particles`` solver allows to simulate the fluidization of the particles, with a gas velocity of :math:`U = 0.9` m/s at the inlet at the bottom of the column.
+First, ``lethe-particles`` is used to fill the rectangular column with :math:`17562` particles, corresponding to the :math:`39` g sample of particles used in the experiment. Then, the ``lethe-fluid-particles`` solver allows to simulate the fluidization of the particles, with a gas velocity of :math:`U = 0.9` m/s at the inlet at the bottom of the column.
 
 
 -------------------
 DEM Parameter File
 -------------------
 
-All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
+All parameter subsections are described in the `parameters guide <../../../parameters/parameters.html>`_ of the documentation.
 
-We first introduce the different subsections of the parameter file ``packing-particles.prm`` needed to run this simulation.
+We first introduce the different subsections of the parameter file ``packing-particles.prm``.
 
 
 Mesh
@@ -59,7 +59,7 @@ The domain is generated with GMSH to reproduce the experimental set-up. It is a 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~
 
-A simulation time of :math:`2.5` s was chosen, with a time step of :math:`0.000005`. It is important to choose a long enough time so as to allow all particles to become static. The output files generated are stored in the folder output_dem.
+A simulation time of :math:`2.5` s was chosen, with a time step of :math:`5\times10^{-6}`. It is important to choose a long enough time so that all particles can become static. The output files generated are stored in the folder ``output_dem``.
 
 .. code-block:: text
 
@@ -111,7 +111,7 @@ Model Parameters
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The friction and restitution coefficients are set to :math:`0.3` and :math:`0.9` respectively. These parameters were chosen as given in the article, and the others were kept to usual values.
+In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The friction and restitution coefficients are set to :math:`0.3` and :math:`0.9` respectively. These parameters were chosen as given in the article, while the others were kept to usual values.
 
 .. code-block:: text
 
@@ -193,17 +193,17 @@ The packing simulation can be launched on 8 processors with:
   mpirun -np 8 lethe-particles packing-particles.prm
 
 .. note:: 
-    Running the packing should take approximately .. minutes on 8 cores.
+    Running the packing should take approximately 9 minutes on 8 cores.
 
 
-After the particles have been packed inside the column, it is now possible to simulate the fluidization of particles.
+After the particles have been packed inside the column, it is now possible to simulate the fluidization of the bed.
 
 
 -----------------------
 CFD-DEM Parameter File
 -----------------------
 
-The CFD-DEM simulation is carried out using the packed bed simulated in the previous stage and the application ``lethe-fluid-particles``. The ``mesh``, ``lagrangian physical properties``, DEM ``model parameters`` and ``floating walls`` subsections are identical to that of the packing parameter file, so they will not be shown here.
+The CFD-DEM simulation is carried out using the packed bed generated in the previous stage and the application ``lethe-fluid-particles``. The ``mesh``, ``lagrangian physical properties``, DEM ``model parameters`` and ``floating walls`` subsections are identical to that of the packing parameter file, so they will not be shown here.
 
 
 Simulation Control
@@ -291,7 +291,7 @@ For the boundary conditions, the left and right walls (ID = 3) are treated as no
 Void Fraction
 ~~~~~~~~~~~~~~~
 
-The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) mode is employed to carry out the calculation. More information about the different methods of calculating the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
+The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) is employed to carry out the calculation. More information about the different methods of calculating the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
 
 .. code-block:: text
 
@@ -422,6 +422,7 @@ The following figure compares the simulated pressure power spectral density (PSD
 
 
 Although the simulation PSD is several orders of magnitude lower, the shape of the curve and the peak frequency show good agreement with the experimental data.
+
 
 .. The simulated fluidized bed is shown in the animation below.
 
