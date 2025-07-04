@@ -29,7 +29,7 @@ recreate_folder "$folder"
 { time $action ; } &> "$folder/log"
 
 # Process the simulation
-python3 rising-bubble.py -f output  --validate
+python3 rising-bubble.py -f output  --validate -c 1
 
 # Copy the information to the log folder
 cp $plots $folder
