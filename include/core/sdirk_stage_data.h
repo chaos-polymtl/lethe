@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 =======
 // SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2025 The Lethe Authors
 >>>>>>> 996dad99 (version 2 après révision de Bruno)
+=======
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+>>>>>>> 8fa41dfc (Update include/core/sdirk_stage_data.h)
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef SDIRK_STAGE_DATA_H
