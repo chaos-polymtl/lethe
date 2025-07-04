@@ -809,7 +809,7 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
  * @brief Delete vtu and pvd files
  */
 void
-delete_vtu_and_pvd_files(std::string &output_path);
+delete_vtu_and_pvd_files(const std::string &output_path);
 
 /**
  * @brief Converts point to radius

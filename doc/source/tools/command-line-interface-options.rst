@@ -1,6 +1,6 @@
-======================================
-Useful Flags when Lauching Simulations
-======================================
+==============================
+Command-line Interface Options
+==============================
 
 
 --------------------------------
@@ -22,7 +22,7 @@ run an application. In an example of usage, ``lethe-fluid -V`` yields:
 ----------------------------
 Delete Previous Output Files
 ----------------------------
-The flag ``-R`` allows the user to delete previous ``.vtu`` output files before 
+The flag ``-R`` allows the user to delete previous output files before 
 new ones are written. This is useful, for instance, when launching the simulation
 multiple times with different numbers of steps, so that you make sure only the 
 most recent output files are stored. One example is as follows:
@@ -31,7 +31,7 @@ most recent output files are stored. One example is as follows:
 
    lethe-fluid -R tgv-matrix-based.prm
 
-The previous (if any) ``.vtu`` and ``.pvd`` files, stored in the output path 
+The previous (if any) ``.vtu``, ``.pvtu``, and ``.pvd`` files, stored in the output path 
 determined in the ``prm`` file, will be removed before the files corresponding
 to the current simulation are saved.
 
