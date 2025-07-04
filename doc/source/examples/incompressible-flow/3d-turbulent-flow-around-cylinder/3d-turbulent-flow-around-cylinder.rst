@@ -45,6 +45,7 @@ Mesh
 ~~~~
 
 The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to create the flow using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
+
 .. code-block:: text
   
   subsection mesh
@@ -54,6 +55,7 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
     set initial boundary refinement = 1 
     set boundaries refined = 2
   end
+
 
 .. note::
 
