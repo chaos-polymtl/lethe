@@ -13,7 +13,7 @@ set dimension = 3
 subsection simulation control
   set method           = bdf1
   set output frequency = 100
-  set time end         = 20
+  set time end         = 12
   set time step        = 0.0001
   set output path      = ./output/
 end
@@ -191,7 +191,7 @@ subsection floating walls
       set nz = 1
     end
     set start time = 0
-    set end time   = 30
+    set end time   = 50
   end
 end
 

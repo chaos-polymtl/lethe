@@ -8,11 +8,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
-from scipy import signal
 from cycler import cycler
+from scipy.fft import rfft, rfftfreq
+from scipy.interpolate import interp1d
+from scipy.ndimage import gaussian_filter1d
+
 
 # Set plot parameters
-colors=['#1B9E77','#D95F02','#7570B3','#E7298A','#66A61E','#E6AB02']
+colors=['#1B9E77','#D95F02','#7570B3']
 plt.rcParams['axes.prop_cycle'] = cycler(color = colors)
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['figure.figsize'] = (10,8)
@@ -41,16 +44,16 @@ import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
-parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 2d-sandpile DEM example')
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the Pseudo-2d gas solid fluidized bed example')
 parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
 args, leftovers=parser.parse_known_args()
 
 # Simulation folder
 folder=args.folder
 
-# Starting vtu id (~2s at least)
+# Starting-ending vtu id
 start = 200
-end = 1000
+end = 1200
 
 # Load lethe data
 pvd_particles = 'out_particles.pvd'
@@ -60,40 +63,33 @@ particles = lethe_pyvista_tools(folder, prm_file, pvd_particles)
 fluid = lethe_pyvista_tools(folder, prm_file, pvd_fluid)
 time = np.array(particles.time_list)
 
-# Get mean pressures and void fractions on the plane at 45mm above the floating wall
+# Get properties on the plane at 45mm above the floating wall
 pressure = np.zeros(end-start)
 void_fraction = np.zeros(end-start)
 bed_height = np.zeros(end-start)
-y_values = [0.001, 0.003, 0.005, 0.007]
+y = 0.004
 
 for i in range(start, end):
 
+    print(f"Time: {time[i]:.2f} s")
     df_fluid = fluid.get_df(i)
-    sampled_pressures = []
-    sampled_void_fractions = []
-
-    for y in y_values:
-        sampled_data = df_fluid.sample_over_line([0, y, 0.045], [0.09, y, 0.045])
-        sampled_pressures.append(np.mean(sampled_data['pressure']))
-        sampled_void_fractions.append(np.mean(sampled_data['void_fraction']))
-
-    pressure[i - start] = np.mean(sampled_pressures)
-    void_fraction[i - start] = np.mean(sampled_void_fractions)
-
     df_particles = particles.get_df(i)
     df_loc = pd.DataFrame(np.copy(df_particles.points), columns=['x', 'y','z'])
+
     bed_height[i-start] = df_loc['z'].max()
+    sampled_data = df_fluid.sample_over_line([0, y, 0.045], [0.09, y, 0.045])
+    void_fraction[i - start] = np.mean(sampled_data['void_fraction'])
+    pressure[i - start] = np.mean(sampled_data['pressure'])
 
 
-
-# Plot mean pressure and void fraction over time
+# Plot mean pressure over time
 reference_pressure = pd.read_csv('reference/relative_pressure.csv')
 plt.figure()
+plt.plot(reference_pressure['t'],reference_pressure['p'], label='Reference')
 plt.plot(time[start:end],pressure-np.mean(pressure),label='Lethe')
-plt.plot(reference_pressure['t'],reference_pressure['p'], label='Ref')
 plt.legend()
-plt.xlabel('Time (s)')
-plt.ylabel('Relative pressure (Pa)')
+plt.xlabel('Time [s]')
+plt.ylabel('Relative pressure [Pa]')
 plt.xlim(3,6)
 plt.ylim(-300,300)
 plt.grid()
@@ -101,69 +97,85 @@ plt.subplots_adjust(left=0.2)
 plt.savefig('pressure-fluctuations')
 plt.show()
 
+# Plot void fraction over time
 reference_voidage = pd.read_csv('reference/voidage.csv')
 plt.figure()
+plt.plot(reference_voidage['t'],reference_voidage['voidage'], label='Reference')
 plt.plot(time[start:end],void_fraction, label='Lethe')
-plt.plot(reference_voidage['t'],reference_voidage['voidage'], label='Ref')
 plt.legend()
-plt.xlabel('Time (s)')
-plt.ylabel('Void fraction')
-plt.yticks(np.arange(0.1, 0.7, 0.1))
-plt.xticks(np.arange(2, 4, 0.25))
+plt.xlabel('Time [s]')
+plt.ylabel('Void fraction [-]')
 plt.xlim(2,4)
 plt.ylim(0.1,0.7)
 plt.grid()
 plt.savefig('void-fraction-fluctuations')
 plt.show()
 
-
-# Calculate Power Spectral Density of pressure
-reference_psd = pd.read_csv('reference/psd.csv')
+# Plot bed height
+reference_height = pd.read_csv('reference/height.csv')
 plt.figure()
-dt = time[1] - time[0]
-fs = 1 / dt
-print(fs)
-f, P = signal.periodogram(pressure-np.mean(pressure),fs)
-plt.loglog(f, P, label='Lethe')
-plt.loglog(reference_psd['f'],reference_psd['PSD'], label='Ref')
+plt.plot(reference_height['t'],reference_height['h'], label='Reference')
+plt.plot(time[start:end],bed_height, label='Lethe')
 plt.legend()
-plt.xlim(0.5, 100)
-plt.ylim(1e-1,1e7)
-plt.xlabel('frequency [Hz]')
-plt.ylabel(f'PSD $[Pa^2/Hz]$')
+plt.xlabel('Time [s]')
+plt.ylabel('Bed height [m]')
+plt.xlim(2,4)
+plt.ylim(0.08,0.18)
 plt.grid()
 plt.subplots_adjust(left=0.2)
-plt.savefig('pressure-psd')
+plt.savefig('bed-height')
 plt.show()
 
-# N = len(pressure)
-# fft_vals = np.fft.fft(pressure-np.mean(pressure))
-# fft_freqs = np.fft.fftfreq(N, 1/fs)
-# psd = (1 / (fs * N)) * np.abs(fft_vals)**2
-# psd[1:N//2] *= 2 
-# plt.loglog(fft_freqs, psd, label='Lethe')
-# plt.loglog(reference_psd['f'],reference_psd['PSD'], label='Ref')
-# plt.legend()
-# plt.xlim(0.5, 100)
-# plt.ylim(1e-1,1e7)
-# plt.xlabel('frequency [Hz]')
-# plt.ylabel(f'PSD $[Pa^2/Hz]$')
-# plt.grid()
-# plt.subplots_adjust(left=0.2)
-# plt.show()
+# Calculate Power Spectral Density of pressure
+plt.rcParams['lines.linewidth'] = 3
+# Interpolate signal to have dt=1e-3 instead of 1e-2 
+# and so fs~1000 (like experiment) instead of fs~100
+t=time[start:end]
+p=pressure - np.mean(pressure)
+f_interp = interp1d(t, p, kind='linear')
+n_steps = len(t) * 10
+x_new = np.linspace(t.min(), t.max(), n_steps)
+y_new = f_interp(x_new)
+dt = (t.max() - t.min()) / n_steps
+fs = 1/dt
 
-# reference_height = pd.read_csv('reference/height.csv')
-# plt.figure()
-# plt.plot(time[start:end],bed_height, label='Lethe')
-# plt.plot(reference_height['t'],reference_height['h'], label='Ref')
-# plt.legend()
-# plt.xlabel('Time (s)')
-# plt.ylabel('Bed height (m)')
-# plt.yticks(np.arange(0.05, 0.25, 0.05))
-# plt.xticks(np.arange(2, 4, 0.25))
-# plt.xlim(2,4)
-# plt.ylim(0.05,0.25)
-# plt.grid()
-# plt.subplots_adjust(left=0.2)
-# plt.savefig('bed-height')
-# plt.show()
+# Plot interpolation
+plt.show()
+plt.xlabel('Time [s]')
+plt.ylabel('Relative pressure [Pa]')
+plt.plot(t, p, 'b.', label='Original data')
+plt.plot(x_new, y_new, 'r-', label='Cubic interpolation')
+plt.legend()
+plt.title("Cubic interpolation of pressure signal")
+plt.grid()
+plt.tight_layout()
+plt.show()
+
+# Calculate PSD with fft
+Y = rfft(y_new)
+frequencies = rfftfreq(len(y_new), dt)
+psd = (dt/len(y_new) ) * np.abs(Y)**2
+psd[1:len(y_new)//2] *= 2 
+amplitudes = np.abs(Y)
+amplitudes[0] = 0  # Ignore DC component
+freq_dominante = frequencies[np.argmax(amplitudes)]
+f = freq_dominante
+
+# Apply filter to PSD
+psd_smoothed = gaussian_filter1d(psd, sigma=1.5)
+
+# Plot
+reference_psd = pd.read_csv('reference/psd.csv')
+plt.figure()
+plt.loglog(reference_psd['f'],reference_psd['PSD'], label='Reference')
+plt.loglog(frequencies, psd, label='Lethe')
+plt.loglog(frequencies, psd_smoothed,label='Lethe-Gauss')
+plt.xlim(0.5, 100)
+plt.xlabel("Frequency [Hz]")
+plt.ylabel(f'PSD $[Pa^2/Hz]$')
+plt.grid()
+plt.subplots_adjust(left=0.2, bottom=0.15)
+plt.tight_layout()
+plt.legend()
+plt.savefig('pressure-psd')
+plt.show() 
