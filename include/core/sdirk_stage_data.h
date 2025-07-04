@@ -21,6 +21,9 @@
 using namespace dealii;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a5c7f729 (version 3 après révision de Bruno)
 
 /**
  * @brief Structure representing a Butcher tableau for a SDIRK method.
@@ -39,8 +42,11 @@ using namespace dealii;
  * integration method and are specific to each SDIRK variant (e.g., SDIRK22,
  * SDIRK33).
  */
+<<<<<<< HEAD
 =======
 >>>>>>> 996dad99 (version 2 après révision de Bruno)
+=======
+>>>>>>> a5c7f729 (version 3 après révision de Bruno)
 struct SDIRKTable
 {
   FullMatrix<double>  A;
@@ -70,11 +76,17 @@ struct SDIRKTable
  */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Important note : the nomenclature used for the name of the SDIRK methods
 // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
 // means SDIRK with order 3 and 3 stages
 =======
 >>>>>>> 996dad99 (version 2 après révision de Bruno)
+=======
+// Important note : the nomenclature used for the name of the SDIRK methods
+// are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
+// means SDIRK with order 3 and 3 stages
+>>>>>>> a5c7f729 (version 3 après révision de Bruno)
 SDIRKTable
 sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method);
 
@@ -96,6 +108,9 @@ public:
    * solution.
    *
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a5c7f729 (version 3 après révision de Bruno)
    * These coefficients are used to compute each stage value \( \boldsymbol{z}_i
    * \) of the Runge-Kutta method according to the formula:
    *
@@ -117,8 +132,11 @@ public:
    * for the matrix and the vectors when coding start from 0.
    *
    *
+<<<<<<< HEAD
 =======
 >>>>>>> 996dad99 (version 2 après révision de Bruno)
+=======
+>>>>>>> a5c7f729 (version 3 après révision de Bruno)
    * @param[in] table The SDIRK Butcher tableau (structure containing A, b, and
    * c).
    * @param[in] stage_i Index of the stage (starting from 1) for which the data
