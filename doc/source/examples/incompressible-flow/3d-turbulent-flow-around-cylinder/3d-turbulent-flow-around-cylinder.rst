@@ -2,7 +2,7 @@
 Turbulent Flow Around a Cylinder
 =====================================
 
-This example showcases the turbulent flow around a Cylinder at :math:`Re=3900`. . It features the matrix-free solver (``lethe-fluid-matrix-free``) which is more computationally efficient when solving problems using high-order elements and fine meshes. It also demonstrates the usage of static box refinement and boundary condition refinement to statically refine a mesh. 
+This example showcases the turbulent flow around a Cylinder at :math:`Re=3900`. It features the matrix-free solver (``lethe-fluid-matrix-free``) which is more computationally efficient when solving problems using high-order elements and fine meshes. It also demonstrates the usage of static box refinement and boundary condition refinement to statically refine a mesh. 
 
 ---------
 Features
@@ -25,7 +25,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 ------------------------
 
-The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involve boundary-layer seperation, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder,  the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forcs on the body. 
+The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involve boundary-layer seperation, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder, the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forcs on the body. 
 
 This example is a canonical benchmark for LES, as explained in the book by Grinstein, Margolin and Rider [#Grinstein2007]_. It also showcases the capabilities of Lethe to statically refine the mesh a the beggining of the simulation using user-defined box refinement. The mesh is refined in the vicinity of the cylinder to capture the boundary layer and the wake region more accurately.
 
@@ -44,8 +44,7 @@ Parameter File
 Mesh
 ~~~~
 
-The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to create the flow using high-order elements.
-
+The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to create the flow using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
 .. code-block:: text
   
   subsection mesh
@@ -58,7 +57,7 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
 
 .. note::
 
-  This mesh generator is only present in the 9.7 version of the deal.II library.
+  This grid generator is only present in the 9.7 version of the deal.II library.
 
 Box refinement
 ~~~~~~~~~~~~~~~~
@@ -79,7 +78,7 @@ The ``box refinement`` subsection refines the mesh in a specific region of the d
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The ``boundary conditions`` subsection establishes the constraints on different parts of the domain: 
+The ``boundary conditions`` subsection establishes the boundary conditions:
 
 .. code-block:: text
 
@@ -118,7 +117,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
   end
 
 
-Periodic boundary conditions are applied to the front (``id=5``) and the back (``id=6``) of the domain to mimic an infinite domain in the axial direction.
+Periodic boundary conditions are applied to the front (``id=5``) and the back (``id=6``) of the domain to mimic an infinite domain along the main axis of the cylinder.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -139,13 +138,13 @@ The Reynolds number is defined as: :math:`Re = \frac{UD}{\nu}`. Since we set the
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present example consider both :math:`Q_1Q_1`, :math:`Q_2Q_2` elements and :math:`Q_3Q_3` elements. The order of the velocity and pressure interpolation can be set in the ``FEM`` subsection.
+The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present example consider both :math:`Q_1Q_1` and :math:`Q_2Q_2` elements. The order of the velocity and pressure interpolation can be set in the ``FEM`` subsection.
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1  #2 for Q3
-      set pressure order = 1  #2 for Q3
+      set velocity order = 1  
+      set pressure order = 1  
     end
 
 Forces
@@ -219,7 +218,7 @@ Results and Discussion
 
 In the following, results obtained with a box refinement of [2,3,4] and using :math:`Q_1Q_1` and :math:`Q_2Q_2` elements are presented. The results are compared with the literature, including the work of Cardell [#Cardell1993]_, Ong and Wallace [#Ong1996]_, and Norberg [#Norberg1987]_.
 
-First, the following animation displays the evolution of the velocity magnitude on a slice of the domain over time.
+First, the following animation displays the evolution of the velocity magnitude on a slice of the domain over time for a very coarse mesh (:math:`Q_1Q_1` with box refinement of 2):
 
 
 +----------------------------------------------------------------------------------------------------------------------------------------------------+
