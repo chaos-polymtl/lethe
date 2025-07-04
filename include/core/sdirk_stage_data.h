@@ -16,6 +16,24 @@
 
 using namespace dealii;
 
+
+/**
+ * @brief Structure representing a Butcher tableau for a SDIRK method.
+ *
+ * A singly diagonally implicit Runge-Kutta (SDIRK) method is defined by
+ * a Butcher tableau composed of three components:
+ *
+ * - A: a lower triangular matrix of coefficients a_ij, used to compute each
+ * stage.
+ * - b: a vector of weights b_i, used to combine the stage values into the final
+ * solution.
+ * - c: a vector of stage times c_i, indicating at which time fraction (within a
+ * time step) each stage is evaluated.
+ *
+ * These coefficients fully define the behavior of an implicit Runge-Kutta time
+ * integration method and are specific to each SDIRK variant (e.g., SDIRK22,
+ * SDIRK33).
+ */
 struct SDIRKTable
 {
   FullMatrix<double>  A;
@@ -44,6 +62,9 @@ struct SDIRKTable
  * @return SDIRKTable A structure containing the Butcher tableau (A, b, c) for the requested method.
  */
 
+// Important note : the nomenclature used for the name of the SDIRK methods
+// are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
+// means SDIRK with order 3 and 3 stages
 SDIRKTable
 sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method);
 
@@ -63,6 +84,27 @@ public:
    * - c_i: the time coefficient associated with stage i,
    * - b_i: the weight for combining the result of stage i in the final
    * solution.
+   *
+   * These coefficients are used to compute each stage value \( \boldsymbol{z}_i
+   * \) of the Runge-Kutta method according to the formula:
+   *
+   * \[
+   * \boldsymbol{z}_i = \mathcal{F}\left(t_n + c_i \Delta t, \boldsymbol{u}_n +
+   * \Delta t \sum_{j=1}^{i} a_{ij} \boldsymbol{z}_j \right)
+   * \]
+   *
+   * Then, the final solution at the next time step is obtained as:
+   *
+   * \[
+   * \boldsymbol{u}_{n+1} = \boldsymbol{u}_n + \Delta t \sum_{i=1}^{s} b_i
+   * \boldsymbol{z}_i
+   * \]
+   *
+   * where \( s \) is the total number of stages.
+   *
+   * Pay attention that the stage indices start from 1, but the but indicices
+   * for the matrix and the vectors when coding start from 0.
+   *
    *
    * @param[in] table The SDIRK Butcher tableau (structure containing A, b, and
    * c).

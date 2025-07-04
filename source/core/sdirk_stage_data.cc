@@ -50,6 +50,9 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
       return table;
     }
 
+  // Important note : the nomenclature used for the name of the SDIRK methods
+  // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
+  // means SDIRK with order 3 and 3 stages
   else if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       // SDIRK33 - 3-stage, 3rd-order L-stable method (Kennedy-Carpenter)
