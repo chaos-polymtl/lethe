@@ -59,7 +59,7 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
 
 .. note::
 
-  This grid generator is only present in the 9.7 version of the deal.II library.
+  This `custom_channel_with_cylinder` grid generator is only present in the 9.7 version of the deal.II library.
 
 Box refinement
 ~~~~~~~~~~~~~~~~
