@@ -1227,19 +1227,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
 
+  // If mortar is enabled, update mortar manager, operator, and evaluator
   if (this->simulation_parameters.mortar.enable)
-    {
-      this->mortar_coupling_evaluator->update_evaluator_data(*this->get_mapping(),
-                                                           this->dof_handler);
-      this->mortar_coupling_operator->update_operator_data(*this->get_mapping(),
-      this->dof_handler,
-      this->zero_constraints,
-      this->mortar_coupling_evaluator,
-      this->mortar_manager,
-      this->simulation_parameters.mortar.rotor_boundary_id,
-      this->simulation_parameters.mortar.stator_boundary_id,
-      this->simulation_parameters.mortar.sip_factor);
-    }
+    this->init_mortar_coupling();
     
   // Fix on the new mesh
   present_solution = tmp;
