@@ -119,12 +119,12 @@ The ``boundary conditions`` subsection establishes the boundary conditions:
   end
 
 
-Periodic boundary conditions are applied to the front (``id=5``) and the back (``id=6``) of the domain to mimic an infinite domain along the main axis of the cylinder.
+Periodic boundary conditions are applied to the front (``id=5``) and back (``id=6``) walls of the domain to mimic an infinite domain along the main axis of the cylinder.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The Reynolds number is defined as: :math:`Re = \frac{UD}{\nu}`. Since we set the values of :math:`U` and :math:`D`, the Reynold number of 3900 can be set using the kinematic viscosity: 
+The Reynolds number is defined as: :math:`Re = \frac{U_{\infty}D}{\nu}`, where :math:`U_{\infty}` is the velocity at the inlet, :math:`D` is the cylinder diameter, and :math:`\nu` is the kinematic viscosity. Since we set the values of :math:`U_{\infty}` and :math:`D`, the Reynold number of 3900 can be imposed using the kinematic viscosity: 
 
 
 .. code-block:: text
@@ -218,7 +218,7 @@ and choosing the number of processes ``n_proc`` according to the resources you h
 Results and Discussion
 ----------------------
 
-In the following, results obtained with a box refinement of [2,3,4] and using :math:`Q_1Q_1` and :math:`Q_2Q_2` elements are presented. The results are compared with the literature, including the work of Cardell [#Cardell1993]_, Ong and Wallace [#Ong1996]_, and Norberg [#Norberg1987]_.
+In the following, results obtained with a box refinement of [2,3,4] levels and using :math:`Q_1Q_1` and :math:`Q_2Q_2` elements are presented. The results are compared with the literature, including the work of Cardell [#Cardell1993]_, Ong and Wallace [#Ong1996]_, and Norberg [#Norberg1987]_.
 
 First, the following animation displays the evolution of the velocity magnitude on a slice of the domain over time for a very coarse mesh (:math:`Q_1Q_1` with box refinement of 2):
 
@@ -230,7 +230,7 @@ First, the following animation displays the evolution of the velocity magnitude 
 |                                                                                                                                                    |
 +----------------------------------------------------------------------------------------------------------------------------------------------------+
 
-The following formulas were used to compute the key validation metrics:
+The key validation metrics are:
 
 - **Strouhal number**:
 
@@ -245,16 +245,16 @@ The following formulas were used to compute the key validation metrics:
   C_d = \frac{F_x}{\frac{1}{2} \rho U_\infty^2 A}
 
 
-Where :math:`A` is the reference area. In this 3D simulation, it is taken as the product of the cylinder diameter and its span in the z-direction.
+where :math:`F_x` is the time-averaged x-component of the force at the cylinder wall, :math:`\rho` is the fluid density, and :math:`A` is the reference area. In this 3D simulation, it is taken as the product of the cylinder diameter and its span in the z-direction.
 
 - **Pressure coefficient**:
 
 .. math::
 
-  C_p = \frac{p - p_\infty}{\frac{1}{2} \rho U_\infty^2}
+  C_p = \frac{\bar{p} - p_\infty}{\frac{1}{2} \rho U_\infty^2}
 
 
-The reference pressure :math:`p_\infty` is sampled upstream of the cylinder at the inlet boundary condition.
+where :math:`\bar{p}` is the time-averaged pressure and  :math:`p_\infty` is the reference pressure sampled upstream of the cylinder at the inlet boundary condition.
 
 The drag coefficient, the Strouhal number, and the pressure coefficient are computed using the postprocessing script ``postprocess-cylinder.py``:
 
