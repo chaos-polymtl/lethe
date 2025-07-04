@@ -14,7 +14,7 @@ subsection simulation control
   set method           = bdf2
   set output name      = cylinder-Re3900
   set output path      = ./output/
-  set time end         = 200                               
+  set time end         = 200
   set adapt            = true
   set max cfl          = 1
   set time step        = 0.002
@@ -32,10 +32,10 @@ subsection restart
   set frequency  = 500
 
   # Output/input files
-  set filename   = restart
+  set filename = restart
 
   # Restarting parameter
-  set restart    = false
+  set restart = false
 end
 
 #------------------------ ---------------------------
@@ -72,17 +72,19 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-  set type               = dealii
-  set grid type          = custom_channel_with_cylinder
-  set grid arguments     = 8, 52, 25, 25 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
-  set initial boundary refinement = 1 
-  set boundaries refined = 2
+  set type                        = dealii
+  set grid type                   = custom_channel_with_cylinder
+  set grid arguments              = 8, 52, 25, 25 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
+  set initial boundary refinement = 1
+  set boundaries refined          = 2
 end
 
 #---------------------------------------------------
 # Box Refinement
 #---------------------------------------------------
+
 subsection box refinement
   subsection mesh
     set type               = dealii
@@ -98,8 +100,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 1 
-  set pressure order = 1 
+  set velocity order = 1
+  set pressure order = 1
 end
 
 #---------------------------------------------------
@@ -107,11 +109,11 @@ end
 #---------------------------------------------------
 
 subsection forces
-  set verbosity             = verbose
-  set calculate force       = true
-  set force name            = force
-  set output precision      = 10
-  set output frequency      = 10
+  set verbosity        = verbose
+  set calculate force  = true
+  set force name       = force
+  set output precision = 10
+  set output frequency = 10
 end
 
 #---------------------------------------------------
@@ -126,6 +128,7 @@ end
 #---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
   set number = 6
   subsection bc 0
@@ -141,8 +144,8 @@ subsection boundary conditions
     end
   end
   subsection bc 1
-   set type = outlet
-   set beta = 1
+    set type = outlet
+    set beta = 1
   end
   subsection bc 2
     set type = noslip
@@ -154,8 +157,8 @@ subsection boundary conditions
     set type = slip
   end
   subsection bc 5
-    set type = periodic
-    set periodic_id = 6
+    set type               = periodic
+    set periodic_id        = 6
     set periodic_direction = 2
   end
 end
@@ -184,7 +187,7 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set solver = inexact_newton
+    set solver    = inexact_newton
     set tolerance = 1e-5
     set verbosity = verbose
   end
@@ -196,19 +199,18 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method            = gmres
-    set max iters         = 500
-    set relative residual = 1e-3
-    set minimum residual  = 5e-6
-    set preconditioner    = gcmg
-    set verbosity         = verbose
+    set method             = gmres
+    set max iters          = 500
+    set relative residual  = 1e-3
+    set minimum residual   = 5e-6
+    set preconditioner     = gcmg
+    set verbosity          = verbose
     set max krylov vectors = 500
 
     # MG parameters
     set mg verbosity                   = verbose
     set mg enable hessians in jacobian = false
     set mg coarse grid use fe q iso q1 = true
-
 
     # Smoother
     set mg smoother iterations          = 10
