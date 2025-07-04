@@ -2,7 +2,7 @@
 Turbulent Flow Around a Cylinder
 =====================================
 
-This example showcases the turbulent flow around a Cylinder at :math:`Re=3900`. It features the matrix-free solver (``lethe-fluid-matrix-free``) which is more computationally efficient when solving problems using high-order elements and fine meshes. It also demonstrates the usage of static box refinement and boundary condition refinement to statically refine a mesh. 
+This example showcases the turbulent flow around a cylinder at :math:`Re=3900`. It features the matrix-free solver (``lethe-fluid-matrix-free``) which is more computationally efficient when solving problems using high-order elements and fine meshes. It also demonstrates the usage of static box refinement and boundary condition refinement to statically refine a mesh. 
 
 ---------
 Features
@@ -10,7 +10,7 @@ Features
 
 - Solvers: ``lethe-fluid-matrix-free`` (with Q1-Q1 and Q2-Q2)
 - Transient problem using ``bdf2`` time integrator
-- Static mesh refinement using the ``box refinement`` feature :doc:`../../../parameters/cfd/box_refinement`
+- Static mesh refinement using the :doc:`../../../parameters/cfd/box_refinement` feature
 
 ---------------------------
 Files Used in This Example
@@ -25,7 +25,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 ------------------------
 
-The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involve boundary-layer seperation, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder, the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forcs on the body. 
+The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involves boundary-layer separation, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder, the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forces on the body. 
 
 This example is a canonical benchmark for LES, as explained in the book by Grinstein, Margolin and Rider [#Grinstein2007]_. It also showcases the capabilities of Lethe to statically refine the mesh a the beggining of the simulation using user-defined box refinement. The mesh is refined in the vicinity of the cylinder to capture the boundary layer and the wake region more accurately.
 
@@ -44,7 +44,7 @@ Parameter File
 Mesh
 ~~~~
 
-The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to create the flow using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
+The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the functionality `custom_channel_with_cylinder`  of the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to discretize the domain using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
 
 .. code-block:: text
   
