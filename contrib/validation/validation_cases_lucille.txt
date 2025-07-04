@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: Copyright (c) 2020-2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This file contains the list of validation test cases used in the large-scale validation cases for lethe
+# The cases assume that the validation is ran from the root folder of the lethe source code
+# For every cases, the path of the vase must be specified followed by the number of processors with which
+# the case must be ran. The file allows for comments, which are specified by a "#"
+
+examples/incompressible-flow/2d-lid-driven-cavity 1
+examples/incompressible-flow/2d-taylor-couette 1
+examples/incompressible-flow/3d-taylor-green-vortex 128
+examples/multiphysics/rising-bubble 128
+examples/dem/3d-rectangular-hopper 64
+examples/dem/3d-rotating-drum 128
+
+
