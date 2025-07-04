@@ -1,0 +1,228 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set output name      = cylinder-Re3900
+  set output path      = ./output/
+  set time end         = 200
+  set adapt            = true
+  set max cfl          = 1
+  set time step        = 0.002
+  set output frequency = 500
+  set subdivision      = 1
+end
+
+#---------------------------------------------------
+# Checkpointing
+#---------------------------------------------------
+
+subsection restart
+  # Checkpointing parameters
+  set checkpoint = true
+  set frequency  = 500
+
+  # Output/input files
+  set filename = restart
+
+  # Restarting parameter
+  set restart = false
+end
+
+#------------------------ ---------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 2.5641025e-04
+  end
+end
+
+#---------------------------------------------------
+# Initial conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                        = dealii
+  set grid type                   = custom_channel_with_cylinder
+  set grid arguments              = 8, 52, 25, 25 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
+  set initial boundary refinement = 1
+  set boundaries refined          = 2
+end
+
+#---------------------------------------------------
+# Box Refinement
+#---------------------------------------------------
+
+subsection box refinement
+  subsection mesh
+    set type               = dealii
+    set grid type          = subdivided_hyper_rectangle
+    set grid arguments     = 1,1,1 : -2, -3, -1 : 52,3,5 : false
+    set initial refinement = 0
+  end
+  set initial refinement = 2
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+
+subsection forces
+  set verbosity        = verbose
+  set calculate force  = true
+  set force name       = force
+  set output precision = 10
+  set output frequency = 10
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set calculate average velocities      = true
+  set initial time for average velocity = 25
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set type = outlet
+    set beta = 1
+  end
+  subsection bc 2
+    set type = noslip
+  end
+  subsection bc 3
+    set type = slip
+  end
+  subsection bc 4
+    set type = slip
+  end
+  subsection bc 5
+    set type               = periodic
+    set periodic_id        = 6
+    set periodic_direction = 2
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set solver    = inexact_newton
+    set tolerance = 1e-5
+    set verbosity = verbose
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method             = gmres
+    set max iters          = 500
+    set relative residual  = 1e-3
+    set minimum residual   = 5e-6
+    set preconditioner     = gcmg
+    set verbosity          = verbose
+    set max krylov vectors = 500
+
+    # MG parameters
+    set mg verbosity                   = verbose
+    set mg enable hessians in jacobian = false
+    set mg coarse grid use fe q iso q1 = true
+
+    # Smoother
+    set mg smoother iterations          = 10
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse diagonal
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = verbose
+
+    #coarse-grid solver
+    set mg coarse grid solver = amg
+  end
+end
