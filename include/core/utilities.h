@@ -806,6 +806,12 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const std::string        &file_name);
 
 /**
+ * @brief Delete vtu and pvd files
+ */
+void
+delete_vtu_and_pvd_files(const std::string &output_path);
+
+/**
  * @brief Converts point to radius
  * @param[in] point Point in cartesian coordinates (x-y plane)
  * @param[in] center_of_rotation Reference point
