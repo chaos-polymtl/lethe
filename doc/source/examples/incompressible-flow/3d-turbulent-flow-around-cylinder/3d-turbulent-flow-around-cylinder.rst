@@ -79,6 +79,15 @@ The ``box refinement`` subsection refines the mesh in a specific region of the d
     set initial refinement = 2
   end
 
+A slice of the final mesh obtained from both the initial boundary refinement and the box refinement is shown in the following figure:
+
+.. image:: images/mesh.png
+  :alt: Mesh used for the simulation
+  :align: center
+  :name: cylinder_mesh
+  :height: 13cm
+
+
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
