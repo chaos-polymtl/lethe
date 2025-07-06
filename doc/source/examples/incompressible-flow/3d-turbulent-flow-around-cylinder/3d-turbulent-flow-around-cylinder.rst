@@ -37,6 +37,8 @@ The simulation set-up as well as the boundary ids are illustrated in the followi
   :name: geometry
   :height: 9cm
 
+Without loss of generality, :math:`u_\infty` is set to 1 and the cylinder diameter :math:`D` is set to 1. The Reynolds number is defined as :math:`Re = \frac{U_{\infty}D}{\nu}`, where :math:`\nu` is the kinematic viscosity. The kinematic viscosity is set to :math:`\nu=2.5641025e-04`, which results in a Reynolds number of 3900.
+
 --------------
 Parameter File
 --------------
@@ -49,17 +51,17 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
 .. code-block:: text
   
   subsection mesh
-    set type               = dealii
-    set grid type          = custom_channel_with_cylinder
-    set grid arguments     = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
+    set type                        = dealii
+    set grid type                   = uniform_channel_with_cylinder
+    set grid arguments              = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
     set initial boundary refinement = 1 
-    set boundaries refined = 2
+    set boundaries refined          = 2
   end
 
 
 .. note::
 
-  This `custom_channel_with_cylinder` grid generator is only present in the 9.7 version of the deal.II library.
+  This `uniform_channel_with_cylinder` grid generator is only present in the 9.7 version of the deal.II library.
 
 Box refinement
 ~~~~~~~~~~~~~~~~
@@ -157,10 +159,10 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 .. code-block:: text
 
   subsection forces
-    set verbosity             = verbose
-    set calculate force       = true
-    set output precision      = 10
-    set output frequency      = 10
+    set verbosity        = verbose
+    set calculate force  = true
+    set output precision = 10
+    set output frequency = 10
   end
 
 By setting ``calculate force = true``, the calculation of the force resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. 
@@ -169,14 +171,14 @@ By setting ``calculate force = true``, the calculation of the force resulting fr
 Post-processing
 ~~~~~~~~~~~~~~~
 
+To monitor the average velocity and pressure, we set ``calculate average velocities = true`` in the post-processing subsection. The average velocity is computed starting from the time step specified by ``initial time for average velocity = 25``. This allows us to focus on the statistically steady state of the flow. 
+
 .. code-block:: text
 
   subsection post-processing
     set calculate average velocities      = true
     set initial time for average velocity = 25
   end
-
-To monitor the average velocity and pressure, we set ``calculate average velocities = true``. The average velocity is computed starting from the time step specified by ``initial time for average velocity = 25``. This allows us to focus on the statistically steady state of the flow. 
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
@@ -237,6 +239,8 @@ The key validation metrics are:
 .. math::
 
   St = \frac{f D}{U_\infty}
+
+where :math:`f` is the frequency of vortex shedding, :math:`D` is the cylinder diameter, and :math:`U_\infty` is the free-stream velocity. T The frequency of vortex shedding is determined using a Fast Fourier Transform (FFT) of the lift force.
 
 - **Drag coefficient**:
 
