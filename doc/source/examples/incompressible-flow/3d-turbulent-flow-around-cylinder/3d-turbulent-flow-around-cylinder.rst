@@ -318,6 +318,8 @@ Possibilities for Extension
 References
 ------------
 
+.. [#Grinstein2007] F. Grinstein, L. Margolin, W. J. Rider, *Implicit large eddy simulation*, Cambridge University Press (2007).
+
 .. [#Cardell1993] G.S. Cardell, *Flow past a circular cylinder with a permeable splitter plate*, Ph.D. Thesis, Graduate Aeronautical Laboratories, California Institute of Technology, 1993.
 
 .. [#Ong1996] J. Ong and L. Wallace, *The velocity field of the turbulent very near wake of a circular cylinder*, Exp. Fluids 20, 441 (1996).
@@ -325,5 +327,3 @@ References
 .. [#Norberg1987] C. Norberg, *Effects of Reynolds number and a low-intensity freestream turbulence on the flow around a circular cylinder*, Publication No. 87/2, Department of Applied Thermodynamics and Fluid Mechanics, Chalmers University of Technology, Gothenburg, Sweden, 1987.
 
 .. [#Norberg1994] C. Norberg, *Experimental investigation of the flow around a circular cylinder: influence of aspect ratio*, J. Fluid Mech. 258, 287–316 (1994).
-
-.. [#Grinstein2007] F. Grinstein, L. Margolin, W. J. Rider, *Implicit large eddy simulation*, Cambridge University Press (2007).
