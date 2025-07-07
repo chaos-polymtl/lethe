@@ -2732,7 +2732,7 @@ namespace Parameters
                           "Preconditioner of smoother");
 
         prm.declare_entry("mg smoother eig estimation",
-                          "false",
+                          "true",
                           Patterns::Bool(),
                           "estimate eigenvalues for relaxation parameter");
 

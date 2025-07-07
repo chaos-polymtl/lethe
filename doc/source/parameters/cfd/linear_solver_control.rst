@@ -216,7 +216,7 @@ Different parameters for the main components of the two geometric multigrid algo
     # Relaxation smoother parameters
     set mg smoother iterations          = 10
     set mg smoother relaxation          = 0.5
-    set mg smoother eig estimation      = false #if set to true, previous parameter is not used
+    set mg smoother eig estimation      = true #if set to true, previous parameter is not used
     set mg smoother preconditioner type = inverse diagonal
 
     # Eigenvalue estimation parameters
