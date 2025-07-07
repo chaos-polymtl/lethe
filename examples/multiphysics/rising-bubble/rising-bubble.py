@@ -282,7 +282,7 @@ for i in range(n):
     if (args.validate):
         solution = np.column_stack((x, y))
         np.savetxt("solution-contour-case" + str(case_number) + ".dat", solution, header="x y")
-        fig2.savefig("bubble-contour-case" + str(case_number) + ".png")
+        fig2.savefig("bubble-contour-case" + str(case_number) + ".pdf")
     else:
         fig2.savefig(fig_name[i] + "-bubble-contour-case" + str(case_number) + ".png",dpi=300)
         plt.show()
