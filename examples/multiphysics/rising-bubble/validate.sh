@@ -8,10 +8,10 @@
 . ../../../contrib/validation/validation_functions.sh
 
 # Store filenames of all plots in a variable (space-seperated)
-plots="bubble-rise-barycenter.pdf bubble-rise-velocity.pdf bubble-contour.pdf"
+plots="bubble-rise-barycenter-case1.pdf bubble-rise-velocity-case1.pdf bubble-contour-case1.pdf geo-mass-conservation-case1.pdf global-mass-conservation-case1.pdf"
 
 # Store filenames of all data files in a variable (space-seperated)
-data="solution-barycenter.dat solution-contour.dat solution-velocity.dat"
+data="solution-contour-case1-Geometric.dat solution-contour-case1-PDE-based.dat solution-contour-case1-Projection.dat
 
 # Default path
 output_root="./"
@@ -23,13 +23,15 @@ n_proc=16
 parse_command_line "$@"
 
 folder="$output_root/rising-bubble"
-action="mpirun -np $n_proc lethe-fluid rising-bubble.prm" 
+action="mpirun -np $n_proc lethe-fluid rising-bubble-proj.prm" 
+action="mpirun -np $n_proc lethe-fluid rising-bubble-geo.prm" 
+action="mpirun -np $n_proc lethe-fluid rising-bubble-alge.prm" 
 recreate_folder "$folder"
 
 { time $action ; } &> "$folder/log"
 
 # Process the simulation
-python3 rising-bubble.py -f output  --validate -c 1
+python3 ./rising-bubble.py -s rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1 --validate
 
 # Copy the information to the log folder
 cp $plots $folder

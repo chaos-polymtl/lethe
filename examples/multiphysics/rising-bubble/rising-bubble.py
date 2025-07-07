@@ -156,8 +156,12 @@ elif case_number ==2 :
 ax0.set_ylabel(r'Barycenter height [L]')
 ax0.set_xlabel(r'Rising time [T]')
 ax0.legend(loc="upper left")
-fig0.savefig(f'./ymean-t-case' + str(case_number) + '.png',dpi=300)
-plt.show()
+if (args.validate):
+  
+  fig0.savefig(f'./ymean-t-case' + str(case_number) + '.pdf')
+else:  
+  fig0.savefig(f'./ymean-t-case' + str(case_number) + '.png',dpi=300)
+  plt.show()
 
 # Plot the velocity
 fig1 = plt.figure()
@@ -184,8 +188,11 @@ elif case_number == 2 :
 ax1.set_ylabel(r'Rise velocity [LT$^{-1}$]')
 ax1.set_xlabel(r'Rising time [T]')
 ax1.legend(loc=4)
-fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.png',dpi=300)
-plt.show()
+if (args.validate):
+  fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.pdf')
+else:
+  fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.png',dpi=300)
+  plt.show()
 
 # Plot the contour of the bubble in the last frame
 if has_proj:
@@ -247,7 +254,10 @@ for i in range(n):
     ax2= fig2.add_subplot(111)
     
     ax2.scatter(x[i], y[i], s=2, marker="s", color=colors[i], label=label[i], linewidths=1)
-    
+    if (args.validate):
+        solution = np.column_stack((x[i], y[i]))
+        np.savetxt("solution-contour-case" + str(case_number) + "-" + label[i] + ".dat", solution, header="x y")
+
     if case_number == 1 :
 
         ax2.plot(df_contour_ZKR['x'], df_contour_ZKR['y'], '-k',
@@ -280,8 +290,6 @@ for i in range(n):
     ax2.grid( which='major', color='grey', linestyle='--')
 
     if (args.validate):
-        solution = np.column_stack((x, y))
-        np.savetxt("solution-contour-case" + str(case_number) + ".dat", solution, header="x y")
         fig2.savefig("bubble-contour-case" + str(case_number) + ".pdf")
     else:
         fig2.savefig(fig_name[i] + "-bubble-contour-case" + str(case_number) + ".png",dpi=300)
@@ -293,6 +301,9 @@ if n > 1:
     ax2= fig2.add_subplot(111)
     for i in range(len(x)):
         ax2.scatter(x[i], y[i], s=1, marker="s", color=colors[i], label=label[i], linewidths=1)
+        if (args.validate):
+            solution = np.column_stack((x[i], y[i]))
+            np.savetxt("solution-contour-case" + str(case_number) + "-" + label[i] + ".dat", solution, header="x y")
 
     ax2.set_xlabel(r'x [L]')
     ax2.set_ylabel(r'y [L]')
@@ -304,9 +315,11 @@ if n > 1:
     if case_number == 2 :
         ax2.set_xlim([0,1])
         ax2.set_ylim([0.5,1.4])    
-        
-    fig2.savefig("bubble-contour-case" + str(case_number) + ".png",dpi=300)
-    plt.show()
+    if (args.validate):
+      fig2.savefig("bubble-contour-case" + str(case_number) + ".pdf")
+    else:
+      fig2.savefig("bubble-contour-case" + str(case_number) + ".png",dpi=300)
+      plt.show()
     
 # Plot the mass conservation for the global and local mass
 fig3 = plt.figure()
@@ -329,8 +342,11 @@ ax3.set_ylabel(r'$V/{V_\mathrm{0}}[-]$')
 ax3.set_xlabel(r'Rising time [T]')
 ax3.ticklabel_format(useOffset=False, style='plain', axis='y')
 ax3.legend(loc="upper left")
-fig3.savefig(f'./global-mass-conservation-case' + str(case_number) + '.png',dpi=300)
-plt.show()
+if (args.validate):
+  fig3.savefig(f'./global-mass-conservation-case' + str(case_number) + '.pdf')
+else:
+  fig3.savefig(f'./global-mass-conservation-case' + str(case_number) + '.png',dpi=300)
+  plt.show()
 
 fig4 = plt.figure()
 ax4 = fig4.add_subplot(111)
@@ -352,5 +368,8 @@ ax4.set_ylabel(r'$V/{V_\mathrm{0}}[-]$')
 ax4.set_xlabel(r'Rising time [T]')
 ax4.ticklabel_format(useOffset=False, style='plain', axis='y')
 ax4.legend(loc="upper left")
-fig4.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.png',dpi=300)
-plt.show()
+if (args.validate):
+  fig3.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.pdf')
+else:
+  fig4.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.png',dpi=300)
+  plt.show()
