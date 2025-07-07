@@ -301,7 +301,7 @@ for i in range(n):
     ax2.grid( which='major', color='grey', linestyle='--')
 
     if (args.validate):
-        fig2.savefig("bubble-contour-case" + str(case_number) + ".pdf")
+        fig2.savefig(fig_name[i] +"-bubble-contour-case" + str(case_number) + ".pdf")
     else:
         fig2.savefig(fig_name[i] + "-bubble-contour-case" + str(case_number) + ".png",dpi=300)
         plt.show()

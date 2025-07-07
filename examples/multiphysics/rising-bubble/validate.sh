@@ -8,7 +8,7 @@
 . ../../../contrib/validation/validation_functions.sh
 
 # Store filenames of all plots in a variable (space-seperated)
-plots="bubble-barycenter-case1.pdf bubble-velocity-case1.pdf bubble-contour-case1.pdf geo-mass-conservation-case1.pdf global-mass-conservation-case1.pdf"
+plots="bubble-barycenter-case1.pdf bubble-velocity-case1.pdf alge-bubble-contour-case1.pdf geo-bubble-contour-case1.pdf proj-bubble-contour-case1.pdf bubble-contour-case1.pdf geo-mass-conservation-case1.pdf global-mass-conservation-case1.pdf"
 
 # Store filenames of all data files in a variable (space-seperated)
 data="solution-contour-case1-Geometric.dat solution-contour-case1-PDE-based.dat solution-contour-case1-Projection.dat solution-barycenter-case1-Geometric.dat solution-barycenter-case1-PDE-based.dat solution-barycenter-case1-Projection.dat solution-velocity-case1-Geometric.dat solution-velocity-case1-PDE-based.dat solution-velocity-case1-Projection.dat"
