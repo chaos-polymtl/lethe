@@ -22,12 +22,15 @@ n_proc=16
 parse_command_line "$@"
 
 folder="$output_root/rising-bubble"
-action="mpirun -np $n_proc lethe-fluid rising-bubble-proj.prm" 
-action="mpirun -np $n_proc lethe-fluid rising-bubble-geo.prm" 
-action="mpirun -np $n_proc lethe-fluid rising-bubble-alge.prm" 
+action_proj="mpirun -np $n_proc lethe-fluid rising-bubble-proj.prm" 
+action_geo="mpirun -np $n_proc lethe-fluid rising-bubble-geo.prm" 
+action_alge="mpirun -np $n_proc lethe-fluid rising-bubble-alge.prm" 
 recreate_folder "$folder"
 
-{ time $action ; } &> "$folder/log"
+{ time $action_proj ; } &> "$folder/log-proj"
+{ time $action_geo ; } &> "$folder/log-geo"
+{ time $action_alge ; } &> "$folder/log-alge"
+
 
 # Process the simulation
 python3 ./rising-bubble.py -s rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1 --validate
