@@ -157,8 +157,13 @@ ax0.set_ylabel(r'Barycenter height [L]')
 ax0.set_xlabel(r'Rising time [T]')
 ax0.legend(loc="upper left")
 if (args.validate):
-  
-  fig0.savefig(f'./ymean-t-case' + str(case_number) + '.pdf')
+  solution = np.column_stack((t_proj, y_proj))
+  np.savetxt("solution-barycenter-case" + str(case_number) + "-" + "Projection" + ".dat", solution, header="t y") 
+  solution = np.column_stack((t_geo, y_geo))
+  np.savetxt("solution-barycenter-case" + str(case_number) + "-" + "Geometric" + ".dat", solution, header="t y") 
+  solution = np.column_stack((t_alge, y_alge))
+  np.savetxt("solution-barycenter-case" + str(case_number) + "-" + "PDE-based" + ".dat", solution, header="t y") 
+  fig0.savefig(f'./bubble-barycenter-case' + str(case_number) + '.pdf')
 else:  
   fig0.savefig(f'./ymean-t-case' + str(case_number) + '.png',dpi=300)
   plt.show()
@@ -189,6 +194,12 @@ ax1.set_ylabel(r'Rise velocity [LT$^{-1}$]')
 ax1.set_xlabel(r'Rising time [T]')
 ax1.legend(loc=4)
 if (args.validate):
+  solution = np.column_stack((t_proj, vy_proj))
+  np.savetxt("solution-velocity-case" + str(case_number) + "-" + "Projection" + ".dat", solution, header="t vy") 
+  solution = np.column_stack((t_geo, vy_geo))
+  np.savetxt("solution-velocity-case" + str(case_number) + "-" + "Geometric" + ".dat", solution, header="t vy") 
+  solution = np.column_stack((t_alge, vy_alge))
+  np.savetxt("solution-velocity-case" + str(case_number) + "-" + "PDE-based" + ".dat", solution, header="t vy") 
   fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.pdf')
 else:
   fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.png',dpi=300)
