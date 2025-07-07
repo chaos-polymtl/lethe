@@ -399,6 +399,13 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
             }
         }
 
+      if (is_sdirk(this->simulation_control->get_assembly_method()))
+        {
+          this->assemblers.emplace_back(
+            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
+              this->simulation_control));
+        }
+
       // Rotating frame sources term
       if (this->simulation_parameters.velocity_sources.rotating_frame_type ==
           Parameters::VelocitySource::RotatingFrameType::srf)

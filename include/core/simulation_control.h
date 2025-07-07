@@ -5,6 +5,7 @@
 #define lethe_simulation_control_h
 
 #include <core/bdf.h>
+#include <core/sdirk_stage_data.h>
 #include <core/parameters.h>
 
 /**
@@ -212,6 +213,13 @@ public:
              Parameters::SimulationControl::TimeSteppingMethod::steady_bdf ||
            method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
            method == Parameters::SimulationControl::TimeSteppingMethod::bdf3;
+  }
+
+  bool
+  is_sdirk()
+  {
+    return method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
+           method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||;
   }
 
 
