@@ -33,7 +33,7 @@ recreate_folder "$folder"
 
 
 # Process the simulation
-python3 ./rising-bubble.py -s rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1 --validate
+python3 ./rising-bubble.py -p rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1 --validate
 
 # Copy the information to the log folder
 cp $plots $folder
