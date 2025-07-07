@@ -64,4 +64,4 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
-* `Alphonius, A., Barbeau, L., Blais, B., Gaboriault, O., Guévremont, O., Lamouche, J., Laurentin, P., Marquis, O., Munch, P., Oliveira Ferreira, V. and Papillon-Laroche, H., Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows. SSRN 5090483. <https://dx.doi.org/10.2139/ssrn.5090483>`_
+* `A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont, J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira, H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant, Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows. SSRN 5090483. <https://dx.doi.org/10.2139/ssrn.5090483>`_
