@@ -2,7 +2,7 @@
 Pseudo-2D Gas-Solid Fluidized Bed
 ==================================
 
-This example simulates the fluidization of a particle bed in air. It is based on the pseudo-2D experimental set-up used by B.G.M. van Wachem *et al* [#Wachem2001]_ to validate their two-dimensional fluidized bed simulations.
+This example simulates the fluidization of a particle bed in gas. It is based on the pseudo-2D experimental set-up used by B.G.M. van Wachem *et al* [#Wachem2001]_ to validate their two-dimensional fluidized bed simulations.
 
 ----------------------------------
 Features
