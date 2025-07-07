@@ -1,0 +1,141 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set output name       = mms-mortar_output
+  set number mesh adapt = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.0
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type      = dealii
+  set grid type = hyper_cube_with_cylindrical_hole
+  set grid arguments = 0.5 : 1 : 0 : 1 : false
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Mortar
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type                   = dealii
+    set grid type              = hyper_ball_balanced
+    set grid arguments         = 0.0, 0.0 : 0.5
+    set initial refinement     = 1
+    set initial rotation angle = 0
+  end
+  set rotor boundary id   = 2
+  set stator boundary id  = 1
+  set center of rotation  = 0, 0
+  set penalty factor      = 1
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 2
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = none
+  end
+  subsection bc 2
+    set id   = 2
+    set type = none
+  end
+end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable              = true
+    set Function constants  = nu=1
+    set Function expression = pi*sin(pi*y)*(-16*pi*nu*sin(pi*x)*sin(pi*x)*cos(pi*y)+ 4*pi*nu*cos(pi*y)+4*sin(pi*x)*sin(pi*x)*sin(pi*x)*sin(pi*y)*cos(pi*x)+cos(pi*x)); pi*sin(pi*x)*(16*pi*nu*sin(pi*y)*sin(pi*y)*cos(pi*x)- 4*pi*nu*cos(pi*x)+4*sin(pi*x)*sin(pi*y)*sin(pi*y)*sin(pi*y)*cos(pi*y)+cos(pi*y)); 0
+  end
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = -2*sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; 2*cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)*sin(pi*y)
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity 	= quiet
+    set tolerance 	= 1e-10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set preconditioner              = amg
+    set amg preconditioner ilu fill = 3
+    set verbosity                   = quiet
+  end
+end
