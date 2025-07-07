@@ -15,7 +15,6 @@ data="solution-contour-case1-Geometric.dat solution-contour-case1-PDE-based.dat 
 
 # Default path
 output_root="./"
-solution-barycenter-case1-Geometric.datu
 # Default number of cores
 n_proc=16
 
