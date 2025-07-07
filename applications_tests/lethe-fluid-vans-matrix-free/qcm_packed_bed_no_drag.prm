@@ -173,5 +173,9 @@ subsection linear solver
     set preconditioner     = gcmg
     set verbosity          = quiet
     set max krylov vectors = 1000
+  
+    #MG parameters
+    set mg verbosity               = verbose
+    set eig estimation verbosity   = quiet
   end
 end
