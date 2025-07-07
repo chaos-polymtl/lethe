@@ -200,7 +200,7 @@ if (args.validate):
   np.savetxt("solution-velocity-case" + str(case_number) + "-" + "Geometric" + ".dat", solution, header="t vy") 
   solution = np.column_stack((t_alge, vy_alge))
   np.savetxt("solution-velocity-case" + str(case_number) + "-" + "PDE-based" + ".dat", solution, header="t vy") 
-  fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.pdf')
+  fig1.savefig(f'./bubble-velocity-case' + str(case_number) + '.pdf')
 else:
   fig1.savefig(f'./bubble-rise-velocity-case' + str(case_number) + '.png',dpi=300)
   plt.show()
