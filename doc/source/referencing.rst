@@ -7,6 +7,8 @@ If you write a paper using results obtained with the help of Lethe or use Lethe 
 Main Articles
 ---------------
 
+* `A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont, J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira, H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant, Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows. SSRN 5090483. <https://dx.doi.org/10.2139/ssrn.5090483>`_
+
 * `B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, and J. Chaouki, “Lethe: An open-source parallel high-order adaptative CFD solver for Incompressible flows”, SoftwareX, 12, 100579, 2020 <https://www.sciencedirect.com/science/article/pii/S2352711020302922?via%3Dihub>`_. 
 
 Discrete Element Method
@@ -34,8 +36,13 @@ Sharp-Edge Immersed Boundary Method
 
 * `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Pore-resolved CFD in Digital Twin of Porous Monoliths Reconstructed by Micro-computed Tomography,” arXiv.org, 2024 <https://doi.org/10.48550/arXiv.2408.04711>`_.
 
+Matrix-Free
+-----------
+
+* `L. Prieto Saavedra, P. Munch, and B. Blais, "A Matrix-Free Stabilized Solver for the Incompressible Navier-Stokes Equations", Journal of Computational Physics, p. 114186, 2025 <https://doi.org/10.1016/j.jcp.2025.114186>`_.
+
 Nitsche Immersed Boundary Method
-------------------------------------
+---------------------------------
 
 * `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais, "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", Journal of Computational Physics, 2023 <https://doi.org/10.1016/j.jcp.2023.112189>`_.
 
