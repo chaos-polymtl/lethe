@@ -36,7 +36,7 @@ show_help() {
     echo
     echo "Options:"
     echo "  -h, --help       Display this help message"
-    echo "  -i, --input      Specify the input file with the list of cases to validate (default: validation_cases.txt)"
+    echo "  -i, --input      Specify the input file containing the list of cases to validate (default: validation_cases.txt)"
     echo "  -o, --output     Specify the absolute path directory for validation results"
     echo "  -f, --force      Do not ask for confirmation when erasing the contents of the output folder or proceeding with the validation" 
     echo 
