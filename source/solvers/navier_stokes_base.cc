@@ -1227,10 +1227,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
 
-  // If mortar is enabled, update mortar manager, operator, and evaluator
-  if (this->simulation_parameters.mortar.enable)
-    this->init_mortar_coupling();
-    
   // Fix on the new mesh
   present_solution = tmp;
 
