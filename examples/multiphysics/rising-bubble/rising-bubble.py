@@ -380,7 +380,7 @@ ax4.set_xlabel(r'Rising time [T]')
 ax4.ticklabel_format(useOffset=False, style='plain', axis='y')
 ax4.legend(loc="upper left")
 if (args.validate):
-  fig3.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.pdf')
+  fig4.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.pdf')
 else:
   fig4.savefig(f'./geo-mass-conservation-case' + str(case_number) + '.png',dpi=300)
   plt.show()
