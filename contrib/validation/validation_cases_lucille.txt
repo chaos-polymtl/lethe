@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This file contains the list of validation test cases used in the large-scale validation of Lethe
-# The cases assume that the validation is ran from the root folder of the lethe source code
+# The cases assume that the validation is ran from the root folder of the Lethe source code
 # For every cases, the path of the case must be specified followed by the number of processors with which
 # the case must be ran. The file allows for comments, which are specified by a "#"
 
