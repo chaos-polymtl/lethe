@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-07-08
+
+### Fixed
+
+- MINOR The center of rotation of the rotor was not being accounted for in the MortarManagerBase, which has been fixed. Two application tests for a MMS with mortar have also been added. [#1575](https://github.com/chaos-polymtl/lethe/pull/1575)
+
 ## [Master] - 2025-07-03
 
 ### Added

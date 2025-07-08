@@ -502,7 +502,7 @@ template <int dim>
 double
 MortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
 {
-  return point_to_angle(point);
+  return point_to_angle(point, this->center_of_rotation);
 }
 
 template <int dim>
