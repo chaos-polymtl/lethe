@@ -25,9 +25,9 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 ------------------------
 
-The flow around bluff bodies such as a cylinder is quite complicated and it often used as a benchmark problem for CFD. Such flow typically involves boundary-layer separation, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder, the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forces on the body. 
+The flow around bluff bodies such as a cylinder is quite complicated and it is often used as a benchmark problem for CFD. Such flow typically involves boundary-layer separation, flow-regime transition, transition to turbulence, vortex shedding and coherent structures. If the body is symmetric, as is the case for a cylinder, the wake usually exhibits self-induced periodicity from vortices being shed from alternate sides of the body, generating fluctuating forces on the body. 
 
-This example is a canonical benchmark for LES, as explained in the book by Grinstein, Margolin and Rider [#Grinstein2007]_. It also showcases the capabilities of Lethe to statically refine the mesh a the beggining of the simulation using user-defined box refinement. The mesh is refined in the vicinity of the cylinder to capture the boundary layer and the wake region more accurately.
+This example is a canonical benchmark for LES, as explained in the book by Grinstein, Margolin and Rider [#Grinstein2007]_. It also showcases the capabilities of Lethe to statically refine the mesh a the beginning of the simulation using user-defined box refinement. The mesh is refined in the vicinity of the cylinder to capture the boundary layer and the wake region more accurately.
 
 The simulation set-up as well as the boundary ids are illustrated in the following figure:
 
@@ -37,7 +37,7 @@ The simulation set-up as well as the boundary ids are illustrated in the followi
   :name: geometry
   :height: 9cm
 
-Without loss of generality, :math:`u_\infty` is set to 1 and the cylinder diameter :math:`D` is set to 1. The Reynolds number is defined as :math:`Re = \frac{U_{\infty}D}{\nu}`, where :math:`\nu` is the kinematic viscosity. The kinematic viscosity is set to :math:`\nu=2.5641025e-04`, which results in a Reynolds number of 3900.
+Without loss of generality, :math:`U_\infty` is set to 1 and the cylinder diameter :math:`D` is set to 1. The Reynolds number is defined as :math:`Re = \frac{U_{\infty}D}{\nu}`, where :math:`\nu` is the kinematic viscosity. The kinematic viscosity is set to :math:`\nu=2.5641025\times 10^{-4}`, which results in a Reynolds number of 3900.
 
 --------------
 Parameter File
@@ -46,14 +46,14 @@ Parameter File
 Mesh
 ~~~~
 
-The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the functionality `custom_channel_with_cylinder`  of the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to discretize the domain using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
+The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the functionality ``uniform_channel_with_cylinder``  of the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to discretize the domain using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
 
 .. code-block:: text
   
   subsection mesh
     set type                        = dealii
     set grid type                   = uniform_channel_with_cylinder
-    set grid arguments              = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
+    set grid arguments              = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false : true
     set initial boundary refinement = 1 
     set boundaries refined          = 2
   end
@@ -61,7 +61,7 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
 
 .. note::
 
-  This `uniform_channel_with_cylinder` grid generator is only present in the 9.7 version of the deal.II library.
+  This ``uniform_channel_with_cylinder`` grid generator is only present in the 9.7 version of the deal.II library.
 
 Box refinement
 ~~~~~~~~~~~~~~~~
@@ -73,7 +73,7 @@ The ``box refinement`` subsection refines the mesh in a specific region of the d
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
-      set grid arguments     = 1,1,1 : -2, -3, -1 : 52,3,5 : false
+      set grid arguments     = 1, 1, 1 : -2, -3, -1 : 52, 3, 5 : false
       set initial refinement = 0
     end
     set initial refinement = 2
@@ -223,7 +223,7 @@ and choosing the number of processes ``n_proc`` according to the resources you h
 
 .. note::
 
-  THe simulation takes approximatively 10 hours on 16 cores of a AMD Ryzen 9 7950X 16-Core Processor.
+  The simulation takes approximatively 10 hours on 16 cores of a AMD Ryzen 9 7950X 16-Core Processor.
 
 ----------------------
 Results and Discussion
@@ -249,7 +249,7 @@ The key validation metrics are:
 
   St = \frac{f D}{U_\infty}
 
-where :math:`f` is the frequency of vortex shedding, :math:`D` is the cylinder diameter, and :math:`U_\infty` is the free-stream velocity. T The frequency of vortex shedding is determined using a Fast Fourier Transform (FFT) of the lift force.
+where :math:`f` is the frequency of vortex shedding, :math:`D` is the cylinder diameter, and :math:`U_\infty` is the free-stream velocity. The frequency of vortex shedding is determined using a Fast Fourier Transform (FFT) of the lift force.
 
 - **Drag coefficient**:
 
