@@ -12,7 +12,7 @@ set dimension = 2
 
 subsection simulation control
   set method            = steady
-  set output name       = mms-mortar-gmsh_output
+  set output name       = output
   set number mesh adapt = 2
 end
 
@@ -32,7 +32,7 @@ end
 
 subsection mesh
   set type      = gmsh
-  set file name = square-with-circle.msh
+  set file name = ../../square-with-circle.msh
   set initial refinement = 2
 end
 
