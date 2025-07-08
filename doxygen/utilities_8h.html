@@ -395,9 +395,9 @@ Functions</h2></td></tr>
 <tr class="separator:a5f8e2b4fdf7a2b6eceab3461c4edd221"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bff1c25176117effa0161cb4ebfc520" id="r_a6bff1c25176117effa0161cb4ebfc520"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a> (const std::string &amp;output_path)</td></tr>
 <tr class="separator:a6bff1c25176117effa0161cb4ebfc520"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62b7a5b8b658ffe2e90d2a74b894f27b" id="r_a62b7a5b8b658ffe2e90d2a74b894f27b"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a62b7a5b8b658ffe2e90d2a74b894f27b"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a62b7a5b8b658ffe2e90d2a74b894f27b">point_to_angle</a> (const Point&lt; dim &gt; &amp;point)</td></tr>
-<tr class="separator:a62b7a5b8b658ffe2e90d2a74b894f27b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5df21d5e2572a5711790ce28e326a07d" id="r_a5df21d5e2572a5711790ce28e326a07d"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a5df21d5e2572a5711790ce28e326a07d"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">point_to_angle</a> (const Point&lt; dim &gt; &amp;point, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;())</td></tr>
+<tr class="separator:a5df21d5e2572a5711790ce28e326a07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0bea60f70f692902d4d84d9cf118ccaf" id="r_a0bea60f70f692902d4d84d9cf118ccaf"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a0bea60f70f692902d4d84d9cf118ccaf"><td class="memTemplItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">radius_to_point</a> (const double radius, const double rad)</td></tr>
 <tr class="separator:a0bea60f70f692902d4d84d9cf118ccaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1801,8 +1801,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a62b7a5b8b658ffe2e90d2a74b894f27b" name="a62b7a5b8b658ffe2e90d2a74b894f27b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62b7a5b8b658ffe2e90d2a74b894f27b">&#9670;&#160;</a></span>point_to_angle()</h2>
+<a id="a5df21d5e2572a5711790ce28e326a07d" name="a5df21d5e2572a5711790ce28e326a07d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5df21d5e2572a5711790ce28e326a07d">&#9670;&#160;</a></span>point_to_angle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1816,8 +1816,18 @@ template&lt;int dim&gt; </div>
           <td class="memname">double point_to_angle </td>
           <td>(</td>
           <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>point</em></td><td>)</td>
+          <td class="paramname"><em>point</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>center_of_rotation</em> = <code>Point&lt;dim&gt;()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -1827,16 +1837,17 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Converts point to radius. </p>
+<p>Converts point to angle (in radians) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td>Point in cartesian coordinates (x-y plane) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">center_of_rotation</td><td>Reference point </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">center_of_rotation</td><td>Center of rotation</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Angle between point and the x-axis </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00821">821</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00823">823</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1961,7 +1972,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>point Point cartesian coordinates </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00836">836</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00841">841</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
