@@ -1966,7 +1966,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
+NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
 {
   if (!this->simulation_parameters.mortar.enable)
     return;

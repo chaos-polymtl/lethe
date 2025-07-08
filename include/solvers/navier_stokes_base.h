@@ -441,7 +441,7 @@ protected:
    * @brief Initialize mortar coupling operator
    */
   void
-  init_mortar_coupling();
+  update_mortar_coupling();
 
   /**
    * @brief Returns the mapping shared pointer. A MappingQCache is

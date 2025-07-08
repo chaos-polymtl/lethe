@@ -85,7 +85,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->define_zero_constraints();
 
   // If enabled, create mortar coupling
-  this->init_mortar_coupling();
+  this->update_mortar_coupling();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
