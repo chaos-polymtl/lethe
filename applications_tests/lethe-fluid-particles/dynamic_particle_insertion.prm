@@ -67,10 +67,10 @@ end
 #---------------------------------------------------
 
 subsection void fraction
-  set mode                         = qcm
-  set read dem                     = false
-  set l2 smoothing length          = 0.08
-  set particle refinement factor   = 0
+  set mode                       = qcm
+  set read dem                   = false
+  set l2 smoothing length        = 0.08
+  set particle refinement factor = 0
 end
 
 #---------------------------------------------------
@@ -205,10 +205,10 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set solver           = inexact_newton
-    set tolerance        = 1e-4
-    set max iterations   = 25
-    set verbosity        = quiet
+    set solver         = inexact_newton
+    set tolerance      = 1e-4
+    set max iterations = 25
+    set verbosity      = quiet
   end
 end
 
@@ -218,13 +218,13 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method                                = gmres
-    set max iters                             = 200
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-7
-    set preconditioner                        = ilu
-    set verbosity                             = quiet
-    set max krylov vectors                    = 200
+    set method             = gmres
+    set max iters          = 200
+    set relative residual  = 1e-3
+    set minimum residual   = 1e-7
+    set preconditioner     = ilu
+    set verbosity          = quiet
+    set max krylov vectors = 200
   end
 end
 
