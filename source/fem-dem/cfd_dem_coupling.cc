@@ -937,6 +937,11 @@ template <int dim>
 void
 CFDDEMSolver<dim>::insert_particles()
 {
+  // If the insertion frequency is set to 0, then no particles are going
+  // to be inserted inside of the CFD-DEM simulation and the function returns
+  if (dem_parameters.insertion_info.insertion_frequency == 0)
+    return;
+
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);

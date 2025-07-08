@@ -465,11 +465,11 @@ namespace Parameters
                           "Choosing insertion method. "
                           "Choices are <file|plane|list|volume>.");
         prm.declare_entry("inserted number of particles at each time step",
-                          "1",
+                          "0",
                           Patterns::Integer(),
                           "Inserted number of particles at each time step");
         prm.declare_entry("insertion frequency",
-                          "1",
+                          "0",
                           Patterns::Integer(),
                           "Insertion frequency");
 
