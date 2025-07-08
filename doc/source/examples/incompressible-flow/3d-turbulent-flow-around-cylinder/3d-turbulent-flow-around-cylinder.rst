@@ -59,7 +59,7 @@ The ``mesh`` subsection specifies the computational grid. We use a custom mesh g
   end
 
 
-.. note::
+.. warning::
 
   This ``uniform_channel_with_cylinder`` grid generator is only present in the 9.7 version of the deal.II library.
 
