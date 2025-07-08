@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MINOR Add tailored capability for validation script to run on Lucille (a compute node) and re-adapt rising bubble case. [#1574](https://github.com/chaos-polymtl/lethe/pull/1574)
+
+## [Master] - 2025-07-03
+
+### Added
+
 - MINOR Add functionality that allows to delete previous vtu and pvd files by using a flag '-R'. [#1569](https://github.com/chaos-polymtl/lethe/pull/1569)
 
 ## [Master] - 2025-06-30
