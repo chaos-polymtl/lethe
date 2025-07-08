@@ -32,9 +32,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type      = dealii
-  set grid type = hyper_cube_with_cylindrical_hole
-  set grid arguments = 0.5 : 1 : 0 : 1 : false
+  set type               = dealii
+  set grid type          = hyper_cube_with_cylindrical_hole
+  set grid arguments     = 0.5 : 1 : 0 : 1 : false
   set initial refinement = 1
 end
 
@@ -51,10 +51,10 @@ subsection mortar
     set initial refinement     = 1
     set initial rotation angle = 0
   end
-  set rotor boundary id   = 2
-  set stator boundary id  = 1
-  set center of rotation  = 0, 0
-  set penalty factor      = 1
+  set rotor boundary id  = 2
+  set stator boundary id = 1
+  set center of rotation = 0, 0
+  set penalty factor     = 1
 end
 
 #---------------------------------------------------
@@ -123,8 +123,8 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity 	= quiet
-    set tolerance 	= 1e-10
+    set verbosity = quiet
+    set tolerance = 1e-10
   end
 end
 
