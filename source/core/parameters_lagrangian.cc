@@ -879,6 +879,13 @@ namespace Parameters
                           "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
+          "enable particle wall contact statistics",
+          "false",
+          Patterns::Selection("true|false"),
+          "Enable the logging of particle-wall contact statistics"
+          "Choices are <true|false>.");
+
+        prm.declare_entry(
           "dmt cut-off threshold",
           "0.1",
           Patterns::Double(),
@@ -1102,6 +1109,9 @@ namespace Parameters
             throw(
               std::runtime_error("Invalid particle-wall contact force model "));
           }
+
+        particle_wall_contact_statistics =
+          prm.get_bool("enable particle wall contact statistics");
 
         dmt_cut_off_threshold = prm.get_double("dmt cut-off threshold");
 
