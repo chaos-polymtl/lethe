@@ -3,7 +3,7 @@
 
 # This file contains the list of validation test cases used in the large-scale validation cases for lethe
 # The cases assume that the validation is ran from the root folder of the lethe source code
-# For every cases, the path of the vase must be specified followed by the number of processors with which
+# For every cases, the path of the case must be specified followed by the number of processors with which
 # the case must be ran. The file allows for comments, which are specified by a "#"
 
 examples/incompressible-flow/2d-lid-driven-cavity 1
