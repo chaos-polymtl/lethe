@@ -56,6 +56,23 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   /**
+   * @brief Calculate the contact outcomes for particle-wall contacts
+   * using the contact pair information and physical properties. Logs the
+   * particle-wall contact statistics.
+   *
+   * @param[in] particle_wall_pairs_in_contact Required information for the
+   * calculation of the particle-wall contact.
+   * @param[in] dt DEM time step.
+   * @param[out] contact_outcome Interaction outcomes.
+   */
+  virtual void
+  calculate_particle_wall_contact_with_stats_log(
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
+
+  /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
    * using the contact pair information and physical properties.
    *
@@ -106,6 +123,23 @@ public:
    */
   virtual void
   calculate_particle_wall_contact(
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
+
+  /**
+   * @brief Calculate the contact outcomes for particle-wall contacts
+   * using the contact pair information and physical properties. Logs the
+   * particle-wall contact statistics.
+   *
+   * @param[in] particle_wall_pairs_in_contact Required information for the
+   * calculation of the particle-wall contact.
+   * @param[in] dt DEM time step.
+   * @param[out] contact_outcome Interaction outcomes.
+   */
+  virtual void
+  calculate_particle_wall_contact_with_stats_log(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                 &particle_wall_pairs_in_contact,
     const double dt,
