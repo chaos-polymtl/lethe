@@ -20,17 +20,6 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Restart
-#---------------------------------------------------
-
-subsection restart
-  set checkpoint = false
-  set frequency  = 1000
-  set restart    = false
-  set filename   = case
-end
-
-#---------------------------------------------------
 # FEM
 #---------------------------------------------------
 
@@ -234,12 +223,4 @@ end
 
 subsection test
   set enable = true
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
 end
