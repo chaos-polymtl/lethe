@@ -7,8 +7,8 @@
  */
 
 // Lethe
-#include <core/simulation_control.h>
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 
 // Tests
 #include <../tests/tests.h>
@@ -34,7 +34,8 @@ test()
       deallog << "Method: " << static_cast<int>(method)
               << " -> Stages: " << result << std::endl;
       AssertThrow(result == expected,
-                  ExcMessage("get_number_of_stages() returned incorrect value"));
+                  ExcMessage(
+                    "get_number_of_stages() returned incorrect value"));
     }
 }
 
