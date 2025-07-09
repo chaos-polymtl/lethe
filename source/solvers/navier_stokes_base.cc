@@ -2000,16 +2000,16 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
   if (this->simulation_parameters.mortar.enable)
     {
-      // Get updated rotation angle
-      simulation_parameters.mortar.rotor_angular_velocity->set_time(
+      // Get updated rotation angle (radians)
+      simulation_parameters.mortar.rotor_rotation_angle->set_time(
         this->simulation_control->get_current_time());
       const double rotation_angle =
-        simulation_parameters.mortar.rotor_angular_velocity->value(
+        simulation_parameters.mortar.rotor_rotation_angle->value(
           Point<dim>());
 
       if (simulation_parameters.mortar.verbosity ==
           Parameters::Verbosity::verbose)
-        this->pcout << "Mortar - Rotating rotor grid: " << rotation_angle
+        this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
                     << " rad \n"
                     << std::endl;
 
