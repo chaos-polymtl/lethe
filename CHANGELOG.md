@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Add tailored capability for validation script to run on Lucille (a compute node) and re-adapt rising bubble case. [#1574](https://github.com/chaos-polymtl/lethe/pull/1574)
+## [Master] - 2025-07-07
+
+### Changed
+- MINOR The default parameter for the linear solver of the matrix-free solvers now uses eigenvalue estimation instead of not. This approach is generally more robust and should be preferred. [#1572](https://github.com/chaos-polymtl/lethe/pull/1572)
 
 ## [Master] - 2025-07-03
 
