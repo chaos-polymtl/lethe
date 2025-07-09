@@ -1962,6 +1962,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
 {
+  TimerOutput::Scope t(this->computing_timer, "Update mortar");
+
   if (!this->simulation_parameters.mortar.enable)
     return;
 
@@ -1998,6 +2000,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
+  TimerOutput::Scope t(this->computing_timer, "Rotate mortar");
+
   if (this->simulation_parameters.mortar.enable)
     {
       // Get updated rotation angle (radians)
