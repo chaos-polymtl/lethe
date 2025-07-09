@@ -2034,6 +2034,10 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
                                           this->simulation_parameters.mortar)
           .second,
         rotation_angle);
+
+      // Update mortar information
+      // this->update_mortar_coupling();
+      // setup_dofs();
     }
 }
 
