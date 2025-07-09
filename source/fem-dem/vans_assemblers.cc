@@ -907,11 +907,6 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
-  // particle_number is an increment that goes from 0 to n_particles_in_cell.
-  // It is incremented at the end of the loop over particles and is used to
-  // point to the element of the vectors relative_velocity and
-  // fluid_velocity_at_particle_location corresponding to the particle being
-  // looped over.
   double      cell_void_fraction = 0;
   double      C_d                = 0;
   const auto &relative_velocity =
@@ -924,6 +919,9 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
   const auto pic               = scratch_data.pic;
   beta_drag                    = 0;
+  // particle_number is an increment that goes from 0 to n_particles_in_cell.
+  // It is used to index vector of particle properties and is incremented while
+  // looping over the particles in the cell.
   unsigned int particle_number = 0;
 
   // Loop over particles in cell
@@ -1293,11 +1291,6 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
 
-  // particle_number is an increment that goes from 0 to n_particles_in_cell.
-  // It is incremented at the end of the loop over particles and is used to
-  // point to the element of the vectors relative_velocity and
-  // fluid_velocity_at_particle_location corresponding to the particle being
-  // looped over.
   double      cell_void_fraction = 0;
   const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
@@ -1546,12 +1539,6 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
          RequiresConstantDensity(
            "VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions"));
 
-  // particle_number is an increment that goes from 0 to n_particles_in_cell.
-  // It is incremented at the end of the loop over particles and is used to
-  // point to the element of the vectors relative_velocity and
-  // fluid_velocity_at_particle_location corresponding to the particle being
-  // looped over.
-
   // This implementation follows the formulation in the book "Multiphase Flows
   // with Droplets and Particles" by Crowe et al. (2011).
   double C_m = 0.;
@@ -1708,9 +1695,6 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
-  // particle_number is an increment that goes from 0 to n_particles_in_cell.
-  // It is incremented at the end of the loop over particles
-
   const auto &density = scratch_data.density_at_particle_location;
   const auto &kinematic_viscosity =
     scratch_data.kinematic_viscosity_at_particle_location;
@@ -1737,8 +1721,8 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
             factor * particle_properties
                        [DEM::CFDDEMProperties::PropertiesIndex::omega_x + d];
         }
+      particle_number += 1;
     }
-  particle_number += 1;
 }
 
 template class VANSAssemblerViscousTorque<2>;
@@ -1792,8 +1776,8 @@ VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
             [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] +=
             factor * vorticity_3d[particle_number][d];
         }
+      particle_number += 1;
     }
-  particle_number += 1;
 }
 
 template class VANSAssemblerVorticalTorque<2>;
