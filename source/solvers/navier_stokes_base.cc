@@ -555,11 +555,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
-  // If the mortar method is enabled, update the rotor configuration in the
-  // mortar coupling operator
-  if (this->simulation_parameters.mortar.enable)
-    this->rotate_mortar_mapping();
-
   if (simulation_parameters.multiphysics.fluid_dynamics)
     {
       // Solve and percolate the auxiliary physics that should be treated BEFORE
@@ -1212,8 +1207,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // If mortar is enabled, update mapping cache with refined triangulation
   if (this->simulation_parameters.mortar.enable)
-    this->mapping_cache->initialize(*this->initial_mapping,
-                                    *this->triangulation);
+    this->mapping_cache->initialize(*this->mapping, *this->triangulation);
 
   setup_dofs();
 
@@ -1971,6 +1965,9 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
   if (!this->simulation_parameters.mortar.enable)
     return;
 
+  // Rotate mapping
+  rotate_mortar_mapping();
+
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
@@ -2016,28 +2013,14 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
                     << " rad \n"
                     << std::endl;
 
-      // If this is the first iteration, store initial mapping and create
-      // mapping cache object. Otherwise, use initalize() function to update
-      // current mapping cache
-      if (this->simulation_control->is_at_start())
-        {
-          this->mapping_cache =
-            std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-          this->initial_mapping = this->mapping;
-        }
-
       LetheGridTools::rotate_mapping(
         this->dof_handler,
         *this->mapping_cache,
-        *this->initial_mapping,
+        *this->mapping,
         compute_n_subdivisions_and_radius(*this->triangulation,
                                           this->simulation_parameters.mortar)
           .second,
         rotation_angle);
-
-      // Update mortar information
-      // this->update_mortar_coupling();
-      // setup_dofs();
     }
 }
 

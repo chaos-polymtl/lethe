@@ -450,8 +450,7 @@ protected:
   inline std::shared_ptr<Mapping<dim>>
   get_mapping()
   {
-    if (!this->simulation_parameters.mortar.enable ||
-        this->simulation_control->is_at_start())
+    if (!this->simulation_parameters.mortar.enable)
       return this->mapping;
     else
       return this->mapping_cache;
@@ -944,8 +943,7 @@ protected:
   std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
     mortar_coupling_evaluator;
 
-  // Initial mapping for rotor mesh rotation in mortar method
-  std::shared_ptr<Mapping<dim>>       initial_mapping;
+  // Mapping cache used in rotor mesh rotation in mortar method
   std::shared_ptr<MappingQCache<dim>> mapping_cache;
 
   // Assemblers for the matrix and rhs
