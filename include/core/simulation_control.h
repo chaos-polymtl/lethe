@@ -147,6 +147,22 @@ public:
 
   SimulationControl(const Parameters::SimulationControl &param);
 
+
+  /**
+   * @brief Return the number of stages associated with the time-stepping method.
+   * For SDIRK methods, the number of stages is given by the last digit of the
+   * method name. For other methods, the number of stages is 1.
+   *
+   * @param[in] method The time-stepping method for which the number of stages
+   * is requested.
+   *
+   * @return The number of stages associated with the time-stepping method.
+   */
+  static unsigned int
+  get_number_of_stages(
+    const Parameters::SimulationControl::TimeSteppingMethod &method);
+
+
   /**
    * @brief Pure virtual function to control the progression of the simulation.
    * As long as integrate returns true, a simulation should proceed. The
