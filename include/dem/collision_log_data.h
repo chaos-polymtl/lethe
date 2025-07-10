@@ -193,6 +193,36 @@ namespace DEM
     std::unordered_map<types::particle_index, collision_log<dim>>
       ongoing_collisions;
   };
+
+  /**
+   * @brief Class that stores all the completed collision events.
+   */
+  template <int dim>
+  class CollisionEventLog
+  {
+  public:
+    /**
+     * @brief Add a completed event to the log.
+     */
+    void
+    add_event(const collision_event<dim> &event)
+    {
+      events.push_back(event);
+    }
+
+    /**
+     * @brief Retrieve the list of all completed collision events.
+     */
+    const std::list<collision_event<dim>> &
+    get_events() const
+    {
+      return events;
+    }
+
+  private:
+    // List to store completed collision events
+    std::list<collision_event<dim>> events;
+  };
 } // namespace DEM
 >>>>>>> a83d2c405 (Add the struct collision_event to contain the stats of a full collision (start and end) and add the ongoingcollision log class)
 
