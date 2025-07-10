@@ -96,14 +96,6 @@ subsection insertion info
 end
 
 #---------------------------------------------------
-# Lagrangian post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set lagrangian post-processing = true
-end
-
-#---------------------------------------------------
 # Floating walls
 #---------------------------------------------------
 
