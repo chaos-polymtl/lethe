@@ -23,7 +23,7 @@ var searchData=
   ['eig_5festimation_5fverbose_20',['eig_estimation_verbose',['../structParameters_1_1LinearSolver.html#af0e28141f596fde7667b800aaae50058',1,'Parameters::LinearSolver']]],
   ['el_21',['el',['../classNavierStokesOperatorBase.html#a162a5ebc0742593e2b2d10daf38418a2',1,'NavierStokesOperatorBase']]],
   ['element_5fsize_22',['element_size',['../classNavierStokesOperatorBase.html#a8eaefbeb15982fab2dfbf8ceb540baf4',1,'NavierStokesOperatorBase']]],
-  ['ellipsoid_23',['ellipsoid',['../classEllipsoid.html#a459db84c2238f9e81c56b658fb9e7f6d',1,'Ellipsoid::Ellipsoid()'],['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568',1,'Shape::ellipsoid'],['../classEllipsoid.html',1,'Ellipsoid&lt; dim &gt;']]],
+  ['ellipsoid_23',['ellipsoid',['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568',1,'Shape::ellipsoid'],['../classEllipsoid.html#a459db84c2238f9e81c56b658fb9e7f6d',1,'Ellipsoid::Ellipsoid()'],['../classEllipsoid.html',1,'Ellipsoid&lt; dim &gt;']]],
   ['emissivity_24',['emissivity',['../classBoundaryConditions_1_1HTBoundaryConditions.html#a8e22c2f4eef353bbd788dc789a4a2a83',1,'BoundaryConditions::HTBoundaryConditions::emissivity'],['../structParameters_1_1Laser__FreeSurfaceRadiation.html#a833225bb7c4b3081bcdf81e4aa3e0fc0',1,'Parameters::Laser_FreeSurfaceRadiation::emissivity']]],
   ['empty_25',['empty',['../classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230a3eda417d81f41b3d282e2995f2daa8c9',1,'AdaptiveSparseContacts']]],
   ['empty_5fdof_5fhandler_26',['empty_dof_handler',['../classParticleVisualization.html#abe5fb61476c9d6aa76867e513b8e137e',1,'ParticleVisualization']]],
