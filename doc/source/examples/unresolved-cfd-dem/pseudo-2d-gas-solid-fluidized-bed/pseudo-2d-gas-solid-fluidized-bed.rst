@@ -424,11 +424,11 @@ The following figure compares the simulated pressure power spectral density (PSD
 Although the simulation PSD is several orders of magnitude lower, the shape of the curve and the peak frequency show good agreement with the experimental data.
 
 
-.. The simulated fluidized bed is shown in the animation below.
+The simulated fluidized bed is shown in the animation below.
 
-.. .. raw:: html
+.. raw:: html
 
-..     <iframe width="560" height="315" src="https://www.youtube.com/embed/ygJI42x4K5c" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/F6eSeN3WiSc" frameborder="0" allowfullscreen></iframe>
 
 
 ----------
