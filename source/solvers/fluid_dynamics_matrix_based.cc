@@ -1664,7 +1664,7 @@ FluidDynamicsMatrixBased<dim>::solve()
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-      this->mapping_cache->initialize(*this->mapping, *this->triangulation);
+      this->rotate_mortar_mapping();
     }
   else
     read_mesh_and_manifolds(

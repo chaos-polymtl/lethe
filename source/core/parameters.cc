@@ -4163,8 +4163,7 @@ namespace Parameters
                         Patterns::List(Patterns::Double()),
                         "Center of rotation coordinates of rotor domain");
       prm.enter_subsection("rotor rotation angle");
-      rotor_rotation_angle =
-        std::make_shared<Functions::ParsedFunction<dim>>();
+      rotor_rotation_angle = std::make_shared<Functions::ParsedFunction<dim>>();
       rotor_rotation_angle->declare_parameters(prm);
       prm.leave_subsection();
       prm.declare_entry("penalty factor",

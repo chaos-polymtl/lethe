@@ -1967,8 +1967,11 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
   if (!this->simulation_parameters.mortar.enable)
     return;
 
-  // Rotate mapping
-  rotate_mortar_mapping();
+  // Rotate mapping, but first check if we are not at the start of the
+  // simulation so we don't rotate it twice. For following iterations, this will
+  // be done only once when setup_dofs() is called
+  if (!this->simulation_control->is_at_start())
+    rotate_mortar_mapping();
 
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
@@ -2008,8 +2011,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
       simulation_parameters.mortar.rotor_rotation_angle->set_time(
         this->simulation_control->get_current_time());
       const double rotation_angle =
-        simulation_parameters.mortar.rotor_rotation_angle->value(
-          Point<dim>());
+        simulation_parameters.mortar.rotor_rotation_angle->value(Point<dim>());
 
       if (simulation_parameters.mortar.verbosity ==
           Parameters::Verbosity::verbose)
@@ -2020,7 +2022,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
       // Create new mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-        
+
       LetheGridTools::rotate_mapping(
         this->dof_handler,
         *this->mapping_cache,
