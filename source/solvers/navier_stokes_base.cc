@@ -2017,6 +2017,10 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
                     << " rad \n"
                     << std::endl;
 
+      // Create new mapping cache
+      this->mapping_cache =
+        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+        
       LetheGridTools::rotate_mapping(
         this->dof_handler,
         *this->mapping_cache,
