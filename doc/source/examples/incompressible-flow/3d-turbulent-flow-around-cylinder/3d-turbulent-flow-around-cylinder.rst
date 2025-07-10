@@ -123,8 +123,8 @@ The ``boundary conditions`` subsection establishes the boundary conditions:
       set type = slip
     end
     subsection bc 5
-      set type = periodic
-      set periodic_id = 6
+      set type               = periodic
+      set periodic_id        = 6
       set periodic_direction = 2
     end
   end
