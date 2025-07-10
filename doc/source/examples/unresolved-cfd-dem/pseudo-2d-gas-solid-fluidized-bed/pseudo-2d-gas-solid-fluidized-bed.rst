@@ -428,7 +428,7 @@ The simulated fluidized bed is shown in the animation below.
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/F6eSeN3WiSc" frameborder="0" allowfullscreen></iframe>
+    <iframe width="640" height="360" src="https://www.youtube.com/embed/F6eSeN3WiSc" frameborder="0" allowfullscreen></iframe>
 
 
 ----------
