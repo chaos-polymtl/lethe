@@ -2,7 +2,7 @@
 Pseudo-2D Gas-Solid Fluidized Bed
 ==================================
 
-This example simulates the fluidization of a particle bed in gas. It is based on the pseudo-2D experimental set-up used by B.G.M. van Wachem *et al* [#Wachem2001]_ to validate their two-dimensional fluidized bed simulations.
+This example simulates the fluidization of a particle bed in gas. It is based on the pseudo-2D experimental setup used by B.G.M. van Wachem *et al* [#Wachem2001]_ to validate their two-dimensional fluidized bed simulations.
 
 ----------------------------------
 Features
@@ -45,7 +45,7 @@ We first introduce the different subsections of the parameter file ``packing-par
 Mesh
 ~~~~~
 
-The domain is generated with GMSH to reproduce the experimental set-up. It is a rectangular column with dimensions :math:`0.09\times0.008\times0.54` m.
+The domain is generated with GMSH to reproduce the experimental setup. It is a rectangular column with dimensions :math:`0.09\times0.008\times0.54` m.
 
 .. code-block:: text
 
@@ -59,7 +59,7 @@ The domain is generated with GMSH to reproduce the experimental set-up. It is a 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~
 
-A simulation time of :math:`2.5` s was chosen, with a time step of :math:`5\times10^{-6}`. It is important to choose a long enough time so that all particles can become static. The output files generated are stored in the folder ``output_dem``.
+A simulation time of :math:`2.5` s was chosen, with a time step of :math:`5\times10^{-6}`. It is important to choose a sufficiently long simulation time so that all particles can become static. The output files generated are stored in the folder ``output_dem``.
 
 .. code-block:: text
 
@@ -111,7 +111,7 @@ Model Parameters
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The friction and restitution coefficients are set to :math:`0.3` and :math:`0.9` respectively. These parameters were chosen as given in the article, while the others were kept to usual values.
+In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The Young's moduli and poisson ratios are kept to their default values. For the friction, restitution and rolling friction coefficients, commonly used values are employed, as suggested in the article. In the case of a fluidized bed, friction does not really have an impact.
 
 .. code-block:: text
 
@@ -158,7 +158,7 @@ Particles are inserted within a box in the upper part of the column with the ``v
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~
 
-To allow the gas to flow properly before reaching the particles, the particle bed needs to be elevated compared to the fluid inlet at the bottom of the column. This is done using a ``floating wall``, with an ``end time`` large enough to cover the whole simulation.
+To ensure the gas flow is fully developed before reaching the particles, the particle bed needs to be elevated compared to the fluid inlet at the bottom of the column. This is done using a ``floating wall``, with an ``end time`` large enough to cover the whole simulation.
 
 .. code-block:: text
 
@@ -203,7 +203,7 @@ After the particles have been packed inside the column, it is now possible to si
 CFD-DEM Parameter File
 -----------------------
 
-The CFD-DEM simulation is carried out using the packed bed generated in the previous stage and the application ``lethe-fluid-particles``. The ``mesh``, ``lagrangian physical properties``, DEM ``model parameters`` and ``floating walls`` subsections are identical to that of the packing parameter file, so they will not be shown here.
+The CFD-DEM simulation is carried out using the ``lethe-fluid-particles`` solver and the packed bed generated in the previous stage. The ``mesh``, ``lagrangian physical properties``, DEM ``model parameters`` and ``floating walls`` subsections are identical to that of the packing parameter file, so they will not be shown here.
 
 
 Simulation Control
@@ -254,7 +254,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the boundary conditions, the left and right walls (ID = 3) are treated as no-slip boundary conditions, the front and back walls (ID = 2) are used as slip boundary conditions, the bottom of the column (ID = 0) is an inlet velocity of :math:`0.9` m/s and the top of the column (ID = 1) is an outlet for the gas phase.
+For the fluid boundary conditions, the left and right walls (ID = 3) are treated as no-slip boundary conditions, the front and back walls (ID = 2) are defined as slip boundary conditions, the bottom of the column (ID = 0) is an inlet velocity of :math:`0.9` m/s and the top of the column (ID = 1) is an outlet for the gas phase.
 
 .. code-block:: text
 
@@ -291,7 +291,7 @@ For the boundary conditions, the left and right walls (ID = 3) are treated as no
 Void Fraction
 ~~~~~~~~~~~~~~~
 
-The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) is employed to carry out the calculation. More information about the different methods of calculating the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
+The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) is employed to carry out the calculation. More information about the different methods used to calculate the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
 
 .. code-block:: text
 
@@ -324,7 +324,7 @@ CFD-DEM
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-We use the inexact Newton non-linear solver to minimize the number of time the matrix of the system is assembled. This is used to increase the speed of the simulation, since the matrix assembly requires significant computations.
+We use the inexact Newton non-linear solver to minimize the number of time the matrix of the system is assembled. This is used to increase the speed of the simulation, since the matrix assembly is computationally expensive.
 
 .. code-block:: text
 
@@ -369,7 +369,7 @@ The CFD-DEM simulation is run with the following command:
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid-particles gas-solid-fluidized-bed.prm
+  mpirun -np 10 lethe-fluid-particles gas-solid-fluidized-bed.prm
 
 
 ----------------
@@ -378,7 +378,7 @@ Post-processing
 
 A Python post-processing code ``fluidized-bed-postprocessing.py`` is provided with this example. It is used to compare, at a height of :math:`45` mm in the bed, our simulation results with the experimental results obtained by B.G.M. van Wachem *et al* [#Wachem2001]_. 
 
-The simulation is compared to the experiment using the pressure, void fraction and bed height fluctuations and the power spectral density of the pressure fluctuations. The power spectral density is calculated using the fft of the pressure fluctuations with a sampling frequency of :math:`1000` Hz, and it is then filtered with a Gaussian filter.
+The simulation is compared to the experiment using the pressure, void fraction and bed height fluctuations and the power spectral density of the pressure fluctuations. The power spectral density is calculated using the Fast Fourier Transform (FFT) of the pressure fluctuations with a sampling frequency of :math:`1000` Hz, and it is then filtered with a Gaussian filter. The Gaussian filter is used to reduce the noise in the pressure signal, by averaging the values with a Gaussian distribution.
 
 The post-processing code can be run with the following command. The argument is the folder which contains the ``.prm`` file.
 
@@ -411,7 +411,7 @@ The following figures compare the pressure, void fraction and bed height fluctua
     :height: 300
 
 
-These three figures show that the frequency of the peaks seems to be replicated quite well for each quantity. However, in the case of the relative pressure and the height of the bed, the amplitude of the signals from the simulation is quite lower than what was obtained experimentally. Regarding the void fraction, the values are quite far from the experimental ones. This is mainly because in the experiment, the voidage is calculated using light intensity, which explains why it reaches such low values (:math:`0.2`). Usually, void fraction should remain higher than :math:`0.36` for a packed bed.
+These three figures show that the frequency of the peaks seems to be well replicated for each quantity. However, in the case of the relative pressure and the height of the bed, the amplitude of the signals from the simulation is lower than what was obtained experimentally. Regarding the void fraction, the values are rather far from the experimental ones. This is mainly because the experimental voidage is calculated using light intensity measurements, which can lead to low void fraction values (:math:`0.2`). In a packed bed, void fraction is usually higher than :math:`0.36`.
 
 
 The following figure compares the simulated pressure power spectral density (PSD) with the one which uses the experimental data.
