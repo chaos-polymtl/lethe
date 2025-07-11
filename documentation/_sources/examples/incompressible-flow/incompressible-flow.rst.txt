@@ -21,6 +21,7 @@ Incompressible Flow
     3d-taylor-green-vortex/3d-taylor-green-vortex
     3d-turbulent-taylor-couette/3d-turbulent-taylor-couette
     3d-flow-over-periodic-hills/3d-flow-over-periodic-hills
+    3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder
     3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame
     3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller
 
@@ -77,10 +78,12 @@ Incompressible Flow
       incompressible_2_3 [label="Turbulent Taylor-Couette", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html"];
 
       incompressible_2_4 [label="Flow over Periodic Hills", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html"];
+      
+      incompressible_2_5 [label="Turblent Flow Around a Cylinder", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder.html"];
 
-      incompressible_2_5 [label="Ribbon Mixer Using a Single \n Rotating Reference Frame", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html", tooltip="Ribbon mixer using a single rotating reference frame"];
+      incompressible_2_6 [label="Ribbon Mixer Using a Single \n Rotating Reference Frame", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html", tooltip="Ribbon mixer using a single rotating reference frame"];
 
-      incompressible_2_6 [label="Mixer with Pitched-Blade Turbine Impeller \nUsing Nitsche Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html", tooltip="Mixer with pitched-blade turbine impeller using Nitsche immersed boundary"];
+      incompressible_2_7 [label="Mixer with Pitched-Blade Turbine Impeller \nUsing Nitsche Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html", tooltip="Mixer with pitched-blade turbine impeller using Nitsche immersed boundary"];
 
       incompressible_flow:e -> incompressible_1:w;
       incompressible_flow:e -> incompressible_2:w;
@@ -101,4 +104,5 @@ Incompressible Flow
       incompressible_2 -> incompressible_2_4:w;
       incompressible_2 -> incompressible_2_5:w;
       incompressible_2 -> incompressible_2_6:w;
+      incompressible_2 -> incompressible_2_7:w;
     }

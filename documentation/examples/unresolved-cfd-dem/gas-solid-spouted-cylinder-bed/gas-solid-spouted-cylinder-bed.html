@@ -248,6 +248,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html">Flow over Periodic Hills</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder.html">Turbulent Flow Around a Cylinder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html">Ribbon Mixer Using a Single Rotating Reference Frame</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a></li>
 </ul>
@@ -477,7 +478,7 @@
 <p>In this example, we are simulating a cylinder shaped spouted bed. We introduce the flow through a cylinder of smaller radius that  constitutes the inlet of the bed. A schematic image is shown below;</p>
 <a class="reference internal image-reference" href="../../../_images/geometry3.png" id="geometry"><img alt="The geometry and boundary conditions" class="align-center" id="geometry" src="../../../_images/geometry3.png" style="height: 15cm;" /></a>
 <p>The geometry of the bed was created using <a class="reference external" href="../../../tools/pointwise/pointwise.html">Pointwise</a>. An overview of the mesh is:</p>
-<a class="reference internal image-reference" href="../../../_images/mesh1.png" id="mesh-ver"><img alt="The geometry and boundary conditions" class="align-center" id="mesh-ver" src="../../../_images/mesh1.png" style="height: 10cm;" /></a>
+<a class="reference internal image-reference" href="../../../_images/mesh2.png" id="mesh-ver"><img alt="The geometry and boundary conditions" class="align-center" id="mesh-ver" src="../../../_images/mesh2.png" style="height: 10cm;" /></a>
 <p>In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (&gt;10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three times larger than the diameter of the particles in order to get stable calculation.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
   set type                                = gmsh
