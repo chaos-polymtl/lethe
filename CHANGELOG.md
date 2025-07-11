@@ -3,7 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2025-07-08
+### [Master] - 2025-07-10
+
+### Added
+
+- MAJOR A new example consisting in the 3d simulation of the turbulent flow around a cylinder at Re=3900 has been added. The example includes several comparison with the literature including the drag coefficient, the Strouhal number and the pressure profile around the cylinder for several meshes and orders of convergence. The example will be extended in the near future to include additional validation metric such as the time-averaged velocity and reynolds stresses at serveral locations behind the cylinder. [#1570](https://github.com/chaos-polymtl/lethe/pull/1570)
+
+# [Master] - 2025-07-08
 
 ### Fixed
 
