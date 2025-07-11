@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Removes the old gas-solid-spouted-bed example which has now been replaced with the much better gas-solid-spouted-rectangular-bed. The newer example features validation and other components which make it significnatly more relevant than the previous one which just displayed the capabilities of the solver. [#1570](https://github.com/chaos-polymtl/lethe/pull/1578)
+- MINOR Removes the old gas-solid-spouted-bed example which has now been replaced with the much better gas-solid-spouted-rectangular-bed. The newer example features validation and other components which make it significnatly more relevant than the previous one which just displayed the capabilities of the solver. [#1578](https://github.com/chaos-polymtl/lethe/pull/1578)
 ### [Master] - 2025-07-10
 
 ### Added
