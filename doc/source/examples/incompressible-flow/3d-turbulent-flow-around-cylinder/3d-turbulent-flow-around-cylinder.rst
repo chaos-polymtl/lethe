@@ -241,6 +241,16 @@ First, the following animation displays the evolution of the velocity magnitude 
 |                                                                                                                                                    |
 +----------------------------------------------------------------------------------------------------------------------------------------------------+
 
+
+The secondanimation also present the velocity magnitude on the same slice but for a finer mesh and using high-order elements (:math:`Q_2Q_2` with box refinement of 3). We we can clearly see much more details in the flow structure, such as the boundary layer and the wake region.
+
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+| .. raw:: html                                                                                                                                      |
+|                                                                                                                                                    |
+|    <iframe width="700" height="400" src="https://www.youtube.com/embed/DN0buEVq0oY?si=Tzp8FEkIANgYMI-3"  frameborder="0" allowfullscreen></iframe> |
+|                                                                                                                                                    |
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+
 The key validation metrics are:
 
 - **Strouhal number**:
