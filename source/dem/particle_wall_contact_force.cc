@@ -142,6 +142,7 @@ ParticleWallContactForce<dim,
                          rolling_friction_model>::
   calculate_particle_wall_contact_with_stats_log(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+<<<<<<< HEAD
                                     &particle_wall_pairs_in_contact,
     const double                     dt,
     const double                     current_time,
@@ -149,6 +150,12 @@ ParticleWallContactForce<dim,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log)
+=======
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    const double current_time,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome, OngoingCollisionLog<dim> &ongoing_collision_log, CollisionEventLog<dim> &collision_event_log)
+>>>>>>> c330c00cb (Change function definitions to include current time, OngoingCollisionLog and CollisionEventLog)
 {
   // Getting the threshold distance for contact force, this is useful
   // for non-contact cohesive force models such as the DMT.

@@ -65,7 +65,10 @@ public:
    * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
    * @param[in] current_time Current simulation time.
+<<<<<<< HEAD
    * @param[in] particle_handler Particle handler.
+=======
+>>>>>>> c330c00cb (Change function definitions to include current time, OngoingCollisionLog and CollisionEventLog)
    * @param[out] contact_outcome Interaction outcomes.
    * @param[out] ongoing_collision_log Ongoing collision log.
    * @param[out] collision_event_log Collision event log.
@@ -73,6 +76,7 @@ public:
   virtual void
   calculate_particle_wall_contact_with_stats_log(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+<<<<<<< HEAD
                                     &particle_wall_pairs_in_contact,
     const double                     dt,
     const double                     current_time,
@@ -80,6 +84,12 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log) = 0;
+=======
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    const double current_time,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome, OngoingCollisionLog<dim> &ongoing_collision_log, CollisionEventLog<dim> &collision_event_log) = 0;
+>>>>>>> c330c00cb (Change function definitions to include current time, OngoingCollisionLog and CollisionEventLog)
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
@@ -146,7 +156,10 @@ public:
    * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
    * @param[in] current_time Current simulation time.
+<<<<<<< HEAD
    * @param[in] particle_handler Particle handler.
+=======
+>>>>>>> c330c00cb (Change function definitions to include current time, OngoingCollisionLog and CollisionEventLog)
    * @param[out] contact_outcome Interaction outcomes.
    * @param[out] ongoing_collision_log Ongoing collision log.
    * @param[out] collision_event_log Collision event log.
@@ -154,6 +167,7 @@ public:
   virtual void
   calculate_particle_wall_contact_with_stats_log(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+<<<<<<< HEAD
                                     &particle_wall_pairs_in_contact,
     const double                     dt,
     const double                     current_time,
@@ -161,6 +175,12 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log) override;
+=======
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    const double current_time,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome, OngoingCollisionLog<dim> &ongoing_collision_log, CollisionEventLog<dim> &collision_event_log) override;
+>>>>>>> c330c00cb (Change function definitions to include current time, OngoingCollisionLog and CollisionEventLog)
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
