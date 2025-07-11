@@ -153,6 +153,11 @@ ParticleWallContactForce<dim,
   const double force_calculation_threshold_distance =
     get_force_calculation_threshold_distance();
 
+  // particles_in_contact_now will be used to find the particles that ended
+  // their collision during this time step, so that we can log the end of the
+  // collision.
+  std::set<types::particle_index> particles_in_contact_now;
+
   // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
        particle_wall_pairs_in_contact | boost::adaptors::map_values)
@@ -195,6 +200,35 @@ ParticleWallContactForce<dim,
 
           if (normal_overlap > force_calculation_threshold_distance)
             {
+              types::particle_index particle_id = particle->get_local_index();
+
+              particles_in_contact_now.insert(particle_id);
+
+              if (!ongoing_collision_log.is_in_collision(particle_id))
+                {
+                  collision_log<dim> start_log;
+                  start_log.particle_id = particle_id;
+
+                  start_log.velocity[0] =
+                    particle_properties[PropertiesIndex::v_x];
+                  start_log.velocity[1] =
+                    particle_properties[PropertiesIndex::v_y];
+                  start_log.velocity[2] =
+                    particle_properties[PropertiesIndex::v_z];
+
+                  start_log.omega[0] =
+                    particle_properties[PropertiesIndex::omega_x];
+                  start_log.omega[1] =
+                    particle_properties[PropertiesIndex::omega_y];
+                  start_log.omega[2] =
+                    particle_properties[PropertiesIndex::omega_z];
+
+                  start_log.time        = current_time;
+                  start_log.boundary_id = contact_info.boundary_id;
+
+                  ongoing_collision_log.start_collision(start_log);
+                }
+
               // Updating contact information
               this->update_contact_information(contact_info,
                                                tangential_relative_velocity,
@@ -216,8 +250,7 @@ ParticleWallContactForce<dim,
                                       rolling_resistance_torque);
 
               // Applying the calculated forces and torques on the particle
-              types::particle_index particle_id = particle->get_local_index();
-              Tensor<1, 3>         &particle_torque =
+              Tensor<1, 3> &particle_torque =
                 contact_outcome.torque[particle_id];
               Tensor<1, 3> &particle_force = contact_outcome.force[particle_id];
 
