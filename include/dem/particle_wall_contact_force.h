@@ -9,6 +9,7 @@
 #include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 
+#include <dem/collision_log_data.h>
 #include <dem/contact_info.h>
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
