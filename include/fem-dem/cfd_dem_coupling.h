@@ -222,16 +222,6 @@ private:
   double                                     maximum_particle_diameter;
   double                                     smallest_contact_search_criterion;
 
-  /**
-   * @brief Class object to store the particle id, boundary id, velocity tensor, omega tensor and time of ongoing collisions.
-   */
-  OngoingCollisionLog<dim> ongoing_collision_log;
-
-  /**
-   * @brief Class object to store the complete collision events (start and end).
-   */
-  CollisionEventLog<dim> collision_event_log;
-
   DEMContactManager<dim, DEM::CFDDEMProperties::PropertiesIndex>
     contact_manager;
   LagrangianLoadBalancing<dim, DEM::CFDDEMProperties::PropertiesIndex>
