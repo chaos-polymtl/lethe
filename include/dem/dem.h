@@ -413,6 +413,16 @@ private:
   std::vector<Tensor<1, 3>> &force = contact_outcome.force;
 
   /**
+   * @brief Class object to store the particle id, boundary id, velocity tensor, omega tensor and time of ongoing collisions.
+   */
+  OngoingCollisionLog<dim> ongoing_collision_log;
+
+  /**
+   * @brief Class object to store the complete collision events (start and end).
+   */
+  CollisionEventLog<dim> collision_event_log;
+
+  /**
    * @brief The displacement tracking of particles for the dynamic contact
    * detection.
    */
