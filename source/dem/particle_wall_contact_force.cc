@@ -143,7 +143,8 @@ ParticleWallContactForce<dim,
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                 &particle_wall_pairs_in_contact,
     const double dt,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
+    const double current_time,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome, OngoingCollisionLog<dim> &ongoing_collision_log, CollisionEventLog<dim> &collision_event_log)
 {
   // Getting the threshold distance for contact force, this is useful
   // for non-contact cohesive force models such as the DMT.
