@@ -75,7 +75,9 @@ public:
                 &particle_wall_pairs_in_contact,
     const double dt,
     const double current_time,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome, OngoingCollisionLog<dim> &ongoing_collision_log, CollisionEventLog<dim> &collision_event_log) = 0;
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
+    OngoingCollisionLog<dim>                     &ongoing_collision_log,
+    CollisionEventLog<dim>                       &collision_event_log) = 0;
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
@@ -152,7 +154,9 @@ public:
                 &particle_wall_pairs_in_contact,
     const double dt,
     const double current_time,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome, OngoingCollisionLog<dim> &ongoing_collision_log, CollisionEventLog<dim> &collision_event_log) override;
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
+    OngoingCollisionLog<dim>                     &ongoing_collision_log,
+    CollisionEventLog<dim>                       &collision_event_log) override;
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
