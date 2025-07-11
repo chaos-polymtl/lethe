@@ -962,6 +962,7 @@ void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
+<<<<<<< HEAD
   if (dem_parameters.model_parameters.particle_wall_contact_statistics)
     {
       particle_wall_contact_force_object
@@ -977,11 +978,12 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 
   else
     {
+=======
+>>>>>>> fe6aaf129 (Remove new collision logging from cfd-dem for now)
       particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_wall_in_contact(),
         dem_time_step,
         contact_outcome);
-    }
 
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
