@@ -2,6 +2,12 @@
 # Change Log
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
+
+### [Master] - 2025-07-11
+
+### Fixed
+
+- MINOR The rotor mesh rotation was not in the right place in the code, so that at the start of the simulation the accessed mapping information was still incorrect. This PR fixes this, and adds an application test for a rotor rotated mesh. [#1579](https://github.com/chaos-polymtl/lethe/pull/1579)
 ### [Master] - 2025-07-11
 
 ### Added
