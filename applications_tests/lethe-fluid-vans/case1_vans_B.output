@@ -12,7 +12,7 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -2.32538e-17 s^-1
+Global continuity equation error: -1.58812e-17 s^-1
 Max local continuity error: 0.00226328 s^-1
 
 *****************************
@@ -27,7 +27,7 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: 2.92656e-17 s^-1
+Global continuity equation error: -5.84735e-17 s^-1
 Max local continuity error: 0.000290049 s^-1
 
 *****************************
@@ -42,7 +42,7 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -9.1371e-19 s^-1
+Global continuity equation error: -1.62924e-17 s^-1
 Max local continuity error: 3.65184e-05 s^-1
 cells  error_velocity    error_pressure   
   256 6.359579e-02    - 4.459124e-01    - 
