@@ -8,11 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MINOR The rotor mesh rotation was not in the right place in the code, so that at the start of the simulation the accessed mapping information was still incorrect. This PR fixes this, and adds an application test for a rotor rotated mesh. [#1579](https://github.com/chaos-polymtl/lethe/pull/1579)
-### [Master] - 2025-07-11
 
 ### Added
 
 - MINOR Removes the old gas-solid-spouted-bed example which has now been replaced with the much better gas-solid-spouted-rectangular-bed. The newer example features validation and other components which make it significnatly more relevant than the previous one which just displayed the capabilities of the solver. [#1578](https://github.com/chaos-polymtl/lethe/pull/1578)
+
 ### [Master] - 2025-07-10
 
 ### Added
@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Add tailored capability for validation script to run on Lucille (a compute node) and re-adapt rising bubble case. [#1574](https://github.com/chaos-polymtl/lethe/pull/1574)
+
 ## [Master] - 2025-07-07
 
 ### Changed
