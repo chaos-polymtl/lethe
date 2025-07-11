@@ -12,7 +12,6 @@ This section includes examples related to multiphase fluid-solid flows. We organ
     single-particle-sedimentation/single-particle-sedimentation
     cylindrical-packed-bed/cylindrical-packed-bed
     gas-solid-fluidized-bed/gas-solid-fluidized-bed
-    gas-solid-spouted-bed/gas-solid-spouted-bed
     gas-solid-spouted-rectangular-bed/gas-solid-spouted-rectangular-bed
     liquid-solid-fluidized-bed/liquid-solid-fluidized-bed
     boycott-effect/boycott-effect
@@ -36,17 +35,15 @@ This section includes examples related to multiphase fluid-solid flows. We organ
 
       cfd_dem_3 [label="Gas-Solid Fluidized Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html"];
 
-      cfd_dem_4 [label="Gas-Solid Spouted Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html"];
+      cfd_dem_4 [label="Gas-Solid Spouted Rectangular Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-rectangular-bed/gas-solid-spouted-rectangular-bed.html"];
 
-      cfd_dem_5 [label="Gas-Solid Spouted Rectangular Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-rectangular-bed/gas-solid-spouted-rectangular-bed.html"];
+      cfd_dem_5 [label="Liquid-Solid Fluidized Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html"];
 
-      cfd_dem_6 [label="Liquid-Solid Fluidized Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html"];
+      cfd_dem_6 [label="Boycott Effect", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
 
-      cfd_dem_7 [label="Boycott Effect", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
+      cfd_dem_7 [label="Gas-Solid Spouted Cylinder Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html"];
 
-      cfd_dem_8 [label="Gas-Solid Spouted Cylinder Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html"];
-
-      cfd_dem_9 [label="Dense Pneumatic Conveying", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html"];
+      cfd_dem_8 [label="Dense Pneumatic Conveying", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html"];
 
       unresolved_cfd_dem -> cfd_dem_1:w;
       unresolved_cfd_dem -> cfd_dem_2:w;
@@ -56,5 +53,4 @@ This section includes examples related to multiphase fluid-solid flows. We organ
       unresolved_cfd_dem -> cfd_dem_6:w;
       unresolved_cfd_dem -> cfd_dem_7:w;
       unresolved_cfd_dem -> cfd_dem_8:w;
-      unresolved_cfd_dem -> cfd_dem_9:w;
     }
