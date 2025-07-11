@@ -9,8 +9,6 @@
 
 using namespace dealii;
 
-namespace DEM
-{
   /**
    * @brief Struct to store information about a particle-wall collision moment.
    */
@@ -116,6 +114,5 @@ namespace DEM
     // List to store completed collision events
     std::list<collision_event<dim>> events;
   };
-} // namespace DEM
 
 #endif // lethe_collision_log_data_h
