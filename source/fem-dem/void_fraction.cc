@@ -1120,7 +1120,7 @@ void
 VoidFractionBase<dim>::solve_linear_system_and_update_solution()
 {
   // Solve the L2 projection system
-  const double linear_solver_tolerance = 1e-15;
+  const double linear_solver_tolerance =linear_solver_parameters.minimum_residual;
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {

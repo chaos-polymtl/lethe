@@ -24,7 +24,7 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
       &(*this->triangulation),
       nsparam.void_fraction,
       this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver.at(
-        PhysicsID::fluid_dynamics),
+        PhysicsID::void_fraction),
       &particle_handler,
       this->cfd_dem_simulation_parameters.cfd_parameters.fem_parameters
         .void_fraction_order,
