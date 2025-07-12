@@ -112,8 +112,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a376f850815f1541295bc6b6d0434ce65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01ab1689f9329a893329c90069073b86" id="r_a01ab1689f9329a893329c90069073b86"><td class="memItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a01ab1689f9329a893329c90069073b86">center_of_rotation</a></td></tr>
 <tr class="separator:a01ab1689f9329a893329c90069073b86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14c1851190ff8ecabeb3b7e98f6e3a3e" id="r_a14c1851190ff8ecabeb3b7e98f6e3a3e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a14c1851190ff8ecabeb3b7e98f6e3a3e">rotor_angular_velocity</a></td></tr>
-<tr class="separator:a14c1851190ff8ecabeb3b7e98f6e3a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa505cb02c5808619a3538f57da0de941" id="r_aa505cb02c5808619a3538f57da0de941"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#aa505cb02c5808619a3538f57da0de941">rotor_rotation_angle</a></td></tr>
+<tr class="separator:aa505cb02c5808619a3538f57da0de941"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47e4b88e7b761870803d1dd2abf4be5b" id="r_a47e4b88e7b761870803d1dd2abf4be5b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a47e4b88e7b761870803d1dd2abf4be5b">sip_factor</a></td></tr>
 <tr class="separator:a47e4b88e7b761870803d1dd2abf4be5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1f0aeedf52050e9420a14c5894a094b" id="r_ab1f0aeedf52050e9420a14c5894a094b"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#ab1f0aeedf52050e9420a14c5894a094b">oversampling_factor</a></td></tr>
@@ -167,7 +167,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04190">4190</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04189">4189</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -234,26 +234,6 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a14c1851190ff8ecabeb3b7e98f6e3a3e" name="a14c1851190ff8ecabeb3b7e98f6e3a3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14c1851190ff8ecabeb3b7e98f6e3a3e">&#9670;&#160;</a></span>rotor_angular_velocity</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt; &gt; <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt;::rotor_angular_velocity</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Rotation function of the rotor domain. </p>
-
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01806">1806</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
-
-</div>
-</div>
 <a id="a50d08d147ecc318dda278724af26910a" name="a50d08d147ecc318dda278724af26910a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a50d08d147ecc318dda278724af26910a">&#9670;&#160;</a></span>rotor_boundary_id</h2>
 
@@ -291,6 +271,26 @@ template&lt;int dim&gt; </div>
 <p><a class="el" href="structParameters_1_1Mesh.html" title="Mesh - Parameters that control mesh reading and mesh generation.">Mesh</a> parameters for the rotor part. </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01798">1798</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="aa505cb02c5808619a3538f57da0de941" name="aa505cb02c5808619a3538f57da0de941"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa505cb02c5808619a3538f57da0de941">&#9670;&#160;</a></span>rotor_rotation_angle</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt; &gt; <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt;::rotor_rotation_angle</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Rotation angle of the rotor domain in radians. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01806">1806</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

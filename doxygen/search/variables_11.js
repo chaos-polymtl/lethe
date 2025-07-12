@@ -78,9 +78,9 @@ var searchData=
   ['rotation_5faxis_75',['rotation_axis',['../classParameters_1_1Laser.html#a883b18b03e6ca59001d87b4112d09183',1,'Parameters::Laser::rotation_axis'],['../structParameters_1_1Mesh.html#a10bdb4bcd32b48067e347abb04be7058',1,'Parameters::Mesh::rotation_axis'],['../classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e',1,'GridMotion::rotation_axis']]],
   ['rotation_5fmatrix_76',['rotation_matrix',['../classIBParticle.html#a60c2787b635b03e99b0cd8d0bd450ca5',1,'IBParticle::rotation_matrix'],['../classParameters_1_1Laser.html#a8b8ac2fb0b8307233d3cec2da3c0734c',1,'Parameters::Laser::rotation_matrix'],['../classShape.html#a18a2eaa1dc203ef6ebadfa3e52e5c509',1,'Shape::rotation_matrix']]],
   ['rotational_5fviscous_5ftorque_77',['rotational_viscous_torque',['../structParameters_1_1CFDDEM.html#a1f2fba40324f02c1396e99ebb0561ce2',1,'Parameters::CFDDEM']]],
-  ['rotor_5fangular_5fvelocity_78',['rotor_angular_velocity',['../structParameters_1_1Mortar.html#a14c1851190ff8ecabeb3b7e98f6e3a3e',1,'Parameters::Mortar']]],
-  ['rotor_5fboundary_5fid_79',['rotor_boundary_id',['../structParameters_1_1Mortar.html#a50d08d147ecc318dda278724af26910a',1,'Parameters::Mortar']]],
-  ['rotor_5fmesh_80',['rotor_mesh',['../structParameters_1_1Mortar.html#ac50e0ff932d627dfe1c6c1e5ca8ef4d0',1,'Parameters::Mortar']]],
+  ['rotor_5fboundary_5fid_78',['rotor_boundary_id',['../structParameters_1_1Mortar.html#a50d08d147ecc318dda278724af26910a',1,'Parameters::Mortar']]],
+  ['rotor_5fmesh_79',['rotor_mesh',['../structParameters_1_1Mortar.html#ac50e0ff932d627dfe1c6c1e5ca8ef4d0',1,'Parameters::Mortar']]],
+  ['rotor_5frotation_5fangle_80',['rotor_rotation_angle',['../structParameters_1_1Mortar.html#aa505cb02c5808619a3538f57da0de941',1,'Parameters::Mortar']]],
   ['rpt_5fparam_81',['rpt_param',['../classRPTCalculatingParameters.html#a8ca8cd3738bb99e99186ed2f38446bf6',1,'RPTCalculatingParameters']]],
   ['rpt_5fparameters_82',['rpt_parameters',['../classRPT.html#ae8b913a2a26589e95c08cb0d2a5ca16a',1,'RPT::rpt_parameters'],['../classRPTFEMReconstruction.html#a40a5a8175803e43d0b74f8b3af379a93',1,'RPTFEMReconstruction::rpt_parameters']]]
 ];

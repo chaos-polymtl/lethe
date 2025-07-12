@@ -183,7 +183,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  this-&gt;define_zero_constraints();</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  <span class="comment">// If enabled, create mortar coupling</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  this-&gt;init_mortar_coupling();</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  this-&gt;update_mortar_coupling();</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  this-&gt;present_solution.reinit(this-&gt;locally_owned_dofs,</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                                this-&gt;locally_relevant_dofs,</div>
@@ -1789,63 +1789,69 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01653" name="l01653"></a><span class="lineno"> 1653</span>  this-&gt;computing_timer.enter_subsection(<span class="stringliteral">&quot;Read mesh and manifolds&quot;</span>);</div>
 <div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span> </div>
 <div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar.enable)</div>
-<div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>    <a class="code hl_function" href="grids_8h.html#a2531d415f6bbcee20e4514819b689da6">read_mesh_and_manifolds_for_stator_and_rotor</a>(</div>
-<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>      *this-&gt;triangulation,</div>
-<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>      this-&gt;simulation_parameters.mesh,</div>
-<div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>      this-&gt;simulation_parameters.manifolds_parameters,</div>
-<div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>      this-&gt;simulation_parameters.restart_parameters.restart,</div>
-<div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span>      this-&gt;simulation_parameters.boundary_conditions,</div>
-<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>      this-&gt;simulation_parameters.mortar);</div>
-<div class="line"><a id="l01663" name="l01663"></a><span class="lineno"> 1663</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01664" name="l01664"></a><span class="lineno"> 1664</span>    <a class="code hl_function" href="grids_8h.html#a12c5f7ced96095e07e2610117cf726df">read_mesh_and_manifolds</a>(</div>
-<div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span>      *this-&gt;triangulation,</div>
-<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>      this-&gt;simulation_parameters.mesh,</div>
-<div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>      this-&gt;simulation_parameters.manifolds_parameters,</div>
-<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>      this-&gt;simulation_parameters.restart_parameters.restart,</div>
-<div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span>      this-&gt;simulation_parameters.boundary_conditions);</div>
-<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span> </div>
-<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>  this-&gt;computing_timer.leave_subsection(<span class="stringliteral">&quot;Read mesh and manifolds&quot;</span>);</div>
-<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span> </div>
-<div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>  this-&gt;setup_dofs();</div>
-<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>  this-&gt;enable_dynamic_zero_constraints_fd();</div>
-<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>  this-&gt;box_refine_mesh(this-&gt;simulation_parameters.restart_parameters.restart);</div>
-<div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>  this-&gt;set_initial_condition(</div>
-<div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span>    this-&gt;simulation_parameters.initial_condition-&gt;type,</div>
-<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span>    this-&gt;simulation_parameters.restart_parameters.restart);</div>
-<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span>  this-&gt;update_multiphysics_time_average_solution();</div>
-<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span> </div>
-<div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>  <span class="keywordflow">while</span> (this-&gt;simulation_control-&gt;integrate())</div>
-<div class="line"><a id="l01682" name="l01682"></a><span class="lineno"> 1682</span>    {</div>
-<div class="line"><a id="l01683" name="l01683"></a><span class="lineno"> 1683</span>      this-&gt;forcing_function-&gt;set_time(</div>
-<div class="line"><a id="l01684" name="l01684"></a><span class="lineno"> 1684</span>        this-&gt;simulation_control-&gt;get_current_time());</div>
-<div class="line"><a id="l01685" name="l01685"></a><span class="lineno"> 1685</span> </div>
-<div class="line"><a id="l01686" name="l01686"></a><span class="lineno"> 1686</span>      <span class="comment">// We allow the physics to update their boundary conditions</span></div>
-<div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span>      <span class="comment">// according to their own parameters</span></div>
-<div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span>      this-&gt;update_boundary_conditions();</div>
-<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>      this-&gt;multiphysics-&gt;update_boundary_conditions();</div>
-<div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span> </div>
-<div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span>      this-&gt;simulation_control-&gt;print_progression(this-&gt;pcout);</div>
-<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>      this-&gt;dynamic_flow_control();</div>
-<div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span> </div>
-<div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>      <span class="keywordflow">if</span> (!this-&gt;simulation_control-&gt;is_at_start())</div>
-<div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>        <a class="code hl_function" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase&lt;dim, GlobalVectorType, IndexSet&gt;::refine_mesh</a>();</div>
+<div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>    {</div>
+<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>      <a class="code hl_function" href="grids_8h.html#a2531d415f6bbcee20e4514819b689da6">read_mesh_and_manifolds_for_stator_and_rotor</a>(</div>
+<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>        *this-&gt;triangulation,</div>
+<div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>        this-&gt;simulation_parameters.mesh,</div>
+<div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>        this-&gt;simulation_parameters.manifolds_parameters,</div>
+<div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span>        this-&gt;simulation_parameters.restart_parameters.restart,</div>
+<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>        this-&gt;simulation_parameters.boundary_conditions,</div>
+<div class="line"><a id="l01663" name="l01663"></a><span class="lineno"> 1663</span>        this-&gt;simulation_parameters.mortar);</div>
+<div class="line"><a id="l01664" name="l01664"></a><span class="lineno"> 1664</span>      <span class="comment">// Create and initialize mapping cache</span></div>
+<div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span>      this-&gt;mapping_cache =</div>
+<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>        std::make_shared&lt;MappingQCache&lt;dim&gt;&gt;(this-&gt;velocity_fem_degree);</div>
+<div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>      this-&gt;rotate_mortar_mapping();</div>
+<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>    }</div>
+<div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>    <a class="code hl_function" href="grids_8h.html#a12c5f7ced96095e07e2610117cf726df">read_mesh_and_manifolds</a>(</div>
+<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>      *this-&gt;triangulation,</div>
+<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>      this-&gt;simulation_parameters.mesh,</div>
+<div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>      this-&gt;simulation_parameters.manifolds_parameters,</div>
+<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>      this-&gt;simulation_parameters.restart_parameters.restart,</div>
+<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>      this-&gt;simulation_parameters.boundary_conditions);</div>
+<div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span> </div>
+<div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span>  this-&gt;computing_timer.leave_subsection(<span class="stringliteral">&quot;Read mesh and manifolds&quot;</span>);</div>
+<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span> </div>
+<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span>  this-&gt;setup_dofs();</div>
+<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>  this-&gt;enable_dynamic_zero_constraints_fd();</div>
+<div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>  this-&gt;box_refine_mesh(this-&gt;simulation_parameters.restart_parameters.restart);</div>
+<div class="line"><a id="l01682" name="l01682"></a><span class="lineno"> 1682</span>  this-&gt;set_initial_condition(</div>
+<div class="line"><a id="l01683" name="l01683"></a><span class="lineno"> 1683</span>    this-&gt;simulation_parameters.initial_condition-&gt;type,</div>
+<div class="line"><a id="l01684" name="l01684"></a><span class="lineno"> 1684</span>    this-&gt;simulation_parameters.restart_parameters.restart);</div>
+<div class="line"><a id="l01685" name="l01685"></a><span class="lineno"> 1685</span>  this-&gt;update_multiphysics_time_average_solution();</div>
+<div class="line"><a id="l01686" name="l01686"></a><span class="lineno"> 1686</span> </div>
+<div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span>  <span class="keywordflow">while</span> (this-&gt;simulation_control-&gt;integrate())</div>
+<div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span>    {</div>
+<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>      this-&gt;forcing_function-&gt;set_time(</div>
+<div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span>        this-&gt;simulation_control-&gt;get_current_time());</div>
+<div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span> </div>
+<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>      <span class="comment">// We allow the physics to update their boundary conditions</span></div>
+<div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span>      <span class="comment">// according to their own parameters</span></div>
+<div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>      this-&gt;update_boundary_conditions();</div>
+<div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>      this-&gt;multiphysics-&gt;update_boundary_conditions();</div>
 <div class="line"><a id="l01696" name="l01696"></a><span class="lineno"> 1696</span> </div>
-<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>      this-&gt;define_dynamic_zero_constraints();</div>
-<div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>      this-&gt;iterate();</div>
-<div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span>      this-&gt;postprocess(<span class="keyword">false</span>);</div>
-<div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span>      this-&gt;finish_time_step();</div>
-<div class="line"><a id="l01701" name="l01701"></a><span class="lineno"> 1701</span>    }</div>
+<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>      this-&gt;simulation_control-&gt;print_progression(this-&gt;pcout);</div>
+<div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>      this-&gt;dynamic_flow_control();</div>
+<div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span> </div>
+<div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span>      <span class="keywordflow">if</span> (!this-&gt;simulation_control-&gt;is_at_start())</div>
+<div class="line"><a id="l01701" name="l01701"></a><span class="lineno"> 1701</span>        <a class="code hl_function" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase&lt;dim, GlobalVectorType, IndexSet&gt;::refine_mesh</a>();</div>
 <div class="line"><a id="l01702" name="l01702"></a><span class="lineno"> 1702</span> </div>
-<div class="line"><a id="l01703" name="l01703"></a><span class="lineno"> 1703</span> </div>
-<div class="line"><a id="l01704" name="l01704"></a><span class="lineno"> 1704</span>  this-&gt;finish_simulation();</div>
-<div class="line"><a id="l01705" name="l01705"></a><span class="lineno"> 1705</span>}</div>
+<div class="line"><a id="l01703" name="l01703"></a><span class="lineno"> 1703</span>      this-&gt;define_dynamic_zero_constraints();</div>
+<div class="line"><a id="l01704" name="l01704"></a><span class="lineno"> 1704</span>      this-&gt;iterate();</div>
+<div class="line"><a id="l01705" name="l01705"></a><span class="lineno"> 1705</span>      this-&gt;postprocess(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l01706" name="l01706"></a><span class="lineno"> 1706</span>      this-&gt;finish_time_step();</div>
+<div class="line"><a id="l01707" name="l01707"></a><span class="lineno"> 1707</span>    }</div>
+<div class="line"><a id="l01708" name="l01708"></a><span class="lineno"> 1708</span> </div>
+<div class="line"><a id="l01709" name="l01709"></a><span class="lineno"> 1709</span> </div>
+<div class="line"><a id="l01710" name="l01710"></a><span class="lineno"> 1710</span>  this-&gt;finish_simulation();</div>
+<div class="line"><a id="l01711" name="l01711"></a><span class="lineno"> 1711</span>}</div>
 </div>
-<div class="line"><a id="l01706" name="l01706"></a><span class="lineno"> 1706</span> </div>
-<div class="line"><a id="l01707" name="l01707"></a><span class="lineno"> 1707</span> </div>
-<div class="line"><a id="l01708" name="l01708"></a><span class="lineno"> 1708</span><span class="comment">// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is</span></div>
-<div class="line"><a id="l01709" name="l01709"></a><span class="lineno"> 1709</span><span class="comment">// valid before we actually compile the solver This greatly helps with debugging</span></div>
-<div class="line"><a id="l01710" name="l01710"></a><span class="lineno"> 1710</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased&lt;2&gt;</a>;</div>
-<div class="line"><a id="l01711" name="l01711"></a><span class="lineno"> 1711</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased&lt;3&gt;</a>;</div>
+<div class="line"><a id="l01712" name="l01712"></a><span class="lineno"> 1712</span> </div>
+<div class="line"><a id="l01713" name="l01713"></a><span class="lineno"> 1713</span> </div>
+<div class="line"><a id="l01714" name="l01714"></a><span class="lineno"> 1714</span><span class="comment">// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is</span></div>
+<div class="line"><a id="l01715" name="l01715"></a><span class="lineno"> 1715</span><span class="comment">// valid before we actually compile the solver This greatly helps with debugging</span></div>
+<div class="line"><a id="l01716" name="l01716"></a><span class="lineno"> 1716</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased&lt;2&gt;</a>;</div>
+<div class="line"><a id="l01717" name="l01717"></a><span class="lineno"> 1717</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsMatrixBased_html"><div class="ttname"><a href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased</a></div><div class="ttdoc">A solver class for the Navier-Stokes equation using GLS stabilization.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__based_8h_source.html#l00032">fluid_dynamics_matrix_based.h:34</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsMatrixBased_html_a01fd5496793c44c9889381ab54f7d6ba"><div class="ttname"><a href="classFluidDynamicsMatrixBased.html#a01fd5496793c44c9889381ab54f7d6ba">FluidDynamicsMatrixBased::define_dynamic_zero_constraints</a></div><div class="ttdeci">void define_dynamic_zero_constraints()</div><div class="ttdoc">Define the zero constraints used to solved the problem that change with other physics' solutions.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__based_8cc_source.html#l00184">fluid_dynamics_matrix_based.cc:184</a></div></div>
@@ -1886,8 +1892,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassGLSNavierStokesVOFAssemblerNonNewtonianCore_html"><div class="ttname"><a href="classGLSNavierStokesVOFAssemblerNonNewtonianCore.html">GLSNavierStokesVOFAssemblerNonNewtonianCore</a></div><div class="ttdoc">Assembles the core of the Navier-Stokes equation using a Rheological model to predict non-Newtonian b...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__vof__assemblers_8h_source.html#l00315">navier_stokes_vof_assemblers.h:317</a></div></div>
 <div class="ttc" id="aclassGLSNavierStokesVOFAssemblerSTF_html"><div class="ttname"><a href="classGLSNavierStokesVOFAssemblerSTF.html">GLSNavierStokesVOFAssemblerSTF</a></div><div class="ttdoc">Assembles the Surface Tension Force (STF) for the Navier-Stokes equations according to the following ...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__vof__assemblers_8h_source.html#l00169">navier_stokes_vof_assemblers.h:170</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html"><div class="ttname"><a href="classNavierStokesBase.html">NavierStokesBase</a></div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00119">navier_stokes_base.h:120</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a57ffa198f9fabb15e3af4c9fa2921e18"><div class="ttname"><a href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase::refine_mesh</a></div><div class="ttdeci">virtual void refine_mesh()</div><div class="ttdoc">Allow the refinement of the mesh according to one of the 2 methods proposed.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00680">navier_stokes_base.cc:680</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a888b30d921a5a6beb3883cbaa3f8fa28"><div class="ttname"><a href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a></div><div class="ttdeci">SimulationParameters&lt; dim &gt; simulation_parameters</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00907">navier_stokes_base.h:907</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a57ffa198f9fabb15e3af4c9fa2921e18"><div class="ttname"><a href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase::refine_mesh</a></div><div class="ttdeci">virtual void refine_mesh()</div><div class="ttdoc">Allow the refinement of the mesh according to one of the 2 methods proposed.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00675">navier_stokes_base.cc:675</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a888b30d921a5a6beb3883cbaa3f8fa28"><div class="ttname"><a href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a></div><div class="ttdeci">SimulationParameters&lt; dim &gt; simulation_parameters</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00906">navier_stokes_base.h:906</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html"><div class="ttname"><a href="classNavierStokesScratchData.html">NavierStokesScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a Navier-Stokes equation....</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8h_source.html#l00058">navier_stokes_scratch_data.h:59</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html_a0e506238dac667b6c23647eb1b237120"><div class="ttname"><a href="classNavierStokesScratchData.html#a0e506238dac667b6c23647eb1b237120">NavierStokesScratchData::reinit_projected_phase_fraction_gradient</a></div><div class="ttdeci">void reinit_projected_phase_fraction_gradient(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;projected_phase_fraction_gradient_cell, const VectorType &amp;current_projected_phase_fraction_gradient_solution)</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8h_source.html#l00554">navier_stokes_scratch_data.h:554</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html_a30ca912e22e35000f7109061ad47726b"><div class="ttname"><a href="classNavierStokesScratchData.html#a30ca912e22e35000f7109061ad47726b">NavierStokesScratchData::calculate_physical_properties</a></div><div class="ttdeci">void calculate_physical_properties()</div><div class="ttdoc">Calculates the physical properties. This function calculates the physical properties that may be requ...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00378">navier_stokes_scratch_data.cc:378</a></div></div>
