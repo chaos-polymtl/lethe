@@ -797,7 +797,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
 }
 #endif
 
-
 template <int dim, typename Number>
 const AffineConstraints<Number> &
 CouplingOperator<dim, Number>::get_affine_constraints() const
@@ -1503,15 +1502,13 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       const auto penalty_parameter = data.all_penalty_parameter[q_index];
       const auto normal            = data.all_normals[q_index];
 
-      // The expression for the jump on the mortar interface is
-      // jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
-      // the value of normal_m, we use a minus sign here because normal_p = -
-      // normal_m
+      // jump(u) = u_m - u_p
       const auto u_value_jump = u_value_m - u_value_p;
 
       // The expression for the average on the mortar interface is
-      // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
-      // above, we include the negative sign here
+      // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. Since we are
+      // accessing only the value of normal_m, we use a minus sign here because
+      // normal_p = - normal_m
       const auto u_grad_avg = (u_grad_normal_m - u_grad_normal_p) * 0.5;
 
       // {{p}} = (p_m + p_p)/2
@@ -1528,9 +1525,9 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
       // - (n avg(∇v), jump(u))
       u_grad_result -= u_value_jump;
       // - (jump(v), ν avg(∇δu) n)
-      u_value_result -= u_grad_avg;
+      u_value_result -= u_grad_avg * this->kinematic_viscosity;
       // + (jump(v), ν σ jump(δu))
-      u_value_result += sigma * u_value_jump;
+      u_value_result += sigma * this->kinematic_viscosity * u_value_jump;
 
       /* Contribution from pressure gradient term */
       // + (jump(v), avg(δp) n)
@@ -1538,12 +1535,13 @@ NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
 
       /* Contribution from velocity divergence term */
       // - (avg(q), jump(u) n)
-      p_value_result -= 0.5 * u_value_jump * normal;
-      // p_value_result += u_value_avg * normal;
+      p_value_result -= 0.5 * contract(u_value_jump, normal);
 
       // - (n avg(∇v), ν/2 jump(δu))
-      phi_u_m.submit_gradient(outer(u_grad_result, normal) * 0.5 * JxW, q);
-      phi_u_m.submit_value(u_value_result * this->kinematic_viscosity * JxW, q);
+      phi_u_m.submit_gradient(outer(u_grad_result, normal) *
+                                this->kinematic_viscosity * 0.5 * JxW,
+                              q);
+      phi_u_m.submit_value(u_value_result * JxW, q);
       phi_p_m.submit_value(p_value_result * JxW, q);
     }
 

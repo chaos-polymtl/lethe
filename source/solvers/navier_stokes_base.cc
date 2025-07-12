@@ -555,11 +555,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
-  // If the mortar method is enabled, update the rotor configuration in the
-  // mortar coupling operator
-  if (this->simulation_parameters.mortar.enable)
-    this->rotate_mortar_mapping();
-
   if (simulation_parameters.multiphysics.fluid_dynamics)
     {
       // Solve and percolate the auxiliary physics that should be treated BEFORE
@@ -1212,8 +1207,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // If mortar is enabled, update mapping cache with refined triangulation
   if (this->simulation_parameters.mortar.enable)
-    this->mapping_cache->initialize(*this->initial_mapping,
-                                    *this->triangulation);
+    this->mapping_cache->initialize(*this->mapping, *this->triangulation);
 
   setup_dofs();
 
@@ -1966,10 +1960,18 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
+NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
 {
+  TimerOutput::Scope t(this->computing_timer, "Update mortar");
+
   if (!this->simulation_parameters.mortar.enable)
     return;
+
+  // Rotate mapping, but first check if we are not at the start of the
+  // simulation so we don't rotate it twice. For following iterations, this will
+  // be done only once when setup_dofs() is called
+  if (!this->simulation_control->is_at_start())
+    rotate_mortar_mapping();
 
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
@@ -1978,20 +1980,19 @@ NavierStokesBase<dim, VectorType, DofsType>::init_mortar_coupling()
     this->simulation_parameters.mortar);
 
   // Create mortar coupling evaluator
-  const std::shared_ptr<CouplingEvaluationBase<dim, double>>
-    mortar_coupling_evaluator =
-      std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-        *this->get_mapping(),
-        this->dof_handler,
-        this->simulation_parameters.physical_properties_manager
-          .get_kinematic_viscosity_scale());
+  this->mortar_coupling_evaluator =
+    std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+      *this->get_mapping(),
+      this->dof_handler,
+      this->simulation_parameters.physical_properties_manager
+        .get_kinematic_viscosity_scale());
 
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(
       *this->get_mapping(),
       this->dof_handler,
       this->zero_constraints,
-      mortar_coupling_evaluator,
+      this->mortar_coupling_evaluator,
       this->mortar_manager,
       this->simulation_parameters.mortar.rotor_boundary_id,
       this->simulation_parameters.mortar.stator_boundary_id,
@@ -2002,35 +2003,30 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
+  TimerOutput::Scope t(this->computing_timer, "Rotate mortar");
+
   if (this->simulation_parameters.mortar.enable)
     {
-      // Get updated rotation angle
-      simulation_parameters.mortar.rotor_angular_velocity->set_time(
+      // Get updated rotation angle (radians)
+      simulation_parameters.mortar.rotor_rotation_angle->set_time(
         this->simulation_control->get_current_time());
       const double rotation_angle =
-        simulation_parameters.mortar.rotor_angular_velocity->value(
-          Point<dim>());
+        simulation_parameters.mortar.rotor_rotation_angle->value(Point<dim>());
 
       if (simulation_parameters.mortar.verbosity ==
           Parameters::Verbosity::verbose)
-        this->pcout << "Mortar - Rotating rotor grid: " << rotation_angle
+        this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
                     << " rad \n"
                     << std::endl;
 
-      // If this is the first iteration, store initial mapping and create
-      // mapping cache object. Otherwise, use initalize() function to update
-      // current mapping cache
-      if (this->simulation_control->is_at_start())
-        {
-          this->mapping_cache =
-            std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-          this->initial_mapping = this->mapping;
-        }
+      // Create new mapping cache
+      this->mapping_cache =
+        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
 
       LetheGridTools::rotate_mapping(
         this->dof_handler,
         *this->mapping_cache,
-        *this->initial_mapping,
+        *this->mapping,
         compute_n_subdivisions_and_radius(*this->triangulation,
                                           this->simulation_parameters.mortar)
           .second,

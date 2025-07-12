@@ -281,7 +281,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
       compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
                                         mortar_parameters)
         .second,
-      mortar_parameters.rotor_angular_velocity->value(Point<dim>()),
+      mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
       mortar_parameters.center_of_rotation)
 {}
 
