@@ -68,6 +68,14 @@ private:
   setup_distribution_type();
 
   /**
+   * @brief Set the insertion method.
+   *
+   * @return The pointer to the insertion object
+   */
+  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+  set_insertion_type();
+
+  /**
    * @brief Set the integration method.
    *
    * @return The pointer to the integration object
@@ -113,6 +121,13 @@ private:
    */
   void
   load_balance();
+
+  /**
+   * @brief Check if particles need to be inserted and perform it if necessary.
+   */
+  void
+  insert_particles();
+
 
   /**
    * @brief Add fluid-particle interaction force to the "force" container.

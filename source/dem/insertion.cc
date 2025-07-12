@@ -115,6 +115,22 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
           properties_of_one_particle.push_back(specific_heat);
         }
 
+      if constexpr (std::is_same_v<PropertiesIndex,
+                                   DEM::CFDDEMProperties::PropertiesIndex>)
+        {
+          // Push back all zero variables for the CFD-DEM coupling properties
+          // fem_force variable
+          for (unsigned int d = 0; d < dim; ++d)
+            properties_of_one_particle.push_back(0.);
+
+          // fem_torque variable
+          for (unsigned int d = 0; d < dim; ++d)
+            properties_of_one_particle.push_back(0.);
+
+          // volumetric contribution
+          properties_of_one_particle.push_back(0.);
+        }
+
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
