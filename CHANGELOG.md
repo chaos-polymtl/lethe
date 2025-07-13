@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-13
+
+### Change
+
+- MAJOR The void fraction linear tolerance can now be specified directly within the .prm file. The previous default value which was 1e-15 has now been changed to the default value used for all linear solvers. We advise users to explicitely specify the minimum tolerance for the void fraction within their parameter files. [#1580](https://github.com/chaos-polymtl/lethe/pull/1580)
+
 ### [Master] - 2025-07-11
 
 ### Fixed
@@ -38,6 +44,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Master] - 2025-07-07
 
 ### Changed
+
 - MINOR The default parameter for the linear solver of the matrix-free solvers now uses eigenvalue estimation instead of not. This approach is generally more robust and should be preferred. [#1572](https://github.com/chaos-polymtl/lethe/pull/1572)
 
 ## [Master] - 2025-07-03
