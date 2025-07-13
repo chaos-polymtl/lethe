@@ -209,6 +209,7 @@ subsection linear solver
   subsection void fraction
     set relative residual = 1e-15
     set minimum residual  = 1e-15
+    set verbopsity        = quiet
   end
   subsection fluid dynamics
     set method             = gmres
