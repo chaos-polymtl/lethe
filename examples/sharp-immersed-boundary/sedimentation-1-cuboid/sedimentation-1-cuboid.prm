@@ -13,8 +13,8 @@ set dimension = 3
 subsection simulation control
   set method             = bdf2
   set bdf startup method = multiple step bdf
-  set time step          = 0.0005 
-  set time end           = 0.6   
+  set time step          = 0.0005
+  set time end           = 0.6
   set output path        = out/
 end
 
@@ -24,7 +24,7 @@ end
 
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity = 1.07 
+    set kinematic viscosity = 1.07
     set density             = 0.00124
   end
 end
@@ -100,11 +100,11 @@ subsection particles
   end
 
   subsection DEM
-    set particle nonlinear tolerance      = 1e-2
-    set enable lubrication force          = false
-    set explicit contact impulsion        = true
-    set explicit position integration     = true
-    set contact search radius factor      = 1.2
+    set particle nonlinear tolerance  = 1e-2
+    set enable lubrication force      = false
+    set explicit contact impulsion    = true
+    set explicit position integration = true
+    set contact search radius factor  = 1.2
     subsection gravity
       set Function expression = 0;-981;0
     end
@@ -145,7 +145,7 @@ subsection mesh adaptation
   set max refinement level = 8
   set min refinement level = 4
 
-  set type = kelly
+  set type     = kelly
   set variable = velocity
 end
 
