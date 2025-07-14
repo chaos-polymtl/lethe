@@ -269,6 +269,44 @@ ParticleWallContactForce<dim,
             }
         }
     }
+
+  // Now we check which particles ended their collision during this time step
+  for (auto it = particle_handler.begin(); it != particle_handler.end(); ++it)
+    {
+      types::particle_index particle_id = it->get_local_index();
+
+      // If the particle is not in contact now, but was in contact before
+      if (particles_in_contact_now.find(particle_id) ==
+            particles_in_contact_now.end() &&
+          ongoing_collision_log.is_in_collision(particle_id))
+        {
+          collision_log<dim> end_log;
+          end_log.particle_id             = particle_id;
+          const auto &particle_properties = it->get_properties();
+
+          end_log.velocity[0] = particle_properties[PropertiesIndex::v_x];
+          end_log.velocity[1] = particle_properties[PropertiesIndex::v_y];
+          end_log.velocity[2] = particle_properties[PropertiesIndex::v_z];
+
+          end_log.omega[0] = particle_properties[PropertiesIndex::omega_x];
+          end_log.omega[1] = particle_properties[PropertiesIndex::omega_y];
+          end_log.omega[2] = particle_properties[PropertiesIndex::omega_z];
+
+          end_log.time = current_time;
+          collision_log<dim> start_log;
+          bool               ended =
+            ongoing_collision_log.end_collision(particle_id, start_log);
+          if (ended)
+            {
+              end_log.boundary_id = start_log.boundary_id;
+              collision_event<dim> event;
+              event.particle_id = particle_id;
+              event.start_log   = start_log;
+              event.end_log     = end_log;
+              collision_event_log.add_event(event);
+            }
+        }
+    }
 }
 
 template <int dim,
