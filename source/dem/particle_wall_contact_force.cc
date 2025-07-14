@@ -141,9 +141,10 @@ ParticleWallContactForce<dim,
                          rolling_friction_model>::
   calculate_particle_wall_contact_with_stats_log(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                &particle_wall_pairs_in_contact,
-    const double dt,
-    const double current_time,
+                                    &particle_wall_pairs_in_contact,
+    const double                     dt,
+    const double                     current_time,
+    Particles::ParticleHandler<dim> &particle_handler,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log)
