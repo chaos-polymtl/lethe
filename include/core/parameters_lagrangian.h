@@ -359,6 +359,16 @@ namespace Parameters
       // Particle-wall contact force model
       ParticleWallContactForceModel particle_wall_contact_force_method;
 
+      // Enable the logging of particle-wall contact statistics
+      bool particle_wall_contact_statistics;
+
+      // Collision threshold for the particle-wall contact to be considered a
+      // collision.
+      double collision_threshold;
+
+      // Exporting collision statistics csv filename
+      std::string export_collision_stats_file;
+
       // Rolling resistance torque method
       RollingResistanceMethod rolling_resistance_method;
 
@@ -381,9 +391,6 @@ namespace Parameters
       // Enable advection of particles (applies cell average velocity and
       // acceleration to particles)
       bool advect_particles;
-
-      // Enable the logging of particle-wall contact statistics
-      bool particle_wall_contact_statistics;
 
       // Minimal granular temperature value of cells where particle contacts
       // are considered

@@ -877,13 +877,28 @@ namespace Parameters
                           Patterns::Selection("linear|nonlinear|JKR|DMT"),
                           "Choosing particle-wall contact force model"
                           "Choices are <linear|nonlinear|JKR|DMT>.");
+        prm.enter_subsection("particle wall contact statistics");
+        {
+          prm.declare_entry(
+            "enable particle wall contact statistics",
+            "false",
+            Patterns::Selection("true|false"),
+            "Enable the logging of particle-wall contact statistics"
+            "Choices are <true|false>.");
 
-        prm.declare_entry(
-          "enable particle wall contact statistics",
-          "false",
-          Patterns::Selection("true|false"),
-          "Enable the logging of particle-wall contact statistics"
-          "Choices are <true|false>.");
+          prm.declare_entry(
+            "collision statistics file",
+            "collision_statistics.csv",
+            Patterns::FileName(),
+            "Exported particle-wall collision results filename");
+
+          prm.declare_entry(
+            "collision threshold",
+            "0.1",
+            Patterns::Double(),
+            "Threshold for the particle-wall contact to be considered a collision");
+        }
+        prm.leave_subsection();
 
         prm.declare_entry(
           "dmt cut-off threshold",
@@ -1109,10 +1124,21 @@ namespace Parameters
             throw(
               std::runtime_error("Invalid particle-wall contact force model "));
           }
+        prm.enter_subsection("particle wall contact statistics");
+        {
+          particle_wall_contact_statistics =
+            prm.get_bool("enable particle wall contact statistics");
 
-        particle_wall_contact_statistics =
-          prm.get_bool("enable particle wall contact statistics");
+          export_collision_stats_file = prm.get("collision statistics file");
+          collision_threshold         = prm.get_double("collision threshold");
 
+          if (collision_threshold < 0)
+            {
+              throw(std::runtime_error(
+                "Collision threshold must be greater than or equal to zero"));
+            }
+        }
+        prm.leave_subsection();
         dmt_cut_off_threshold = prm.get_double("dmt cut-off threshold");
 
         const std::string rolling_resistance_torque =
