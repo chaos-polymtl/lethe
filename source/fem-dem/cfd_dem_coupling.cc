@@ -969,6 +969,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
           contact_manager.get_particle_wall_in_contact(),
           dem_time_step,
           this->simulation_control->get_current_time(),
+          this->particle_handler,
           contact_outcome,
           ongoing_collision_log,
           collision_event_log);
