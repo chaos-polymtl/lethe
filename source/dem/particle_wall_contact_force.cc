@@ -17,6 +17,7 @@ ParticleWallContactForce<dim,
   ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
+  , collision_threshold(dem_parameters.model_parameters.collision_threshold)
 {
   set_effective_properties(dem_parameters);
   if constexpr (std::is_same_v<PropertiesIndex,
@@ -199,10 +200,10 @@ ParticleWallContactForce<dim,
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          if (normal_overlap > force_calculation_threshold_distance)
-            {
-              types::particle_index particle_id = particle->get_local_index();
+          types::particle_index particle_id = particle->get_local_index();
 
+          if (normal_overlap > collision_threshold)
+            {
               particles_in_contact_now.insert(particle_id);
 
               if (!ongoing_collision_log.is_in_collision(particle_id))
@@ -229,7 +230,9 @@ ParticleWallContactForce<dim,
 
                   ongoing_collision_log.start_collision(start_log);
                 }
-
+            }
+          if (normal_overlap > force_calculation_threshold_distance)
+            {
               // Updating contact information
               this->update_contact_information(contact_info,
                                                tangential_relative_velocity,
