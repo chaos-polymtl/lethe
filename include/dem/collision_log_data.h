@@ -78,6 +78,23 @@ public:
     return ongoing_collisions.find(particle_id) != ongoing_collisions.end();
   }
 
+  /**
+   * @brief Get all ongoing collisions.
+   */
+  const std::unordered_map<types::particle_index, collision_log<dim>> &
+  get_ongoing_collisions() const
+  {
+    return ongoing_collisions;
+  }
+  /**
+   * @brief Remove a collision entry for a particle.
+   */
+  void
+  remove_collision(types::particle_index particle_id)
+  {
+    ongoing_collisions.erase(particle_id);
+  }
+
 private:
   // Map to store ongoing collisions with particle id as key and collision log
   // as value
