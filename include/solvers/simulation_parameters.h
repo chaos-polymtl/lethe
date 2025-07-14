@@ -495,7 +495,8 @@ private:
                                             "heat transfer",
                                             "tracer",
                                             "VOF",
-                                            "cahn hilliard"};
+                                            "cahn hilliard",
+                                            "void fraction"};
   // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
     "VOF algebraic interface reinitialization"};

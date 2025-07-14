@@ -184,6 +184,11 @@ end
 #---------------------------------------------------
 
 subsection linear solver
+  subsection void fraction
+    set relative residual = 1e-15
+    set minimum residual  = 1e-15
+    set verbosity         = quiet
+  end
   subsection fluid dynamics
     set max iters                             = 200
     set relative residual                     = 1e-4

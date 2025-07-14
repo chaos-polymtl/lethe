@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_multiphysics_h
@@ -10,7 +10,8 @@ enum PhysicsID : unsigned int
   heat_transfer  = 1,
   tracer         = 2,
   VOF            = 3,
-  cahn_hilliard  = 4
+  cahn_hilliard  = 4,
+  void_fraction  = 5
 };
 
 /**
@@ -51,8 +52,14 @@ get_physics_id(std::string physics_name)
     return PhysicsID::tracer;
   else if (physics_name == "VOF")
     return PhysicsID::VOF;
-  else
+  else if (physics_name == "cahn hilliard")
     return PhysicsID::cahn_hilliard;
+  else if (physics_name == "void fraction")
+    return PhysicsID::void_fraction;
+  else
+    AssertThrow(false,
+                dealii::StandardExceptions::ExcMessage(
+                  "An unknown Physics name was requested"));
 }
 
 #endif

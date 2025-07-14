@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
@@ -24,7 +24,7 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
       &(*this->triangulation),
       nsparam.void_fraction,
       this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver.at(
-        PhysicsID::fluid_dynamics),
+        PhysicsID::void_fraction),
       &particle_handler,
       this->cfd_dem_simulation_parameters.cfd_parameters.fem_parameters
         .void_fraction_order,

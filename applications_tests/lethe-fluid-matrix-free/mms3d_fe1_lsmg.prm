@@ -120,6 +120,6 @@ subsection linear solver
 
     #MG parameters
     set mg verbosity               = quiet
-    set mg smoother eig estimation = false 
+    set mg smoother eig estimation = false
   end
 end
