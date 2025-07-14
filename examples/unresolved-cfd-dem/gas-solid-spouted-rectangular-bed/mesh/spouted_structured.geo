@@ -1,18 +1,18 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Define a variable
 
-H=0.45; // height of bed
-W=0.07; // half width of bed from end of channel to end of bed
-Z = 0.015; // depth of the bed in z
-iW=0.005; // half width of channel
-B=0.04; // point at channel inlet
-nw=8;  // number of points  in the half width of bed after channel
-nwi=2; // number of points in width of channel
-nb=5; // number of points in the height of the channel
-nh=46; // number of points in the height of the bed without channel
-zl = 1; // number of cells in the z direction (depth)
+H = 1; // height of bed
+W = 0.128; // half width of bed from end of channel to end of bed
+Z = 0.04; // depth of the bed in z
+iW = 0.012; // half width of channel
+B = 0.04; // point at channel inlet
+nw = 18;  // number of points  in the half width of bed after channel
+nwi = 3; // number of points in width of channel
+nb = 6; // number of points in the height of the channel
+nh = 101; // number of points in the height of the bed without channel
+zl = 4; // number of cells in the z direction (depth)
 
 Point(2) = {-iW, -B, 0};
 Point(3) = {+iW, -B, 0};

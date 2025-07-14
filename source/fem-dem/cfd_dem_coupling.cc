@@ -6,6 +6,10 @@
 
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/insertion_file.h>
+#include <dem/insertion_list.h>
+#include <dem/insertion_plane.h>
+#include <dem/insertion_volume.h>
 #include <dem/particle_handler_conversion.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
@@ -42,6 +46,8 @@ CFDDEMSolver<dim>::dem_setup_parameters()
   g = dem_parameters.lagrangian_physical_properties.g;
   dem_parameters.boundary_conditions =
     this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
+  dem_parameters.insertion_info =
+    this->cfd_dem_simulation_parameters.dem_parameters.insertion_info;
   dem_parameters.floating_walls =
     this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
   dem_parameters.model_parameters =
@@ -131,6 +137,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
         }
     }
 
+  insertion_object = set_insertion_type();
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
@@ -188,6 +195,58 @@ CFDDEMSolver<dim>::setup_distribution_type()
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
+}
+
+template <int dim>
+std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+CFDDEMSolver<dim>::set_insertion_type()
+{
+  using namespace Parameters::Lagrangian;
+  typename InsertionInfo<dim>::InsertionMethod insertion_method =
+    dem_parameters.insertion_info.insertion_method;
+
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+
+  switch (insertion_method)
+    {
+      case InsertionInfo<dim>::InsertionMethod::file:
+        {
+          return std::make_shared<
+            InsertionFile<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            *parallel_triangulation,
+            dem_parameters);
+        }
+      case InsertionInfo<dim>::InsertionMethod::list:
+        {
+          return std::make_shared<
+            InsertionList<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            *parallel_triangulation,
+            dem_parameters);
+        }
+      case InsertionInfo<dim>::InsertionMethod::plane:
+        {
+          return std::make_shared<
+            InsertionPlane<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            *parallel_triangulation,
+            dem_parameters);
+        }
+      case InsertionInfo<dim>::InsertionMethod::volume:
+        {
+          return std::make_shared<
+            InsertionVolume<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
+            size_distribution_object_container,
+            *parallel_triangulation,
+            dem_parameters,
+            maximum_particle_diameter);
+        }
+      default:
+        throw(std::runtime_error("Invalid insertion method."));
+    }
 }
 
 template <int dim>
@@ -876,6 +935,30 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
 
 template <int dim>
 void
+CFDDEMSolver<dim>::insert_particles()
+{
+  // If the insertion frequency is set to 0, then no particles are going
+  // to be inserted inside of the CFD-DEM simulation and the function returns
+  if (dem_parameters.insertion_info.insertion_frequency == 0)
+    return;
+
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+  if ((this->simulation_control->get_step_number() %
+       dem_parameters.insertion_info.insertion_frequency) == 1 ||
+      this->simulation_control->get_step_number() == 1)
+    {
+      insertion_object->insert(this->particle_handler,
+                               *parallel_triangulation,
+                               dem_parameters);
+
+      dem_action_manager->particle_insertion_step();
+    }
+}
+
+template <int dim>
+void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
@@ -1543,6 +1626,9 @@ CFDDEMSolver<dim>::solve()
             dem_iterator(dem_counter);
           }
       }
+
+      // Insert particle if needed
+      insert_particles();
 
       contact_search_total_number += contact_search_counter;
 

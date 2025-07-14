@@ -136,6 +136,40 @@ SimulationControl::update_assembly_method()
     }
 }
 
+unsigned int
+SimulationControl::get_number_of_stages(
+  const Parameters::SimulationControl::TimeSteppingMethod &method)
+{
+  using Method = Parameters::SimulationControl::TimeSteppingMethod;
+
+  switch (method)
+    {
+      case Method::steady:
+      case Method::steady_bdf:
+      case Method::bdf1:
+      case Method::bdf2:
+      case Method::bdf3:
+        return 1;
+
+      // Important note : the nomenclature used for the name of the SDIRK
+      // methods are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2
+      // stages, sdirk33 means SDIRK with order 3 and 3 stages
+      case Method::sdirk22:
+        return 2;
+
+      case Method::sdirk33:
+        return 3;
+
+      default:
+        AssertThrow(
+          false,
+          ExcMessage(
+            "Unknown TimeSteppingMethod passed to "
+            "get_number_of_stages(). Please add the number of stages of the new method in core/simulation_control.cc."));
+        return 1;
+    }
+}
+
 
 
 bool

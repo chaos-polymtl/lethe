@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,10 +11,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
+  set method           = bdf2
   set output frequency = 50
-  set time end         = 5
-  set time step        = 0.0001
+  set time end         = 10
+  set time step        = 0.0005
   set subdivision      = 1
   set log precision    = 10
   set output path      = ./output/
@@ -26,7 +26,7 @@ end
 
 subsection restart
   set checkpoint = true
-  set frequency  = 100
+  set frequency  = 1000
   set restart    = false
   set filename   = case
 end
@@ -66,10 +66,11 @@ end
 #---------------------------------------------------
 
 subsection void fraction
-  set mode                         = qcm
-  set qcm sphere equal cell volume = true
-  set read dem                     = true
-  set dem file name                = dem
+  set mode                       = qcm
+  set read dem                   = true
+  set dem file name              = dem
+  set l2 smoothing length        = 0.0075
+  set particle refinement factor = 0
 end
 
 #---------------------------------------------------
@@ -84,10 +85,10 @@ subsection cfd-dem
   set shear force                   = true
   set pressure force                = true
   set saffman lift force            = false
-  set drag model                    = rong
+  set drag model                    = difelice
   set coupling frequency            = 100
   set implicit stabilization        = false
-  set grad-div length scale         = 0.005
+  set grad-div length scale         = 0.1
   set vans model                    = modelA
 end
 
@@ -115,7 +116,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set lagrangian post-processing = false
+  set lagrangian post-processing = true
 end
 
 #---------------------------------------------------
@@ -133,7 +134,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set time dependent = false
+  set time dependent = true
   set number         = 4
   subsection bc 0
     set id   = 0
@@ -146,7 +147,7 @@ subsection boundary conditions
       set Function expression = 0
     end
     subsection v
-      set Function expression = 20
+      set Function expression = if(t<0.05,416*t,20.8)
     end
     subsection w
       set Function expression = 0
@@ -158,16 +159,7 @@ subsection boundary conditions
   end
   subsection bc 3
     set id   = 3
-    set type = function
-    subsection u
-      set Function expression = 0
-    end
-    subsection v
-      set Function expression = 1.25
-    end
-    subsection w
-      set Function expression = 0
-    end
+    set type = slip
   end
 end
 
@@ -197,6 +189,12 @@ subsection model parameters
     set dynamic contact search size coefficient = 0.9
     set neighborhood threshold                  = 1.3
   end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 100
+    set particle weight         = 100
+  end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
@@ -212,19 +210,19 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.0025
-    set number of particles               = 31050
-    set density particles                 = 2526
-    set young modulus particles           = 1e6
+    set number of particles               = 175800
+    set density particles                 = 2500
+    set young modulus particles           = 1e7
     set poisson ratio particles           = 0.25
-    set restitution coefficient particles = 0.97
-    set friction coefficient particles    = 0.4
-    set rolling friction particles        = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0
   end
-  set young modulus wall           = 1e6
+  set young modulus wall           = 1e7
   set poisson ratio wall           = 0.25
-  set restitution coefficient wall = 0.33
-  set friction coefficient wall    = 0.2
-  set rolling friction wall        = 0.3
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0
 end
 
 #---------------------------------------------------
@@ -256,10 +254,10 @@ end
 subsection non-linear solver
   subsection fluid dynamics
     set solver           = inexact_newton
-    set tolerance        = 1e-8
-    set max iterations   = 20
+    set tolerance        = 1e-6
+    set max iterations   = 25
     set verbosity        = verbose
-    set matrix tolerance = 0.75
+    set matrix tolerance = 0.8
   end
 end
 
@@ -270,12 +268,12 @@ end
 subsection linear solver
   subsection fluid dynamics
     set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-10
+    set max iters                             = 200
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-8
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner absolute tolerance = 1e-10
     set ilu preconditioner relative tolerance = 1
     set verbosity                             = verbose
     set max krylov vectors                    = 200

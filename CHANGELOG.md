@@ -3,6 +3,49 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-11
+
+### Fixed
+
+- MINOR The rotor mesh rotation was not in the right place in the code, so that at the start of the simulation the accessed mapping information was still incorrect. This PR fixes this, and adds an application test for a rotor rotated mesh. [#1579](https://github.com/chaos-polymtl/lethe/pull/1579)
+
+### Added
+
+- MINOR Removes the old gas-solid-spouted-bed example which has now been replaced with the much better gas-solid-spouted-rectangular-bed. The newer example features validation and other components which make it significnatly more relevant than the previous one which just displayed the capabilities of the solver. [#1578](https://github.com/chaos-polymtl/lethe/pull/1578)
+
+### Added
+
+- MINOR Dynamic particle insertion in CFD-DEM functionality is added using the insertion methods defined for DEM. [#1576](https://github.com/chaos-polymtl/lethe/pull/1576)
+
+### [Master] - 2025-07-10
+
+### Added
+
+- MAJOR A new example consisting in the 3d simulation of the turbulent flow around a cylinder at Re=3900 has been added. The example includes several comparison with the literature including the drag coefficient, the Strouhal number and the pressure profile around the cylinder for several meshes and orders of convergence. The example will be extended in the near future to include additional validation metric such as the time-averaged velocity and reynolds stresses at serveral locations behind the cylinder. [#1570](https://github.com/chaos-polymtl/lethe/pull/1570)
+
+# [Master] - 2025-07-08
+
+### Fixed
+
+- MINOR The center of rotation of the rotor was not being accounted for in the MortarManagerBase, which has been fixed. Two application tests for a MMS with mortar have also been added. [#1575](https://github.com/chaos-polymtl/lethe/pull/1575)
+
+## [Master] - 2025-07-03
+
+### Added
+
+- MINOR Add tailored capability for validation script to run on Lucille (a compute node) and re-adapt rising bubble case. [#1574](https://github.com/chaos-polymtl/lethe/pull/1574)
+
+## [Master] - 2025-07-07
+
+### Changed
+- MINOR The default parameter for the linear solver of the matrix-free solvers now uses eigenvalue estimation instead of not. This approach is generally more robust and should be preferred. [#1572](https://github.com/chaos-polymtl/lethe/pull/1572)
+
+## [Master] - 2025-07-03
+
+### Added
+
+- MINOR Add functionality that allows to delete previous vtu and pvd files by using a flag '-R'. [#1569](https://github.com/chaos-polymtl/lethe/pull/1569)
+
 ## [Master] - 2025-06-30
 
 ### Added

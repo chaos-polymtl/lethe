@@ -86,7 +86,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->define_zero_constraints();
 
   // If enabled, create mortar coupling
-  this->init_mortar_coupling();
+  this->update_mortar_coupling();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -1661,13 +1661,19 @@ FluidDynamicsMatrixBased<dim>::solve()
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
   if (this->simulation_parameters.mortar.enable)
-    read_mesh_and_manifolds_for_stator_and_rotor(
-      *this->triangulation,
-      this->simulation_parameters.mesh,
-      this->simulation_parameters.manifolds_parameters,
-      this->simulation_parameters.restart_parameters.restart,
-      this->simulation_parameters.boundary_conditions,
-      this->simulation_parameters.mortar);
+    {
+      read_mesh_and_manifolds_for_stator_and_rotor(
+        *this->triangulation,
+        this->simulation_parameters.mesh,
+        this->simulation_parameters.manifolds_parameters,
+        this->simulation_parameters.restart_parameters.restart,
+        this->simulation_parameters.boundary_conditions,
+        this->simulation_parameters.mortar);
+      // Create and initialize mapping cache
+      this->mapping_cache =
+        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+      this->rotate_mortar_mapping();
+    }
   else
     read_mesh_and_manifolds(
       *this->triangulation,

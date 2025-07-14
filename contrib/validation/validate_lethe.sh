@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: Copyright (c) 2020-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # -----------------------------------------------------------------------------
@@ -36,8 +36,10 @@ show_help() {
     echo
     echo "Options:"
     echo "  -h, --help       Display this help message"
+    echo "  -i, --input      Specify the input file containing the list of cases to validate (default: validation_cases.txt)"
     echo "  -o, --output     Specify the absolute path directory for validation results"
-    echo
+    echo "  -f, --force      Do not ask for confirmation when erasing the contents of the output folder or proceeding with the validation" 
+    echo 
     echo "Description:"
     echo "This script automates the validation of the Computational Fluid Dynamics (CFD)"
     echo "and Discrete Element Method (DEM) software Lethe. It runs a series of predefined"
@@ -93,11 +95,28 @@ verify_or_create_folder() {
 
 show_splash
 
+# Default values for options
+input_file="$lethe_path/contrib/validation/validation_cases.txt"
+force=false # Flag to skip confirmation prompts
+
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help)
             show_help
+            ;;
+        -f|--force)
+            force=true  # Set a flag to skip confirmation prompts
+            shift  # Skip the flag
+            ;;
+        -i|--input)
+            if [[ -n $2 && $2 != -* ]]; then
+                input_file="$2"
+                shift 2  # Skip the flag and its argument
+            else
+                echo "Error: Missing argument for -i|--input."
+                exit 1
+            fi
             ;;
         -o|--output)
             if [[ -n $2 && $2 != -* ]]; then
@@ -166,13 +185,12 @@ else
     exit 1
 fi
 
-echo "Press Enter to continue..."
-read -r  # Wait for user to press Enter
-
-
-
-# Input file
-input_file="$lethe_path/contrib/validation/validation_cases.txt"
+if ($force); then
+    echo "Skipping confirmation prompts as --force was specified."
+else
+    echo "Press Enter to continue..."
+    read -r  # Wait for user to press Enter
+fi
 
 cases=()
 n_procs=()

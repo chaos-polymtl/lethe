@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -12,7 +12,7 @@ set dimension = 3
 
 subsection simulation control
   set time step        = 0.00001
-  set time end         = 0.8
+  set time end         = 1.5
   set log frequency    = 1000
   set output frequency = 10000
   set output path      = ./output_dem/
@@ -67,19 +67,19 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.0025
-    set number of particles               = 31050
-    set density particles                 = 2526
-    set young modulus particles           = 1e6
+    set number of particles               = 175800
+    set density particles                 = 2500
+    set young modulus particles           = 1e7
     set poisson ratio particles           = 0.25
-    set restitution coefficient particles = 0.97
-    set friction coefficient particles    = 0.4
-    set rolling friction particles        = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0
   end
-  set young modulus wall           = 1e6
+  set young modulus wall           = 1e7
   set poisson ratio wall           = 0.25
-  set restitution coefficient wall = 0.33
-  set friction coefficient wall    = 0.2
-  set rolling friction wall        = 0.3
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0
 end
 
 #---------------------------------------------------
@@ -88,10 +88,10 @@ end
 
 subsection insertion info
   set insertion method                               = volume
-  set inserted number of particles at each time step = 31050
-  set insertion frequency                            = 2000
-  set insertion box points coordinates               = -0.075, 0.0, 0 : 0.075, 0.3, 0.015
-  set insertion distance threshold                   = 1.05
+  set inserted number of particles at each time step = 43950
+  set insertion frequency                            = 30000
+  set insertion box points coordinates               = -0.139, 0.3, 0.001 : 0.139, 0.525, 0.039
+  set insertion distance threshold                   = 1.5
   set insertion maximum offset                       = 0.3
   set insertion prn seed                             = 19
 end

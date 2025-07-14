@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="515.48999"
+   height="305.04965"
+   version="1.1"
+   id="svg945"
+   sodipodi:docname="3d_cylinder_perspective_schematic.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview947"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="3.5025356"
+     inkscape:cx="133.90299"
+     inkscape:cy="209.13421"
+     inkscape:window-width="3840"
+     inkscape:window-height="2052"
+     inkscape:window-x="3840"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4" />
+  <!-- Arrowhead Definition -->
+  <defs
+     id="defs913">
+    <marker
+       style="overflow:visible"
+       id="marker2821"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path2819" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker2419"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path2417" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <marker
+       id="arrowhead"
+       markerWidth="10"
+       markerHeight="7"
+       refX="0"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#000000"
+         id="polygon910" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker2419-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path2417-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker2821-1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path2819-2" />
+    </marker>
+  </defs>
+  <!-- Box domain in 3D perspective -->
+  <!-- Front rectangle -->
+  <polygon
+     points="500,400 100,400 100,150 500,150 "
+     fill="none"
+     stroke="#000000"
+     stroke-width="2"
+     id="polygon915"
+     transform="translate(-99,-99)" />
+  <!-- Back rectangle -->
+  <polygon
+     points="600,350 200,350 200,100 600,100 "
+     fill="none"
+     stroke="#000000"
+     stroke-width="2"
+     id="polygon917"
+     transform="translate(-99,-99)" />
+  <!-- Connect corners -->
+  <line
+     x1="1"
+     y1="51"
+     x2="101"
+     y2="1"
+     stroke="#000000"
+     id="line919" />
+  <line
+     x1="401"
+     y1="51"
+     x2="501"
+     y2="1"
+     stroke="#000000"
+     id="line921" />
+  <line
+     x1="1"
+     y1="301"
+     x2="101"
+     y2="251"
+     stroke="#000000"
+     id="line923" />
+  <line
+     x1="401"
+     y1="301"
+     x2="501"
+     y2="251"
+     stroke="#000000"
+     id="line925" />
+  <!-- Cylinder (as a long tube in 3D perspective) -->
+  <!-- Front ellipse -->
+  <!-- Back ellipse -->
+  <!-- Sides of the cylinder -->
+  <!-- Inlet velocity -->
+  <line
+     x1="8.9580231"
+     y1="87.866653"
+     x2="58.958008"
+     y2="87.866653"
+     stroke="#000000"
+     stroke-width="2"
+     marker-end="url(#arrowhead)"
+     id="line935" />
+  <text
+     x="12.362381"
+     y="77.156509"
+     font-size="24px"
+     font-family="Arial"
+     id="text937">U∞</text>
+  <!-- Dimensions -->
+  <text
+     x="15.711098"
+     y="201.44556"
+     font-size="16px"
+     font-family="Arial"
+     id="text939">L<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan2493">1</tspan> = 8</text>
+  <text
+     x="244.79053"
+     y="201.7558"
+     font-size="16px"
+     font-family="Arial"
+     id="text939-7">L<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan2785">2</tspan> = 52</text>
+  <text
+     x="407.76602"
+     y="110.98605"
+     font-size="16px"
+     font-family="Arial"
+     id="text941">H = 50</text>
+  <text
+     x="471.81812"
+     y="292.30862"
+     font-size="16px"
+     font-family="Arial"
+     id="text941-0">W = π</text>
+  <text
+     x="139.70436"
+     y="158.29855"
+     font-size="16px"
+     font-family="Arial"
+     id="text943">D = 1</text>
+  <g
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="Bot_line"
+     transform="translate(-99,-99)">
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:1.2;stroke-dasharray:none"
+       d="m 205.75116,299.0834 94.60298,-48.58525"
+       id="path1650-6"
+       sodipodi:nodetypes="cc" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Layer_circles"
+     transform="translate(-99,-99)">
+    <g
+       id="g1858"
+       transform="translate(104.97981,-100.13459)"
+       style="stroke:#000000">
+      <ellipse
+         cx="100.97913"
+         cy="377.75906"
+         rx="21.443439"
+         ry="21.096905"
+         fill="#000000"
+         id="ellipse927"
+         style="fill:#e6e6e6;stroke:#000000;stroke-width:1.09835" />
+      <ellipse
+         cx="193.67563"
+         cy="329.33795"
+         rx="21.443439"
+         ry="21.096905"
+         fill="#000000"
+         id="ellipse927-3"
+         style="fill:#e6e6e6;stroke:#000000;stroke-width:1.09835" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="fill:#008066;stroke:#008066;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none"
+       x="140.46967"
+       y="244.96539"
+       id="text3619"><tspan
+         sodipodi:role="line"
+         id="tspan3617"
+         x="140.46967"
+         y="244.96539">ID=0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="fill:#008066;stroke:#008066;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none"
+       x="530.73151"
+       y="247.95421"
+       id="text3619-9"><tspan
+         sodipodi:role="line"
+         id="tspan3617-3"
+         x="530.73151"
+         y="247.95421">ID=1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="fill:#008066;stroke:#008066;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none"
+       x="283.54068"
+       y="234.53246"
+       id="text3619-9-6"><tspan
+         sodipodi:role="line"
+         id="tspan3617-3-0"
+         x="283.54068"
+         y="234.53246">ID=2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="fill:#008066;stroke:#008066;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none"
+       x="309.24512"
+       y="132.09679"
+       id="text3619-9-6-6"><tspan
+         sodipodi:role="line"
+         id="tspan3617-3-0-2"
+         x="309.24512"
+         y="132.09679">ID=4</tspan></text>
+    <text
+       xml:space="preserve"
+       style="fill:#008066;stroke:#008066;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none"
+       x="305.24805"
+       y="378.48972"
+       id="text3619-9-6-6-6"><tspan
+         sodipodi:role="line"
+         id="tspan3617-3-0-2-1"
+         x="305.24805"
+         y="378.48972">ID=3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="fill:#008066;stroke:#008066;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none"
+       x="300.6799"
+       y="292.26648"
+       id="text3619-9-6-6-6-8"><tspan
+         sodipodi:role="line"
+         id="tspan3617-3-0-2-1-7"
+         x="300.6799"
+         y="292.26648">ID=5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="fill:#008066;stroke:#008066;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none"
+       x="382.62054"
+       y="206.61424"
+       id="text3619-9-6-6-6-8-9"><tspan
+         sodipodi:role="line"
+         id="tspan3617-3-0-2-1-7-2"
+         x="382.62054"
+         y="206.61424">ID=6</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Top_line"
+     transform="translate(-99,-99)">
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:1.2;stroke-dasharray:none"
+       d="m 205.642,256.4959 92.88083,-48.4201"
+       id="path1650"
+       sodipodi:nodetypes="cc" />
+  </g>
+  <path
+     style="fill:#e6e6e6;stroke:#000000;stroke-width:1.2;stroke-dasharray:none;marker-start:url(#TriangleStart);marker-end:url(#marker2419)"
+     d="M 103.00072,179.36976 H 5.3171"
+     id="path2174"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="fill:#e6e6e6;stroke:#000000;stroke-width:1.2;stroke-dasharray:none;marker-start:url(#TriangleStart-3);marker-end:url(#marker2419-6)"
+     d="M 396.40978,179.1965 H 111.37757"
+     id="path2174-9"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="fill:#e6e6e6;stroke:#000000;stroke-width:1.2;stroke-dasharray:none;marker-start:url(#marker2821);marker-end:url(#marker2821)"
+     d="M 462.24575,24.48335 V 265.4233"
+     id="path2787"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="fill:#e6e6e6;stroke:#000000;stroke-width:1.2;stroke-dasharray:none;marker-start:url(#marker2821-1);marker-end:url(#marker2821-1)"
+     d="m 506.24899,254.95802 -95.69314,47.73672"
+     id="path2787-7"
+     sodipodi:nodetypes="cc" />
+</svg>

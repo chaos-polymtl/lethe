@@ -7,6 +7,10 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2025
 ----
 
+* `L. Prieto Saavedra, J. Archambault, P. Munch, and B. Blais, "An implicit large-eddy simulation study of the turbulent Taylor-Couette flow with an inner rotating cylinder", Journal of Turbulence, 2025 <http://dx.doi.org/10.1080/14685248.2025.2524336>`_.
+
+* `L. Prieto Saavedra, P. Munch, and B. Blais, "A Matrix-Free Stabilized Solver for the Incompressible Navier-Stokes Equations", Journal of Computational Physics, p. 114186, 2025 <https://doi.org/10.1016/j.jcp.2025.114186>`_.
+
 * `A. Collard-Daigneault, D. Vidal, F. Bertrand, and B. Blais, “Enhancing the computational performance of granular flow simulations in DEM and CFD-DEM with adaptive sparse contacts (ASC),” Powder Technology, pp. 120530–120530, 2025 <https://doi.org/10.1016/j.powtec.2024.120530>`_.
 
 * `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Robust pore-resolved CFD through porous monoliths reconstructed by micro-computed tomography: From digitization to flow prediction,” Chemical Engineering Journal, pp. 158577–158577, 2025 <https://doi.org/10.1016/j.cej.2024.158577>`_.
@@ -60,4 +64,4 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
-* `L. Prieto Saavedra, P. Munch, and B. Blais, "A Matrix-Free Stabilized Solver for the Incompressible Navier-Stokes Equations", available at SSRN, October 2024 <https://dx.doi.org/10.2139/ssrn.4981567>`_.
+* `A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont, J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira, H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant, Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows. SSRN 5090483. <https://dx.doi.org/10.2139/ssrn.5090483>`_

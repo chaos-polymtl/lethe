@@ -806,15 +806,26 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const std::string        &file_name);
 
 /**
- * @brief Converts point to radius
+ * @brief Delete vtu and pvd files
+ */
+void
+delete_vtu_and_pvd_files(const std::string &output_path);
+
+/**
+ * @brief Converts point to angle (in radians)
  * @param[in] point Point in cartesian coordinates (x-y plane)
- * @param[in] center_of_rotation Reference point
+ * @param[in] center_of_rotation Center of rotation
+ *
+ * @return Angle between point and the x-axis
  */
 template <int dim>
 inline double
-point_to_angle(const Point<dim> &point)
+point_to_angle(const Point<dim> &point,
+               const Point<dim> &center_of_rotation = Point<dim>())
 {
-  return std::fmod(std::atan2(point[1], point[0]) + 2 * numbers::PI,
+  return std::fmod(std::atan2(point[1] - center_of_rotation[1],
+                              point[0] - center_of_rotation[0]) +
+                     2 * numbers::PI,
                    2 * numbers::PI);
 }
 
