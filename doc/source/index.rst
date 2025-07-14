@@ -53,7 +53,7 @@ Contents
    tools/tools
    publications
    referencing
-   contributing
+   contributing/contributing
 
 Installation
 ------------
