@@ -452,19 +452,18 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  DoFHandler<dim> *dof_handler_vof = nullptr;
+  std::optional<typename DoFHandler<dim>::active_cell_iterator> phase_cell;
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+      phase_cell.emplace(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF));
 
       scratch_data.reinit_vof(
-        phase_cell,
+        *phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
@@ -487,25 +486,23 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     {
       scratch_data.reinit_particle_fluid_interactions(
         cell,
+        void_fraction_cell,
+        *phase_cell,
         this->evaluation_point,
         this->previous_solutions[0],
         this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
-        this->dof_handler,
-        particle_projector.dof_handler,
-        *dof_handler_vof,
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
   else
     {
       scratch_data.reinit_particle_fluid_interactions(
         cell,
+        void_fraction_cell,
         this->evaluation_point,
         this->previous_solutions[0],
         this->particle_projector.void_fraction_locally_relevant,
-        particle_handler,
-        this->dof_handler,
-        particle_projector.dof_handler);
+        particle_handler);
     }
 
   copy_data.reset();
@@ -610,19 +607,18 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  DoFHandler<dim> *dof_handler_vof = nullptr;
+   std::optional<typename DoFHandler<dim>::active_cell_iterator> phase_cell;
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+      phase_cell.emplace(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF));
 
       scratch_data.reinit_vof(
-        phase_cell,
+        *phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
@@ -645,25 +641,23 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     {
       scratch_data.reinit_particle_fluid_interactions(
         cell,
+        void_fraction_cell,
+        *phase_cell,
         this->evaluation_point,
         this->previous_solutions[0],
         particle_projector.void_fraction_locally_relevant,
         particle_handler,
-        this->dof_handler,
-        particle_projector.dof_handler,
-        *dof_handler_vof,
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
   else
     {
       scratch_data.reinit_particle_fluid_interactions(
         cell,
+        void_fraction_cell,
         this->evaluation_point,
         this->previous_solutions[0],
         particle_projector.void_fraction_locally_relevant,
-        particle_handler,
-        this->dof_handler,
-        particle_projector.dof_handler);
+        particle_handler);
     }
 
   copy_data.reset();
