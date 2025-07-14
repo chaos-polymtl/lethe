@@ -456,11 +456,10 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      phase_cell.emplace(
-        &(*(this->triangulation)),
-        cell->level(),
-        cell->index(),
-        this->multiphysics->get_dof_handler(PhysicsID::VOF));
+      phase_cell.emplace(&(*(this->triangulation)),
+                         cell->level(),
+                         cell->index(),
+                         this->multiphysics->get_dof_handler(PhysicsID::VOF));
 
       scratch_data.reinit_vof(
         *phase_cell,
@@ -607,15 +606,14 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-   std::optional<typename DoFHandler<dim>::active_cell_iterator> phase_cell;
+  std::optional<typename DoFHandler<dim>::active_cell_iterator> phase_cell;
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      phase_cell.emplace(
-        &(*(this->triangulation)),
-        cell->level(),
-        cell->index(),
-        this->multiphysics->get_dof_handler(PhysicsID::VOF));
+      phase_cell.emplace(&(*(this->triangulation)),
+                         cell->level(),
+                         cell->index(),
+                         this->multiphysics->get_dof_handler(PhysicsID::VOF));
 
       scratch_data.reinit_vof(
         *phase_cell,
