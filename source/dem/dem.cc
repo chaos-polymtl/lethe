@@ -532,6 +532,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
           contact_manager.get_particle_wall_in_contact(),
           simulation_control->get_time_step(),
           simulation_control->get_current_time(),
+          particle_handler,
           contact_outcome,
           ongoing_collision_log,
           collision_event_log);
