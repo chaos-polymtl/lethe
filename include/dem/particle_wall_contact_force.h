@@ -1118,6 +1118,7 @@ private:
   double              wall_thermal_conductivity;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
+  const double        collision_threshold;
 
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>>
