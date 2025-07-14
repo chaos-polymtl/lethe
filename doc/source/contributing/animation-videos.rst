@@ -6,12 +6,12 @@ Here we cover the steps for saving a video using Paraview visualization tool; if
 
 Making the video
 ^^^^^^^^^^^^^^^^
-``Save animation`` on Paraview saves the animation in images. They can be combined in a video using ``ffmpeg``, with an appropriate framerate and from inside the images folder:
+``Save Animation`` on Paraview saves the animation in images. They can be combined in a video using ``ffmpeg``, with an appropriate framerate and from inside the images folder:
 
 .. code-block:: text
  :class: copy-button
  
-  ffmpeg -framerate 20 -i test.%04d.png -c:v libx264 -pix_fmt yuv420p ../out.mp4 
+  ffmpeg -framerate 20 -i <imageprefix>.%04d.png -c:v libx264 -pix_fmt yuv420p ../out.mp4 
 
 Formatting
 ^^^^^^^^^^
