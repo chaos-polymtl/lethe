@@ -57,7 +57,9 @@ get_physics_id(std::string physics_name)
   else if (physics_name == "void fraction")
     return PhysicsID::void_fraction;
   else
-    AssertThrow(false, dealii::StandardExceptions::ExcMessage("An unknown Physics name was requested"));
+    AssertThrow(false,
+                dealii::StandardExceptions::ExcMessage(
+                  "An unknown Physics name was requested"));
 }
 
 #endif
