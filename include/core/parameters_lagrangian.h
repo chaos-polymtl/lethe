@@ -392,9 +392,6 @@ namespace Parameters
       // acceleration to particles)
       bool advect_particles;
 
-      // Enable the logging of particle-wall contact statistics
-      bool particle_wall_contact_statistics;
-
       // Minimal granular temperature value of cells where particle contacts
       // are considered
       double granular_temperature_threshold;

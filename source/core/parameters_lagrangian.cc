@@ -877,35 +877,6 @@ namespace Parameters
                           Patterns::Selection("linear|nonlinear|JKR|DMT"),
                           "Choosing particle-wall contact force model"
                           "Choices are <linear|nonlinear|JKR|DMT>.");
-        prm.enter_subsection("particle wall contact statistics");
-        {
-          prm.declare_entry(
-            "enable particle wall contact statistics",
-            "false",
-            Patterns::Selection("true|false"),
-            "Enable the logging of particle-wall contact statistics"
-            "Choices are <true|false>.");
-
-          prm.declare_entry(
-            "collision statistics file",
-            "collision_statistics.csv",
-            Patterns::FileName(),
-            "Exported particle-wall collision results filename");
-
-          prm.declare_entry(
-            "collision threshold",
-            "0.0001",
-            Patterns::Double(),
-            "Threshold for the particle-wall contact to be considered a collision");
-        }
-        prm.leave_subsection();
-
-        prm.declare_entry(
-          "enable particle wall contact statistics",
-          "false",
-          Patterns::Selection("true|false"),
-          "Enable the logging of particle-wall contact statistics"
-          "Choices are <true|false>.");
 
         prm.declare_entry(
           "dmt cut-off threshold",
@@ -1131,7 +1102,7 @@ namespace Parameters
             throw(
               std::runtime_error("Invalid particle-wall contact force model "));
           }
-
+          
         dmt_cut_off_threshold = prm.get_double("dmt cut-off threshold");
 
         const std::string rolling_resistance_torque =
