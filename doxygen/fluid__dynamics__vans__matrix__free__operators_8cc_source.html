@@ -158,7 +158,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_cells = this-&gt;matrix_free.n_cell_batches();</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <a class="code hl_typedef" href="classVANSOperator.html#a9a3dd8bec1922fa6fbf749153f1156c7">FECellIntegrator</a>   integrator(this-&gt;matrix_free);</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  void_fraction.reinit(n_cells, integrator.n_q_points);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>.reinit(n_cells, integrator.n_q_points);</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  void_fraction_gradient.reinit(n_cells, integrator.n_q_points);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  FEValues&lt;dim&gt; fe_values(*(this-&gt;matrix_free.get_mapping_info().mapping),</div>
@@ -192,7 +192,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                void_fraction_gradient[cell][q][c][lane] =</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                  cell_void_fraction_gradient[q][c];</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>              void_fraction[cell][q][lane] = cell_void_fraction[q];</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>              <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>[cell][q][lane] = cell_void_fraction[q];</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>            }</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        }</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    }</div>
@@ -273,7 +273,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        this-&gt;nonlinear_previous_hessian_diagonal(cell, q);</div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>      <span class="comment">// Gather void fraction value and gradient</span></div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>      <span class="keyword">auto</span> vf_value    = this-&gt;void_fraction(cell, q);</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>      <span class="keyword">auto</span> vf_value    = this-&gt;<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>(cell, q);</div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>      <span class="keyword">auto</span> vf_gradient = this-&gt;void_fraction_gradient(cell, q);</div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>      Tensor&lt;1, dim + 1, VectorizedArray&lt;number&gt;&gt; previous_time_derivatives;</div>
@@ -480,7 +480,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>            hessian_diagonal = integrator.get_hessian_diagonal(q);</div>
 <div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span> </div>
 <div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>          <span class="comment">// Gather void fraction value and gradient</span></div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>          <span class="keyword">auto</span> vf_value    = this-&gt;void_fraction(cell, q);</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>          <span class="keyword">auto</span> vf_value    = this-&gt;<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>(cell, q);</div>
 <div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>          <span class="keyword">auto</span> vf_gradient = this-&gt;void_fraction_gradient(cell, q);</div>
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span> </div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>          <span class="comment">// Time derivatives of previous solutions</span></div>
@@ -632,6 +632,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVANSOperator_html_ae0ee413bc626c3f851ce39f446245a2b"><div class="ttname"><a href="classVANSOperator.html#ae0ee413bc626c3f851ce39f446245a2b">VANSOperator::evaluate_non_linear_term_and_calculate_tau</a></div><div class="ttdeci">virtual void evaluate_non_linear_term_and_calculate_tau(const VectorType &amp;newton_step) override</div><div class="ttdoc">Store relevant values of the vector of the last newton step to use it in the Jacobian and pre-calcula...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00009">fluid_dynamics_vans_matrix_free_operators.cc:9</a></div></div>
 <div class="ttc" id="aclassVANSOperator_html_ae67d8e965b1ad8370d64ac504e5991df"><div class="ttname"><a href="classVANSOperator.html#ae67d8e965b1ad8370d64ac504e5991df">VANSOperator::compute_void_fraction</a></div><div class="ttdeci">void compute_void_fraction(const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;void_fraction_solution, const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler)</div><div class="ttdoc">Compute the void fraction and the void fraction gradient at the quadrature points.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00056">fluid_dynamics_vans_matrix_free_operators.cc:56</a></div></div>
 <div class="ttc" id="afluid__dynamics__vans__matrix__free__operators_8h_html"><div class="ttname"><a href="fluid__dynamics__vans__matrix__free__operators_8h.html">fluid_dynamics_vans_matrix_free_operators.h</a></div></div>
+<div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a></div><div class="ttdeci">@ void_fraction</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00015">multiphysics.h:14</a></div></div>
 <div class="ttc" id="astructParameters_1_1Stabilization_html_aa349ab6e7ab2df88077df91d4707a4baaae21e5838883a96aab921c84e14383bb"><div class="ttname"><a href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baaae21e5838883a96aab921c84e14383bb">Parameters::Stabilization::NavierStokesStabilization::pspg_supg</a></div><div class="ttdeci">@ pspg_supg</div></div>
 <div class="ttc" id="atime__integration__utilities_8h_html_a0a24876ac89130c482872183aaabb619"><div class="ttname"><a href="time__integration__utilities_8h.html#a0a24876ac89130c482872183aaabb619">is_bdf</a></div><div class="ttdeci">bool is_bdf(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Determines if the time integration method is within the bdf family.</div><div class="ttdef"><b>Definition</b> <a href="time__integration__utilities_8h_source.html#l00040">time_integration_utilities.h:40</a></div></div>
 <div class="ttc" id="avoid__fraction_8h_html"><div class="ttname"><a href="void__fraction_8h.html">void_fraction.h</a></div></div>

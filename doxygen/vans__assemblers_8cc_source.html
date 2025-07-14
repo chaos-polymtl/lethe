@@ -147,7 +147,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; pressure_gradient =</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#af329e1c369385dbdd3cb044f23aeda0f">pressure_gradients</a>[q];</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         void_fraction = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; void_fraction_gradients =</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a2e37181c34de8b2712921a955fc7a5c2">void_fraction_gradient_values</a>[q];</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
@@ -189,14 +189,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>      <span class="comment">// Calculate the strong residual for GLS stabilization</span></div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>      <span class="keyword">auto</span> strong_residual = velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction +</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>      <span class="keyword">auto</span> strong_residual = velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                             <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>                             mass_source * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a></div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                             <span class="comment">// Pressure</span></div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                             + pressure_gradient -</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>                             <span class="comment">// Kinematic viscosity and Force</span></div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                             kinematic_viscosity * velocity_laplacian -</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                             force * void_fraction + strong_residual_vec[q];</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                             force * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> + strong_residual_vec[q];</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>      <span class="comment">// Pressure scaling factor</span></div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> pressure_scaling_factor =</div>
@@ -214,8 +214,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>            pressure_scaling_factor * scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a6960a212f41712ec9eba3091d9191a18">grad_phi_p</a>[q][j];</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>          strong_jacobian_vec[q][j] +=</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>            (velocity_gradient * phi_u_j * void_fraction +</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>             grad_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction +</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>            (velocity_gradient * phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>             grad_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>             <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>             mass_source * phi_u_j +</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>             <span class="comment">// Pressure</span></div>
@@ -254,7 +254,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>                {</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>                  <span class="comment">// Continuity</span></div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                  local_matrix_ij +=</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                    phi_p_i * ((void_fraction * div_phi_u_j) +</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                    phi_p_i * ((<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * div_phi_u_j) +</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                               (phi_u_j * void_fraction_gradients));</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                  <span class="comment">// PSPG GLS term</span></div>
@@ -265,8 +265,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                {</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>                  <span class="comment">// Convection</span></div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>                  local_matrix_ij +=</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                    ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>                     (grad_phi_u_j * void_fraction * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phi_u_i));</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                    ((phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * velocity_gradient * phi_u_i) +</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>                     (grad_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phi_u_i));</div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>                  <span class="keywordflow">if</span> (component_i == component_j)</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                    {</div>
@@ -295,7 +295,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>              <span class="keywordflow">if</span> (cfd_dem.grad_div == <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                {</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                  local_matrix_ij += gamma *</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                                     (div_phi_u_j * void_fraction +</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                                     (div_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                                      phi_u_j * void_fraction_gradients) *</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                                     div_phi_u_i;</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                }</div>
@@ -357,7 +357,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#af329e1c369385dbdd3cb044f23aeda0f">pressure_gradients</a>[q];</div>
 <div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>      <span class="comment">// Void Fraction</span></div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         void_fraction = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; void_fraction_gradients =</div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a2e37181c34de8b2712921a955fc7a5c2">void_fraction_gradient_values</a>[q];</div>
 <div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
@@ -399,14 +399,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));</div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span> </div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>      <span class="comment">// Calculate the strong residual for GLS stabilization</span></div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>      <span class="keyword">auto</span> strong_residual = velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction +</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>      <span class="keyword">auto</span> strong_residual = velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                             <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                             mass_source * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a></div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                             <span class="comment">// Pressure</span></div>
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                             + pressure_gradient -</div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>                             <span class="comment">// Kinematic viscosity and Force</span></div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                             kinematic_viscosity * velocity_laplacian -</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                             force * void_fraction + strong_residual_vec[q];</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                             force * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> + strong_residual_vec[q];</div>
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>      <span class="comment">// Assembly of the right-hand side</span></div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
@@ -426,15 +426,15 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>              <span class="comment">// Momentum</span></div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>              -kinematic_viscosity *</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>                scalar_product(velocity_gradient, grad_phi_u_i) -</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>              velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction * phi_u_i</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>              velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * phi_u_i</div>
 <div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>              <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>              - mass_source * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phi_u_i</div>
 <div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>              <span class="comment">// Pressure and Force</span></div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>              + <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a> * div_phi_u_i + force * void_fraction * phi_u_i;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>              + <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a> * div_phi_u_i + force * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * phi_u_i;</div>
 <div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>          <span class="keywordflow">if</span> (component_i == dim)</div>
 <div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>            <span class="comment">// Continuity</span></div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>            local_rhs_i += -(velocity_divergence * void_fraction +</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>            local_rhs_i += -(velocity_divergence * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>                             <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction_gradients - mass_source) *</div>
 <div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>                           phi_p_i;</div>
 <div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span> </div>
@@ -452,7 +452,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>          <span class="keywordflow">if</span> (cfd_dem.grad_div == <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>            {</div>
 <div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>              local_rhs_i -= gamma *</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>                             (void_fraction * velocity_divergence +</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>                             (<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * velocity_divergence +</div>
 <div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>                              <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction_gradients) *</div>
 <div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>                             div_phi_u_i;</div>
 <div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>            }</div>
@@ -516,7 +516,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; pressure_gradient =</div>
 <div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#af329e1c369385dbdd3cb044f23aeda0f">pressure_gradients</a>[q];</div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span> </div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         void_fraction = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; void_fraction_gradients =</div>
 <div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a2e37181c34de8b2712921a955fc7a5c2">void_fraction_gradient_values</a>[q];</div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span> </div>
@@ -559,14 +559,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span> </div>
 <div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>      <span class="comment">// Calculate the strong residual for GLS stabilization</span></div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>      <span class="keyword">auto</span> strong_residual =</div>
-<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>        velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction +</div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>        velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>        <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>        mass_source * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a></div>
 <div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>        <span class="comment">// Pressure</span></div>
-<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>        + void_fraction * pressure_gradient -</div>
+<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>        + <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * pressure_gradient -</div>
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>        <span class="comment">// Kinematic viscosity and Force</span></div>
-<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>        void_fraction * kinematic_viscosity * velocity_laplacian -</div>
-<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>        force * void_fraction + strong_residual_vec[q];</div>
+<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>        <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * kinematic_viscosity * velocity_laplacian -</div>
+<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>        force * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> + strong_residual_vec[q];</div>
 <div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span> </div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>      <span class="comment">// Pressure scaling factor</span></div>
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> pressure_scaling_factor =</div>
@@ -584,14 +584,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>            pressure_scaling_factor * scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a6960a212f41712ec9eba3091d9191a18">grad_phi_p</a>[q][j];</div>
 <div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span> </div>
 <div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>          strong_jacobian_vec[q][j] +=</div>
-<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>            (velocity_gradient * phi_u_j * void_fraction +</div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>             grad_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction +</div>
+<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>            (velocity_gradient * phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>             grad_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>             <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>             mass_source * phi_u_j +</div>
 <div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>             <span class="comment">// Pressure</span></div>
-<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>             void_fraction * grad_phi_p_j</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>             <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * grad_phi_p_j</div>
 <div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>             <span class="comment">// Kinematic viscosity</span></div>
-<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>             - void_fraction * kinematic_viscosity * laplacian_phi_u_j);</div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>             - <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * kinematic_viscosity * laplacian_phi_u_j);</div>
 <div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>        }</div>
 <div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span> </div>
 <div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
@@ -616,13 +616,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span> </div>
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>              <span class="comment">// Pressure</span></div>
 <div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>              <span class="keywordtype">double</span> local_matrix_ij =</div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>                -(div_phi_u_i * phi_p_j * void_fraction +</div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>                -(div_phi_u_i * phi_p_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>                  phi_p_j * void_fraction_gradients * phi_u_i);</div>
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span> </div>
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>              <span class="keywordflow">if</span> (component_i == dim)</div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>                {</div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>                  local_matrix_ij +=</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>                    phi_p_i * ((void_fraction * div_phi_u_j) +</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>                    phi_p_i * ((<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * div_phi_u_j) +</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>                               (phi_u_j * void_fraction_gradients));</div>
 <div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span> </div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>                  <span class="comment">// PSPG GLS term</span></div>
@@ -633,12 +633,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>                {</div>
 <div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>                  <span class="comment">// Convection</span></div>
 <div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>                  local_matrix_ij +=</div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>                    ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>                     (grad_phi_u_j * void_fraction * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phi_u_i));</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>                    ((phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * velocity_gradient * phi_u_i) +</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>                     (grad_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phi_u_i));</div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span> </div>
 <div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>                  <span class="keywordflow">if</span> (component_i == component_j)</div>
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>                    {</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>                      local_matrix_ij += void_fraction * kinematic_viscosity *</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>                      local_matrix_ij += <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * kinematic_viscosity *</div>
 <div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>                                           (grad_phi_u_j[component_j] *</div>
 <div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>                                            grad_phi_u_i[component_i]) +</div>
 <div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>                                         kinematic_viscosity * grad_phi_u_j *</div>
@@ -663,7 +663,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>              <span class="keywordflow">if</span> (cfd_dem.grad_div == <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>                {</div>
 <div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>                  local_matrix_ij += gamma *</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>                                     (div_phi_u_j * void_fraction +</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>                                     (div_phi_u_j * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>                                      phi_u_j * void_fraction_gradients) *</div>
 <div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>                                     div_phi_u_i;</div>
 <div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>                }</div>
@@ -725,7 +725,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#af329e1c369385dbdd3cb044f23aeda0f">pressure_gradients</a>[q];</div>
 <div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span> </div>
 <div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>      <span class="comment">// Void Fraction</span></div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         void_fraction = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>      <span class="keyword">const</span> <span class="keywordtype">double</span>         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
 <div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; void_fraction_gradients =</div>
 <div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a2e37181c34de8b2712921a955fc7a5c2">void_fraction_gradient_values</a>[q];</div>
 <div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span> </div>
@@ -768,14 +768,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span> </div>
 <div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>      <span class="comment">// Calculate the strong residual for GLS stabilization</span></div>
 <div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>      <span class="keyword">auto</span> strong_residual =</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>        velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction +</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>        velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>        <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>        mass_source * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a></div>
 <div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>        <span class="comment">// Pressure</span></div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>        + void_fraction * pressure_gradient -</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>        + <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * pressure_gradient -</div>
 <div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>        <span class="comment">// Kinematic viscosity and Force</span></div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>        void_fraction * kinematic_viscosity * velocity_laplacian -</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>        force * void_fraction + strong_residual_vec[q];</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>        <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * kinematic_viscosity * velocity_laplacian -</div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>        force * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> + strong_residual_vec[q];</div>
 <div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span> </div>
 <div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>      <span class="comment">// Assembly of the right-hand side</span></div>
 <div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
@@ -794,21 +794,21 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>          <span class="keywordflow">if</span> (component_i &lt; dim)</div>
 <div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>            local_rhs_i += (</div>
 <div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>              <span class="comment">// Momentum</span></div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>              -(void_fraction * kinematic_viscosity *</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>              -(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * kinematic_viscosity *</div>
 <div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>                  scalar_product(velocity_gradient, grad_phi_u_i) +</div>
 <div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>                kinematic_viscosity * velocity_gradient *</div>
 <div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>                  void_fraction_gradients * phi_u_i) -</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>              velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction * phi_u_i</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>              velocity_gradient * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * phi_u_i</div>
 <div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>              <span class="comment">// Mass Source</span></div>
 <div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>              - mass_source * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phi_u_i</div>
 <div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>              <span class="comment">// Pressure and Force</span></div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>              + (void_fraction * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a> * div_phi_u_i +</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>              + (<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a> * div_phi_u_i +</div>
 <div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>                 <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a> * void_fraction_gradients * phi_u_i) +</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>              force * void_fraction * phi_u_i);</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>              force * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * phi_u_i);</div>
 <div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span> </div>
 <div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>          <span class="keywordflow">if</span> (component_i == dim)</div>
 <div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>            <span class="comment">// Continuity</span></div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>            local_rhs_i -= (velocity_divergence * void_fraction +</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>            local_rhs_i -= (velocity_divergence * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> +</div>
 <div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>                            <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction_gradients - mass_source) *</div>
 <div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>                           phi_p_i;</div>
 <div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span> </div>
@@ -826,7 +826,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>          <span class="keywordflow">if</span> (cfd_dem.grad_div == <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>            {</div>
 <div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>              local_rhs_i -= gamma *</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>                             (void_fraction * velocity_divergence +</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>                             (<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * velocity_divergence +</div>
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>                              <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * void_fraction_gradients) *</div>
 <div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>                             div_phi_u_i;</div>
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>            }</div>
@@ -873,18 +873,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method); ++p)</div>
 <div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>        <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p + 1] = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a35e6cecb73b9e5a9d2576b8208c77da8">previous_velocity_values</a>[p][q];</div>
 <div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span> </div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      <span class="keywordtype">double</span> void_fraction = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      <span class="keywordtype">double</span> <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
 <div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span> </div>
 <div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method) + 1;</div>
 <div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>           ++p)</div>
 <div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>        {</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>          strong_residual[q] += bdf_coefs[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p] * void_fraction;</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>          strong_residual[q] += bdf_coefs[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>;</div>
 <div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        }</div>
 <div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span> </div>
 <div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
 <div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        {</div>
 <div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>          strong_jacobian[q][j] +=</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            void_fraction * bdf_coefs[0] * scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a913ebeb7fb378c145825751e65b88432">phi_u</a>[q][j];</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * bdf_coefs[0] * scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a913ebeb7fb378c145825751e65b88432">phi_u</a>[q][j];</div>
 <div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        }</div>
 <div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span> </div>
 <div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span> </div>
@@ -896,7 +896,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>              <span class="keyword">const</span> Tensor&lt;1, dim&gt; &amp;phi_u_j = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a913ebeb7fb378c145825751e65b88432">phi_u</a>[q][j];</div>
 <div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span> </div>
 <div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>              local_matrix(i, j) +=</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>                void_fraction * phi_u_j * phi_u_i * bdf_coefs[0] * JxW[q];</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>                <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> * phi_u_j * phi_u_i * bdf_coefs[0] * JxW[q];</div>
 <div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>            }</div>
 <div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>        }</div>
 <div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>    }</div>
@@ -931,7 +931,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
 <div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>  std::vector&lt;Tensor&lt;1, dim&gt;&gt; <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>(1 +</div>
 <div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                                       <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method));</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>  std::vector&lt;double&gt; void_fraction(1 + <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method));</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>  std::vector&lt;double&gt; <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>(1 + <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method));</div>
 <div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span> </div>
 <div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>  <span class="comment">// Loop over the quadrature points</span></div>
 <div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
@@ -940,14 +940,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method); ++p)</div>
 <div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>        <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p + 1] = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a35e6cecb73b9e5a9d2576b8208c77da8">previous_velocity_values</a>[p][q];</div>
 <div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span> </div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>      void_fraction[0] = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>      <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>[0] = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a732e9107c27d323f8d013e214dbcd223">void_fraction_values</a>[q];</div>
 <div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method); ++p)</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>        void_fraction[p + 1] = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#aa48c218f4f67db5887e6036756508bbd">previous_void_fraction_values</a>[p][q];</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>        <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>[p + 1] = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#aa48c218f4f67db5887e6036756508bbd">previous_void_fraction_values</a>[p][q];</div>
 <div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span> </div>
 <div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method) + 1;</div>
 <div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>           ++p)</div>
 <div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>        {</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>          strong_residual[q] += bdf_coefs[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p] * void_fraction[0];</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>          strong_residual[q] += bdf_coefs[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>[0];</div>
 <div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>        }</div>
 <div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>      <span class="keywordtype">double</span> u_mag = 0;</div>
 <div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span> </div>
@@ -978,17 +978,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>               ++p)</div>
 <div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>            {</div>
 <div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>              local_rhs_i -=</div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>                (bdf_coefs[p] * void_fraction[0] * (<a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p] * phi_u_i));</div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>                (bdf_coefs[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>[0] * (<a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[p] * phi_u_i));</div>
 <div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span> </div>
 <div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>              <span class="keywordflow">if</span> (cfd_dem.void_fraction_time_derivative == <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>                {</div>
 <div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>                  local_rhs_i -= bdf_coefs[p] *</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>                                 (void_fraction[p] * scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a25ae34c64cf3e77c4f82d83cb00fb734">phi_p</a>[q][i]);</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>                                 (<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>[p] * scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a25ae34c64cf3e77c4f82d83cb00fb734">phi_p</a>[q][i]);</div>
 <div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span> </div>
 <div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>                  <span class="keywordflow">if</span> (cfd_dem.grad_div == <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>                    {</div>
 <div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>                      local_rhs_i -=</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>                        gamma * (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>                        gamma * (bdf_coefs[p] * <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a>[p]) * div_phi_u_i;</div>
 <div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>                    }</div>
 <div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>                }</div>
 <div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>            }</div>
@@ -2327,6 +2327,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVANSAssemblerVorticalTorque_html"><div class="ttname"><a href="classVANSAssemblerVorticalTorque.html">VANSAssemblerVorticalTorque</a></div><div class="ttdoc">Class that assembles the Viscous dissipative torque due to fluid vorticity as defined by Derksen (200...</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00545">vans_assemblers.h:546</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerVorticalTorque_html_a42d73e5e1c8b9b3e9856f13353b07b09"><div class="ttname"><a href="classVANSAssemblerVorticalTorque.html#a42d73e5e1c8b9b3e9856f13353b07b09">VANSAssemblerVorticalTorque::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">calculate_particle_fluid_interactions calculates the viscous torque dissipation</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01756">vans_assemblers.cc:1756</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">Variable::velocity</a></div><div class="ttdeci">@ velocity</div><div class="ttdoc">Velocity vector field from fluid dynamics.</div></div>
+<div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a></div><div class="ttdeci">@ void_fraction</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00015">multiphysics.h:14</a></div></div>
 <div class="ttc" id="anamespaceDEM_1_1CFDDEMProperties_html_ae9734b9d29480269e4764c5092d87b2fa0b120504b8591bd6814e4291c614e7ae"><div class="ttname"><a href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa0b120504b8591bd6814e4291c614e7ae">DEM::CFDDEMProperties::fem_torque_x</a></div><div class="ttdeci">@ fem_torque_x</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00072">dem_properties.h:72</a></div></div>
 <div class="ttc" id="anamespaceDEM_1_1CFDDEMProperties_html_ae9734b9d29480269e4764c5092d87b2fa5eb09b7710337e3c52bdee099ccf708b"><div class="ttname"><a href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa5eb09b7710337e3c52bdee099ccf708b">DEM::CFDDEMProperties::fem_force_x</a></div><div class="ttdeci">@ fem_force_x</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00069">dem_properties.h:69</a></div></div>
 <div class="ttc" id="anamespaceDEM_1_1CFDDEMProperties_html_ae9734b9d29480269e4764c5092d87b2faac4df77d99fca9883e5408087425da34"><div class="ttname"><a href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2faac4df77d99fca9883e5408087425da34">DEM::CFDDEMProperties::omega_z</a></div><div class="ttdeci">@ omega_z</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00068">dem_properties.h:68</a></div></div>
