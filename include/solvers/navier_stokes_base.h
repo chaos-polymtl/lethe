@@ -153,6 +153,11 @@ protected:
     return present_solution;
   };
   virtual VectorType &
+  get_present_zi_ki_solution() override
+  {
+    return present_zi_ki_solution;
+  };
+  virtual VectorType &
   get_system_rhs() override
   {
     return system_rhs;
@@ -924,9 +929,11 @@ protected:
   VectorType newton_update;
   VectorType present_solution;
   VectorType system_rhs;
+  VectorType present_zi_ki_solution; // store the solution for the SDIRK Newton Solver
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
+  std::vector<VectorType> previous_zi_ki_solutions; // store the previous solutions for the SDIRK Newton Solver
 
   // Finite element order used
   const unsigned int velocity_fem_degree;

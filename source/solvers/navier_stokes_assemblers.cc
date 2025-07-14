@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -1241,14 +1242,24 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_matrix    = copy_data.local_matrix;
+  auto &local_matrix = copy_data.local_matrix;
 
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();
 
   // a_ii coefficient needed to modify the local matrix
-  const double hxa_ii =
-    this->simulation_control->get_sdirk_coefficient_x_time_step().;
+  // We first get the Butcher's coefficients for the SDIRK method
+  // In the SDIRK method, all the diagonal coefficients are equal
+  // The Jacobian is calculated only once for all the stages for a given time
+  // step
+  const SDIRKTable table = scratch_data.sdirk_table;
+  SDIRKStageData   data(table,
+                      1); // We only need the first stage for the diagonal terms
+  const double     a_ii =
+    data.a_ij[0]; // Get the diagonal coefficient for the first stage
+
+  // We also need the time step size to multiply each Butcher's coefficient
+  const double h = this->simulation_control->get_time_step();
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1261,16 +1272,51 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
-              
+
               // correction of the core assembler for the sdirk method
-              // the mass matrix is not scaled by the time step but all other terms are
-              local_matrix(i, j) *= hxa_ii;
-              local_matrix(i, j) += (1 - hxa_ii) * phi_u_j * phi_u_i * masse_source *
-                                    JxW[q];
+              // the mass matrix is not scaled by the time step but all other
+              // terms are
+              local_matrix(i, j) *= h * a_ii;
+              local_matrix(i, j) +=
+                (1 - h * a_ii) * phi_u_j * phi_u_i * mass_source * JxW[q];
             }
         }
     }
 }
+
+template <int dim>
+void
+GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW        = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      zi = scratch_data.zi_values[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i     = scratch_data.phi_u[q][i];
+          double     local_rhs_i = 0;
+          local_rhs_i -=
+            mass_source * phi_u_i * zi; // The SDIRK method defines zi as the
+                                        // solution of the system M*zi = F(,,,)
+          local_rhs(i) += local_rhs_i * JxW[q];
+        }
+    }
+}
+
+template class GLSNavierStokesAssemblerSDIRK<2>;
+template class GLSNavierStokesAssemblerSDIRK<3>;
 
 template <int dim>
 void

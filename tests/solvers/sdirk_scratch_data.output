@@ -1,0 +1,10 @@
+
+DEAL::Testing SDIRK22 coefficients
+DEAL::
+Stage 1:
+DEAL::  a_ij: 2.928932188135e-01 
+  c_i : 2.928932188135e-01
+DEAL::
+Stage 2:
+DEAL::  a_ij: 7.071067811865e-01 2.928932188135e-01 
+  c_i : 1.000000000000e+00

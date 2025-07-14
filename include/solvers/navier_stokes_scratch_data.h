@@ -10,6 +10,7 @@
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 #include <core/rheological_model.h>
+#include <core/sdirk_stage_data.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/cahn_hilliard_filter.h>
@@ -100,6 +101,16 @@ public:
                      update_values | update_quadrature_points |
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
+    // The SDIRK table is called through the scractch_data
+    // The motivation for this is that the SDIRK table is constant during the
+    // whole simulation If the method is not SDIRK, then the table is empty
+    , sdirk_table(
+        simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
+            simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ?
+          ::sdirk_table(simulation_control->get_assembly_method()) :
+          SDIRKTable())
   {
     allocate();
 
@@ -1087,6 +1098,18 @@ public:
   std::vector<std::vector<double>>         previous_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
 
+  // zi et ki values for the SDIRK methods
+  std::vector<Tensor<1, dim>>
+    zi_values; // the structure is identical to velocity_values
+  std::vector<std::vector<Tensor<1, dim>>>
+    previous_zj_values; // the structure is identical to
+                        // previous_velocity_values
+  std::vector<double>
+    ki_values; // the structure is identical to pressure_values
+  std::vector<std::vector<double>>
+    previous_kj_values; // the structure is identical to
+                        // previous_pressure_values
+
   // Shape functions
   std::vector<std::vector<double>>         div_phi_u;
   std::vector<std::vector<Tensor<1, dim>>> phi_u;
@@ -1225,6 +1248,10 @@ public:
   std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
   std::vector<std::vector<std::vector<double>>>         face_phi_p;
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
+
+  // The SDIRK table contains the coefficients for the SDIRK time-stepping
+  // method If the SDIRK method is not used, this will be empty
+  SDIRKTable sdirk_table;
 };
 
 #endif
