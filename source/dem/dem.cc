@@ -891,6 +891,39 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
 
 template <int dim, typename PropertiesIndex>
 void
+DEMSolver<dim, PropertiesIndex>::export_collision_stats()
+{
+  // Open a file
+  std::ofstream myfile;
+  std::string   sep;
+  std::string   filename =
+    parameters.model_parameters.export_collision_stats_file;
+  // check if an extension is specified in the filename, if not add ".csv"
+  std::size_t csv_file = filename.find(".csv");
+  std::size_t dat_file = filename.find("dat");
+  if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
+    filename += ".csv";
+  myfile.open(filename);
+  if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
+    {
+      myfile
+        << "particle_id boundary_id simulation_time particle_velocity_x particle_velocity_y particle_velocity_z particle_angular_velocity_x particle_angular_velocity_y particle_angular_velocity_z"
+        << std::endl;
+      sep = " ";
+    }
+  else // .csv is default
+    {
+      myfile
+        << "particle_id,boundary_id,simulation_time,particle_velocity_x,particle_velocity_y,particle_velocity_z,particle_angular_velocity_x,particle_angular_velocity_y,particle_angular_velocity_z"
+        << std::endl;
+      sep = ",";
+    }
+  // Write the collision statistics
+  myfile.close();
+}
+
+template <int dim, typename PropertiesIndex>
+void
 DEMSolver<dim, PropertiesIndex>::solve()
 {
   // Set up the parameters
@@ -1159,6 +1192,10 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // Reset all trigger flags
       action_manager->reset_triggers();
     }
+
+  // Export particle-wall collision statistics in .csv if enable
+  if (parameters.model_parameters.particle_wall_contact_statistics)
+    export_collision_stats();
 
   finish_simulation();
 }

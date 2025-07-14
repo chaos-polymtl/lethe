@@ -1010,6 +1010,39 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 
 template <int dim>
 void
+CFDDEMSolver<dim>::export_collision_stats()
+{
+  // Open a file
+  std::ofstream myfile;
+  std::string   sep;
+  std::string   filename =
+    dem_parameters.model_parameters.export_collision_stats_file;
+  // check if an extension is specified in the filename, if not add ".csv"
+  std::size_t csv_file = filename.find(".csv");
+  std::size_t dat_file = filename.find("dat");
+  if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
+    filename += ".csv";
+  myfile.open(filename);
+  if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
+    {
+      myfile
+        << "particle_id boundary_id simulation_time particle_velocity_x particle_velocity_y particle_velocity_z particle_angular_velocity_x particle_angular_velocity_y particle_angular_velocity_z"
+        << std::endl;
+      sep = " ";
+    }
+  else // .csv is default
+    {
+      myfile
+        << "particle_id,boundary_id,simulation_time,particle_velocity_x,particle_velocity_y,particle_velocity_z,particle_angular_velocity_x,particle_angular_velocity_y,particle_angular_velocity_z"
+        << std::endl;
+      sep = ",";
+    }
+  // Write the collision statistics
+  myfile.close();
+}
+
+template <int dim>
+void
 CFDDEMSolver<dim>::write_dem_output_results()
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
@@ -1660,6 +1693,10 @@ CFDDEMSolver<dim>::solve()
       if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
         report_particle_statistics();
     }
+
+  // Export particle-wall collision statistics in .csv if enable
+  if (dem_parameters.model_parameters.particle_wall_contact_statistics)
+    export_collision_stats();
 
   this->finish_simulation();
 }
