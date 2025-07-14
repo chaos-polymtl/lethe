@@ -917,8 +917,8 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
   Tensor<1, dim> drag_force;
 
-  const auto pic               = scratch_data.pic;
-  beta_drag                    = 0;
+  const auto pic = scratch_data.pic;
+  beta_drag      = 0;
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
   // It is used to index vector of particle properties and is incremented while
   // looping over the particles in the cell.

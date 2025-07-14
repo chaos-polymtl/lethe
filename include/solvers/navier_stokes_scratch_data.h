@@ -702,9 +702,11 @@ public:
         particle_i++;
       }
     number_of_particles = particle_i;
-        if (number_of_particles != 0)
-          {// Calculate the average particle velocity within the cell
-           average_particle_velocity = average_particle_velocity / number_of_particles;}
+    if (number_of_particles != 0)
+      { // Calculate the average particle velocity within the cell
+        average_particle_velocity =
+          average_particle_velocity / number_of_particles;
+      }
     return total_particle_volume;
   }
 
@@ -728,9 +730,9 @@ public:
         for (unsigned int j = 0; j < number_of_particles; ++j)
           cell_void_fraction[j] = cell_void_fraction_bulk;
       }
-      else
-        for (unsigned int j = 0; j < number_of_particles; ++j)
-          cell_void_fraction[j] = 0;
+    else
+      for (unsigned int j = 0; j < number_of_particles; ++j)
+        cell_void_fraction[j] = 0;
   }
 
   /** @brief Creates an object of type Quadrature<dim> that contains the
@@ -767,22 +769,22 @@ public:
   /** @brief Interpolates the velocity and pressure of the fluid, as well as the
    * pressure gradient, and the laplacian, curl and gradient of the velocity, at
    * the locations of the particles.
-   * 
+   *
    * @param q_particles Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    *
    * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
    *
-   * @param vector_solution The solution (velocity and pressure) that is used to 
+   * @param vector_solution The solution (velocity and pressure) that is used to
    * interpolate the velocity and pressure at the particles locations.
    */
 
   template <typename VectorType>
   void
   calculate_fluid_fields_at_particle_location(
-    const Quadrature<dim> &q_particles,
+    const Quadrature<dim>                                &q_particles,
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
-    const VectorType      &vector_solution)
+    const VectorType                                     &vector_solution)
   {
     FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
                                             q_particles,
@@ -843,9 +845,9 @@ public:
   template <typename VectorType>
   void
   calculate_void_fraction_at_particle_location(
-    const Quadrature<dim> &q_particles,
+    const Quadrature<dim>                                &q_particles,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
-    const VectorType      &void_fraction_solution)
+    const VectorType &void_fraction_solution)
   {
     FEValues<dim> fe_values_particles_void_fraction(
       this->fe_values_void_fraction->get_fe(), q_particles, update_values);
@@ -857,10 +859,11 @@ public:
   }
 
   /** @brief Calculates the properties of the fluid at the locations of the particles.
-   * At the moment, only constant properties within the same fluid are supported. When 
-   * two fluids are present and VOF is used, the properties are calculated based on
-   * the filtered phase fraction interpolated at the location of the particles.
-   * These properties are used in the forces calculations in the VANS equations.
+   * At the moment, only constant properties within the same fluid are
+   * supported. When two fluids are present and VOF is used, the properties are
+   * calculated based on the filtered phase fraction interpolated at the
+   * location of the particles. These properties are used in the forces
+   * calculations in the VANS equations.
    */
 
   void
@@ -947,22 +950,22 @@ public:
   /** @brief Interpolates the filtered phase fraction value at the location of the particles.
    * The latter values are used in calculating the density and viscosity of the
    * fluid at the particles' locations when VOF is used.
-   * 
+   *
    * @param q_particles Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
-   * 
+   *
    * @param phase_cell The active cell associated with the vof DoFHandler
    *
-   * @param current_filtered_solution The present value of the solution for the filtered phase 
+   * @param current_filtered_solution The present value of the solution for the filtered phase
    * fraction
    */
 
   template <typename VectorType>
   void
   calculate_vof_at_particle_location(
-    const Quadrature<dim> &q_particles,
+    const Quadrature<dim>                                &q_particles,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
-    const VectorType      &current_filtered_solution)
+    const VectorType &current_filtered_solution)
   {
     FEValues<dim> fe_values_vof_local_particles((*this->fe_values_vof).get_fe(),
                                                 q_particles,
@@ -1080,8 +1083,7 @@ public:
 
     average_particle_velocity = average_particle_velocity / number_of_particles;
 
-    Quadrature<dim> q_particles =
-      gather_particles_reference_location();
+    Quadrature<dim> q_particles = gather_particles_reference_location();
     calculate_fluid_fields_at_particle_location(q_particles,
                                                 velocity_cell,
                                                 previous_solution);
