@@ -24,9 +24,13 @@ This subsection specifies the characteristics of the finite element method used 
     # interpolation order vof
     set VOF order          = 1
 
-    #interpolation order cahn hilliard
+    # interpolation order cahn hilliard
     set phase cahn hilliard order     = 1
     set potential cahn hilliard order = 1
+
+    # bubble enrichment function
+    set enable bubble function velocity = false
+    set enable bubble function pressure = false
   end
 
 
@@ -44,4 +48,8 @@ This subsection specifies the characteristics of the finite element method used 
 
 * ``phase cahn hilliard order`` and ``potential cahn hilliard order`` specify the interpolation order for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate parameters for debugging purposes.
 
+* ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively.
 
+.. warning::
+  
+  The `bubble enrichment function <https://www.dealii.org/current/doxygen/deal.II/classFE__Q__Bubbles.html>`_ is not compatible with simplex meshes.
