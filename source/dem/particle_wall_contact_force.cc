@@ -158,7 +158,7 @@ ParticleWallContactForce<dim,
   // particles_in_contact_now will be used to find the particles that ended
   // their collision during this time step, so that we can log the end of the
   // collision.
-  std::set<types::particle_index> particles_in_contact_now;
+  std::set<unsigned int> particles_in_contact_now;
 
   // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
@@ -200,10 +200,9 @@ ParticleWallContactForce<dim,
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          types::particle_index particle_id = particle->get_local_index();
-
           if (normal_overlap > collision_threshold)
             {
+                        unsigned int particle_id = particle->get_id();
               particles_in_contact_now.insert(particle_id);
 
               if (!ongoing_collision_log.is_in_collision(particle_id))
@@ -229,6 +228,8 @@ ParticleWallContactForce<dim,
                   start_log.boundary_id = contact_info.boundary_id;
 
                   ongoing_collision_log.start_collision(start_log);
+                  std::cout << "Collision with boundary " << start_log.boundary_id << " started for particle " << particle_id
+                            << std::endl;
                 }
             }
           if (normal_overlap > force_calculation_threshold_distance)
@@ -254,9 +255,10 @@ ParticleWallContactForce<dim,
                                       rolling_resistance_torque);
 
               // Applying the calculated forces and torques on the particle
+                        types::particle_index particle_index = particle->get_local_index();
               Tensor<1, 3> &particle_torque =
-                contact_outcome.torque[particle_id];
-              Tensor<1, 3> &particle_force = contact_outcome.force[particle_id];
+                contact_outcome.torque[particle_index];
+              Tensor<1, 3> &particle_force = contact_outcome.force[particle_index];
 
               this->apply_force_and_torque(normal_force,
                                            tangential_force,
@@ -276,7 +278,7 @@ ParticleWallContactForce<dim,
   // Now we check which particles ended their collision during this time step
   for (auto it = particle_handler.begin(); it != particle_handler.end(); ++it)
     {
-      types::particle_index particle_id = it->get_local_index();
+      unsigned int particle_id = it->get_id();
 
       // If the particle is not in contact now, but was in contact before
       if (particles_in_contact_now.find(particle_id) ==
@@ -307,6 +309,8 @@ ParticleWallContactForce<dim,
               event.start_log   = start_log;
               event.end_log     = end_log;
               collision_event_log.add_event(event);
+                  std::cout << "Collision with boundary " << end_log.boundary_id << " ended for particle " << particle_id
+                            << std::endl;
             }
         }
     }
