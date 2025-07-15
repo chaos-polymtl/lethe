@@ -897,6 +897,12 @@ namespace Parameters
             "0.0001",
             Patterns::Double(),
             "Threshold for the particle-wall contact to be considered a collision");
+          prm.declare_entry(
+            "verbosity",
+            "quiet",
+            Patterns::Selection("quiet|verbose"),
+            "State whether collision starts and ends should be printed. "
+            "Choices are <quiet|verbose>.");
         }
         prm.leave_subsection();
 
@@ -1136,6 +1142,15 @@ namespace Parameters
             {
               throw(std::runtime_error(
                 "Collision threshold must be greater than or equal to zero"));
+            }
+          const std::string verbose = prm.get("verbosity");
+          if (verbose == "quiet")
+            collision_verbosity = Parameters::Verbosity::quiet;
+          else if (verbose == "verbose")
+            collision_verbosity = Parameters::Verbosity::verbose;
+          else
+            {
+              throw(std::runtime_error("Invalid verbosity choice "));
             }
         }
         prm.leave_subsection();

@@ -366,6 +366,8 @@ namespace Parameters
       // collision.
       double collision_threshold;
 
+      Parameters::Verbosity collision_verbosity;
+
       // Exporting collision statistics csv filename
       std::string export_collision_stats_file;
 

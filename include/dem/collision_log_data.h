@@ -15,11 +15,11 @@ using namespace dealii;
 template <int dim>
 struct collision_log
 {
-  unsigned int particle_id;
-  Tensor<1, dim>        velocity;
-  Tensor<1, dim>        omega;
-  double                time;
-  types::boundary_id    boundary_id;
+  unsigned int       particle_id;
+  Tensor<1, dim>     velocity;
+  Tensor<1, dim>     omega;
+  double             time;
+  types::boundary_id boundary_id;
 };
 
 /**
@@ -28,9 +28,9 @@ struct collision_log
 template <int dim>
 struct collision_event
 {
-  unsigned int particle_id;
-  collision_log<dim>    start_log;
-  collision_log<dim>    end_log;
+  unsigned int       particle_id;
+  collision_log<dim> start_log;
+  collision_log<dim> end_log;
 };
 
 /**
@@ -56,8 +56,7 @@ public:
    * @brief End a collision for a particle. Retrieve the start log and remove the particle from the ongoing collisions. Return true if the particle was in the log, false otherwise.
    */
   bool
-  end_collision(const unsigned int particle_id,
-                collision_log<dim>         &start_log)
+  end_collision(const unsigned int particle_id, collision_log<dim> &start_log)
   {
     auto it = ongoing_collisions.find(particle_id);
     if (it != ongoing_collisions.end())
@@ -81,8 +80,7 @@ public:
 private:
   // Map to store ongoing collisions with particle id as key and collision log
   // as value
-  std::unordered_map<unsigned int, collision_log<dim>>
-    ongoing_collisions;
+  std::unordered_map<unsigned int, collision_log<dim>> ongoing_collisions;
 };
 
 /**
