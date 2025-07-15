@@ -19,6 +19,9 @@ ParticleWallContactForce<dim,
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
   , collision_threshold(dem_parameters.model_parameters.collision_threshold)
   , collision_verbosity(dem_parameters.model_parameters.collision_verbosity)
+  , wall_boundary_id(dem_parameters.model_parameters.wall_boundary_id)
+  , log_collisions_with_all_walls(
+      dem_parameters.model_parameters.log_collisions_with_all_walls)
 {
   set_effective_properties(dem_parameters);
   if constexpr (std::is_same_v<PropertiesIndex,
@@ -208,43 +211,49 @@ ParticleWallContactForce<dim,
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          if (normal_overlap > collision_threshold)
+          types::boundary_id boundary_id = contact_info.boundary_id;
+          if (boundary_id == wall_boundary_id || log_collisions_with_all_walls)
             {
-              unsigned int particle_id = particle->get_id();
-              particles_in_contact_now.insert(particle_id);
-
-              if (!ongoing_collision_log.is_in_collision(particle_id))
+              if (normal_overlap > collision_threshold)
                 {
-                  collision_log<dim> start_log;
-                  start_log.particle_id = particle_id;
+                  unsigned int particle_id = particle->get_id();
+                  particles_in_contact_now.insert(particle_id);
 
-                  start_log.velocity[0] =
-                    particle_properties[PropertiesIndex::v_x];
-                  start_log.velocity[1] =
-                    particle_properties[PropertiesIndex::v_y];
-                  start_log.velocity[2] =
-                    particle_properties[PropertiesIndex::v_z];
-
-                  start_log.omega[0] =
-                    particle_properties[PropertiesIndex::omega_x];
-                  start_log.omega[1] =
-                    particle_properties[PropertiesIndex::omega_y];
-                  start_log.omega[2] =
-                    particle_properties[PropertiesIndex::omega_z];
-
-                  start_log.time        = current_time;
-                  start_log.boundary_id = contact_info.boundary_id;
-
-                  ongoing_collision_log.start_collision(start_log);
-
-                  if (collision_verbosity == Parameters::Verbosity::verbose)
+                  if (!ongoing_collision_log.is_in_collision(particle_id))
                     {
-                      std::cout
-                        << "Collision with boundary " << start_log.boundary_id
-                        << " started for particle " << particle_id << std::endl;
+                      collision_log<dim> start_log;
+                      start_log.particle_id = particle_id;
+
+                      start_log.velocity[0] =
+                        particle_properties[PropertiesIndex::v_x];
+                      start_log.velocity[1] =
+                        particle_properties[PropertiesIndex::v_y];
+                      start_log.velocity[2] =
+                        particle_properties[PropertiesIndex::v_z];
+
+                      start_log.omega[0] =
+                        particle_properties[PropertiesIndex::omega_x];
+                      start_log.omega[1] =
+                        particle_properties[PropertiesIndex::omega_y];
+                      start_log.omega[2] =
+                        particle_properties[PropertiesIndex::omega_z];
+
+                      start_log.time        = current_time;
+                      start_log.boundary_id = contact_info.boundary_id;
+
+                      ongoing_collision_log.start_collision(start_log);
+
+                      if (collision_verbosity == Parameters::Verbosity::verbose)
+                        {
+                          std::cout << "Collision with boundary "
+                                    << start_log.boundary_id
+                                    << " started for particle " << particle_id
+                                    << std::endl;
+                        }
                     }
                 }
             }
+
           if (normal_overlap > force_calculation_threshold_distance)
             {
               // Updating contact information

@@ -362,6 +362,12 @@ namespace Parameters
       // Enable the logging of particle-wall contact statistics
       bool particle_wall_contact_statistics;
 
+      // State whether collisions with all walls should be logged
+      bool log_collisions_with_all_walls;
+
+      // Boundary id of the wall to log collisions with
+      unsigned int wall_boundary_id;
+
       // Collision threshold for the particle-wall contact to be considered a
       // collision.
       double collision_threshold;

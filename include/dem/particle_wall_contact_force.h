@@ -1118,28 +1118,30 @@ private:
 
   // Members of the class
 
-  unsigned int        n_particle_types;
-  std::vector<double> effective_youngs_modulus;
-  std::vector<double> effective_real_youngs_modulus;
-  std::vector<double> effective_shear_modulus;
-  std::vector<double> effective_coefficient_of_restitution;
-  std::vector<double> effective_coefficient_of_friction;
-  std::vector<double> effective_coefficient_of_rolling_friction;
-  std::vector<double> effective_coefficient_of_rolling_viscous_damping;
-  std::vector<double> effective_surface_energy;
-  std::vector<double> effective_hamaker_constant;
-  std::vector<double> model_parameter_beta;
-  std::vector<double> equivalent_surface_roughness;
-  std::vector<double> equivalent_surface_slope;
-  std::vector<double> effective_microhardness;
-  std::vector<double> particle_thermal_conductivity;
-  std::vector<double> gas_parameter_m;
-  double              gas_thermal_conductivity;
-  double              wall_thermal_conductivity;
-  const double        dmt_cut_off_threshold;
-  const double        f_coefficient_epsd;
-  const double        collision_threshold;
+  unsigned int          n_particle_types;
+  std::vector<double>   effective_youngs_modulus;
+  std::vector<double>   effective_real_youngs_modulus;
+  std::vector<double>   effective_shear_modulus;
+  std::vector<double>   effective_coefficient_of_restitution;
+  std::vector<double>   effective_coefficient_of_friction;
+  std::vector<double>   effective_coefficient_of_rolling_friction;
+  std::vector<double>   effective_coefficient_of_rolling_viscous_damping;
+  std::vector<double>   effective_surface_energy;
+  std::vector<double>   effective_hamaker_constant;
+  std::vector<double>   model_parameter_beta;
+  std::vector<double>   equivalent_surface_roughness;
+  std::vector<double>   equivalent_surface_slope;
+  std::vector<double>   effective_microhardness;
+  std::vector<double>   particle_thermal_conductivity;
+  std::vector<double>   gas_parameter_m;
+  double                gas_thermal_conductivity;
+  double                wall_thermal_conductivity;
+  const double          dmt_cut_off_threshold;
+  const double          f_coefficient_epsd;
+  const double          collision_threshold;
   Parameters::Verbosity collision_verbosity;
+  unsigned int          wall_boundary_id;
+  bool                  log_collisions_with_all_walls;
 
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>>
