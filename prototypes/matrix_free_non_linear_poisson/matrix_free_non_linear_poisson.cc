@@ -774,6 +774,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_update()
           smoother_data[0].eig_cg_n_iterations = mg_matrices[0].m();
         }
 
+      mg_solution[level].update_ghost_values();
       mg_matrices[level].evaluate_newton_step(mg_solution[level]);
       mg_matrices[level].compute_diagonal();
 
