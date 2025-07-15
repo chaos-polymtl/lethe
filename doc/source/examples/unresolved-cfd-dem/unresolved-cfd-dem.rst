@@ -12,6 +12,7 @@ This section includes examples related to multiphase fluid-solid flows. We organ
     single-particle-sedimentation/single-particle-sedimentation
     cylindrical-packed-bed/cylindrical-packed-bed
     gas-solid-fluidized-bed/gas-solid-fluidized-bed
+    pseudo-2d-gas-solid-fluidized-bed/pseudo-2d-gas-solid-fluidized-bed
     gas-solid-spouted-rectangular-bed/gas-solid-spouted-rectangular-bed
     liquid-solid-fluidized-bed/liquid-solid-fluidized-bed
     boycott-effect/boycott-effect
