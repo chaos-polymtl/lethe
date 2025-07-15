@@ -894,7 +894,7 @@ namespace Parameters
 
           prm.declare_entry(
             "collision threshold",
-            "0.1",
+            "0.0001",
             Patterns::Double(),
             "Threshold for the particle-wall contact to be considered a collision");
         }
