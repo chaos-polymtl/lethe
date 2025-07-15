@@ -1056,6 +1056,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
               // refine if at least refinement flag on one variable
               global_refine_flags[i] =
                 global_refine_flags[i] || current_refine_flags[i];
+            }
+
+          // for subsequent coarsen variables
+          for (std::vector<bool>::size_type i = 0;
+               i != global_coarsen_flags.size();
+               ++i)
+            {
               // coarsen if refinement flag on all variables
               global_coarsen_flags[i] =
                 global_coarsen_flags[i] && current_coarsen_flags[i];

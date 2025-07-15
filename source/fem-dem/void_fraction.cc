@@ -99,7 +99,8 @@ VoidFractionBase<dim>::setup_constraints(
   has_periodic_boundaries = false;
   // Define constraints for periodic boundary conditions
   void_fraction_constraints.clear();
-  void_fraction_constraints.reinit(locally_relevant_dofs);
+  void_fraction_constraints.reinit(dof_handler.locally_owned_dofs(),
+                                   locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler,
                                           void_fraction_constraints);
 

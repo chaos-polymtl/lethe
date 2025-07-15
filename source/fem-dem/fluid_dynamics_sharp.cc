@@ -86,15 +86,14 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
   // check all the cells if they are cut or not. Put the information in a map
   // with the key being the cell.
   TimerOutput::Scope t(this->computing_timer, "Map cut cells");
-  std::map<types::global_dof_index, Point<dim>> support_points;
+
 
   // A vector of the unordered map. Each map stores if a point is inside or
   // outside of a given particle.
   std::vector<std::unordered_map<types::global_dof_index, bool>>
     inside_outside_support_point_vector(particles.size());
-  DoFTools::map_dofs_to_support_points(*this->mapping,
-                                       this->dof_handler,
-                                       support_points);
+  std::map<types::global_dof_index, Point<dim>> support_points =
+    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
 
   // When the finite element order > 1, overconstrained cells are impossible
   // since there is always at least a DOF inside the element that is not
@@ -849,10 +848,9 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
   TimerOutput::Scope                            t(this->computing_timer,
                        "Refine around immersed boundary");
   Point<dim>                                    center_immersed;
-  std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(*this->mapping,
-                                       this->dof_handler,
-                                       support_points);
+  std::map<types::global_dof_index, Point<dim>> support_points =
+    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
+
   double dt = this->simulation_control->get_time_steps_vector()[0];
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
@@ -1002,11 +1000,8 @@ FluidDynamicsSharp<dim>::force_on_ib()
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   // Define a map to all DOFs and their support points
-  std::map<types::global_dof_index, Point<dim>> support_points;
-
-  DoFTools::map_dofs_to_support_points(*this->mapping,
-                                       this->dof_handler,
-                                       support_points);
+  std::map<types::global_dof_index, Point<dim>> support_points =
+    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
 
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>            q_formula(this->number_quadrature_points);
@@ -1851,10 +1846,8 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
   Function<dim> *l_exact_solution = this->exact_solution;
 
   Point<dim>                                    center_immersed;
-  std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(*this->mapping,
-                                       this->dof_handler,
-                                       support_points);
+  std::map<types::global_dof_index, Point<dim>> support_points =
+    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
 
   double l2errorU                  = 0.;
   double l2errorU_boundary         = 0.;
@@ -3124,10 +3117,8 @@ FluidDynamicsSharp<dim>::sharp_edge()
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   // Define a map to all DOFs and their support points
-  std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(*this->mapping,
-                                       this->dof_handler,
-                                       support_points);
+  std::map<types::global_dof_index, Point<dim>> support_points =
+    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
 
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);

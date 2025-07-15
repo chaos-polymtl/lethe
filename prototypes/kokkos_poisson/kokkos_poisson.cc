@@ -141,10 +141,10 @@ private:
   {
     LinearAlgebra::ReadWriteVector<Number2> rw_vector(
       src.get_partitioner()->locally_owned_range());
-    rw_vector.import(src, VectorOperation::insert);
+    rw_vector.import_elements(src, VectorOperation::insert);
 
     dst.reinit(src.get_partitioner());
-    dst.import(rw_vector, VectorOperation::insert);
+    dst.import_elements(rw_vector, VectorOperation::insert);
   }
 
   template <typename Number2>
@@ -156,11 +156,11 @@ private:
   {
     LinearAlgebra::ReadWriteVector<Number2> rw_vector(
       src.get_partitioner()->locally_owned_range());
-    rw_vector.import(src, VectorOperation::insert);
+    rw_vector.import_elements(src, VectorOperation::insert);
 
     if (dst.size() == 0)
       dst.reinit(src.get_partitioner());
-    dst.import(rw_vector, VectorOperation::insert);
+    dst.import_elements(rw_vector, VectorOperation::insert);
   }
 };
 
@@ -498,8 +498,8 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
 
     LinearAlgebra::ReadWriteVector<Number> rw_vector(
       src.get_partitioner()->locally_owned_range());
-    rw_vector.import(src_host, VectorOperation::insert);
-    src.import(rw_vector, VectorOperation::insert);
+    rw_vector.import_elements(src_host, VectorOperation::insert);
+    src.import_elements(rw_vector, VectorOperation::insert);
 
     dst = 0.0;
   }
@@ -624,8 +624,8 @@ run(const unsigned int n_refinements, ConvergenceTable &table)
 
     LinearAlgebra::ReadWriteVector<Number> rw_vector(
       src.get_partitioner()->locally_owned_range());
-    rw_vector.import(dst, VectorOperation::insert);
-    dst_host.import(rw_vector, VectorOperation::insert);
+    rw_vector.import_elements(dst, VectorOperation::insert);
+    dst_host.import_elements(rw_vector, VectorOperation::insert);
 
     std::string file_name = "solution_" + std::to_string(counter++) + ".vtu";
 
