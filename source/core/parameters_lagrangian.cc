@@ -885,7 +885,16 @@ namespace Parameters
             Patterns::Selection("true|false"),
             "Enable the logging of particle-wall contact statistics"
             "Choices are <true|false>.");
-
+          prm.declare_entry(
+            "log collisions with all walls",
+            "true",
+            Patterns::Selection("true|false"),
+            "State whether collisions with all walls should be logged"
+            "Choices are <true|false>.");
+          prm.declare_entry("wall boundary id",
+                            "0",
+                            Patterns::Integer(),
+                            "Boundary id of the wall to log collisions with");
           prm.declare_entry(
             "collision statistics file",
             "collision_statistics.csv",
@@ -1134,7 +1143,9 @@ namespace Parameters
         {
           particle_wall_contact_statistics =
             prm.get_bool("enable particle wall contact statistics");
-
+          log_collisions_with_all_walls =
+            prm.get_bool("log collisions with all walls");
+          wall_boundary_id            = prm.get_integer("wall boundary id");
           export_collision_stats_file = prm.get("collision statistics file");
           collision_threshold         = prm.get_double("collision threshold");
 
