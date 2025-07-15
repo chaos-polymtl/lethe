@@ -392,12 +392,12 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
   if (action_manager->check_periodic_boundaries_enabled() &&
       action_manager->check_sparse_contacts_enabled())
     {
-      IndexSet locally_relevant_dofs;
-      DoFTools::extract_locally_relevant_dofs(background_dh,
-                                              locally_relevant_dofs);
+      IndexSet locally_relevant_dofs =
+        DoFTools::extract_locally_relevant_dofs(background_dh);
 
       background_constraints.clear();
-      background_constraints.reinit(locally_relevant_dofs);
+      background_constraints.reinit(background_dh.locally_owned_dofs(),
+                                    locally_relevant_dofs);
 
       DoFTools::make_periodicity_constraints(
         background_dh,
