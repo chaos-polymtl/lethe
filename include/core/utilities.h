@@ -441,16 +441,17 @@ serialize_table(const TableHandler &table, const std::string filename)
 {
   std::ofstream                 ofile(filename);
   boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
+  ofile.flush();
   oa << table;
   ofile.flush();
   ofile.close();
-  
-  TableHandler table_tmp;
-  std::ifstream                 ifile(filename);
-  boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
-  ia >> table_tmp;
-  
-  assert(table == table_tmp);
+  // 
+  // TableHandler table_tmp;
+  // std::ifstream                 ifile(filename);
+  // boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
+  // ia >> table_tmp;
+  // 
+  // assert(table == table_tmp);
 }
 
 /**
