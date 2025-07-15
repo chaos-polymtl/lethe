@@ -18,6 +18,7 @@ ParticleWallContactForce<dim,
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
   , collision_threshold(dem_parameters.model_parameters.collision_threshold)
+  , collision_verbosity(dem_parameters.model_parameters.collision_verbosity)
 {
   set_effective_properties(dem_parameters);
   if constexpr (std::is_same_v<PropertiesIndex,
@@ -209,7 +210,7 @@ ParticleWallContactForce<dim,
 
           if (normal_overlap > collision_threshold)
             {
-                        unsigned int particle_id = particle->get_id();
+              unsigned int particle_id = particle->get_id();
               particles_in_contact_now.insert(particle_id);
 
               if (!ongoing_collision_log.is_in_collision(particle_id))
@@ -235,8 +236,13 @@ ParticleWallContactForce<dim,
                   start_log.boundary_id = contact_info.boundary_id;
 
                   ongoing_collision_log.start_collision(start_log);
-                  std::cout << "Collision with boundary " << start_log.boundary_id << " started for particle " << particle_id
-                            << std::endl;
+
+                  if (collision_verbosity == Parameters::Verbosity::verbose)
+                    {
+                      std::cout
+                        << "Collision with boundary " << start_log.boundary_id
+                        << " started for particle " << particle_id << std::endl;
+                    }
                 }
             }
           if (normal_overlap > force_calculation_threshold_distance)
@@ -262,10 +268,12 @@ ParticleWallContactForce<dim,
                                       rolling_resistance_torque);
 
               // Applying the calculated forces and torques on the particle
-                        types::particle_index particle_index = particle->get_local_index();
+              types::particle_index particle_index =
+                particle->get_local_index();
               Tensor<1, 3> &particle_torque =
                 contact_outcome.torque[particle_index];
-              Tensor<1, 3> &particle_force = contact_outcome.force[particle_index];
+              Tensor<1, 3> &particle_force =
+                contact_outcome.force[particle_index];
 
               this->apply_force_and_torque(normal_force,
                                            tangential_force,
@@ -316,8 +324,12 @@ ParticleWallContactForce<dim,
               event.start_log   = start_log;
               event.end_log     = end_log;
               collision_event_log.add_event(event);
-                  std::cout << "Collision with boundary " << end_log.boundary_id << " ended for particle " << particle_id
+              if (collision_verbosity == Parameters::Verbosity::verbose)
+                {
+                  std::cout << "Collision with boundary " << end_log.boundary_id
+                            << " ended for particle " << particle_id
                             << std::endl;
+                }
             }
         }
     }

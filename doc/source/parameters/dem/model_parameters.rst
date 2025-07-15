@@ -46,6 +46,7 @@ In this subsection, contact detection, force models, particle-wall collision sta
       set enable particle wall contact statistics = false
       set collision statistics file               = collision_statistics.csv
       set collision threshold                     = 0.0001
+      set verbosity                               = quiet # Choices are quiet|verbose
     end
 
     # DMT cut-off threshold
@@ -140,6 +141,8 @@ The particle-wall contact statistics logging feature allows to log the particle-
 
 .. note::
     The ``collision threshold`` must be greater than or equal to 0.
+
+* ``verbosity`` controls the verbosity of the particle-wall collisions. The available options are ``quiet`` (the default option) and ``verbose``. If set to ``verbose``, the start and the end of a collision are printed in the terminal.
 
 -----------------------
 Load Balancing
