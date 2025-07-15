@@ -1108,6 +1108,10 @@ namespace Parameters
     unsigned int phase_cahn_hilliard_order;
     unsigned int potential_cahn_hilliard_order;
 
+    // Option for bubble enrichment functions
+    bool enable_bubble_function_velocity;
+    bool enable_bubble_function_pressure;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
