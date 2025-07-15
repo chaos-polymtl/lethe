@@ -35,7 +35,7 @@ VoidFractionBase<dim>::setup_dofs()
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   void_fraction_constraints.clear();
-  void_fraction_constraints.reinit(locally_relevant_dofs);
+  void_fraction_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler,
                                           void_fraction_constraints);
 

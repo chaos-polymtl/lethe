@@ -195,7 +195,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
       std::vector<types::global_dof_index> interface_indices;
       IndexSet                             refinement_edge_indices;
       refinement_edge_indices = get_refinement_edges(this->matrix_free);
-      refinement_edge_indices.fill_index_vector(interface_indices);
+
+      interface_indices = refinement_edge_indices.get_index_vector();
 
       edge_constrained_indices.clear();
       edge_constrained_indices.reserve(interface_indices.size());
@@ -1260,7 +1261,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           typename FEFaceIntegrator::value_type    value_result    = {};
           typename FEFaceIntegrator::gradient_type gradient_result = {};
 
-          const auto normal_vector = integrator.get_normal_vector(q);
+          const auto normal_vector = integrator.normal_vector(q);
 
           auto       value    = integrator.get_value(q);
           const auto gradient = integrator.get_gradient(q);
@@ -1303,7 +1304,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
         {
           typename FEFaceIntegrator::value_type value_result = {};
 
-          const auto normal_vector = integrator.get_normal_vector(q);
+          const auto normal_vector = integrator.normal_vector(q);
 
           auto value = integrator.get_value(q);
 
