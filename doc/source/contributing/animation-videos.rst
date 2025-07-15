@@ -5,7 +5,8 @@ Animation Videos
 Here we cover the steps for saving a video using Paraview visualization tool; if you are using a different tool, keep in mind that the video formatting rules still apply.
 
 Making the video
-^^^^^^^^^^^^^^^^
+----------------
+
 ``Save Animation`` on Paraview saves the animation in images. They can be combined in a video using ``ffmpeg``, with an appropriate framerate and from inside the images folder:
 
 .. code-block:: text
@@ -14,12 +15,14 @@ Making the video
   ffmpeg -framerate 20 -i <imageprefix>.%04d.png -c:v libx264 -pix_fmt yuv420p ../out.mp4 
 
 Formatting
-^^^^^^^^^^
+----------
+
 - Check if the legend contains the corresponding units of the represented field (e.g., [length/time] unit when plotting velocity).
 - Make sure that the video contains the Lethe logo within it (add on Paraview with Sources/Annotations/Logo). The file can be found in the `repository <https://github.com/chaos-polymtl/lethe/tree/master/logo>`_.
 
 Video Upload
-^^^^^^^^^^^^
+------------
+
 Animation videos are uploaded on the `Lethe Youtube page <https://www.youtube.com/@lethecfd6431>`_.
 
 When adjusting the video configurations:
