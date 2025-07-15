@@ -466,7 +466,7 @@ MatrixBasedPoissonProblem<dim, fe_degree>::setup_system()
                        mpi_communicator);
 
   constraints.clear();
-  constraints.reinit(locally_owned_dofs,locally_relevant_dofs);
+  constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
   VectorTools::interpolate_boundary_values(dof_handler,
                                            0,
@@ -719,7 +719,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::assemble_gmg()
     {
       const IndexSet dof_set =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
-      boundary_constraints[level].reinit(dof_handler.locally_owned_dofs(), dof_set);
+      boundary_constraints[level].reinit(dof_handler.locally_owned_dofs(),
+                                         dof_set);
       boundary_constraints[level].add_lines(
         mg_constrained_dofs.get_refinement_edge_indices(level));
       boundary_constraints[level].add_lines(

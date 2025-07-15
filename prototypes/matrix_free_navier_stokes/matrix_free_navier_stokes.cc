@@ -603,10 +603,10 @@ NavierStokesOperator<dim, number>::reinit(
 
   if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
     {
-      IndexSet                             refinement_edge_indices;
+      IndexSet refinement_edge_indices;
       refinement_edge_indices = get_refinement_edges(this->matrix_free);
       std::vector<types::global_dof_index> interface_indices =
-      refinement_edge_indices.get_index_vector();
+        refinement_edge_indices.get_index_vector();
 
       edge_constrained_indices.clear();
       edge_constrained_indices.reserve(interface_indices.size());
@@ -1271,7 +1271,8 @@ solve_with_gcmg(SolverControl             &solver_control,
 
       const IndexSet locally_relevant_dofs =
         DoFTools::extract_locally_relevant_dofs(dof_handler);
-      constraint.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
+      constraint.reinit(dof_handler.locally_owned_dofs(),
+                        locally_relevant_dofs);
 
       DoFTools::make_hanging_node_constraints(dof_handler, constraint);
       VectorTools::interpolate_boundary_values(mapping,
