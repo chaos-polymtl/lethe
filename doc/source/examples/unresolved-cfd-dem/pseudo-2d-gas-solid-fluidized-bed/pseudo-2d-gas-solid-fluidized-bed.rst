@@ -331,7 +331,7 @@ We use the inexact Newton non-linear solver to minimize the number of time the m
   subsection non-linear solver
     subsection fluid dynamics
       set solver           = inexact_newton
-      set tolerance        = 1e-7
+      set tolerance        = 1e-6
       set max iterations   = 20
       set matrix tolerance = 0.2
       set verbosity        = verbose
@@ -347,7 +347,7 @@ Linear Solver
     subsection linear solver
       subsection fluid dynamics
         set method                                = gmres
-        set max iters                             = 5000
+        set max iters                             = 200
         set relative residual                     = 1e-3
         set minimum residual                      = 1e-11
         set preconditioner                        = ilu
@@ -370,6 +370,10 @@ The CFD-DEM simulation is run with the following command:
   :class: copy-button
 
   mpirun -np 10 lethe-fluid-particles gas-solid-fluidized-bed.prm
+
+
+.. note:: 
+    Running this simulation should take approximately 25 hours on 10 cores.
 
 
 ----------------
