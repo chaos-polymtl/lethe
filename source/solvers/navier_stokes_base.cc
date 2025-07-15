@@ -21,6 +21,7 @@
 #include <deal.II/distributed/grid_refinement.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_q_bubbles.h>
 #include <deal.II/fe/fe_simplex_p.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -71,6 +72,13 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       const FE_SimplexP<dim> pressure_fe(
         p_nsparam.fem_parameters.pressure_order);
       fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
+
+      AssertThrow(
+        !p_nsparam.fem_parameters.enable_bubble_function_velocity ||
+          !p_nsparam.fem_parameters.enable_bubble_function_pressure,
+        ExcMessage(
+          "Bubble enrichment functions are not compatible with simplex meshes."));
+
       mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
       cell_quadrature =
         std::make_shared<QGaussSimplex<dim>>(number_quadrature_points);
@@ -85,11 +93,24 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   else
     {
       // Usual case, for quad/hex meshes
-      fe = std::make_shared<FESystem<dim>>(
-        FE_Q<dim>(p_nsparam.fem_parameters.velocity_order),
-        dim,
-        FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
-        1);
+      std::shared_ptr<FiniteElement<dim>> fe_u;
+      std::shared_ptr<FiniteElement<dim>> fe_p;
+
+      if (p_nsparam.fem_parameters.enable_bubble_function_velocity)
+        fe_u = std::make_shared<FE_Q_Bubbles<dim>>(
+          p_nsparam.fem_parameters.velocity_order);
+      else
+        fe_u =
+          std::make_shared<FE_Q<dim>>(p_nsparam.fem_parameters.velocity_order);
+
+      if (p_nsparam.fem_parameters.enable_bubble_function_pressure)
+        fe_p = std::make_shared<FE_Q_Bubbles<dim>>(
+          p_nsparam.fem_parameters.pressure_order);
+      else
+        fe_p =
+          std::make_shared<FE_Q<dim>>(p_nsparam.fem_parameters.pressure_order);
+
+      fe              = std::make_shared<FESystem<dim>>(*fe_u, dim, *fe_p, 1);
       mapping         = std::make_shared<MappingQ<dim>>(velocity_fem_degree);
       cell_quadrature = std::make_shared<QGauss<dim>>(number_quadrature_points);
       face_quadrature =
