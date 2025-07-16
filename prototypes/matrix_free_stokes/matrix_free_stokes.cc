@@ -1250,7 +1250,7 @@ solve_with_lsmg(SolverControl             &solver_control,
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
       const IndexSet owned_dofs =
-        this->dof_handler.locally_owned_mg_dofs(level);
+        dof_handler.locally_owned_mg_dofs(level);
 
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
