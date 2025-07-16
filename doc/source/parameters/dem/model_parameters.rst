@@ -137,7 +137,7 @@ The particle-wall contact statistics logging feature allows to log the particle-
 
 * ``enable particle wall contact statistics`` enables the feature.
 
-* ``collision statistics file`` is the name of the file where the particle-wall contact statistics will be logged. The file will be created in the working directory of the simulation.
+* ``collision statistics file`` is the name of the file where the particle-wall contact statistics will be logged. The file will be created in the working directory of the simulation. If the name does not specify the format, the file will be created in .csv format. If the name ends with .dat or .csv, the file will be created in the corresponding format.
 
 * ``collision threshold`` is the threshold distance below which the particle-wall contact statistics will be logged.
 
