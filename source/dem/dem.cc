@@ -519,35 +519,31 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
 {
+  bool floating_wall = false;
   // Particle-wall contact force
-  if (parameters.model_parameters.particle_wall_contact_statistics)
-    {
-      particle_wall_contact_force_object
-        ->calculate_particle_wall_contact_with_stats_log(
-          contact_manager.get_particle_wall_in_contact(),
-          simulation_control->get_time_step(),
-          simulation_control->get_current_time(),
-          particle_handler,
-          contact_outcome,
-          ongoing_collision_log,
-          collision_event_log);
-    }
-
-  else
-    {
-      particle_wall_contact_force_object->calculate_particle_wall_contact(
-        contact_manager.get_particle_wall_in_contact(),
-        simulation_control->get_time_step(),
-        contact_outcome);
-    }
+  particle_wall_contact_force_object->calculate_particle_wall_contact(
+    contact_manager.get_particle_wall_in_contact(),
+    simulation_control->get_time_step(),
+    simulation_control->get_current_time(),
+    particle_handler,
+    floating_wall,
+    contact_outcome,
+    ongoing_collision_log,
+    collision_event_log);
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
+      floating_wall = true;
       particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
-        contact_outcome);
+        simulation_control->get_current_time(),
+        particle_handler,
+        floating_wall,
+        contact_outcome,
+        ongoing_collision_log,
+        collision_event_log);
     }
 
   // Particle-solid objects contact force

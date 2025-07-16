@@ -47,36 +47,21 @@ public:
    * @param[in] particle_wall_pairs_in_contact Required information for the
    * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
-   * @param[out] contact_outcome Interaction outcomes.
-   */
-  virtual void
-  calculate_particle_wall_contact(
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                &particle_wall_pairs_in_contact,
-    const double dt,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
-
-  /**
-   * @brief Calculate the contact outcomes for particle-wall contacts
-   * using the contact pair information and physical properties. Logs the
-   * particle-wall contact statistics.
-   *
-   * @param[in] particle_wall_pairs_in_contact Required information for the
-   * calculation of the particle-wall contact.
-   * @param[in] dt DEM time step.
    * @param[in] current_time Current simulation time.
    * @param[in] particle_handler Particle handler.
+   * @param[in] floating_wall Whether the wall is floating or not.
    * @param[out] contact_outcome Interaction outcomes.
    * @param[out] ongoing_collision_log Ongoing collision log.
    * @param[out] collision_event_log Collision event log.
    */
   virtual void
-  calculate_particle_wall_contact_with_stats_log(
+  calculate_particle_wall_contact(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                                     &particle_wall_pairs_in_contact,
     const double                     dt,
     const double                     current_time,
     Particles::ParticleHandler<dim> &particle_handler,
+    const bool                       floating_wall,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log) = 0;
@@ -128,36 +113,21 @@ public:
    * @param[in] particle_wall_pairs_in_contact Required information for the
    * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
-   * @param[out] contact_outcome Interaction outcomes.
-   */
-  virtual void
-  calculate_particle_wall_contact(
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                &particle_wall_pairs_in_contact,
-    const double dt,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
-
-  /**
-   * @brief Calculate the contact outcomes for particle-wall contacts
-   * using the contact pair information and physical properties. Logs the
-   * particle-wall contact statistics.
-   *
-   * @param[in] particle_wall_pairs_in_contact Required information for the
-   * calculation of the particle-wall contact.
-   * @param[in] dt DEM time step.
    * @param[in] current_time Current simulation time.
    * @param[in] particle_handler Particle handler.
+   * @param[in] floating_wall Whether the wall is floating or not.
    * @param[out] contact_outcome Interaction outcomes.
    * @param[out] ongoing_collision_log Ongoing collision log.
    * @param[out] collision_event_log Collision event log.
    */
   virtual void
-  calculate_particle_wall_contact_with_stats_log(
+  calculate_particle_wall_contact(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                                     &particle_wall_pairs_in_contact,
     const double                     dt,
     const double                     current_time,
     Particles::ParticleHandler<dim> &particle_handler,
+    const bool                       floating_wall,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log) override;
@@ -1122,6 +1092,7 @@ private:
   Parameters::Verbosity collision_verbosity;
   unsigned int          wall_boundary_id;
   bool                  log_collisions_with_all_walls;
+  bool                  particle_wall_contact_statistics;
 
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>>

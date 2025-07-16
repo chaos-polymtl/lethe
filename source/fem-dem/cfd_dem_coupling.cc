@@ -961,35 +961,33 @@ template <int dim>
 void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
+  bool floating_wall = false;
   // Particle-wall contact force
-  if (dem_parameters.model_parameters.particle_wall_contact_statistics)
-    {
-      particle_wall_contact_force_object
-        ->calculate_particle_wall_contact_with_stats_log(
-          contact_manager.get_particle_wall_in_contact(),
-          dem_time_step,
-          this->simulation_control->get_current_time(),
-          this->particle_handler,
-          contact_outcome,
-          ongoing_collision_log,
-          collision_event_log);
-    }
 
-  else
-    {
-      particle_wall_contact_force_object->calculate_particle_wall_contact(
-        contact_manager.get_particle_wall_in_contact(),
-        dem_time_step,
-        contact_outcome);
-    }
+  particle_wall_contact_force_object->calculate_particle_wall_contact(
+    contact_manager.get_particle_wall_in_contact(),
+    dem_time_step,
+    this->simulation_control->get_current_time(),
+    this->particle_handler,
+    floating_wall,
+    contact_outcome,
+    ongoing_collision_log,
+    collision_event_log);
+
 
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
+      floating_wall = true;
       particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
-        contact_outcome);
+        this->simulation_control->get_current_time(),
+        this->particle_handler,
+        floating_wall,
+        contact_outcome,
+        ongoing_collision_log,
+        collision_event_log);
     }
 
   particle_point_line_contact_force_object
