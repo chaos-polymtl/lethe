@@ -1004,7 +1004,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
     DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   constraints.clear();
-  constraints.reinit(locally_relevant_dofs);
+  constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
   // Set homogeneous constraints for the matrix-free operator
@@ -1234,11 +1234,14 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
   for (unsigned int level = 0; level < nlevels; ++level)
     {
       mg_matrices[level].reinit_operator_parameters(parameters);
+      const IndexSet owned_dofs =
+        this->dof_handler.locally_owned_mg_dofs(level);
+
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
       // AffineConstraints<double> level_constraints;
-      level_constraints[level].reinit(relevant_dofs);
+      level_constraints[level].reinit(owned_dofs, relevant_dofs);
       level_constraints[level].add_lines(
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();

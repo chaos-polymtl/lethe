@@ -564,7 +564,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::setup_system()
     DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   constraints.clear();
-  constraints.reinit(locally_relevant_dofs);
+  constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
   VectorTools::interpolate_boundary_values(dof_handler,
                                            0,
@@ -618,11 +618,14 @@ MatrixFreePoissonProblem<dim, fe_degree>::setup_gmg()
 
   for (unsigned int level = 0; level < nlevels; ++level)
     {
+      const IndexSet owned_dofs =
+        this->dof_handler.locally_owned_mg_dofs(level);
+
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
       AffineConstraints<double> level_constraints;
-      level_constraints.reinit(relevant_dofs);
+      level_constraints.reinit(owned_dofs, relevant_dofs);
       level_constraints.add_lines(
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints.close();
@@ -774,6 +777,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_update()
           smoother_data[0].eig_cg_n_iterations = mg_matrices[0].m();
         }
 
+      mg_solution[level].update_ghost_values();
       mg_matrices[level].evaluate_newton_step(mg_solution[level]);
       mg_matrices[level].compute_diagonal();
 

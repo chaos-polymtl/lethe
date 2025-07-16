@@ -1352,7 +1352,8 @@ HeatTransfer<dim>::setup_dofs()
 
   {
     nonzero_constraints.clear();
-    nonzero_constraints.reinit(this->locally_relevant_dofs);
+    nonzero_constraints.reinit(this->locally_owned_dofs,
+                               this->locally_relevant_dofs);
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
 
@@ -1397,7 +1398,8 @@ HeatTransfer<dim>::setup_dofs()
   // Boundary conditions for Newton correction
   {
     zero_constraints.clear();
-    zero_constraints.reinit(this->locally_relevant_dofs);
+    zero_constraints.reinit(this->locally_owned_dofs,
+                            this->locally_relevant_dofs);
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             zero_constraints);
 
@@ -1481,7 +1483,8 @@ HeatTransfer<dim>::update_boundary_conditions()
     }
 
   nonzero_constraints.clear();
-  nonzero_constraints.reinit(this->locally_relevant_dofs);
+  nonzero_constraints.reinit(this->locally_owned_dofs,
+                             this->locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           nonzero_constraints);
 

@@ -497,10 +497,10 @@ StokesOperator<dim, number>::reinit(
 
   if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
     {
-      std::vector<types::global_dof_index> interface_indices;
-      IndexSet                             refinement_edge_indices;
+      IndexSet refinement_edge_indices;
       refinement_edge_indices = get_refinement_edges(this->matrix_free);
-      refinement_edge_indices.fill_index_vector(interface_indices);
+      std::vector<types::global_dof_index> interface_indices =
+        refinement_edge_indices.get_index_vector();
 
       edge_constrained_indices.clear();
       edge_constrained_indices.reserve(interface_indices.size());
@@ -1036,7 +1036,8 @@ solve_with_gcmg(SolverControl             &solver_control,
 
       const IndexSet locally_relevant_dofs =
         DoFTools::extract_locally_relevant_dofs(dof_handler);
-      constraint.reinit(locally_relevant_dofs);
+      constraint.reinit(dof_handler.locally_owned_dofs(),
+                        locally_relevant_dofs);
 
       DoFTools::make_hanging_node_constraints(dof_handler, constraint);
       VectorTools::interpolate_boundary_values(mapping,
@@ -1248,11 +1249,13 @@ solve_with_lsmg(SolverControl             &solver_control,
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
+      const IndexSet owned_dofs = dof_handler.locally_owned_mg_dofs(level);
+
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
       // AffineConstraints<double> level_constraints;
-      level_constraints[level].reinit(relevant_dofs);
+      level_constraints[level].reinit(owned_dofs, relevant_dofs);
       level_constraints[level].add_lines(
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();
@@ -1478,7 +1481,7 @@ MatrixFreeStokes<dim>::setup_system()
     DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   constraints.clear();
-  constraints.reinit(locally_relevant_dofs);
+  constraints.reinit(dof_handler.locally_owned_dofs(), locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
   // Set homogeneous constraints for the matrix-free operator
