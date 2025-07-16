@@ -1517,11 +1517,14 @@ solve_with_lsmg(SolverControl             &solver_control,
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
+      const IndexSet active_dofs =
+        DoFTools::extract_locally_active_level_dofs(dof_handler, level);
+
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
       // AffineConstraints<double> level_constraints;
-      level_constraints[level].reinit(relevant_dofs, relevant_dofs);
+      level_constraints[level].reinit(active_dofs, relevant_dofs);
       level_constraints[level].add_lines(
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();

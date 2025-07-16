@@ -1234,11 +1234,14 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
   for (unsigned int level = 0; level < nlevels; ++level)
     {
       mg_matrices[level].reinit_operator_parameters(parameters);
+      const IndexSet active_dofs =
+        DoFTools::extract_locally_active_level_dofs(this->dof_handler, level);
+
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
       // AffineConstraints<double> level_constraints;
-      level_constraints[level].reinit(relevant_dofs, relevant_dofs);
+      level_constraints[level].reinit(active_dofs, relevant_dofs);
       level_constraints[level].add_lines(
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();
