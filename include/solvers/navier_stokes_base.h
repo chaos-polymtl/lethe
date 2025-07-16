@@ -143,6 +143,11 @@ protected:
     return local_evaluation_point;
   };
   virtual VectorType &
+  get_local_ki_evaluation_point() override
+  {
+    return local_ki_evaluation_point;
+  };
+  virtual VectorType &
   get_newton_update() override
   {
     return newton_update;
@@ -153,9 +158,9 @@ protected:
     return present_solution;
   };
   virtual VectorType &
-  get_present_zi_ki_solution() override
+  get_present_ki_solution() override
   {
-    return present_zi_ki_solution;
+    return present_ki_solution;
   };
   virtual VectorType &
   get_system_rhs() override
@@ -286,6 +291,13 @@ protected:
   percolate_time_vectors_fd();
 
   /**
+   * @brief finish_stage
+   * Finishes the stage of the fluid dynamics SDIRK scheme
+   */
+  virtual void
+  percolate_stage_vectors_fd();
+
+  /**
    * @brief finish_simulation
    * Finishes the simulation for fluid dynamics by calling
    * the post-processing elements that are required
@@ -367,7 +379,7 @@ protected:
    * Do a regular CFD iteration
    */
   virtual void
-  iterate();
+  iterate(const NavierStokesScratchData<dim>   &scratch_data);
 
   /**
    * @brief Enable the use of dynamic zero constraints by initializing required
@@ -925,14 +937,15 @@ protected:
   // Present solution and non-linear solution components
   VectorType evaluation_point;
   VectorType local_evaluation_point;
+  VectorType local_ki_evaluation_point;
   VectorType newton_update;
   VectorType present_solution;
   VectorType system_rhs;
-  VectorType present_zi_ki_solution; // store the solution for the SDIRK Newton Solver
+  VectorType present_ki_solution; // store the solution for the SDIRK Newton Solver
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
-  std::vector<VectorType> previous_zi_ki_solutions; // store the previous solutions for the SDIRK Newton Solver
+  std::vector<VectorType> previous_ki_solutions; // store the previous solutions for the SDIRK Newton Solver
 
   // Finite element order used
   const unsigned int velocity_fem_degree;

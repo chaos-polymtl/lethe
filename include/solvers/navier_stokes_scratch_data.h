@@ -235,6 +235,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
+         const std::vector<VectorType> &previous_ki_solutions,
          std::shared_ptr<Function<dim>> forcing_function,
          Tensor<1, dim>                 beta_force,
          const double                   pressure_scaling_factor)
@@ -302,6 +303,12 @@ public:
       {
         this->fe_values[velocities].get_function_values(
           previous_solutions[p], previous_velocity_values[p]);
+      }
+
+    for (unsigned int p = 0; p < previous_ki_solutions.size(); ++p)
+      {
+        this->fe_values[k_i_s].get_function_values(
+          previous_ki_solutions[p], previous_zj_values[p]);
       }
 
     // Only gather the pressure when a pressure history is necessary
@@ -1072,6 +1079,7 @@ public:
   unsigned int               n_q_points;
   double                     cell_size;
   FEValuesExtractors::Vector velocities;
+  FEValuesExtractors::Vector k_i_s;
   FEValuesExtractors::Scalar pressure;
 
   std::vector<Vector<double>> rhs_force;

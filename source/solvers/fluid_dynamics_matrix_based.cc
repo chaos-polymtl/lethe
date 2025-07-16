@@ -584,6 +584,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
+    this->previous_ki_solutions
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -960,6 +961,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
         solve_system_GMRES(true, 1e-15, 1e-15);
 
       this->present_solution = this->newton_update;
+      this->present_ki_solution = 0;
       this->finish_time_step();
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
@@ -1118,6 +1120,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->local_evaluation_point =
         this->average_velocities->get_average_velocities();
       this->present_solution = this->local_evaluation_point;
+      this->present_ki_solution = 0;
     }
   else
     {
@@ -1691,6 +1694,14 @@ FluidDynamicsMatrixBased<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
   this->update_multiphysics_time_average_solution();
+  
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_control,
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->get_mapping(),
+    *this->face_quadrature);
 
   while (this->simulation_control->integrate())
     {
@@ -1709,7 +1720,7 @@ FluidDynamicsMatrixBased<dim>::solve()
         NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
 
       this->define_dynamic_zero_constraints();
-      this->iterate();
+      this->iterate(scratch_data);
       this->postprocess(false);
       this->finish_time_step();
     }
