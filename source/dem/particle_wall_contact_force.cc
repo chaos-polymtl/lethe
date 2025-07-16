@@ -102,17 +102,24 @@ ParticleWallContactForce<dim,
           double normal_overlap =
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
+
+          // If the feature is enabled, we log the collision statistics for
+          // walls
           if (particle_wall_contact_statistics && !floating_wall)
             {
               types::boundary_id boundary_id = contact_info.boundary_id;
 
+              // Logs if logging for all walls is enabled or if the boundary_id
+              // matches the wall_boundary_id
               if (boundary_id == wall_boundary_id ||
                   log_collisions_with_all_walls)
                 {
                   if (normal_overlap > collision_threshold)
                     {
                       unsigned int particle_id = particle->get_id();
-                      particles_in_contact_now.insert(particle_id);
+                      particles_in_contact_now.insert(
+                        particle_id); // We track nwhich particles are in
+                                      // contact now
 
                       if (!ongoing_collision_log.is_in_collision(particle_id))
                         {
@@ -222,8 +229,10 @@ ParticleWallContactForce<dim,
 
               end_log.time = current_time;
               collision_log<dim> start_log;
-              bool               ended =
+
+              bool ended =
                 ongoing_collision_log.end_collision(particle_id, start_log);
+
               if (ended)
                 {
                   end_log.boundary_id = start_log.boundary_id;
@@ -232,6 +241,7 @@ ParticleWallContactForce<dim,
                   event.start_log   = start_log;
                   event.end_log     = end_log;
                   collision_event_log.add_event(event);
+
                   if (collision_verbosity == Parameters::Verbosity::verbose)
                     {
                       std::cout << "Collision with boundary "

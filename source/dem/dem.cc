@@ -519,7 +519,8 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
 {
-  bool floating_wall = false;
+  bool floating_wall = false; // Flag to indicate if the wall is a floating wall
+
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
