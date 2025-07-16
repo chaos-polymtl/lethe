@@ -49,6 +49,7 @@ add_library(lethe-dem
   # Headers
   ../../include/dem/adaptive_sparse_contacts.h
   ../../include/dem/boundary_cells_info_struct.h
+  ../../include/dem/collision_log_data.h
   ../../include/dem/contact_info.h
   ../../include/dem/contact_type.h
   ../../include/dem/data_containers.h
