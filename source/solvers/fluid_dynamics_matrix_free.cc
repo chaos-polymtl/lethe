@@ -677,15 +677,16 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   AffineConstraints<double> temp_constraints;
                   temp_constraints.clear();
 
-                  const IndexSet locally_active_level_dofs =
-                    DoFTools::extract_locally_active_level_dofs(
-                      this->dof_handler, level);
+                  const IndexSet locally_owned_level_dofs =
+                    this->dof_handler.locally_owned_mg_dofs(level);
+
+
 
                   const IndexSet locally_relevant_level_dofs =
                     DoFTools::extract_locally_relevant_level_dofs(
                       this->dof_handler, level);
 
-                  temp_constraints.reinit(locally_active_level_dofs,
+                  temp_constraints.reinit(locally_owned_level_dofs,
                                           locally_relevant_level_dofs);
 
                   VectorTools::compute_no_normal_flux_constraints_on_level(
@@ -750,14 +751,14 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         {
           level_constraints[level].clear();
 
-          const IndexSet active_dofs =
-            DoFTools::extract_locally_active_level_dofs(this->dof_handler,
-                                                        level);
+          const IndexSet owned_dofs =
+            this->dof_handler.locally_owned_mg_dofs(level);
+
           const IndexSet relevant_dofs =
             DoFTools::extract_locally_relevant_level_dofs(this->dof_handler,
                                                           level);
 
-          level_constraints[level].reinit(active_dofs, relevant_dofs);
+          level_constraints[level].reinit(owned_dofs, relevant_dofs);
 
 #if DEAL_II_VERSION_GTE(9, 6, 0)
           this->mg_constrained_dofs.merge_constraints(

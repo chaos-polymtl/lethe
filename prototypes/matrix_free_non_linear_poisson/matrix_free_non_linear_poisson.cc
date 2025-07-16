@@ -618,14 +618,14 @@ MatrixFreePoissonProblem<dim, fe_degree>::setup_gmg()
 
   for (unsigned int level = 0; level < nlevels; ++level)
     {
-      const IndexSet active_dofs =
-        DoFTools::extract_locally_active_level_dofs(dof_handler, level);
+      const IndexSet owned_dofs =
+        this->dof_handler.locally_owned_mg_dofs(level);
 
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
       AffineConstraints<double> level_constraints;
-      level_constraints.reinit(relevant_dofs, relevant_dofs);
+      level_constraints.reinit(owned_dofs, relevant_dofs);
       level_constraints.add_lines(
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints.close();
