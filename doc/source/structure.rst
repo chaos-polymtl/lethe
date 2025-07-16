@@ -78,7 +78,7 @@ The ``/contrib`` folder houses various scripts that help for the maintenance of 
 The ``doc`` Folder
 ------------------
 
-The ``/doc`` folder contains the source files of this documentation page of Lethe. To contribute or compile the documentation on your own machine follow the instructions of the :doc:`contributing` tab.
+The ``/doc`` folder contains the source files of this documentation page of Lethe. To contribute or compile the documentation on your own machine follow the instructions of the :doc:`contributing/documentation` tab.
 
 The ``examples`` Folder
 -----------------------
