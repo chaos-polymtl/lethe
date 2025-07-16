@@ -2195,9 +2195,10 @@ FluidDynamicsSharp<dim>::integrate_particles()
                          ->f_gravity->value(particles[p].position, 2);
 
               Tensor<1, 3> gravity_buoyancy_force =
-                g * (particles[p].mass / volume - fluid_density) * volume;
+                // g * (particles[p].mass / volume - fluid_density) * volume;
+                g * particles[p].mass ;
 
-              // Transfers the impulsion evaluated in the sub-time-stepping
+              // TransfersS the impulsion evaluated in the sub-time-stepping
               // scheme to the particle at the CFD time scale.
               particles[p].impulsion = ib_dem.dem_particles[p].impulsion;
               particles[p].omega_impulsion =
