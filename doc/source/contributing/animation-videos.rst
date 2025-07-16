@@ -2,7 +2,7 @@
 Animation Videos
 ================
 
-Here we cover the steps for saving a video using Paraview visualization tool; if you are using a different tool, keep in mind that the video formatting rules still apply.
+Here we cover the steps for saving a video using the Paraview visualization tool; if you are using a different tool, keep in mind that the video formatting rules still apply.
 
 Making the video
 ----------------
@@ -23,19 +23,19 @@ Formatting
 Video Upload
 ------------
 
-Animation videos are uploaded on the `Lethe Youtube page <https://www.youtube.com/@lethecfd6431>`_.
+Animation videos can be uploaded to `Lethe's YouTube page <https://www.youtube.com/@lethecfd6431>`_.
 
 When adjusting the video configurations:
 
 - Add a descriptive title to the video. This usually includes the type of solver (e.g., CFD, DEM, CFD-DEM) and the type of problem solved (e.g. `Transient flow around a cylinder <https://www.youtube.com/watch?v=NbN2kBdakH4>`_).
-- When starting the upload process, a template for the video description will appear, which relates the video to its documentation page. 
-- Most of the animations uploaded are part of an example listed in the Lethe documentation. If that is your case, remember to add the correspondent website link in the video description.
-- Add the video to its correspondent playlist: CFD, CFD-DEM, or DEM.
+- When starting the upload process, include a link to the video's documentation page in the template that appears. 
+- Most of the animations uploaded are part of an example listed in the Lethe documentation. If that is your case, remember to add the corresponding website link in the video description.
+- Add the video to its corresponding playlist: CFD, CFD-DEM, or DEM.
 - Ensure that the video audience is set as "No, it's not Made for Kids".
 
 .. tip::
 
-    In the Video Elements section, you can add cards to promote related content during the video. A good practice is to add a card to reference a related playlist or video to the current upload, so that people watching it know there's more to explore!
+    In the Video Elements section, you can add cards to promote related content during the video. A good practice is to add a card to reference a playlist or video related to the current upload, so that people watching it know there's more to explore!
 
 - In the Visibility section, choose the "Public" configuration for who's allowed to see the video.
 - After checking if all your input information is correct, just click on "Publish" and your animation is ready to be accessed.

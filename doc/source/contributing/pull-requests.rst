@@ -32,7 +32,7 @@ Reviewers Responsibility
 Description
 -----------
 
-Without explicit request to the person responsible for merging the PR, all commits will be squashed when merging. The pull request description will be the only remaining description of the changes left in the code history.
+Without an explicit request to the person responsible for merging the PR, all commits will be squashed when merging. The pull request description will be the only remaining description of the changes left in the code history.
 The description must therefore be filled in correctly using the template.
 Depending on the type of changes, not all sections need to be filled in, but the contributor is expected to fill in the description as completely as possible.
 This helps reviewers to understand what has been changed and facilitates future debugging.
