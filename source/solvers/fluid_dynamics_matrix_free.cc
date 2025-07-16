@@ -774,7 +774,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 .fix_pressure_constant &&
               level == this->minlevel)
             {
-              unsigned int min_index = numbers::invalid_unsigned_int;
+              types::global_dof_index min_index = numbers::invalid_unsigned_int;
 
               std::vector<types::global_dof_index> dof_indices;
 
@@ -1173,7 +1173,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 .fix_pressure_constant &&
               level == this->minlevel)
             {
-              unsigned int min_index = numbers::invalid_unsigned_int;
+              types::global_dof_index min_index = numbers::invalid_unsigned_int;
 
               std::vector<types::global_dof_index> dof_indices;
 
