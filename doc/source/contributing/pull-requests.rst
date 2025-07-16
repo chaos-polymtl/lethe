@@ -11,8 +11,11 @@ If there are many aspects to change, it is better to create multiple branches an
 Format
 ------
 
-Lethe uses clang-format to have a uniform indentation across all source files. You should always run the indentation script in the contrib folder before creating a PR: ``contrib/utilities/indent-all``. If there are compatibility issues, you can run before that script either ``./contrib/utilities/download_clang_format`` or  ``./contrib/utilities/compile_clang_format``. For parameter files, there is a specific script that can be run as follows:  ``prmindent -i name_of_file.prm``.
-
+Lethe uses clang-format to have a uniform indentation across all source files. 
+You should always run the indentation script in the contrib folder before creating a PR: ``contrib/utilities/indent-all``. 
+If there are compatibility issues, you can run before that script either ``./contrib/utilities/download_clang_format`` or  ``./contrib/utilities/compile_clang_format``. 
+For parameter files, there is a specific script that can be run as follows:  ``prmindent -i name_of_file.prm``.
+Alternatively, you can run the script ``contrib/utilities/pre-commit.sh`` to indent both source and parameter files.
 
 Review Process
 --------------

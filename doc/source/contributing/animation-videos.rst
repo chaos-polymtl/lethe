@@ -17,7 +17,7 @@ Making the video
 Formatting
 ----------
 
-- Check if the legend contains the corresponding units of the represented field (e.g., [length/time] unit when plotting velocity).
+- Check if the legend contains the corresponding units of the represented field (e.g., ``[length/time]`` unit when plotting velocity). If the problem is dimensionless, you can clarify it by adding ``[-]`` in the field legend.
 - Make sure that the video contains the Lethe logo within it (add on Paraview with Sources/Annotations/Logo). The file can be found in the `repository <https://github.com/chaos-polymtl/lethe/tree/master/logo>`_.
 
 Video Upload
@@ -25,7 +25,11 @@ Video Upload
 
 Animation videos can be uploaded to `Lethe's YouTube page <https://www.youtube.com/@lethecfd6431>`_.
 
-When adjusting the video configurations:
+.. tip::
+
+  If you are outside of CHAOS Laboratory and would like to contribute with a movie or an animation, please feel free to reach out to us in the `Discussions channel <https://github.com/chaos-polymtl/lethe.git>`_ of Lethe's GitHub page.
+
+When adjusting the video configurations, please proceed with the following steps:
 
 - Add a descriptive title to the video. This usually includes the type of solver (e.g., CFD, DEM, CFD-DEM) and the type of problem solved (e.g. `Transient flow around a cylinder <https://www.youtube.com/watch?v=NbN2kBdakH4>`_).
 - When starting the upload process, include a link to the video's documentation page in the template that appears. 
