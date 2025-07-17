@@ -48,8 +48,8 @@ This subsection specifies the characteristics of the finite element method used 
 
 * ``phase cahn hilliard order`` and ``potential cahn hilliard order`` specify the interpolation order for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate parameters for debugging purposes.
 
-* ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively.
+* ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  `Franca and Farhat 1995 <https://www.sciencedirect.com/science/article/abs/pii/004578259400721X>`_ and `Brezzi et al 1992 <https://www.sciencedirect.com/science/article/abs/pii/004578259290102P>`_ for more detail.
 
 .. warning::
   
-  The `bubble enrichment function <https://www.dealii.org/current/doxygen/deal.II/classFE__Q__Bubbles.html>`_ is not compatible with simplex meshes.
+  The bubble enrichment function `FE_Q_Bubbles <https://www.dealii.org/current/doxygen/deal.II/classFE__Q__Bubbles.html>`_ is not compatible with simplex meshes.
