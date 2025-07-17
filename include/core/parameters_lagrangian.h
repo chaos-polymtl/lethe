@@ -368,10 +368,6 @@ namespace Parameters
       // Boundary id of the wall to log collisions with
       unsigned int wall_boundary_id;
 
-      // Collision threshold for the particle-wall contact to be considered a
-      // collision.
-      double collision_threshold;
-
       Parameters::Verbosity collision_verbosity;
 
       // Exporting collision statistics csv filename

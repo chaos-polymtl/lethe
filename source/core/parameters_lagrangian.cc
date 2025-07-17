@@ -902,11 +902,6 @@ namespace Parameters
             "Exported particle-wall collision results filename");
 
           prm.declare_entry(
-            "collision threshold",
-            "0.0001",
-            Patterns::Double(),
-            "Threshold for the particle-wall contact to be considered a collision");
-          prm.declare_entry(
             "verbosity",
             "quiet",
             Patterns::Selection("quiet|verbose"),
@@ -1147,13 +1142,6 @@ namespace Parameters
             prm.get_bool("log collisions with all walls");
           wall_boundary_id            = prm.get_integer("wall boundary id");
           export_collision_stats_file = prm.get("collision statistics file");
-          collision_threshold         = prm.get_double("collision threshold");
-
-          if (collision_threshold < 0)
-            {
-              throw(std::runtime_error(
-                "Collision threshold must be greater than or equal to zero"));
-            }
           const std::string verbose = prm.get("verbosity");
           if (verbose == "quiet")
             collision_verbosity = Parameters::Verbosity::quiet;
