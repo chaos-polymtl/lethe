@@ -45,7 +45,6 @@ In this subsection, contact detection, force models, particle-wall collision sta
     subsection particle wall contact statistics
       set enable particle wall contact statistics = false
       set collision statistics file               = collision_statistics.csv
-      set collision threshold                     = 0.0001
       set verbosity                               = quiet # Choices are quiet|verbose
       set log collisions with all walls           = true
       set wall boundary id                        = 0
@@ -138,11 +137,6 @@ The particle-wall contact statistics logging feature allows to log the particle-
 * ``enable particle wall contact statistics`` enables the feature.
 
 * ``collision statistics file`` is the name of the file where the particle-wall contact statistics will be logged. The file will be created in the working directory of the simulation. If the name does not specify the format, the file will be created in .csv format. If the name ends with .dat or .csv, the file will be created in the corresponding format.
-
-* ``collision threshold`` is the threshold distance below which the particle-wall contact statistics will be logged.
-
-.. note::
-    The ``collision threshold`` must be greater than or equal to 0.
 
 * ``verbosity`` controls the verbosity of the particle-wall collisions. The available options are ``quiet`` (the default option) and ``verbose``. If set to ``verbose``, the start and the end of a collision are printed in the terminal.
 
