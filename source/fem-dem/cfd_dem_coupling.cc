@@ -961,15 +961,12 @@ template <int dim>
 void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
-  bool floating_wall = false; // Flag to indicate if the wall is a floating wall
-
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
     dem_time_step,
     this->simulation_control->get_current_time(),
     this->particle_handler,
-    floating_wall,
     contact_outcome,
     ongoing_collision_log,
     collision_event_log);
@@ -978,13 +975,11 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
-      floating_wall = true;
       particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
         this->simulation_control->get_current_time(),
         this->particle_handler,
-        floating_wall,
         contact_outcome,
         ongoing_collision_log,
         collision_event_log);

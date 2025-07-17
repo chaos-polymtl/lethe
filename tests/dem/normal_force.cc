@@ -181,7 +181,6 @@ test()
             &particle_wall_contact_information.begin()->second;
           auto particle_wall_contact_information_iterator =
             particle_wall_pairs_in_contact_iterator->begin();
-          bool                     floating_wall = false;
           OngoingCollisionLog<dim> ongoing_collision_log;
           CollisionEventLog<dim>   collision_event_log;
           particle_wall_force_object.calculate_particle_wall_contact(
@@ -189,7 +188,6 @@ test()
             dt,
             time,
             particle_handler,
-            floating_wall,
             contact_outcome,
             ongoing_collision_log,
             collision_event_log);

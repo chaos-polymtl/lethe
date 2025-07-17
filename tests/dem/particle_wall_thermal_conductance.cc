@@ -175,7 +175,6 @@ test()
     Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
                            nonlinear_force_object(dem_parameters);
-  bool                     floating_wall = false;
   OngoingCollisionLog<dim> ongoing_collision_log;
   CollisionEventLog<dim>   collision_event_log;
   double                   time;
@@ -184,7 +183,6 @@ test()
     dt,
     time,
     particle_handler,
-    floating_wall,
     contact_outcome,
     ongoing_collision_log,
     collision_event_log);

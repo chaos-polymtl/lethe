@@ -47,7 +47,6 @@ ParticleWallContactForce<dim,
     const double                     dt,
     const double                     current_time,
     Particles::ParticleHandler<dim> &particle_handler,
-    const bool                       floating_wall,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log)
@@ -106,7 +105,7 @@ ParticleWallContactForce<dim,
             {
               // If the feature is enabled, we log the collision statistics for
               // walls
-              if (particle_wall_contact_statistics && !floating_wall)
+              if (particle_wall_contact_statistics)
                 {
                   types::boundary_id boundary_id = contact_info.boundary_id;
 
@@ -197,7 +196,7 @@ ParticleWallContactForce<dim,
         }
     }
 
-  if (particle_wall_contact_statistics && !floating_wall)
+  if (particle_wall_contact_statistics)
     {
       // Now we check which particles ended their collision during this time
       // step

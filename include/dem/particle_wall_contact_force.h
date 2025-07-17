@@ -49,7 +49,6 @@ public:
    * @param[in] dt DEM time step.
    * @param[in] current_time Current simulation time.
    * @param[in] particle_handler Particle handler.
-   * @param[in] floating_wall Whether the wall is floating or not.
    * @param[out] contact_outcome Interaction outcomes.
    * @param[out] ongoing_collision_log Ongoing collision log.
    * @param[out] collision_event_log Collision event log.
@@ -61,7 +60,6 @@ public:
     const double                     dt,
     const double                     current_time,
     Particles::ParticleHandler<dim> &particle_handler,
-    const bool                       floating_wall,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log) = 0;
@@ -115,7 +113,6 @@ public:
    * @param[in] dt DEM time step.
    * @param[in] current_time Current simulation time.
    * @param[in] particle_handler Particle handler.
-   * @param[in] floating_wall Whether the wall is floating or not.
    * @param[out] contact_outcome Interaction outcomes.
    * @param[out] ongoing_collision_log Ongoing collision log.
    * @param[out] collision_event_log Collision event log.
@@ -127,7 +124,6 @@ public:
     const double                     dt,
     const double                     current_time,
     Particles::ParticleHandler<dim> &particle_handler,
-    const bool                       floating_wall,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
     OngoingCollisionLog<dim>                     &ongoing_collision_log,
     CollisionEventLog<dim>                       &collision_event_log) override;

@@ -1142,7 +1142,7 @@ namespace Parameters
             prm.get_bool("log collisions with all walls");
           wall_boundary_id            = prm.get_integer("wall boundary id");
           export_collision_stats_file = prm.get("collision statistics file");
-          const std::string verbose = prm.get("verbosity");
+          const std::string verbose   = prm.get("verbosity");
           if (verbose == "quiet")
             collision_verbosity = Parameters::Verbosity::quiet;
           else if (verbose == "verbose")
