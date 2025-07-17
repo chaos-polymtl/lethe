@@ -155,9 +155,20 @@ test()
     PropertiesIndex,
     Parameters::Lagrangian::ParticleWallContactForceModel::linear,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
-    force_object(dem_parameters);
+                           force_object(dem_parameters);
+  bool                     floating_wall = false;
+  OngoingCollisionLog<dim> ongoing_collision_log;
+  CollisionEventLog<dim>   collision_event_log;
+  double                   time;
   force_object.calculate_particle_wall_contact(
-    particle_wall_contact_information, dt, contact_outcome);
+    particle_wall_contact_information,
+    dt,
+    time,
+    particle_handler,
+    floating_wall,
+    contact_outcome,
+    ongoing_collision_log,
+    collision_event_log);
 
   // Output
   auto particle = particle_handler.begin();
