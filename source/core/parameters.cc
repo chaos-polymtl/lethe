@@ -1556,6 +1556,16 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Switch VOF to Discontinuous Galerkin (DG) formulation");
+
+      prm.declare_entry("enable bubble function velocity",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable bubble enrichment function for velocity field");
+
+      prm.declare_entry("enable bubble function pressure",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable bubble enrichment function for pressure field");
     }
     prm.leave_subsection();
   }
@@ -1576,6 +1586,10 @@ namespace Parameters
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
+      enable_bubble_function_velocity =
+        prm.get_bool("enable bubble function velocity");
+      enable_bubble_function_pressure =
+        prm.get_bool("enable bubble function pressure");
     }
     prm.leave_subsection();
   }
