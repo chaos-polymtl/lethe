@@ -1138,7 +1138,6 @@ private:
   double                wall_thermal_conductivity;
   const double          dmt_cut_off_threshold;
   const double          f_coefficient_epsd;
-  const double          collision_threshold;
   Parameters::Verbosity collision_verbosity;
   unsigned int          wall_boundary_id;
   bool                  log_collisions_with_all_walls;

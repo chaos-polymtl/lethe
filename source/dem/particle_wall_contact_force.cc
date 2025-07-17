@@ -17,7 +17,6 @@ ParticleWallContactForce<dim,
   ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
-  , collision_threshold(dem_parameters.model_parameters.collision_threshold)
   , collision_verbosity(dem_parameters.model_parameters.collision_verbosity)
   , wall_boundary_id(dem_parameters.model_parameters.wall_boundary_id)
   , log_collisions_with_all_walls(
