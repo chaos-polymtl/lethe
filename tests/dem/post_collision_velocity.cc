@@ -158,9 +158,18 @@ test(double coefficient_of_restitution)
       // If particle and wall are in contact
       particle_wall_fine_search<dim>(particle_wall_contact_list,
                                      particle_wall_contact_information);
-
+      bool                     floating_wall = false;
+      OngoingCollisionLog<dim> ongoing_collision_log;
+      CollisionEventLog<dim>   collision_event_log;
       particle_wall_force_object.calculate_particle_wall_contact(
-        particle_wall_contact_information, dt, contact_outcome);
+        particle_wall_contact_information,
+        dt,
+        time,
+        particle_handler,
+        floating_wall,
+        contact_outcome,
+        ongoing_collision_log,
+        collision_event_log);
       integrator_object.integrate(particle_handler,
                                   g,
                                   dt,
