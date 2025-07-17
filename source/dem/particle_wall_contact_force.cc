@@ -103,18 +103,18 @@ ParticleWallContactForce<dim,
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          // If the feature is enabled, we log the collision statistics for
-          // walls
-          if (particle_wall_contact_statistics && !floating_wall)
+          if (normal_overlap > force_calculation_threshold_distance)
             {
-              types::boundary_id boundary_id = contact_info.boundary_id;
-
-              // Logs if logging for all walls is enabled or if the boundary_id
-              // matches the wall_boundary_id
-              if (boundary_id == wall_boundary_id ||
-                  log_collisions_with_all_walls)
+              // If the feature is enabled, we log the collision statistics for
+              // walls
+              if (particle_wall_contact_statistics && !floating_wall)
                 {
-                  if (normal_overlap > collision_threshold)
+                  types::boundary_id boundary_id = contact_info.boundary_id;
+
+                  // Logs if logging for all walls is enabled or if the
+                  // boundary_id matches the wall_boundary_id
+                  if (boundary_id == wall_boundary_id ||
+                      log_collisions_with_all_walls)
                     {
                       unsigned int particle_id = particle->get_id();
                       particles_in_contact_now.insert(
@@ -156,10 +156,7 @@ ParticleWallContactForce<dim,
                         }
                     }
                 }
-            }
 
-          if (normal_overlap > force_calculation_threshold_distance)
-            {
               // Updating contact information
               this->update_contact_information(contact_info,
                                                tangential_relative_velocity,
