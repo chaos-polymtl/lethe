@@ -491,7 +491,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
       /* Loop over all DoFs of the volume mesh belonging to an intersected
        * volume cell. This is more expensive, but it is required to have the
        * right signed distance approximation for the first neighbors.*/
-      for (const unsigned int &intersected_dof : intersected_dofs)
+      for (const types::global_dof_index &intersected_dof : intersected_dofs)
         {
           const Point<dim> y = dof_support_points.at(intersected_dof);
 

@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-16
+
+### CHange
+
+- MINOR Lethe could not be compiled when deal.II was using 64 bit indices due to some locations where unsigned int were used instead of types::global_dof_index. This PR fixes this by using the correct type. It compiles with deal.II with 64bit indices. [#1585](https://github.com/chaos-polymtl/lethe/pull/1585)
+
 ### [Master] - 2025-07-14
 
 ### Change
