@@ -607,7 +607,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>      <span class="comment">/* Loop over all DoFs of the volume mesh belonging to an intersected</span></div>
 <div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span><span class="comment">       * volume cell. This is more expensive, but it is required to have the</span></div>
 <div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span><span class="comment">       * right signed distance approximation for the first neighbors.*/</span></div>
-<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;intersected_dof : intersected_dofs)</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> types::global_dof_index &amp;intersected_dof : intersected_dofs)</div>
 <div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>        {</div>
 <div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>          <span class="keyword">const</span> Point&lt;dim&gt; y = dof_support_points.at(intersected_dof);</div>
 <div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span> </div>

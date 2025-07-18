@@ -229,9 +229,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a0c9d7a0c3f630dd0b01704aa8c0d8e14" id="r_a0c9d7a0c3f630dd0b01704aa8c0d8e14"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a0c9d7a0c3f630dd0b01704aa8c0d8e14"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a0c9d7a0c3f630dd0b01704aa8c0d8e14">find_particle_wall_contact_pairs</a> (const std::map&lt; int, <a class="el" href="structboundary__cells__info__struct.html">boundary_cells_info_struct</a>&lt; dim &gt; &gt; &amp;boundary_cells_information, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_wall_candidates &amp;particle_wall_contact_candidates)</td></tr>
 <tr class="separator:a0c9d7a0c3f630dd0b01704aa8c0d8e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec0990e2837b4932432f6fdd814d6664" id="r_aec0990e2837b4932432f6fdd814d6664"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:aec0990e2837b4932432f6fdd814d6664"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#aec0990e2837b4932432f6fdd814d6664">find_particle_floating_wall_contact_pairs</a> (const std::unordered_map&lt; <a class="el" href="namespaceDEM.html#aef67e3518b42018c6fb5db80f6a9c4f7">DEM::global_face_id</a>, std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &amp;floating_wall_properties, const double simulation_time, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates)</td></tr>
-<tr class="separator:aec0990e2837b4932432f6fdd814d6664"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10d103f04a7780e5249384ef4d1b1079" id="r_a10d103f04a7780e5249384ef4d1b1079"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a10d103f04a7780e5249384ef4d1b1079"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a10d103f04a7780e5249384ef4d1b1079">find_particle_floating_wall_contact_pairs</a> (const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;boundary_cells_for_floating_walls, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &amp;floating_wall_properties, const double simulation_time, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates)</td></tr>
+<tr class="separator:a10d103f04a7780e5249384ef4d1b1079"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b91c2d51c44928bdd6119a44bc43709" id="r_a6b91c2d51c44928bdd6119a44bc43709"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a6b91c2d51c44928bdd6119a44bc43709"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__broad__search_8cc.html#a6b91c2d51c44928bdd6119a44bc43709">particle_solid_surfaces_contact_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::solid_surfaces_mesh_information &amp;solid_surfaces_mesh_information, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
 <tr class="separator:a6b91c2d51c44928bdd6119a44bc43709"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -297,8 +297,8 @@ Functions</h2></td></tr>
 <tr class="separator:abf378c047f371a97002cce62ab5fd848"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="aec0990e2837b4932432f6fdd814d6664" name="aec0990e2837b4932432f6fdd814d6664"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec0990e2837b4932432f6fdd814d6664">&#9670;&#160;</a></span>find_particle_floating_wall_contact_pairs() <span class="overload">[1/2]</span></h2>
+<a id="a10d103f04a7780e5249384ef4d1b1079" name="a10d103f04a7780e5249384ef4d1b1079"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10d103f04a7780e5249384ef4d1b1079">&#9670;&#160;</a></span>find_particle_floating_wall_contact_pairs() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -308,7 +308,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void find_particle_floating_wall_contact_pairs </td>
           <td>(</td>
-          <td class="paramtype">const std::unordered_map&lt; <a class="el" href="namespaceDEM.html#aef67e3518b42018c6fb5db80f6a9c4f7">DEM::global_face_id</a>, std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::unordered_map&lt; types::global_dof_index, std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_cells_for_floating_walls</em>, </td>
         </tr>
         <tr>
@@ -342,6 +342,18 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Find a two-layered unordered map of particle iterators which shows the candidate particle-floating wall collision candidates. These collision pairs will be investigated in the fine search to check if they are in contact or not. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">boundary_cells_for_floating_walls</td><td>Boundary cells located adjacent to floating walls </td></tr>
+    <tr><td class="paramname">particle_handler</td><td>Particle handler of particles located in boundary cells </td></tr>
+    <tr><td class="paramname">floating_wall_properties</td><td>Properties of the floating walls specified in the parameter handler file </td></tr>
+    <tr><td class="paramname">simulation_time</td><td>Simulation time </td></tr>
+    <tr><td class="paramname">particle_floating_wall_candidates</td><td>Output of particle-floating wall broad search which contains all the particle-floating wall collision candidates </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8cc_source.html#l00060">60</a> of file <a class="el" href="particle__wall__broad__search_8cc_source.html">particle_wall_broad_search.cc</a>.</p>
 
