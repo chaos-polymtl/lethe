@@ -148,6 +148,12 @@ private:
   particle_wall_contact_force();
 
   /**
+   * @brief Export velocity, omega, particle id, boundary id and time results in .csv or .dat
+   */
+  void
+  export_collision_stats();
+
+  /**
    * @brief Post-processing as parallel VTU files.
    */
   void
@@ -221,6 +227,16 @@ private:
   std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;
   double                                     maximum_particle_diameter;
   double                                     smallest_contact_search_criterion;
+
+  /**
+   * @brief Class object to store the particle id, boundary id, velocity tensor, omega tensor and time of ongoing collisions.
+   */
+  OngoingCollisionLog<dim> ongoing_collision_log;
+
+  /**
+   * @brief Class object to store the complete collision events (start and end).
+   */
+  CollisionEventLog<dim> collision_event_log;
 
   DEMContactManager<dim, DEM::CFDDEMProperties::PropertiesIndex>
     contact_manager;

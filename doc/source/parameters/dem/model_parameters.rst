@@ -2,7 +2,7 @@
 Model Parameters
 ================
 
-In this subsection, contact detection, force models, time integration, load balancing and adaptive sparse contacts parameters are defined.
+In this subsection, contact detection, force models, particle-wall collision statistics logging, time integration, load balancing and adaptive sparse contacts parameters are defined.
 
 .. code-block:: text
 
@@ -40,6 +40,15 @@ In this subsection, contact detection, force models, time integration, load bala
     # Particle-wall contact force model
     # Choices are linear|nonlinear|JKR|DMT
     set particle wall contact force method = nonlinear
+
+    # Particle-wall contact statistics logging
+    subsection particle wall contact statistics
+      set enable particle wall contact statistics = false
+      set collision statistics file               = collision_statistics.csv
+      set verbosity                               = quiet # Choices are quiet|verbose
+      set log collisions with all walls           = true
+      set wall boundary id                        = 0
+    end
 
     # DMT cut-off threshold
     set DMT cut-off threshold = 0.1
@@ -119,6 +128,21 @@ All contact force models are described in the :doc:`../../theory/multiphase/cfd_
 
 * ``f coefficient`` is a model parameter used for the ``epsd_resistance`` model which controls the proportion of the viscous damping applied when full mobilization is reached.
 
+-----------------------------------------
+Particle-Wall Contact Statistics Logging
+-----------------------------------------
+
+The particle-wall contact statistics logging feature allows to log the particle-wall contact statistics in a .dat file or a .csv file. This feature is useful for post-processing and analysis of particle-wall interactions.
+
+* ``enable particle wall contact statistics`` enables the feature.
+
+* ``collision statistics file`` is the name of the file where the particle-wall contact statistics will be logged. The file will be created in the working directory of the simulation. If the name does not specify the format, the file will be created in .csv format. If the name ends with .dat or .csv, the file will be created in the corresponding format.
+
+* ``verbosity`` controls the verbosity of the particle-wall collisions. The available options are ``quiet`` (the default option) and ``verbose``. If set to ``verbose``, the start and the end of a collision are printed in the terminal.
+
+* ``log collisions with all walls`` is a boolean parameter that controls whether the particle-wall contact statistics will be logged for all walls or only for the wall defined by the ``wall boundary id`` parameter. If set to ``true``, the statistics will be logged for all walls. If set to ``false``, the statistics will be logged only for the wall defined by the ``wall boundary id`` parameter.
+
+* ``wall boundary id`` is the ID of the wall boundary where the particle-wall contact statistics will be logged.
 
 -----------------------
 Load Balancing

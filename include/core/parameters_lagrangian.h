@@ -359,6 +359,20 @@ namespace Parameters
       // Particle-wall contact force model
       ParticleWallContactForceModel particle_wall_contact_force_method;
 
+      // Enable the logging of particle-wall contact statistics
+      bool particle_wall_contact_statistics;
+
+      // State whether collisions with all walls should be logged
+      bool log_collisions_with_all_walls;
+
+      // Boundary id of the wall to log collisions with
+      unsigned int wall_boundary_id;
+
+      Parameters::Verbosity collision_verbosity;
+
+      // Exporting collision statistics csv filename
+      std::string export_collision_stats_file;
+
       // Rolling resistance torque method
       RollingResistanceMethod rolling_resistance_method;
 

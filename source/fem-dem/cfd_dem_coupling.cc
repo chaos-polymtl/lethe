@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
@@ -961,19 +961,33 @@ template <int dim>
 void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
+  bool floating_wall = false; // Flag to indicate if the wall is a floating wall
+
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
     dem_time_step,
-    contact_outcome);
+    this->simulation_control->get_current_time(),
+    this->particle_handler,
+    floating_wall,
+    contact_outcome,
+    ongoing_collision_log,
+    collision_event_log);
+
 
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
+      floating_wall = true;
       particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
-        contact_outcome);
+        this->simulation_control->get_current_time(),
+        this->particle_handler,
+        floating_wall,
+        contact_outcome,
+        ongoing_collision_log,
+        collision_event_log);
     }
 
   particle_point_line_contact_force_object
@@ -990,6 +1004,53 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
           dem_parameters.lagrangian_physical_properties,
           force);
     }
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::export_collision_stats()
+{
+  // Open a file
+  std::ofstream myfile;
+  std::string   sep;
+  std::string   filename =
+    dem_parameters.model_parameters.export_collision_stats_file;
+  // check if an extension is specified in the filename, if not add ".csv"
+  std::size_t csv_file = filename.find(".csv");
+  std::size_t dat_file = filename.find("dat");
+  if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
+    filename += ".csv";
+  myfile.open(filename);
+  if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
+    {
+      myfile
+        << "particle_id boundary_id start_time end_time start_particle_velocity_x start_particle_velocity_y start_particle_velocity_z start_particle_angular_velocity_x start_particle_angular_velocity_y start_particle_angular_velocity_z end_particle_velocity_x end_particle_velocity_y end_particle_velocity_z end_particle_angular_velocity_x end_particle_angular_velocity_y end_particle_angular_velocity_z"
+        << std::endl;
+      sep = " ";
+    }
+  else // .csv is default
+    {
+      myfile
+        << "particle_id,boundary_id,start_time,end_time,start_particle_velocity_x,start_particle_velocity_y,start_particle_velocity_z,start_particle_angular_velocity_x,start_particle_angular_velocity_y,start_particle_angular_velocity_z,end_particle_velocity_x,end_particle_velocity_y,end_particle_velocity_z,end_particle_angular_velocity_x,end_particle_angular_velocity_y,end_particle_angular_velocity_z"
+        << std::endl;
+      sep = ",";
+    }
+  // Write the collision statistics
+  for (const auto &event : collision_event_log.get_events())
+    {
+      const auto &start = event.start_log;
+      const auto &end   = event.end_log;
+
+      // Write the collision data to the file
+      myfile << start.particle_id << sep << static_cast<int>(start.boundary_id)
+             << sep << start.time << sep << end.time << sep << start.velocity[0]
+             << sep << start.velocity[1] << sep << start.velocity[2] << sep
+             << start.omega[0] << sep << start.omega[1] << sep << start.omega[2]
+             << sep << end.velocity[0] << sep << end.velocity[1] << sep
+             << end.velocity[2] << sep << end.omega[0] << sep << end.omega[1]
+             << sep << end.omega[2] << std::endl;
+    }
+  myfile.close();
 }
 
 template <int dim>
@@ -1644,6 +1705,10 @@ CFDDEMSolver<dim>::solve()
       if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
         report_particle_statistics();
     }
+
+  // Export particle-wall collision statistics in .csv if enable
+  if (dem_parameters.model_parameters.particle_wall_contact_statistics)
+    export_collision_stats();
 
   this->finish_simulation();
 }

@@ -169,6 +169,12 @@ private:
   particle_wall_contact_force();
 
   /**
+   * @brief Export velocity, omega, particle id, boundary id and time results in .csv or .dat
+   */
+  void
+  export_collision_stats();
+
+  /**
    * @brief Move all solid objects.
    */
   void
@@ -411,6 +417,16 @@ private:
    * @brief The vector of force of particles.
    */
   std::vector<Tensor<1, 3>> &force = contact_outcome.force;
+
+  /**
+   * @brief Class object to store the particle id, boundary id, velocity tensor, omega tensor and time of ongoing collisions.
+   */
+  OngoingCollisionLog<dim> ongoing_collision_log;
+
+  /**
+   * @brief Class object to store the complete collision events (start and end).
+   */
+  CollisionEventLog<dim> collision_event_log;
 
   /**
    * @brief The displacement tracking of particles for the dynamic contact
