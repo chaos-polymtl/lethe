@@ -641,6 +641,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                       while (correction_norm > tol && outside_check < 3 &&
                              newton_it < newton_max_it)
                         {
+                            // std::cout << "newton_it = " << newton_it << std::endl;
                           /* Set stencil for numerical jacobian computation.
                            The entries of the vector are the following:
                                     4
@@ -676,10 +677,16 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                             {
                               stencil_real[k] =
                                 fe_point_evaluation.quadrature_point(k);
+                                // std::cout << "stencil_real[k] = " << stencil_real[k] <<std::endl;
+                                // std::cout << "stencil_ref[k] = " << stencil_ref[k] <<std::endl;
+                                
+                                
                               distance_gradients[k] =
                                 fe_point_evaluation.get_gradient(k);
+                                // std::cout << "distance_gradients[k] = " << distance_gradients[k] <<std::endl;
                               cell_transformation_jacobians[k] =
-                                fe_point_evaluation.jacobian(k);
+                                fe_point_evaluation.jacobian(0);
+                                // std::cout << "cell_transformation_jacobians[k] = " << cell_transformation_jacobians[k] <<std::endl;
                               get_face_transformation_jacobian(
                                 cell_transformation_jacobians[k],
                                 dof_opposite_faces[j],
@@ -708,6 +715,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                            distance_gradients[0],
                                            face_transformation_jacobians[0],
                                            residual_n);
+                           // std::cout << "residual_n = " << residual_n << std::endl;
 
                           // Convert the right hand side to the right format
                           // for the linear solver
@@ -720,8 +728,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
                           /* Factorize and solve the matrix. The correction is
                           put back in residual_n_vec. */
+                          // std::cout << "Matrix = " << std::endl;
+                          // jacobian_matrix.print_formatted(std::cout,3,true,0,"0",1.,0.," ");
                           jacobian_matrix.compute_lu_factorization();
                           jacobian_matrix.solve(residual_n_vec);
+                          
+                          // std::cout << "sol = " << residual_n_vec << std::endl;
+                          
 
                           // Compute the norm of the correction
                           correction_norm = residual_n_vec.l2_norm();
@@ -735,6 +748,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           /* Compute the solution (the point x_n_ref on the
                           face minimizing the distance)*/
                           Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
+
+                          // std::cout << "x_n_p1_ref = " << x_n_p1_ref <<std::endl;
 
                           /* Relax the correction if it brings us outside
                           the cell */
@@ -784,7 +799,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                   x_n_p1_ref[k] < 0.0 - tol)
                                 {
                                   check = true;
-
+                                  // std::cout << "OUTSIDE" << std::endl;
                                   /* Set the correction to put the solution on
                                   the face boundary. Select the minimum
                                   relaxation of the all directions to ensure
@@ -803,9 +818,11 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                                    (correction[k] + tol),
                                                  relaxation);
                                     }
+                                    // std::cout << "relaxation = " << relaxation << std::endl;
                                 }
                             }
-
+                        
+                        // std::cout << "relaxation = " << relaxation << std::endl;
                           // Increment the outside_check if the correction
                           // brought us outside the face
                           if (check)
@@ -813,6 +830,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
                           // Re-compute the solution with the relaxation
                           x_n_p1_ref = stencil_ref[0] + relaxation * correction;
+                          
+                          // std::cout << "x_n_p1_ref = " << x_n_p1_ref <<std::endl;
 
                           // Transform the solution from reference to the real
                           // cell. This could be improved to not call

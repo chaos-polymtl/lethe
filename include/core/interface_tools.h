@@ -719,14 +719,18 @@ namespace InterfaceTools
     {
       Tensor<1, dim> residual_real =
         distance_gradient - (1.0 / x_n_to_x_I_real.norm()) * x_n_to_x_I_real;
+        // std::cout << "residual_real = " << residual_real << std::endl;
 
       DerivativeForm<1, dim, dim - 1> transformation_jac_transpose =
         transformation_jac.transpose();
+        // std::cout << "transformation_jac_transpose = " << transformation_jac_transpose << std::endl;
 
       for (unsigned int i = 0; i < dim - 1; ++i)
         for (unsigned int j = 0; j < dim; ++j)
           residual_ref[i] +=
             transformation_jac_transpose[i][j] * residual_real[j];
+            
+        
     };
 
     /**
@@ -862,6 +866,7 @@ namespace InterfaceTools
                            distance_gradients[2 * i + 1],
                            transformation_jacobians[2 * i + 1],
                            residual_ref_m1);
+        // std::cout << "residual_ref_m1 = " << residual_ref_m1 << std::endl;
 
           const Tensor<1, dim> x_n_to_x_I_real_p1 =
             x_I_real - stencil_real[2 * i + 2];
@@ -871,6 +876,8 @@ namespace InterfaceTools
                            distance_gradients[2 * i + 2],
                            transformation_jacobians[2 * i + 2],
                            residual_ref_p1);
+       
+       // std::cout << "residual_ref_p1 = " << residual_ref_p1 << std::endl;
 
           for (unsigned int j = 0; j < dim - 1; ++j)
             {
