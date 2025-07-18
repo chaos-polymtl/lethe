@@ -1427,6 +1427,8 @@ private:
     // Contact between particle + constant cohesive force.
     if (normal_overlap > 0.)
       {
+        contact_info.previously_in_interaction = true;
+
         cohesive_term = -F_po;
 
         calculate_hertz_mindlin_limit_overlap_contact(
@@ -1448,8 +1450,12 @@ private:
     else if (normal_overlap > delta_0)
       {
         cohesive_term = -F_po;
-        contact_info.tangential_displacement.clear();
-        contact_info.rolling_resistance_spring_torque.clear();
+        if (contact_info.previously_in_interaction)
+          {
+            contact_info.previously_in_interaction = false;
+            contact_info.tangential_displacement.clear();
+            contact_info.rolling_resistance_spring_torque.clear();
+          }
       }
     // No contact. Particle are far from each other. The cohesive force is not
     // constant. It needs to be computed.
@@ -1457,8 +1463,13 @@ private:
       {
         cohesive_term = -hamaker_constant * effective_radius /
                         (6. * Utilities::fixed_power<2>(normal_overlap));
-        contact_info.tangential_displacement.clear();
-        contact_info.rolling_resistance_spring_torque.clear();
+
+        if (contact_info.previously_in_interaction)
+          {
+            contact_info.previously_in_interaction = false;
+            contact_info.tangential_displacement.clear();
+            contact_info.rolling_resistance_spring_torque.clear();
+          }
       }
     normal_force += cohesive_term * normal_unit_vector;
   }
@@ -1756,6 +1767,8 @@ private:
 
         if (normal_overlap > force_calculation_threshold_distance)
           {
+            contact_info.previously_in_interaction = true;
+
             // Update of contact information and calculation of contact force
             // are the same for all local-local and local-ghost contact.
             // However, they are based on particle two for ghost-local periodic
@@ -1900,10 +1913,14 @@ private:
           }
         else
           {
-            // If the adjacent pair is not in contact anymore, only the
-            // tangential displacement is set to zero
-            contact_info.tangential_displacement.clear();
-            contact_info.rolling_resistance_spring_torque.clear();
+            if (contact_info.previously_in_interaction)
+              {
+                // If the adjacent pair is not in contact anymore, only the
+                // tangential displacement is set to zero
+                contact_info.previously_in_interaction = false;
+                contact_info.tangential_displacement.clear();
+                contact_info.rolling_resistance_spring_torque.clear();
+              }
           }
 
         if constexpr (std::is_same_v<PropertiesIndex,

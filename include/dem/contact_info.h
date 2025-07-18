@@ -24,6 +24,7 @@ struct particle_particle_contact_info
   Particles::ParticleIterator<dim> particle_two;
   Tensor<1, 3>                     tangential_displacement;
   Tensor<1, 3>                     rolling_resistance_spring_torque;
+  bool                             previously_in_interaction;
 };
 
 /**
@@ -39,6 +40,7 @@ struct particle_wall_contact_info
   types::boundary_id               boundary_id;
   Tensor<1, 3>                     tangential_displacement;
   Tensor<1, 3>                     rolling_resistance_spring_torque;
+  bool                             previously_in_interaction;
 };
 
 /**

@@ -63,7 +63,8 @@ particle_wall_fine_search(
                   point_on_boundary_3d,
                   std::get<3>(particle_pair_candidate_content),
                   Tensor<1, 3>(),
-                  Tensor<1, 3>()});
+                  Tensor<1, 3>(),
+                  false});
               // std::get<3> contains the boundary id
             }
         }
@@ -158,7 +159,8 @@ particle_floating_wall_fine_search(
                                                     point_on_floating_wall_3d,
                                                     100,
                                                     Tensor<1, 3>(),
-                                                    Tensor<1, 3>()});
+                                                    Tensor<1, 3>(),
+                                                    false});
                 }
             }
         }
@@ -201,7 +203,8 @@ particle_floating_mesh_fine_search(
                       Point<3>(),
                       0,
                       Tensor<1, 3>(),
-                      Tensor<1, 3>()});
+                      Tensor<1, 3>(),
+                      false});
                 }
             }
         }

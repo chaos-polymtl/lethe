@@ -88,6 +88,7 @@ ParticleWallContactForce<dim,
 
           if (normal_overlap > force_calculation_threshold_distance)
             {
+              contact_info.previously_in_interaction = true;
               // Updating contact information
               this->update_contact_information(contact_info,
                                                tangential_relative_velocity,
@@ -123,8 +124,12 @@ ParticleWallContactForce<dim,
             }
           else
             {
-              contact_info.tangential_displacement.clear();
-              contact_info.rolling_resistance_spring_torque.clear();
+              if (contact_info.previously_in_interaction)
+                {
+                  contact_info.previously_in_interaction = false;
+                  contact_info.tangential_displacement.clear();
+                  contact_info.rolling_resistance_spring_torque.clear();
+                }
             }
         }
     }
@@ -245,6 +250,7 @@ ParticleWallContactForce<dim,
 
                       if (normal_overlap > force_calculation_threshold_distance)
                         {
+                          contact_info.previously_in_interaction = true;
                           contact_info.normal_vector =
                             normal_vectors[particle_counter];
 
@@ -297,8 +303,12 @@ ParticleWallContactForce<dim,
                         }
                       else
                         {
-                          contact_info.tangential_displacement.clear();
-                          contact_info.rolling_resistance_spring_torque.clear();
+                          if (contact_info.previously_in_interaction)
+                            {
+                              contact_info.previously_in_interaction = false;
+                              contact_info.tangential_displacement.clear();
+                              contact_info.rolling_resistance_spring_torque.clear();
+                            }
                         }
 
                       if constexpr (std::is_same_v<
