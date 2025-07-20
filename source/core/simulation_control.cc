@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "core/simulation_control.h"
+#include <core/simulation_control.h>
 
 #include <cfloat>
 #include <fstream>
@@ -158,6 +158,7 @@ SimulationControl::get_number_of_stages(
         return 2;
 
       case Method::sdirk33:
+      case Method::sdirk43:
         return 3;
 
       default:

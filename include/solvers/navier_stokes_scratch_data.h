@@ -10,6 +10,7 @@
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 #include <core/rheological_model.h>
+#include <core/sdirk_stage_data.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/cahn_hilliard_filter.h>
@@ -100,6 +101,15 @@ public:
                      update_values | update_quadrature_points |
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
+    , sdirk_table(
+        simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
+            simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
+            simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk43 ?
+          ::sdirk_table(simulation_control->get_assembly_method()) :
+          SDIRKTable())
   {
     allocate();
 
@@ -139,6 +149,7 @@ public:
                      update_values | update_quadrature_points |
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
+    , sdirk_table(sd.sdirk_table)
   {
     allocate();
 
@@ -228,6 +239,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
+         const VectorType              &sum_over_previous_stages,
          std::shared_ptr<Function<dim>> forcing_function,
          Tensor<1, dim>                 beta_force,
          const double                   pressure_scaling_factor)
@@ -267,6 +279,11 @@ public:
     double cell_measure =
       compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
     this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
+
+    // For the SDIRK methods, \sum_{j=1}^{i-1} a_{ij} k_j is needed for the
+    // assembler
+    this->fe_values[velocities].get_function_values(sum_over_previous_stages,
+                                                    this->sdirk_stage_sum);
 
     // Gather velocity (values, gradient and laplacian)
     this->fe_values[velocities].get_function_values(current_solution,
@@ -1112,6 +1129,7 @@ public:
   std::vector<Tensor<1, dim>>              pressure_gradients;
   std::vector<std::vector<double>>         previous_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
+  std::vector<Tensor<1, dim>>              sdirk_stage_sum;
 
   // Shape functions
   std::vector<std::vector<double>>         div_phi_u;
@@ -1257,6 +1275,8 @@ public:
   std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
   std::vector<std::vector<std::vector<double>>>         face_phi_p;
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
+
+  SDIRKTable sdirk_table;
 };
 
 #endif

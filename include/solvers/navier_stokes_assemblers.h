@@ -308,6 +308,56 @@ public:
   const std::shared_ptr<SimulationControl> simulation_control;
 };
 
+/**
+ * @brief Class that assembles the transient time arising from SDIRK time
+ * integration for the Navier Stokes equations.
+ * For a given stage \( i \), the following expression is assembled and treated
+ * implicitly: \f[ \frac{\mathbf{u}_i^* - \mathbf{u}_n}{h a_{ii}} -
+ * \sum_{j=0}^{i-1} \frac{a_{ij}}{a_{ii}} \mathbf{k}_j \f] where:
+ * - \( \mathbf{u}_i^* \) is the current stage solution,
+ * - \( \mathbf{u}_n \) is the solution at the previous time step,
+ * - \( \mathbf{k}_j \)coefficients are the solution increments at the previous
+ * stages,
+ * - \( h \) is the time step size,
+ * - \( a_{ij} \), \( a_{ii} \) are coefficients from the SDIRK Butcher tableau.
+ * These coefficients are given data by the method and constant for the all
+ * simulation.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class GLSNavierStokesAssemblerSDIRK : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesAssemblerSDIRK(
+    const std::shared_ptr<SimulationControl> &simulation_control)
+    : simulation_control(simulation_control)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
+};
+
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation.

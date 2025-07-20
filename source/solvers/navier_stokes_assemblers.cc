@@ -1230,6 +1230,110 @@ template class GLSNavierStokesAssemblerBDF<3>;
 
 template <int dim>
 void
+GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW        = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+  auto &local_matrix    = copy_data.local_matrix;
+
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double h = time_steps_vector[0];
+
+  // Time stepping information
+  SDIRKStageData stage_data(scratch_data.sdirk_table, 1);
+
+  std::vector<Tensor<1, dim>> velocity(2);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      velocity[0] = scratch_data.velocity_values[q];
+      velocity[1] = scratch_data.previous_velocity_values[0][q];
+
+      strong_residual[q] +=
+        (velocity[0] - velocity[1]) / (h * stage_data.a_ij[0]) -
+        scratch_data.sdirk_stage_sum[q];
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian[q][j] +=
+            scratch_data.phi_u[q][j] / (h * stage_data.a_ij[0]);
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const Tensor<1, dim> &phi_u_i = scratch_data.phi_u[q][i];
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
+
+              local_matrix(i, j) +=
+                ((phi_u_j * phi_u_i) / (h * stage_data.a_ij[0])) * JxW[q];
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW        = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
+
+  SDIRKStageData stage_data(scratch_data.sdirk_table, 1);
+
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double h = time_steps_vector[0];
+
+  std::vector<Tensor<1, dim>> velocity(2);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      velocity[0] = scratch_data.velocity_values[q];
+      velocity[1] = scratch_data.previous_velocity_values[0][q];
+
+      strong_residual[q] +=
+        (velocity[0] - velocity[1]) / (h * stage_data.a_ij[0]) -
+        scratch_data.sdirk_stage_sum[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i     = scratch_data.phi_u[q][i];
+          double     local_rhs_i = 0;
+          local_rhs_i -= (1 / (h * stage_data.a_ij[0])) * phi_u_i *
+                           (scratch_data.velocity_values[q] -
+                            scratch_data.previous_velocity_values[0][q]) -
+                         phi_u_i * scratch_data.sdirk_stage_sum[q];
+          local_rhs(i) += local_rhs_i * JxW[q];
+        }
+    }
+}
+
+template class GLSNavierStokesAssemblerSDIRK<2>;
+template class GLSNavierStokesAssemblerSDIRK<3>;
+
+template <int dim>
+void
 BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
