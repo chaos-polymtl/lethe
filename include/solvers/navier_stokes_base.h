@@ -7,6 +7,7 @@
 
 // Lethe Includes
 #include <core/mesh_controller.h>
+#include <core/sdirk_stage_data.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
@@ -279,6 +280,14 @@ protected:
    */
   virtual void
   percolate_time_vectors_fd();
+
+  /**
+   * @brief iterate
+   * Finishes the stage of the SDIRK method for fluid dynamics
+   * Post-processing of the stage
+   */
+  virtual void
+  percolate_stage_vectors_fd();
 
   /**
    * @brief finish_simulation
@@ -922,10 +931,14 @@ protected:
   VectorType local_evaluation_point;
   VectorType newton_update;
   VectorType present_solution;
+  VectorType present_hk_i_solution;
   VectorType system_rhs;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
+  std::vector<VectorType> previous_hk_j_solutions;
+
+  VectorType sum_over_stages;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
@@ -990,6 +1003,8 @@ protected:
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
+
+  std::unique_ptr<NavierStokesScratchData<dim>> scratch_data;
 };
 
 #endif
