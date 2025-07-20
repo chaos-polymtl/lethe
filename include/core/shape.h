@@ -26,10 +26,7 @@
 #  include <GProp_GProps.hxx>
 #endif
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-#else
-#  include <deal.II/base/function_signed_distance.h>
-#endif
+#include <deal.II/base/function_signed_distance.h>
 
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -1386,12 +1383,9 @@ public:
          const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
   {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-#else
     sphere_function =
       std::make_shared<Functions::SignedDistance::Sphere<dim>>(position,
                                                                radius);
-#endif
     for (unsigned int d = 0; d < dim; ++d)
       {
         this->bounding_box_half_length[d] = radius;
@@ -1495,10 +1489,7 @@ public:
 
 
 private:
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-#else
   std::shared_ptr<Functions::SignedDistance::Sphere<dim>> sphere_function;
-#endif
 };
 
 
