@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR Deal.II-9.8pre deprecates some functions such as get_communicator and the parallel::distributed::SolutionTransfer class. This PR uses the modern version of these functions or classes following the new 9.8 release standard before they are deprecated.  [#1589](https://github.com/chaos-polymtl/lethe/pull/1589)
+- MAJOR Deal.II-9.8pre deprecates some functions such as get_communicator and the parallel::distributed::SolutionTransfer class. This PR uses the modern version of these functions or classes following the new 9.8 release standard before they are deprecated. This PR officially deprecates the compatibility with deal.II 9.6.0.  [#1589](https://github.com/chaos-polymtl/lethe/pull/1589)
 
 ### [Master] - 2025-07-17
 
