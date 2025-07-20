@@ -2066,7 +2066,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     temp_cell_diameter;
 
   likely_nodes_map[cell]          = std::make_shared<std::vector<
-             std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
+    std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
   const size_t number_of_portions = iterable_nodes.size();
   for (size_t portion_id = 0; portion_id < number_of_portions; portion_id++)
     {
