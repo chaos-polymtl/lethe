@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-11-15
+
+### Added
+
+- MINOR Add the SDIRK method to the lethe-fluid-matrix-free solver. The SDIRK scheme is now available for both MatrixBased and MatrixFree [#1616](https://github.com/chaos-polymtl/lethe/pull/1616/)
+
 ### [Master] - 2025-11-04
 
 ### Added

@@ -1508,7 +1508,7 @@ public:
   Table<3, double>         face_phi_p;
   Table<3, Tensor<1, dim>> face_grad_phi_p;
 
-  /// SDIRK table for SDIRK time integration
+  /// SDIRK Butcher table with coefficients for the SDIRK time-stepping method
   SDIRKTable sdirk_table;
 };
 
