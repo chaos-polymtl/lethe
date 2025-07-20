@@ -3,15 +3,20 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-20
+
+### Fixed
+
+- MINOR Deal.II-9.8pre deprecates some functions such as get_communicator and the parallel::distributed::SolutionTransfer class. This PR uses the modern version of these functions or classes following the new 9.8 release standard before they are deprecated.  [#1589](https://github.com/chaos-polymtl/lethe/pull/1589)
+
 ### [Master] - 2025-07-17
 
 ### Added
 
 - MINOR Allow quad/hex meshes to use bubble enrichment function FE_Q_Bubbles. [#1584](https://github.com/chaos-polymtl/lethe/pull/1584)
-
 ### [Master] - 2025-07-16
 
-### CHange
+### Change
 
 - MINOR Lethe could not be compiled when deal.II was using 64 bit indices due to some locations where unsigned int were used instead of types::global_dof_index. This PR fixes this by using the correct type. It compiles with deal.II with 64bit indices. [#1585](https://github.com/chaos-polymtl/lethe/pull/1585)
 
