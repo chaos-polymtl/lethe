@@ -472,7 +472,7 @@ namespace dealii
     /**
      * Reference to the preconditioner.
      */
-    SmartPointer<
+    ObserverPointer<
       const PreconditionerType,
       MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
       preconditioner;
@@ -591,7 +591,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             n_cells_on_levels[l]++;
 
       Utilities::MPI::sum(n_cells_on_levels,
-                          this->dof_handler.get_communicator(),
+                          this->dof_handler.get_mpi_communicator(),
                           n_cells_on_levels);
       AssertThrow(
         mg_level_min_cells <= static_cast<int>(n_cells_on_levels[maxlevel]),
@@ -797,7 +797,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               // Necessary to find the min across all cores.
               min_index =
                 Utilities::MPI::min(min_index,
-                                    this->dof_handler.get_communicator());
+                                    this->dof_handler.get_mpi_communicator());
 
               if (relevant_dofs.is_element(min_index))
                 level_constraints[level].add_line(min_index);
@@ -1196,7 +1196,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               // Necessary to find the min across all cores.
               min_index =
                 Utilities::MPI::min(min_index,
-                                    this->dof_handler.get_communicator());
+                                    this->dof_handler.get_mpi_communicator());
 
               if (locally_relevant_dofs.is_element(min_index))
                 level_constraint.add_line(min_index);
@@ -1808,10 +1808,10 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
         {
 #if DEAL_II_VERSION_GTE(9, 6, 0)
           // Constant modes for velocity and pressure
-          DoFTools::extract_level_constant_modes(this->minlevel,
-                                                 this->dof_handler,
-                                                 components,
-                                                 constant_modes);
+          constant_modes =
+            DoFTools::extract_level_constant_modes(this->minlevel,
+                                                   this->dof_handler,
+                                                   components);
 #else
           AssertThrow(
             false,
@@ -1825,9 +1825,9 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
                Parameters::LinearSolver::PreconditionerType::gcmg)
         {
           // Constant modes for velocity and pressure
-          DoFTools::extract_constant_modes(this->dof_handlers[this->minlevel],
-                                           components,
-                                           constant_modes);
+          constant_modes =
+            DoFTools::extract_constant_modes(this->dof_handlers[this->minlevel],
+                                             components);
         }
 
       amg_data.constant_modes = constant_modes;

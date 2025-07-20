@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -314,7 +314,7 @@ template <int dim>
 std::pair<double, double>
 CahnHilliard<dim>::calculate_L2_error()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values(*this->mapping,
                           *fe,
@@ -388,7 +388,7 @@ template <int dim>
 void
 CahnHilliard<dim>::calculate_phase_statistics()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values(*mapping,
                           *fe,
@@ -477,7 +477,7 @@ template <int dim>
 void
 CahnHilliard<dim>::write_phase_statistics()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
@@ -494,7 +494,7 @@ template <int dim>
 void
 CahnHilliard<dim>::calculate_phase_energy()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values(*mapping,
                           *fe,
@@ -577,7 +577,7 @@ template <int dim>
 void
 CahnHilliard<dim>::write_phase_energy()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
@@ -598,7 +598,7 @@ template <int dim>
 void
 CahnHilliard<dim>::finish_simulation()
 {
-  auto         mpi_communicator = triangulation->get_communicator();
+  auto         mpi_communicator = triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
@@ -647,7 +647,7 @@ template <int dim>
 void
 CahnHilliard<dim>::postprocess(bool first_iteration)
 {
-  auto         mpi_communicator = this->triangulation->get_communicator();
+  auto         mpi_communicator = this->triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
@@ -870,7 +870,7 @@ template <int dim>
 void
 CahnHilliard<dim>::post_mesh_adaptation()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   // Set up the vectors for the transfer
   GlobalVectorType tmp(locally_owned_dofs, mpi_communicator);
@@ -936,9 +936,8 @@ CahnHilliard<dim>::write_checkpoint()
 {
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
-  solution_transfer = std::make_shared<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-    dof_handler);
+  solution_transfer =
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
   for (const auto &previous_solution : previous_solutions)
@@ -967,7 +966,7 @@ template <int dim>
 void
 CahnHilliard<dim>::read_checkpoint()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading Cahn Hilliard checkpoint" << std::endl;
 
   std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions.size());
@@ -1021,7 +1020,7 @@ CahnHilliard<dim>::setup_dofs()
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
 
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
@@ -1248,7 +1247,7 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
@@ -1328,7 +1327,7 @@ std::pair<Tensor<1, dim>, Tensor<1, dim>>
 CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
                                         const VectorType       &solution_fd)
 {
-  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+  const MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values_cahn_hilliard(*this->mapping,
                                         *this->fe,
@@ -1418,7 +1417,7 @@ template <int dim>
 void
 CahnHilliard<dim>::apply_phase_filter()
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values(*mapping,
                           *fe,
@@ -1495,7 +1494,7 @@ void
 CahnHilliard<dim>::output_newton_update_norms(
   const unsigned int display_precision)
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   FEValuesExtractors::Scalar phase_order(0);
   FEValuesExtractors::Scalar chemical_potential(1);

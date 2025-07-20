@@ -312,15 +312,14 @@ private:
    * @brief Object used to transfer the average velocities in case of mesh adaptation.
    *
    */
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer_sum_velocity_dt;
+  SolutionTransfer<dim, VectorType> solution_transfer_sum_velocity_dt;
 
   /**
    * @brief Object used to transfer the average Reynolds normal stresses in case of
    * mesh adaptation.
    *
    */
-  parallel::distributed::SolutionTransfer<dim, VectorType>
+  SolutionTransfer<dim, VectorType>
     solution_transfer_sum_reynolds_normal_stress_dt;
 
   /**
@@ -328,7 +327,7 @@ private:
    * mesh adaptation.
    *
    */
-  parallel::distributed::SolutionTransfer<dim, VectorType>
+  SolutionTransfer<dim, VectorType>
     solution_transfer_sum_reynolds_shear_stress_dt;
 
   /**

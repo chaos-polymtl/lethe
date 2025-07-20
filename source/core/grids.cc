@@ -29,7 +29,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
     {
       if (mesh_parameters.simplex)
         {
-          auto        comm      = triangulation.get_communicator();
+          auto        comm      = triangulation.get_mpi_communicator();
           std::string file_name = mesh_parameters.file_name;
 
           auto construction_data = TriangulationDescription::Utilities::
@@ -92,7 +92,8 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             flat_temp_quad_triangulation, temporary_tri_triangulation);
 
           GridTools::partition_triangulation_zorder(
-            Utilities::MPI::n_mpi_processes(triangulation.get_communicator()),
+            Utilities::MPI::n_mpi_processes(
+              triangulation.get_mpi_communicator()),
             temporary_tri_triangulation);
           GridTools::partition_multigrid_levels(temporary_tri_triangulation);
 
@@ -100,7 +101,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
           auto construction_data = TriangulationDescription::Utilities::
             create_description_from_triangulation(
               temporary_tri_triangulation,
-              triangulation.get_communicator(),
+              triangulation.get_mpi_communicator(),
               TriangulationDescription::Settings::
                 construct_multigrid_hierarchy);
           triangulation.create_triangulation(construction_data);

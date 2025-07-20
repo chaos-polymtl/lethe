@@ -22,7 +22,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   : AuxiliaryPhysics<dim, GlobalVectorType>(
       p_simulation_parameters.non_linear_solver.at(PhysicsID::VOF))
   , multiphysics(multiphysics_interface)
-  , computing_timer(p_triangulation->get_communicator(),
+  , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
@@ -84,9 +84,8 @@ VolumeOfFluid<dim>::VolumeOfFluid(
     }
 
   // Allocate solution transfer
-  solution_transfer = std::make_shared<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-    dof_handler);
+  solution_transfer =
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
 
   // Set size of previous solutions using BDF schemes information
   previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -96,8 +95,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
-        parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
-          this->dof_handler));
+        SolutionTransfer<dim, GlobalVectorType>(this->dof_handler));
     }
 
   // Check the value of interface sharpness
@@ -759,7 +757,7 @@ template <int dim>
 double
 VolumeOfFluid<dim>::calculate_L2_error()
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
@@ -806,7 +804,7 @@ std::pair<Tensor<1, dim>, Tensor<1, dim>>
 VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
                                          const VectorType       &solution_fd)
 {
-  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+  const MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
@@ -915,7 +913,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
   const VectorType                &current_solution_fd,
   const Parameters::FluidIndicator monitored_fluid)
 {
-  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+  const MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
@@ -1019,7 +1017,7 @@ VolumeOfFluid<dim>::calculate_momentum(
   const VectorType                &current_solution_fd,
   const Parameters::FluidIndicator monitored_fluid)
 {
-  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+  const MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
@@ -1120,7 +1118,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::finish_simulation()
 {
-  auto         mpi_communicator = this->triangulation->get_communicator();
+  auto         mpi_communicator = this->triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
@@ -1156,7 +1154,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::postprocess(bool first_iteration)
 {
-  auto         mpi_communicator = this->triangulation->get_communicator();
+  auto         mpi_communicator = this->triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
@@ -2003,7 +2001,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
   const double linear_solver_tolerance = 1e-13;
 
   GlobalVectorType completely_distributed_phase_fraction_solution(
-    this->locally_owned_dofs, triangulation->get_communicator());
+    this->locally_owned_dofs, triangulation->get_mpi_communicator());
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
@@ -2067,7 +2065,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::post_mesh_adaptation()
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Set up the vectors for the transfer
   GlobalVectorType tmp(this->locally_owned_dofs, mpi_communicator);
@@ -2123,9 +2121,8 @@ VolumeOfFluid<dim>::write_checkpoint()
 {
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
-  solution_transfer = std::make_shared<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-    dof_handler);
+  solution_transfer =
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
 
   sol_set_transfer.emplace_back(&this->present_solution);
   for (const auto &previous_solution : this->previous_solutions)
@@ -2163,7 +2160,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::read_checkpoint()
 {
-  auto mpi_communicator        = this->triangulation->get_communicator();
+  auto mpi_communicator        = this->triangulation->get_mpi_communicator();
   auto previous_solutions_size = this->previous_solutions.size();
   this->pcout << "Reading VOF checkpoint" << std::endl;
 
@@ -2239,7 +2236,7 @@ VolumeOfFluid<dim>::setup_dofs()
 {
   verify_consistency_of_boundary_conditions();
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   // Setup DoFs for all active subequations
   this->vof_subequations_interface->setup_dofs();
@@ -2525,7 +2522,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
       simulation_parameters.multiphysics.vof_parameters.regularization_method
         .algebraic_interface_reinitialization.output_reinitialization_steps)
     {
-      auto mpi_communicator = this->triangulation->get_communicator();
+      auto mpi_communicator = this->triangulation->get_mpi_communicator();
       const std::string folder =
         this->simulation_parameters.simulation_control.output_folder +
         "/algebraic-reinitialization-steps-output/";
@@ -2557,7 +2554,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
@@ -2635,7 +2632,7 @@ VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
   const double penalty_parameter = 100;
 
   GlobalVectorType lambda(this->locally_owned_dofs,
-                          this->triangulation->get_communicator());
+                          this->triangulation->get_mpi_communicator());
 
   nodal_phase_fraction_owned = solution;
 
@@ -2807,7 +2804,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
     }
 
   GlobalVectorType completely_distributed_phase_fraction_solution(
-    this->locally_owned_dofs, triangulation->get_communicator());
+    this->locally_owned_dofs, triangulation->get_mpi_communicator());
 
 
   SolverControl solver_control(
@@ -2900,7 +2897,7 @@ VolumeOfFluid<dim>::apply_phase_filter(
   GlobalVectorType       &filtered_solution)
 {
   // Initializations
-  auto             mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
   GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
                                            mpi_communicator);
   filtered_solution_owned = original_solution;
@@ -2938,7 +2935,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.frequency > 1)
     {
-      auto mpi_communicator = this->triangulation->get_communicator();
+      auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
       GlobalVectorType previous_reinitialized_solution_owned(
         this->locally_owned_dofs, mpi_communicator);
@@ -3002,7 +2999,7 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
   const GlobalVectorType &solution,
   GlobalVectorType       &level_set_solution)
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   GlobalVectorType level_set_owned(this->locally_owned_dofs, mpi_communicator);
 
@@ -3023,7 +3020,7 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
   const GlobalVectorType &level_set_solution,
   GlobalVectorType       &phase_fraction_solution)
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   GlobalVectorType solution_owned(this->locally_owned_dofs, mpi_communicator);
 
@@ -3050,7 +3047,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
                   << std::endl;
     }
 
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   signed_distance_solver->setup_dofs();
 

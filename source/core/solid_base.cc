@@ -111,7 +111,7 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
     {
       if (param->solid_mesh.simplex)
         {
-          auto        comm      = solid_tria->get_communicator();
+          auto        comm      = solid_tria->get_mpi_communicator();
           std::string file_name = param->solid_mesh.file_name;
 
           auto construction_data = TriangulationDescription::Utilities::
@@ -171,7 +171,7 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
             flat_temp_quad_triangulation, temporary_tri_triangulation);
 
           GridTools::partition_triangulation_zorder(
-            Utilities::MPI::n_mpi_processes(solid_tria->get_communicator()),
+            Utilities::MPI::n_mpi_processes(solid_tria->get_mpi_communicator()),
             temporary_tri_triangulation);
           GridTools::partition_multigrid_levels(temporary_tri_triangulation);
 
@@ -179,7 +179,7 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
           auto construction_data = TriangulationDescription::Utilities::
             create_description_from_triangulation(
               temporary_tri_triangulation,
-              solid_tria->get_communicator(),
+              solid_tria->get_mpi_communicator(),
               TriangulationDescription::Settings::
                 construct_multigrid_hierarchy);
           solid_tria->create_triangulation(construction_data);
@@ -725,8 +725,8 @@ SolidBase<dim, spacedim>::write_checkpoint(const std::string &prefix)
 
   // Prepare serialization of the solid triangulation which is
   // only used for visualization purposes
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType, spacedim>
-    system_trans_vectors(this->displacement_dh);
+  SolutionTransfer<dim, GlobalVectorType, spacedim> system_trans_vectors(
+    this->displacement_dh);
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
   displacement_relevant = displacement;
@@ -770,8 +770,8 @@ SolidBase<dim, spacedim>::read_checkpoint(const std::string &prefix)
   std::vector<GlobalVectorType *> x_system(1);
   x_system[0] = &(displacement);
 
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType, spacedim>
-    system_trans_vectors(this->displacement_dh);
+  SolutionTransfer<dim, GlobalVectorType, spacedim> system_trans_vectors(
+    this->displacement_dh);
 
   system_trans_vectors.deserialize(x_system);
   displacement_relevant = displacement;

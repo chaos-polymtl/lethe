@@ -258,7 +258,7 @@ template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs()
 {
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   dof_handler.distribute_dofs(*this->fe);
 
@@ -297,7 +297,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
     const DoFHandler<dim> &background_dof_handler,
     const VectorType      &background_level_set_vector)
 {
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   VectorType tmp_local_level_set(this->locally_owned_dofs, mpi_communicator);
 
@@ -387,7 +387,7 @@ template <int dim, typename VectorType>
 VectorType &
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance()
 {
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   VectorType tmp_local_level_set(this->locally_owned_dofs, mpi_communicator);
 
@@ -537,7 +537,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
    * the interface. It works in a similar manner as a marching algorithm from
    * the knowledge of the signed distance for the interface first neighbors. */
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   const unsigned int n_opposite_faces_per_dofs = dim;
   const unsigned int dofs_per_cell             = fe->n_dofs_per_cell();
@@ -1096,7 +1096,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
      a constant. We use the secant method to do so. See Ausas et al. (2011) for
      more details.*/
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   /* Compute targeted global volume. It corresponds to the one enclosed by
   the level 0 of the level_set vector (same volume as the one enclosed
@@ -1238,7 +1238,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                   const double       time,
                                   const unsigned int it)
 {
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   InterfaceReconstructionDataOut<dim> reconstruction_data_out;
 
   reconstruction_data_out.build_patches(interface_reconstruction_vertices);
@@ -1261,7 +1261,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::output_signed_distance(
   const double       time,
   const unsigned int it)
 {
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   DataOut<dim> data_out;
   data_out.attach_dof_handler(this->dof_handler);

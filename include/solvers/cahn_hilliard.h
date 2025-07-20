@@ -62,7 +62,7 @@ public:
     : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.non_linear_solver.at(PhysicsID::cahn_hilliard))
     , multiphysics(multiphysics_interface)
-    , computing_timer(p_triangulation->get_communicator(),
+    , computing_timer(p_triangulation->get_mpi_communicator(),
                       this->pcout,
                       TimerOutput::summary,
                       TimerOutput::wall_times)
@@ -124,9 +124,8 @@ public:
       }
 
     // Allocate solution transfer
-    solution_transfer = std::make_shared<
-      parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-      dof_handler);
+    solution_transfer =
+      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
 
     // Set size of previous solutions using BDF schemes information
     previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -136,8 +135,7 @@ public:
     for (unsigned int i = 0; i < previous_solutions.size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
-          parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
-            this->dof_handler));
+          SolutionTransfer<dim, GlobalVectorType>(this->dof_handler));
       }
 
     // Change the behavior of the timer for situations when you don't want
@@ -497,10 +495,8 @@ private:
   std::vector<GlobalVectorType> previous_solutions;
 
   // Solution transfer classes
-  std::shared_ptr<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
-    solution_transfer;
-  std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
+  std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
+  std::vector<SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 
   // Assemblers for the matrix and rhs

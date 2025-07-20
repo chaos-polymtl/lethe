@@ -862,17 +862,16 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       tria.prepare_coarsening_and_refinement();
 
       // Solution transfer objects for all the solutions
-      parallel::distributed::SolutionTransfer<dim, VectorType>
-        solution_transfer(this->dof_handler, true);
-      std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
+      SolutionTransfer<dim, VectorType> solution_transfer(this->dof_handler,
+                                                          true);
+      std::vector<SolutionTransfer<dim, VectorType>>
         previous_solutions_transfer;
       // Important to reserve to prevent pointer dangling
       previous_solutions_transfer.reserve(previous_solutions.size());
       for (unsigned int i = 0; i < previous_solutions.size(); ++i)
         {
           previous_solutions_transfer.emplace_back(
-            parallel::distributed::SolutionTransfer<dim, VectorType>(
-              this->dof_handler, true));
+            SolutionTransfer<dim, VectorType>(this->dof_handler, true));
           if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
@@ -881,12 +880,12 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
             previous_solutions[i]);
         }
 
-      parallel::distributed::SolutionTransfer<dim, VectorType>
-        solution_transfer_m1(this->dof_handler, true);
-      parallel::distributed::SolutionTransfer<dim, VectorType>
-        solution_transfer_m2(this->dof_handler, true);
-      parallel::distributed::SolutionTransfer<dim, VectorType>
-        solution_transfer_m3(this->dof_handler, true);
+      SolutionTransfer<dim, VectorType> solution_transfer_m1(this->dof_handler,
+                                                             true);
+      SolutionTransfer<dim, VectorType> solution_transfer_m2(this->dof_handler,
+                                                             true);
+      SolutionTransfer<dim, VectorType> solution_transfer_m3(this->dof_handler,
+                                                             true);
 
       if constexpr (std::is_same_v<VectorType,
                                    LinearAlgebra::distributed::Vector<double>>)
@@ -1122,17 +1121,14 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   tria.prepare_coarsening_and_refinement();
 
   // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
-    this->dof_handler, true);
-  std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
-    previous_solutions_transfer;
+  SolutionTransfer<dim, VectorType> solution_transfer(this->dof_handler, true);
+  std::vector<SolutionTransfer<dim, VectorType>> previous_solutions_transfer;
   // Important to reserve to prevent pointer dangling
   previous_solutions_transfer.reserve(previous_solutions.size());
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
-        parallel::distributed::SolutionTransfer<dim, VectorType>(
-          this->dof_handler, true));
+        SolutionTransfer<dim, VectorType>(this->dof_handler, true));
       if constexpr (std::is_same_v<VectorType,
                                    LinearAlgebra::distributed::Vector<double>>)
         previous_solutions[i].update_ghost_values();
@@ -1195,12 +1191,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
-    this->dof_handler, true);
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
-    this->dof_handler, true);
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
-    this->dof_handler, true);
+  SolutionTransfer<dim, VectorType> solution_transfer(this->dof_handler, true);
+  SolutionTransfer<dim, VectorType> solution_transfer_m2(this->dof_handler,
+                                                         true);
+  SolutionTransfer<dim, VectorType> solution_transfer_m3(this->dof_handler,
+                                                         true);
 
   if constexpr (std::is_same_v<VectorType,
                                LinearAlgebra::distributed::Vector<double>>)
@@ -1209,16 +1204,14 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
 
-  std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
-    previous_solutions_transfer;
+  std::vector<SolutionTransfer<dim, VectorType>> previous_solutions_transfer;
   // Important to reserve to prevent pointer dangling
   previous_solutions_transfer.reserve(previous_solutions.size());
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
-        parallel::distributed::SolutionTransfer<dim, VectorType>(
-          this->dof_handler, true));
+        SolutionTransfer<dim, VectorType>(this->dof_handler, true));
 
       if constexpr (std::is_same_v<VectorType,
                                    LinearAlgebra::distributed::Vector<double>>)
@@ -2262,8 +2255,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
                    this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
-  parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
-    this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
 
   if (simulation_parameters.post_processing.calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
@@ -2928,8 +2920,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
                               av_set_transfer.end());
     }
 
-  parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
-    this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
   multiphysics->write_checkpoint();

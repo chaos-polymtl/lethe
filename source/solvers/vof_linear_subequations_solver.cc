@@ -13,7 +13,7 @@ void
 VOFLinearSubequationsSolver<dim>::setup_dofs()
 {
   // Get MPI communicator
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Distribute and renumber DoFs
   this->dof_handler->distribute_dofs(*this->fe);
@@ -97,7 +97,7 @@ template <int dim>
 void
 VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used = this->constraints;
 

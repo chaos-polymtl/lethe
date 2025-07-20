@@ -260,7 +260,7 @@ private:
       identify_minimum_cell_size(*this->mapping,
                                  *this->dof_handler,
                                  *this->cell_quadrature,
-                                 this->triangulation->get_communicator());
+                                 this->triangulation->get_mpi_communicator());
 
     return h_min * cfl;
   }

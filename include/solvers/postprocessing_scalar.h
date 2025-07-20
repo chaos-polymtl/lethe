@@ -168,8 +168,7 @@ private:
    * @brief Object to transfer the averaged scalar in case of mesh adaptation.
    *
    */
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    solution_transfer_sum_scalar_dt;
+  SolutionTransfer<dim, GlobalVectorType> solution_transfer_sum_scalar_dt;
 
   /**
    * @brief Time averaged scalar.

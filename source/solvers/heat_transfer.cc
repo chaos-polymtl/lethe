@@ -246,7 +246,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
         }
       heat_flux_on_nitsche_ib_vector[i_solid] =
         Utilities::MPI::sum(heat_flux_on_nitsche_bc,
-                            triangulation->get_communicator());
+                            triangulation->get_mpi_communicator());
     }
 
   // Console output
@@ -862,7 +862,7 @@ template <int dim>
 double
 HeatTransfer<dim>::calculate_L2_error()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values(*this->temperature_mapping,
                           *fe,
@@ -907,7 +907,7 @@ template <int dim>
 void
 HeatTransfer<dim>::finish_simulation()
 {
-  auto         mpi_communicator = triangulation->get_communicator();
+  auto         mpi_communicator = triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
@@ -1108,7 +1108,7 @@ template <int dim>
 void
 HeatTransfer<dim>::post_mesh_adaptation()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
 
   // Set up the vectors for the transfer
@@ -1165,9 +1165,8 @@ HeatTransfer<dim>::write_checkpoint()
 {
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
-  solution_transfer = std::make_shared<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-    dof_handler);
+  solution_transfer =
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
   for (const auto &previous_solution : previous_solutions)
@@ -1226,7 +1225,7 @@ template <int dim>
 void
 HeatTransfer<dim>::read_checkpoint()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading heat transfer checkpoint" << std::endl;
 
   std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions.size());
@@ -1243,8 +1242,8 @@ HeatTransfer<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
+    this->dof_handler);
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
@@ -1326,7 +1325,7 @@ HeatTransfer<dim>::setup_dofs()
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
 
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
@@ -1536,7 +1535,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
@@ -1618,8 +1617,8 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
   const std::string                domain_name,
   const bool                       time_average)
 {
-  const unsigned int n_q_points       = this->cell_quadrature->size();
-  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+  const unsigned int n_q_points   = this->cell_quadrature->size();
+  const MPI_Comm mpi_communicator = this->dof_handler.get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -1820,7 +1819,7 @@ template <int dim>
 void
 HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
@@ -1838,8 +1837,8 @@ template <int dim>
 void
 HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
 {
-  const unsigned int n_q_points       = this->cell_quadrature->size();
-  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+  const unsigned int n_q_points   = this->cell_quadrature->size();
+  const MPI_Comm mpi_communicator = this->dof_handler.get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -1974,7 +1973,7 @@ template <int dim>
 void
 HeatTransfer<dim>::write_liquid_fraction()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
@@ -1997,8 +1996,8 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
   const bool        gather_vof,
   const VectorType &current_solution_fd)
 {
-  const unsigned int n_q_points_face  = this->face_quadrature->size();
-  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+  const unsigned int n_q_points_face = this->face_quadrature->size();
+  const MPI_Comm mpi_communicator    = this->dof_handler.get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double>         local_temperature_values(n_q_points_face);
@@ -2277,8 +2276,8 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   const std::string                domain_name,
   const VectorType                &current_solution_fd)
 {
-  const unsigned int n_q_points       = this->cell_quadrature->size();
-  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+  const unsigned int n_q_points   = this->cell_quadrature->size();
+  const MPI_Comm mpi_communicator = this->dof_handler.get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double>         local_temperature_values(n_q_points);
@@ -2481,7 +2480,7 @@ template <int dim>
 void
 HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {

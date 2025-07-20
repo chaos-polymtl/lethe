@@ -486,8 +486,8 @@ CFDDEMSolver<dim>::write_checkpoint()
     }
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
+    this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
   // Prepare particle handler for serialization
@@ -508,8 +508,8 @@ CFDDEMSolver<dim>::write_checkpoint()
   this->multiphysics->write_checkpoint();
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    vf_system_trans_vectors(this->void_fraction_manager.dof_handler);
+  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
+    this->void_fraction_manager.dof_handler);
   vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
 
   if (auto parallel_triangulation =
@@ -607,8 +607,8 @@ CFDDEMSolver<dim>::read_checkpoint()
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
+    this->dof_handler);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
@@ -650,8 +650,8 @@ CFDDEMSolver<dim>::read_checkpoint()
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
 
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    vf_system_trans_vectors(this->void_fraction_manager.dof_handler);
+  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
+    this->void_fraction_manager.dof_handler);
 
   vf_system_trans_vectors.deserialize(vf_system);
 
@@ -732,8 +732,8 @@ CFDDEMSolver<dim>::load_balance()
     }
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
+    this->dof_handler);
   system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);
 
   // Void Fraction
@@ -749,8 +749,8 @@ CFDDEMSolver<dim>::load_balance()
     }
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    vf_system_trans_vectors(this->void_fraction_manager.dof_handler);
+  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
+    this->void_fraction_manager.dof_handler);
   vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
     vf_set_transfer);
 
