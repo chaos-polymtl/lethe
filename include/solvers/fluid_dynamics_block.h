@@ -168,6 +168,51 @@ private:
   virtual void
   setup_dofs_fd() override;
 
+  /**
+   * @brief Update the sum_over_previous_stages variable to use it in the solver.
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK method for now (BDF methods are single stage)
+   */
+  void
+  multi_stage_preresolution(
+    unsigned int                                      stage,
+    Parameters::SimulationControl::TimeSteppingMethod method) override;
+
+  /**
+   * @brief Calculate \f$ k_i \f$ from \f$ u*_i : k_i = \frac{u*_i - u_n}{time_step*a_ii} - \sum{j=1}^{i-1} a_ij * k_j \f$
+   * Update \f$ \sum_{i=1}^{N_{stages}} b_i * k_i \f$
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK methods for now (BDF methods are single stage)
+   */
+  virtual void
+  multi_stage_postresolution(
+    unsigned int                                      stage,
+    Parameters::SimulationControl::TimeSteppingMethod method,
+    double                                            time_step) override;
+
+  /**
+   * @brief \f$ u_{n+1} = u_n + time_step * \sum_{i=1}^{N_{stages}} b_i * k_i \f$
+   *
+   * @param time_step The current time step to build the solution at the next time step
+   */
+  virtual void
+  update_multi_stage_solution(double time_step) override;
+
+  /**
+   * @brief Sets the initial condition for the solver
+   *
+   * If the simulation is restarted from a checkpoint, the initial solution
+   * setting is bypassed and the checkpoint is instead read.
+   *
+   * @param initial_condition_type The type of initial condition to be set
+   *
+   * @param restart A boolean that indicates if the simulation is being restarted.
+   * if set to true, the initial conditions are never set, but are instead
+   * overridden by the read_checkpoint functionality.
+   *
+   **/
   virtual void
   set_initial_condition_fd(
     Parameters::FluidDynamicsInitialConditionType initial_condition_type,
