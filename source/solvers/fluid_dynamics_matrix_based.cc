@@ -544,15 +544,18 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                         *this->get_mapping());
     }
 
-  WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
-    *this,
-    &FluidDynamicsMatrixBased::assemble_local_system_matrix,
-    &FluidDynamicsMatrixBased::copy_local_matrix_to_global_matrix,
-    scratch_data,
-    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                         this->cell_quadrature->size()));
+  if (scratch_data.current_stage < 2)
+    {
+      WorkStream::run(
+        this->dof_handler.begin_active(),
+        this->dof_handler.end(),
+        *this,
+        &FluidDynamicsMatrixBased::assemble_local_system_matrix,
+        &FluidDynamicsMatrixBased::copy_local_matrix_to_global_matrix,
+        scratch_data,
+        StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                             this->cell_quadrature->size()));
+    }
 
   // Add mortar entries
   if (this->simulation_parameters.mortar.enable)
@@ -577,6 +580,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
+    this->previous_hk_j_solutions,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -807,6 +811,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
+    this->previous_hk_j_solutions,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);

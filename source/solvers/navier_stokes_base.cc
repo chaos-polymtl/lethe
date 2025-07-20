@@ -176,6 +176,14 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   this->pcout << std::setprecision(
     simulation_parameters.simulation_control.log_precision);
+
+  scratch_data = std::make_unique<NavierStokesScratchData<dim>>(
+    simulation_control,
+    simulation_parameters.physical_properties_manager,
+    *fe,
+    *cell_quadrature,
+    *mapping,
+    *face_quadrature);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -511,6 +519,17 @@ NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::percolate_stage_vectors_fd()
+{
+  for (unsigned int i = previous_hk_j_solutions.size() - 1; i > 0; --i)
+    {
+      previous_hk_j_solutions[i] = previous_hk_j_solutions[i - 1];
+    }
+  previous_hk_j_solutions[0] = this->present_hk_i_solution;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
 {
   if (simulation_parameters.simulation_control.method !=
@@ -553,72 +572,133 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  auto &present_solution = this->present_solution;
+  auto &present_solution   = this->present_solution;
+  auto &previous_solutions = this->previous_solutions;
 
-  if (simulation_parameters.multiphysics.fluid_dynamics)
+  VectorType sum_over_stages;
+  sum_over_stages.reinit(present_solution);
+  sum_over_stages   = 0;
+  const auto method = this->simulation_control->get_assembly_method();
+
+  unsigned int stage_i;
+
+  for (unsigned int s = 0; s < SimulationControl::get_number_of_stages(method);
+       ++s)
     {
-      // Solve and percolate the auxiliary physics that should be treated BEFORE
-      // the fluid dynamics
-      multiphysics->solve(false,
-                          simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(false);
+      stage_i = s + 1;
+      SDIRKStageData stage_data(scratch_data->sdirk_table, stage_i);
+      auto          &present_hk_i_solution    = this->present_hk_i_solution;
+      auto          &previous_hk_j_solutions = this->previous_hk_j_solutions;
 
-      if (simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-              .verbosity != Parameters::Verbosity::quiet ||
-          simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-              .verbosity != Parameters::Verbosity::quiet)
-        announce_string(this->pcout, "Fluid Dynamics");
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
+      VectorType sum_over_previous_stages;
+      sum_over_previous_stages.reinit(present_solution);
+      sum_over_previous_stages = 0;
 
-      // If the physics need to be solved after the physics, the matrix free
-      // solver requires to update the value here. This is due to the different
-      // type of vectors.
-      if (this->multiphysics->get_active_physics().size() > 1)
-        this->update_solutions_for_multiphysics();
+      scratch_data->current_stage = stage_i;
 
-      // Solve and percolate the auxiliary physics that should be treated AFTER
-      // the fluid dynamics
-      multiphysics->solve(true,
-                          simulation_parameters.simulation_control.method);
-      // Dear future Bruno, percolating auxiliary physics before fluid dynamics
-      // is necessary because of the checkpointing mechanism. You spent an
-      // evening debugging this, trust me.
-      multiphysics->percolate_time_vectors(true);
-    }
-  else
-    {
-      // Fluid dynamics is not to be solved, but rather specified. Update
-      // condition and move on.
-
-      // Solve and percolate the auxiliary physics that should be treated
-      // BEFORE the fluid dynamics
-      multiphysics->solve(false,
-                          simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(false);
-
-      if (this->simulation_parameters.initial_condition->type ==
-          Parameters::InitialConditionType::average_velocity_profile)
+      if (simulation_parameters.multiphysics.fluid_dynamics)
         {
-          // We get the solution via the average solution
-          this->local_evaluation_point =
-            this->average_velocities->get_average_velocities();
-          present_solution = this->local_evaluation_point;
+          // Solve and percolate the auxiliary physics that should be treated
+          // BEFORE the fluid dynamics
+          multiphysics->solve(false,
+                              simulation_parameters.simulation_control.method);
+          multiphysics->percolate_time_vectors(false);
+
+          if (simulation_parameters.non_linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet ||
+              simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet)
+            announce_string(this->pcout, "Fluid Dynamics");
+          PhysicsSolver<VectorType>::solve_non_linear_system(false);
+
+          for (unsigned int p = 0; p < stage_i; ++p)
+          {
+            VectorType tmp;
+            tmp.reinit(previous_hk_j_solutions[0]);
+
+            // tmp = a_ij[p] * previous_hk_j_solutions[stage_i - 1 - p]
+            tmp.equ(stage_data.a_ij[p], previous_hk_j_solutions[stage_i - 1 - p]);
+
+            // sum_over_previous_stages += tmp
+            sum_over_previous_stages.add(1.0, tmp);
+          }
+
+          const double a_ii = stage_data.a_ij[s];
+
+          present_hk_i_solution.reinit(present_solution); 
+          // Step 1: present_hk_i_solution = present_solution
+          present_hk_i_solution = present_solution;
+          // Step 2: present_hk_i_solution -= previous_solutions[0]
+          present_hk_i_solution.add(-1.0, previous_solutions[0]);
+          // Step 3: present_hk_i_solution /= a_ii
+          present_hk_i_solution *= 1.0 / a_ii;
+          // Step 4: present_hk_i_solution -= sum_over_previous_stages
+          present_hk_i_solution.add(-1.0, sum_over_previous_stages);
+
+          percolate_stage_vectors_fd();
+          const double b_i = stage_data.b_i;
+          sum_over_stages.add(b_i, present_hk_i_solution);
+
+          // If the physics need to be solved after the physics, the matrix free
+          // solver requires to update the value here. This is due to the
+          // different type of vectors.
+          if (this->multiphysics->get_active_physics().size() > 1)
+            this->update_solutions_for_multiphysics();
+
+          // Solve and percolate the auxiliary physics that should be treated
+          // AFTER the fluid dynamics
+          multiphysics->solve(true,
+                              simulation_parameters.simulation_control.method);
+          // Dear future Bruno, percolating auxiliary physics before fluid
+          // dynamics is necessary because of the checkpointing mechanism. You
+          // spent an evening debugging this, trust me.
+          multiphysics->percolate_time_vectors(true);
         }
       else
         {
-          // We get the solution via an initial condition
-          this->simulation_parameters.initial_condition->uvwp.set_time(
-            this->simulation_control->get_current_time());
-          set_initial_condition_fd(
-            this->simulation_parameters.initial_condition->type);
-        }
+          // Fluid dynamics is not to be solved, but rather specified. Update
+          // condition and move on.
 
-      // Solve and percolate the auxiliary physics that should be treated
-      // AFTER the fluid dynamics
-      multiphysics->solve(true,
-                          simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(true);
+          // Solve and percolate the auxiliary physics that should be treated
+          // BEFORE the fluid dynamics
+          multiphysics->solve(false,
+                              simulation_parameters.simulation_control.method);
+          multiphysics->percolate_time_vectors(false);
+
+          if (this->simulation_parameters.initial_condition->type ==
+              Parameters::InitialConditionType::average_velocity_profile)
+            {
+              // We get the solution via the average solution
+              this->local_evaluation_point =
+                this->average_velocities->get_average_velocities();
+              present_solution = this->local_evaluation_point;
+            }
+          else
+            {
+              // We get the solution via an initial condition
+              this->simulation_parameters.initial_condition->uvwp.set_time(
+                this->simulation_control->get_current_time());
+              set_initial_condition_fd(
+                this->simulation_parameters.initial_condition->type);
+            }
+
+          // Solve and percolate the auxiliary physics that should be treated
+          // AFTER the fluid dynamics
+          multiphysics->solve(true,
+                              simulation_parameters.simulation_control.method);
+          multiphysics->percolate_time_vectors(true);
+        }
     }
+  if (method != Parameters::SimulationControl::TimeSteppingMethod::steady &&
+      method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf && 
+      method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
+      method != Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
+      method != Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+      {
+        present_solution = previous_solutions[0];
+        present_solution.add(1, sum_over_stages);
+      }
 }
 
 template <int dim, typename VectorType, typename DofsType>

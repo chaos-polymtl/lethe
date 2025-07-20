@@ -5,6 +5,7 @@
 #define lethe_navier_stokes_scratch_data_h
 
 #include <core/bdf.h>
+#include <core/sdirk_stage_data.h>
 #include <core/dem_properties.h>
 #include <core/density_model.h>
 #include <core/parameters.h>
@@ -100,6 +101,13 @@ public:
                      update_values | update_quadrature_points |
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
+    , sdirk_table(
+        simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
+            simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ?
+          ::sdirk_table(simulation_control->get_assembly_method()) :
+          SDIRKTable())
   {
     allocate();
 
@@ -224,6 +232,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
+         const std::vector<VectorType> &previous_hk_j_solutions,
          std::shared_ptr<Function<dim>> forcing_function,
          Tensor<1, dim>                 beta_force,
          const double                   pressure_scaling_factor)
@@ -291,6 +300,12 @@ public:
       {
         this->fe_values[velocities].get_function_values(
           previous_solutions[p], previous_velocity_values[p]);
+      }
+
+    for (unsigned int p = 0; p < previous_hk_j_solutions.size(); ++p)
+      {
+        this->fe_values[velocities].get_function_values(
+          previous_hk_j_solutions[p], previous_hk_j_values[p]);
       }
 
     // Only gather the pressure when a pressure history is necessary
@@ -1086,6 +1101,7 @@ public:
   std::vector<Tensor<1, dim>>              pressure_gradients;
   std::vector<std::vector<double>>         previous_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
+  std::vector<std::vector<Tensor<1, dim>>> previous_hk_j_values;
 
   // Shape functions
   std::vector<std::vector<double>>         div_phi_u;
@@ -1225,6 +1241,10 @@ public:
   std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
   std::vector<std::vector<std::vector<double>>>         face_phi_p;
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
+
+  unsigned int current_stage = 0;
+
+  SDIRKTable sdirk_table;
 };
 
 #endif
