@@ -21,6 +21,60 @@
 
 using namespace dealii;
 
+
+template <int dim>
+void
+ParticleVelocityQCM<dim>::setup_dofs()
+{
+  // Get a constant copy of the communicator since it is used extensively to
+  // establish the void fraction vectors
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+  dof_handler.distribute_dofs(*fe);
+  locally_owned_dofs = dof_handler.locally_owned_dofs();
+
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+
+  particle_velocity_locally_relevant.reinit(locally_owned_dofs,
+                                            locally_relevant_dofs,
+                                            mpi_communicator);
+
+  particle_velocity_locally_owned.reinit(locally_owned_dofs, mpi_communicator);
+
+  // deal.II vector that will also hold the solution
+  this->particle_velocity_solution.reinit(dof_handler.locally_owned_dofs(),
+                                          DoFTools::extract_locally_active_dofs(
+                                            dof_handler),
+                                          mpi_communicator);
+
+  particle_velocity_constraints.clear();
+  particle_velocity_constraints.reinit(locally_owned_dofs,
+                                       locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(dof_handler,
+                                          particle_velocity_constraints);
+
+  particle_velocity_constraints.close();
+
+  DynamicSparsityPattern dsp(locally_relevant_dofs);
+  DoFTools::make_sparsity_pattern(dof_handler,
+                                  dsp,
+                                  particle_velocity_constraints,
+                                  false);
+
+  SparsityTools::distribute_sparsity_pattern(dsp,
+                                             locally_owned_dofs,
+                                             mpi_communicator,
+                                             locally_relevant_dofs);
+
+  system_matrix_particle_velocity.reinit(locally_owned_dofs,
+                                         locally_owned_dofs,
+                                         dsp,
+                                         mpi_communicator);
+
+
+  system_rhs_particle_velocity.reinit(locally_owned_dofs, mpi_communicator);
+}
+
 template <int dim>
 void
 VoidFractionBase<dim>::setup_dofs()
