@@ -2004,7 +2004,8 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
     this->dof_handler,
-    this->simulation_parameters.mortar_parameters);
+    this->simulation_parameters.mortar_parameters,
+    this->rotation_angle);
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =

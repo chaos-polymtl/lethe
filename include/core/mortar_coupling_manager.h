@@ -221,7 +221,8 @@ public:
   template <int dim2>
   MortarManagerCircle(const Quadrature<dim2>        &quadrature,
                       const DoFHandler<dim2>        &dof_handler,
-                      const Parameters::Mortar<dim> &mortar_parameters);
+                      const Parameters::Mortar<dim> &mortar_parameters,
+                      const double                   rotation_angle);
 
 protected:
   Point<dim>
@@ -272,7 +273,8 @@ template <int dim2>
 MortarManagerCircle<dim>::MortarManagerCircle(
   const Quadrature<dim2>        &quadrature,
   const DoFHandler<dim2>        &dof_handler,
-  const Parameters::Mortar<dim> &mortar_parameters)
+  const Parameters::Mortar<dim> &mortar_parameters,
+  const double                   rotation_angle)
   : MortarManagerCircle(
       compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
                                         mortar_parameters)
@@ -281,7 +283,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
       compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
                                         mortar_parameters)
         .second,
-      mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
+      rotation_angle,
       mortar_parameters.center_of_rotation)
 {}
 
