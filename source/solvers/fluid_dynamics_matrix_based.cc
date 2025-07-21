@@ -275,6 +275,17 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_control, this->simulation_parameters.ale));
     }
 
+  // Mortar ALE
+  if (this->simulation_parameters.mortar_parameters.enable ||
+      this->simulation_parameters.simulation_control.method ==
+        Parameters::SimulationControl::TimeSteppingMethod::steady)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<NavierStokesAssemblerMortarALE<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.mortar_parameters));
+    }
+
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
@@ -544,6 +555,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                         *this->get_mapping());
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.enable_mortar();
+
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
@@ -662,6 +676,14 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
         *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters,
+                               compute_n_subdivisions_and_radius(
+                                 *this->triangulation,
+                                 this->simulation_parameters.mortar_parameters)
+                                 .second);
+
   scratch_data.calculate_physical_properties();
 
   copy_data.reset();
@@ -762,6 +784,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
                                         *this->cell_quadrature,
                                         *this->get_mapping());
     }
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.enable_mortar();
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -887,6 +912,14 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
         *this->multiphysics->get_solution(PhysicsID::heat_transfer),
         *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters,
+                               compute_n_subdivisions_and_radius(
+                                 *this->triangulation,
+                                 this->simulation_parameters.mortar_parameters)
+                                 .second);
 
   scratch_data.calculate_physical_properties();
 
