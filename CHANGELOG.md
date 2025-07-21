@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR At multiple locations, Lethe was still checking if deal.II was compiled with a version number larger than 9.4 for some features. Since we do not even compile with anything before deal.II 9.6, this PR removes all of these checks which are not relevant anymore. This increases readability and prevents confusion in terms of compatibility. [#1588](https://github.com/chaos-polymtl/lethe/pull/1588)
+- MINOR At multiple locations and for specific features, Lethe was still checking if deal.II was compiled with a version number larger than 9.4. Since we do not even compile with anything before deal.II 9.6, this PR removes all of these checks which are not relevant anymore. This increases readability and prevents confusion in terms of compatibility. [#1588](https://github.com/chaos-polymtl/lethe/pull/1588)
 
 ### [Master] - 2025-07-17
 
