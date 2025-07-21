@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-17
+
+### Added
+
+- MINOR Allow quad/hex meshes to use bubble enrichment function FE_Q_Bubbles. [#1584](https://github.com/chaos-polymtl/lethe/pull/1584)
+
 ### [Master] - 2025-07-16
 
 ### CHange
