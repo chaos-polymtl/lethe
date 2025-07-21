@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-21
+
+### Changed
+
+- Minor The QCM calculation method for the void fraction had multiple chunks of code which were duplicated. This PR refactors the QCM to make an additional use of functions and greatly simplifies the code. Nothing is changed in the way the calculations are made. [#1591](https://github.com/chaos-polymtl/lethe/pull/1591)
+
 ### [Master] - 2025-07-20
 
 ### Fixed
