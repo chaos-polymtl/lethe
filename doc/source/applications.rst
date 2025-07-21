@@ -2,7 +2,7 @@
 Applications Overview
 ######################
 
-Lethe has several applications that can be used depending on the problem to be solved. Once Lethe is compiled, all the executables to these applications become available. In the following table a brief description of each application is provided:
+Lethe has several applications that can be used depending on the problem to be solved. Once Lethe is compiled, all the executables to these applications become available. In the following table, a brief description of each application is provided:
 
 .. list-table::
     :header-rows: 1
@@ -16,12 +16,12 @@ Lethe has several applications that can be used depending on the problem to be s
         * Heat transfer
         * Tracer
       - ``lethe-fluid``
-      - This application solves the Navier-Stokes equations in a monolithic way. **This is the most robust fluid dynamics solver in Lethe  and it is compatible with all multiphysics features**.
+      - This application solves the Navier-Stokes equations in a monolithic way. **This is the most robust fluid dynamics solver in Lethe and it is compatible with all multiphysics features**.
     * - * Single-phase flows
         * Heat transfer
         * Tracer
       - ``lethe-fluid-matrix-free``
-      - This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach.  **This is the fastest fluid dynamics solver in Lethe. This solver should be used for high-order simulations. This solver does not fully support all multiphysics features**.
+      - This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach.  **This is the fastest fluid dynamics solver in Lethe. It should be used for high-order simulations. It does not fully support all multiphysics features**.
     * - * Single-phase flows
         * Fluid-fluid flows 
         * Heat transfer
@@ -35,14 +35,14 @@ Lethe has several applications that can be used depending on the problem to be s
     * - * Particle-laden flows
         * Immersed boundaries
       - ``lethe-fluid-sharp``
-      - This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the sharp-edge method. It is used for resolved Computational Fluid Dynamics-Discrete Element Method simulations.
+      - This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.
     * - * Single phase volume-averaged flows
       - ``lethe-fluid-vans``
       - This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way.
     * - * Granular flow of spherical particles
       - ``lethe-particles``
       - This application uses the Discrete Element Method to simulate spherical particles. 
-    * - * Single-phase flows
+    * - * Steady-state single-phase flows
       - ``lethe-fluid-block``
       - This application solves the Navier-Stokes equations in a monolithic way using block preconditioner. **This solver is experimental and is only adequate for steady-state simulations**.
     * - * Radioactive Particle Tracking
