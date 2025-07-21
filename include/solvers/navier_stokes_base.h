@@ -943,8 +943,11 @@ protected:
   std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
     mortar_coupling_evaluator;
 
-  // Mapping cache used in rotor mesh rotation in mortar method
+  // Mapping cache and rotation angle used in rotor mesh rotation in mortar
+  // method
   std::shared_ptr<MappingQCache<dim>> mapping_cache;
+  double                              rotation_angle;
+  double                              previous_rotation_angle;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers;
