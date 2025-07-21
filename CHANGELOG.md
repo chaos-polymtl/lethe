@@ -23,13 +23,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-07-14
 
-### Change
+### Changed
 
 - MAJOR The introduction of the deal.II-9.8-pre version introduced numerous warnings for functions that will be deprecated in the near future. This PR addresses all of these warnings. Furthermore, I reran all of the prototypes and realized there was an issue with the matrix_free_non_linear prototype in which the multigrid solution did not have their ghost value correctly calculated. I have addressed this issue at the same time. Finally, on my machine I encountered a small segfault when running the kelly error estimator with multiple variables. This is because the solver assumed the number of coarsen and refine flag would be the same in the for loop, while there is no reason for this assumption. I have thus fixed this problem within this PR also. [#1582](https://github.com/chaos-polymtl/lethe/pull/1582)
 
 ### [Master] - 2025-07-13
 
-### Change
+### Changed
 
 - MAJOR The void fraction linear tolerance can now be specified directly within the .prm file. The previous default value which was 1e-15 has now been changed to the default value used for all linear solvers. We advise users to explicitely specify the minimum tolerance for the void fraction within their parameter files. [#1580](https://github.com/chaos-polymtl/lethe/pull/1580)
 
