@@ -576,6 +576,13 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
+  // If mortar is enabled, and if no refinement has been done, allow the mapping
+  // rotation to be updated by setting up the dofs again
+  if (simulation_parameters.mortar_parameters.enable &&
+      this->simulation_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none)
+    this->setup_dofs();
+
   if (simulation_parameters.multiphysics.fluid_dynamics)
     {
       // Solve and percolate the auxiliary physics that should be treated BEFORE
@@ -2073,8 +2080,8 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
         this->dof_handler,
         *this->mapping_cache,
         *this->mapping,
-        compute_n_subdivisions_and_radius(*this->triangulation,
-                                          this->simulation_parameters.mortar_parameters)
+        compute_n_subdivisions_and_radius(
+          *this->triangulation, this->simulation_parameters.mortar_parameters)
           .second,
         rotation_angle);
     }
