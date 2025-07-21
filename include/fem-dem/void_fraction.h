@@ -19,6 +19,7 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_simplex_p.h>
+#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_fe.h>
 
 #include <deal.II/lac/affine_constraints.h>
@@ -85,6 +86,92 @@ particle_sphere_intersection_3d(double r_particle,
 }
 
 /**
+ * @brief Particle velocity calculator. This class stores the required information for the calculation of the projected particle velocity.
+ * This class does not solve any equation, but compartimentalize the necessary
+ * information for the projection of the particle velocity onto the mesh.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ */
+template <int dim>
+class ParticleVelocityQCM
+{
+public:
+  ParticleVelocityQCM(
+    parallel::DistributedTriangulationBase<dim> *triangulation,
+    const unsigned int                           fe_degree,
+    const bool                                   simplex)
+    : dof_handler(*triangulation)
+  {
+    if (simplex)
+      {
+        const FE_SimplexP<dim> velocity_fe(fe_degree);
+        fe = std::make_shared<FESystem<dim>>(velocity_fe, dim);
+      }
+    else
+      {
+        const FE_Q<dim> velocity_fe(fe_degree);
+        fe = std::make_shared<FESystem<dim>>(velocity_fe, dim);
+      }
+  }
+
+  /// DoFHandler that manages the void fraction
+  DoFHandler<dim> dof_handler;
+
+  /// Fully distributed (including locally relevant) solution
+  GlobalVectorType particle_velocity_locally_relevant;
+
+  /// deal.II vector for the particle velocity
+  LinearAlgebra::distributed::Vector<double> particle_velocity_solution;
+
+  /// Finite element for the void fraction
+  std::shared_ptr<FESystem<dim>> fe;
+
+  /// Index set for the locally owned degree of freedoms
+  IndexSet locally_owned_dofs;
+
+  /// Index set for the locally relevant degree of freedoms
+  IndexSet locally_relevant_dofs;
+
+  /// Locally owned solution of the void fraction
+  GlobalVectorType particle_velocity_locally_owned;
+
+  /// System matrix used to assemble the smoothed L2 projection of the void
+  /// fraction
+  TrilinosWrappers::SparseMatrix system_matrix_particle_velocity;
+
+  /// Right-hand side used to assemble the smoothed L2 projection of the void
+  /// fraction
+  GlobalVectorType system_rhs_particle_velocity;
+
+  /// Constraints used for the boundary conditions of the void fraction.
+  /// Currently, this is only used to establish periodic void fractions. This
+  /// object has to be made public because the boundary conditions are set
+  /// outside of the object for now.
+  AffineConstraints<double> particle_velocity_constraints;
+
+  /**
+   * @brief Setup the degrees of freedom.
+   *
+   */
+  void
+  setup_dofs();
+
+
+  // void
+  // project_particle_velocity(Particles::ParticleHandler<dim>
+  // *particle_handler);
+
+  /**
+   * @brief Assemble the linear system and the right-hand-side of the equations
+   *
+   */
+  void
+  assemble_system_matrix_and_rhs(
+    Particles::ParticleHandler<dim> *particle_handler);
+};
+
+
+/**
  * @brief Void fraction calculator. This class manages the calculation of the
  * void fraction which is used as an auxiliary field for the solvers that solve
  * the Volume-Averaged Navier-Stokes equations. The present architecture
@@ -123,6 +210,7 @@ public:
     , void_fraction_parameters(input_parameters)
     , linear_solver_parameters(linear_solver_parameters)
     , particle_handler(particle_handler)
+    , particle_velocity_qcm(triangulation, fe_degree, simplex)
   {
     if (simplex)
       {
@@ -503,6 +591,9 @@ private:
   // Smoothing length factor for the void fraction calculation
   const double l2_smoothing_factor =
     Utilities::fixed_power<2>(void_fraction_parameters->l2_smoothing_length);
+
+public:
+  ParticleVelocityQCM<dim> particle_velocity_qcm;
 };
 
 
