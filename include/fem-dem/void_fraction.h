@@ -266,6 +266,92 @@ public:
 
 private:
   /**
+   * @brief Calculate the characteristic radius of a sphere with a given volume (area in 2D):
+   * R = (2*dim*V/pi)^(1/dim) / 2
+   *
+   * @param volume value for which the equivalent radius of a sphere is calculated.
+   *
+   * @return Radius of a sphere with equivalent volume
+   */
+  static double
+  radius_sphere_equivalent_volume(const double volume)
+  {
+    return 0.5 * pow(2.0 * static_cast<double>(dim) * volume / M_PI,
+                     1.0 / static_cast<double>(dim));
+  }
+
+  /**
+   * @brief Calculate the radius of the QCM averaging sphere
+   *
+   * @param cell_measure The measure of the cell in wich QCM is calculated.
+   *
+   * @return The QCM radius used in the calculations.
+   */
+  inline double
+  calculate_qcm_radius_from_cell_measure(const double cell_measure)
+  {
+    if (void_fraction_parameters->qcm_sphere_equal_cell_volume == true)
+      {
+        // Get the radius by the volume of sphere which is
+        // equal to the volume of cell
+        return radius_sphere_equivalent_volume(cell_measure);
+      }
+    else
+      {
+        // The radius is obtained from the volume of sphere based
+        // on R_s = h_omega
+        return std::cbrt(cell_measure);
+      }
+  }
+
+  /**
+   * @brief Calculate the intersection measure (volume in 3D and area in 2D) between a particle and an hypersphere.
+   * This is used when calculating the intersection volume between the averaging
+   * sphere and a particle in QCM. The calculation inherently assumes that the
+   * radius of the averaging sphere is larger than that of the particle.
+   *
+   * @param r_particle The radius of the particle
+   * @param r_sphere The radius of the averaging sphere
+   * @param distance_between_spheres The distance between the spheres
+   *
+   * @return The intersection volume (in 3D) or area (in 2d)
+   */
+
+  static double
+  calculate_intersection_measure(double r_particle,
+                                 double r_sphere,
+                                 double distance_between_spheres)
+  {
+    // Particle completely in the reference sphere
+    if (distance_between_spheres <= (r_sphere - r_particle))
+      {
+        if constexpr (dim == 2)
+          return M_PI * Utilities::fixed_power<2>(r_particle);
+        if constexpr (dim == 3)
+          return 4. / 3. * M_PI * Utilities::fixed_power<3>(r_particle);
+      }
+
+    // Particle partially in the reference sphere
+    if ((distance_between_spheres > (r_sphere - r_particle)) &&
+        (distance_between_spheres < (r_sphere + r_particle)))
+      {
+        if constexpr (dim == 2)
+          return particle_circle_intersection_2d(r_particle,
+                                                 r_sphere,
+                                                 distance_between_spheres);
+
+        else if constexpr (dim == 3)
+          return particle_sphere_intersection_3d(r_particle,
+                                                 r_sphere,
+                                                 distance_between_spheres);
+      }
+
+    // Particle completely outside the reference
+    // sphere. The intersection volume is zero.
+    return 0;
+  }
+
+  /**
    * @brief Calculate the void fraction using a function. This is a straightforward usage of VectorTools.
    *
    * @param[in] time Current time for which the void fraction is to be
