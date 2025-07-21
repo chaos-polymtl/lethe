@@ -4193,10 +4193,17 @@ namespace Parameters
                         default_entry_point,
                         Patterns::List(Patterns::Double()),
                         "Center of rotation coordinates of rotor domain");
-      prm.enter_subsection("rotor rotation angle");
-      rotor_rotation_angle = std::make_shared<Functions::ParsedFunction<dim>>();
-      rotor_rotation_angle->declare_parameters(prm);
+      prm.declare_entry("rotor rotation angle",
+                        "0.",
+                        Patterns::Double(),
+                        "Rotor rotation angle in radians");
+
+      prm.enter_subsection("rotor angular velocity");
+      rotor_angular_velocity =
+        std::make_shared<Functions::ParsedFunction<dim>>();
+      rotor_angular_velocity->declare_parameters(prm);
       prm.leave_subsection();
+
       prm.declare_entry("penalty factor",
                         "1.",
                         Patterns::Double(),
@@ -4227,10 +4234,13 @@ namespace Parameters
       stator_boundary_id = prm.get_integer("stator boundary id");
       center_of_rotation =
         value_string_to_tensor<dim>(prm.get("center of rotation"));
-      prm.enter_subsection("rotor rotation angle");
-      rotor_rotation_angle->parse_parameters(prm);
-      rotor_rotation_angle->set_time(0);
+      rotor_rotation_angle = prm.get_double("rotor rotation angle");
+
+      prm.enter_subsection("rotor angular velocity");
+      rotor_angular_velocity->parse_parameters(prm);
+      rotor_angular_velocity->set_time(0);
       prm.leave_subsection();
+
       sip_factor          = prm.get_double("penalty factor");
       oversampling_factor = prm.get_integer("oversampling factor");
 
