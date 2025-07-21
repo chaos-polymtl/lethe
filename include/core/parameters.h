@@ -1812,8 +1812,12 @@ namespace Parameters
     unsigned int stator_boundary_id;
     /// Center of rotation of the rotor domain
     Point<dim> center_of_rotation;
-    /// Rotation angle of the rotor domain in radians
-    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_rotation_angle;
+    /// Rotation angle of the rotor domain in radians, required in steady-state
+    /// case
+    double rotor_rotation_angle;
+    /// Angular velocity of the rotor domain, required in transient
+    /// case
+    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity;
     /// Penalty factor for mortar elements
     double sip_factor;
     /// Oversampling factor for quadrature points
