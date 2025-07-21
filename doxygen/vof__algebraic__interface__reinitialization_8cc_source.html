@@ -108,7 +108,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="classVOFAlgebraicInterfaceReinitialization.html#a4be3625416e3003de8465984bedbcaed">   14</a></span><a class="code hl_function" href="classVOFAlgebraicInterfaceReinitialization.html#a4be3625416e3003de8465984bedbcaed">VOFAlgebraicInterfaceReinitialization&lt;dim&gt;::setup_dofs</a>()</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="comment">// Get MPI communicator</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_communicator();</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="comment">// Distribute and renumber DoFs</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  this-&gt;dof_handler-&gt;distribute_dofs(*this-&gt;fe);</div>
@@ -365,7 +365,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    this-&gt;subequations_interface.get_dof_handler(</div>
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>      <a class="code hl_enumvalue" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">VOFSubequationsID::algebraic_interface_reinitialization</a>),</div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    *this-&gt;cell_quadrature,</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    this-&gt;triangulation-&gt;get_communicator());</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    this-&gt;triangulation-&gt;get_mpi_communicator());</div>
 <div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> diffusivity_coefficient = compute_diffusivity(h_min);</div>
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>  <span class="comment">// BDF coefficients for pseudo time-stepping</span></div>
@@ -563,7 +563,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>    this-&gt;subequations_interface.get_dof_handler(</div>
 <div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>      <a class="code hl_enumvalue" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">VOFSubequationsID::algebraic_interface_reinitialization</a>),</div>
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>    *this-&gt;cell_quadrature,</div>
-<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>    this-&gt;triangulation-&gt;get_communicator());</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>    this-&gt;triangulation-&gt;get_mpi_communicator());</div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> diffusivity_coefficient = compute_diffusivity(h_min);</div>
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span> </div>
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>  <span class="comment">// BDF coefficients for pseudo time-stepping</span></div>
@@ -704,7 +704,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> initial_step,</div>
 <div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> <span class="comment">/*renewed_matrix*/</span>)</div>
 <div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>{</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_communicator();</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span> </div>
 <div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used =</div>
 <div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>    initial_step ? this-&gt;nonzero_constraints : this-&gt;zero_constraints;</div>
@@ -886,7 +886,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00776" name="l00776"></a><span class="lineno"><a class="line" href="classVOFAlgebraicInterfaceReinitialization.html#a00858817710405810425afa5a8f13ed6">  776</a></span><a class="code hl_function" href="classVOFAlgebraicInterfaceReinitialization.html#a00858817710405810425afa5a8f13ed6">VOFAlgebraicInterfaceReinitialization&lt;dim&gt;::write_output_results</a>(</div>
 <div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> step)</div>
 <div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>{</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>  <span class="keyword">auto</span>              mpi_communicator = this-&gt;triangulation-&gt;get_communicator();</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>  <span class="keyword">const</span> std::string folder =</div>
 <div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
 <div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    <span class="stringliteral">&quot;/algebraic-reinitialization-steps-output/&quot;</span>;</div>

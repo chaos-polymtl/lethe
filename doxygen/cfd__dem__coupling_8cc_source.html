@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">cfd_dem_coupling.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="cfd__dem__coupling_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<a href="cfd__dem__coupling_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="grids_8h.html">core/grids.h</a>&gt;</span></div>
@@ -594,8 +594,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>    }</div>
 <div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span> </div>
 <div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>  <span class="comment">// Prepare for Serialization</span></div>
-<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType&gt;</div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>    system_trans_vectors(this-&gt;dof_handler);</div>
+<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; system_trans_vectors(</div>
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>    this-&gt;dof_handler);</div>
 <div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>  system_trans_vectors.prepare_for_serialization(sol_set_transfer);</div>
 <div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span> </div>
 <div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>  <span class="comment">// Prepare particle handler for serialization</span></div>
@@ -616,8 +616,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>  this-&gt;multiphysics-&gt;write_checkpoint();</div>
 <div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span> </div>
 <div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>  <span class="comment">// Prepare for Serialization</span></div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType&gt;</div>
-<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>    vf_system_trans_vectors(this-&gt;void_fraction_manager.dof_handler);</div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; vf_system_trans_vectors(</div>
+<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>    this-&gt;void_fraction_manager.dof_handler);</div>
 <div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>  vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);</div>
 <div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span> </div>
 <div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>  <span class="keywordflow">if</span> (<span class="keyword">auto</span> parallel_triangulation =</div>
@@ -717,8 +717,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>      x_system[i + 1] = &amp;distributed_previous_solutions[i];</div>
 <div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>    }</div>
 <div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span> </div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType&gt;</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>    system_trans_vectors(this-&gt;dof_handler);</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; system_trans_vectors(</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>    this-&gt;dof_handler);</div>
 <div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span> </div>
 <div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.post_processing.calculate_average_velocities)</div>
 <div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>    {</div>
@@ -760,8 +760,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>      vf_system[i + 1] = &amp;vf_distributed_previous_solutions[i];</div>
 <div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>    }</div>
 <div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span> </div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType&gt;</div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>    vf_system_trans_vectors(this-&gt;void_fraction_manager.dof_handler);</div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; vf_system_trans_vectors(</div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>    this-&gt;void_fraction_manager.dof_handler);</div>
 <div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span> </div>
 <div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>  vf_system_trans_vectors.deserialize(vf_system);</div>
 <div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span> </div>
@@ -846,8 +846,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    }</div>
 <div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span> </div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>  <span class="comment">// Prepare for Serialization</span></div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType&gt;</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    system_trans_vectors(this-&gt;dof_handler);</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; system_trans_vectors(</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    this-&gt;dof_handler);</div>
 <div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>  system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);</div>
 <div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span> </div>
 <div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>  <span class="comment">// Void Fraction</span></div>
@@ -863,8 +863,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    }</div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span> </div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>  <span class="comment">// Prepare for Serialization</span></div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType&gt;</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    vf_system_trans_vectors(this-&gt;void_fraction_manager.dof_handler);</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; vf_system_trans_vectors(</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    this-&gt;void_fraction_manager.dof_handler);</div>
 <div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>  vf_system_trans_vectors.prepare_for_coarsening_and_refinement(</div>
 <div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    vf_set_transfer);</div>
 <div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span> </div>
@@ -1834,7 +1834,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassInsertionPlane_html"><div class="ttname"><a href="classInsertionPlane.html">InsertionPlane</a></div><div class="ttdoc">Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane....</div><div class="ttdef"><b>Definition</b> <a href="insertion__plane_8h_source.html#l00018">insertion_plane.h:19</a></div></div>
 <div class="ttc" id="aclassInsertionVolume_html"><div class="ttname"><a href="classInsertionVolume.html">InsertionVolume</a></div><div class="ttdef"><b>Definition</b> <a href="insertion__volume_8h_source.html#l00013">insertion_volume.h:14</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a57ffa198f9fabb15e3af4c9fa2921e18"><div class="ttname"><a href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase::refine_mesh</a></div><div class="ttdeci">virtual void refine_mesh()</div><div class="ttdoc">Allow the refinement of the mesh according to one of the 2 methods proposed.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00696">navier_stokes_base.cc:696</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_aa5e0b2804ae3afe6bb89e0a25fc26ed2"><div class="ttname"><a href="classNavierStokesBase.html#aa5e0b2804ae3afe6bb89e0a25fc26ed2">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd</a></div><div class="ttdeci">virtual void postprocess_fd(bool first_iteration)</div><div class="ttdoc">postprocess Post-process fluid dynamics after an iteration</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00296">navier_stokes_base.cc:1278</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_aa5e0b2804ae3afe6bb89e0a25fc26ed2"><div class="ttname"><a href="classNavierStokesBase.html#aa5e0b2804ae3afe6bb89e0a25fc26ed2">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd</a></div><div class="ttdeci">virtual void postprocess_fd(bool first_iteration)</div><div class="ttdoc">postprocess Post-process fluid dynamics after an iteration</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00296">navier_stokes_base.cc:1271</a></div></div>
 <div class="ttc" id="aclassVelocityVerletIntegrator_html"><div class="ttname"><a href="classVelocityVerletIntegrator.html">VelocityVerletIntegrator</a></div><div class="ttdoc">Implementation of a classical velocity verlet scheme for the integration of the particle motion....</div><div class="ttdef"><b>Definition</b> <a href="velocity__verlet__integrator_8h_source.html#l00038">velocity_verlet_integrator.h:39</a></div></div>
 <div class="ttc" id="aclassVisualization_html"><div class="ttname"><a href="classVisualization.html">Visualization</a></div><div class="ttdoc">Building patches of particle properties for visualization. This function is taken from Aspect and dea...</div><div class="ttdef"><b>Definition</b> <a href="visualization_8h_source.html#l00030">visualization.h:31</a></div></div>
 <div class="ttc" id="aclassVisualization_html_a29014b0590114f94ecd7786ae984de93"><div class="ttname"><a href="classVisualization.html#a29014b0590114f94ecd7786ae984de93">Visualization::build_patches</a></div><div class="ttdeci">void build_patches(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::vector&lt; std::pair&lt; std::string, int &gt; &gt; properties)</div><div class="ttdoc">Build the patches of properties of particles for visualization.</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00015">visualization.cc:15</a></div></div>
@@ -1843,7 +1843,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aexplicit__euler__integrator_8h_html"><div class="ttname"><a href="explicit__euler__integrator_8h.html">explicit_euler_integrator.h</a></div></div>
 <div class="ttc" id="afind__contact__detection__step_8h_html_a0d6d367c590091ae3722d8ae4c64b8f9"><div class="ttname"><a href="find__contact__detection__step_8h.html#a0d6d367c590091ae3722d8ae4c64b8f9">find_particle_contact_detection_step</a></div><div class="ttdeci">void find_particle_contact_detection_step(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update=true)</div><div class="ttdoc">Find steps for dynamic contact search for particle-particle contacts.</div><div class="ttdef"><b>Definition</b> <a href="find__contact__detection__step_8cc_source.html#l00011">find_contact_detection_step.cc:11</a></div></div>
 <div class="ttc" id="agrids_8h_html"><div class="ttname"><a href="grids_8h.html">grids.h</a></div></div>
-<div class="ttc" id="agrids_8h_html_a12c5f7ced96095e07e2610117cf726df"><div class="ttname"><a href="grids_8h.html#a12c5f7ced96095e07e2610117cf726df">read_mesh_and_manifolds</a></div><div class="ttdeci">void read_mesh_and_manifolds(parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const Parameters::Mesh &amp;mesh_parameters, const Parameters::Manifolds &amp;manifolds_parameters, const bool &amp;restart, const BoundaryConditions::BoundaryConditions &amp;boundary_conditions)</div><div class="ttdoc">Completely set-up a mesh and its manifold.</div><div class="ttdef"><b>Definition</b> <a href="grids_8cc_source.html#l00321">grids.cc:321</a></div></div>
+<div class="ttc" id="agrids_8h_html_a12c5f7ced96095e07e2610117cf726df"><div class="ttname"><a href="grids_8h.html#a12c5f7ced96095e07e2610117cf726df">read_mesh_and_manifolds</a></div><div class="ttdeci">void read_mesh_and_manifolds(parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const Parameters::Mesh &amp;mesh_parameters, const Parameters::Manifolds &amp;manifolds_parameters, const bool &amp;restart, const BoundaryConditions::BoundaryConditions &amp;boundary_conditions)</div><div class="ttdoc">Completely set-up a mesh and its manifold.</div><div class="ttdef"><b>Definition</b> <a href="grids_8cc_source.html#l00322">grids.cc:322</a></div></div>
 <div class="ttc" id="ainsertion__file_8h_html"><div class="ttname"><a href="insertion__file_8h.html">insertion_file.h</a></div></div>
 <div class="ttc" id="ainsertion__list_8h_html"><div class="ttname"><a href="insertion__list_8h.html">insertion_list.h</a></div></div>
 <div class="ttc" id="ainsertion__plane_8h_html"><div class="ttname"><a href="insertion__plane_8h.html">insertion_plane.h</a></div></div>

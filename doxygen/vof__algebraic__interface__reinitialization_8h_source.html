@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">vof_algebraic_interface_reinitialization.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="vof__algebraic__interface__reinitialization_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors</span></div>
+<a href="vof__algebraic__interface__reinitialization_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_vof_algebraic_interface_reinitialization_h</span></div>
@@ -373,7 +373,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>      <a class="code hl_function" href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">identify_minimum_cell_size</a>(*this-&gt;<a class="code hl_variable" href="classVOFAlgebraicInterfaceReinitialization.html#a349aa251e7056a31032a26fc3b826b9d">mapping</a>,</div>
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>                                 *this-&gt;<a class="code hl_variable" href="classVOFAlgebraicInterfaceReinitialization.html#a573017bc257827d66fbaeba054c0e1e7">dof_handler</a>,</div>
 <div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                                 *this-&gt;<a class="code hl_variable" href="classVOFAlgebraicInterfaceReinitialization.html#a87f11c11b53c140c8cdf0afa4e2ff483">cell_quadrature</a>,</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                                 this-&gt;<a class="code hl_variable" href="classVOFAlgebraicInterfaceReinitialization.html#a66ac62788233f86e8ac8c40fd46dfd09">triangulation</a>-&gt;get_communicator());</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                                 this-&gt;<a class="code hl_variable" href="classVOFAlgebraicInterfaceReinitialization.html#a66ac62788233f86e8ac8c40fd46dfd09">triangulation</a>-&gt;get_mpi_communicator());</div>
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span> </div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    <span class="keywordflow">return</span> h_min * cfl;</div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>  }</div>

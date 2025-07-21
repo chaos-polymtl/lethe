@@ -598,10 +598,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span><span class="comment">    /**</span></div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span><span class="comment">     * Reference to the preconditioner.</span></div>
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>    SmartPointer&lt;</div>
+<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>    ObserverPointer&lt;</div>
 <div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>      <span class="keyword">const</span> PreconditionerType,</div>
 <div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span>      <a class="code hl_class" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html">MGCoarseGridApplyPreconditioner&lt;VectorType, PreconditionerType&gt;</a>&gt;</div>
-<div class="line"><a id="l00478" name="l00478"></a><span class="lineno"><a class="line" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a00bdd340c5e4f6277e5e561d3ed5450e">  478</a></span>      <a class="code hl_variable" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a00bdd340c5e4f6277e5e561d3ed5450e">preconditioner</a>;</div>
+<div class="line"><a id="l00478" name="l00478"></a><span class="lineno"><a class="line" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a41acf6aeadda9938d8b0c5e957f66201">  478</a></span>      <a class="code hl_variable" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a41acf6aeadda9938d8b0c5e957f66201">preconditioner</a>;</div>
 <div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>  };</div>
 </div>
 <div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span> </div>
@@ -731,7 +731,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>            n_cells_on_levels[l]++;</div>
 <div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span> </div>
 <div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>      Utilities::MPI::sum(n_cells_on_levels,</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>                          this-&gt;dof_handler.get_communicator(),</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>                          this-&gt;dof_handler.get_mpi_communicator(),</div>
 <div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>                          n_cells_on_levels);</div>
 <div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>      AssertThrow(</div>
 <div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>        mg_level_min_cells &lt;= <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(n_cells_on_levels[maxlevel]),</div>
@@ -937,7 +937,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>              <span class="comment">// Necessary to find the min across all cores.</span></div>
 <div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>              min_index =</div>
 <div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>                Utilities::MPI::min(min_index,</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>                                    this-&gt;dof_handler.get_communicator());</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>                                    this-&gt;dof_handler.get_mpi_communicator());</div>
 <div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span> </div>
 <div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>              <span class="keywordflow">if</span> (relevant_dofs.is_element(min_index))</div>
 <div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>                level_constraints[level].add_line(min_index);</div>
@@ -1336,7 +1336,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span>              <span class="comment">// Necessary to find the min across all cores.</span></div>
 <div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span>              min_index =</div>
 <div class="line"><a id="l01198" name="l01198"></a><span class="lineno"> 1198</span>                Utilities::MPI::min(min_index,</div>
-<div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span>                                    this-&gt;dof_handler.get_communicator());</div>
+<div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span>                                    this-&gt;dof_handler.get_mpi_communicator());</div>
 <div class="line"><a id="l01200" name="l01200"></a><span class="lineno"> 1200</span> </div>
 <div class="line"><a id="l01201" name="l01201"></a><span class="lineno"> 1201</span>              <span class="keywordflow">if</span> (locally_relevant_dofs.is_element(min_index))</div>
 <div class="line"><a id="l01202" name="l01202"></a><span class="lineno"> 1202</span>                level_constraint.add_line(min_index);</div>
@@ -1960,10 +1960,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01808" name="l01808"></a><span class="lineno"> 1808</span>        {</div>
 <div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span><span class="preprocessor">#if DEAL_II_VERSION_GTE(9, 6, 0)</span></div>
 <div class="line"><a id="l01810" name="l01810"></a><span class="lineno"> 1810</span>          <span class="comment">// Constant modes for velocity and pressure</span></div>
-<div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span>          DoFTools::extract_level_constant_modes(this-&gt;minlevel,</div>
-<div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span>                                                 this-&gt;dof_handler,</div>
-<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span>                                                 components,</div>
-<div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span>                                                 constant_modes);</div>
+<div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span>          constant_modes =</div>
+<div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span>            DoFTools::extract_level_constant_modes(this-&gt;minlevel,</div>
+<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span>                                                   this-&gt;dof_handler,</div>
+<div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span>                                                   components);</div>
 <div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span>          AssertThrow(</div>
 <div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span>            <span class="keyword">false</span>,</div>
@@ -1977,9 +1977,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>               <a class="code hl_enumvalue" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::PreconditionerType::gcmg</a>)</div>
 <div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>        {</div>
 <div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span>          <span class="comment">// Constant modes for velocity and pressure</span></div>
-<div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>          DoFTools::extract_constant_modes(this-&gt;dof_handlers[this-&gt;minlevel],</div>
-<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>                                           components,</div>
-<div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span>                                           constant_modes);</div>
+<div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>          constant_modes =</div>
+<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>            DoFTools::extract_constant_modes(this-&gt;dof_handlers[this-&gt;minlevel],</div>
+<div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span>                                             components);</div>
 <div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>        }</div>
 <div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span> </div>
 <div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span>      amg_data.constant_modes = constant_modes;</div>
@@ -3248,14 +3248,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassSimulationParameters_html_abf8bd85aa726f3b3324b29e35da38dac"><div class="ttname"><a href="classSimulationParameters.html#abf8bd85aa726f3b3324b29e35da38dac">SimulationParameters::linear_solver</a></div><div class="ttdeci">std::map&lt; PhysicsID, Parameters::LinearSolver &gt; linear_solver</div><div class="ttdef"><b>Definition</b> <a href="simulation__parameters_8h_source.html#l00027">simulation_parameters.h:27</a></div></div>
 <div class="ttc" id="aclassSimulationParameters_html_adde7cf181bfcb851bbef918682a30a62"><div class="ttname"><a href="classSimulationParameters.html#adde7cf181bfcb851bbef918682a30a62">SimulationParameters::fem_parameters</a></div><div class="ttdeci">Parameters::FEM fem_parameters</div><div class="ttdef"><b>Definition</b> <a href="simulation__parameters_8h_source.html#l00040">simulation_parameters.h:40</a></div></div>
 <div class="ttc" id="aclassdealii_1_1MGCoarseGridApplyPreconditioner_html"><div class="ttname"><a href="classdealii_1_1MGCoarseGridApplyPreconditioner.html">dealii::MGCoarseGridApplyPreconditioner</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00438">fluid_dynamics_matrix_free.cc:439</a></div></div>
-<div class="ttc" id="aclassdealii_1_1MGCoarseGridApplyPreconditioner_html_a00bdd340c5e4f6277e5e561d3ed5450e"><div class="ttname"><a href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a00bdd340c5e4f6277e5e561d3ed5450e">dealii::MGCoarseGridApplyPreconditioner::preconditioner</a></div><div class="ttdeci">SmartPointer&lt; const PreconditionerType, MGCoarseGridApplyPreconditioner&lt; VectorType, PreconditionerType &gt; &gt; preconditioner</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00478">fluid_dynamics_matrix_free.cc:478</a></div></div>
 <div class="ttc" id="aclassdealii_1_1MGCoarseGridApplyPreconditioner_html_a04fd1a15437bba37b0d46a380ff1cea4"><div class="ttname"><a href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a04fd1a15437bba37b0d46a380ff1cea4">dealii::MGCoarseGridApplyPreconditioner::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00511">fluid_dynamics_matrix_free.cc:511</a></div></div>
+<div class="ttc" id="aclassdealii_1_1MGCoarseGridApplyPreconditioner_html_a41acf6aeadda9938d8b0c5e957f66201"><div class="ttname"><a href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a41acf6aeadda9938d8b0c5e957f66201">dealii::MGCoarseGridApplyPreconditioner::preconditioner</a></div><div class="ttdeci">ObserverPointer&lt; const PreconditionerType, MGCoarseGridApplyPreconditioner&lt; VectorType, PreconditionerType &gt; &gt; preconditioner</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00478">fluid_dynamics_matrix_free.cc:478</a></div></div>
 <div class="ttc" id="aclassdealii_1_1MGCoarseGridApplyPreconditioner_html_aa45c10614054b82b781c216f0ef6dea2"><div class="ttname"><a href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#aa45c10614054b82b781c216f0ef6dea2">dealii::MGCoarseGridApplyPreconditioner::MGCoarseGridApplyPreconditioner</a></div><div class="ttdeci">MGCoarseGridApplyPreconditioner()</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00484">fluid_dynamics_matrix_free.cc:485</a></div></div>
 <div class="ttc" id="aclassdealii_1_1MGCoarseGridApplyPreconditioner_html_ac4b86a2d236dd2ab41e74e131f8db1cf"><div class="ttname"><a href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#ac4b86a2d236dd2ab41e74e131f8db1cf">dealii::MGCoarseGridApplyPreconditioner::initialize</a></div><div class="ttdeci">void initialize(const PreconditionerType &amp;precondition)</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00501">fluid_dynamics_matrix_free.cc:501</a></div></div>
 <div class="ttc" id="aclassdealii_1_1MGCoarseGridApplyPreconditioner_html_af2955a8093f7742bd5e9f15b3243bba1"><div class="ttname"><a href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#af2955a8093f7742bd5e9f15b3243bba1">dealii::MGCoarseGridApplyPreconditioner::operator()</a></div><div class="ttdeci">virtual void operator()(const unsigned int level, VectorType &amp;dst, const VectorType &amp;src) const override</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00520">fluid_dynamics_matrix_free.cc:520</a></div></div>
 <div class="ttc" id="afluid__dynamics__matrix__free_8h_html"><div class="ttname"><a href="fluid__dynamics__matrix__free_8h.html">fluid_dynamics_matrix_free.h</a></div></div>
 <div class="ttc" id="agrids_8h_html"><div class="ttname"><a href="grids_8h.html">grids.h</a></div></div>
-<div class="ttc" id="agrids_8h_html_a12c5f7ced96095e07e2610117cf726df"><div class="ttname"><a href="grids_8h.html#a12c5f7ced96095e07e2610117cf726df">read_mesh_and_manifolds</a></div><div class="ttdeci">void read_mesh_and_manifolds(parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const Parameters::Mesh &amp;mesh_parameters, const Parameters::Manifolds &amp;manifolds_parameters, const bool &amp;restart, const BoundaryConditions::BoundaryConditions &amp;boundary_conditions)</div><div class="ttdoc">Completely set-up a mesh and its manifold.</div><div class="ttdef"><b>Definition</b> <a href="grids_8cc_source.html#l00321">grids.cc:321</a></div></div>
+<div class="ttc" id="agrids_8h_html_a12c5f7ced96095e07e2610117cf726df"><div class="ttname"><a href="grids_8h.html#a12c5f7ced96095e07e2610117cf726df">read_mesh_and_manifolds</a></div><div class="ttdeci">void read_mesh_and_manifolds(parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const Parameters::Mesh &amp;mesh_parameters, const Parameters::Manifolds &amp;manifolds_parameters, const bool &amp;restart, const BoundaryConditions::BoundaryConditions &amp;boundary_conditions)</div><div class="ttdoc">Completely set-up a mesh and its manifold.</div><div class="ttdef"><b>Definition</b> <a href="grids_8cc_source.html#l00322">grids.cc:322</a></div></div>
 <div class="ttc" id="amanifolds_8h_html"><div class="ttname"><a href="manifolds_8h.html">manifolds.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html"><div class="ttname"><a href="multiphysics_8h.html">multiphysics.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">fluid_dynamics</a></div><div class="ttdeci">@ fluid_dynamics</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00009">multiphysics.h:9</a></div></div>

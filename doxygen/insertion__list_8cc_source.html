@@ -213,7 +213,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        std::min(remaining_particles_of_each_type, n_total_particles_to_insert);</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>      <span class="comment">// All processors except 0 will not insert particles</span></div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>      MPI_Comm communicator = triangulation.get_communicator();</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>      MPI_Comm communicator = triangulation.get_mpi_communicator();</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>      <span class="keyword">auto</span> this_mpi_process = Utilities::MPI::this_mpi_process(communicator);</div>
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_particles_to_insert_this_proc =</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        this_mpi_process == 0 ? n_total_particles_to_insert : 0;</div>

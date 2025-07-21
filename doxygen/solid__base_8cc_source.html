@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">solid_base.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="solid__base_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors</span></div>
+<a href="solid__base_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="solid__base_8h.html">core/solid_base.h</a>&gt;</span></div>
@@ -209,7 +209,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    {</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>      <span class="keywordflow">if</span> (param-&gt;solid_mesh.simplex)</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>          <span class="keyword">auto</span>        comm      = solid_tria-&gt;get_communicator();</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>          <span class="keyword">auto</span>        comm      = solid_tria-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>          std::string file_name = param-&gt;solid_mesh.file_name;</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>          <span class="keyword">auto</span> construction_data = TriangulationDescription::Utilities::</div>
@@ -269,7 +269,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>            flat_temp_quad_triangulation, temporary_tri_triangulation);</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>          GridTools::partition_triangulation_zorder(</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            Utilities::MPI::n_mpi_processes(solid_tria-&gt;get_communicator()),</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            Utilities::MPI::n_mpi_processes(solid_tria-&gt;get_mpi_communicator()),</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            temporary_tri_triangulation);</div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>          GridTools::partition_multigrid_levels(temporary_tri_triangulation);</div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
@@ -277,7 +277,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>          <span class="keyword">auto</span> construction_data = TriangulationDescription::Utilities::</div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            create_description_from_triangulation(</div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>              temporary_tri_triangulation,</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>              solid_tria-&gt;get_communicator(),</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>              solid_tria-&gt;get_mpi_communicator(),</div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>              TriangulationDescription::Settings::</div>
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                construct_multigrid_hierarchy);</div>
 <div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>          solid_tria-&gt;create_triangulation(construction_data);</div>
@@ -869,8 +869,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span> </div>
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>  <span class="comment">// Prepare serialization of the solid triangulation which is</span></div>
 <div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>  <span class="comment">// only used for visualization purposes</span></div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt;</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    system_trans_vectors(this-&gt;displacement_dh);</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>  SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt; system_trans_vectors(</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    this-&gt;displacement_dh);</div>
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span> </div>
 <div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>  std::vector&lt;const GlobalVectorType *&gt; sol_set_transfer;</div>
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>  displacement_relevant = displacement;</div>
@@ -916,8 +916,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  std::vector&lt;GlobalVectorType *&gt; x_system(1);</div>
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>  x_system[0] = &amp;(displacement);</div>
 <div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span> </div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt;</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>    system_trans_vectors(this-&gt;displacement_dh);</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>  SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt; system_trans_vectors(</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>    this-&gt;displacement_dh);</div>
 <div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span> </div>
 <div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>  system_trans_vectors.deserialize(x_system);</div>
 <div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>  displacement_relevant = displacement;</div>

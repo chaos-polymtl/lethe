@@ -8,7 +8,7 @@ Regular Installation on Linux
 .. important::
   Distributions on which compatibility was tested are: Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, Centos 7 and Manjaro.
 
-Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.6`` and ``deal.II 9.7pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
+Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.7`` and ``deal.II 9.8pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
 
 **Lethe installation steps:**
   

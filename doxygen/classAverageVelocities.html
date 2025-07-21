@@ -156,12 +156,12 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a1e532d3d1b7005ba66d2ecc964ce5b8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ce4a57740c66f128df5f67f238f608c" id="r_a7ce4a57740c66f128df5f67f238f608c"><td class="memItemLeft" align="right" valign="top">VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a7ce4a57740c66f128df5f67f238f608c">sum_rss_dt_with_ghost_cells</a></td></tr>
 <tr class="separator:a7ce4a57740c66f128df5f67f238f608c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c56d3679cac0720cddbf6f0b65321d5" id="r_a5c56d3679cac0720cddbf6f0b65321d5"><td class="memItemLeft" align="right" valign="top">parallel::distributed::SolutionTransfer&lt; dim, VectorType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a5c56d3679cac0720cddbf6f0b65321d5">solution_transfer_sum_velocity_dt</a></td></tr>
-<tr class="separator:a5c56d3679cac0720cddbf6f0b65321d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeefda4c8b5f35ec0acf99dc16f279ddf" id="r_aeefda4c8b5f35ec0acf99dc16f279ddf"><td class="memItemLeft" align="right" valign="top">parallel::distributed::SolutionTransfer&lt; dim, VectorType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#aeefda4c8b5f35ec0acf99dc16f279ddf">solution_transfer_sum_reynolds_normal_stress_dt</a></td></tr>
-<tr class="separator:aeefda4c8b5f35ec0acf99dc16f279ddf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31b609b6811a1a4636bc48a55dc87949" id="r_a31b609b6811a1a4636bc48a55dc87949"><td class="memItemLeft" align="right" valign="top">parallel::distributed::SolutionTransfer&lt; dim, VectorType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a31b609b6811a1a4636bc48a55dc87949">solution_transfer_sum_reynolds_shear_stress_dt</a></td></tr>
-<tr class="separator:a31b609b6811a1a4636bc48a55dc87949"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5a93aff000e28cd153c2bea25ba2a50" id="r_ad5a93aff000e28cd153c2bea25ba2a50"><td class="memItemLeft" align="right" valign="top">SolutionTransfer&lt; dim, VectorType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#ad5a93aff000e28cd153c2bea25ba2a50">solution_transfer_sum_velocity_dt</a></td></tr>
+<tr class="separator:ad5a93aff000e28cd153c2bea25ba2a50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08d20f679ff38a5f8a06a47552aacf13" id="r_a08d20f679ff38a5f8a06a47552aacf13"><td class="memItemLeft" align="right" valign="top">SolutionTransfer&lt; dim, VectorType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a08d20f679ff38a5f8a06a47552aacf13">solution_transfer_sum_reynolds_normal_stress_dt</a></td></tr>
+<tr class="separator:a08d20f679ff38a5f8a06a47552aacf13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43792a2829174ef5f3ca337c436ba369" id="r_a43792a2829174ef5f3ca337c436ba369"><td class="memItemLeft" align="right" valign="top">SolutionTransfer&lt; dim, VectorType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a43792a2829174ef5f3ca337c436ba369">solution_transfer_sum_reynolds_shear_stress_dt</a></td></tr>
+<tr class="separator:a43792a2829174ef5f3ca337c436ba369"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d5018f5b1e9675896309e667b26af98" id="r_a8d5018f5b1e9675896309e667b26af98"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#a8d5018f5b1e9675896309e667b26af98">dt</a></td></tr>
 <tr class="separator:a8d5018f5b1e9675896309e667b26af98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3c111556e181fa4a78ebbbf6fcc0fa5" id="r_af3c111556e181fa4a78ebbbf6fcc0fa5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageVelocities.html#af3c111556e181fa4a78ebbbf6fcc0fa5">real_initial_time</a></td></tr>
@@ -704,7 +704,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00338">338</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00337">337</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -844,7 +844,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Track whether we are within the averaging time period. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00356">356</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00355">355</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -900,7 +900,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Number of degrees of freedom per vertex needed to calculate correctly Reynolds stresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00363">363</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00362">362</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -928,7 +928,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Initial time of the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00344">344</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00343">343</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1044,8 +1044,8 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 </div>
 </div>
-<a id="aeefda4c8b5f35ec0acf99dc16f279ddf" name="aeefda4c8b5f35ec0acf99dc16f279ddf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeefda4c8b5f35ec0acf99dc16f279ddf">&#9670;&#160;</a></span>solution_transfer_sum_reynolds_normal_stress_dt</h2>
+<a id="a08d20f679ff38a5f8a06a47552aacf13" name="a08d20f679ff38a5f8a06a47552aacf13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08d20f679ff38a5f8a06a47552aacf13">&#9670;&#160;</a></span>solution_transfer_sum_reynolds_normal_stress_dt</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1056,7 +1056,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::solution_transfer_sum_reynolds_normal_stress_dt</td>
+          <td class="memname">SolutionTransfer&lt;dim, VectorType&gt; <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::solution_transfer_sum_reynolds_normal_stress_dt</td>
         </tr>
       </table>
   </td>
@@ -1068,12 +1068,12 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Object used to transfer the average Reynolds normal stresses in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00324">324</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00323">323</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
-<a id="a31b609b6811a1a4636bc48a55dc87949" name="a31b609b6811a1a4636bc48a55dc87949"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31b609b6811a1a4636bc48a55dc87949">&#9670;&#160;</a></span>solution_transfer_sum_reynolds_shear_stress_dt</h2>
+<a id="a43792a2829174ef5f3ca337c436ba369" name="a43792a2829174ef5f3ca337c436ba369"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43792a2829174ef5f3ca337c436ba369">&#9670;&#160;</a></span>solution_transfer_sum_reynolds_shear_stress_dt</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1084,7 +1084,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::solution_transfer_sum_reynolds_shear_stress_dt</td>
+          <td class="memname">SolutionTransfer&lt;dim, VectorType&gt; <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::solution_transfer_sum_reynolds_shear_stress_dt</td>
         </tr>
       </table>
   </td>
@@ -1096,12 +1096,12 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Object used to transfer the average Reynolds shear stresses in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00332">332</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00331">331</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
-<a id="a5c56d3679cac0720cddbf6f0b65321d5" name="a5c56d3679cac0720cddbf6f0b65321d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c56d3679cac0720cddbf6f0b65321d5">&#9670;&#160;</a></span>solution_transfer_sum_velocity_dt</h2>
+<a id="ad5a93aff000e28cd153c2bea25ba2a50" name="ad5a93aff000e28cd153c2bea25ba2a50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5a93aff000e28cd153c2bea25ba2a50">&#9670;&#160;</a></span>solution_transfer_sum_velocity_dt</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1112,7 +1112,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">parallel::distributed::SolutionTransfer&lt;dim, VectorType&gt; <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::solution_transfer_sum_velocity_dt</td>
+          <td class="memname">SolutionTransfer&lt;dim, VectorType&gt; <a class="el" href="classAverageVelocities.html">AverageVelocities</a>&lt; dim, VectorType, DofsType &gt;::solution_transfer_sum_velocity_dt</td>
         </tr>
       </table>
   </td>
@@ -1124,7 +1124,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Object used to transfer the average velocities in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00316">316</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00315">315</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>
@@ -1320,7 +1320,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Total period of time for averaging. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00350">350</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__velocities_8h_source.html#l00349">349</a> of file <a class="el" href="postprocessing__velocities_8h_source.html">postprocessing_velocities.h</a>.</p>
 
 </div>
 </div>

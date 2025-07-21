@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">interface_tools.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="interface__tools_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors</span></div>
+<a href="interface__tools_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="interface__tools_8h.html">core/interface_tools.h</a>&gt;</span></div>
@@ -358,7 +358,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00259" data-start="{" data-end="}">
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a7a2f538e72870490a75dfd1ea4c32612">  259</a></span><a class="code hl_function" href="classInterfaceTools_1_1SignedDistanceSolver.html#a7a2f538e72870490a75dfd1ea4c32612">InterfaceTools::SignedDistanceSolver&lt;dim, VectorType&gt;::setup_dofs</a>()</div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>{</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_communicator();</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>  dof_handler.distribute_dofs(*this-&gt;fe);</div>
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span> </div>
@@ -399,7 +399,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>    <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;background_dof_handler,</div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    <span class="keyword">const</span> VectorType      &amp;background_level_set_vector)</div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>{</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_communicator();</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span> </div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>  VectorType tmp_local_level_set(this-&gt;locally_owned_dofs, mpi_communicator);</div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
@@ -495,7 +495,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00388" data-start="{" data-end="}">
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a9b41dc84b1bc98b1c955a9fd7723a8ee">  388</a></span><a class="code hl_function" href="classInterfaceTools_1_1SignedDistanceSolver.html#a9b41dc84b1bc98b1c955a9fd7723a8ee">InterfaceTools::SignedDistanceSolver&lt;dim, VectorType&gt;::get_signed_distance</a>()</div>
 <div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>{</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_communicator();</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span> </div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>  VectorType tmp_local_level_set(this-&gt;locally_owned_dofs, mpi_communicator);</div>
 <div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
@@ -655,7 +655,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span><span class="comment">   * the interface. It works in a similar manner as a marching algorithm from</span></div>
 <div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span><span class="comment">   * the knowledge of the signed distance for the interface first neighbors. */</span></div>
 <div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span> </div>
-<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_communicator();</div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span> </div>
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_opposite_faces_per_dofs = dim;</div>
 <div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> dofs_per_cell             = fe-&gt;n_dofs_per_cell();</div>
@@ -1220,7 +1220,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span><span class="comment">     a constant. We use the secant method to do so. See Ausas et al. (2011) for</span></div>
 <div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span><span class="comment">     more details.*/</span></div>
 <div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span> </div>
-<div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_communicator();</div>
+<div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span> </div>
 <div class="line"><a id="l01101" name="l01101"></a><span class="lineno"> 1101</span>  <span class="comment">/* Compute targeted global volume. It corresponds to the one enclosed by</span></div>
 <div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span><span class="comment">  the level 0 of the level_set vector (same volume as the one enclosed</span></div>
@@ -1364,7 +1364,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span>                                  <span class="keyword">const</span> <span class="keywordtype">double</span>       time,</div>
 <div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>                                  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> it)</div>
 <div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>{</div>
-<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_communicator();</div>
+<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span>  <a class="code hl_class" href="classInterfaceTools_1_1InterfaceReconstructionDataOut.html">InterfaceReconstructionDataOut&lt;dim&gt;</a> reconstruction_data_out;</div>
 <div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span> </div>
 <div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>  reconstruction_data_out.<a class="code hl_function" href="classInterfaceTools_1_1InterfaceReconstructionDataOut.html#a98db2dc3c7bd7d170c7e5be049707fd9">build_patches</a>(interface_reconstruction_vertices);</div>
@@ -1389,7 +1389,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>       time,</div>
 <div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> it)</div>
 <div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>{</div>
-<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_communicator();</div>
+<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span> </div>
 <div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>  DataOut&lt;dim&gt; data_out;</div>
 <div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>  data_out.attach_dof_handler(this-&gt;dof_handler);</div>

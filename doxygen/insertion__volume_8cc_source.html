@@ -157,7 +157,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>          this-&gt;remove_particles_in_box(particle_handler);</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        }</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>      MPI_Comm           communicator = triangulation.get_communicator();</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>      MPI_Comm           communicator = triangulation.get_mpi_communicator();</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>      ConditionalOStream pcout(</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>

@@ -91,7 +91,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">postprocessing_cfd_dem.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="postprocessing__cfd__dem_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors</span></div>
+<a href="postprocessing__cfd__dem_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">// Dofs</span></div>
@@ -162,7 +162,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        }</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator =</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    void_fraction_dof_handler.get_communicator();</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    void_fraction_dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  total_volume_fluid =</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    Utilities::MPI::sum(total_volume_fluid, mpi_communicator);</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  total_volume_particles =</div>
