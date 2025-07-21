@@ -14,11 +14,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Allow quad/hex meshes to use bubble enrichment function FE_Q_Bubbles. [#1584](https://github.com/chaos-polymtl/lethe/pull/1584)
-### [Master] - 2025-07-20
-
-### Fixed
-
-- MINOR Deal.II-9.8pre deprecates some functions such as get_communicator and the parallel::distributed::SolutionTransfer class. This PR uses the modern version of these functions or classes following the new 9.8 release standard before they are deprecated.  [#1589](https://github.com/chaos-polymtl/lethe/pull/1589)
 
 ### [Master] - 2025-07-16
 
