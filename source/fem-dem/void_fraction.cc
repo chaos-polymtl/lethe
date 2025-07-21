@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
@@ -27,7 +27,7 @@ VoidFractionBase<dim>::setup_dofs()
 {
   // Get a constant copy of the communicator since it is used extensively to
   // establish the void fraction vectors
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   dof_handler.distribute_dofs(*fe);
   locally_owned_dofs = dof_handler.locally_owned_dofs();
@@ -52,17 +52,17 @@ VoidFractionBase<dim>::setup_dofs()
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
-                      this->triangulation->get_communicator());
+                      this->triangulation->get_mpi_communicator());
     }
 
-  void_fraction_locally_owned.reinit(locally_owned_dofs,
-                                     this->triangulation->get_communicator());
+  void_fraction_locally_owned.reinit(
+    locally_owned_dofs, this->triangulation->get_mpi_communicator());
 
   // deal.II vector that will also hold the solution
-  this->void_fraction_solution.reinit(dof_handler.locally_owned_dofs(),
-                                      DoFTools::extract_locally_active_dofs(
-                                        dof_handler),
-                                      this->triangulation->get_communicator());
+  this->void_fraction_solution.reinit(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_active_dofs(dof_handler),
+    this->triangulation->get_mpi_communicator());
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler,
@@ -73,17 +73,18 @@ VoidFractionBase<dim>::setup_dofs()
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     locally_owned_dofs,
-    this->triangulation->get_communicator(),
+    this->triangulation->get_mpi_communicator(),
     locally_relevant_dofs);
 
-  system_matrix_void_fraction.reinit(locally_owned_dofs,
-                                     locally_owned_dofs,
-                                     dsp,
-                                     this->triangulation->get_communicator());
+  system_matrix_void_fraction.reinit(
+    locally_owned_dofs,
+    locally_owned_dofs,
+    dsp,
+    this->triangulation->get_mpi_communicator());
 
 
   system_rhs_void_fraction.reinit(locally_owned_dofs,
-                                  this->triangulation->get_communicator());
+                                  this->triangulation->get_mpi_communicator());
 
 
   // Vertices to cell mapping
@@ -143,13 +144,14 @@ VoidFractionBase<dim>::setup_constraints(
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     locally_owned_dofs,
-    this->triangulation->get_communicator(),
+    this->triangulation->get_mpi_communicator(),
     locally_relevant_dofs);
 
-  system_matrix_void_fraction.reinit(locally_owned_dofs,
-                                     locally_owned_dofs,
-                                     dsp,
-                                     this->triangulation->get_communicator());
+  system_matrix_void_fraction.reinit(
+    locally_owned_dofs,
+    locally_owned_dofs,
+    dsp,
+    this->triangulation->get_mpi_communicator());
 
   if (has_periodic_boundaries)
     LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
@@ -1133,7 +1135,7 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution()
   const IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   GlobalVectorType completely_distributed_solution(
-    locally_owned_dofs, this->triangulation->get_communicator());
+    locally_owned_dofs, this->triangulation->get_mpi_communicator());
 
   SolverControl solver_control(linear_solver_parameters.max_iterations,
                                linear_solver_tolerance,

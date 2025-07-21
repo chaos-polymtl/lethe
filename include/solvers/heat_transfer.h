@@ -76,7 +76,7 @@ public:
     : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.non_linear_solver.at(PhysicsID::heat_transfer))
     , multiphysics(multiphysics_interface)
-    , computing_timer(p_triangulation->get_communicator(),
+    , computing_timer(p_triangulation->get_mpi_communicator(),
                       this->pcout,
                       TimerOutput::summary,
                       TimerOutput::wall_times)
@@ -110,9 +110,8 @@ public:
       }
 
     // Allocate solution transfer
-    solution_transfer = std::make_shared<
-      parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-      dof_handler);
+    solution_transfer =
+      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
 
     // Set size of previous solutions using BDF schemes information
     previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -122,8 +121,7 @@ public:
     for (unsigned int i = 0; i < previous_solutions.size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
-          parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
-            this->dof_handler));
+          SolutionTransfer<dim, GlobalVectorType>(this->dof_handler));
       }
 
     // Change the behavior of the timer for situations when you don't want
@@ -745,20 +743,18 @@ private:
   std::vector<GlobalVectorType> previous_solutions;
 
   /**
-   * @brief parallel::distributed::SolutionTransfer<dim, GlobalVectorType>> is
+   * @brief SolutionTransfer<dim, GlobalVectorType>> is
    * used to implement the transfer of a discrete FE function
    * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
    * used for mesh_refinement and simulation restarts.
    */
-  std::shared_ptr<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
-    solution_transfer;
+  std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
   /**
    * @brief previous_solutions_transfer occupies the same role as
    * solution_transfer but for solutions at previous time steps.
    */
-  std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
+  std::vector<SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 
   /**

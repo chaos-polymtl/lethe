@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/floating_point_comparator.h>
@@ -43,7 +43,7 @@ output_mesh(const Triangulation<dim, spacedim> &tria,
   data_out.attach_triangulation(tria);
 
   Vector<double> vector(tria.n_active_cells());
-  vector = Utilities::MPI::this_mpi_process(tria.get_communicator());
+  vector = Utilities::MPI::this_mpi_process(tria.get_mpi_communicator());
   data_out.add_data_vector(vector, "ranks");
 
   data_out.build_patches(
@@ -51,7 +51,7 @@ output_mesh(const Triangulation<dim, spacedim> &tria,
     mapping_degree + 1,
     DataOut<dim, spacedim>::CurvedCellRegion::curved_inner_cells);
 
-  data_out.write_vtu_in_parallel(file_name, tria.get_communicator());
+  data_out.write_vtu_in_parallel(file_name, tria.get_mpi_communicator());
 }
 
 template <int dim, int spacedim>

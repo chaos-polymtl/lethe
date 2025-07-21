@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_algebraic_interface_reinitialization_h
@@ -260,7 +260,7 @@ private:
       identify_minimum_cell_size(*this->mapping,
                                  *this->dof_handler,
                                  *this->cell_quadrature,
-                                 this->triangulation->get_communicator());
+                                 this->triangulation->get_mpi_communicator());
 
     return h_min * cfl;
   }

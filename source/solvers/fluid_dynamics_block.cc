@@ -838,21 +838,15 @@ FluidDynamicsBlock<dim>::setup_AMG()
   FEValuesExtractors::Vector     velocities(0);
 
   ComponentMask velocity_components = this->fe->component_mask(velocities);
-  // std::vector<bool> velocity_components(dim + 1, true);
-  // velocity_components[dim] = false;
-  DoFTools::extract_constant_modes(this->dof_handler,
-                                   velocity_components,
-                                   velocity_constant_modes);
+  velocity_constant_modes =
+    DoFTools::extract_constant_modes(this->dof_handler, velocity_components);
 
   // Constant modes for pressure
   std::vector<std::vector<bool>> pressure_constant_modes;
   FEValuesExtractors::Scalar     pressure(dim);
   ComponentMask pressure_components = this->fe->component_mask(pressure);
-  // std::vector<bool> pressure_components(dim + 1, false);
-  // pressure_components[dim] = true;
-  DoFTools::extract_constant_modes(this->dof_handler,
-                                   pressure_components,
-                                   pressure_constant_modes);
+  pressure_constant_modes =
+    DoFTools::extract_constant_modes(this->dof_handler, pressure_components);
 
   this->computing_timer.enter_subsection("AMG_velocity");
   const bool elliptic_velocity     = false;

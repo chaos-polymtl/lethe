@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "solvers/fluid_dynamics_matrix_free_operators.h"
@@ -211,7 +211,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
       this->has_edge_constrained_indices =
         Utilities::MPI::max(edge_constrained_indices.size(),
-                            dof_handler.get_communicator()) > 0;
+                            dof_handler.get_mpi_communicator()) > 0;
 
       if (this->has_edge_constrained_indices)
         {
@@ -632,13 +632,14 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
       SparsityTools::distribute_sparsity_pattern(
         dsp,
         locally_owned_dofs,
-        dof_handler.get_triangulation().get_communicator(),
+        dof_handler.get_triangulation().get_mpi_communicator(),
         locally_relevant_dofs);
 
-      system_matrix.reinit(locally_owned_dofs,
-                           locally_owned_dofs,
-                           dsp,
-                           dof_handler.get_triangulation().get_communicator());
+      system_matrix.reinit(
+        locally_owned_dofs,
+        locally_owned_dofs,
+        dsp,
+        dof_handler.get_triangulation().get_mpi_communicator());
     }
 
   system_matrix = 0.0;

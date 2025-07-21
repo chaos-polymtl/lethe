@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/function.h>
@@ -802,7 +802,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::get_system_matrix(
         mg_level != numbers::invalid_unsigned_int ?
           dof_handler.locally_owned_mg_dofs(mg_level) :
           dof_handler.locally_owned_dofs(),
-        dof_handler.get_triangulation().get_communicator());
+        dof_handler.get_triangulation().get_mpi_communicator());
 
       if (mg_level != numbers::invalid_unsigned_int)
         MGTools::make_sparsity_pattern(dof_handler, dsp, mg_level, constraints);

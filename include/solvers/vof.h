@@ -735,10 +735,8 @@ private:
   std::vector<GlobalVectorType> previous_solutions;
 
   // Solution transfer classes
-  std::shared_ptr<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
-    solution_transfer;
-  std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
+  std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
+  std::vector<SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 
   // Phase fraction matrices for interface sharpening

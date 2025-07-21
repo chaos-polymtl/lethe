@@ -71,7 +71,7 @@ InsertionFile<dim, PropertiesIndex>::insert(
         std::min(remaining_particles_of_each_type, n_total_particles_to_insert);
 
       // Processor 0 will be the only one inserting particles
-      MPI_Comm communicator = triangulation.get_communicator();
+      MPI_Comm communicator = triangulation.get_mpi_communicator();
       auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
       const unsigned int n_particles_to_insert_this_proc =
         this_mpi_process == 0 ? n_total_particles_to_insert : 0;

@@ -61,7 +61,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
           this->remove_particles_in_box(particle_handler);
         }
 
-      MPI_Comm           communicator = triangulation.get_communicator();
+      MPI_Comm           communicator = triangulation.get_mpi_communicator();
       ConditionalOStream pcout(
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
 

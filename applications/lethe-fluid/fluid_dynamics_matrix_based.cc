@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "solvers/fluid_dynamics_matrix_based.h"

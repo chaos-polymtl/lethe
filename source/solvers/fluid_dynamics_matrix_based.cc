@@ -1295,9 +1295,8 @@ FluidDynamicsMatrixBased<dim>::setup_AMG()
 
   // Constant modes include pressure since everything is in the same matrix
   ComponentMask components(dim + 1, true);
-  DoFTools::extract_constant_modes(this->dof_handler,
-                                   components,
-                                   constant_modes);
+  constant_modes =
+    DoFTools::extract_constant_modes(this->dof_handler, components);
 
   const bool elliptic              = false;
   bool       higher_order_elements = false;

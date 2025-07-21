@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/function.h>
@@ -621,7 +621,7 @@ NavierStokesOperator<dim, number>::reinit(
 
       this->has_edge_constrained_indices =
         Utilities::MPI::max(edge_constrained_indices.size(),
-                            dof_handler.get_communicator()) > 0;
+                            dof_handler.get_mpi_communicator()) > 0;
 
       if (this->has_edge_constrained_indices)
         {
@@ -826,7 +826,7 @@ NavierStokesOperator<dim, number>::get_system_matrix() const
         this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int ?
           dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level()) :
           dof_handler.locally_owned_dofs(),
-        dof_handler.get_triangulation().get_communicator());
+        dof_handler.get_triangulation().get_mpi_communicator());
 
       if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
         MGTools::make_sparsity_pattern(dof_handler,

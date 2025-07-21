@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-20
+
+### Fixed
+
+- MAJOR Deal.II-9.8pre deprecates some functions such as get_communicator and the parallel::distributed::SolutionTransfer class. This PR uses the modern version of these functions or classes following the new 9.8 release standard before they are deprecated. This PR officially deprecates the compatibility with deal.II 9.6.0.  [#1589](https://github.com/chaos-polymtl/lethe/pull/1589)
+
 ### [Master] - 2025-07-17
 
 ### Added
@@ -11,19 +17,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-07-16
 
-### CHange
+### Changed
 
 - MINOR Lethe could not be compiled when deal.II was using 64 bit indices due to some locations where unsigned int were used instead of types::global_dof_index. This PR fixes this by using the correct type. It compiles with deal.II with 64bit indices. [#1585](https://github.com/chaos-polymtl/lethe/pull/1585)
 
 ### [Master] - 2025-07-14
 
-### Change
+### Changed
 
 - MAJOR The introduction of the deal.II-9.8-pre version introduced numerous warnings for functions that will be deprecated in the near future. This PR addresses all of these warnings. Furthermore, I reran all of the prototypes and realized there was an issue with the matrix_free_non_linear prototype in which the multigrid solution did not have their ghost value correctly calculated. I have addressed this issue at the same time. Finally, on my machine I encountered a small segfault when running the kelly error estimator with multiple variables. This is because the solver assumed the number of coarsen and refine flag would be the same in the for loop, while there is no reason for this assumption. I have thus fixed this problem within this PR also. [#1582](https://github.com/chaos-polymtl/lethe/pull/1582)
 
 ### [Master] - 2025-07-13
 
-### Change
+### Changed
 
 - MAJOR The void fraction linear tolerance can now be specified directly within the .prm file. The previous default value which was 1e-15 has now been changed to the default value used for all linear solvers. We advise users to explicitely specify the minimum tolerance for the void fraction within their parameter files. [#1580](https://github.com/chaos-polymtl/lethe/pull/1580)
 

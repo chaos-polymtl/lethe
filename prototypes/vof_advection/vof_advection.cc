@@ -2504,8 +2504,7 @@ template <int dim>
 void
 AdvectionProblem<dim>::refine_grid()
 {
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_trans(
-    dof_handler);
+  SolutionTransfer<dim, VectorType> solution_trans(dof_handler);
 
   Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
 

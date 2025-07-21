@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/postprocessors_smoothing.h>
@@ -12,7 +12,7 @@ PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
   , dof_handler(triangulation)
   , simulation_parameters(simulation_parameters)
   , number_quadrature_points(number_quadrature_points)
-  , mpi_communicator(triangulation.get_communicator())
+  , mpi_communicator(triangulation.get_mpi_communicator())
 {
   mapping       = std::make_shared<MappingQ<dim>>(1);
   system_matrix = std::make_shared<TrilinosWrappers::SparseMatrix>();

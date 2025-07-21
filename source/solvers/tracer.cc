@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -654,7 +654,7 @@ template <int dim>
 double
 Tracer<dim>::calculate_L2_error()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values(*mapping,
                           *fe,
@@ -699,7 +699,7 @@ template <int dim>
 void
 Tracer<dim>::finish_simulation()
 {
-  auto         mpi_communicator = triangulation->get_communicator();
+  auto         mpi_communicator = triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
@@ -800,7 +800,7 @@ template <int dim>
 void
 Tracer<dim>::calculate_tracer_statistics()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   FEValues<dim> fe_values(*mapping,
                           *fe,
@@ -896,8 +896,8 @@ template <typename VectorType>
 std::map<types::boundary_id, double>
 Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 {
-  const unsigned int n_q_points_face  = this->face_quadrature->size();
-  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+  const unsigned int n_q_points_face = this->face_quadrature->size();
+  const MPI_Comm mpi_communicator    = this->dof_handler.get_mpi_communicator();
 
   // Initialize tracer information
   std::vector<double>         tracer_values(n_q_points_face);
@@ -1037,7 +1037,7 @@ Tracer<dim>::write_tracer_flow_rates(
         this->pcout << "\t boundary " << id << ": " << value << std::endl;
     }
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
   if ((simulation_control->get_step_number() %
          this->simulation_parameters.post_processing.output_frequency ==
        0) &&
@@ -1056,7 +1056,7 @@ template <int dim>
 void
 Tracer<dim>::write_tracer_statistics()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
@@ -1087,7 +1087,7 @@ template <int dim>
 void
 Tracer<dim>::post_mesh_adaptation()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   // Set up the vectors for the transfer
   GlobalVectorType tmp(locally_owned_dofs, mpi_communicator);
@@ -1118,9 +1118,8 @@ Tracer<dim>::write_checkpoint()
 {
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
-  solution_transfer = std::make_shared<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
-    dof_handler);
+  solution_transfer =
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
   for (const auto &previous_solution : previous_solutions)
@@ -1149,7 +1148,7 @@ template <int dim>
 void
 Tracer<dim>::read_checkpoint()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading tracer checkpoint" << std::endl;
 
   std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions.size());
@@ -1200,7 +1199,7 @@ Tracer<dim>::setup_dofs()
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
 
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
@@ -1422,7 +1421,7 @@ Tracer<dim>::solve_linear_system(const bool initial_step,
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;

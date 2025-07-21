@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Base
@@ -136,7 +136,7 @@ calculate_pressure_drop(const DoFHandler<dim>     &dof_handler,
         }
     }
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   static_pressure_inlet_boundary =
     Utilities::MPI::sum(static_pressure_inlet_boundary, mpi_communicator);
   static_pressure_outlet_boundary =
@@ -280,7 +280,7 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
             }
         }
     }
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   CFL                             = Utilities::MPI::max(CFL, mpi_communicator);
   return (CFL);
 }
@@ -394,7 +394,7 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
             }
         }
     }
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   en                              = Utilities::MPI::sum(en, mpi_communicator);
   return (en);
 }
@@ -487,7 +487,7 @@ calculate_pressure_power(const DoFHandler<dim> &dof_handler,
 
   pressure_power /= GridTools::volume(dof_handler.get_triangulation(), mapping);
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   pressure_power = Utilities::MPI::sum(pressure_power, mpi_communicator);
 
   return pressure_power;
@@ -598,7 +598,7 @@ calculate_viscous_dissipation(
   viscous_dissipation /=
     GridTools::volume(dof_handler.get_triangulation(), mapping);
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   viscous_dissipation =
     Utilities::MPI::sum(viscous_dissipation, mpi_communicator);
   return viscous_dissipation;
@@ -703,7 +703,7 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
             }
         }
     }
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   KEU = Utilities::MPI::sum(KEU / domain_volume, mpi_communicator);
   return (KEU);
 }
@@ -819,7 +819,7 @@ calculate_apparent_viscosity(
             }
         }
     }
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   integral_viscosity_x_shear_rate =
     Utilities::MPI::sum(integral_viscosity_x_shear_rate, mpi_communicator);
   integral_shear_rate =
@@ -915,7 +915,7 @@ calculate_forces(
                                    update_values | update_quadrature_points |
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
-  const MPI_Comm    mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm    mpi_communicator = dof_handler.get_mpi_communicator();
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -1081,7 +1081,7 @@ calculate_torques(
                                    update_values | update_quadrature_points |
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
-  const MPI_Comm    mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm    mpi_communicator = dof_handler.get_mpi_communicator();
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -1264,7 +1264,7 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
             }
         }
     }
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   pressure_integral = Utilities::MPI::sum(pressure_integral, mpi_communicator);
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, mpi_communicator);
@@ -1428,7 +1428,7 @@ calculate_flow_rate(const DoFHandler<dim>     &dof_handler,
         }
     }
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   area                            = Utilities::MPI::sum(area, mpi_communicator);
   flow_rate = Utilities::MPI::sum(flow_rate, mpi_communicator);
 
@@ -1618,7 +1618,7 @@ calculate_average_velocity(const DoFHandler<dim> &dof_handler,
         }
     }
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
   average_velocity = Utilities::MPI::sum(average_velocity, mpi_communicator);
   volume           = Utilities::MPI::sum(volume, mpi_communicator);
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Dofs
@@ -68,7 +68,7 @@ calculate_fluid_and_particle_volumes(
         }
     }
   const MPI_Comm mpi_communicator =
-    void_fraction_dof_handler.get_communicator();
+    void_fraction_dof_handler.get_mpi_communicator();
   total_volume_fluid =
     Utilities::MPI::sum(total_volume_fluid, mpi_communicator);
   total_volume_particles =

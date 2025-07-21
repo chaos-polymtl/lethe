@@ -14,7 +14,7 @@ void
 VOFAlgebraicInterfaceReinitialization<dim>::setup_dofs()
 {
   // Get MPI communicator
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Distribute and renumber DoFs
   this->dof_handler->distribute_dofs(*this->fe);
@@ -263,7 +263,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
     this->subequations_interface.get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),
     *this->cell_quadrature,
-    this->triangulation->get_communicator());
+    this->triangulation->get_mpi_communicator());
   const double diffusivity_coefficient = compute_diffusivity(h_min);
 
   // BDF coefficients for pseudo time-stepping
@@ -459,7 +459,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
     this->subequations_interface.get_dof_handler(
       VOFSubequationsID::algebraic_interface_reinitialization),
     *this->cell_quadrature,
-    this->triangulation->get_communicator());
+    this->triangulation->get_mpi_communicator());
   const double diffusivity_coefficient = compute_diffusivity(h_min);
 
   // BDF coefficients for pseudo time-stepping
@@ -598,7 +598,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
   const bool initial_step,
   const bool /*renewed_matrix*/)
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
@@ -776,7 +776,7 @@ void
 VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
   const unsigned int step)
 {
-  auto              mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
   const std::string folder =
     this->simulation_parameters.simulation_control.output_folder +
     "/algebraic-reinitialization-steps-output/";
