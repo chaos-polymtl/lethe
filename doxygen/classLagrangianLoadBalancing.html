@@ -117,10 +117,10 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:ac8dc6856b7e2ac403bd5bd3d6a6233e6" id="r_ac8dc6856b7e2ac403bd5bd3d6a6233e6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ac8dc6856b7e2ac403bd5bd3d6a6233e6">calculate_total_cell_weight</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus status) const</td></tr>
-<tr class="separator:ac8dc6856b7e2ac403bd5bd3d6a6233e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87618c67de459ace8c6130ba8dc21cfc" id="r_a87618c67de459ace8c6130ba8dc21cfc"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#a87618c67de459ace8c6130ba8dc21cfc">calculate_total_cell_weight_with_mobility_status</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus status) const</td></tr>
-<tr class="separator:a87618c67de459ace8c6130ba8dc21cfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad347d5b3ea6cad7ea777675160232727" id="r_ad347d5b3ea6cad7ea777675160232727"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ad347d5b3ea6cad7ea777675160232727">calculate_total_cell_weight</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const CellStatus status) const</td></tr>
+<tr class="separator:ad347d5b3ea6cad7ea777675160232727"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4e394d651f4779a6d063015dc642d72" id="r_ae4e394d651f4779a6d063015dc642d72"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangianLoadBalancing.html#ae4e394d651f4779a6d063015dc642d72">calculate_total_cell_weight_with_mobility_status</a> (const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const CellStatus status) const</td></tr>
+<tr class="separator:ae4e394d651f4779a6d063015dc642d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -196,8 +196,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac8dc6856b7e2ac403bd5bd3d6a6233e6" name="ac8dc6856b7e2ac403bd5bd3d6a6233e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8dc6856b7e2ac403bd5bd3d6a6233e6">&#9670;&#160;</a></span>calculate_total_cell_weight()</h2>
+<a id="ad347d5b3ea6cad7ea777675160232727" name="ad347d5b3ea6cad7ea777675160232727"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad347d5b3ea6cad7ea777675160232727">&#9670;&#160;</a></span>calculate_total_cell_weight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -216,7 +216,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus&#160;</td>
+          <td class="paramtype">const CellStatus&#160;</td>
           <td class="paramname"><em>status</em>&#160;</td>
         </tr>
         <tr>
@@ -244,12 +244,12 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>TODO: Remove preprocessor directives after deal.ii v.9.6 release</p>
 <dl class="section return"><dt>Returns</dt><dd>The total weight of the cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00145">145</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00144">144</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
 
 </div>
 </div>
-<a id="a87618c67de459ace8c6130ba8dc21cfc" name="a87618c67de459ace8c6130ba8dc21cfc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87618c67de459ace8c6130ba8dc21cfc">&#9670;&#160;</a></span>calculate_total_cell_weight_with_mobility_status()</h2>
+<a id="ae4e394d651f4779a6d063015dc642d72" name="ae4e394d651f4779a6d063015dc642d72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4e394d651f4779a6d063015dc642d72">&#9670;&#160;</a></span>calculate_total_cell_weight_with_mobility_status()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -268,7 +268,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename parallel::distributed::Triangulation&lt; dim &gt;::CellStatus&#160;</td>
+          <td class="paramtype">const CellStatus&#160;</td>
           <td class="paramname"><em>status</em>&#160;</td>
         </tr>
         <tr>
@@ -285,9 +285,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </div><div class="memdoc">
 
 <p>Indicates to the triangulation how much computational work is expected to happen on this cell, and consequently how the domain needs to be partitioned. Only used with the Adaptive Sparse Contacts mechanism. </p>
-<p>Similar to the <a class="el" href="classLagrangianLoadBalancing.html#ac8dc6856b7e2ac403bd5bd3d6a6233e6" title="Indicates to the triangulation how much computational work is expected to happen on this cell,...">calculate_total_cell_weight()</a>, this function is used when the cell weight is adapted to the mobility status. For instance, if the cell is inactive, its computational load will be significantly lower than if it is a mobile cell since there is no force calculation and no velocity integration for the particles that lie within it. The weight of the cells must thus be adapted to the status of the cell.</p>
+<p>Similar to the <a class="el" href="classLagrangianLoadBalancing.html#ad347d5b3ea6cad7ea777675160232727" title="Indicates to the triangulation how much computational work is expected to happen on this cell,...">calculate_total_cell_weight()</a>, this function is used when the cell weight is adapted to the mobility status. For instance, if the cell is inactive, its computational load will be significantly lower than if it is a mobile cell since there is no force calculation and no velocity integration for the particles that lie within it. The weight of the cells must thus be adapted to the status of the cell.</p>
 <p>total cell weight = cell weight + load balancing factor * n particles * particle weight</p>
-<p>TODO: Remove preprocessor directives after deal.ii v.9.6 release</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>The cell for which the load is calculated </td></tr>
@@ -297,7 +296,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The total weight of the cell </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00211">211</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8cc_source.html#l00187">187</a> of file <a class="el" href="load__balancing_8cc_source.html">load_balancing.cc</a>.</p>
 
 </div>
 </div>
@@ -397,7 +396,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00098">98</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
-<p class="reference">References <a class="el" href="load__balancing_8h_source.html#l00375">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::iteration_check_function</a>.</p>
+<p class="reference">References <a class="el" href="load__balancing_8h_source.html#l00337">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::iteration_check_function</a>.</p>
 
 </div>
 </div>
@@ -499,7 +498,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00249">249</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
-<p class="reference">References <a class="el" href="load__balancing_8cc_source.html#l00212">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::calculate_total_cell_weight_with_mobility_status()</a>, <a class="el" href="load__balancing_8h_source.html#l00380">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight</a>, and <a class="el" href="load__balancing_8h_source.html#l00453">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="load__balancing_8cc_source.html#l00188">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::calculate_total_cell_weight_with_mobility_status()</a>, <a class="el" href="load__balancing_8h_source.html#l00342">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight</a>, and <a class="el" href="load__balancing_8h_source.html#l00415">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -538,7 +537,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00193">193</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
-<p class="reference">References <a class="el" href="load__balancing_8cc_source.html#l00145">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::calculate_total_cell_weight()</a>, <a class="el" href="load__balancing_8h_source.html#l00380">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight</a>, <a class="el" href="load__balancing_8h_source.html#l00382">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight_function</a>, and <a class="el" href="load__balancing_8h_source.html#l00453">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="load__balancing_8cc_source.html#l00144">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::calculate_total_cell_weight()</a>, <a class="el" href="load__balancing_8h_source.html#l00342">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight</a>, <a class="el" href="load__balancing_8h_source.html#l00344">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight_function</a>, and <a class="el" href="load__balancing_8h_source.html#l00415">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -603,7 +602,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00080">80</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
-<p class="reference">References <a class="el" href="load__balancing_8h_source.html#l00463">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::adaptive_sparse_contacts</a>, <a class="el" href="load__balancing_8h_source.html#l00458">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::particle_handler</a>, <a class="el" href="load__balancing_8h_source.html#l00448">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::simulation_control</a>, and <a class="el" href="load__balancing_8h_source.html#l00453">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="load__balancing_8h_source.html#l00425">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::adaptive_sparse_contacts</a>, <a class="el" href="load__balancing_8h_source.html#l00420">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::particle_handler</a>, <a class="el" href="load__balancing_8h_source.html#l00410">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::simulation_control</a>, and <a class="el" href="load__balancing_8h_source.html#l00415">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -637,7 +636,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00113">113</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
-<p class="reference">References <a class="el" href="load__balancing_8cc_source.html#l00036">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_dynamic()</a>, <a class="el" href="load__balancing_8cc_source.html#l00027">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_frequent()</a>, <a class="el" href="load__balancing_8cc_source.html#l00019">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_once()</a>, <a class="el" href="load__balancing_8cc_source.html#l00060">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_with_sparse_contacts()</a>, and <a class="el" href="load__balancing_8h_source.html#l00369">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_method</a>.</p>
+<p class="reference">References <a class="el" href="load__balancing_8cc_source.html#l00036">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_dynamic()</a>, <a class="el" href="load__balancing_8cc_source.html#l00027">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_frequent()</a>, <a class="el" href="load__balancing_8cc_source.html#l00019">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_once()</a>, <a class="el" href="load__balancing_8cc_source.html#l00060">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::check_load_balance_with_sparse_contacts()</a>, and <a class="el" href="load__balancing_8h_source.html#l00331">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_method</a>.</p>
 
 </div>
 </div>
@@ -677,7 +676,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00040">40</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00336">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::active_load_balancing_factor</a>, <a class="el" href="load__balancing_8h_source.html#l00399">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::active_status_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00328">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::cell_weight_function</a>, <a class="el" href="load__balancing_8h_source.html#l00382">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight_function</a>, <a class="el" href="load__balancing_8h_source.html#l00417">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::dynamic_check_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00321">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::dynamic_load_balance_check_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00337">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::inactive_load_balancing_factor</a>, <a class="el" href="load__balancing_8h_source.html#l00393">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::inactive_status_factor</a>, <a class="el" href="load__balancing_8h_source.html#l00375">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::iteration_check_function</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00315">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_frequency</a>, <a class="el" href="load__balancing_8h_source.html#l00411">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_frequency</a>, <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a77b2574914ef20413457311895ee82b9">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_method</a>, <a class="el" href="load__balancing_8h_source.html#l00369">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00331">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_particle_weight</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00312">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_step</a>, <a class="el" href="load__balancing_8h_source.html#l00405">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_step</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00318">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_threshold</a>, <a class="el" href="load__balancing_8h_source.html#l00428">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_threshold</a>, <a class="el" href="load__balancing_8h_source.html#l00387">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::particle_weight</a>, and <a class="el" href="load__balancing_8h_source.html#l00113">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::set_iteration_check_function()</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00336">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::active_load_balancing_factor</a>, <a class="el" href="load__balancing_8h_source.html#l00361">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::active_status_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00328">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::cell_weight_function</a>, <a class="el" href="load__balancing_8h_source.html#l00344">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::cell_weight_function</a>, <a class="el" href="load__balancing_8h_source.html#l00379">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::dynamic_check_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00321">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::dynamic_load_balance_check_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00337">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::inactive_load_balancing_factor</a>, <a class="el" href="load__balancing_8h_source.html#l00355">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::inactive_status_factor</a>, <a class="el" href="load__balancing_8h_source.html#l00337">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::iteration_check_function</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00315">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_frequency</a>, <a class="el" href="load__balancing_8h_source.html#l00373">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_frequency</a>, <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a77b2574914ef20413457311895ee82b9">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_method</a>, <a class="el" href="load__balancing_8h_source.html#l00331">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00331">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_particle_weight</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00312">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_step</a>, <a class="el" href="load__balancing_8h_source.html#l00367">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_balance_step</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00318">Parameters::Lagrangian::ModelParameters&lt; dim &gt;::load_balance_threshold</a>, <a class="el" href="load__balancing_8h_source.html#l00390">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::load_threshold</a>, <a class="el" href="load__balancing_8h_source.html#l00349">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::particle_weight</a>, and <a class="el" href="load__balancing_8h_source.html#l00113">LagrangianLoadBalancing&lt; dim, PropertiesIndex &gt;::set_iteration_check_function()</a>.</p>
 
 </div>
 </div>
@@ -706,7 +705,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Load weight factor of particle weight in a cell with an active mobility status (only with ASC). </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00399">399</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00361">361</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -734,7 +733,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Pointer to the adaptive sparse contacts object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00463">463</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00425">425</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -762,7 +761,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Default hard-coded load weight of a cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00380">380</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00342">342</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -788,7 +787,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00382">382</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00344">344</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -816,7 +815,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Frequency of check for the load balancing execution, only when method is <code>dynamic</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00417">417</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00379">379</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -844,7 +843,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Load weight factor of particle weight in a cell with an inactive mobility status (only with ASC). </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00393">393</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00355">355</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -872,7 +871,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The load balancing iteration check function according to the load balancing method. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00375">375</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00337">337</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -900,7 +899,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Frequency of load balancing execution, only when method is <code>frequent</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00411">411</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00373">373</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -928,7 +927,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>The load balancing method chosen by the user. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00369">369</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00331">331</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -956,7 +955,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Iteration number for load balancing execution, only when method is <code>once</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00405">405</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00367">367</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -985,7 +984,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Threshold (\beta) for the check load balancing execution, only when method is <code>dynamic</code>. </p>
 <p>Load balancing will be done when the computational load amongst core is too uneven. If L_{max} - L_{min} &gt; \beta \bar{L}, where L_{max}, L_{min}, and \bar{L} are the maximum, minimum, and the average load, the load balancing will be executed. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00428">428</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00390">390</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -1013,7 +1012,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>MPI communicator. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00433">433</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00395">395</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -1041,7 +1040,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Number of MPI processes. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00438">438</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00400">400</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -1069,7 +1068,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Pointer to the particle handler object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00458">458</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00420">420</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -1097,7 +1096,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Load weight of a particle, the default parameters is 10000. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00387">387</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00349">349</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -1125,7 +1124,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Pointer to the simulation control object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00448">448</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00410">410</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -1153,7 +1152,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Rank of the current MPI process. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00443">443</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00405">405</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
@@ -1181,7 +1180,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Pointer to the triangulation object. </p>
 
-<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00453">453</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="load__balancing_8h_source.html#l00415">415</a> of file <a class="el" href="load__balancing_8h_source.html">load_balancing.h</a>.</p>
 
 </div>
 </div>
