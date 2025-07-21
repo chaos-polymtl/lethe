@@ -1233,7 +1233,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   this->triangulation->refine_global(1);
 
   // If mortar is enabled, update mapping cache with refined triangulation
-  if (this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar_parameters.enable)
     this->mapping_cache->initialize(*this->mapping, *this->triangulation);
 
   setup_dofs();
@@ -1991,7 +1991,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
 {
   TimerOutput::Scope t(this->computing_timer, "Update mortar");
 
-  if (!this->simulation_parameters.mortar.enable)
+  if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
   // Rotate mapping, but first check if we are not at the start of the
@@ -2004,7 +2004,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
     this->dof_handler,
-    this->simulation_parameters.mortar);
+    this->simulation_parameters.mortar_parameters);
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
@@ -2021,9 +2021,9 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
       this->zero_constraints,
       this->mortar_coupling_evaluator,
       this->mortar_manager,
-      this->simulation_parameters.mortar.rotor_boundary_id,
-      this->simulation_parameters.mortar.stator_boundary_id,
-      this->simulation_parameters.mortar.sip_factor);
+      this->simulation_parameters.mortar_parameters.rotor_boundary_id,
+      this->simulation_parameters.mortar_parameters.stator_boundary_id,
+      this->simulation_parameters.mortar_parameters.sip_factor);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2032,7 +2032,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
   TimerOutput::Scope t(this->computing_timer, "Rotate mortar");
 
-  if (this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar_parameters.enable)
     {
       // Get updated rotation angle (radians)
       simulation_parameters.mortar.rotor_rotation_angle->set_time(
@@ -2055,7 +2055,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
         *this->mapping_cache,
         *this->mapping,
         compute_n_subdivisions_and_radius(*this->triangulation,
-                                          this->simulation_parameters.mortar)
+                                          this->simulation_parameters.mortar_parameters)
           .second,
         rotation_angle);
     }

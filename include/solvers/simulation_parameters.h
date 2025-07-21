@@ -61,7 +61,7 @@ public:
   Parameters::ALE<dim>                          ale;
   Parameters::Evaporation                       evaporation;
   Parameters::TracerDriftVelocity<dim>          tracer_drift_velocity;
-  Parameters::Mortar<dim>                       mortar;
+  Parameters::Mortar<dim>                       mortar_parameters;
 
 
   PhysicalPropertiesManager physical_properties_manager;
@@ -147,7 +147,7 @@ public:
 
     tracer_drift_velocity.declare_parameters(prm);
 
-    mortar.declare_parameters(prm);
+    mortar_parameters.declare_parameters(prm);
   }
 
   void
@@ -202,7 +202,7 @@ public:
     ale.parse_parameters(prm);
     evaporation.parse_parameters(prm);
     tracer_drift_velocity.parse_parameters(prm);
-    mortar.parse_parameters(prm);
+    mortar_parameters.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
 
