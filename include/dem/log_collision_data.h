@@ -4,6 +4,11 @@
 #ifndef lethe_collision_log_data_h
 #define lethe_collision_log_data_h
 
+#include <core/dem_properties.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
+#include <dem/dem_contact_manager.h>
+
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/types.h>
 
@@ -112,5 +117,59 @@ private:
   // List to store completed collision events
   std::list<collision_event<dim>> events;
 };
+
+/**
+ * @brief Get the 3d location of the particle.
+ *
+ * @param[in] particle The particle to get the location from.
+ * @return 3d location of particle.
+ */
+template <int dim>
+inline Point<3>
+get_location(const Particles::ParticleIterator<dim> &particle)
+{
+  if constexpr (dim == 3)
+    return particle->get_location();
+
+  if constexpr (dim == 2)
+    return point_nd_to_3d(particle->get_location());
+}
+
+/**
+ * @brief This function is used to find the projection of vector_a on
+ * vector_b
+ * @param[in] vector_a A vector which is going to be projected on vector_b
+ * @param[in] vector_b The projection vector of vector_a
+ * @return The projection of vector_a on vector_b
+ */
+inline Tensor<1, 3>
+find_projection(const Tensor<1, 3> &vector_a, const Tensor<1, 3> &vector_b)
+{
+  Tensor<1, 3> vector_c;
+  vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
+
+  return vector_c;
+}
+
+/**
+ * @brief Logs the particle-wall contact statistics.
+ *
+ * @param[in] parameters Parameters
+ * @param[in] particle_wall_pairs_in_contact Required information for the
+ * calculation of the particle-wall contact.
+ * @param[in] current_time Current simulation time.
+ * @param[out] ongoing_collision_log Ongoing collision log.
+ * @param[out] collision_event_log Collision event log.
+ */
+template <int dim, typename PropertiesIndex>
+void
+log_collision_data(
+  const DEMSolverParameters<dim> &parameters,
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<dim> &ongoing_collision_log,
+  CollisionEventLog<dim>   &collision_event_log);
+
 
 #endif // lethe_collision_log_data_h

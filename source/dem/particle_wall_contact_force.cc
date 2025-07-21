@@ -17,12 +17,6 @@ ParticleWallContactForce<dim,
   ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
-  , collision_verbosity(dem_parameters.model_parameters.collision_verbosity)
-  , wall_boundary_id(dem_parameters.model_parameters.wall_boundary_id)
-  , log_collisions_with_all_walls(
-      dem_parameters.model_parameters.log_collisions_with_all_walls)
-  , particle_wall_contact_statistics(
-      dem_parameters.model_parameters.particle_wall_contact_statistics)
 {
   set_effective_properties(dem_parameters);
   if constexpr (std::is_same_v<PropertiesIndex,
@@ -43,23 +37,14 @@ ParticleWallContactForce<dim,
                          rolling_friction_model>::
   calculate_particle_wall_contact(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                                    &particle_wall_pairs_in_contact,
-    const double                     dt,
-    const double                     current_time,
-    Particles::ParticleHandler<dim> &particle_handler,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
-    OngoingCollisionLog<dim>                     &ongoing_collision_log,
-    CollisionEventLog<dim>                       &collision_event_log)
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
   // Getting the threshold distance for contact force, this is useful
   // for non-contact cohesive force models such as the DMT.
   const double force_calculation_threshold_distance =
     get_force_calculation_threshold_distance();
-
-  // particles_in_contact_now will be used to find the particles that ended
-  // their collision during this time step, so that we can log the end of the
-  // collision.
-  std::set<unsigned int> particles_in_contact_now;
 
   // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
@@ -103,58 +88,6 @@ ParticleWallContactForce<dim,
 
           if (normal_overlap > force_calculation_threshold_distance)
             {
-              // If the feature is enabled, we log the collision statistics for
-              // walls
-              if (particle_wall_contact_statistics)
-                {
-                  types::boundary_id boundary_id = contact_info.boundary_id;
-
-                  // Logs if logging for all walls is enabled or if the
-                  // boundary_id matches the wall_boundary_id
-                  if (boundary_id == wall_boundary_id ||
-                      log_collisions_with_all_walls)
-                    {
-                      unsigned int particle_id = particle->get_id();
-                      particles_in_contact_now.insert(
-                        particle_id); // We track nwhich particles are in
-                                      // contact now
-
-                      if (!ongoing_collision_log.is_in_collision(particle_id))
-                        {
-                          collision_log<dim> start_log;
-                          start_log.particle_id = particle_id;
-
-                          start_log.velocity[0] =
-                            particle_properties[PropertiesIndex::v_x];
-                          start_log.velocity[1] =
-                            particle_properties[PropertiesIndex::v_y];
-                          start_log.velocity[2] =
-                            particle_properties[PropertiesIndex::v_z];
-
-                          start_log.omega[0] =
-                            particle_properties[PropertiesIndex::omega_x];
-                          start_log.omega[1] =
-                            particle_properties[PropertiesIndex::omega_y];
-                          start_log.omega[2] =
-                            particle_properties[PropertiesIndex::omega_z];
-
-                          start_log.time        = current_time;
-                          start_log.boundary_id = contact_info.boundary_id;
-
-                          ongoing_collision_log.start_collision(start_log);
-
-                          if (collision_verbosity ==
-                              Parameters::Verbosity::verbose)
-                            {
-                              std::cout << "Collision with boundary "
-                                        << start_log.boundary_id
-                                        << " started for particle "
-                                        << particle_id << std::endl;
-                            }
-                        }
-                    }
-                }
-
               // Updating contact information
               this->update_contact_information(contact_info,
                                                tangential_relative_velocity,
@@ -192,58 +125,6 @@ ParticleWallContactForce<dim,
             {
               contact_info.tangential_displacement.clear();
               contact_info.rolling_resistance_spring_torque.clear();
-            }
-        }
-    }
-
-  if (particle_wall_contact_statistics)
-    {
-      // Now we check which particles ended their collision during this time
-      // step
-      for (auto it = particle_handler.begin(); it != particle_handler.end();
-           ++it)
-        {
-          unsigned int particle_id = it->get_id();
-
-          // If the particle is not in contact now, but was in contact before
-          if (particles_in_contact_now.find(particle_id) ==
-                particles_in_contact_now.end() &&
-              ongoing_collision_log.is_in_collision(particle_id))
-            {
-              collision_log<dim> end_log;
-              end_log.particle_id             = particle_id;
-              const auto &particle_properties = it->get_properties();
-
-              end_log.velocity[0] = particle_properties[PropertiesIndex::v_x];
-              end_log.velocity[1] = particle_properties[PropertiesIndex::v_y];
-              end_log.velocity[2] = particle_properties[PropertiesIndex::v_z];
-
-              end_log.omega[0] = particle_properties[PropertiesIndex::omega_x];
-              end_log.omega[1] = particle_properties[PropertiesIndex::omega_y];
-              end_log.omega[2] = particle_properties[PropertiesIndex::omega_z];
-
-              end_log.time = current_time;
-              collision_log<dim> start_log;
-
-              bool ended =
-                ongoing_collision_log.end_collision(particle_id, start_log);
-
-              if (ended)
-                {
-                  end_log.boundary_id = start_log.boundary_id;
-                  collision_event<dim> event;
-                  event.particle_id = particle_id;
-                  event.start_log   = start_log;
-                  event.end_log     = end_log;
-                  collision_event_log.add_event(event);
-
-                  if (collision_verbosity == Parameters::Verbosity::verbose)
-                    {
-                      std::cout << "Collision with boundary "
-                                << end_log.boundary_id << " ended for particle "
-                                << particle_id << std::endl;
-                    }
-                }
             }
         }
     }

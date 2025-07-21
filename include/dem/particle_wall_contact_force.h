@@ -9,7 +9,6 @@
 #include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 
-#include <dem/collision_log_data.h>
 #include <dem/contact_info.h>
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
@@ -47,22 +46,14 @@ public:
    * @param[in] particle_wall_pairs_in_contact Required information for the
    * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
-   * @param[in] current_time Current simulation time.
-   * @param[in] particle_handler Particle handler.
    * @param[out] contact_outcome Interaction outcomes.
-   * @param[out] ongoing_collision_log Ongoing collision log.
-   * @param[out] collision_event_log Collision event log.
    */
   virtual void
   calculate_particle_wall_contact(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                                    &particle_wall_pairs_in_contact,
-    const double                     dt,
-    const double                     current_time,
-    Particles::ParticleHandler<dim> &particle_handler,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
-    OngoingCollisionLog<dim>                     &ongoing_collision_log,
-    CollisionEventLog<dim>                       &collision_event_log) = 0;
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
@@ -111,22 +102,14 @@ public:
    * @param[in] particle_wall_pairs_in_contact Required information for the
    * calculation of the particle-wall contact.
    * @param[in] dt DEM time step.
-   * @param[in] current_time Current simulation time.
-   * @param[in] particle_handler Particle handler.
    * @param[out] contact_outcome Interaction outcomes.
-   * @param[out] ongoing_collision_log Ongoing collision log.
-   * @param[out] collision_event_log Collision event log.
    */
   virtual void
   calculate_particle_wall_contact(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                                    &particle_wall_pairs_in_contact,
-    const double                     dt,
-    const double                     current_time,
-    Particles::ParticleHandler<dim> &particle_handler,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
-    OngoingCollisionLog<dim>                     &ongoing_collision_log,
-    CollisionEventLog<dim>                       &collision_event_log) override;
+                &particle_wall_pairs_in_contact,
+    const double dt,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
@@ -1064,30 +1047,26 @@ private:
 
   // Members of the class
 
-  unsigned int          n_particle_types;
-  std::vector<double>   effective_youngs_modulus;
-  std::vector<double>   effective_real_youngs_modulus;
-  std::vector<double>   effective_shear_modulus;
-  std::vector<double>   effective_coefficient_of_restitution;
-  std::vector<double>   effective_coefficient_of_friction;
-  std::vector<double>   effective_coefficient_of_rolling_friction;
-  std::vector<double>   effective_coefficient_of_rolling_viscous_damping;
-  std::vector<double>   effective_surface_energy;
-  std::vector<double>   effective_hamaker_constant;
-  std::vector<double>   model_parameter_beta;
-  std::vector<double>   equivalent_surface_roughness;
-  std::vector<double>   equivalent_surface_slope;
-  std::vector<double>   effective_microhardness;
-  std::vector<double>   particle_thermal_conductivity;
-  std::vector<double>   gas_parameter_m;
-  double                gas_thermal_conductivity;
-  double                wall_thermal_conductivity;
-  const double          dmt_cut_off_threshold;
-  const double          f_coefficient_epsd;
-  Parameters::Verbosity collision_verbosity;
-  unsigned int          wall_boundary_id;
-  bool                  log_collisions_with_all_walls;
-  bool                  particle_wall_contact_statistics;
+  unsigned int        n_particle_types;
+  std::vector<double> effective_youngs_modulus;
+  std::vector<double> effective_real_youngs_modulus;
+  std::vector<double> effective_shear_modulus;
+  std::vector<double> effective_coefficient_of_restitution;
+  std::vector<double> effective_coefficient_of_friction;
+  std::vector<double> effective_coefficient_of_rolling_friction;
+  std::vector<double> effective_coefficient_of_rolling_viscous_damping;
+  std::vector<double> effective_surface_energy;
+  std::vector<double> effective_hamaker_constant;
+  std::vector<double> model_parameter_beta;
+  std::vector<double> equivalent_surface_roughness;
+  std::vector<double> equivalent_surface_slope;
+  std::vector<double> effective_microhardness;
+  std::vector<double> particle_thermal_conductivity;
+  std::vector<double> gas_parameter_m;
+  double              gas_thermal_conductivity;
+  double              wall_thermal_conductivity;
+  const double        dmt_cut_off_threshold;
+  const double        f_coefficient_epsd;
 
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>>

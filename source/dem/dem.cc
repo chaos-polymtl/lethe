@@ -523,11 +523,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
   particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
     simulation_control->get_time_step(),
-    simulation_control->get_current_time(),
-    particle_handler,
-    contact_outcome,
-    ongoing_collision_log,
-    collision_event_log);
+    contact_outcome);
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
@@ -535,11 +531,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
-        simulation_control->get_current_time(),
-        particle_handler,
-        contact_outcome,
-        ongoing_collision_log,
-        collision_event_log);
+        contact_outcome);
     }
 
   // Particle-solid objects contact force
@@ -1150,6 +1142,17 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // Visualization
       if (simulation_control->is_output_iteration())
         write_output_results();
+
+      // Log the contact statistics if the parameter is enabled
+      if (parameters.model_parameters.particle_wall_contact_statistics)
+        {
+          log_collision_data<dim, PropertiesIndex>(
+            parameters,
+            contact_manager.get_particle_wall_in_contact(),
+            simulation_control->get_current_time(),
+            ongoing_collision_log,
+            collision_event_log);
+        }
 
       // Calculation of forces and torques if needed
       if (parameters.forces_torques.calculate_force_torque)
