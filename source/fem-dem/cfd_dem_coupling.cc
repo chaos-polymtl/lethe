@@ -962,25 +962,11 @@ void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
-  if (dem_parameters.model_parameters.particle_wall_contact_statistics)
-    {
-      particle_wall_contact_force_object
-        ->calculate_particle_wall_contact_with_stats_log(
-          contact_manager.get_particle_wall_in_contact(),
-          dem_time_step,
-          this->simulation_control->get_current_time(),
-          contact_outcome,
-          ongoing_collision_log,
-          collision_event_log);
-    }
+  particle_wall_contact_force_object->calculate_particle_wall_contact(
+    contact_manager.get_particle_wall_in_contact(),
+    dem_time_step,
+    contact_outcome);
 
-  else
-    {
-      particle_wall_contact_force_object->calculate_particle_wall_contact(
-        contact_manager.get_particle_wall_in_contact(),
-        dem_time_step,
-        contact_outcome);
-    }
 
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
@@ -988,6 +974,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact(
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
+        contact_outcome);
         contact_outcome);
     }
 
@@ -1491,6 +1478,16 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
                                    MOI,
                                    *parallel_triangulation,
                                    sparse_contacts_object);
+    }
+  // Log the contact statistics if the parameter is enabled
+  if (dem_parameters.model_parameters.particle_wall_contact_statistics)
+    {
+      log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
+        dem_parameters,
+        contact_manager.get_particle_wall_in_contact(),
+        this->simulation_control->get_current_time(),
+        ongoing_collision_log,
+        collision_event_log);
     }
 
   dem_action_manager->reset_triggers();

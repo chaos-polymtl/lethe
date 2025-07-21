@@ -22,6 +22,7 @@
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/load_balancing.h>
+#include <dem/log_collision_data.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_point_line_contact_force.h>

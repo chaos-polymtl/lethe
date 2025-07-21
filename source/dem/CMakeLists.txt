@@ -23,6 +23,7 @@ add_library(lethe-dem
   integrator.cc
   lagrangian_post_processing.cc
   load_balancing.cc
+  log_collision_data.cc
   multiphysics_integrator.cc
   output_force_torque_calculation.cc
   particle_handler_conversion.cc
@@ -49,7 +50,6 @@ add_library(lethe-dem
   # Headers
   ../../include/dem/adaptive_sparse_contacts.h
   ../../include/dem/boundary_cells_info_struct.h
-  ../../include/dem/collision_log_data.h
   ../../include/dem/contact_info.h
   ../../include/dem/contact_type.h
   ../../include/dem/data_containers.h
@@ -74,6 +74,7 @@ add_library(lethe-dem
   ../../include/dem/integrator.h
   ../../include/dem/lagrangian_post_processing.h
   ../../include/dem/load_balancing.h
+  ../../include/dem/log_collision_data.h
   ../../include/dem/multiphysics_integrator.h
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_handler_conversion.h

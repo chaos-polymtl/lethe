@@ -1517,9 +1517,9 @@ id,           x,            y,            z,            v_x,          v_y,      
 DEM
 ----
 DEM contact search at dem step 5
-DEM contact search at dem step 9
 Collision with boundary 2 started for particle 0
 Collision with boundary 2 started for particle 1
+DEM contact search at dem step 9
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.88373e-17 s^-1
@@ -4207,6 +4207,7 @@ DEM
 DEM contact search at dem step 5
 Collision with boundary 2 started for particle 1
 DEM contact search at dem step 9
+Collision with boundary 2 started for particle 0
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -5.41538e-16 s^-1
@@ -4228,7 +4229,6 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-Collision with boundary 2 started for particle 0
 Collision with boundary 2 ended for particle 1
 Collision with boundary 2 ended for particle 0
 DEM contact search at dem step 7
@@ -4953,6 +4953,8 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
+Collision with boundary 5 started for particle 1
+Collision with boundary 5 ended for particle 1
 DEM contact search at dem step 9
 Finished 10 DEM iterations
 ---------------------------------------------------------------
@@ -5639,8 +5641,8 @@ id,           x,            y,            z,            v_x,          v_y,      
 DEM
 ----
 Collision with boundary 0 started for particle 1
-Collision with boundary 0 ended for particle 1
 DEM contact search at dem step 9
+Collision with boundary 0 ended for particle 1
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.36433e-16 s^-1
