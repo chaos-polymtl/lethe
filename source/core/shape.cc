@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/shape.h>
@@ -283,12 +283,7 @@ double
 Sphere<dim>::value(const Point<dim> &evaluation_point,
                    const unsigned int /*component*/) const
 {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  return evaluation_point.distance(this->position) - this->effective_radius -
-         this->layer_thickening;
-#else
   return sphere_function->value(evaluation_point) - this->layer_thickening;
-#endif
 }
 
 
@@ -315,13 +310,7 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
   if ((evaluation_point - this->position).norm() <
       1e-12 * this->effective_radius)
     return AutoDerivativeFunction<dim>::gradient(evaluation_point);
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  const Tensor<1, dim> center_to_point = evaluation_point - this->position;
-  const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
-  return grad;
-#else
   return sphere_function->gradient(evaluation_point);
-#endif
 }
 
 template <int dim>
@@ -351,11 +340,8 @@ void
 Sphere<dim>::set_position(const Point<dim> &position)
 {
   this->Shape<dim>::set_position(position);
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-#else
   sphere_function = std::make_shared<Functions::SignedDistance::Sphere<dim>>(
     position, this->effective_radius);
-#endif
 }
 
 template <int dim>

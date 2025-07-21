@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -118,11 +118,7 @@ ParticlePointLineForce<dim, PropertiesIndex>::
           Tensor<1, 3> total_force = spring_normal_force - dashpot_normal_force;
 
           // Getting force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          Tensor<1, 3> &particle_force = force[particle->get_id()];
-#else
           Tensor<1, 3> &particle_force = force[particle->get_local_index()];
-#endif
 
           // Updating the body force of particles in the particle handler
           particle_force += total_force;
@@ -247,11 +243,7 @@ ParticlePointLineForce<dim, PropertiesIndex>::
           Tensor<1, 3> total_force = spring_normal_force - dashpot_normal_force;
 
           // Getting force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          Tensor<1, 3> &particle_force = force[particle->get_id()];
-#else
           Tensor<1, 3> &particle_force = force[particle->get_local_index()];
-#endif
 
           // Updating the body force of particles in the particle handler
           particle_force += total_force;

@@ -98,16 +98,10 @@ test()
               << " is cut " << std::endl;
     }
 
-    // Printing the final position for all the vertices
+  // Printing the final position for all the vertices
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  Legacy::DataOut<3>                   data_out;
-  Legacy::DataOut<2, DoFHandler<2, 3>> flat_data_out;
-#else
   DataOut<3>    data_out;
   DataOut<2, 3> flat_data_out;
-#endif
-
 
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(subdomain, "subdomain");
