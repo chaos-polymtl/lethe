@@ -126,6 +126,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a44257122ea767efddf5385f698591efe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad455d960df990fb708a6e7a1d63cbc4a" id="r_ad455d960df990fb708a6e7a1d63cbc4a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#ad455d960df990fb708a6e7a1d63cbc4a">potential_cahn_hilliard_order</a></td></tr>
 <tr class="separator:ad455d960df990fb708a6e7a1d63cbc4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f1bb52821d2a0f932f44349a0db1251" id="r_a1f1bb52821d2a0f932f44349a0db1251"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#a1f1bb52821d2a0f932f44349a0db1251">enable_bubble_function_velocity</a></td></tr>
+<tr class="separator:a1f1bb52821d2a0f932f44349a0db1251"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcc97be9f143dbe3671f81f67bf266bf" id="r_afcc97be9f143dbe3671f81f67bf266bf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#afcc97be9f143dbe3671f81f67bf266bf">enable_bubble_function_pressure</a></td></tr>
+<tr class="separator:afcc97be9f143dbe3671f81f67bf266bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1FEM.html" title="FEM - The finite element section controls the properties of the finite element method....">FEM</a> - The finite element section controls the properties of the finite element method. This section controls the order of polynomial integration and the number of quadrature points within the cells. </p>
@@ -176,13 +180,45 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01564">1564</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01574">1574</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01108">phase_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01109">potential_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01087">pressure_order</a>, <a class="el" href="parameters_8h_source.html#l01093">temperature_order</a>, <a class="el" href="parameters_8h_source.html#l01096">tracer_order</a>, <a class="el" href="parameters_8h_source.html#l01099">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01084">velocity_order</a>, <a class="el" href="parameters_8h_source.html#l01102">VOF_order</a>, <a class="el" href="parameters_8h_source.html#l01105">VOF_uses_dg</a>, and <a class="el" href="parameters_8h_source.html#l01090">void_fraction_order</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01113">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01112">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01108">phase_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01109">potential_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01087">pressure_order</a>, <a class="el" href="parameters_8h_source.html#l01093">temperature_order</a>, <a class="el" href="parameters_8h_source.html#l01096">tracer_order</a>, <a class="el" href="parameters_8h_source.html#l01099">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01084">velocity_order</a>, <a class="el" href="parameters_8h_source.html#l01102">VOF_order</a>, <a class="el" href="parameters_8h_source.html#l01105">VOF_uses_dg</a>, and <a class="el" href="parameters_8h_source.html#l01090">void_fraction_order</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="afcc97be9f143dbe3671f81f67bf266bf" name="afcc97be9f143dbe3671f81f67bf266bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcc97be9f143dbe3671f81f67bf266bf">&#9670;&#160;</a></span>enable_bubble_function_pressure</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::FEM::enable_bubble_function_pressure</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01113">1113</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a1f1bb52821d2a0f932f44349a0db1251" name="a1f1bb52821d2a0f932f44349a0db1251"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f1bb52821d2a0f932f44349a0db1251">&#9670;&#160;</a></span>enable_bubble_function_velocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::FEM::enable_bubble_function_velocity</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01112">1112</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a44257122ea767efddf5385f698591efe" name="a44257122ea767efddf5385f698591efe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a44257122ea767efddf5385f698591efe">&#9670;&#160;</a></span>phase_cahn_hilliard_order</h2>
 
