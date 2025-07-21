@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Allow quad/hex meshes to use bubble enrichment function FE_Q_Bubbles. [#1584](https://github.com/chaos-polymtl/lethe/pull/1584)
+
 ### [Master] - 2025-07-16
 
 ### Changed
