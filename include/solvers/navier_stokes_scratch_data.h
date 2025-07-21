@@ -112,6 +112,7 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
+    gather_mortar                            = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -150,6 +151,7 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
+    gather_mortar                            = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
 
@@ -995,6 +997,49 @@ public:
                            this->filtered_phase_order_cahn_hilliard_values);
   }
 
+  /**
+   * @brief enable_mortar Enables the calculation of the rotor rotation angle
+   */
+
+  void
+  enable_mortar();
+
+
+  /**
+   * @brief Renitialize the content of the scratch data for mortar
+   */
+  void
+  reinit_mortar(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                const Parameters::Mortar<dim> &mortar_parameters,
+                const double                   radius)
+  {
+    auto cell_center = cell->center();
+
+    mortar_parameters.rotor_angular_velocity->set_time(
+      this->simulation_control->get_current_time());
+
+    rotor_angular_velocity =
+      mortar_parameters.rotor_angular_velocity->value(Point<dim>());
+
+    double radius_current =
+      cell_center.distance(mortar_parameters.center_of_rotation);
+
+    if (radius_current > radius)
+      this->rotor_angular_velocity = 0.0;
+    else
+      this->rotor_angular_velocity = rotor_angular_velocity;
+
+    // Rotor linear velocity
+    rotor_linear_velocity = std::vector<Tensor<1, dim>>(this->n_q_points);
+
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        const auto x                = fe_values.quadrature_point(q)[0];
+        const auto y                = fe_values.quadrature_point(q)[1];
+        rotor_linear_velocity[q][0] = -this->rotor_angular_velocity * y;
+        rotor_linear_velocity[q][1] = this->rotor_angular_velocity * x;
+      }
+  }
 
   /** @brief Calculates the physical properties. This function calculates the
    * physical properties that may be required by the fluid dynamics problem.
@@ -1183,6 +1228,13 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;
   FEValuesExtractors::Scalar     phase_order;
   FEValuesExtractors::Scalar     chemical_potential;
+
+  /**
+   * Scratch component for the mortar method
+   */
+  bool                        gather_mortar;
+  double                      rotor_angular_velocity;
+  std::vector<Tensor<1, dim>> rotor_linear_velocity;
 
   /**
    * Is boundary cell indicator

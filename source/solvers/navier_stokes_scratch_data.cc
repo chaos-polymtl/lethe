@@ -348,6 +348,13 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   Re_particle = std::vector<double>(n_global_max_particles_per_cell);
 }
 
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_mortar()
+{
+  gather_mortar = true;
+}
+
 
 template <int dim>
 void
