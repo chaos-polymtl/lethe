@@ -875,14 +875,21 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       distance = particle_location.distance(
                         quadrature_point_location[q]);
 
-                      // Calculate the normalized particle contribution
-                      particles_volume_in_sphere +=
-                        calculate_intersection_measure(r_particle,
-                                                       r_sphere,
-                                                       distance) /
+                      // Calculate the ratio between the particle volume and the
+                      // total volume it contribute
+                      const double particle_volume_ratio =
+                        (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
+                         (2 * dim)) /
                         particle_properties
                           [DEM::CFDDEMProperties::PropertiesIndex::
                              volumetric_contribution];
+
+                      // Calculate the normalized particle contribution
+                      particles_volume_in_sphere +=
+                        particle_volume_ratio *
+                        calculate_intersection_measure(r_particle,
+                                                       r_sphere,
+                                                       distance);
                     }
                 }
 
