@@ -467,9 +467,10 @@ VoidFractionBase<dim>::calculate_velocity_projection()
 
 #ifndef LETHE_USE_LDV
   // Perform copy between two vector types to ensure there is a deal.II vector
-  convert_vector_trilinos_to_dealii(this->void_fraction_solution,
-                                    void_fraction_locally_relevant);
-  void_fraction_solution.update_ghost_values();
+  convert_vector_trilinos_to_dealii(
+    particle_velocity_qcm.particle_velocity_solution,
+    particle_velocity_qcm.particle_velocity_locally_relevant);
+  particle_velocity_qcm.particle_velocity_solution.update_ghost_values();
 #else
   void_fraction_solution = void_fraction_locally_relevant;
 #endif
