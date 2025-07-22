@@ -25,7 +25,7 @@ Lethe has several applications that can be used depending on the problem to be s
     * - * Single-phase flows
         * Fluid-fluid flows 
         * Heat transfer
-        * Tracer
+        * Passive tracer
         * Immersed boundaries
       - ``lethe-fluid-nitsche``
       - This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the Nitsche method. 
