@@ -1667,10 +1667,6 @@ FluidDynamicsSharp<dim>::write_force_ib()
             std::ofstream output(filename.c_str());
 
             table_p[p].write_text(output);
-            std::string filename_residual =
-              this->simulation_parameters.simulation_control.output_folder +
-              "residual" + ".dat";
-            std::ofstream output_residual(filename_residual.c_str());
           }
         MPI_Barrier(this->mpi_communicator);
       }
