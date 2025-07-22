@@ -33,6 +33,7 @@ Lethe has several applications that can be used depending on the problem to be s
       - ``lethe-fluid-particles``
       - This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.
     * - * Particle-laden flows
+        * Passive tracer  
         * Immersed boundaries
       - ``lethe-fluid-sharp``
       - This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.
