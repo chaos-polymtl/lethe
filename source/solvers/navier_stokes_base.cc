@@ -2011,8 +2011,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
     this->dof_handler,
-    this->simulation_parameters.mortar_parameters,
-    this->rotation_angle);
+    this->simulation_parameters.mortar_parameters);
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
@@ -2042,33 +2041,16 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 
   if (this->simulation_parameters.mortar_parameters.enable)
     {
-      // Initialize previous rotation angle
-      if (this->simulation_control->is_at_start())
-        this->previous_rotation_angle = 0.;
-
-      // If using steady simulation method, access the rotation angle in the prm
-      // file. Otherwise, access the prescribed angular velocity and obtain the
-      // correspondent rotation angle
-      if (simulation_parameters.simulation_control.method ==
-          Parameters::SimulationControl::TimeSteppingMethod::steady)
-        this->rotation_angle =
-          simulation_parameters.mortar_parameters.rotor_rotation_angle;
-      else
-        {
-          const double dt =
-            this->simulation_control->get_time_steps_vector()[0];
-          simulation_parameters.mortar_parameters.rotor_angular_velocity
-            ->set_time(this->simulation_control->get_current_time());
-          const double angular_velocity =
-            simulation_parameters.mortar_parameters.rotor_angular_velocity
-              ->value(Point<dim>());
-          this->rotation_angle =
-            this->previous_rotation_angle + dt * angular_velocity;
-        }
+      // Get updated rotation angle (radians)
+      simulation_parameters.mortar_parameters.rotor_rotation_angle->set_time(
+        this->simulation_control->get_current_time());
+      const double rotation_angle =
+        simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
+          Point<dim>());
 
       if (simulation_parameters.mortar_parameters.verbosity ==
           Parameters::Verbosity::verbose)
-        this->pcout << "Mortar - Rotor grid angle is: " << this->rotation_angle
+        this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
                     << " rad \n"
                     << std::endl;
 
