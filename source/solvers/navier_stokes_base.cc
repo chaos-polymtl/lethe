@@ -2039,45 +2039,45 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
 {
   TimerOutput::Scope t(this->computing_timer, "Rotate mortar");
 
-  if (this->simulation_parameters.mortar_parameters.enable)
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  // Get updated rotation angle (radians)
+  simulation_parameters.mortar_parameters.rotor_rotation_angle->set_time(
+    this->simulation_control->get_current_time());
+  const double rotation_angle =
+    simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
+      Point<dim>());
+
+  // Get updated angular velocity (radians/time)
+  simulation_parameters.mortar_parameters.rotor_angular_velocity->set_time(
+    this->simulation_control->get_current_time());
+  const double angular_velocity =
+    simulation_parameters.mortar_parameters.rotor_angular_velocity->value(
+      Point<dim>());
+
+  if (simulation_parameters.mortar_parameters.verbosity ==
+      Parameters::Verbosity::verbose)
     {
-      // Get updated rotation angle (radians)
-      simulation_parameters.mortar_parameters.rotor_rotation_angle->set_time(
-        this->simulation_control->get_current_time());
-      const double rotation_angle =
-        simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
-          Point<dim>());
-
-      // Get updated angular velocity (radians/time)
-      simulation_parameters.mortar_parameters.rotor_angular_velocity->set_time(
-        this->simulation_control->get_current_time());
-      const double angular_velocity =
-        simulation_parameters.mortar_parameters.rotor_angular_velocity->value(
-          Point<dim>());
-
-      if (simulation_parameters.mortar_parameters.verbosity ==
-          Parameters::Verbosity::verbose)
-        {
-          this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
-                      << " rad \n"
-                      << "         Rotor grid velocity is: " << angular_velocity
-                      << " rad/time \n"
-                      << std::endl;
-        }
-
-      // Create new mapping cache
-      this->mapping_cache =
-        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-
-      LetheGridTools::rotate_mapping(
-        this->dof_handler,
-        *this->mapping_cache,
-        *this->mapping,
-        compute_n_subdivisions_and_radius(
-          *this->triangulation, this->simulation_parameters.mortar_parameters)
-          .second,
-        rotation_angle);
+      this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
+                  << " rad \n"
+                  << "         Rotor grid velocity is: " << angular_velocity
+                  << " rad/time \n"
+                  << std::endl;
     }
+
+  // Create new mapping cache
+  this->mapping_cache =
+    std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+
+  LetheGridTools::rotate_mapping(
+    this->dof_handler,
+    *this->mapping_cache,
+    *this->mapping,
+    compute_n_subdivisions_and_radius(
+      *this->triangulation, this->simulation_parameters.mortar_parameters)
+      .second,
+    rotation_angle);
 }
 
 template <int dim, typename VectorType, typename DofsType>
