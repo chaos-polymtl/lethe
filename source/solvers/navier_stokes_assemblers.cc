@@ -1281,34 +1281,26 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
   auto &local_rhs = copy_data.local_rhs;
 
   // Time stepping information
-  const unsigned int stage = scratch_data.current_stage;
-  SDIRKStageData     stage_data(scratch_data.sdirk_table, stage);
+  const unsigned int stage = this->simulation_control->get_stage_i_number();
+  SDIRKStageData stage_data(scratch_data.sdirk_table,
+                                                        stage + 1);
 
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   const double h = time_steps_vector[0];
 
-  Tensor<1, dim> u_sum_over_stages;
-  u_sum_over_stages = 0; // met toutes les composantes à 0.0
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      for (unsigned int p = 0; p < stage - 1; ++p)
-      {
-        u_sum_over_stages +=
-          stage_data.a_ij[p] * scratch_data.previous_hk_j_values[p][q];
-      }
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
           local_rhs_i += local_rhs(i) * h;
-          local_rhs_i += (1 / stage_data.a_ij[stage - 1]) * phi_u_i *
+          local_rhs_i += (1 / stage_data.a_ij[stage]) * phi_u_i *
                            (scratch_data.velocity_values[q] -
                             scratch_data.previous_velocity_values[0][q]) -
-                         phi_u_i * u_sum_over_stages;
+                         phi_u_i * scratch_data.u_sum_over_stages[q];
           local_rhs(i) += local_rhs_i * JxW[q];
         }
     }

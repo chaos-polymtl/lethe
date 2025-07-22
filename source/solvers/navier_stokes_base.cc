@@ -595,28 +595,21 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution   = this->present_solution;
   auto &previous_solutions = this->previous_solutions;
-
-  VectorType sum_over_stages;
-  sum_over_stages.reinit(present_solution);
-  sum_over_stages   = 0;
   const auto method = this->simulation_control->get_assembly_method();
 
-  unsigned int stage_i;
+  if (method != Parameters::SimulationControl::TimeSteppingMethod::steady &&
+      method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf && 
+      method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
+      method != Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
+      method != Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+      {
+      sum_over_stages.reinit(present_solution);
+      }
 
-  for (unsigned int s = 0; s < SimulationControl::get_number_of_stages(method);
-       ++s)
+  for (unsigned int stage = 0; stage < SimulationControl::get_number_of_stages(method);
+       ++stage)
     {
-      stage_i = s + 1;
-      SDIRKStageData stage_data(scratch_data->sdirk_table, stage_i);
-      auto          &present_hk_i_solution    = this->present_hk_i_solution;
-      auto          &previous_hk_j_solutions = this->previous_hk_j_solutions;
-
-      VectorType sum_over_previous_stages;
-      sum_over_previous_stages.reinit(present_solution);
-      sum_over_previous_stages = 0;
-
-      scratch_data->current_stage = stage_i;
-
+      this->simulation_control->set_stage_i_number(stage);
       if (simulation_parameters.multiphysics.fluid_dynamics)
         {
           // Solve and percolate the auxiliary physics that should be treated
@@ -633,33 +626,48 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
             announce_string(this->pcout, "Fluid Dynamics");
           PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
-          for (unsigned int p = 0; p < stage_i; ++p)
+          if (method != Parameters::SimulationControl::TimeSteppingMethod::steady &&
+              method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf && 
+              method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
+              method != Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
+              method != Parameters::SimulationControl::TimeSteppingMethod::bdf3)
           {
-            VectorType tmp;
-            tmp.reinit(previous_hk_j_solutions[0]);
+            SDIRKStageData stage_data(scratch_data->sdirk_table,
+                                                        stage + 1);
+            
+            auto          &present_hk_i_solution    = this->present_hk_i_solution;
+            auto          &previous_hk_j_solutions = this->previous_hk_j_solutions;
 
-            // tmp = a_ij[p] * previous_hk_j_solutions[stage_i - 1 - p]
-            tmp.equ(stage_data.a_ij[p], previous_hk_j_solutions[stage_i - 1 - p]);
+            sum_over_previous_stages.reinit(present_solution);
 
-            // sum_over_previous_stages += tmp
-            sum_over_previous_stages.add(1.0, tmp);
+            for (unsigned int p = 0; p < stage + 1; ++p)
+            {
+              VectorType tmp;
+              tmp.reinit(previous_hk_j_solutions[0]);
+
+              // tmp = a_ij[p] * previous_hk_j_solutions[stage - p]
+              tmp.equ(stage_data.a_ij[p], previous_hk_j_solutions[stage - p]);
+
+              // sum_over_previous_stages += tmp
+              sum_over_previous_stages.add(1.0, tmp);
+            }
+
+            const double a_ii = stage_data.a_ij[stage];
+
+            present_hk_i_solution.reinit(present_solution); 
+            // Step 1: present_hk_i_solution = present_solution
+            present_hk_i_solution = present_solution;
+            // Step 2: present_hk_i_solution -= previous_solutions[0]
+            present_hk_i_solution.add(-1.0, previous_solutions[0]);
+            // Step 3:  /= a_ii
+            present_hk_i_solution *= 1.0 / a_ii;
+            // Step 4:  -= sum_over_previous_stages
+            present_hk_i_solution.add(-1.0, sum_over_previous_stages);
+
+            percolate_stage_vectors_fd();
+            const double b_i = stage_data.b_i;
+            sum_over_stages.add(b_i, present_hk_i_solution);
           }
-
-          const double a_ii = stage_data.a_ij[s];
-
-          present_hk_i_solution.reinit(present_solution); 
-          // Step 1: present_hk_i_solution = present_solution
-          present_hk_i_solution = present_solution;
-          // Step 2: present_hk_i_solution -= previous_solutions[0]
-          present_hk_i_solution.add(-1.0, previous_solutions[0]);
-          // Step 3: present_hk_i_solution /= a_ii
-          present_hk_i_solution *= 1.0 / a_ii;
-          // Step 4: present_hk_i_solution -= sum_over_previous_stages
-          present_hk_i_solution.add(-1.0, sum_over_previous_stages);
-
-          percolate_stage_vectors_fd();
-          const double b_i = stage_data.b_i;
-          sum_over_stages.add(b_i, present_hk_i_solution);
 
           // If the physics need to be solved after the physics, the matrix free
           // solver requires to update the value here. This is due to the
