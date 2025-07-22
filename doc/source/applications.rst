@@ -32,7 +32,8 @@ Lethe has several applications that can be used depending on the problem to be s
     * - * Particle-laden flows
       - ``lethe-fluid-particles``
       - This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.
-    * - * Particle-laden flows
+    * - * Single-phase flows
+        * Particle-laden flows
         * Passive tracer  
         * Immersed boundaries
       - ``lethe-fluid-sharp``
