@@ -33,22 +33,13 @@ In this subsection, contact detection, force models, particle-wall collision sta
       end
     end
 
-      # Particle-particle contact force model
-      # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
-      set particle particle contact force method = hertz_mindlin_limit_overlap
+    # Particle-particle contact force model
+    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
+    set particle particle contact force method = hertz_mindlin_limit_overlap
 
     # Particle-wall contact force model
     # Choices are linear|nonlinear|JKR|DMT
     set particle wall contact force method = nonlinear
-
-    # Particle-wall contact statistics logging
-    subsection particle wall contact statistics
-      set enable particle wall contact statistics = false
-      set collision statistics file               = collision_statistics.csv
-      set verbosity                               = quiet # Choices are quiet|verbose
-      set log collisions with all walls           = true
-      set wall boundary id                        = 0
-    end
 
     # DMT cut-off threshold
     set DMT cut-off threshold = 0.1
@@ -61,6 +52,15 @@ In this subsection, contact detection, force models, particle-wall collision sta
     # Choices are no_resistance|constant_resistance|viscous_resistance|epsd_resistance
     set rolling resistance torque method       = constant_resistance
     set f coefficient                          = 0.0 # if rolling resistance torque method = epsd_resistance
+
+    # Particle-wall contact statistics logging
+    subsection particle wall contact statistics
+      set enable particle wall contact statistics = false
+      set collision statistics file               = collision_statistics.csv
+      set verbosity                               = quiet # Choices are quiet|verbose
+      set log collisions with all walls           = true
+      set wall boundary id                        = 0
+    end
 
     subsection adaptive sparse contacts
       set enable adaptive sparse contacts = false
@@ -136,7 +136,7 @@ The particle-wall contact statistics logging feature allows to log the particle-
 
 * ``enable particle wall contact statistics`` enables the feature.
 
-* ``collision statistics file`` is the name of the file where the particle-wall contact statistics will be logged. The file will be created in the working directory of the simulation. If the name does not specify the format, the file will be created in .csv format. If the name ends with .dat or .csv, the file will be created in the corresponding format.
+* ``collision statistics file`` is the name of the file where the particle-wall contact statistics will be logged. The file will be created from the working directory of the simulation. If the name does not specify the format, the file will be created in .csv format. If the name ends with .dat or .csv, the file will be created in the corresponding format.
 
 * ``verbosity`` controls the verbosity of the particle-wall collisions. The available options are ``quiet`` (the default option) and ``verbose``. If set to ``verbose``, the start and the end of a collision are printed in the terminal.
 

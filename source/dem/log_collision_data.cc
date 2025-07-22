@@ -60,7 +60,7 @@ log_collision_data(
               if (normal_overlap > 0)
                 {
                   unsigned int particle_id = particle->get_id();
-                  particles_in_contact_now.insert(particle_id);
+                  particles_in_contact_now.insert(particle_id); // We track which particles are in contact now
 
                   if (!ongoing_collision_log.is_in_collision(particle_id))
                     {

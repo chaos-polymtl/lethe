@@ -877,38 +877,6 @@ namespace Parameters
                           Patterns::Selection("linear|nonlinear|JKR|DMT"),
                           "Choosing particle-wall contact force model"
                           "Choices are <linear|nonlinear|JKR|DMT>.");
-        prm.enter_subsection("particle wall contact statistics");
-        {
-          prm.declare_entry(
-            "enable particle wall contact statistics",
-            "false",
-            Patterns::Selection("true|false"),
-            "Enable the logging of particle-wall contact statistics"
-            "Choices are <true|false>.");
-          prm.declare_entry(
-            "log collisions with all walls",
-            "true",
-            Patterns::Selection("true|false"),
-            "State whether collisions with all walls should be logged"
-            "Choices are <true|false>.");
-          prm.declare_entry("wall boundary id",
-                            "0",
-                            Patterns::Integer(),
-                            "Boundary id of the wall to log collisions with");
-          prm.declare_entry(
-            "collision statistics file",
-            "collision_statistics.csv",
-            Patterns::FileName(),
-            "Exported particle-wall collision results filename");
-
-          prm.declare_entry(
-            "verbosity",
-            "quiet",
-            Patterns::Selection("quiet|verbose"),
-            "State whether collision starts and ends should be printed. "
-            "Choices are <quiet|verbose>.");
-        }
-        prm.leave_subsection();
 
         prm.declare_entry(
           "dmt cut-off threshold",
@@ -941,6 +909,39 @@ namespace Parameters
                           Patterns::Selection("dem|cfd_dem|dem_mp"),
                           "Choosing solver type"
                           "Choices are <dem|cfd_dem|dem_mp>.");
+
+        prm.enter_subsection("particle wall contact statistics");
+        {
+          prm.declare_entry(
+            "enable particle wall contact statistics",
+            "false",
+            Patterns::Selection("true|false"),
+            "Enable the logging of particle-wall contact statistics"
+            "Choices are <true|false>.");
+          prm.declare_entry(
+            "log collisions with all walls",
+            "true",
+            Patterns::Selection("true|false"),
+            "State whether collisions with all walls should be logged"
+            "Choices are <true|false>.");
+          prm.declare_entry("wall boundary id",
+                            "0",
+                            Patterns::Integer(),
+                            "Boundary id of the wall to log collisions with");
+          prm.declare_entry(
+            "collision statistics file",
+            "collision_statistics.csv",
+            Patterns::FileName(),
+            "Exported particle-wall collision results filename");
+
+          prm.declare_entry(
+            "verbosity",
+            "quiet",
+            Patterns::Selection("quiet|verbose"),
+            "State whether collision starts and ends should be printed. "
+            "Choices are <quiet|verbose>.");
+        }
+        prm.leave_subsection();
 
         prm.enter_subsection("adaptive sparse contacts");
         {
