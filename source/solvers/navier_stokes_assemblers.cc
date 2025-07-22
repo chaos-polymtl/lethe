@@ -2679,7 +2679,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
   auto &local_matrix        = copy_data.local_matrix;
 
   // Mortar ALE components
-  const auto velocity_ale = scratch_data.rotor_linear_velocity;
+  const auto velocity_ale = scratch_data.rotor_linear_velocity_values;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -2733,7 +2733,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
   auto &local_rhs           = copy_data.local_rhs;
 
   // ALE components
-  const auto velocity_ale = scratch_data.rotor_linear_velocity;
+  const auto velocity_ale = scratch_data.rotor_linear_velocity_values;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
