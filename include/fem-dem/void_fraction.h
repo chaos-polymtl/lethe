@@ -312,7 +312,7 @@ private:
    *
    * @param r_particle The radius of the particle
    * @param r_sphere The radius of the averaging sphere
-   * @param distance_between_spheres The distance between the spheres
+   * @param distance_between_spheres The distance between the centers of the spheres
    *
    * @return The intersection volume (in 3D) or area (in 2d)
    */
