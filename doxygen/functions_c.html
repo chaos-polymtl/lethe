@@ -147,7 +147,7 @@ $(function() {
 <li>calculate_force_model()&#160;:&#160;<a class="el" href="classIBParticlesDEM.html#a63c2a432df105b069d81a49bdde615d0">IBParticlesDEM&lt; dim &gt;</a></li>
 <li>calculate_force_on_solid&#160;:&#160;<a class="el" href="classParameters_1_1NitscheObject.html#a2442a95dd85abc2cf655f14e5e56221b">Parameters::NitscheObject&lt; dim &gt;</a></li>
 <li>calculate_force_torque&#160;:&#160;<a class="el" href="classParameters_1_1Lagrangian_1_1ForceTorqueOnWall.html#ac521a62af5f264d7970ea471012d41f1">Parameters::Lagrangian::ForceTorqueOnWall&lt; dim &gt;</a></li>
-<li>calculate_forces_on_solid()&#160;:&#160;<a class="el" href="classFluidDynamicsNitsche.html#ae857c44153023b42d403fa7215dc3a70">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a></li>
+<li>calculate_forces_on_solid()&#160;:&#160;<a class="el" href="classFluidDynamicsNitsche.html#aac89d96117231627627a7186f594c721">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a></li>
 <li>calculate_global_id()&#160;:&#160;<a class="el" href="classPhysicalPropertiesManager.html#a33d957f0756893a3657312274a089dc9">PhysicalPropertiesManager</a></li>
 <li>calculate_granular_temperature_and_solid_fraction()&#160;:&#160;<a class="el" href="classAdaptiveSparseContacts.html#a09117df0c762ec6b8199b68313d706b0">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</a></li>
 <li>calculate_heat_flux&#160;:&#160;<a class="el" href="structParameters_1_1PostProcessing.html#af6508cf9a649ed716315135210bd7df0">Parameters::PostProcessing</a></li>
@@ -156,6 +156,7 @@ $(function() {
 <li>calculate_hertz_mindlin_limit_force_contact()&#160;:&#160;<a class="el" href="classParticleParticleContactForce.html#a103d082fa685b4aa5e47d67b13168f22">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a></li>
 <li>calculate_hertz_mindlin_limit_overlap_contact()&#160;:&#160;<a class="el" href="classParticleParticleContactForce.html#a56497494ce98d32b2e99adb0e10854d3">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a></li>
 <li>calculate_insertion_domain_maximum_particle_number()&#160;:&#160;<a class="el" href="classInsertion.html#a1c08df7a62332bb7c519f35cfb111771">Insertion&lt; dim, PropertiesIndex &gt;</a></li>
+<li>calculate_intersection_measure()&#160;:&#160;<a class="el" href="classVoidFractionBase.html#aba83719588cb8e04f1d3fbc0092cf673">VoidFractionBase&lt; dim &gt;</a></li>
 <li>calculate_JKR_contact()&#160;:&#160;<a class="el" href="classParticleWallContactForce.html#a3f649526e451c316e8b8086b7085701e">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a></li>
 <li>calculate_kinematic_viscosity()&#160;:&#160;<a class="el" href="classCarreau.html#add75dc2299e6b3ca194ec038082a2339">Carreau</a>, <a class="el" href="classPowerLaw.html#a0831662edc25901880af2e82056bf1cb">PowerLaw</a></li>
 <li>calculate_kinetic_energy&#160;:&#160;<a class="el" href="structParameters_1_1PostProcessing.html#a7c40e900b19cf49d56c63fb0b4a3abde">Parameters::PostProcessing</a></li>
@@ -185,6 +186,7 @@ $(function() {
 <li>calculate_pressure_power&#160;:&#160;<a class="el" href="structParameters_1_1PostProcessing.html#a01032169fdab07b424db94962105f98d">Parameters::PostProcessing</a></li>
 <li>calculate_pw_contact_force()&#160;:&#160;<a class="el" href="classIBParticlesDEM.html#a2f3799f220830e72acc764176330f892">IBParticlesDEM&lt; dim &gt;</a></li>
 <li>calculate_pw_lubrication_force()&#160;:&#160;<a class="el" href="classIBParticlesDEM.html#a4e93741ecb687413f738cb0165e345ee">IBParticlesDEM&lt; dim &gt;</a></li>
+<li>calculate_qcm_radius_from_cell_measure()&#160;:&#160;<a class="el" href="classVoidFractionBase.html#a8e4ee34b55be037b752fcd68f83201b2">VoidFractionBase&lt; dim &gt;</a></li>
 <li>calculate_reactor_path_length()&#160;:&#160;<a class="el" href="classParticleDetectorInteractions.html#a4dd0a82e296d58d7f3dc3317475230a6">ParticleDetectorInteractions&lt; dim &gt;</a></li>
 <li>calculate_reference_location_error()&#160;:&#160;<a class="el" href="classRPTFEMReconstruction.html#a3ae749c990e7192f2fc54d5e95ef5cd6">RPTFEMReconstruction&lt; dim &gt;</a></li>
 <li>calculate_reynolds_stresses()&#160;:&#160;<a class="el" href="classAverageVelocities.html#a62b8f5905278c238a20a59cf7ab9f630">AverageVelocities&lt; dim, VectorType, DofsType &gt;</a></li>
@@ -295,7 +297,7 @@ $(function() {
 <li>clear_shape_cache()&#160;:&#160;<a class="el" href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">IBParticle&lt; dim &gt;</a></li>
 <li>clear_tangential_displacement_trigger&#160;:&#160;<a class="el" href="classDEMActionManager.html#ae188883f0847d0a890588b658d97b065">DEMActionManager</a></li>
 <li>closest_point_cache&#160;:&#160;<a class="el" href="classShape.html#aad72eb3feaa5852170232e3c19855330">Shape&lt; dim &gt;</a></li>
-<li>closest_surface_point()&#160;:&#160;<a class="el" href="classIBParticle.html#af033452338f361820c04eede277852b5">IBParticle&lt; dim &gt;</a>, <a class="el" href="classShape.html#ab62a9020dd584342e820cb622da9a357">Shape&lt; dim &gt;</a>, <a class="el" href="classSuperquadric.html#a6221e680513e3bf71501781db520c401">Superquadric&lt; dim &gt;</a></li>
+<li>closest_surface_point()&#160;:&#160;<a class="el" href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">IBParticle&lt; dim &gt;</a>, <a class="el" href="classShape.html#a3b5eef85928c9e2261165a0c171f3918">Shape&lt; dim &gt;</a>, <a class="el" href="classSuperquadric.html#a6221e680513e3bf71501781db520c401">Superquadric&lt; dim &gt;</a></li>
 <li>coarse_grid_iterations&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#aa295ba39af47cec38f2321f54adf450a">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
 <li>coarse_grid_precondition&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a34c70deb41196513a94319e61b7dab1c">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
 <li>coarse_grid_solver&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#af5747489f5a8ae9b76f6ca4976ca91af">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
