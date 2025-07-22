@@ -19,7 +19,7 @@ Lethe has several applications that can be used depending on the problem to be s
       - This application solves the Navier-Stokes equations in a monolithic way. **This is the most robust fluid dynamics solver in Lethe and it is compatible with all multiphysics features**.
     * - * Single-phase flows
         * Heat transfer
-        * Tracer
+        * Passive tracer
       - ``lethe-fluid-matrix-free``
       - This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach.  **This is the fastest fluid dynamics solver in Lethe. It should be used for high-order simulations. It does not fully support all multiphysics features**.
     * - * Single-phase flows
