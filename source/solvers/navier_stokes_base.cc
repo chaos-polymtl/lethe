@@ -2048,11 +2048,22 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
         simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
           Point<dim>());
 
+      // Get updated angular velocity (radians/time)
+      simulation_parameters.mortar_parameters.rotor_angular_velocity->set_time(
+        this->simulation_control->get_current_time());
+      const double angular_velocity =
+        simulation_parameters.mortar_parameters.rotor_angular_velocity->value(
+          Point<dim>());
+
       if (simulation_parameters.mortar_parameters.verbosity ==
           Parameters::Verbosity::verbose)
-        this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
-                    << " rad \n"
-                    << std::endl;
+        {
+          this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
+                      << " rad \n"
+                      << "         Rotor grid velocity is: " << angular_velocity
+                      << " rad/time \n"
+                      << std::endl;
+        }
 
       // Create new mapping cache
       this->mapping_cache =
