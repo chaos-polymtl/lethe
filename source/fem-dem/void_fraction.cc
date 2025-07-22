@@ -594,23 +594,6 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
       calculate_reference_sphere_radius = false;
     }
 
-  // Lambda functions for calculating the radius of the reference sphere
-  // Calculate the radius by the volume (area in 2D) of sphere:
-  // r = (2*dim*V/pi)^(1/dim) / 2
-  auto radius_sphere_volume_cell = [](auto cell_measure) {
-    return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / double(dim));
-  };
-
-  // Calculate the radius is obtained from the volume of sphere based on
-  // R_s = h_omega:
-  // V_s = pi*(2*V_c^(1/dim))^(dim)/(2*dim) = pi*2^(dim)*V_c/(2*dim)
-  auto radius_h_omega = [&radius_sphere_volume_cell](double cell_measure) {
-    double reference_sphere_volume =
-      M_PI * Utilities::fixed_power<dim>(2.0) * cell_measure / (2.0 * dim);
-
-    return radius_sphere_volume_cell(reference_sphere_volume);
-  };
-
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
 
@@ -691,27 +674,14 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
               for (unsigned int n = 0; n < active_neighbors.size(); n++)
                 {
                   // Define the radius of the reference sphere to be used as
-                  // the averaging volume for the QCM, if the reference sphere
+                  // the averaging volume for the QCM. If the reference sphere
                   // diameter was given by the user the value is already
                   // defined since it is not dependent on any measure of the
                   // active cell
                   if (calculate_reference_sphere_radius)
                     {
-                      if (void_fraction_parameters
-                            ->qcm_sphere_equal_cell_volume == true)
-                        {
-                          // Get the radius by the volume of sphere which is
-                          // equal to the volume of cell
-                          r_sphere = radius_sphere_volume_cell(
-                            active_neighbors[n]->measure());
-                        }
-                      else
-                        {
-                          // The radius is obtained from the volume of sphere
-                          // based on R_s = h_omega
-                          r_sphere =
-                            radius_h_omega(active_neighbors[n]->measure());
-                        }
+                      r_sphere = calculate_qcm_radius_from_cell_measure(
+                        active_neighbors[n]->measure());
                     }
 
                   // Loop over quadrature points
@@ -722,40 +692,14 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         particle.get_location().distance(
                           neighbor_quadrature_point_location[n][k]);
 
-                      // Particle completely in reference sphere
-                      if (neighbor_distance <= (r_sphere - r_particle))
-                        {
-                          particle_properties
-                            [DEM::CFDDEMProperties::PropertiesIndex::
-                               volumetric_contribution] +=
-                            M_PI *
-                            Utilities::fixed_power<dim>(
-                              particle_properties
-                                [DEM::CFDDEMProperties::PropertiesIndex::dp]) /
-                            (2.0 * dim);
-                        }
-
-                      // Particle partially in the reference sphere
-                      else if ((neighbor_distance > (r_sphere - r_particle)) &&
-                               (neighbor_distance < (r_sphere + r_particle)))
-                        {
-                          if constexpr (dim == 2)
-                            particle_properties
-                              [DEM::CFDDEMProperties::PropertiesIndex::
-                                 volumetric_contribution] +=
-                              particle_circle_intersection_2d(
-                                r_particle, r_sphere, neighbor_distance);
-
-                          else if constexpr (dim == 3)
-                            particle_properties
-                              [DEM::CFDDEMProperties::PropertiesIndex::
-                                 volumetric_contribution] +=
-                              particle_sphere_intersection_3d(
-                                r_particle, r_sphere, neighbor_distance);
-                        }
-
-                      // Particle completely outside reference
-                      // sphere. Do absolutely nothing.
+                      // Add the intersection volume to the particle
+                      // contribution
+                      particle_properties
+                        [DEM::CFDDEMProperties::PropertiesIndex::
+                           volumetric_contribution] +=
+                        calculate_intersection_measure(r_particle,
+                                                       r_sphere,
+                                                       neighbor_distance);
                     }
                 }
 
@@ -768,21 +712,8 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                 {
                   if (calculate_reference_sphere_radius)
                     {
-                      if (void_fraction_parameters
-                            ->qcm_sphere_equal_cell_volume == true)
-                        {
-                          // Get the radius by the volume of sphere which is
-                          // equal to the volume of cell
-                          r_sphere = radius_sphere_volume_cell(
-                            active_periodic_neighbors[n]->measure());
-                        }
-                      else
-                        {
-                          // The radius is obtained from the volume of sphere
-                          // based on R_s = h_omega
-                          r_sphere = radius_h_omega(
-                            active_periodic_neighbors[n]->measure());
-                        }
+                      r_sphere = calculate_qcm_radius_from_cell_measure(
+                        active_periodic_neighbors[n]->measure());
                     }
 
                   // Loop over quadrature points
@@ -790,7 +721,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                     {
                       // Adjust the location of the particle in the cell to
                       // account for the periodicity. If the position of the
-                      // periodic cell if greater than the position of the
+                      // periodic cell is greater than the position of the
                       // current cell, the particle location needs a positive
                       // correction, and vice versa
                       const Point<dim> particle_location =
@@ -805,63 +736,20 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         particle_location.distance(
                           periodic_neighbor_quadrature_point_location[n][k]);
 
-                      // Particle completely in the reference sphere
-                      if (periodic_neighbor_distance <= (r_sphere - r_particle))
-                        {
-                          particle_properties
-                            [DEM::CFDDEMProperties::PropertiesIndex::
-                               volumetric_contribution] +=
-                            M_PI *
-                            Utilities::fixed_power<dim>(
-                              particle_properties
-                                [DEM::CFDDEMProperties::PropertiesIndex::dp]) /
-                            (2.0 * dim);
-                        }
-
-                      // Particle partially in the reference sphere
-                      else if ((periodic_neighbor_distance >
-                                (r_sphere - r_particle)) &&
-                               (periodic_neighbor_distance <
-                                (r_sphere + r_particle)))
-                        {
-                          if constexpr (dim == 2)
-                            particle_properties
-                              [DEM::CFDDEMProperties::PropertiesIndex::
-                                 volumetric_contribution] +=
-                              particle_circle_intersection_2d(
-                                r_particle,
-                                r_sphere,
-                                periodic_neighbor_distance);
-
-                          else if constexpr (dim == 3)
-                            particle_properties
-                              [DEM::CFDDEMProperties::PropertiesIndex::
-                                 volumetric_contribution] +=
-                              particle_sphere_intersection_3d(
-                                r_particle,
-                                r_sphere,
-                                periodic_neighbor_distance);
-                        }
-
-                      // Particle completely outside the reference
-                      // sphere. Do absolutely nothing.
+                      // Add the intersection volume to the particle
+                      // contribution
+                      particle_properties
+                        [DEM::CFDDEMProperties::PropertiesIndex::
+                           volumetric_contribution] +=
+                        calculate_intersection_measure(
+                          r_particle, r_sphere, periodic_neighbor_distance);
                     }
                 }
             }
         }
     }
 
-  // BB Double check if this is still necessary or not.
-  // Update ghost particles
-  // if (load_balance_step)
-  //  {
-  //    particle_handler.sort_particles_into_subdomains_and_cells();
-  //    particle_handler.exchange_ghost_particles(true);
-  //  }
-  // else
-  //  {
   particle_handler->update_ghost_particles();
-  //  }
 
   // After the particles' contributions have been determined, calculate and
   // normalize the void fraction
@@ -885,19 +773,8 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
           // averaging volume for the QCM
           if (calculate_reference_sphere_radius)
             {
-              if (void_fraction_parameters->qcm_sphere_equal_cell_volume ==
-                  true)
-                {
-                  // Get the radius by the volume of sphere which is
-                  // equal to the volume of cell
-                  r_sphere = radius_sphere_volume_cell(cell->measure());
-                }
-              else
-                {
-                  // The radius is obtained from the volume of sphere based
-                  // on R_s = h_omega
-                  r_sphere = radius_h_omega(cell->measure());
-                }
+              r_sphere =
+                calculate_qcm_radius_from_cell_measure(cell->measure());
             }
 
           // Array of real locations for the quadrature points
@@ -934,54 +811,27 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         particle_properties
                           [DEM::CFDDEMProperties::PropertiesIndex::dp] *
                         0.5;
-                      double single_particle_volume =
-                        M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
-                        (2 * dim);
+
+                      // Calculate the ratio between the particle volume and the
+                      // total volume it contributes to
+                      const double particle_volume_ratio =
+                        (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
+                         (2 * dim)) /
+                        particle_properties
+                          [DEM::CFDDEMProperties::PropertiesIndex::
+                             volumetric_contribution];
 
                       // Distance between particle and quadrature point
                       // centers
                       distance = particle.get_location().distance(
                         quadrature_point_location[q]);
 
-                      // Particle completely in the reference sphere
-                      if (distance <= (r_sphere - r_particle))
-                        particles_volume_in_sphere +=
-                          (M_PI *
-                           Utilities::fixed_power<dim>(
-                             particle_properties
-                               [DEM::CFDDEMProperties::PropertiesIndex::dp]) /
-                           (2.0 * dim)) *
-                          single_particle_volume /
-                          particle_properties
-                            [DEM::CFDDEMProperties::PropertiesIndex::
-                               volumetric_contribution];
-
-                      // Particle partially in the reference sphere
-                      else if ((distance > (r_sphere - r_particle)) &&
-                               (distance < (r_sphere + r_particle)))
-                        {
-                          if (dim == 2)
-                            particles_volume_in_sphere +=
-                              particle_circle_intersection_2d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::CFDDEMProperties::PropertiesIndex::
-                                   volumetric_contribution];
-                          else if (dim == 3)
-                            particles_volume_in_sphere +=
-                              particle_sphere_intersection_3d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::CFDDEMProperties::PropertiesIndex::
-                                   volumetric_contribution];
-                        }
-
-                      // Particle completely outside the reference sphere. Do
-                      // absolutely nothing.
+                      // Calculate the normalized particle contribution
+                      particles_volume_in_sphere +=
+                        particle_volume_ratio *
+                        calculate_intersection_measure(r_particle,
+                                                       r_sphere,
+                                                       distance);
                     }
                 }
 
@@ -1005,9 +855,6 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         particle_properties
                           [DEM::CFDDEMProperties::PropertiesIndex::dp] *
                         0.5;
-                      double single_particle_volume =
-                        M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
-                        (2 * dim);
 
                       // Adjust the location of the particle in the cell to
                       // account for the periodicity. If the position of the
@@ -1028,45 +875,21 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       distance = particle_location.distance(
                         quadrature_point_location[q]);
 
-                      // Particle completely in the reference sphere
-                      if (distance <= (r_sphere - r_particle))
-                        particles_volume_in_sphere +=
-                          (M_PI *
-                           Utilities::fixed_power<dim>(
-                             particle_properties
-                               [DEM::CFDDEMProperties::PropertiesIndex::dp]) /
-                           (2.0 * dim)) *
-                          single_particle_volume /
-                          particle_properties
-                            [DEM::CFDDEMProperties::PropertiesIndex::
-                               volumetric_contribution];
+                      // Calculate the ratio between the particle volume and the
+                      // total volume it contributes to
+                      const double particle_volume_ratio =
+                        (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
+                         (2 * dim)) /
+                        particle_properties
+                          [DEM::CFDDEMProperties::PropertiesIndex::
+                             volumetric_contribution];
 
-                      // Particle partially in the reference sphere
-                      else if ((distance > (r_sphere - r_particle)) &&
-                               (distance < (r_sphere + r_particle)))
-                        {
-                          if (dim == 2)
-                            particles_volume_in_sphere +=
-                              particle_circle_intersection_2d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::CFDDEMProperties::PropertiesIndex::
-                                   volumetric_contribution];
-                          else if (dim == 3)
-                            particles_volume_in_sphere +=
-                              particle_sphere_intersection_3d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::CFDDEMProperties::PropertiesIndex::
-                                   volumetric_contribution];
-                        }
-
-                      // Particle completely outside the reference sphere. Do
-                      // absolutely nothing.
+                      // Calculate the normalized particle contribution
+                      particles_volume_in_sphere +=
+                        particle_volume_ratio *
+                        calculate_intersection_measure(r_particle,
+                                                       r_sphere,
+                                                       distance);
                     }
                 }
 
