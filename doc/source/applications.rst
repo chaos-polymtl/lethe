@@ -2,60 +2,58 @@
 Applications Overview
 ######################
 
-Lethe has several applications that can be used depending on the problem to be solved. Once Lethe is compiled, all the executables to these applications become available. In the following table, a brief description of each application is provided:
+Lethe has several applications that can be used depending on the problem to be solved. Once Lethe is compiled, all the executables to these applications become available. In the following table, we provide a brief description of each application. The applications are sorted from the most commonly used to the least.
 
 .. list-table::
-    :header-rows: 1
-    :widths: 40 40 60 
+   :header-rows: 1
+   :widths: 40 40 60 
 
-    * - Physics 
-      - Application
-      - Description
-    * - * Single-phase flows
-        * Fluid-fluid flows 
-        * Heat transfer
-        * Passive tracer
-      - ``lethe-fluid``
-      - This application solves the Navier-Stokes equations in a monolithic way. **This is the most robust fluid dynamics solver in Lethe and it is compatible with all multiphysics features**.
-    * - * Single-phase flows
-        * Heat transfer
-        * Passive tracer
-      - ``lethe-fluid-matrix-free``
-      - This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach.  **This is the fastest fluid dynamics solver in Lethe. It should be used for high-order simulations. It does not fully support all multiphysics features**.
-    * - * Single-phase flows
-        * Fluid-fluid flows 
-        * Heat transfer
-        * Passive tracer
-        * Immersed boundaries
-      - ``lethe-fluid-nitsche``
-      - This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the Nitsche method. 
-    * - * Particle-laden flows
-      - ``lethe-fluid-particles``
-      - This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.
-    * - * Single-phase flows
-        * Particle-laden flows
-        * Passive tracer  
-        * Immersed boundaries
-      - ``lethe-fluid-sharp``
-      - This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.
-    * - * Single phase volume-averaged flows
-      - ``lethe-fluid-vans``
-      - This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way. It supports calculation of the void fraction from particles, but the particles remain static.
-    * - * Granular flows of spherical particles
-      - ``lethe-particles``
-      - This application uses the Discrete Element Method to simulate spherical particles. 
-    * - * Steady-state single-phase flows
-      - ``lethe-fluid-block``
-      - This application solves the Navier-Stokes equations in a monolithic way using block preconditioner. **This solver is experimental and is only adequate for steady-state simulations**.
-    * - * Radioactive Particle Tracking
-      - ``lethe-rpt-3d``
-      - This application solves the Beam Monte-Carlo model for the interaction between gamma ray emitting particles and detectors.
-    * - * Radioactive Particle Tracking
-      - ``lethe-rpt-cell-reconstruction-3d``
-      - This application reconstructs the position of particles using a cellular decomposition approach.
-    * - * Radioactive Particle Tracking
-      - ``lethe-rpt-fem-reconstruction-3d``
-      - This application allows to reconstruct positions from ray tracing experimental measurements obtained by Radioactive Particle Tracking.
-    * - * Radioactive Particle Tracking
-      - ``lethe-rpt-l2-projection-3d``
-      - This application calculates a volumetric projection of the Beam model on a finite element mesh using an L2 projection.
+   * - Application
+     - Physics
+     - Description
+   * - ``lethe-fluid``
+     - * Single-phase flows
+       * Fluid-fluid flows 
+       * Heat transfer
+       * Passive tracer
+     - This application solves the Navier-Stokes equations in a monolithic way. **This is the most robust fluid dynamics solver in Lethe and it is compatible with all multiphysics features**.
+   * - ``lethe-fluid-matrix-free``
+     - * Single-phase flows
+       * Heat transfer
+       * Passive tracer
+     - This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach. **This is the fastest fluid dynamics solver in Lethe. It should be used for high-order simulations. It does not fully support all multiphysics features**.
+   * - ``lethe-particles``
+     - * Granular flows of spherical particles
+     - This application uses the Discrete Element Method to simulate spherical particles.
+   * - ``lethe-fluid-particles``
+     - * Particle-laden flows
+     - This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.
+   * - ``lethe-fluid-sharp``
+     - * Single-phase flows
+       * Particle-laden flows
+       * Passive tracer  
+     - This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.
+   * - ``lethe-fluid-nitsche``
+     - * Single-phase flows
+       * Fluid-fluid flows 
+       * Heat transfer
+       * Passive tracer
+     - This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the Nitsche method.
+   * - ``lethe-fluid-vans``
+     - * Single phase volume-averaged flows
+     - This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way. It supports calculation of the void fraction from particles, but the particles remain static.
+   * - ``lethe-fluid-block``
+     - * Steady-state single-phase flows
+     - This application solves the Navier-Stokes equations in a monolithic way using block preconditioner. **This solver is experimental and is only adequate for steady-state simulations**.
+   * - ``lethe-rpt-3d``
+     - * Radioactive Particle Tracking
+     - This application solves the Beam Monte-Carlo model for the interaction between gamma ray emitting particles and detectors.
+   * - ``lethe-rpt-cell-reconstruction-3d``
+     - * Radioactive Particle Tracking
+     - This application reconstructs the position of particles using a cellular decomposition approach.
+   * - ``lethe-rpt-fem-reconstruction-3d``
+     - * Radioactive Particle Tracking
+     - This application allows to reconstruct positions from ray tracing experimental measurements obtained by Radioactive Particle Tracking.
+   * - ``lethe-rpt-l2-projection-3d``
+     - * Radioactive Particle Tracking
+     - This application calculates a volumetric projection of the Beam model on a finite element mesh using an L2 projection.
