@@ -1996,10 +1996,10 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
 {
-  TimerOutput::Scope t(this->computing_timer, "Update mortar");
-
   if (!this->simulation_parameters.mortar_parameters.enable)
-    return;
+  return;
+  
+  TimerOutput::Scope t(this->computing_timer, "Update mortar");
 
   // Rotate mapping, but first check if we are not at the start of the
   // simulation so we don't rotate it twice. For following iterations, this will
