@@ -38,7 +38,7 @@ Lethe has several applications that can be used depending on the problem to be s
       - This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.
     * - * Single phase volume-averaged flows
       - ``lethe-fluid-vans``
-      - This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way.
+      - This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way. It supports calculation of the void fraction from particles, but the particles remain static.
     * - * Granular flow of spherical particles
       - ``lethe-particles``
       - This application uses the Discrete Element Method to simulate spherical particles. 
