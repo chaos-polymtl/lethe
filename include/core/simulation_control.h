@@ -5,6 +5,7 @@
 #define lethe_simulation_control_h
 
 #include <core/bdf.h>
+#include <core/sdirk_stage_data.h>
 #include <core/parameters.h>
 
 /**
@@ -133,7 +134,7 @@ protected:
     bdf_coefs = calculate_bdf_coefficients(assembly_method, time_step_vector);
   }
 
-
+  unsigned int stage_i;
 
 public:
   /**
@@ -228,6 +229,18 @@ public:
              Parameters::SimulationControl::TimeSteppingMethod::steady_bdf ||
            method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
            method == Parameters::SimulationControl::TimeSteppingMethod::bdf3;
+  }
+
+  /**
+   * @brief Establish if the method is a sdirk method
+   *
+   */
+  bool
+  is_sdirk()
+  {
+    return method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
+           method ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk33;
   }
 
 
@@ -478,6 +491,18 @@ public:
   get_bdf_coefficients()
   {
     return bdf_coefs;
+  }
+
+  unsigned int
+  get_stage_i_number()
+  {
+    return stage_i;
+  }
+
+  void
+  set_stage_i_number(unsigned int s)
+  {
+    stage_i = s;
   }
 
   /**

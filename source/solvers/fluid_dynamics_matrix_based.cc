@@ -90,6 +90,10 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
+  
+  this->present_hk_i_solution.reinit(this->locally_owned_dofs,
+                                      this->locally_relevant_dofs,
+                                      this->mpi_communicator);
 
   this->evaluation_point.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -97,6 +101,14 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
+
+  // Initialize vector of previous hk_j solutions
+  for (auto &solution : this->previous_hk_j_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
@@ -399,6 +411,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                   this->simulation_control));
             }
         }
+      
+      // sdirk methods
+      if (is_sdirk(this->simulation_control->get_assembly_method()))
+        {
+          this->assemblers.emplace_back(
+                std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
+                  this->simulation_control));
+        }
 
       // Rotating frame sources term
       if (this->simulation_parameters.velocity_sources.rotating_frame_type ==
@@ -544,18 +564,15 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                         *this->get_mapping());
     }
 
-  if (scratch_data.current_stage < 2)
-    {
-      WorkStream::run(
-        this->dof_handler.begin_active(),
-        this->dof_handler.end(),
-        *this,
-        &FluidDynamicsMatrixBased::assemble_local_system_matrix,
-        &FluidDynamicsMatrixBased::copy_local_matrix_to_global_matrix,
-        scratch_data,
-        StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                             this->cell_quadrature->size()));
-    }
+  WorkStream::run(
+    this->dof_handler.begin_active(),
+    this->dof_handler.end(),
+    *this,
+    &FluidDynamicsMatrixBased::assemble_local_system_matrix,
+    &FluidDynamicsMatrixBased::copy_local_matrix_to_global_matrix,
+    scratch_data,
+    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                          this->cell_quadrature->size()));
 
   // Add mortar entries
   if (this->simulation_parameters.mortar.enable)
@@ -580,7 +597,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->previous_hk_j_solutions,
+    this->sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -811,7 +828,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->previous_hk_j_solutions,
+    this->sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);

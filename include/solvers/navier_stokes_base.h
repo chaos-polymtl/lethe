@@ -939,6 +939,7 @@ protected:
   std::vector<VectorType> previous_hk_j_solutions;
 
   VectorType sum_over_stages;
+  VectorType sum_over_previous_stages;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
