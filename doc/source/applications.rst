@@ -14,7 +14,7 @@ Lethe has several applications that can be used depending on the problem to be s
     * - * Single-phase flows
         * Fluid-fluid flows 
         * Heat transfer
-        * Tracer
+        * Passive tracer
       - ``lethe-fluid``
       - This application solves the Navier-Stokes equations in a monolithic way. **This is the most robust fluid dynamics solver in Lethe and it is compatible with all multiphysics features**.
     * - * Single-phase flows
