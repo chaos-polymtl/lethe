@@ -66,14 +66,415 @@ ParticleVelocityQCM<dim>::setup_dofs()
                                              mpi_communicator,
                                              locally_relevant_dofs);
 
-  system_matrix_particle_velocity.reinit(locally_owned_dofs,
-                                         locally_owned_dofs,
-                                         dsp,
-                                         mpi_communicator);
+  system_matrix.reinit(locally_owned_dofs,
+                       locally_owned_dofs,
+                       dsp,
+                       mpi_communicator);
 
 
-  system_rhs_particle_velocity.reinit(locally_owned_dofs, mpi_communicator);
+  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
 }
+
+template <int dim>
+void
+VoidFractionBase<dim>::calculate_velocity_projection()
+{
+  FEValues<dim> fe_values_velocity(*mapping,
+                                   *particle_velocity_qcm.fe,
+                                   *quadrature,
+                                   update_values | update_quadrature_points |
+                                     update_JxW_values | update_gradients);
+
+  FEValuesExtractors::Vector velocities;
+  velocities.first_vector_component = 0;
+
+  const unsigned int dofs_per_cell = particle_velocity_qcm.fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  const unsigned int                   n_q_points = quadrature->size();
+  FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>              local_rhs(dofs_per_cell);
+  std::vector<Tensor<1, dim>> phi_vf(dofs_per_cell);
+  std::vector<Tensor<2, dim>> grad_phi_vf(dofs_per_cell);
+
+  double         r_sphere = 0.0;
+  double         total_volume_of_particle_in_sphere;
+  Tensor<1, dim> particles_velocity_in_sphere;
+  double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
+
+  // If the reference sphere diameter is user-defined, the radius is
+  // calculated from it, otherwise, the value must be calculated while looping
+  // over the cells.
+  bool calculate_reference_sphere_radius = true;
+  if (qcm_sphere_diameter > 1e-16)
+    {
+      r_sphere                          = 0.5 * qcm_sphere_diameter;
+      calculate_reference_sphere_radius = false;
+    }
+
+  // Lambda functions for calculating the radius of the reference sphere
+  // Calculate the radius by the volume (area in 2D) of sphere:
+  // r = (2*dim*V/pi)^(1/dim) / 2
+  auto radius_sphere_volume_cell = [](auto cell_measure) {
+    return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / double(dim));
+  };
+
+  // Calculate the radius is obtained from the volume of sphere based on
+  // R_s = h_omega:
+  // V_s = pi*(2*V_c^(1/dim))^(dim)/(2*dim) = pi*2^(dim)*V_c/(2*dim)
+  auto radius_h_omega = [&radius_sphere_volume_cell](double cell_measure) {
+    double reference_sphere_volume =
+      M_PI * Utilities::fixed_power<dim>(2.0) * cell_measure / (2.0 * dim);
+
+    return radius_sphere_volume_cell(reference_sphere_volume);
+  };
+
+  particle_velocity_qcm.system_rhs    = 0;
+  particle_velocity_qcm.system_matrix = 0;
+
+
+  for (const auto &cell :
+       particle_velocity_qcm.dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_velocity.reinit(cell);
+
+          local_matrix = 0;
+          local_rhs    = 0;
+
+          // Array of real locations for the quadrature points
+          std::vector<Point<dim>> quadrature_point_location;
+
+          quadrature_point_location =
+            fe_values_velocity.get_quadrature_points();
+
+          // Active neighbors include the current cell as well
+          auto active_neighbors =
+            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+
+          // Periodic neighbors of the current cell
+          auto active_periodic_neighbors =
+            LetheGridTools::find_cells_around_cell<dim>(
+              vertices_to_periodic_cell, cell);
+
+          // Define the volume of the reference sphere to be used as the
+          // averaging volume for the QCM
+          if (calculate_reference_sphere_radius)
+            {
+              if (void_fraction_parameters->qcm_sphere_equal_cell_volume ==
+                  true)
+                {
+                  // Get the radius by the volume of sphere which is
+                  // equal to the volume of cell
+                  r_sphere = radius_sphere_volume_cell(cell->measure());
+                }
+              else
+                {
+                  // The radius is obtained from the volume of sphere based
+                  // on R_s = h_omega
+                  r_sphere = radius_h_omega(cell->measure());
+                }
+            }
+
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              total_volume_of_particle_in_sphere = 0;
+              particles_velocity_in_sphere       = 0;
+
+              for (unsigned int m = 0; m < active_neighbors.size(); m++)
+                {
+                  // Loop over particles in neighbor cell
+                  // Begin and end iterator for particles in neighbor cell
+                  const auto pic =
+                    particle_handler->particles_in_cell(active_neighbors[m]);
+                  for (auto &particle : pic)
+                    {
+                      double distance            = 0;
+                      auto   particle_properties = particle.get_properties();
+                      const double r_particle =
+                        particle_properties
+                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
+                        0.5;
+                      double single_particle_volume =
+                        M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
+                        (2 * dim);
+
+                      // Distance between particle and quadrature point
+                      // centers
+                      distance = particle.get_location().distance(
+                        quadrature_point_location[q]);
+
+                      // Particle completely in the reference sphere
+                      if (distance <= (r_sphere - r_particle))
+                        {
+                          const double particle_volume = single_particle_volume;
+
+                          total_volume_of_particle_in_sphere += particle_volume;
+                          for (unsigned int d = 0; d < dim; ++d)
+                            {
+                              particles_velocity_in_sphere[d] +=
+                                particle_volume *
+                                particle_properties
+                                  [DEM::CFDDEMProperties::PropertiesIndex::v_x +
+                                   d];
+                            }
+                        }
+
+                      // Particle partially in the reference sphere
+                      else if ((distance > (r_sphere - r_particle)) &&
+                               (distance < (r_sphere + r_particle)))
+                        {
+                          if (dim == 2)
+                            {
+                              const double particle_volume =
+                                particle_circle_intersection_2d(r_particle,
+                                                                r_sphere,
+                                                                distance);
+
+                              total_volume_of_particle_in_sphere +=
+                                particle_volume;
+
+                              for (unsigned int d = 0; d < dim; ++d)
+                                {
+                                  particles_velocity_in_sphere[d] +=
+                                    particle_volume *
+                                    particle_properties[DEM::CFDDEMProperties::
+                                                          PropertiesIndex::v_x +
+                                                        d];
+                                }
+                            }
+                          else if (dim == 3)
+                            {
+                              const double particle_volume =
+                                particle_sphere_intersection_3d(r_particle,
+                                                                r_sphere,
+                                                                distance);
+                              total_volume_of_particle_in_sphere +=
+                                particle_volume;
+
+                              for (unsigned int d = 0; d < dim; ++d)
+                                {
+                                  particles_velocity_in_sphere[d] +=
+                                    particle_volume *
+                                    particle_properties[DEM::CFDDEMProperties::
+                                                          PropertiesIndex::v_x +
+                                                        d];
+                                }
+                            }
+                        }
+
+                      // Particle completely outside the reference sphere. Do
+                      // absolutely nothing.
+                    }
+                }
+
+              // Execute same operations for periodic neighbors, if the
+              // simulation has no periodic boundaries, the container is
+              // empty. Also, those operations cannot be done in the previous
+              // loop because the particles on the periodic side need a
+              // correction with an offset for the distance with the
+              // quadrature point
+              for (unsigned int m = 0; m < active_periodic_neighbors.size();
+                   m++)
+                {
+                  // Loop over particles in periodic neighbor cell
+                  const auto pic = particle_handler->particles_in_cell(
+                    active_periodic_neighbors[m]);
+                  for (auto &particle : pic)
+                    {
+                      double distance            = 0;
+                      auto   particle_properties = particle.get_properties();
+                      const double r_particle =
+                        particle_properties
+                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
+                        0.5;
+                      double single_particle_volume =
+                        M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
+                        (2 * dim);
+
+                      // Adjust the location of the particle in the cell to
+                      // account for the periodicity. If the position of the
+                      // periodic cell if greater than the position of the
+                      // current cell, the particle location needs a negative
+                      // correction, and vice versa. Since the particle is in
+                      // the periodic cell, this correction is the inverse of
+                      // the correction for the volumetric contribution
+                      const Point<dim> particle_location =
+                        (active_periodic_neighbors[m]
+                           ->center()[periodic_direction] >
+                         cell->center()[periodic_direction]) ?
+                          particle.get_location() - periodic_offset :
+                          particle.get_location() + periodic_offset;
+
+                      // Distance between particle and quadrature point
+                      // centers
+                      distance = particle_location.distance(
+                        quadrature_point_location[q]);
+
+                      // Particle completely in the reference sphere
+                      if (distance <= (r_sphere - r_particle))
+                        {
+                          const double particle_volume = single_particle_volume;
+                          total_volume_of_particle_in_sphere += particle_volume;
+                          for (unsigned int d = 0; d < dim; ++d)
+                            {
+                              particles_velocity_in_sphere[d] +=
+                                particle_volume *
+                                particle_properties
+                                  [DEM::CFDDEMProperties::PropertiesIndex::v_x +
+                                   d];
+                            }
+                        }
+
+                      // Particle partially in the reference sphere
+                      else if ((distance > (r_sphere - r_particle)) &&
+                               (distance < (r_sphere + r_particle)))
+                        {
+                          if (dim == 2)
+                            {
+                              const double particle_volume =
+                                particle_circle_intersection_2d(r_particle,
+                                                                r_sphere,
+                                                                distance);
+
+                              total_volume_of_particle_in_sphere +=
+                                particle_volume;
+
+                              for (unsigned int d = 0; d < dim; ++d)
+                                {
+                                  particles_velocity_in_sphere[d] +=
+                                    particle_volume *
+                                    particle_properties[DEM::CFDDEMProperties::
+                                                          PropertiesIndex::v_x +
+                                                        d];
+                                }
+                            }
+                          else if (dim == 3)
+                            {
+                              const double particle_volume =
+                                particle_sphere_intersection_3d(r_particle,
+                                                                r_sphere,
+                                                                distance);
+                              total_volume_of_particle_in_sphere +=
+                                particle_volume;
+
+                              for (unsigned int d = 0; d < dim; ++d)
+                                {
+                                  particles_velocity_in_sphere[d] +=
+                                    particle_volume *
+                                    particle_properties[DEM::CFDDEMProperties::
+                                                          PropertiesIndex::v_x +
+                                                        d];
+                                }
+                            }
+                        }
+
+
+                      // Particle completely outside the reference sphere. Do
+                      // absolutely nothing.
+                    }
+                }
+
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  phi_vf[k] = fe_values_velocity[velocities].value(k, q);
+                  grad_phi_vf[k] =
+                    fe_values_velocity[velocities].gradient(k, q);
+                }
+
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  // Assemble L2 projection
+                  // Matrix assembly
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                    {
+                      local_matrix(i, j) +=
+                        ((phi_vf[j] * phi_vf[i]) +
+                         (this->l2_smoothing_factor *
+                          scalar_product(grad_phi_vf[j], grad_phi_vf[i]))) *
+                        fe_values_velocity.JxW(q);
+                    }
+
+                  if (total_volume_of_particle_in_sphere > 0)
+                    {
+                      local_rhs(i) += phi_vf[i] * particles_velocity_in_sphere /
+                                      total_volume_of_particle_in_sphere *
+                                      fe_values_velocity.JxW(q);
+                    }
+                }
+            }
+
+          cell->get_dof_indices(local_dof_indices);
+          particle_velocity_qcm.particle_velocity_constraints
+            .distribute_local_to_global(local_matrix,
+                                        local_rhs,
+                                        local_dof_indices,
+                                        particle_velocity_qcm.system_matrix,
+                                        particle_velocity_qcm.system_rhs);
+        }
+    }
+
+  particle_velocity_qcm.system_matrix.compress(VectorOperation::add);
+  particle_velocity_qcm.system_rhs.compress(VectorOperation::add);
+
+  // Solve the L2 projection system
+  const double linear_solver_tolerance =
+    linear_solver_parameters.minimum_residual;
+
+  if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  SolverControl solver_control(linear_solver_parameters.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+
+  TrilinosWrappers::SolverCG solver(solver_control);
+
+  //**********************************************
+  // Trillinos Wrapper ILU Preconditioner
+  //*********************************************
+  const double ilu_fill = linear_solver_parameters.ilu_precond_fill;
+  const double ilu_atol = linear_solver_parameters.ilu_precond_atol;
+  const double ilu_rtol = linear_solver_parameters.ilu_precond_rtol;
+
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(particle_velocity_qcm.system_matrix,
+                                 preconditionerOptions);
+
+  solver.solve(particle_velocity_qcm.system_matrix,
+               particle_velocity_qcm.particle_velocity_locally_owned,
+               particle_velocity_qcm.system_rhs,
+               *ilu_preconditioner);
+
+  if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  particle_velocity_qcm.particle_velocity_constraints.distribute(
+    particle_velocity_qcm.particle_velocity_locally_owned);
+  particle_velocity_qcm.particle_velocity_locally_relevant =
+    particle_velocity_qcm.particle_velocity_locally_owned;
+
+#ifndef LETHE_USE_LDV
+  // Perform copy between two vector types to ensure there is a deal.II vector
+  convert_vector_trilinos_to_dealii(this->void_fraction_solution,
+                                    void_fraction_locally_relevant);
+  void_fraction_solution.update_ghost_values();
+#else
+  void_fraction_solution = void_fraction_locally_relevant;
+#endif
+}
+
 
 template <int dim>
 void
@@ -143,6 +544,8 @@ VoidFractionBase<dim>::setup_dofs()
 
   // Vertices to cell mapping
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+
+  particle_velocity_qcm.setup_dofs();
 }
 
 
@@ -244,6 +647,11 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
     }
 
   solve_linear_system_and_update_solution();
+
+  if (void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm)
+    {
+      calculate_velocity_projection();
+    }
 }
 
 template <int dim>

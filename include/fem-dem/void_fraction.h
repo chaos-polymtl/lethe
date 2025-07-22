@@ -137,11 +137,11 @@ public:
 
   /// System matrix used to assemble the smoothed L2 projection of the void
   /// fraction
-  TrilinosWrappers::SparseMatrix system_matrix_particle_velocity;
+  TrilinosWrappers::SparseMatrix system_matrix;
 
   /// Right-hand side used to assemble the smoothed L2 projection of the void
   /// fraction
-  GlobalVectorType system_rhs_particle_velocity;
+  GlobalVectorType system_rhs;
 
   /// Constraints used for the boundary conditions of the void fraction.
   /// Currently, this is only used to establish periodic void fractions. This
@@ -155,19 +155,6 @@ public:
    */
   void
   setup_dofs();
-
-
-  // void
-  // project_particle_velocity(Particles::ParticleHandler<dim>
-  // *particle_handler);
-
-  /**
-   * @brief Assemble the linear system and the right-hand-side of the equations
-   *
-   */
-  void
-  assemble_system_matrix_and_rhs(
-    Particles::ParticleHandler<dim> *particle_handler);
 };
 
 
@@ -476,6 +463,12 @@ private:
    */
   virtual void
   solve_linear_system_and_update_solution() override;
+
+  /*
+   *
+   */
+  void
+  calculate_velocity_projection();
 
   /**
    * @brief Calculate and return the periodic offset distance vector of the domain which is needed
