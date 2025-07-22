@@ -40,7 +40,7 @@ Lethe has several applications that can be used depending on the problem to be s
     * - * Single phase volume-averaged flows
       - ``lethe-fluid-vans``
       - This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way. It supports calculation of the void fraction from particles, but the particles remain static.
-    * - * Granular flow of spherical particles
+    * - * Granular flows of spherical particles
       - ``lethe-particles``
       - This application uses the Discrete Element Method to simulate spherical particles. 
     * - * Steady-state single-phase flows
