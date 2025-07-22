@@ -876,14 +876,13 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
 
 template <int dim, typename PropertiesIndex>
 void
-DEMSolver<dim, PropertiesIndex>::export_collision_stats()
+DEMSolver<dim, PropertiesIndex>::write_collision_stats()
 {
   // Open a file
   std::ofstream myfile;
   std::string   sep;
-  std::string   filename =
-    parameters.model_parameters.export_collision_stats_file;
-  // check if an extension is specified in the filename, if not add ".csv"
+  std::string   filename = parameters.post_processing.collision_stats_file_name;
+  // Check if an extension is specified in the filename, if not add ".csv"
   std::size_t csv_file = filename.find(".csv");
   std::size_t dat_file = filename.find("dat");
   if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
@@ -1150,7 +1149,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
         write_output_results();
 
       // Log the contact statistics if the parameter is enabled
-      if (parameters.model_parameters.particle_wall_contact_statistics)
+      if (parameters.post_processing.particle_wall_collision_statistics)
         {
           log_collision_data<dim, PropertiesIndex>(
             parameters,
@@ -1203,9 +1202,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
       action_manager->reset_triggers();
     }
 
-  // Export particle-wall collision statistics in .csv if enable
-  if (parameters.model_parameters.particle_wall_contact_statistics)
-    export_collision_stats();
+  // Write particle-wall collision statistics file if enabled
+  if (parameters.post_processing.particle_wall_collision_statistics)
+    write_collision_stats();
 
   finish_simulation();
 }

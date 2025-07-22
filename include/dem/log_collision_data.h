@@ -47,6 +47,8 @@ class OngoingCollisionLog
 public:
   /**
    * @brief Start logging a collision for a particle. If the particle is already present in the log, it does nothing.
+   *
+   * @param[in] log The collision log to be added for the particle.
    */
   void
   start_collision(const collision_log<dim> &log)
@@ -58,23 +60,24 @@ public:
   }
 
   /**
-   * @brief End a collision for a particle. Retrieve the start log and remove the particle from the ongoing collisions. Return true if the particle was in the log, false otherwise.
+   * @brief End a collision for a particle. Retrieve the start log and remove the particle from the ongoing collisions.
+   *
+   * @param[in] particle_id The id of the particle that ended the collision.
+   * @param[out] start_log The log of the collision start to be filled.
    */
-  bool
+  void
   end_collision(const unsigned int particle_id, collision_log<dim> &start_log)
   {
-    auto it = ongoing_collisions.find(particle_id);
-    if (it != ongoing_collisions.end())
-      {
-        start_log = it->second;
-        ongoing_collisions.erase(it);
-        return true;
-      }
-    return false;
+    auto it   = ongoing_collisions.find(particle_id);
+    start_log = it->second;
+    ongoing_collisions.erase(it);
   }
 
   /**
-   * @brief Check wether the collision is curently in a collision.
+   * @brief Check whether the particle is currently in a collision.
+   *
+   * @param[in] particle_id The id of the particle to check.
+   * @return True if the particle is in a collision, false otherwise.
    */
   bool
   is_in_collision(const unsigned int particle_id) const
@@ -92,11 +95,13 @@ private:
  * @brief Class that stores all the completed collision events.
  */
 template <int dim>
-class CollisionEventLog
+class CompletedCollisionLog
 {
 public:
   /**
    * @brief Add a completed event to the log.
+   *
+   * @param[in] event Collision event to be added.
    */
   void
   add_event(const collision_event<dim> &event)
@@ -106,6 +111,8 @@ public:
 
   /**
    * @brief Retrieve the list of all completed collision events.
+   *
+   * @return List of completed collision events.
    */
   const std::list<collision_event<dim>> &
   get_events() const
@@ -166,10 +173,10 @@ void
 log_collision_data(
   const DEMSolverParameters<dim> &parameters,
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                           &particle_wall_pairs_in_contact,
-  const double              current_time,
-  OngoingCollisionLog<dim> &ongoing_collision_log,
-  CollisionEventLog<dim>   &collision_event_log);
+                             &particle_wall_pairs_in_contact,
+  const double                current_time,
+  OngoingCollisionLog<dim>   &ongoing_collision_log,
+  CompletedCollisionLog<dim> &collision_event_log);
 
 
 #endif // lethe_collision_log_data_h

@@ -151,7 +151,7 @@ private:
    * @brief Export velocity, omega, particle id, boundary id and time results in .csv or .dat
    */
   void
-  export_collision_stats();
+  write_collision_stats();
 
   /**
    * @brief Post-processing as parallel VTU files.
@@ -236,7 +236,7 @@ private:
   /**
    * @brief Class object to store the complete collision events (start and end).
    */
-  CollisionEventLog<dim> collision_event_log;
+  CompletedCollisionLog<dim> collision_event_log;
 
   DEMContactManager<dim, DEM::CFDDEMProperties::PropertiesIndex>
     contact_manager;

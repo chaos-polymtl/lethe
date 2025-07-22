@@ -10,10 +10,10 @@ void
 log_collision_data(
   const DEMSolverParameters<dim> &parameters,
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                           &particle_wall_pairs_in_contact,
-  const double              current_time,
-  OngoingCollisionLog<dim> &ongoing_collision_log,
-  CollisionEventLog<dim>   &collision_event_log)
+                             &particle_wall_pairs_in_contact,
+  const double                current_time,
+  OngoingCollisionLog<dim>   &ongoing_collision_log,
+  CompletedCollisionLog<dim> &collision_event_log)
 {
   // particles_in_contact_now will be used to find the particles that ended
   // their collision during this time step, so that we can log the end of the
@@ -54,14 +54,28 @@ log_collision_data(
             (projected_vector.norm());
 
           types::boundary_id boundary_id = contact_info.boundary_id;
-          if (boundary_id == parameters.model_parameters.wall_boundary_id ||
-              parameters.model_parameters.log_collisions_with_all_walls)
+
+          // If we log all walls or if the boundary ID is in the list of
+          // particle-wall collision boundary IDs, we log the collision
+          // information.
+          if (std::find(parameters.post_processing
+                          .particle_wall_collision_boundary_ids.begin(),
+                        parameters.post_processing
+                          .particle_wall_collision_boundary_ids.end(),
+                        boundary_id) !=
+                parameters.post_processing.particle_wall_collision_boundary_ids
+                  .end() ||
+              parameters.post_processing.log_collisions_with_all_walls)
             {
               if (normal_overlap > 0)
                 {
                   unsigned int particle_id = particle->get_id();
-                  particles_in_contact_now.insert(particle_id); // We track which particles are in contact now
+                  particles_in_contact_now.insert(
+                    particle_id); // We track which particles are in contact now
 
+                  // If the particle is not in the ongoing collision log, we
+                  // start a new collision log for this particle.
+                  // If the particle is already in the log, we do nothing.
                   if (!ongoing_collision_log.is_in_collision(particle_id))
                     {
                       collision_log<dim> start_log;
@@ -84,9 +98,12 @@ log_collision_data(
                       start_log.time        = current_time;
                       start_log.boundary_id = contact_info.boundary_id;
 
-                      ongoing_collision_log.start_collision(start_log);
+                      ongoing_collision_log.start_collision(
+                        start_log); // Start logging the collision
 
-                      if (parameters.model_parameters.collision_verbosity ==
+                      // Print the start of the collision in the terminal if
+                      // verbosity is set to verbose
+                      if (parameters.post_processing.collision_verbosity ==
                           Parameters::Verbosity::verbose)
                         {
                           std::cout << "Collision with boundary "
@@ -99,6 +116,7 @@ log_collision_data(
             }
         }
     }
+
   for (auto &&pairs_in_contact_content :
        particle_wall_pairs_in_contact | boost::adaptors::map_values)
     {
@@ -111,7 +129,8 @@ log_collision_data(
           auto         particle    = contact_info.particle;
           unsigned int particle_id = particle->get_id();
 
-          // If the particle is not in contact now, but was in contact before
+          // If the particle does not have a positive overlap anymore, the
+          // collision has ended
           if (particles_in_contact_now.find(particle_id) ==
                 particles_in_contact_now.end() &&
               ongoing_collision_log.is_in_collision(particle_id))
@@ -130,23 +149,27 @@ log_collision_data(
 
               end_log.time = current_time;
               collision_log<dim> start_log;
-              bool               ended =
-                ongoing_collision_log.end_collision(particle_id, start_log);
-              if (ended)
+
+              // End the collision for the particle and retrieve the start log
+              ongoing_collision_log.end_collision(particle_id, start_log);
+
+              end_log.boundary_id = start_log.boundary_id;
+              collision_event<dim> event;
+              event.particle_id = particle_id;
+              event.start_log   = start_log;
+              event.end_log     = end_log;
+
+              // Add the completed collision event to the collision event log
+              collision_event_log.add_event(event);
+
+              // Print the end of the collision in the terminal if verbosity
+              // is set to verbose
+              if (parameters.post_processing.collision_verbosity ==
+                  Parameters::Verbosity::verbose)
                 {
-                  end_log.boundary_id = start_log.boundary_id;
-                  collision_event<dim> event;
-                  event.particle_id = particle_id;
-                  event.start_log   = start_log;
-                  event.end_log     = end_log;
-                  collision_event_log.add_event(event);
-                  if (parameters.model_parameters.collision_verbosity ==
-                      Parameters::Verbosity::verbose)
-                    {
-                      std::cout << "Collision with boundary "
-                                << end_log.boundary_id << " ended for particle "
-                                << particle_id << std::endl;
-                    }
+                  std::cout << "Collision with boundary " << end_log.boundary_id
+                            << " ended for particle " << particle_id
+                            << std::endl;
                 }
             }
         }
@@ -157,52 +180,52 @@ template void
 log_collision_data<2, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &parameters,
   typename DEM::dem_data_structures<2>::particle_wall_in_contact
-                         &particle_wall_pairs_in_contact,
-  const double            current_time,
-  OngoingCollisionLog<2> &ongoing_collision_log,
-  CollisionEventLog<2>   &collision_event_log);
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<2>   &ongoing_collision_log,
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &parameters,
   typename DEM::dem_data_structures<3>::particle_wall_in_contact
-                         &particle_wall_pairs_in_contact,
-  const double            current_time,
-  OngoingCollisionLog<3> &ongoing_collision_log,
-  CollisionEventLog<3>   &collision_event_log);
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<3>   &ongoing_collision_log,
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &parameters,
   typename DEM::dem_data_structures<2>::particle_wall_in_contact
-                         &particle_wall_pairs_in_contact,
-  const double            current_time,
-  OngoingCollisionLog<2> &ongoing_collision_log,
-  CollisionEventLog<2>   &collision_event_log);
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<2>   &ongoing_collision_log,
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &parameters,
   typename DEM::dem_data_structures<3>::particle_wall_in_contact
-                         &particle_wall_pairs_in_contact,
-  const double            current_time,
-  OngoingCollisionLog<3> &ongoing_collision_log,
-  CollisionEventLog<3>   &collision_event_log);
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<3>   &ongoing_collision_log,
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &parameters,
   typename DEM::dem_data_structures<2>::particle_wall_in_contact
-                         &particle_wall_pairs_in_contact,
-  const double            current_time,
-  OngoingCollisionLog<2> &ongoing_collision_log,
-  CollisionEventLog<2>   &collision_event_log);
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<2>   &ongoing_collision_log,
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &parameters,
   typename DEM::dem_data_structures<3>::particle_wall_in_contact
-                         &particle_wall_pairs_in_contact,
-  const double            current_time,
-  OngoingCollisionLog<3> &ongoing_collision_log,
-  CollisionEventLog<3>   &collision_event_log);
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<3>   &ongoing_collision_log,
+  CompletedCollisionLog<3> &collision_event_log);

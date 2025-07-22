@@ -173,7 +173,7 @@ private:
    * @brief Export velocity, omega, particle id, boundary id and time results in .csv or .dat
    */
   void
-  export_collision_stats();
+  write_collision_stats();
 
   /**
    * @brief Move all solid objects.
@@ -427,7 +427,7 @@ private:
   /**
    * @brief Class object to store the complete collision events (start and end).
    */
-  CollisionEventLog<dim> collision_event_log;
+  CompletedCollisionLog<dim> collision_event_log;
 
   /**
    * @brief The displacement tracking of particles for the dynamic contact

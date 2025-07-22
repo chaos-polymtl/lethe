@@ -910,39 +910,6 @@ namespace Parameters
                           "Choosing solver type"
                           "Choices are <dem|cfd_dem|dem_mp>.");
 
-        prm.enter_subsection("particle wall contact statistics");
-        {
-          prm.declare_entry(
-            "enable particle wall contact statistics",
-            "false",
-            Patterns::Selection("true|false"),
-            "Enable the logging of particle-wall contact statistics"
-            "Choices are <true|false>.");
-          prm.declare_entry(
-            "log collisions with all walls",
-            "true",
-            Patterns::Selection("true|false"),
-            "State whether collisions with all walls should be logged"
-            "Choices are <true|false>.");
-          prm.declare_entry("wall boundary id",
-                            "0",
-                            Patterns::Integer(),
-                            "Boundary id of the wall to log collisions with");
-          prm.declare_entry(
-            "collision statistics file",
-            "collision_statistics.csv",
-            Patterns::FileName(),
-            "Exported particle-wall collision results filename");
-
-          prm.declare_entry(
-            "verbosity",
-            "quiet",
-            Patterns::Selection("quiet|verbose"),
-            "State whether collision starts and ends should be printed. "
-            "Choices are <quiet|verbose>.");
-        }
-        prm.leave_subsection();
-
         prm.enter_subsection("adaptive sparse contacts");
         {
           prm.declare_entry(
@@ -1135,25 +1102,7 @@ namespace Parameters
             throw(
               std::runtime_error("Invalid particle-wall contact force model "));
           }
-        prm.enter_subsection("particle wall contact statistics");
-        {
-          particle_wall_contact_statistics =
-            prm.get_bool("enable particle wall contact statistics");
-          log_collisions_with_all_walls =
-            prm.get_bool("log collisions with all walls");
-          wall_boundary_id            = prm.get_integer("wall boundary id");
-          export_collision_stats_file = prm.get("collision statistics file");
-          const std::string verbose = prm.get("verbosity");
-          if (verbose == "quiet")
-            collision_verbosity = Parameters::Verbosity::quiet;
-          else if (verbose == "verbose")
-            collision_verbosity = Parameters::Verbosity::verbose;
-          else
-            {
-              throw(std::runtime_error("Invalid verbosity choice "));
-            }
-        }
-        prm.leave_subsection();
+
         dmt_cut_off_threshold = prm.get_double("dmt cut-off threshold");
 
         const std::string rolling_resistance_torque =
@@ -1726,6 +1675,38 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "State whether force chains visualization should be performed.");
+        prm.enter_subsection("particle wall collision statistics");
+        {
+          prm.declare_entry(
+            "enable particle wall collision statistics",
+            "false",
+            Patterns::Selection("true|false"),
+            "Enable the logging of particle-wall collision statistics"
+            "Choices are <true|false>.");
+          prm.declare_entry(
+            "log collisions with all walls",
+            "true",
+            Patterns::Selection("true|false"),
+            "State whether collisions with all walls should be logged"
+            "Choices are <true|false>.");
+          prm.declare_entry("wall boundary ids",
+                            "0",
+                            Patterns::List(Patterns::Integer()),
+                            "Boundary ids of the walls to log collisions with");
+          prm.declare_entry(
+            "collision statistics file",
+            "collision_statistics.csv",
+            Patterns::FileName(),
+            "Exported particle-wall collision results filename");
+
+          prm.declare_entry(
+            "verbosity",
+            "quiet",
+            Patterns::Selection("quiet|verbose"),
+            "State whether collision starts and ends should be printed. "
+            "Choices are <quiet|verbose>.");
+        }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }
@@ -1738,6 +1719,26 @@ namespace Parameters
         lagrangian_post_processing_enabled =
           prm.get_bool("lagrangian post-processing");
         force_chains = prm.get_bool("force chains");
+        prm.enter_subsection("particle wall collision statistics");
+        {
+          particle_wall_collision_statistics =
+            prm.get_bool("enable particle wall collision statistics");
+          log_collisions_with_all_walls =
+            prm.get_bool("log collisions with all walls");
+          particle_wall_collision_boundary_ids =
+            convert_string_to_vector<int>(prm, "wall boundary ids");
+          collision_stats_file_name = prm.get("collision statistics file");
+          const std::string verbose = prm.get("verbosity");
+          if (verbose == "quiet")
+            collision_verbosity = Parameters::Verbosity::quiet;
+          else if (verbose == "verbose")
+            collision_verbosity = Parameters::Verbosity::verbose;
+          else
+            {
+              throw(std::runtime_error("Invalid verbosity choice "));
+            }
+        }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }

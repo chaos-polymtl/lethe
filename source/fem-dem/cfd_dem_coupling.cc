@@ -996,13 +996,13 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::export_collision_stats()
+CFDDEMSolver<dim>::write_collision_stats()
 {
   // Open a file
   std::ofstream myfile;
   std::string   sep;
   std::string   filename =
-    dem_parameters.model_parameters.export_collision_stats_file;
+    dem_parameters.post_processing.collision_stats_file_name;
   // check if an extension is specified in the filename, if not add ".csv"
   std::size_t csv_file = filename.find(".csv");
   std::size_t dat_file = filename.find("dat");
@@ -1480,7 +1480,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
                                    sparse_contacts_object);
     }
   // Log the contact statistics if the parameter is enabled
-  if (dem_parameters.model_parameters.particle_wall_contact_statistics)
+  if (dem_parameters.post_processing.particle_wall_collision_statistics)
     {
       log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
         dem_parameters,
@@ -1704,9 +1704,9 @@ CFDDEMSolver<dim>::solve()
         report_particle_statistics();
     }
 
-  // Export particle-wall collision statistics in .csv if enable
-  if (dem_parameters.model_parameters.particle_wall_contact_statistics)
-    export_collision_stats();
+  // Write particle-wall collision statistics file if enabled
+  if (dem_parameters.post_processing.particle_wall_collision_statistics)
+    write_collision_stats();
 
   this->finish_simulation();
 }
