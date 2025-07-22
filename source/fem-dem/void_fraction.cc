@@ -813,7 +813,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         0.5;
 
                       // Calculate the ratio between the particle volume and the
-                      // total volume it contribute
+                      // total volume it contributes to
                       const double particle_volume_ratio =
                         (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                          (2 * dim)) /
@@ -876,7 +876,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         quadrature_point_location[q]);
 
                       // Calculate the ratio between the particle volume and the
-                      // total volume it contribute
+                      // total volume it contributes to
                       const double particle_volume_ratio =
                         (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                          (2 * dim)) /
