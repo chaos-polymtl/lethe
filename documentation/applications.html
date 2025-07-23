@@ -453,53 +453,113 @@
         <article role="main">
           <section id="applications-overview">
 <h1>Applications Overview<a class="headerlink" href="#applications-overview" title="Link to this heading">#</a></h1>
-<p>Lethe has several applications that can be used depending on the problem that wants to be solved. Once Lethe is compiled, all the executables to these applications become available. In the following table a brief description of each application is provided:</p>
+<p>Lethe has several applications that can be used depending on the problem to be solved. Once Lethe is compiled, all the executables to these applications become available. In the following table, we provide a brief description of each application. The applications are sorted from the most commonly used to the least.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 40.0%" />
-<col style="width: 60.0%" />
+<col style="width: 28.6%" />
+<col style="width: 28.6%" />
+<col style="width: 42.9%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Application</p></th>
+<th class="head"><p>Physics</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></td>
-<td><p>This application solves the Navier-Stokes equations in a monolithic way. <strong>This is the most robust fluid dynamics solver in Lethe</strong>.</p></td>
+<td><ul class="simple">
+<li><p>Single-phase flows</p></li>
+<li><p>Fluid-fluid flows</p></li>
+<li><p>Heat transfer</p></li>
+<li><p>Passive tracer</p></li>
+</ul>
+</td>
+<td><p>This application solves the Navier-Stokes equations in a monolithic way. <strong>This is the most robust fluid dynamics solver in Lethe and it is compatible with all multiphysics features</strong>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-block</span></code></p></td>
-<td><p>This application solves the Navier-Stokes equations in a monolithic way using block preconditioner.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code></p></td>
+<td><ul class="simple">
+<li><p>Single-phase flows</p></li>
+<li><p>Heat transfer</p></li>
+<li><p>Passive tracer</p></li>
+</ul>
+</td>
+<td><p>This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach. <strong>This is the fastest fluid dynamics solver in Lethe. It should be used for high-order simulations. It does not fully support all multiphysics features</strong>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code></p></td>
-<td><p>This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code></p></td>
+<td><ul class="simple">
+<li><p>Granular flows of spherical particles</p></li>
+</ul>
+</td>
+<td><p>This application uses the Discrete Element Method to simulate spherical particles.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-nitsche</span></code></p></td>
-<td><p>This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the Nitsche method.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code></p></td>
+<td><ul class="simple">
+<li><p>Particle-laden flows</p></li>
+</ul>
+</td>
 <td><p>This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></td>
-<td><p>This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the sharp-edge method.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></td>
+<td><ul class="simple">
+<li><p>Single-phase flows</p></li>
+<li><p>Particle-laden flows</p></li>
+<li><p>Passive tracer</p></li>
+</ul>
+</td>
+<td><p>This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-nitsche</span></code></p></td>
+<td><ul class="simple">
+<li><p>Single-phase flows</p></li>
+<li><p>Fluid-fluid flows</p></li>
+<li><p>Heat transfer</p></li>
+<li><p>Passive tracer</p></li>
+</ul>
+</td>
+<td><p>This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the Nitsche method.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code></p></td>
-<td><p>This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way.</p></td>
+<td><ul class="simple">
+<li><p>Single phase volume-averaged flows</p></li>
+</ul>
+</td>
+<td><p>This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way. It supports calculation of the void fraction from particles, but the particles remain static.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code></p></td>
-<td><p>This application uses the Discrete Element Method to simulate particles.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-block</span></code></p></td>
+<td><ul class="simple">
+<li><p>Steady-state single-phase flows</p></li>
+</ul>
+</td>
+<td><p>This application solves the Navier-Stokes equations in a monolithic way using block preconditioner. <strong>This solver is experimental and is only adequate for steady-state simulations</strong>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-3d</span></code></p></td>
+<td><ul class="simple">
+<li><p>Radioactive Particle Tracking</p></li>
+</ul>
+</td>
 <td><p>This application solves the Beam Monte-Carlo model for the interaction between gamma ray emitting particles and detectors.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-cell-reconstruction-3d</span></code></p></td>
+<td><ul class="simple">
+<li><p>Radioactive Particle Tracking</p></li>
+</ul>
+</td>
 <td><p>This application reconstructs the position of particles using a cellular decomposition approach.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-fem-reconstruction-3d</span></code></p></td>
+<td><ul class="simple">
+<li><p>Radioactive Particle Tracking</p></li>
+</ul>
+</td>
 <td><p>This application allows to reconstruct positions from ray tracing experimental measurements obtained by Radioactive Particle Tracking.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-l2-projection-3d</span></code></p></td>
+<td><ul class="simple">
+<li><p>Radioactive Particle Tracking</p></li>
+</ul>
+</td>
 <td><p>This application calculates a volumetric projection of the Beam model on a finite element mesh using an L2 projection.</p></td>
 </tr>
 </tbody>
