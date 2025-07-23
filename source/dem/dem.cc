@@ -505,6 +505,11 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::insert_particles()
 {
+  // If the insertion frequency is set to 0, then no particles are going
+  // to be inserted
+  if (parameters.insertion_info.insertion_frequency == 0)
+    return;
+
   if ((simulation_control->get_step_number() %
        parameters.insertion_info.insertion_frequency) == 1 ||
       simulation_control->get_step_number() == 1)
