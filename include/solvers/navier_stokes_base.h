@@ -437,11 +437,14 @@ protected:
   void
   define_zero_constraints();
 
+  void
+  update_mortar_configuration();
+
   /**
    * @brief Initialize mortar coupling operator
    */
   void
-  update_mortar_coupling();
+  reinit_mortar();
 
   /**
    * @brief Returns the mapping shared pointer. A MappingQCache is
@@ -466,7 +469,7 @@ protected:
    * @brief Rotate rotor mapping in mortar method
    */
   void
-  rotate_mortar_mapping();
+  rotate_rotor_mapping();
 
   /**
    * @brief Update non-zero constraints if the boundary is time dependent.

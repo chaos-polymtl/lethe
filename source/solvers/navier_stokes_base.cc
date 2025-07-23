@@ -725,7 +725,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
   // if (this->simulation_parameters.mortar_parameters.enable &&
   //     (!refinement_step || this->simulation_parameters.mesh_adaptation.type ==
   //                            Parameters::MeshAdaptation::Type::none))
-    // this->setup_dofs();
+  // this->setup_dofs();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2001,18 +2001,68 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
+NavierStokesBase<dim, VectorType, DofsType>::update_mortar_configuration()
 {
   if (!this->simulation_parameters.mortar_parameters.enable)
-  return;
-  
+    return;
+
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+
+  if (this->simulation_control->is_at_start() || !refinement_step ||
+      this->simulation_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none)
+    {
+      setup_dofs();
+
+      // Set up the vectors for the transfer
+      VectorType tmp = init_temporary_vector();
+      tmp            = this->present_solution;
+
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        tmp.update_ghost_values();
+
+      // Distribute constraints
+      auto &nonzero_constraints = this->nonzero_constraints;
+      nonzero_constraints.distribute(tmp);
+
+      // Fix on the new mesh
+      this->present_solution = tmp;
+
+      for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+        {
+          VectorType tmp_previous_solution = init_temporary_vector();
+          if constexpr (std::is_same_v<
+                          VectorType,
+                          LinearAlgebra::distributed::Vector<double>>)
+            tmp_previous_solution.update_ghost_values();
+
+          nonzero_constraints.distribute(tmp_previous_solution);
+          previous_solutions[i] = tmp_previous_solution;
+        }
+    }
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
   TimerOutput::Scope t(this->computing_timer, "Update mortar");
 
   // Rotate mapping, but first check if we are not at the start of the
   // simulation so we don't rotate it twice. For following iterations, this will
   // be done only once when setup_dofs() is called
-  if (!this->simulation_control->is_at_start())
-    rotate_mortar_mapping();
+  // if (!this->simulation_control->is_at_start())
+  rotate_rotor_mapping();
 
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
@@ -2049,7 +2099,7 @@ NavierStokesBase<dim, VectorType, DofsType>::sanitize_mortar()
   std::cout << "present solution before" << std::endl;
   for (unsigned int n = 0; n < present_solution.size(); n++)
     std::cout << present_solution[n] << " ";
-  
+
   std::cout << std::endl;
 
   // If necessary, rotate mapping and update dofs
@@ -2057,7 +2107,7 @@ NavierStokesBase<dim, VectorType, DofsType>::sanitize_mortar()
 
   // Set up the vectors for the transfer
   VectorType tmp = init_temporary_vector();
-  tmp = this->present_solution;
+  tmp            = this->present_solution;
 
   if constexpr (std::is_same_v<VectorType,
                                LinearAlgebra::distributed::Vector<double>>)
@@ -2084,7 +2134,7 @@ NavierStokesBase<dim, VectorType, DofsType>::sanitize_mortar()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
+NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping()
 {
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
@@ -2133,8 +2183,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
 {
-  this->rotate_mortar_mapping();
-  this->setup_dofs();
+  // this->rotate_rotor_mapping();
+  // this->setup_dofs();
 
   if (!this->simulation_parameters.boundary_conditions.time_dependent)
     return;

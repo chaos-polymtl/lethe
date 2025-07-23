@@ -85,7 +85,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->define_zero_constraints();
 
   // If enabled, create mortar coupling
-  this->update_mortar_coupling();
+  this->reinit_mortar();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -1697,7 +1697,7 @@ FluidDynamicsMatrixBased<dim>::solve()
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-      this->rotate_mortar_mapping();
+      this->rotate_rotor_mapping();
     }
   else
     read_mesh_and_manifolds(
@@ -1729,6 +1729,7 @@ FluidDynamicsMatrixBased<dim>::solve()
 
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
+      this->update_mortar_configuration();
 
       if (!this->simulation_control->is_at_start())
         NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
