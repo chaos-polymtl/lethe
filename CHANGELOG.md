@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-23
+
+### Fixed
+
+- MINOR The default insertion frequency was causing a segmentation fault when using the DEM solver (division by zero when set unchanged). This PR adds an "if" statement that checks if this insertion frequency is equal to 0. [#1593](https://github.com/chaos-polymtl/lethe/pull/1593)
+
 ### [Master] - 2025-07-21
 
 ### Changed
