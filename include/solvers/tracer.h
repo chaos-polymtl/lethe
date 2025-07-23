@@ -167,6 +167,12 @@ public:
   post_mesh_adaptation() override;
 
   /**
+   * @brief Implements a Moe a posteriori shock capturing method to keep the field bounded. This limiting is only used when DG advection is used for the Tracer.
+   */
+  void
+  moe_shock_capture();
+
+  /**
    * @brief Compute the Kelly error estimator for mesh refinement.
    * NB : not implemented for the tracer parameter for now.
    *
@@ -450,6 +456,19 @@ private:
    */
   void
   write_tracer_statistics();
+
+  /**
+   * @brief Modify the tracer solution by applying a limiter;
+   */
+  virtual void
+  modify_solution() override
+  {
+    if (simulation_parameters.fem_parameters.tracer_uses_dg)
+      {
+        this->pcout << "Applying MOE limiter" << std::endl;
+        moe_shock_capture();
+      }
+  };
 
 
   /**

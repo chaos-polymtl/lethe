@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/lethe_grid_tools.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -643,6 +644,151 @@ Tracer<dim>::copy_local_rhs_to_global_rhs(
                                               system_rhs);
 }
 
+
+template <int dim>
+void
+Tracer<dim>::moe_shock_capture()
+{
+  this->local_evaluation_point = this->present_solution;
+
+  // We define the cutoff function from the MOE paper using a lambda function.
+  // It's a bit weird this cutoff but function, but YOLO I guess.
+  auto phi_limit = [](const double y) { return std::min(1., y / 1.1); };
+
+  // For each cell we will do the following
+  // Loop over every cell and store:
+  // 1. Calculate the max and the min value of the field we wish to limit
+  // Loop over every cell and do:
+  // 2. Calculate approximate upper and lower bound using the neighbhors
+  // 3. Calculate the theta limiter
+  // 4. Rescale the nodal values of the function
+
+  // We need a vertices to cell map to have access to the neihbhors rapidly
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_cell;
+  LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+
+
+
+  // Step 1, loop over every cell and calculate the max, the min and the mean
+  std::map<typename ::dealii::types::global_cell_index, double>
+    max_value_per_cells;
+  std::map<typename ::dealii::types::global_cell_index, double>
+    min_value_per_cells;
+  std::map<typename ::dealii::types::global_cell_index, double>
+    mean_value_per_cells;
+
+  std::vector<types::global_dof_index> local_dof_indices(fe->n_dofs_per_cell());
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      // if (cell->is_locally_owned())
+      {
+        cell->get_dof_indices(local_dof_indices);
+        double max_value  = -DBL_MAX;
+        double min_value  = DBL_MAX;
+        double mean_value = 0;
+        for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+          {
+            // Get the max and the min value of the solution
+            double dof_value = present_solution(local_dof_indices[i]);
+            max_value        = std::max(max_value, dof_value);
+            min_value        = std::min(min_value, dof_value);
+            // Calculate mean solution \bar{w}. Right now this is an average of
+            // the nodal value which is lazy as balls. A better one will be to
+            // do an integral, but this is dev and I am a lazy bum for now.
+            mean_value += dof_value;
+          }
+        mean_value /= local_dof_indices.size();
+        min_value_per_cells[cell->global_active_cell_index()]  = min_value;
+        max_value_per_cells[cell->global_active_cell_index()]  = max_value;
+        mean_value_per_cells[cell->global_active_cell_index()] = mean_value;
+      }
+    }
+
+  // Loop over every cell and do:
+  // 2. Calculate approximate upper and lower bound using the neighbhors
+  // 3. Calculate the theta limiter
+  // 4. Rescale the nodal values of the function
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          cell->get_dof_indices(local_dof_indices);
+
+          // Active neighbors include the current cell as well
+          auto active_neighbors =
+            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+
+
+          // 2. Calculate approximate upper and lower bound using the neighbhors
+
+          // Here we assume that alpha = 0 (see the Moe paper) as a starter
+          // point to see if this has any chance of working.
+          double upper_bound =
+            mean_value_per_cells[cell->global_active_cell_index()];
+          double lower_bound =
+            min_value_per_cells[cell->global_active_cell_index()];
+
+
+          for (const auto &neighbor : active_neighbors)
+            {
+              // The shock capture mechanism theta calculation should not
+              // consider the cell itself.
+              if (cell->global_active_cell_index() ==
+                  neighbor->global_active_cell_index())
+                continue;
+
+              upper_bound = std::max(
+                upper_bound,
+                max_value_per_cells[neighbor->global_active_cell_index()]);
+
+              lower_bound = std::min(
+                lower_bound,
+                max_value_per_cells[neighbor->global_active_cell_index()]);
+            }
+
+          // 3. Calculate the value of the theta limiting
+          double max_value =
+            max_value_per_cells[cell->global_active_cell_index()];
+          double min_value =
+            min_value_per_cells[cell->global_active_cell_index()];
+          double mean_value =
+            mean_value_per_cells[cell->global_active_cell_index()];
+          double y_max =
+            (upper_bound - mean_value) / ((max_value - mean_value) + 1e-16);
+          double y_min =
+            (lower_bound - mean_value) / ((min_value - mean_value) + 1e-16);
+          /*std::cout << "upper_bound : " << upper_bound
+                    << " lower_bound : " << lower_bound
+                    << " max_value : " << max_value
+                    << " min_value : " << min_value
+                    << " mean value : " << mean_value << std::endl;
+          std::cout << "y_max : " << y_max << " y_min : " << y_min <<
+          std::endl;*/
+          double theta = std::min(1., phi_limit(y_max));
+          theta        = std::min(theta, phi_limit(y_min));
+
+
+          // 4. Rescale the solution within the element
+          for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+            {
+              // Get the max and the min value of the solution
+              double dof_value =
+                this->local_evaluation_point(local_dof_indices[i]);
+              this->local_evaluation_point(local_dof_indices[i]) =
+                mean_value + theta * (dof_value - mean_value);
+              /*std::cout << "theta : " << theta << " mean " << mean_value
+                        << " dof value: " << dof_value << std::endl;*/
+            }
+        }
+    }
+  present_solution = this->local_evaluation_point;
+  evaluation_point = this->local_evaluation_point;
+}
+
 template <int dim>
 void
 Tracer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
@@ -737,6 +883,8 @@ template <int dim>
 void
 Tracer<dim>::postprocess(bool first_iteration)
 {
+  moe_shock_capture();
+
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
@@ -995,10 +1143,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
