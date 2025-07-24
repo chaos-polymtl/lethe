@@ -652,7 +652,7 @@ Tracer<dim>::moe_shock_capture()
   this->local_evaluation_point = this->present_solution;
 
   // We define the cutoff function from the MOE paper using a lambda function.
-  // It's a bit weird this cutoff but function, but YOLO I guess.
+  // It's a bit weird this cutoff function, but YOLO I guess.
   auto phi_limit = [](const double y) { return std::min(1., y / 1.1); };
 
   // For each cell we will do the following
@@ -668,8 +668,6 @@ Tracer<dim>::moe_shock_capture()
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
-
-
 
   // Step 1, loop over every cell and calculate the max, the min and the mean
   std::map<typename ::dealii::types::global_cell_index, double>
@@ -716,6 +714,8 @@ Tracer<dim>::moe_shock_capture()
     {
       if (cell->is_locally_owned())
         {
+          // Get an approximate cell size
+          // const double alpha = 50 * cell->diameter();
           cell->get_dof_indices(local_dof_indices);
 
           // Active neighbors include the current cell as well
@@ -730,7 +730,7 @@ Tracer<dim>::moe_shock_capture()
           double upper_bound =
             mean_value_per_cells[cell->global_active_cell_index()];
           double lower_bound =
-            min_value_per_cells[cell->global_active_cell_index()];
+            mean_value_per_cells[cell->global_active_cell_index()];
 
 
           for (const auto &neighbor : active_neighbors)
@@ -741,47 +741,40 @@ Tracer<dim>::moe_shock_capture()
                   neighbor->global_active_cell_index())
                 continue;
 
+              // These should be max and min, but the limiter is more robust
+              // (although more diffusive) when we use the mean value.
+
               upper_bound = std::max(
                 upper_bound,
-                max_value_per_cells[neighbor->global_active_cell_index()]);
+                mean_value_per_cells[neighbor->global_active_cell_index()]);
 
               lower_bound = std::min(
                 lower_bound,
-                max_value_per_cells[neighbor->global_active_cell_index()]);
+                mean_value_per_cells[neighbor->global_active_cell_index()]);
             }
 
           // 3. Calculate the value of the theta limiting
-          double max_value =
+          const double max_value =
             max_value_per_cells[cell->global_active_cell_index()];
-          double min_value =
+          const double min_value =
             min_value_per_cells[cell->global_active_cell_index()];
-          double mean_value =
+          const double mean_value =
             mean_value_per_cells[cell->global_active_cell_index()];
           double y_max =
             (upper_bound - mean_value) / ((max_value - mean_value) + 1e-16);
           double y_min =
             (lower_bound - mean_value) / ((min_value - mean_value) + 1e-16);
-          /*std::cout << "upper_bound : " << upper_bound
-                    << " lower_bound : " << lower_bound
-                    << " max_value : " << max_value
-                    << " min_value : " << min_value
-                    << " mean value : " << mean_value << std::endl;
-          std::cout << "y_max : " << y_max << " y_min : " << y_min <<
-          std::endl;*/
+
           double theta = std::min(1., phi_limit(y_max));
           theta        = std::min(theta, phi_limit(y_min));
-
 
           // 4. Rescale the solution within the element
           for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
             {
               // Get the max and the min value of the solution
-              double dof_value =
-                this->local_evaluation_point(local_dof_indices[i]);
+              double dof_value = this->present_solution(local_dof_indices[i]);
               this->local_evaluation_point(local_dof_indices[i]) =
                 mean_value + theta * (dof_value - mean_value);
-              /*std::cout << "theta : " << theta << " mean " << mean_value
-                        << " dof value: " << dof_value << std::endl;*/
             }
         }
     }
@@ -883,8 +876,6 @@ template <int dim>
 void
 Tracer<dim>::postprocess(bool first_iteration)
 {
-  moe_shock_capture();
-
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
@@ -1143,10 +1134,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                } // end face is a boundary face
-            } // end loop on faces
-        } // end condition cell at boundary
-    } // end loop on cells
+                }     // end face is a boundary face
+            }         // end loop on faces
+        }             // end condition cell at boundary
+    }                 // end loop on cells
 
 
   // Sum across all cores
