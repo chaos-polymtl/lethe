@@ -277,7 +277,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
       compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
                                         mortar_parameters)
         .first,
-      quadrature,
+      construct_quadrature(quadrature, mortar_parameters),
       compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
                                         mortar_parameters)
         .second,
