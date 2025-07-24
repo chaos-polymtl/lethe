@@ -14,10 +14,10 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
     set insertion method                               = volume
 
     # Every method
-    set insertion frequency                            = 1
+    set insertion frequency                            = 0
 
     # If method = volume
-    set inserted number of particles at each time step = 1
+    set inserted number of particles at each time step = 0
     set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
     set insertion direction sequence                   = 0, 1, 2
     set insertion distance threshold                   = 1.
