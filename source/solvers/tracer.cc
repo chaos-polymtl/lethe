@@ -647,29 +647,38 @@ Tracer<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
-Tracer<dim>::moe_shock_capture()
+Tracer<dim>::moe_scalar_limiter()
 {
+  // The limiter requires a vector in which the value can be modified.
+  // For this we use the local_evaluation_point. We thus begin by making sure
+  // that the local_evaluation_point is set at the present value of the solution
+  // to limit.
   this->local_evaluation_point = this->present_solution;
 
-  // We define the cutoff function from the MOE paper using a lambda function.
-  // It's a bit weird this cutoff function, but YOLO I guess.
+  // We define the cutoff function from the Moe paper using a lambda function.
+  // It's a bit weird this cutoff function, but YOLO I guess. Why do we divide y
+  // by 1.1? I do not know, I believe it to be one of the mysteries of life.
   auto phi_limit = [](const double y) { return std::min(1., y / 1.1); };
 
-  // For each cell we will do the following
-  // Loop over every cell and store:
+  // The strategy for limiting requires looping over the cells twice.
+  // First loop over all active cells (local and ghost):
   // 1. Calculate the max and the min value of the field we wish to limit
-  // Loop over every cell and do:
-  // 2. Calculate approximate upper and lower bound using the neighbhors
-  // 3. Calculate the theta limiter
-  // 4. Rescale the nodal values of the function
+  // Loop over every local cells:
+  // 2. Calculate approximate upper and lower bound using the neighbors
+  // 3. Calculate the value of the theta limiting parameter
+  // 4. Rescale the nodal values of the function using the average value of the
+  // solution within the element and the theta limiter.
 
-  // We need a vertices to cell map to have access to the neihbhors rapidly
+
+  // We need a vertices to cell map to have access to the neighbors rapidly
+  // We obtain this map using the LetheGridTools functionnalities.
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 
-  // Step 1, loop over every cell and calculate the max, the min and the mean
+  // Step 1, loop over every cell and calculate the max, the min and the mean.
+  // These values are stored in std::map for rapid access.
   std::map<typename ::dealii::types::global_cell_index, double>
     max_value_per_cells;
   std::map<typename ::dealii::types::global_cell_index, double>
@@ -725,12 +734,13 @@ Tracer<dim>::moe_shock_capture()
 
           // 2. Calculate approximate upper and lower bound using the neighbhors
 
-          // Here we assume that alpha = 0 (see the Moe paper) as a starter
-          // point to see if this has any chance of working.
+          // Here we assume that alpha = 0 (see the Moe paper). The definition
+          // of alpha in the original paper is flaky in my opinion, let's use
+          // the more robust version as a started point.
           double upper_bound =
-            mean_value_per_cells[cell->global_active_cell_index()];
+            mean_value_per_cells.at(cell->global_active_cell_index());
           double lower_bound =
-            mean_value_per_cells[cell->global_active_cell_index()];
+            mean_value_per_cells.at(cell->global_active_cell_index());
 
 
           for (const auto &neighbor : active_neighbors)
@@ -741,25 +751,29 @@ Tracer<dim>::moe_shock_capture()
                   neighbor->global_active_cell_index())
                 continue;
 
-              // These should be max and min, but the limiter is more robust
-              // (although more diffusive) when we use the mean value.
+              // The original paper uses the max and the min of the neighbor
+              // solutions. I have also tested with the mean values of the
+              // neighbor. It seemed a bit more robust, but I'd rather follow
+              // the paper for now. Let's just keep in mind that this can be a
+              // fallback.
 
-              upper_bound = std::max(
-                upper_bound,
-                max_value_per_cells[neighbor->global_active_cell_index()]);
+              upper_bound = std::max(upper_bound,
+                                     max_value_per_cells.at(
+                                       neighbor->global_active_cell_index()));
 
-              lower_bound = std::min(
-                lower_bound,
-                min_value_per_cells[neighbor->global_active_cell_index()]);
+              lower_bound = std::min(lower_bound,
+                                     min_value_per_cells.at(
+                                       neighbor->global_active_cell_index()));
             }
 
-          // 3. Calculate the value of the theta limiting
+          // 3. Calculate the value of the theta limiting using the max, min and
+          // mean values as well as the bounds.
           const double max_value =
-            max_value_per_cells[cell->global_active_cell_index()];
+            max_value_per_cells.at(cell->global_active_cell_index());
           const double min_value =
-            min_value_per_cells[cell->global_active_cell_index()];
+            min_value_per_cells.at(cell->global_active_cell_index());
           const double mean_value =
-            mean_value_per_cells[cell->global_active_cell_index()];
+            mean_value_per_cells.at(cell->global_active_cell_index());
           double y_max =
             (upper_bound - mean_value) / ((max_value - mean_value) + 1e-16);
           double y_min =
@@ -771,13 +785,18 @@ Tracer<dim>::moe_shock_capture()
           // 4. Rescale the solution within the element
           for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
             {
-              // Get the max and the min value of the solution
-              double dof_value = this->present_solution(local_dof_indices[i]);
+              // Get the value of the solution at the DOFs and rescale it
+              // using the mean value and the theta limiter.
+              const double dof_value =
+                this->present_solution(local_dof_indices[i]);
               this->local_evaluation_point(local_dof_indices[i]) =
                 mean_value + theta * (dof_value - mean_value);
             }
         }
     }
+
+  // Reset the present solution and the evaluation point to the new updated
+  // solution.
   present_solution = this->local_evaluation_point;
   evaluation_point = this->local_evaluation_point;
 }
