@@ -461,9 +461,15 @@ protected:
 
   /**
    * @brief Rotate rotor mapping in mortar method
+   *
+   * @param[in] is_first Whether this is the first mapping rotation. This
+   * boolean is used only for printing output purposes; since the mapping needs
+   * to be rotated before setting up dofs, but also after the constraints are
+   * first defined, this function is called twice before the iterate() loop. The
+   * parameter is_first just prevents the mortar verbosity to be printed twice
    */
   void
-  rotate_rotor_mapping();
+  rotate_rotor_mapping(bool is_first);
 
   /**
    * @brief Update non-zero constraints if the boundary is time dependent.
