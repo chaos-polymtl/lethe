@@ -2042,9 +2042,9 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
-  TimerOutput::Scope t(this->computing_timer, "Update mortar");
-
   rotate_rotor_mapping();
+
+  TimerOutput::Scope t(this->computing_timer, "Reinit mortar");
 
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
