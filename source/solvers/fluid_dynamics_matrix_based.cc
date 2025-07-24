@@ -126,12 +126,8 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
-  // Initialize vector of previous solutions
-  for (auto &solution : this->temp_previous_solutions)
-    {
-      solution.reinit(this->locally_owned_dofs,
-                      this->mpi_communicator);
-    }
+  this->previous_solutions_0.reinit(this->locally_owned_dofs,
+                                this->mpi_communicator);
 
     
   // Initialize vector of previous hk_j solutions
@@ -141,11 +137,8 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
-  for (auto &solution : this->temp_previous_hk_j_solutions)
-    {
-      solution.reinit(this->locally_owned_dofs,
-                      this->mpi_communicator);
-    }
+  this->previous_hk_j_solutions_p.reinit(this->locally_owned_dofs,
+                                this->mpi_communicator);
   this->tmp.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
 

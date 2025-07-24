@@ -604,7 +604,7 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
-   this->present_solution.reinit(this->locally_owned_dofs,
+  this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
@@ -642,6 +642,8 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
+  this->previous_solutions_0.reinit(this->locally_owned_dofs,
+                                this->mpi_communicator);
 
     
   // Initialize vector of previous hk_j solutions
@@ -651,11 +653,8 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
-  for (auto &solution : this->temp_previous_hk_j_solutions)
-    {
-      solution.reinit(this->locally_owned_dofs,
-                      this->mpi_communicator);
-    }
+  this->previous_hk_j_solutions_p.reinit(this->locally_owned_dofs,
+                                this->mpi_communicator);
   this->tmp.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
 

@@ -585,15 +585,13 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  std::cout << "DEBUG: Entering iterate()" << std::endl;
-
   const auto method = this->simulation_control->get_assembly_method();
 
   auto &present_solution   = this->present_solution;
   auto &local_evaluation_point = this->local_evaluation_point;
   
   auto &previous_solutions = this->previous_solutions;
-  auto &temp_previous_solutions = this->temp_previous_solutions;
+  auto &previous_solutions_0 = this->previous_solutions_0;
 
   auto &sum_bi_ki = this->sum_bi_ki;
   auto &temp_sum_bi_ki = this->temp_sum_bi_ki;
@@ -605,23 +603,18 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   auto &temp_present_hk_i_solution = this->temp_present_hk_i_solution;
 
   auto &previous_hk_j_solutions = this->previous_hk_j_solutions;
-  auto &temp_previous_hk_j_solutions = this->temp_previous_hk_j_solutions;
+  auto &previous_hk_j_solutions_p = this->previous_hk_j_solutions_p;
 
   auto &tmp = this->tmp;
 
   const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
-  std::cout << "DEBUG: Number of stages = " << n_stages << std::endl;
 
   for (unsigned int stage = 0; stage < n_stages; ++stage)
     {
-      std::cout << "DEBUG: Entering stage " << stage << std::endl;
-
       this->simulation_control->set_stage_i_number(stage);
 
       if (simulation_parameters.multiphysics.fluid_dynamics)
         {
-          std::cout << "DEBUG: Solving fluid dynamics at stage " << stage << std::endl;
-
           multiphysics->solve(false,
                               simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(false);
@@ -635,59 +628,36 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
           SDIRKStageData stage_data(scratch_data->sdirk_table, stage + 1);
           const double a_ii = stage_data.a_ij[stage];
-          std::cout << "DEBUG: a_ii = " << a_ii << std::endl;
 
           temp_sum_over_previous_stages = sum_over_previous_stages;
           temp_sum_over_previous_stages = 0;
 
           if (stage > 0)
           {
-            std::cout << "DEBUG: stage > 0, accumulating previous_hk_j_solutions" << std::endl;
-
-            for (unsigned int i = 0; i < previous_hk_j_solutions.size(); ++i)
-            {
-              temp_previous_hk_j_solutions[i] = previous_hk_j_solutions[i];
-            }
-
             for (unsigned int p = 0; p < stage; ++p)
             {
-              std::cout << "DEBUG: Adding contribution from stage " << p << std::endl;
-              tmp = temp_previous_hk_j_solutions[0];
-              tmp.equ(stage_data.a_ij[p] / a_ii, previous_hk_j_solutions[p]);
+              previous_hk_j_solutions_p = previous_hk_j_solutions[p];
+              tmp = previous_hk_j_solutions[0];
+              tmp.equ(stage_data.a_ij[p] / a_ii, previous_hk_j_solutions_p);
               temp_sum_over_previous_stages.add(1.0, tmp);
             }
           }
 
           sum_over_previous_stages = temp_sum_over_previous_stages;
 
-          std::cout << "DEBUG: Calling solve_non_linear_system()" << std::endl;
           PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
-          temp_previous_solutions = previous_solutions;
-
-          // std::cout << "DEBUG: Resizing temp_previous_solutions to " << std::endl;
-          std::cout << "Before loop over previous_solutions" << std::endl;
-          for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-            {
-              temp_previous_solutions[i] = previous_solutions[i];
-            }
-          std::cout << "After loop over previous_solutions" << std::endl;
-          
+          previous_solutions_0 = previous_solutions[0];
           temp_present_hk_i_solution = present_solution;
-          std::cout << ".add over temp_present_hk_i_solution is not working" << std::endl;
-          temp_present_hk_i_solution.add(-1.0, temp_previous_solutions[0]);
-          std::cout << "DEBUG: Si ça passe ici parfait " << std::endl;
+          temp_present_hk_i_solution.add(-1.0, previous_solutions_0);
           temp_present_hk_i_solution *= 1.0 / a_ii;
           temp_present_hk_i_solution.add(-1.0, temp_sum_over_previous_stages);
-
-          std::cout << "DEBUG: Computed present_hk_i_solution for stage " << stage << std::endl;
 
           present_hk_i_solution = temp_present_hk_i_solution;
 
           previous_hk_j_solutions[stage] = present_hk_i_solution;
 
           const double b_i = stage_data.b_i;
-          std::cout << "DEBUG: b_i = " << b_i << std::endl;
 
           temp_sum_bi_ki = sum_bi_ki;
           temp_sum_bi_ki.add(b_i, temp_present_hk_i_solution);
@@ -695,7 +665,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
           if (this->multiphysics->get_active_physics().size() > 1)
           {
-            std::cout << "DEBUG: Updating solutions for multiphysics" << std::endl;
             this->update_solutions_for_multiphysics();
           }
 
@@ -705,8 +674,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         }
       else
         {
-          std::cout << "DEBUG: Fluid dynamics not enabled" << std::endl;
-
           multiphysics->solve(false, simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(false);
 
@@ -716,11 +683,9 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
               this->local_evaluation_point =
                 this->average_velocities->get_average_velocities();
               present_solution = this->local_evaluation_point;
-              std::cout << "DEBUG: Set present_solution from average velocity" << std::endl;
             }
           else
             {
-              std::cout << "DEBUG: Setting initial condition manually" << std::endl;
               this->simulation_parameters.initial_condition->uvwp.set_time(
                 this->simulation_control->get_current_time());
               set_initial_condition_fd(
@@ -730,11 +695,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
           multiphysics->solve(true, simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(true);
         }
-
-      std::cout << "DEBUG: Finished stage " << stage << std::endl;
     }
-
-  std::cout << "DEBUG: Exited loop over stages" << std::endl;
 
   if (method != Parameters::SimulationControl::TimeSteppingMethod::steady &&
       method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf && 
@@ -742,13 +703,11 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       method != Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
       method != Parameters::SimulationControl::TimeSteppingMethod::bdf3)
   {
-    std::cout << "DEBUG: Finalizing present_solution from sum_bi_ki" << std::endl;
+    temp_sum_bi_ki = sum_bi_ki;
     local_evaluation_point = previous_solutions[0];
-    local_evaluation_point.add(1, sum_bi_ki);
+    local_evaluation_point.add(1, temp_sum_bi_ki);
     present_solution = local_evaluation_point;
   }
-
-  std::cout << "DEBUG: Leaving iterate()" << std::endl;
 }
 
 
