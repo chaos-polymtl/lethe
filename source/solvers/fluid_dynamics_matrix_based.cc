@@ -87,17 +87,37 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // If enabled, create mortar coupling
   this->update_mortar_coupling();
 
+
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
+  this->evaluation_point.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
+
   
   this->present_hk_i_solution.reinit(this->locally_owned_dofs,
                                       this->locally_relevant_dofs,
                                       this->mpi_communicator);
+  this->temp_present_hk_i_solution.reinit(this->locally_owned_dofs,
+                                this->mpi_communicator);
 
-  this->evaluation_point.reinit(this->locally_owned_dofs,
+
+  this->sum_bi_ki.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
+  this->temp_sum_bi_ki.reinit(this->locally_owned_dofs,
+                                this->mpi_communicator);
+
+  
+  this->sum_over_previous_stages.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
+  this->temp_sum_over_previous_stages.reinit(this->locally_owned_dofs,
+                                this->mpi_communicator);
+
 
   // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
@@ -107,6 +127,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
 
+    
   // Initialize vector of previous hk_j solutions
   for (auto &solution : this->previous_hk_j_solutions)
     {
@@ -114,11 +135,18 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
+  for (auto &solution : this->temp_previous_hk_j_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->mpi_communicator);
+    }
+  this->tmp.reinit(this->locally_owned_dofs, this->mpi_communicator);
+
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs,
-                                      this->mpi_communicator);
+
+
   auto                  &nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,

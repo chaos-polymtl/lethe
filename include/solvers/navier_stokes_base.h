@@ -282,14 +282,6 @@ protected:
   percolate_time_vectors_fd();
 
   /**
-   * @brief iterate
-   * Finishes the stage of the SDIRK method for fluid dynamics
-   * Post-processing of the stage
-   */
-  virtual void
-  percolate_stage_vectors_fd();
-
-  /**
    * @brief finish_simulation
    * Finishes the simulation for fluid dynamics by calling
    * the post-processing elements that are required
@@ -931,15 +923,24 @@ protected:
   VectorType local_evaluation_point;
   VectorType newton_update;
   VectorType present_solution;
+
   VectorType present_hk_i_solution;
+  VectorType temp_present_hk_i_solution;
+
   VectorType system_rhs;
+  VectorType tmp;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
-  std::vector<VectorType> previous_hk_j_solutions;
 
-  VectorType sum_over_stages;
+  std::vector<VectorType> previous_hk_j_solutions;
+  std::vector<VectorType> temp_previous_hk_j_solutions;
+
+  VectorType sum_bi_ki;
+  VectorType temp_sum_bi_ki;
+
   VectorType sum_over_previous_stages;
+  VectorType temp_sum_over_previous_stages;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
