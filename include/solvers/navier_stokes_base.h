@@ -932,6 +932,7 @@ protected:
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
+  std::vector<VectorType> temp_previous_solutions;
 
   std::vector<VectorType> previous_hk_j_solutions;
   std::vector<VectorType> temp_previous_hk_j_solutions;
