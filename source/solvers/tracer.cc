@@ -746,11 +746,11 @@ Tracer<dim>::moe_shock_capture()
 
               upper_bound = std::max(
                 upper_bound,
-                mean_value_per_cells[neighbor->global_active_cell_index()]);
+                max_value_per_cells[neighbor->global_active_cell_index()]);
 
               lower_bound = std::min(
                 lower_bound,
-                mean_value_per_cells[neighbor->global_active_cell_index()]);
+                min_value_per_cells[neighbor->global_active_cell_index()]);
             }
 
           // 3. Calculate the value of the theta limiting
@@ -1134,10 +1134,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
