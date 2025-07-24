@@ -932,10 +932,10 @@ protected:
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
-  std::vector<VectorType> temp_previous_solutions;
+  VectorType previous_solutions_0;
 
   std::vector<VectorType> previous_hk_j_solutions;
-  std::vector<VectorType> temp_previous_hk_j_solutions;
+  VectorType previous_hk_j_solutions_p;
 
   VectorType sum_bi_ki;
   VectorType temp_sum_bi_ki;
