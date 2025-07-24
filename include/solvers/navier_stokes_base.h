@@ -460,12 +460,6 @@ protected:
   }
 
   /**
-   * @brief Update mortar information
-   */
-  void
-  sanitize_mortar();
-
-  /**
    * @brief Rotate rotor mapping in mortar method
    */
   void
