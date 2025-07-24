@@ -380,7 +380,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Execute the last post-processing at the end of the simulation and output test results if necessary. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00611">611</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00616">616</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::end</a>, <a class="el" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::mobility_status</a>, <a class="el" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::particles</a>, <a class="el" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7acd9fb49631e1e52bac55a75bf39c81a8">Parameters::Testing::subdomain</a>, and <a class="el" href="output__force__torque__calculation_8cc_source.html#l00036">write_forces_torques_output_results()</a>.</p>
 
@@ -475,7 +475,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Move all solid objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00566">566</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00571">571</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -506,7 +506,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Calculates particles-wall contact forces. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00520">520</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00525">525</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -537,7 +537,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Calculate average velocity and other post-processed quantities that need to be outputted to files. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00740">740</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00745">745</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -568,7 +568,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Calculate statistics on the particles and report them to the terminal. This function is notably used to monitor the time min, max and total performed contact searches, and the instant min, max, avg and total values of the linear velocity, angular velocity, linear kinetic energy and angular kinetic. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00759">759</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00764">764</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00059">add_statistics_to_table_handler()</a>, <a class="el" href="dem__post__processing_8cc_source.html#l00012">DEM::calculate_granular_statistics()</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">DEM::rotational_kinetic_energy</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">DEM::translational_kinetic_energy</a>, and <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>.</p>
 
@@ -879,7 +879,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Engine of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solver. Calls all the necessary functions to set parameters, solve the simulation, and finish the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00873">873</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00878">878</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="find__contact__detection__step_8cc_source.html#l00119">find_floating_mesh_mapping_step()</a>, <a class="el" href="read__checkpoint_8cc_source.html#l00019">read_checkpoint()</a>, <a class="el" href="read__mesh_8cc_source.html#l00016">read_mesh()</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="write__checkpoint_8cc_source.html#l00017">write_checkpoint()</a>, and <a class="el" href="output__force__torque__calculation_8cc_source.html#l00009">write_forces_torques_output_locally()</a>.</p>
 
@@ -912,7 +912,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Execute the sorting of particle into subdomains and cells, and reinitialize the containers dependent on the local particle ids. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00837">837</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00842">842</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -943,7 +943,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Update solid objects temperatures. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00586">586</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00591">591</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -974,7 +974,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Generate VTU file with particles information for visualization. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00673">673</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00678">678</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="visualization_8cc_source.html#l00015">Visualization&lt; dim, PropertiesIndex &gt;::build_patches()</a>.</p>
 
