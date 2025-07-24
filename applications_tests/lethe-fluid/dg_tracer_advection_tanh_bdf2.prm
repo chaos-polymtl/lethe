@@ -34,6 +34,10 @@ subsection physical properties
   end
 end
 
+subsection stabilization
+  set scalar limiter = moe
+end
+
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle

@@ -465,7 +465,9 @@ private:
   {
     if (simulation_parameters.fem_parameters.tracer_uses_dg)
       {
-        moe_shock_capture();
+        if (simulation_parameters.stabilization.scalar_limiter ==
+            Parameters::Stabilization::ScalarLimiters::moe)
+          moe_shock_capture();
       }
   };
 
