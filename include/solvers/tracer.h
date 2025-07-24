@@ -465,7 +465,6 @@ private:
   {
     if (simulation_parameters.fem_parameters.tracer_uses_dg)
       {
-        this->pcout << "Applying MOE limiter" << std::endl;
         moe_shock_capture();
       }
   };
