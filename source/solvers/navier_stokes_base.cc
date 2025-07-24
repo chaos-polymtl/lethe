@@ -576,13 +576,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
-  // If mortar is enabled, and if no refinement has been done, allow the mapping
-  // rotation to be updated by setting up the dofs again
-  // if (simulation_parameters.mortar_parameters.enable &&
-  //     this->simulation_parameters.mesh_adaptation.type ==
-  //       Parameters::MeshAdaptation::Type::none)
-  //   this->setup_dofs();
-
   if (simulation_parameters.multiphysics.fluid_dynamics)
     {
       // Solve and percolate the auxiliary physics that should be treated BEFORE
@@ -719,13 +712,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
                Parameters::MeshAdaptation::Type::uniform)
         refine_mesh_uniform();
     }
-
-  // Ensure that, if mortar is enabled but the mesh is not refined, the
-  // mapping information is still updated
-  // if (this->simulation_parameters.mortar_parameters.enable &&
-  //     (!refinement_step || this->simulation_parameters.mesh_adaptation.type ==
-  //                            Parameters::MeshAdaptation::Type::none))
-  // this->setup_dofs();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2058,10 +2044,6 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
 
   TimerOutput::Scope t(this->computing_timer, "Update mortar");
 
-  // Rotate mapping, but first check if we are not at the start of the
-  // simulation so we don't rotate it twice. For following iterations, this will
-  // be done only once when setup_dofs() is called
-  // if (!this->simulation_control->is_at_start())
   rotate_rotor_mapping();
 
   // Create mortar manager
@@ -2088,48 +2070,6 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
       this->simulation_parameters.mortar_parameters.rotor_boundary_id,
       this->simulation_parameters.mortar_parameters.stator_boundary_id,
       this->simulation_parameters.mortar_parameters.sip_factor);
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::sanitize_mortar()
-{
-  TimerOutput::Scope t(this->computing_timer, "Sanitize mortar");
-
-  std::cout << "present solution before" << std::endl;
-  for (unsigned int n = 0; n < present_solution.size(); n++)
-    std::cout << present_solution[n] << " ";
-
-  std::cout << std::endl;
-
-  // If necessary, rotate mapping and update dofs
-  this->setup_dofs();
-
-  // Set up the vectors for the transfer
-  VectorType tmp = init_temporary_vector();
-  tmp            = this->present_solution;
-
-  if constexpr (std::is_same_v<VectorType,
-                               LinearAlgebra::distributed::Vector<double>>)
-    tmp.update_ghost_values();
-
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(tmp);
-
-  // Fix on the new mesh
-  this->present_solution = tmp;
-
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      VectorType tmp_previous_solution = init_temporary_vector();
-      if constexpr (std::is_same_v<VectorType,
-                                   LinearAlgebra::distributed::Vector<double>>)
-        tmp_previous_solution.update_ghost_values();
-
-      nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
-    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2183,9 +2123,6 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
 {
-  // this->rotate_rotor_mapping();
-  // this->setup_dofs();
-
   if (!this->simulation_parameters.boundary_conditions.time_dependent)
     return;
 
