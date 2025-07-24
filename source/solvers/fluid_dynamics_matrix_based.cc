@@ -126,6 +126,12 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
+  // Initialize vector of previous solutions
+  for (auto &solution : this->temp_previous_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->mpi_communicator);
+    }
 
     
   // Initialize vector of previous hk_j solutions
