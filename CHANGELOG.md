@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR A feature that allows to log the particle-wall collision statistics in a .csv or a .dat file is added. The time, velocity and angular velocity at the start and at the end of a collision are logged for each collision between a particle and the boundary id(s) specified in the .prm file. [#1586](https://github.com/chaos-polymtl/lethe/pull/1586)
 
+### Added
+
+- MINOR The DG tracer implementation was not very good for pure advection equations since the high-order implementation did not have a limiter. This PR implements a Moe limiter that works for all scalar equations with DG. This is especially useful for the Tracer DG implementation and will be tested for the DG VOF implementation in the future. [#1594](https://github.com/chaos-polymtl/lethe/pull/1594)
+
 ### [Master] - 2025-07-23
 
 ### Fixed
