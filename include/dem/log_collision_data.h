@@ -53,10 +53,7 @@ public:
   void
   start_collision(const collision_log<dim> &log)
   {
-    if (ongoing_collisions.find(log.particle_id) == ongoing_collisions.end())
-      {
-        ongoing_collisions[log.particle_id] = log;
-      }
+    ongoing_collisions[std::make_pair(log.particle_id, log.boundary_id)] = log;
   }
 
   /**
@@ -66,9 +63,11 @@ public:
    * @param[out] start_log The log of the collision start to be filled.
    */
   void
-  end_collision(const unsigned int particle_id, collision_log<dim> &start_log)
+  end_collision(const unsigned int       particle_id,
+                const types::boundary_id boundary_id,
+                collision_log<dim>      &start_log)
   {
-    auto it   = ongoing_collisions.find(particle_id);
+    auto it = ongoing_collisions.find(std::make_pair(particle_id, boundary_id));
     start_log = it->second;
     ongoing_collisions.erase(it);
   }
@@ -80,15 +79,18 @@ public:
    * @return True if the particle is in a collision, false otherwise.
    */
   bool
-  is_in_collision(const unsigned int particle_id) const
+  is_in_collision(const unsigned int       particle_id,
+                  const types::boundary_id boundary_id) const
   {
-    return ongoing_collisions.find(particle_id) != ongoing_collisions.end();
+    return ongoing_collisions.find(std::make_pair(particle_id, boundary_id)) !=
+           ongoing_collisions.end();
   }
 
 private:
   // Map to store ongoing collisions with particle id as key and collision log
   // as value
-  std::unordered_map<unsigned int, collision_log<dim>> ongoing_collisions;
+  std::map<std::pair<unsigned int, types::boundary_id>, collision_log<dim>>
+    ongoing_collisions;
 };
 
 /**
