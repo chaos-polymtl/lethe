@@ -967,7 +967,6 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
     dem_time_step,
     contact_outcome);
 
-
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
@@ -1487,7 +1486,8 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
         contact_manager.get_particle_wall_in_contact(),
         this->simulation_control->get_current_time(),
         ongoing_collision_log,
-        collision_event_log);
+        collision_event_log,
+        this->pcout);
     }
 
   dem_action_manager->reset_triggers();

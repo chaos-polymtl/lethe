@@ -1156,7 +1156,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
             contact_manager.get_particle_wall_in_contact(),
             simulation_control->get_current_time(),
             ongoing_collision_log,
-            collision_event_log);
+            collision_event_log,
+            pcout);
         }
 
       // Calculation of forces and torques if needed
