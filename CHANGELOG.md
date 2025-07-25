@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-25
+
+### Added
+
+- MINOR A feature that allows to log the particle-wall collision statistics in a .csv or a .dat file is added. The time, velocity and angular velocity at the start and at the end of a collision are logged for each collision between a particle and the boundary id(s) specified in the .prm file. [#1586](https://github.com/chaos-polymtl/lethe/pull/1586)
+
 ### [Master] - 2025-07-23
 
 ### Fixed
