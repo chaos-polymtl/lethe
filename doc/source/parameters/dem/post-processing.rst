@@ -62,7 +62,7 @@ The following video shows force chains for the `Rectangular Hopper example <../.
 Particle-wall collision statistics
 -----------------------------------
 
-The particle-wall contact statistics logging feature allows to log the particle-wall contact statistics in a .dat file or a .csv file. This feature is useful for post-processing and analysis of particle-wall interactions.
+The particle-wall contact statistics logging feature allows to log the statistics of collisions between particles and walls in a .dat file or a .csv file. This feature is useful for post-processing and analysis of particle-wall interactions.
 
 * ``enable particle wall collision statistics`` enables the feature.
 

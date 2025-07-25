@@ -188,6 +188,7 @@ log_collision_data(
  */
 template <int dim>
 void
-write_collision_stats(const DEMSolverParameters<dim> &parameters, const CompletedCollisionLog<dim> &collision_event_log);
+write_collision_stats(const DEMSolverParameters<dim>   &parameters,
+                      const CompletedCollisionLog<dim> &collision_event_log);
 
 #endif // lethe_collision_log_data_h
