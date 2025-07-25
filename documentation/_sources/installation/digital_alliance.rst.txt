@@ -70,15 +70,15 @@ We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the 
 .. code-block:: text
   :class: copy-button
 
-  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_WITH_METIS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -DDEAL_II_COMPONENT_EXAMPLES=OFF -G Ninja
+  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_WITH_METIS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -DDEAL_II_COMPONENT_EXAMPLES=OFF  -DCMAKE_CXX_FLAGS="-march=native" -G Ninja
 
 .. tip::
 
-  If you are using Niagara, you should add ``-DCMAKE_CXX_FLAGS="-march=skylake-avx512"`` to enable AVX-512 instructions.
+  The -DCMAKE_CXX_FLAGS="-march=native" works on both Rorqual, Nibi and Niagara. To ensure that the flag has worked correctly, the cmake output should contain the following information : ``Vectorization level:    512 bit (sse2 avx2 avx512*)``.
 
-.. tip::
+.. warning::
 
-  If you are using Rorqual, you should add ``-DCMAKE_CXX_FLAGS="-march=znver4"`` to enable AVX-512 instructions.
+  If you wish to run simulations with over 4B (:math:`4\cdot 10^9`) degrees of freedom, you must compile with the ``DEAL_II_WITH_64BIT_INDICES = ON`` flag. Such large simulations should be carried out using the ``lethe-fluid-matrix-free`` application.
 
 and:
 
@@ -92,7 +92,7 @@ The argument ``-jX`` specifies the number of processors used for the compilation
 Installing Lethe
 ----------------
 
-After installing deal.II, compiling Lethe is relatively straightforward, especially since all of these clusters share a very similar environment. To compile Lethe, the ``Trilinos``, ``Parmetis`` and ``P4est`` modules should be loaded.
+After installing deal.II, compiling Lethe is relatively straightforward. To compile Lethe, the ``Trilinos``, ``Parmetis`` and ``P4est`` modules should be loaded.
 
 In the ``$HOME/lethe`` directory, download Lethe:
 
@@ -106,7 +106,7 @@ To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in 
 .. code-block:: text
   :class: copy-button
 
-  cmake ../lethe  -DDEAL_II_DIR=$HOME/dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -G Ninja
+  cmake ../lethe  -DDEAL_II_DIR=$HOME/dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -DCMAKE_CXX_FLAGS="-march=native" -G Ninja
   nice ninja -j6 install
 
 
