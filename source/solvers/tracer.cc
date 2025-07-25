@@ -690,28 +690,30 @@ Tracer<dim>::moe_scalar_limiter()
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
-      // if (cell->is_locally_owned())
-      {
-        cell->get_dof_indices(local_dof_indices);
-        double max_value  = -DBL_MAX;
-        double min_value  = DBL_MAX;
-        double mean_value = 0;
-        for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-          {
-            // Get the max and the min value of the solution
-            double dof_value = present_solution(local_dof_indices[i]);
-            max_value        = std::max(max_value, dof_value);
-            min_value        = std::min(min_value, dof_value);
-            // Calculate mean solution \bar{w}. Right now this is an average of
-            // the nodal value which is lazy as balls. A better one will be to
-            // do an integral, but this is dev and I am a lazy bum for now.
-            mean_value += dof_value;
-          }
-        mean_value /= local_dof_indices.size();
-        min_value_per_cells[cell->global_active_cell_index()]  = min_value;
-        max_value_per_cells[cell->global_active_cell_index()]  = max_value;
-        mean_value_per_cells[cell->global_active_cell_index()] = mean_value;
-      }
+      // We need to loop over cells that are either locally_owned or ghost to
+      // gather all the neighbors.
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          double max_value  = -DBL_MAX;
+          double min_value  = DBL_MAX;
+          double mean_value = 0;
+          for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+            {
+              // Get the max and the min value of the solution
+              double dof_value = present_solution(local_dof_indices[i]);
+              max_value        = std::max(max_value, dof_value);
+              min_value        = std::min(min_value, dof_value);
+              // Calculate mean solution \bar{w}. Right now this is an average
+              // of the nodal value which is lazy as balls. A better one will be
+              // to do an integral, but this is dev and I am a lazy bum for now.
+              mean_value += dof_value;
+            }
+          mean_value /= local_dof_indices.size();
+          min_value_per_cells[cell->global_active_cell_index()]  = min_value;
+          max_value_per_cells[cell->global_active_cell_index()]  = max_value;
+          mean_value_per_cells[cell->global_active_cell_index()] = mean_value;
+        }
     }
 
   // Loop over every cell and do:
