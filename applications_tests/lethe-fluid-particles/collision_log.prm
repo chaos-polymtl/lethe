@@ -12,7 +12,7 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf2
-  set output frequency = 1
+  set output frequency = 0
   set time end         = 0.065
   set time step        = 0.003
   set log frequency    = 1
