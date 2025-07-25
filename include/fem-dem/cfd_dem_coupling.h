@@ -148,12 +148,6 @@ private:
   particle_wall_contact_force();
 
   /**
-   * @brief Export velocity, omega, particle id, boundary id and time results in .csv or .dat
-   */
-  void
-  write_collision_stats();
-
-  /**
    * @brief Post-processing as parallel VTU files.
    */
   void

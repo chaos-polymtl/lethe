@@ -181,5 +181,13 @@ log_collision_data(
   CompletedCollisionLog<dim> &collision_event_log,
   const ConditionalOStream   &pcout);
 
+/**
+ * @brief Writes the collision statistics to a file.
+ * @param[in] collision_event_log Completed collision event log.
+ * @param[in] parameters Parameters
+ */
+template <int dim>
+void
+write_collision_stats(const DEMSolverParameters<dim> &parameters, const CompletedCollisionLog<dim> &collision_event_log);
 
 #endif // lethe_collision_log_data_h
