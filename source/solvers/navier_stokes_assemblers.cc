@@ -1241,13 +1241,17 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
 
   // Copy data elements
   auto &local_matrix    = copy_data.local_matrix;
+  const double h = this->simulation_control->get_time_step();
 
   // Time stepping information
   SDIRKStageData stage_data(scratch_data.sdirk_table, 1);
 
   // Penser à coder plus tard le fait qu'en SDIRK, il n'y pas besoin de
-  // recalculer le jacobien à chaque stage Seul le RHS est à reccalculer à
+  // recalculer le jacobien à chaque stage Seul le RHS est à recalculer à
   // chaque stage
+
+  // std::cout << "DEBUG: h = " << h << std::endl;
+  // std::cout << "DEBUG: a_ij[0] = " << stage_data.a_ij[0] << std::endl;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1259,8 +1263,9 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
             {
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
-              local_matrix(i, j) -=
-                phi_u_j * phi_u_i / stage_data.a_ij[0] * JxW[q];
+              local_matrix(i, j) +=
+                - ((phi_u_j * phi_u_i / (h*stage_data.a_ij[0])) * JxW[q]);
+              std::cout << "DEBUG: - ((phi_u_j * phi_u_i / (h*stage_data.a_ij[0])) * JxW[q] = " << - ((phi_u_j * phi_u_i / (h*stage_data.a_ij[0])) * JxW[q]) << std::endl;
             }
         }
     }
@@ -1280,14 +1285,12 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
   // Copy data elements
   auto &local_rhs = copy_data.local_rhs;
 
-  // Time stepping information
-  const unsigned int stage = this->simulation_control->get_stage_i_number();
-  SDIRKStageData stage_data(scratch_data.sdirk_table,
-                                                        stage + 1);
+  SDIRKStageData stage_data(scratch_data.sdirk_table, 1);
 
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  const double h = time_steps_vector[0];
+  const double h = this->simulation_control->get_time_step();
+
+  // std::cout << "DEBUG: h = " << h << std::endl;
+  // std::cout << "DEBUG: a_ij[0] = " << stage_data.a_ij[0] << std::endl;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1296,11 +1299,13 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
-          local_rhs_i += local_rhs(i) * h;
-          local_rhs_i += (1 / stage_data.a_ij[stage]) * phi_u_i *
+          // std::cout << "scratch_data.u_sum_over_stages[q] = " << scratch_data.u_sum_over_stages[q] << std::endl;
+          local_rhs_i += (1 / (h*stage_data.a_ij[0])) * phi_u_i *
                            (scratch_data.velocity_values[q] -
                             scratch_data.previous_velocity_values[0][q]) -
                          phi_u_i * scratch_data.u_sum_over_stages[q];
+          // std::cout << "scratch_data.velocity_values[q] = " << scratch_data.velocity_values[q] << std::endl;
+          // std::cout << "scratch_data.previous_velocity_values[0][q] = " << scratch_data.previous_velocity_values[0][q] << std::endl;
           local_rhs(i) += local_rhs_i * JxW[q];
         }
     }

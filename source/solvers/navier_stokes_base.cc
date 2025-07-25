@@ -587,6 +587,8 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   const auto method = this->simulation_control->get_assembly_method();
 
+  const auto time_step = this->simulation_control->get_time_step();
+
   auto &present_solution   = this->present_solution;
   auto &local_evaluation_point = this->local_evaluation_point;
   
@@ -650,7 +652,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
           previous_solutions_0 = previous_solutions[0];
           temp_present_hk_i_solution = present_solution;
           temp_present_hk_i_solution.add(-1.0, previous_solutions_0);
-          temp_present_hk_i_solution *= 1.0 / a_ii;
+          temp_present_hk_i_solution *= 1.0 / (time_step*a_ii);
           temp_present_hk_i_solution.add(-1.0, temp_sum_over_previous_stages);
 
           present_hk_i_solution = temp_present_hk_i_solution;
