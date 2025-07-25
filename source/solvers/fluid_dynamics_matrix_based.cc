@@ -276,9 +276,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
     }
 
   // Mortar ALE
-  if (this->simulation_parameters.mortar_parameters.enable &&
-      this->simulation_parameters.simulation_control.method !=
-        Parameters::SimulationControl::TimeSteppingMethod::steady)
+  if (this->simulation_parameters.mortar_parameters.enable)
     {
       this->assemblers.emplace_back(
         std::make_shared<NavierStokesAssemblerMortarALE<dim>>(
