@@ -17,6 +17,7 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/stabilization.h>
 #include <solvers/tracer_assemblers.h>
 #include <solvers/tracer_scratch_data.h>
 
@@ -165,22 +166,6 @@ public:
    */
   void
   post_mesh_adaptation() override;
-
-  /**
-   * @brief Implements a Moe a posteriori shock capturing method to keep the field bounded. This limiting is only used when DG advection is used for the Tracer.
-   * The limiter is based on the implementation proposed by: Moe, Scott A.,
-   * James A. Rossmanith, and David C. Seal. "A simple and effective high-order
-   * shock-capturing limiter for discontinuous Galerkin methods." arXiv preprint
-   * arXiv:1507.03024 (2015). https://doi.org/10.48550/arXiv.1507.03024
-   *
-   * The implementation follows the main idea of the paper, but we hardcode the
-   * value of alpha in the article to 0. This is supposed to lead to a more
-   * diffusive limiter, but in all honesty, all of our tries have shown that
-   * this is already a not very dissipative limiter when using BDF time
-   * integrator.
-   */
-  void
-  moe_scalar_limiter();
 
   /**
    * @brief Compute the Kelly error estimator for mesh refinement.
@@ -477,7 +462,13 @@ private:
       {
         if (simulation_parameters.stabilization.scalar_limiter ==
             Parameters::Stabilization::ScalarLimiters::moe)
-          moe_scalar_limiter();
+          {
+            moe_scalar_limiter<dim>(this->dof_handler,
+                                    this->evaluation_point,
+                                    this->local_evaluation_point);
+
+            present_solution = this->local_evaluation_point;
+          }
       }
   };
 
