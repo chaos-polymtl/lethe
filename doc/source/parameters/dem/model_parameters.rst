@@ -33,9 +33,9 @@ In this subsection, contact detection, force models, time integration, load bala
       end
     end
 
-      # Particle-particle contact force model
-      # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
-      set particle particle contact force method = hertz_mindlin_limit_overlap
+    # Particle-particle contact force model
+    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
+    set particle particle contact force method = hertz_mindlin_limit_overlap
 
     # Particle-wall contact force model
     # Choices are linear|nonlinear|JKR|DMT
@@ -118,7 +118,6 @@ All contact force models are described in the :doc:`../../theory/multiphase/cfd_
 * ``rolling resistance method`` controls the rolling resistance model used. Three rolling resistance models are available: ``no_resistance``, ``constant_resistance``, ``viscous_resistance`` and ``epsd_resistance``
 
 * ``f coefficient`` is a model parameter used for the ``epsd_resistance`` model which controls the proportion of the viscous damping applied when full mobilization is reached.
-
 
 -----------------------
 Load Balancing
