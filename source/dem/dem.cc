@@ -876,52 +876,6 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
 
 template <int dim, typename PropertiesIndex>
 void
-DEMSolver<dim, PropertiesIndex>::write_collision_stats()
-{
-  // Open a file
-  std::ofstream myfile;
-  std::string   sep;
-  std::string   filename = parameters.post_processing.collision_stats_file_name;
-  // Check if an extension is specified in the filename, if not add ".csv"
-  std::size_t csv_file = filename.find(".csv");
-  std::size_t dat_file = filename.find("dat");
-  if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
-    filename += ".csv";
-  myfile.open(filename);
-  if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
-    {
-      myfile
-        << "particle_id boundary_id start_time end_time start_particle_velocity_x start_particle_velocity_y start_particle_velocity_z start_particle_angular_velocity_x start_particle_angular_velocity_y start_particle_angular_velocity_z end_particle_velocity_x end_particle_velocity_y end_particle_velocity_z end_particle_angular_velocity_x end_particle_angular_velocity_y end_particle_angular_velocity_z"
-        << std::endl;
-      sep = " ";
-    }
-  else // .csv is default
-    {
-      myfile
-        << "particle_id,boundary_id,start_time,end_time,start_particle_velocity_x,start_particle_velocity_y,start_particle_velocity_z,start_particle_angular_velocity_x,start_particle_angular_velocity_y,start_particle_angular_velocity_z,end_particle_velocity_x,end_particle_velocity_y,end_particle_velocity_z,end_particle_angular_velocity_x,end_particle_angular_velocity_y,end_particle_angular_velocity_z"
-        << std::endl;
-      sep = ",";
-    }
-  // Write the collision statistics
-  for (const auto &event : collision_event_log.get_events())
-    {
-      const auto &start = event.start_log;
-      const auto &end   = event.end_log;
-
-      // Write the collision data to the file
-      myfile << start.particle_id << sep << static_cast<int>(start.boundary_id)
-             << sep << start.time << sep << end.time << sep << start.velocity[0]
-             << sep << start.velocity[1] << sep << start.velocity[2] << sep
-             << start.omega[0] << sep << start.omega[1] << sep << start.omega[2]
-             << sep << end.velocity[0] << sep << end.velocity[1] << sep
-             << end.velocity[2] << sep << end.omega[0] << sep << end.omega[1]
-             << sep << end.omega[2] << std::endl;
-    }
-  myfile.close();
-}
-
-template <int dim, typename PropertiesIndex>
-void
 DEMSolver<dim, PropertiesIndex>::solve()
 {
   // Set up the parameters
@@ -1205,7 +1159,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
   // Write particle-wall collision statistics file if enabled
   if (parameters.post_processing.particle_wall_collision_statistics)
-    write_collision_stats();
+    write_collision_stats(parameters, collision_event_log);
 
   finish_simulation();
 }
