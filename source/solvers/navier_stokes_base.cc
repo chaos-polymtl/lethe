@@ -2042,7 +2042,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
-  rotate_rotor_mapping(true);
+  rotate_rotor_mapping(false);
 
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar");
 
@@ -2097,7 +2097,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(bool is_first)
 
   if (simulation_parameters.mortar_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
-      is_first)
+      !is_first)
     {
       this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
                   << " rad \n"
