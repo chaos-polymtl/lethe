@@ -23,25 +23,17 @@ function(get_depends_on _filename)
 endfunction()
 
 
-# A function that extracts from a file (presumably a .prm file)
+# A function that extracts from a file (presumably a .output file)
 # the number of MPI processes this test is to be invoked as.
-# This is encoded in .prm files through lines of the form
-#    '# MPI: 4'
-# The result is returned in a variable _mpi_count in the
-# caller's scope.
+# This is encoded in the name of the output file as mpirun=N
+# The result is returned in a variable
 function(get_mpi_count _filename)
-    file(STRINGS ${_filename} _input_lines
-            REGEX "MPI:")
-    if("${_input_lines}" STREQUAL "")
-        set(_mpi_count 1 PARENT_SCOPE)
+    string(REGEX MATCH ".mpirun=[0-9]+" _match "${_filename}")
+    if(_match)
+        set(_mpirun_string "${_match}" PARENT_SCOPE)
     else()
-        # go over the (possibly multiple) lines with MPI markers and choose the last
-        foreach(_input_line ${_input_lines})
-            set(_last_line ${_input_line})
-        endforeach()
-        string(REGEX REPLACE "^ *# *MPI: *([0-9]+) *$" "\\1"
-                _mpi_count ${_last_line})
-        set(_mpi_count "${_mpi_count}" PARENT_SCOPE)
+        set(_mpirun_string "" PARENT_SCOPE)
     endif()
 endfunction()
+
 

@@ -1,3 +1,4 @@
+# DEPENDS-ON: lethe-particles/insert_file_3d.mpirun=2.release
 # SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 

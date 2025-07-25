@@ -68,6 +68,58 @@ file(COPY restart_file_insertion_files/particles_01.input DESTINATION "${CMAKE_C
 
 deal_ii_pickup_tests()
 
+# Add the Utilis functions
+include(../Utils.cmake)
+
+# Get all .prm and .output files in the current directory
+file(GLOB prm_files "${CMAKE_CURRENT_SOURCE_DIR}/*.prm")
+file(GLOB output_files "${CMAKE_CURRENT_SOURCE_DIR}/*.output")
+
+foreach (prm_file ${prm_files})
+
+  get_depends_on("${prm_file}")
+  if (_depends_on)
+
+    message("Found a DEPENDS-ON: ${_depends_on}")
+    # Name of the .prm file without the directory and the .prm extension.
+    # e.g. lethe/lethe/application_test/lethe-particles/pp_jkr_equilibrium.prm --> pp_jkr_equilibrium
+    get_filename_component(test_name ${prm_file} NAME_WLE)
+    message("Test name without the path the the .prm extension: ${test_name}")
+
+    # set matching_output_file  as an empty list
+    set(matching_output_file  "")
+    # Find all the files in the output_files list that have the same test_name
+    foreach (output_file ${output_files})
+      # If no match is found, pos will be equal to -1
+      string(FIND "${output_file}" "${test_name}" pos)
+      if (NOT pos EQUAL -1)
+        # Append the output_file in the matching_output_file list
+        list(APPEND matching_output_files "${output_file}")
+      endif ()
+    endforeach ()
+
+  # Loop over the matching_output_file
+    foreach (matching_output_file  ${matching_output_files})
+      message("Output file name ${matching_output_file}")
+      # Check if the mpirun=N is in the output string. This can be empty
+      get_mpi_count("${matching_output_file}")
+
+      message("Found mpirun string:${_mpirun_string}")
+
+      set(full_test_name "${TEST_TARGET}/${test_name}${_mpirun_string}.${_build_type}")
+      message("Full test name: ${full_test_name}")
+      message("Second test name: ${_depends_on}")
+
+      message("Setting dependency: ${full_test_name} DEPENDS ${_depends_on}")
+      set_tests_properties("${full_test_name}" PROPERTIES DEPENDS "${_depends_on}")
+    endforeach ()
+  endif ()
+
+endforeach ()
+
+
+
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-particles/packing_in_box.mpirun=1.debug PROPERTIES TIMEOUT 3000)
   set_tests_properties(lethe-particles/packing_in_box.mpirun=2.debug PROPERTIES TIMEOUT 3000)
