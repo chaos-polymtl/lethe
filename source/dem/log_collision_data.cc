@@ -13,7 +13,8 @@ log_collision_data(
                              &particle_wall_pairs_in_contact,
   const double                current_time,
   OngoingCollisionLog<dim>   &ongoing_collision_log,
-  CompletedCollisionLog<dim> &collision_event_log)
+  CompletedCollisionLog<dim> &collision_event_log,
+const ConditionalOStream       &pcout)
 {
   // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
@@ -44,6 +45,7 @@ log_collision_data(
             ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
           types::boundary_id boundary_id = contact_info.boundary_id;
+          
           // If we log all walls or if the boundary ID is in the list of
           // particle-wall collision boundary IDs, we log the collision
           // information.
@@ -79,16 +81,21 @@ log_collision_data(
                   start_log.boundary_id = contact_info.boundary_id;
                   ongoing_collision_log.start_collision(
                     start_log); // Start logging the collision
+                  
                   // Print the start of the collision in the terminal if
                   // verbosity is set to verbose
                   if (parameters.post_processing.collision_verbosity ==
                       Parameters::Verbosity::verbose)
                     {
-                      std::cout
+                      pcout
                         << "Collision with boundary " << start_log.boundary_id
                         << " started for particle " << particle_id << std::endl;
                     }
                 }
+                
+                // If the particle does not have a positive overlap anymore, the
+                // collision has ended. Consequently, it now needs to be
+                // removed it since the contact has reached its end.
               if (normal_overlap < 0 &&
                   ongoing_collision_log.is_in_collision(particle_id,
                                                         boundary_id))
@@ -109,8 +116,8 @@ log_collision_data(
                     particle_properties[PropertiesIndex::omega_z];
                   end_log.time = current_time;
                   collision_log<dim> start_log;
-                  // End the collision for the particle and retrieve the start
-                  // log
+
+                  // End the collision for the particle and retrieve the start log
                   ongoing_collision_log.end_collision(particle_id,
                                                       boundary_id,
                                                       start_log);
@@ -119,15 +126,16 @@ log_collision_data(
                   event.particle_id = particle_id;
                   event.start_log   = start_log;
                   event.end_log     = end_log;
-                  // Add the completed collision event to the collision event
-                  // log
+                  
+                  // Add the completed collision event to the collision event log
                   collision_event_log.add_event(event);
+                  
                   // Print the end of the collision in the terminal if verbosity
                   // is set to verbose
                   if (parameters.post_processing.collision_verbosity ==
                       Parameters::Verbosity::verbose)
                     {
-                      std::cout << "Collision with boundary "
+                      pcout << "Collision with boundary "
                                 << end_log.boundary_id << " ended for particle "
                                 << particle_id << std::endl;
                     }
@@ -144,7 +152,8 @@ log_collision_data<2, DEM::DEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log);
+  CompletedCollisionLog<2> &collision_event_log,
+const ConditionalOStream       &pcout);
 
 template void
 log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
@@ -153,7 +162,8 @@ log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log);
+  CompletedCollisionLog<3> &collision_event_log,
+const ConditionalOStream       &pcout);
 
 template void
 log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
@@ -162,7 +172,8 @@ log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log);
+  CompletedCollisionLog<2> &collision_event_log,
+const ConditionalOStream       &pcout);
 
 template void
 log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
@@ -171,7 +182,8 @@ log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log);
+  CompletedCollisionLog<3> &collision_event_log,
+const ConditionalOStream       &pcout);
 
 template void
 log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
@@ -180,7 +192,8 @@ log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log);
+  CompletedCollisionLog<2> &collision_event_log,
+const ConditionalOStream       &pcout);
 
 template void
 log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
@@ -189,4 +202,5 @@ log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log);
+  CompletedCollisionLog<3> &collision_event_log,
+const ConditionalOStream       &pcout);

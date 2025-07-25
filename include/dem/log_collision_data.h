@@ -178,7 +178,8 @@ log_collision_data(
                              &particle_wall_pairs_in_contact,
   const double                current_time,
   OngoingCollisionLog<dim>   &ongoing_collision_log,
-  CompletedCollisionLog<dim> &collision_event_log);
+  CompletedCollisionLog<dim> &collision_event_log,
+  const ConditionalOStream   &pcout);
 
 
 #endif // lethe_collision_log_data_h
