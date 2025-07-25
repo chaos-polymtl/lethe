@@ -1697,7 +1697,7 @@ FluidDynamicsMatrixBased<dim>::solve()
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-      this->rotate_rotor_mapping(false);
+      this->rotate_rotor_mapping(true);
     }
   else
     read_mesh_and_manifolds(
