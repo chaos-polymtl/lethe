@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2024-07-25
+
+### Added
+
+- MINOR The DG tracer implementation was not very good for pure advection equations since the high-order implementation did not have a limiter. This PR implements a Moe limiter that works for all scalar equations with DG. This is especially useful for the Tracer DG implementation and will be tested for the DG VOF implementation in the future. [#1594](https://github.com/chaos-polymtl/lethe/pull/1594)
+
 ### [Master] - 2025-07-23
 
 ### Fixed

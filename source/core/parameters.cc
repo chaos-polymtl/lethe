@@ -763,6 +763,12 @@ namespace Parameters
         "Navier-Stokes equations. When the velocity and pressure scales are very "
         "different, using this parameter allows to reduce the condition number"
         " and reach a solution.");
+
+      prm.declare_entry(
+        "scalar limiter",
+        "none",
+        Patterns::Selection("none|moe"),
+        "Type of scalar limiter. The limiters are only appropriate with the DG versions of the solvers and should only be used for advection-dominated problem.");
     }
     prm.leave_subsection();
   }
@@ -773,15 +779,26 @@ namespace Parameters
     prm.enter_subsection("stabilization");
     {
       use_default_stabilization = prm.get_bool("use default stabilization");
-      std::string op            = prm.get("stabilization");
-      if (op == "pspg_supg")
-        stabilization = NavierStokesStabilization::pspg_supg;
-      else if (op == "gls")
-        stabilization = NavierStokesStabilization::gls;
-      else if (op == "grad_div")
-        stabilization = NavierStokesStabilization::grad_div;
-      else
-        throw(std::runtime_error("Invalid stabilization strategy"));
+      {
+        std::string op = prm.get("stabilization");
+        if (op == "pspg_supg")
+          stabilization = NavierStokesStabilization::pspg_supg;
+        else if (op == "gls")
+          stabilization = NavierStokesStabilization::gls;
+        else if (op == "grad_div")
+          stabilization = NavierStokesStabilization::grad_div;
+        else
+          throw(std::runtime_error("Invalid stabilization strategy"));
+      }
+      {
+        std::string op = prm.get("scalar limiter");
+        if (op == "none")
+          scalar_limiter = ScalarLimiters::none;
+        else if (op == "moe")
+          scalar_limiter = ScalarLimiters::moe;
+        else
+          throw(std::runtime_error("Invalid scalar limiter"));
+      }
 
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =

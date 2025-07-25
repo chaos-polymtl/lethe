@@ -32,6 +32,7 @@ add_library(lethe-solvers
   signed_distance_transformation.cc
   simulation_parameters.cc
   source_terms.cc
+  stabilization.cc
   tracer.cc
   tracer_assemblers.cc
   tracer_drift_velocity.cc

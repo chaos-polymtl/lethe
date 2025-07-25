@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/lethe_grid_tools.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
