@@ -360,7 +360,7 @@ void
 NavierStokesScratchData<dim>::reinit_mortar(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Parameters::Mortar<dim>                        &mortar_parameters,
-  const double                                          radius)
+  const double                                         &radius)
 {
   auto cell_center = cell->center();
 
