@@ -1020,7 +1020,7 @@ public:
   void
   reinit_mortar(const typename DoFHandler<dim>::active_cell_iterator &cell,
                 const Parameters::Mortar<dim> &mortar_parameters,
-                const double                   radius);
+                const double                  &radius);
 
   /** @brief Calculates the physical properties. This function calculates the
    * physical properties that may be required by the fluid dynamics problem.
