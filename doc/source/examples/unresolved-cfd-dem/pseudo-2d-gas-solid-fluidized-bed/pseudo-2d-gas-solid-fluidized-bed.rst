@@ -307,6 +307,8 @@ The void fraction calculation uses the checkpoint files from the previous DEM si
 CFD-DEM
 ~~~~~~~~~
 
+We enable all hydrodynamic forces in the CFD-DEM simulation, such as the drag, buoyancy, shear and pressure forces. The drag model used is the Di Felice model, which is a commonly used model for gas-solid flows. We use the default value of the grad-div length scale (``grad-div length scale = 1``) to ensure that mass conservation is well enforced.
+
 .. code-block:: text
 
     subsection cfd-dem
@@ -342,6 +344,8 @@ We use the inexact Newton non-linear solver to minimize the number of time the m
 
 Linear Solver
 ~~~~~~~~~~~~~
+
+We use an ILU preconditioner with a fill level of one to ensure that the preconditioner is not too expensive to compute, but that the GMRES method converges adequately.
 
 .. code-block:: text
 
