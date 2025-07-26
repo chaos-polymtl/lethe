@@ -111,7 +111,7 @@ Model Parameters
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The Young's moduli and poisson ratios are kept to their default values. For the friction, restitution and rolling friction coefficients, commonly used values are employed, as suggested in the article. In the case of a fluidized bed, friction does not really have an impact.
+In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The Young's moduli and poisson ratios are kept to reasonable values. For the friction, restitution and rolling friction coefficients, commonly used values are employed, as suggested in the article. 
 
 .. code-block:: text
 
@@ -123,17 +123,17 @@ In this simulation, :math:`17562` particles are inserted, with a diameter of :ma
         set diameter                          = 0.001545
         set number of particles               = 17562
         set density particles                 = 1150
-        set young modulus particles           = 1e6
+        set young modulus particles           = 1e7
         set poisson ratio particles           = 0.3
         set restitution coefficient particles = 0.9
         set friction coefficient particles    = 0.3
         set rolling friction particles        = 0.2
       end
-      set young modulus wall           = 1e6
+      set young modulus wall           = 1e7
       set poisson ratio wall           = 0.3
       set restitution coefficient wall = 0.9
       set friction coefficient wall    = 0.3
-      set rolling friction wall        = 0.3
+      set rolling friction wall        = 0.2
     end
 
 
@@ -209,15 +209,15 @@ The CFD-DEM simulation is carried out using the ``lethe-fluid-particles`` solver
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~
 
-The simulation is run for :math:`12` s with a time step of :math:`0.0001` s. The time scheme chosen for the simulation is first order backward difference method (BDF1).
+The simulation is run for :math:`12` s with a time step of :math:`0.0002` s. The time scheme chosen for the simulation is a second-order backward difference method (BDF2).
 
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
+      set method           = bdf2
       set output frequency = 100
       set time end         = 12
-      set time step        = 0.0001
+      set time step        = 0.0002
       set output path      = ./output/
     end
 
@@ -254,7 +254,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the fluid boundary conditions, the left and right walls (ID = 3) are treated as no-slip boundary conditions, the front and back walls (ID = 2) are defined as slip boundary conditions, the bottom of the column (ID = 0) is an inlet velocity of :math:`0.9` m/s and the top of the column (ID = 1) is an outlet for the gas phase.
+For the fluid boundary conditions, the left and right walls (ID = 3) are treated as no-slip boundary conditions, the front and back walls (ID = 2) are defined as slip boundary conditions, the bottom of the column (ID = 0) is an inlet velocity of :math:`0.9` m/s and the top of the column (ID = 1) is an outlet for the gas phase. We set the left and the rigfht walls as no-slip boundary conditions to ensure that the gas bubbles is generated in the center of the fluidized bed, as in the experiment. 
 
 .. code-block:: text
 
@@ -291,7 +291,7 @@ For the fluid boundary conditions, the left and right walls (ID = 3) are treated
 Void Fraction
 ~~~~~~~~~~~~~~~
 
-The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) is employed to carry out the calculation. More information about the different methods used to calculate the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
+The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) is employed to carry out the calculation. We set a very small smoothing coefficient of approximatively :math:`d_p` to ensure that the void fraction remains bounded. More information about the different methods used to calculate the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
 
 .. code-block:: text
 
@@ -300,6 +300,7 @@ The void fraction calculation uses the checkpoint files from the previous DEM si
       set qcm sphere equal cell volume = true
       set read dem                     = true
       set dem file name                = dem
+      set l2 smoothing length          = 0.0015
     end
 
 
@@ -373,7 +374,7 @@ The CFD-DEM simulation is run with the following command:
 
 
 .. note:: 
-    Running this simulation should take approximately 25 hours on 10 cores.
+    Running this simulation should take approximately 12 hours on 16 cores.
 
 
 ----------------

@@ -11,10 +11,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set output frequency = 100
+  set method           = bdf2
+  set output frequency = 50
   set time end         = 12
-  set time step        = 0.0001
+  set time step        = 0.0002
   set output path      = ./output/
 end
 
@@ -57,6 +57,7 @@ subsection void fraction
   set qcm sphere equal cell volume = true
   set read dem                     = true
   set dem file name                = dem
+  set l2 smoothing length          = 0.0015
 end
 
 #---------------------------------------------------
@@ -152,17 +153,17 @@ subsection lagrangian physical properties
     set diameter                          = 0.001545
     set number of particles               = 17562
     set density particles                 = 1150
-    set young modulus particles           = 1e6
+    set young modulus particles           = 1e7
     set poisson ratio particles           = 0.3
     set restitution coefficient particles = 0.9
     set friction coefficient particles    = 0.3
     set rolling friction particles        = 0.2
   end
-  set young modulus wall           = 1e6
+  set young modulus wall           = 1e7
   set poisson ratio wall           = 0.3
   set restitution coefficient wall = 0.9
   set friction coefficient wall    = 0.3
-  set rolling friction wall        = 0.3
+  set rolling friction wall        = 0.2
 end
 
 #---------------------------------------------------
