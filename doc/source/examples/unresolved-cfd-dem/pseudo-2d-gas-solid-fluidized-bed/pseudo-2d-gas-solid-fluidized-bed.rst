@@ -112,6 +112,7 @@ Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The Young's moduli and poisson ratios are kept to reasonable values. For the friction, restitution and rolling friction coefficients, commonly used values are employed, as suggested in the article. We have observed that the results can be quite dependent on the values of the rolling friction coefficient, which was not specified in the reference article.
+
 .. code-block:: text
 
     subsection lagrangian physical properties
