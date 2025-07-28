@@ -974,7 +974,6 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
         contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
         contact_outcome);
-        contact_outcome);
     }
 
   particle_point_line_contact_force_object
