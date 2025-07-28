@@ -254,7 +254,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the fluid boundary conditions, the left and right walls (ID = 3) are treated as no-slip boundary conditions, the front and back walls (ID = 2) are defined as slip boundary conditions, the bottom of the column (ID = 0) is an inlet velocity of :math:`0.9` m/s and the top of the column (ID = 1) is an outlet for the gas phase. We set the left and the rigfht walls as no-slip boundary conditions to ensure that the gas bubbles is generated in the center of the fluidized bed, as in the experiment. 
+For the fluid boundary conditions, the left and right walls (ID = 3) are treated as no-slip boundary conditions, the front and back walls (ID = 2) are defined as slip boundary conditions, the bottom of the column (ID = 0) is an inlet velocity of :math:`0.9` m/s and the top of the column (ID = 1) is an outlet for the gas phase. We set the left and the right walls as no-slip boundary conditions to ensure that the gas bubbles is generated in the center of the fluidized bed, as in the experiment. 
 
 .. code-block:: text
 
