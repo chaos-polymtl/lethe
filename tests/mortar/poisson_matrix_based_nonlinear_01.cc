@@ -83,8 +83,8 @@ public:
     // create mortar manager
     const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
       6 * Utilities::pow(2, n_global_refinements),
-      quadrature,
       0.5 * radius,
+      quadrature,
       0.0);
 
     // create coupling evaluator

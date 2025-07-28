@@ -1268,8 +1268,8 @@ public:
   {
     const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
       std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
-                                                 matrix_free.get_quadrature(),
                                                  radius,
+                                                 matrix_free.get_quadrature(),
                                                  rotate_pi);
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>

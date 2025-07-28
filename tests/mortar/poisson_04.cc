@@ -107,8 +107,8 @@ main(int argc, char **argv)
 
   const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     4 * Utilities::pow(2, n_global_refinements + 1),
-    construct_quadrature(quadrature),
     radius,
+    construct_quadrature(quadrature),
     rotate_pi);
 
   op.add_coupling(mortar_manager, 0, 5);

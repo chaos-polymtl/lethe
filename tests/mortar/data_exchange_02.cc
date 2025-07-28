@@ -83,8 +83,8 @@ main(int argc, char *argv[])
   const MortarManagerCircle<dim> mm(4 *
                                       Utilities::pow(2,
                                                      n_global_refinements + 1),
-                                    QGauss<dim>(n_quadrature_points),
                                     radius,
+                                    QGauss<dim>(n_quadrature_points),
                                     rotate_pi);
 
   const unsigned int n_points = mm.get_n_total_points();
