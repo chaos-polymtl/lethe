@@ -111,8 +111,7 @@ Model Parameters
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The Young's moduli and poisson ratios are kept to reasonable values. For the friction, restitution and rolling friction coefficients, commonly used values are employed, as suggested in the article. 
-
+In this simulation, :math:`17562` particles are inserted, with a diameter of :math:`1.545` mm and a density of :math:`1150\;\text{kg}/\text{m}^3`. The Young's moduli and poisson ratios are kept to reasonable values. For the friction, restitution and rolling friction coefficients, commonly used values are employed, as suggested in the article. We have observed that the results can be quite dependent on the values of the rolling friction coefficient, which was not specified in the reference article.
 .. code-block:: text
 
     subsection lagrangian physical properties
@@ -127,13 +126,13 @@ In this simulation, :math:`17562` particles are inserted, with a diameter of :ma
         set poisson ratio particles           = 0.3
         set restitution coefficient particles = 0.9
         set friction coefficient particles    = 0.3
-        set rolling friction particles        = 0.2
+        set rolling friction particles        = 0.025
       end
       set young modulus wall           = 1e7
       set poisson ratio wall           = 0.3
       set restitution coefficient wall = 0.9
       set friction coefficient wall    = 0.3
-      set rolling friction wall        = 0.2
+      set rolling friction wall        = 0.025
     end
 
 
@@ -437,7 +436,7 @@ The simulated fluidized bed is shown in the animation below.
 
 .. raw:: html
 
-    <iframe width="640" height="360" src="https://www.youtube.com/embed/F6eSeN3WiSc" frameborder="0" allowfullscreen></iframe>
+    <iframe width="640" height="360" src="https://youtu.be/o0Ks0Nvlo-o" frameborder="0" allowfullscreen></iframe>
 
 
 ----------
