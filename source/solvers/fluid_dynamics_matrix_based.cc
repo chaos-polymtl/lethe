@@ -677,10 +677,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
                                this->simulation_parameters.mortar_parameters,
-                               compute_n_subdivisions_and_radius(
-                                 *this->triangulation,
-                                 this->simulation_parameters.mortar_parameters)
-                                 .second);
+                               this->mortar_manager->radius);
 
   scratch_data.calculate_physical_properties();
 
@@ -914,10 +911,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
                                this->simulation_parameters.mortar_parameters,
-                               compute_n_subdivisions_and_radius(
-                                 *this->triangulation,
-                                 this->simulation_parameters.mortar_parameters)
-                                 .second);
+                               this->mortar_manager->radius);
 
   scratch_data.calculate_physical_properties();
 
