@@ -34,10 +34,6 @@ plt.rcParams.update({
     'text.latex.preamble': r'\usepackage{amsfonts}'
 })
 
-import sys
-sys.path.append("$LETHE_PATH/contrib/postprocessing/")
-from lethe_pyvista_tools import *
-
 ######################################################################
 
 

@@ -2,18 +2,21 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
-Script to generate different cases (as folders) of the same problem 
-with parameters being changed.
-
-This script generates folders for the single-particle-flow case.
+Script to generate different cases (as folders) of the same single-particle-flow 
+example with some parameters changed.
 
 """
+
+######################################################################
+# Import Libraries
 
 import jinja2
 import os
 import numpy as np
 import shutil
 import argparse
+
+######################################################################
 
 PATH = os.getcwd()
 

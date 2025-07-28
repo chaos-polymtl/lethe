@@ -11,6 +11,7 @@ sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
 ######################################################################
+
 # Define function to write flow disturbance data on .dat file
 
 def write_flow_disturbance_data(fluid,particle,folder):
@@ -48,11 +49,8 @@ def write_flow_disturbance_data(fluid,particle,folder):
         file.write(line)
 
 
-######################################################################
-
-
 '''
-This post-processing code can be used to get data from multiple single-particle-flow cases of dp/h, Rep = (u_inf*dp)/nu_f, |u_h-u_inf|/u_inf when varying the cell size, the particle diameter, the fluid kinematic viscosity and the position of the particle (preferably within the same cell, where (0,0,0) is).
+This post-processing code can be used to get data from multiple single-particle-flow cases, of dp/h, Rep = (u_inf*dp)/nu_f, |u_h-u_inf|/u_inf when varying the cell size, the particle diameter, the fluid kinematic viscosity and the position of the particle (preferably within the same cell, where (0,0,0) is).
 '''
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing of the simulation')
@@ -76,11 +74,13 @@ for entry in os.listdir(ex_folder):
         case_folder = os.path.join(ex_folder, entry)
         print(f"Processing folder {case_folder}.")
 
+        # Check that output files exist
         if (not os.path.exists(f"{case_folder}/output/{pvd_file}")) or (not os.path.exists(f"{case_folder}/output_dem/{pvd_file}")):
             print(f"Skipping {case_folder} — {pvd_file} not found for one of the simulations.\n")
             continue
 
         fluid = lethe_pyvista_tools(ex_folder, f"{case_folder}/{coupling_prm_file}", pvd_file)
+        # Check that cfd-dem simulation has enough iterations
         if len(fluid.time_list) < 2 :
             print(f"Skipping this folder. Not enough iterations.\n")
             continue
