@@ -11,8 +11,10 @@ The post-processing subsection of the ``.prm`` file is according to the followin
   subsection post-processing
      # Enable output of grid, granular temperature, and particles' average velocity
      set lagrangian post-processing = false
+     
      # Enable output of force chains
      set force chains = false
+     
      # Enable particle-wall collision statistics
      subsection particle wall collision statistics
        set enable particle wall contact statistics = false
