@@ -2,7 +2,7 @@
 Mortar
 ======
 
-The mortar section is used when simulating rotor-stator geometries, in which the rotor (fluid) mesh is attached to the stator by mortar elements. 
+The mortar section is used when simulating rotor-stator geometries, in which the rotor mesh is attached to the stator by mortar elements. 
 
 .. code-block:: text
 
@@ -13,11 +13,13 @@ The mortar section is used when simulating rotor-stator geometries, in which the
       set grid type              = subdivided_hyper_rectangle
       set grid arguments         = 1,1,1 : -1,-1,-1 : 1,1,1 : true
       set initial refinement     = 0
-      set initial rotation angle = 0
     end
     set rotor boundary id   = 4
     set stator boundary id  = 2
     set center of rotation  = 0, 0
+    subsection rotor rotation angle
+      set Function expression = 0
+    end
     subsection rotor angular velocity
       set Function expression = 0
     end
@@ -39,13 +41,18 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 
 * The ``center of rotation`` is the reference point for the prescribed rotation at the rotor domain.
 
+* The ``rotor rotation angle`` subsection allows the imposition of a constant or time-dependent rotation angle for the rotor.
+
 * The ``rotor angular velocity`` subsection allows the imposition of a constant or time-dependent angular velocity for the rotor.
+
+.. warning::
+  The ``rotor angular velocity`` expression needs to correspond to the time derivative of the ``rotor rotation angle``.
 
 * The ``penalty factor`` is used for the weak imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) [#larson2013]_.
 
 * The ``oversampling factor`` is used to increase the number of quadrature points. This feature is used to better approximate the weak imposition of the interface coupling.
 
-* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor angular rotation at every iteration is printed.
+* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration.
 
 Reference
 ---------
