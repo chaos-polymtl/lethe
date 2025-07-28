@@ -95,7 +95,7 @@ log_collision_data(
 
               // If the particle does not have a positive overlap anymore, the
               // collision has ended. Consequently, it now needs to be
-              // removed it since the contact has reached its end.
+              // removed from ongoing_collision_log since the contact has reached its end.
               if (normal_overlap < 0 &&
                   ongoing_collision_log.is_in_collision(particle_id,
                                                         boundary_id))
