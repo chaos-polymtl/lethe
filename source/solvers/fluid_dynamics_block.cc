@@ -614,10 +614,10 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
                                 this->mpi_communicator);
 
   
-  this->present_hk_i_solution.reinit(this->locally_owned_dofs,
+  this->present_k_i_solution.reinit(this->locally_owned_dofs,
                                       this->locally_relevant_dofs,
                                       this->mpi_communicator);
-  this->temp_present_hk_i_solution.reinit(this->locally_owned_dofs,
+  this->temp_present_k_i_solution.reinit(this->locally_owned_dofs,
                                 this->mpi_communicator);
 
 
@@ -647,13 +647,13 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
 
     
   // Initialize vector of previous hk_j solutions
-  for (auto &solution : this->previous_hk_j_solutions)
+  for (auto &solution : this->previous_k_j_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
-  this->previous_hk_j_solutions_p.reinit(this->locally_owned_dofs,
+  this->previous_k_j_solutions_p.reinit(this->locally_owned_dofs,
                                 this->mpi_communicator);
   this->tmp.reinit(this->locally_owned_dofs, this->mpi_communicator);
 

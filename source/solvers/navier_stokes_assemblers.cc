@@ -1240,8 +1240,13 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
   auto &local_matrix    = copy_data.local_matrix;
-  const double h = this->simulation_control->get_time_step();
+
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double h  = time_steps_vector[0];
 
   // Time stepping information
   SDIRKStageData stage_data(scratch_data.sdirk_table, 1);
@@ -1253,9 +1258,22 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
   // std::cout << "DEBUG: h = " << h << std::endl;
   // std::cout << "DEBUG: a_ij[0] = " << stage_data.a_ij[0] << std::endl;
 
+  std::vector<Tensor<1, dim>> velocity(2);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      velocity[0] = scratch_data.velocity_values[q];
+      velocity[1] = scratch_data.previous_velocity_values[0][q];
+
+      strong_residual[q] += (velocity[0] - velocity[1]) / (h * stage_data.a_ij[0]) - 
+                            scratch_data.u_sum_over_stages[q];
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian[q][j] += scratch_data.phi_u[q][j] / (h * stage_data.a_ij[0]);
+        }
+
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const Tensor<1, dim> &phi_u_i = scratch_data.phi_u[q][i];
@@ -1264,8 +1282,7 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) +=
-                - ((phi_u_j * phi_u_i / (h*stage_data.a_ij[0])) * JxW[q]);
-              std::cout << "DEBUG: - ((phi_u_j * phi_u_i / (h*stage_data.a_ij[0])) * JxW[q] = " << - ((phi_u_j * phi_u_i / (h*stage_data.a_ij[0])) * JxW[q]) << std::endl;
+                 ((phi_u_j * phi_u_i) / (h*stage_data.a_ij[0])) * JxW[q];
             }
         }
     }
@@ -1283,29 +1300,37 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_rhs = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
 
   SDIRKStageData stage_data(scratch_data.sdirk_table, 1);
 
-  const double h = this->simulation_control->get_time_step();
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double h  = time_steps_vector[0];
 
   // std::cout << "DEBUG: h = " << h << std::endl;
   // std::cout << "DEBUG: a_ij[0] = " << stage_data.a_ij[0] << std::endl;
 
+  std::vector<Tensor<1, dim>> velocity(2);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      velocity[0] = scratch_data.velocity_values[q];
+      velocity[1] = scratch_data.previous_velocity_values[0][q];
+
+      strong_residual[q] += (velocity[0] - velocity[1]) / (h * stage_data.a_ij[0]) - 
+                            scratch_data.u_sum_over_stages[q];
+
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
           // std::cout << "scratch_data.u_sum_over_stages[q] = " << scratch_data.u_sum_over_stages[q] << std::endl;
-          local_rhs_i += (1 / (h*stage_data.a_ij[0])) * phi_u_i *
-                           (scratch_data.velocity_values[q] -
-                            scratch_data.previous_velocity_values[0][q]) -
+          local_rhs_i -= (1 / (h*stage_data.a_ij[0])) * phi_u_i * (scratch_data.velocity_values[q] - scratch_data.previous_velocity_values[0][q]) -
                          phi_u_i * scratch_data.u_sum_over_stages[q];
-          // std::cout << "scratch_data.velocity_values[q] = " << scratch_data.velocity_values[q] << std::endl;
-          // std::cout << "scratch_data.previous_velocity_values[0][q] = " << scratch_data.previous_velocity_values[0][q] << std::endl;
+          // std::cout << "scratch_data.u_sum_over_stages[q] = " << scratch_data.u_sum_over_stages[q] << std::endl;
           local_rhs(i) += local_rhs_i * JxW[q];
         }
     }

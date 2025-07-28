@@ -172,7 +172,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   // of the BDF schemes
   previous_solutions.resize(maximum_number_of_previous_solutions());
 
-  previous_hk_j_solutions.resize(SimulationControl::get_number_of_stages(this->simulation_control->get_assembly_method()));
+  previous_k_j_solutions.resize(SimulationControl::get_number_of_stages(this->simulation_control->get_assembly_method()));
 
   // Change the behavior of the timer for situations when you don't want
   // outputs
@@ -601,11 +601,11 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   auto &sum_over_previous_stages = this->sum_over_previous_stages;
   auto &temp_sum_over_previous_stages = this->temp_sum_over_previous_stages;
 
-  auto &present_hk_i_solution = this->present_hk_i_solution;
-  auto &temp_present_hk_i_solution = this->temp_present_hk_i_solution;
+  auto &present_k_i_solution = this->present_k_i_solution;
+  auto &temp_present_k_i_solution = this->temp_present_k_i_solution;
 
-  auto &previous_hk_j_solutions = this->previous_hk_j_solutions;
-  auto &previous_hk_j_solutions_p = this->previous_hk_j_solutions_p;
+  auto &previous_k_j_solutions = this->previous_k_j_solutions;
+  auto &previous_k_j_solutions_p = this->previous_k_j_solutions_p;
 
   auto &tmp = this->tmp;
 
@@ -628,42 +628,60 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
                   .verbosity != Parameters::Verbosity::quiet)
             announce_string(this->pcout, "Fluid Dynamics");
 
-          SDIRKStageData stage_data(scratch_data->sdirk_table, stage + 1);
-          const double a_ii = stage_data.a_ij[stage];
+          if (method != Parameters::SimulationControl::TimeSteppingMethod::steady &&
+              method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf && 
+              method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
+              method != Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
+              method != Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+              {
 
-          temp_sum_over_previous_stages = sum_over_previous_stages;
-          temp_sum_over_previous_stages = 0;
+                  SDIRKStageData stage_data(scratch_data->sdirk_table, stage + 1);
+                  const double a_ii = stage_data.a_ij[stage];
 
-          if (stage > 0)
+                  temp_sum_over_previous_stages = sum_over_previous_stages;
+                  temp_sum_over_previous_stages = 0;
+
+                  if (stage > 0)
+                  {
+                    for (unsigned int p = 0; p < stage; ++p)
+                    {
+                      previous_k_j_solutions_p = previous_k_j_solutions[p];
+                      tmp = previous_k_j_solutions[0];
+                      tmp.equ(stage_data.a_ij[p] / a_ii, previous_k_j_solutions_p);
+                      temp_sum_over_previous_stages.add(1.0, tmp);
+                    }
+                  }
+
+                  sum_over_previous_stages = temp_sum_over_previous_stages;
+
+                  PhysicsSolver<VectorType>::solve_non_linear_system(false);
+
+                  previous_solutions_0 = previous_solutions[0];
+                  temp_present_k_i_solution = present_solution;
+                  temp_present_k_i_solution.add(-1.0, previous_solutions_0);
+                  temp_present_k_i_solution *= 1.0 / (time_step*a_ii);
+                  temp_present_k_i_solution.add(-1.0, temp_sum_over_previous_stages);
+
+                  present_k_i_solution = temp_present_k_i_solution;
+
+                  previous_k_j_solutions[stage] = present_k_i_solution;
+
+                  const double b_i = stage_data.b_i;
+
+                  temp_sum_bi_ki = sum_bi_ki;
+                  temp_sum_bi_ki.add(b_i, temp_present_k_i_solution);
+                  sum_bi_ki = temp_sum_bi_ki;
+              }
+
+          if (method == Parameters::SimulationControl::TimeSteppingMethod::steady ||
+              method == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf || 
+              method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+              method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+              method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
           {
-            for (unsigned int p = 0; p < stage; ++p)
-            {
-              previous_hk_j_solutions_p = previous_hk_j_solutions[p];
-              tmp = previous_hk_j_solutions[0];
-              tmp.equ(stage_data.a_ij[p] / a_ii, previous_hk_j_solutions_p);
-              temp_sum_over_previous_stages.add(1.0, tmp);
-            }
+              PhysicsSolver<VectorType>::solve_non_linear_system(false);
           }
 
-          sum_over_previous_stages = temp_sum_over_previous_stages;
-
-          PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-          previous_solutions_0 = previous_solutions[0];
-          temp_present_hk_i_solution = present_solution;
-          temp_present_hk_i_solution.add(-1.0, previous_solutions_0);
-          temp_present_hk_i_solution *= 1.0 / (time_step*a_ii);
-          temp_present_hk_i_solution.add(-1.0, temp_sum_over_previous_stages);
-
-          present_hk_i_solution = temp_present_hk_i_solution;
-
-          previous_hk_j_solutions[stage] = present_hk_i_solution;
-
-          const double b_i = stage_data.b_i;
-
-          temp_sum_bi_ki = sum_bi_ki;
-          temp_sum_bi_ki.add(b_i, temp_present_hk_i_solution);
-          sum_bi_ki = temp_sum_bi_ki;
 
           if (this->multiphysics->get_active_physics().size() > 1)
           {

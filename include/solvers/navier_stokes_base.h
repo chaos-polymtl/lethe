@@ -924,8 +924,8 @@ protected:
   VectorType newton_update;
   VectorType present_solution;
 
-  VectorType present_hk_i_solution;
-  VectorType temp_present_hk_i_solution;
+  VectorType present_k_i_solution;
+  VectorType temp_present_k_i_solution;
 
   VectorType system_rhs;
   VectorType tmp;
@@ -934,8 +934,8 @@ protected:
   std::vector<VectorType> previous_solutions;
   VectorType previous_solutions_0;
 
-  std::vector<VectorType> previous_hk_j_solutions;
-  VectorType previous_hk_j_solutions_p;
+  std::vector<VectorType> previous_k_j_solutions;
+  VectorType previous_k_j_solutions_p;
 
   VectorType sum_bi_ki;
   VectorType temp_sum_bi_ki;
