@@ -611,6 +611,9 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
   const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
 
+  temp_sum_bi_ki = sum_bi_ki;
+  temp_sum_bi_ki = 0;
+
   for (unsigned int stage = 0; stage < n_stages; ++stage)
     {
       this->simulation_control->set_stage_i_number(stage);
@@ -668,7 +671,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
                   const double b_i = stage_data.b_i;
 
-                  temp_sum_bi_ki = sum_bi_ki;
                   temp_sum_bi_ki.add(b_i, temp_present_k_i_solution);
                   sum_bi_ki = temp_sum_bi_ki;
               }
@@ -725,7 +727,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   {
     temp_sum_bi_ki = sum_bi_ki;
     local_evaluation_point = previous_solutions[0];
-    local_evaluation_point.add(1, temp_sum_bi_ki);
+    local_evaluation_point.add(time_step, temp_sum_bi_ki);
     present_solution = local_evaluation_point;
   }
 }
