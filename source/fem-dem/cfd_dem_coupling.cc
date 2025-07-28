@@ -985,11 +985,11 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 
   if constexpr (dim == 3)
     {
-      particle_point_line_contact_force_object
-        .calculate_particle_line_contact_force(
-          &contact_manager.get_particle_lines_in_contact(),
-          dem_parameters.lagrangian_physical_properties,
-          force);
+        particle_point_line_contact_force_object
+          .calculate_particle_line_contact_force(
+            &contact_manager.get_particle_lines_in_contact(),
+            dem_parameters.lagrangian_physical_properties,
+            force);
     }
 }
 
@@ -1060,57 +1060,57 @@ CFDDEMSolver<dim>::report_particle_statistics()
 
   if (this_mpi_process == 0)
     {
-      TableHandler report;
+        TableHandler report;
 
-      std::vector<std::string> column_names{
-        "Variable", "Min", "Max", "Average", "Total"};
+        std::vector<std::string> column_names{
+          "Variable", "Min", "Max", "Average", "Total"};
 
-      for (const std::string &column_name : column_names)
-        report.declare_column(column_name);
+        for (const std::string &column_name : column_names)
+          report.declare_column(column_name);
 
-      add_statistics_to_table_handler("Contact list generation",
-                                      contact_list,
-                                      report);
-      add_statistics_to_table_handler("Velocity magnitude", velocity, report);
-      add_statistics_to_table_handler("Angular velocity magnitude",
-                                      omega,
-                                      report);
-      add_statistics_to_table_handler("Translational kinetic energy",
-                                      translational_kinetic_energy,
-                                      report);
-      add_statistics_to_table_handler("Rotational kinetic energy",
-                                      rotational_kinetic_energy,
-                                      report);
+        add_statistics_to_table_handler("Contact list generation",
+                                        contact_list,
+                                        report);
+        add_statistics_to_table_handler("Velocity magnitude", velocity, report);
+        add_statistics_to_table_handler("Angular velocity magnitude",
+                                        omega,
+                                        report);
+        add_statistics_to_table_handler("Translational kinetic energy",
+                                        translational_kinetic_energy,
+                                        report);
+        add_statistics_to_table_handler("Rotational kinetic energy",
+                                        rotational_kinetic_energy,
+                                        report);
 
-      // Only for Min, Max, Average and Total columns
-      for (unsigned int i = 1; i < column_names.size(); ++i)
-        {
-          report.set_scientific(column_names[i], true);
-          report.set_precision(column_names[i],
-                               this->simulation_control->get_log_precision());
-        }
+        // Only for Min, Max, Average and Total columns
+        for (unsigned int i = 1; i < column_names.size(); ++i)
+          {
+            report.set_scientific(column_names[i], true);
+            report.set_precision(column_names[i],
+                                 this->simulation_control->get_log_precision());
+          }
 
-      announce_string(this->pcout, "Particle statistics");
-      report.write_text(std::cout, dealii::TableHandler::org_mode_table);
+        announce_string(this->pcout, "Particle statistics");
+        report.write_text(std::cout, dealii::TableHandler::org_mode_table);
     }
 
   if (dem_parameters.post_processing.lagrangian_post_processing_enabled &&
       this->simulation_control->is_output_iteration())
     {
-      const auto parallel_triangulation =
-        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-          &*this->triangulation);
+        const auto parallel_triangulation =
+          dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+            &*this->triangulation);
 
-      write_post_processing_results<dim>(
-        *parallel_triangulation,
-        grid_pvdhandler,
-        this->dof_handler,
-        this->particle_handler,
-        dem_parameters,
-        this->simulation_control->get_current_time(),
-        this->simulation_control->get_step_number(),
-        this->mpi_communicator,
-        sparse_contacts_object);
+        write_post_processing_results<dim>(
+          *parallel_triangulation,
+          grid_pvdhandler,
+          this->dof_handler,
+          this->particle_handler,
+          dem_parameters,
+          this->simulation_control->get_current_time(),
+          this->simulation_control->get_step_number(),
+          this->mpi_communicator,
+          sparse_contacts_object);
     }
 }
 
@@ -1142,10 +1142,10 @@ CFDDEMSolver<dim>::print_particles_summary()
        particle != this->particle_handler.end();
        ++particle)
     {
-      current_id     = particle->get_id();
-      current_id_max = std::max(current_id, current_id_max);
+        current_id     = particle->get_id();
+        current_id_max = std::max(current_id, current_id_max);
 
-      global_particles.insert({current_id, particle});
+        global_particles.insert({current_id, particle});
     }
 
   // Find global max particle index
@@ -1154,35 +1154,35 @@ CFDDEMSolver<dim>::print_particles_summary()
 
   for (unsigned int i = 0; i <= id_max; i++)
     {
-      for (auto &iterator : global_particles)
-        {
-          unsigned int id = iterator.first;
-          if (id == i)
-            {
-              auto particle            = iterator.second;
-              auto particle_properties = particle->get_properties();
-              auto particle_location   = particle->get_location();
+        for (auto &iterator : global_particles)
+          {
+            unsigned int id = iterator.first;
+            if (id == i)
+              {
+                auto particle            = iterator.second;
+                auto particle_properties = particle->get_properties();
+                auto particle_location   = particle->get_location();
 
-              std::cout << std::setprecision(
-                             this->simulation_control->get_log_precision())
-                        << std::setw(display_width) << std::left << id;
-              for (unsigned int d = 0; d < dim; ++d)
+                std::cout << std::setprecision(
+                               this->simulation_control->get_log_precision())
+                          << std::setw(display_width) << std::left << id;
+                for (unsigned int d = 0; d < dim; ++d)
+                  std::cout << std::setw(display_width) << std::left
+                            << particle_location[d];
                 std::cout << std::setw(display_width) << std::left
-                          << particle_location[d];
-              std::cout << std::setw(display_width) << std::left
-                        << particle_properties
-                             [DEM::CFDDEMProperties::PropertiesIndex::v_x]
-                        << std::setw(display_width) << std::left
-                        << particle_properties
-                             [DEM::CFDDEMProperties::PropertiesIndex::v_y]
-                        << std::setw(display_width) << std::left
-                        << particle_properties
-                             [DEM::CFDDEMProperties::PropertiesIndex::v_z]
-                        << std::endl;
-            }
-        }
-      usleep(500);
-      MPI_Barrier(this->mpi_communicator);
+                          << particle_properties
+                               [DEM::CFDDEMProperties::PropertiesIndex::v_x]
+                          << std::setw(display_width) << std::left
+                          << particle_properties
+                               [DEM::CFDDEMProperties::PropertiesIndex::v_y]
+                          << std::setw(display_width) << std::left
+                          << particle_properties
+                               [DEM::CFDDEMProperties::PropertiesIndex::v_z]
+                          << std::endl;
+              }
+          }
+        usleep(500);
+        MPI_Barrier(this->mpi_communicator);
     }
 }
 
@@ -1199,7 +1199,7 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
   // Visualization
   if (this->simulation_control->is_output_iteration())
     {
-      write_dem_output_results();
+        write_dem_output_results();
     }
 }
 
@@ -1210,56 +1210,58 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
   // Calculate total volume of fluid and solid
   if (this->simulation_parameters.post_processing.calculate_phase_volumes)
     {
-      TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
-      double             total_volume_fluid, total_volume_particles;
-      std::tie(total_volume_fluid, total_volume_particles) =
-        calculate_fluid_and_particle_volumes(
-          this->void_fraction_manager.dof_handler,
-          this->void_fraction_manager.void_fraction_locally_relevant,
-          *this->cell_quadrature,
-          *this->mapping);
-      this->table_phase_volumes.add_value(
-        "time", this->simulation_control->get_current_time());
-      this->table_phase_volumes.add_value("total-volume-fluid",
-                                          total_volume_fluid);
-      this->table_phase_volumes.add_value("total-volume-particles",
-                                          total_volume_particles);
-      if (this->simulation_parameters.post_processing.verbosity ==
-          Parameters::Verbosity::verbose)
-        {
-          this->pcout << "Total volume of fluid: "
-                      << std::setprecision(
-                           this->simulation_control->get_log_precision())
-                      << this->simulation_parameters.physical_properties_manager
-                             .get_density_scale() *
-                           total_volume_fluid
-                      << " m^3" << std::endl;
-          this->pcout << "Total volume of particles: "
-                      << std::setprecision(
-                           this->simulation_control->get_log_precision())
-                      << this->simulation_parameters.physical_properties_manager
-                             .get_density_scale() *
-                           total_volume_particles
-                      << " m^3" << std::endl;
-        }
+        TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
+        double             total_volume_fluid, total_volume_particles;
+        std::tie(total_volume_fluid, total_volume_particles) =
+          calculate_fluid_and_particle_volumes(
+            this->void_fraction_manager.dof_handler,
+            this->void_fraction_manager.void_fraction_locally_relevant,
+            *this->cell_quadrature,
+            *this->mapping);
+        this->table_phase_volumes.add_value(
+          "time", this->simulation_control->get_current_time());
+        this->table_phase_volumes.add_value("total-volume-fluid",
+                                            total_volume_fluid);
+        this->table_phase_volumes.add_value("total-volume-particles",
+                                            total_volume_particles);
+        if (this->simulation_parameters.post_processing.verbosity ==
+            Parameters::Verbosity::verbose)
+          {
+            this->pcout
+              << "Total volume of fluid: "
+              << std::setprecision(
+                   this->simulation_control->get_log_precision())
+              << this->simulation_parameters.physical_properties_manager
+                     .get_density_scale() *
+                   total_volume_fluid
+              << " m^3" << std::endl;
+            this->pcout
+              << "Total volume of particles: "
+              << std::setprecision(
+                   this->simulation_control->get_log_precision())
+              << this->simulation_parameters.physical_properties_manager
+                     .get_density_scale() *
+                   total_volume_particles
+              << " m^3" << std::endl;
+          }
 
-      // Output pressure drop to a text file from processor 0
-      if ((this->simulation_control->get_step_number() %
-             this->simulation_parameters.post_processing.output_frequency ==
-           0) &&
-          this->this_mpi_process == 0)
-        {
-          std::string filename =
-            this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.post_processing
-              .phase_volumes_output_name +
-            ".dat";
-          std::ofstream output(filename.c_str());
-          table_phase_volumes.set_precision("time", 12);
-          table_phase_volumes.set_precision("total-volume-fluid", 12);
-          table_phase_volumes.set_precision("total-volume-particles", 12);
-          this->table_phase_volumes.write_text(output);
-        }
+        // Output pressure drop to a text file from processor 0
+        if ((this->simulation_control->get_step_number() %
+               this->simulation_parameters.post_processing.output_frequency ==
+             0) &&
+            this->this_mpi_process == 0)
+          {
+            std::string filename =
+              this->simulation_parameters.simulation_control.output_folder +
+              this->simulation_parameters.post_processing
+                .phase_volumes_output_name +
+              ".dat";
+            std::ofstream output(filename.c_str());
+            table_phase_volumes.set_precision("time", 12);
+            table_phase_volumes.set_precision("total-volume-fluid", 12);
+            table_phase_volumes.set_precision("total-volume-particles", 12);
+            this->table_phase_volumes.write_text(output);
+          }
     }
 }
 
@@ -1271,60 +1273,60 @@ CFDDEMSolver<dim>::dynamic_flow_control()
       this->simulation_parameters.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      // Calculate the average velocity according to the void fraction
-      unsigned int flow_direction =
-        this->simulation_parameters.flow_control.flow_direction;
-      double average_velocity = calculate_average_velocity(
-        this->dof_handler,
-        this->void_fraction_manager.dof_handler,
-        this->present_solution,
-        this->void_fraction_manager.void_fraction_locally_relevant,
-        flow_direction,
-        *this->cell_quadrature,
-        *this->mapping);
+        // Calculate the average velocity according to the void fraction
+        unsigned int flow_direction =
+          this->simulation_parameters.flow_control.flow_direction;
+        double average_velocity = calculate_average_velocity(
+          this->dof_handler,
+          this->void_fraction_manager.dof_handler,
+          this->present_solution,
+          this->void_fraction_manager.void_fraction_locally_relevant,
+          flow_direction,
+          *this->cell_quadrature,
+          *this->mapping);
 
-      // Calculate the beta force for fluid
-      this->flow_control.calculate_beta(
-        average_velocity,
-        this->simulation_control->get_time_step(),
-        this->simulation_control->get_step_number());
+        // Calculate the beta force for fluid
+        this->flow_control.calculate_beta(
+          average_velocity,
+          this->simulation_control->get_time_step(),
+          this->simulation_control->get_step_number());
 
-      Tensor<1, 3> beta_particle;
-      if (this->simulation_parameters.flow_control.enable_beta_particle)
-        {
-          // Calculate the beta for particles and add it to force tensor g
-          AssertThrow(
-            dem_parameters.lagrangian_physical_properties
-                .particle_type_number == 1,
-            ExcMessage(std::string(
-              "Beta force calculation for particles is not implemented for multiple particle types.")));
+        Tensor<1, 3> beta_particle;
+        if (this->simulation_parameters.flow_control.enable_beta_particle)
+          {
+            // Calculate the beta for particles and add it to force tensor g
+            AssertThrow(
+              dem_parameters.lagrangian_physical_properties
+                  .particle_type_number == 1,
+              ExcMessage(std::string(
+                "Beta force calculation for particles is not implemented for multiple particle types.")));
 
-          double fluid_density =
-            this->simulation_parameters.physical_properties_manager
-              .get_density_scale();
-          double particle_density =
-            dem_parameters.lagrangian_physical_properties.density_particle[0];
-          beta_particle =
-            this->flow_control.get_beta_particles(fluid_density,
-                                                  particle_density);
-          g = dem_parameters.lagrangian_physical_properties.g + beta_particle;
-        }
+            double fluid_density =
+              this->simulation_parameters.physical_properties_manager
+                .get_density_scale();
+            double particle_density =
+              dem_parameters.lagrangian_physical_properties.density_particle[0];
+            beta_particle =
+              this->flow_control.get_beta_particles(fluid_density,
+                                                    particle_density);
+            g = dem_parameters.lagrangian_physical_properties.g + beta_particle;
+          }
 
-      // Showing results
-      if (this->simulation_parameters.flow_control.verbosity ==
-            Parameters::Verbosity::verbose &&
-          this->simulation_control->get_step_number() > 0 &&
-          this->this_mpi_process == 0)
-        {
-          announce_string(this->pcout, "Flow control summary");
-          this->pcout << "Fluid space-average velocity: " << average_velocity
-                      << std::endl;
-          this->pcout << "Fluid beta force: "
-                      << this->flow_control.get_beta()[flow_direction]
-                      << std::endl;
-          this->pcout << "Particle beta force: "
-                      << beta_particle[flow_direction] << std::endl;
-        }
+        // Showing results
+        if (this->simulation_parameters.flow_control.verbosity ==
+              Parameters::Verbosity::verbose &&
+            this->simulation_control->get_step_number() > 0 &&
+            this->this_mpi_process == 0)
+          {
+            announce_string(this->pcout, "Flow control summary");
+            this->pcout << "Fluid space-average velocity: " << average_velocity
+                        << std::endl;
+            this->pcout << "Fluid beta force: "
+                        << this->flow_control.get_beta()[flow_direction]
+                        << std::endl;
+            this->pcout << "Particle beta force: "
+                        << beta_particle[flow_direction] << std::endl;
+          }
     }
 }
 
@@ -1341,24 +1343,25 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
   // have changed subdomains
   if (dem_action_manager->check_resize_containers())
     {
-      unsigned int number_of_particles =
-        this->particle_handler.get_max_local_particle_index();
-      // Resize displacement container
-      displacement.resize(number_of_particles);
-      // Resize outcome containers
-      contact_outcome.resize_interaction_containers(number_of_particles);
-      MOI.resize(number_of_particles);
+        unsigned int number_of_particles =
+          this->particle_handler.get_max_local_particle_index();
+        // Resize displacement container
+        displacement.resize(number_of_particles);
+        // Resize outcome containers
+        contact_outcome.resize_interaction_containers(number_of_particles);
+        MOI.resize(number_of_particles);
 
-      // Updating moment of inertia container
-      for (auto &particle : this->particle_handler)
-        {
-          auto particle_properties = particle.get_properties();
-          MOI[particle.get_local_index()] =
-            0.1 *
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::mass] *
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
-        }
+        // Updating moment of inertia container
+        for (auto &particle : this->particle_handler)
+          {
+            auto particle_properties = particle.get_properties();
+            MOI[particle.get_local_index()] =
+              0.1 *
+              particle_properties
+                [DEM::CFDDEMProperties::PropertiesIndex::mass] *
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
+          }
     }
 
   // Always reset the displacement values since we are doing a search detection
@@ -1414,33 +1417,33 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // TODO do all DEM time step at first CFD time step are half step?
   if (this->simulation_control->get_step_number() == 0)
     {
-      integrator_object->integrate_half_step_location(
-        this->particle_handler, g, dem_time_step, torque, force, MOI);
+        integrator_object->integrate_half_step_location(
+          this->particle_handler, g, dem_time_step, torque, force, MOI);
     }
   else
     {
-      const auto parallel_triangulation =
-        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-          &*this->triangulation);
-      integrator_object->integrate(this->particle_handler,
-                                   g,
-                                   dem_time_step,
-                                   torque,
-                                   force,
-                                   MOI,
-                                   *parallel_triangulation,
-                                   sparse_contacts_object);
+        const auto parallel_triangulation =
+          dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+            &*this->triangulation);
+        integrator_object->integrate(this->particle_handler,
+                                     g,
+                                     dem_time_step,
+                                     torque,
+                                     force,
+                                     MOI,
+                                     *parallel_triangulation,
+                                     sparse_contacts_object);
     }
   // Log the contact statistics if the parameter is enabled
   if (dem_parameters.post_processing.particle_wall_collision_statistics)
     {
-      log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
-        dem_parameters,
-        contact_manager.get_particle_wall_in_contact(),
-        this->simulation_control->get_current_time(),
-        ongoing_collision_log,
-        collision_event_log,
-        this->pcout);
+        log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
+          dem_parameters,
+          contact_manager.get_particle_wall_in_contact(),
+          this->simulation_control->get_current_time(),
+          ongoing_collision_log,
+          collision_event_log,
+          this->pcout);
     }
 
   dem_action_manager->reset_triggers();
@@ -1460,62 +1463,63 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   // Sort particles in cells
   if (dem_action_manager->check_contact_search())
     {
-      this->pcout << "DEM contact search at dem step " << counter << std::endl;
-      contact_search_counter++;
+        this->pcout << "DEM contact search at dem step " << counter
+                    << std::endl;
+        contact_search_counter++;
 
-      // Execute periodic boundaries (if PBC enabled)
-      periodic_boundaries_object.execute_particles_displacement(
-        this->particle_handler, periodic_boundaries_cells_information);
+        // Execute periodic boundaries (if PBC enabled)
+        periodic_boundaries_object.execute_particles_displacement(
+          this->particle_handler, periodic_boundaries_cells_information);
 
-      // Sort particles into subdomains and cells and reset the vectors that
-      // the local particle if is their index
-      sort_particles_into_subdomains_and_cells();
+        // Sort particles into subdomains and cells and reset the vectors that
+        // the local particle if is their index
+        sort_particles_into_subdomains_and_cells();
 
-      // Identify the mobility status of particles (if ASC enabled)
-      sparse_contacts_object.identify_mobility_status(
-        this->void_fraction_manager.dof_handler,
-        this->particle_handler,
-        (*this->triangulation).n_active_cells(),
-        this->mpi_communicator);
+        // Identify the mobility status of particles (if ASC enabled)
+        sparse_contacts_object.identify_mobility_status(
+          this->void_fraction_manager.dof_handler,
+          this->particle_handler,
+          (*this->triangulation).n_active_cells(),
+          this->mpi_communicator);
 
-      // Execute broad search by filling containers of particle-particle
-      // contact pair candidates and containers of particle-wall
-      // contact pair candidates
-      contact_manager.execute_particle_particle_broad_search(
-        this->particle_handler, sparse_contacts_object);
+        // Execute broad search by filling containers of particle-particle
+        // contact pair candidates and containers of particle-wall
+        // contact pair candidates
+        contact_manager.execute_particle_particle_broad_search(
+          this->particle_handler, sparse_contacts_object);
 
-      contact_manager.execute_particle_wall_broad_search(
-        this->particle_handler,
-        boundary_cell_object,
-        solid_surfaces_mesh_info,
-        dem_parameters.floating_walls,
-        this->simulation_control->get_current_time(),
-        sparse_contacts_object);
+        contact_manager.execute_particle_wall_broad_search(
+          this->particle_handler,
+          boundary_cell_object,
+          solid_surfaces_mesh_info,
+          dem_parameters.floating_walls,
+          this->simulation_control->get_current_time(),
+          sparse_contacts_object);
 
-      // Update contacts, remove replicates and add new contact pairs
-      // to the contact containers when particles are exchanged between
-      // processors
-      contact_manager.update_contacts();
+        // Update contacts, remove replicates and add new contact pairs
+        // to the contact containers when particles are exchanged between
+        // processors
+        contact_manager.update_contacts();
 
-      // Updates the iterators to particles in local-local contact
-      // containers
-      contact_manager.update_local_particles_in_cells(this->particle_handler);
+        // Updates the iterators to particles in local-local contact
+        // containers
+        contact_manager.update_local_particles_in_cells(this->particle_handler);
 
-      // Execute fine search by updating particle-particle contact
-      // containers regards the neighborhood threshold
-      contact_manager.execute_particle_particle_fine_search(
-        neighborhood_threshold_squared);
+        // Execute fine search by updating particle-particle contact
+        // containers regards the neighborhood threshold
+        contact_manager.execute_particle_particle_fine_search(
+          neighborhood_threshold_squared);
 
-      // Execute fine search by updating particle-wall contact containers
-      // regards the neighborhood threshold
-      contact_manager.execute_particle_wall_fine_search(
-        dem_parameters.floating_walls,
-        this->simulation_control->get_current_time(),
-        neighborhood_threshold_squared);
+        // Execute fine search by updating particle-wall contact containers
+        // regards the neighborhood threshold
+        contact_manager.execute_particle_wall_fine_search(
+          dem_parameters.floating_walls,
+          this->simulation_control->get_current_time(),
+          neighborhood_threshold_squared);
     }
   else
     {
-      this->particle_handler.update_ghost_particles();
+        this->particle_handler.update_ghost_particles();
     }
 }
 
@@ -1565,96 +1569,96 @@ CFDDEMSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->simulation_control->print_progression(this->pcout);
+        this->simulation_control->print_progression(this->pcout);
 
-      // We allow the physics to update their boundary conditions
-      // according to their own parameters
-      this->update_boundary_conditions();
-      this->multiphysics->update_boundary_conditions();
+        // We allow the physics to update their boundary conditions
+        // according to their own parameters
+        this->update_boundary_conditions();
+        this->multiphysics->update_boundary_conditions();
 
-      this->dynamic_flow_control();
+        this->dynamic_flow_control();
 
-      if (!this->simulation_control->is_at_start())
-        {
-          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-          this->vertices_cell_mapping();
-        }
+        if (!this->simulation_control->is_at_start())
+          {
+            NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+            this->vertices_cell_mapping();
+          }
 
-      this->calculate_void_fraction(
-        this->simulation_control->get_current_time());
-      this->iterate();
+        this->calculate_void_fraction(
+          this->simulation_control->get_current_time());
+        this->iterate();
 
-      if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
-        {
-          switch (
-            this->cfd_dem_simulation_parameters.cfd_parameters.test.test_type)
-            {
-              case Parameters::Testing::TestType::particles:
-                {
+        if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
+          {
+            switch (
+              this->cfd_dem_simulation_parameters.cfd_parameters.test.test_type)
+              {
+                case Parameters::Testing::TestType::particles:
+                  {
+                    print_particles_summary();
+                    break;
+                  }
+                case Parameters::Testing::TestType::mobility_status:
+                  {
+                    if (this->simulation_control->is_at_end())
+
+                      {
+                        // Get mobility status vector sorted by cell id
+                        Vector<float> mobility_status(
+                          this->triangulation->n_active_cells());
+                        sparse_contacts_object.get_mobility_status_vector(
+                          mobility_status);
+
+                        // Output mobility status vector
+                        visualization_object.print_intermediate_format(
+                          mobility_status,
+                          this->void_fraction_manager.dof_handler,
+                          this->mpi_communicator);
+                      }
+                    break;
+                  }
+                default:
                   print_particles_summary();
-                  break;
-                }
-              case Parameters::Testing::TestType::mobility_status:
-                {
-                  if (this->simulation_control->is_at_end())
+              }
+          }
 
-                    {
-                      // Get mobility status vector sorted by cell id
-                      Vector<float> mobility_status(
-                        this->triangulation->n_active_cells());
-                      sparse_contacts_object.get_mobility_status_vector(
-                        mobility_status);
+        {
+          announce_string(this->pcout, "DEM");
+          TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
 
-                      // Output mobility status vector
-                      visualization_object.print_intermediate_format(
-                        mobility_status,
-                        this->void_fraction_manager.dof_handler,
-                        this->mpi_communicator);
-                    }
-                  break;
-                }
-              default:
-                print_particles_summary();
+          // First DEM iteration of the CFD iteration
+          dem_action_manager->first_dem_of_cfddem_iteration_step();
+
+          // Load balancing if needed
+          load_balance();
+
+          contact_search_counter = 0;
+          for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
+               ++dem_counter)
+            {
+              // dem_iterator carries out the particle-particle and
+              // particle_wall force calculations, integration and
+              // update_ghost
+              dem_iterator(dem_counter);
             }
         }
 
-      {
-        announce_string(this->pcout, "DEM");
-        TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
+        // Insert particle if needed
+        insert_particles();
 
-        // First DEM iteration of the CFD iteration
-        dem_action_manager->first_dem_of_cfddem_iteration_step();
+        contact_search_total_number += contact_search_counter;
 
-        // Load balancing if needed
-        load_balance();
+        this->pcout << "Finished " << coupling_frequency << " DEM iterations"
+                    << std::endl;
 
-        contact_search_counter = 0;
-        for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
-             ++dem_counter)
-          {
-            // dem_iterator carries out the particle-particle and
-            // particle_wall force calculations, integration and
-            // update_ghost
-            dem_iterator(dem_counter);
-          }
-      }
+        this->postprocess(false);
+        this->postprocess_cfd_dem();
+        this->finish_time_step_fd();
 
-      // Insert particle if needed
-      insert_particles();
+        this->FluidDynamicsVANS<dim>::monitor_mass_conservation();
 
-      contact_search_total_number += contact_search_counter;
-
-      this->pcout << "Finished " << coupling_frequency << " DEM iterations"
-                  << std::endl;
-
-      this->postprocess(false);
-      this->postprocess_cfd_dem();
-      this->finish_time_step_fd();
-
-      this->FluidDynamicsVANS<dim>::monitor_mass_conservation();
-
-      if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
-        report_particle_statistics();
+        if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
+          report_particle_statistics();
     }
 
   // Write particle-wall collision statistics file if enabled
