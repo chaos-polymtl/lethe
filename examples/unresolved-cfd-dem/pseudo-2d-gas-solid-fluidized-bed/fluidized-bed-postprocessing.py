@@ -77,7 +77,7 @@ for i in range(start, end):
     df_loc = pd.DataFrame(np.copy(df_particles.points), columns=['x', 'y','z'])
 
     bed_height[i-start] = df_loc['z'].max()
-    sampled_data = df_fluid.sample_over_line([0, y, 0.045], [0.09, y, 0.045])
+    sampled_data = df_fluid.sample_over_line([0.042, y, 0.045], [0.048, y, 0.045])
     void_fraction[i - start] = np.mean(sampled_data['void_fraction'])
     pressure[i - start] = np.mean(sampled_data['pressure'])
 
