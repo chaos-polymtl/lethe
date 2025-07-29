@@ -311,7 +311,15 @@ public:
 /**
  * @brief Class that assembles the transient time arising from SDIRK time
  * integration for the Navier Stokes equations.
- * TODO : give an example of SDIRK scheme
+ * For a given stage \( i \), the following expression is assembled and treated
+ * implicitly: \f[ \frac{\mathbf{u}_i^* - \mathbf{u}_n}{h a_{ii}} -
+ * \sum_{j=0}^{i-1} \frac{a_{ij}}{a_{ii}} \mathbf{k}_j \f] where:
+ * - \( \mathbf{u}_i^* \) is the current stage solution,
+ * - \( \mathbf{u}_n \) is the solution at the previous time step,
+ * - \( \mathbf{k}_j \)coefficients are the solution increments at the previous
+ * stages,
+ * - \( h \) is the time step size,
+ * - \( a_{ij} \), \( a_{ii} \) are coefficients from the SDIRK Butcher tableau.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

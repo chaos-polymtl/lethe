@@ -614,7 +614,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   auto &sum_over_previous_stages      = this->sum_over_previous_stages;
   auto &temp_sum_over_previous_stages = this->temp_sum_over_previous_stages;
 
-  // Intermediate variable to make the calculus of easier to understand
+  // Intermediate variable to make the calculus easier to understand
   // This will be stored in the previous_k_j_solutions vector
   auto &present_k_i_solution      = this->present_k_i_solution;
   auto &temp_present_k_i_solution = this->temp_present_k_i_solution;
