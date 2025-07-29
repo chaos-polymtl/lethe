@@ -2669,8 +2669,6 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
   /// Loop and quadrature informations
   const auto                   &JxW_vec    = scratch_data.JxW;
   const unsigned int            n_q_points = scratch_data.n_q_points;
-  const std::vector<Point<dim>> quadrature_points =
-    scratch_data.quadrature_points;
   const unsigned int n_dofs = scratch_data.n_dofs;
 
   // Copy data elements
@@ -2704,7 +2702,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const Tensor<2, dim> grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const Tensor<2, dim>& grad_phi_u_j = scratch_data.grad_phi_u[q][j];
 
               // Weak form for : -u_ALE * gradu
               local_matrix(i, j) +=
@@ -2724,8 +2722,6 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
   // Loop and quadrature informations
   const auto                   &JxW_vec    = scratch_data.JxW;
   const unsigned int            n_q_points = scratch_data.n_q_points;
-  const std::vector<Point<dim>> quadrature_points =
-    scratch_data.quadrature_points;
   const unsigned int n_dofs = scratch_data.n_dofs;
 
   // Copy data elements
