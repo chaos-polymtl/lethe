@@ -22,6 +22,7 @@
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/load_balancing.h>
+#include <dem/log_collision_data.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_point_line_contact_force.h>
@@ -411,6 +412,16 @@ private:
    * @brief The vector of force of particles.
    */
   std::vector<Tensor<1, 3>> &force = contact_outcome.force;
+
+  /**
+   * @brief Class object to store the particle id, boundary id, velocity tensor, omega tensor and time of ongoing collisions.
+   */
+  OngoingCollisionLog<dim> ongoing_collision_log;
+
+  /**
+   * @brief Class object to store the complete collision events (start and end).
+   */
+  CompletedCollisionLog<dim> collision_event_log;
 
   /**
    * @brief The displacement tracking of particles for the dynamic contact

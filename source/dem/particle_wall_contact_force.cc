@@ -109,10 +109,12 @@ ParticleWallContactForce<dim,
                                       rolling_resistance_torque);
 
               // Applying the calculated forces and torques on the particle
-              types::particle_index particle_id = particle->get_local_index();
-              Tensor<1, 3>         &particle_torque =
-                contact_outcome.torque[particle_id];
-              Tensor<1, 3> &particle_force = contact_outcome.force[particle_id];
+              types::particle_index particle_index =
+                particle->get_local_index();
+              Tensor<1, 3> &particle_torque =
+                contact_outcome.torque[particle_index];
+              Tensor<1, 3> &particle_force =
+                contact_outcome.force[particle_index];
 
               this->apply_force_and_torque(normal_force,
                                            tangential_force,

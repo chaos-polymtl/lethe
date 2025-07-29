@@ -1430,6 +1430,17 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
                                    *parallel_triangulation,
                                    sparse_contacts_object);
     }
+  // Log the contact statistics if the parameter is enabled
+  if (dem_parameters.post_processing.particle_wall_collision_statistics)
+    {
+      log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
+        dem_parameters,
+        contact_manager.get_particle_wall_in_contact(),
+        this->simulation_control->get_current_time(),
+        ongoing_collision_log,
+        collision_event_log,
+        this->pcout);
+    }
 
   dem_action_manager->reset_triggers();
 }
@@ -1644,6 +1655,10 @@ CFDDEMSolver<dim>::solve()
       if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
         report_particle_statistics();
     }
+
+  // Write particle-wall collision statistics file if enabled
+  if (dem_parameters.post_processing.particle_wall_collision_statistics)
+    write_collision_stats(dem_parameters, collision_event_log);
 
   this->finish_simulation();
 }

@@ -564,6 +564,20 @@ namespace Parameters
       /// A bool variable which sets-up the force chains visualization
       bool force_chains;
 
+      // Enable the logging of particle-wall contact statistics
+      bool particle_wall_collision_statistics;
+
+      // State whether collisions with all walls should be logged
+      bool log_collisions_with_all_walls;
+
+      // Boundary ids of the walls to log collisions with
+      std::vector<int> particle_wall_collision_boundary_ids;
+
+      Parameters::Verbosity collision_verbosity;
+
+      // Exporting collision statistics csv filename
+      std::string collision_stats_file_name;
+
       static void
       declare_parameters(ParameterHandler &prm);
       void

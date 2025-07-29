@@ -1101,6 +1101,18 @@ DEMSolver<dim, PropertiesIndex>::solve()
       if (simulation_control->is_output_iteration())
         write_output_results();
 
+      // Log the contact statistics if the parameter is enabled
+      if (parameters.post_processing.particle_wall_collision_statistics)
+        {
+          log_collision_data<dim, PropertiesIndex>(
+            parameters,
+            contact_manager.get_particle_wall_in_contact(),
+            simulation_control->get_current_time(),
+            ongoing_collision_log,
+            collision_event_log,
+            pcout);
+        }
+
       // Calculation of forces and torques if needed
       if (parameters.forces_torques.calculate_force_torque)
         {
@@ -1143,6 +1155,10 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // Reset all trigger flags
       action_manager->reset_triggers();
     }
+
+  // Write particle-wall collision statistics file if enabled
+  if (parameters.post_processing.particle_wall_collision_statistics)
+    write_collision_stats(parameters, collision_event_log);
 
   finish_simulation();
 }
