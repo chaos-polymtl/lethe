@@ -2,18 +2,28 @@
 Post-processing
 ===============
 
-Lethe has built-in post-processing capabilities. All post-processing results are written as VTU, PTVU, and/or PVD files. 
+Lethe has built-in post-processing capabilities. All post-processing results are written as VTU, PTVU, PVD, CSV and/or DAT files. 
 
 The post-processing subsection of the ``.prm`` file is according to the following example:
 
 .. code-block:: text
 
- subsection post-processing
-  # Enable output of grid, granular temperature, and particles' average velocity
-  set lagrangian post-processing = false
-  # Enable output of force chains
-  set force chains = false
- end
+  subsection post-processing
+     # Enable output of grid, granular temperature, and particles' average velocity
+     set lagrangian post-processing = false
+     
+     # Enable output of force chains
+     set force chains = false
+     
+     # Enable particle-wall collision statistics
+     subsection particle wall collision statistics
+       set enable particle wall contact statistics = false
+       set collision statistics file               = collision_statistics.csv
+       set verbosity                               = quiet # Choices are quiet|verbose
+       set log collisions with all walls           = true
+       set wall boundary ids                       = 0
+     end
+  end
 
 .. note::
  By default, post-processing options are set to ``false`` to reduce the number of files generated.
@@ -49,3 +59,19 @@ The following video shows force chains for the `Rectangular Hopper example <../.
  .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/XrXXCz00Yjk?si=45mRK2E4yzT0BQIe" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+-----------------------------------
+Particle-wall collision statistics
+-----------------------------------
+
+The particle-wall contact statistics logging feature allows to log the statistics of collisions between particles and walls in a .dat file or a .csv file. This feature is useful for post-processing and analysis of particle-wall interactions.
+
+* ``enable particle wall collision statistics`` enables the feature.
+
+* ``collision statistics file`` is the name of the file where the particle-wall contact statistics will be logged. The file will be created from the working directory of the simulation. If the name does not specify the format, the file will be created in .csv format. If the name ends with .dat or .csv, the file will be created in the corresponding format.
+
+* ``verbosity`` controls the verbosity of the particle-wall collisions. The available options are ``quiet`` (the default option) and ``verbose``. If set to ``verbose``, the start and the end of a collision are printed in the terminal.
+
+* ``log collisions with all walls`` is a boolean parameter that controls whether the particle-wall contact statistics will be logged for all walls or only for the walls defined by the ``wall boundary ids`` parameter. If set to ``true``, the statistics will be logged for all walls. If set to ``false``, the statistics will be logged only for the walls defined by the ``wall boundary ids`` parameter.
+
+* ``wall boundary ids`` is the list of the wall boundary IDs where the particle-wall contact statistics will be logged when ``log collisions with all walls`` is set to false. When ``log collisions with all walls`` is set to true, this parameter is ignored. Each wall boundary ID must be separated by a comma.

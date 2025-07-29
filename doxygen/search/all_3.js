@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
+  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
   ['b_201_20b_20gamma_20gamma_1',['|   b    1-b-gamma  gamma|',['../sdirk_8cc.html#autotoc_md1',1,'']]],
   ['b_5fi_2',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_3',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
@@ -77,8 +77,8 @@ var searchData=
   ['boundary_5fface_5fassembler_74',['boundary_face_assembler',['../classTracer.html#aef616e5bcfe3f5ea3de335041117c135',1,'Tracer']]],
   ['boundary_5fface_5fid_75',['boundary_face_id',['../classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e',1,'CahnHilliardScratchData::boundary_face_id'],['../classHeatTransferScratchData.html#a1fc1e987d5d9be45a292f689f82c7fc9',1,'HeatTransferScratchData::boundary_face_id'],['../classNavierStokesScratchData.html#acc2f4cf7c08898d8ff4172e2e07ce260',1,'NavierStokesScratchData::boundary_face_id']]],
   ['boundary_5fflow_5fid_76',['boundary_flow_id',['../structParameters_1_1DynamicFlowControl.html#af4d0d02ed67879423fb561b28e02e1cd',1,'Parameters::DynamicFlowControl']]],
-  ['boundary_5fid_77',['boundary_id',['../structboundary__cells__info__struct.html#a9174d2ac214f641b931088931a6b9a0d',1,'boundary_cells_info_struct::boundary_id'],['../structperiodic__boundaries__cells__info__struct.html#a0d4079726874acd8d8c0ffe5d53228e4',1,'periodic_boundaries_cells_info_struct::boundary_id'],['../structparticle__wall__contact__info.html#a3d2c7da7f217f017259b17f8255394d0',1,'particle_wall_contact_info::boundary_id']]],
-  ['boundary_5findex_78',['boundary_index',['../classTracerScratchData.html#a1d371284515b118b0a535e5354f0cba6',1,'TracerScratchData::boundary_index'],['../structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0',1,'IBParticlesDEM::BoundaryCellsInfo::boundary_index']]],
+  ['boundary_5fid_77',['boundary_id',['../structboundary__cells__info__struct.html#a9174d2ac214f641b931088931a6b9a0d',1,'boundary_cells_info_struct::boundary_id'],['../structperiodic__boundaries__cells__info__struct.html#a0d4079726874acd8d8c0ffe5d53228e4',1,'periodic_boundaries_cells_info_struct::boundary_id'],['../structparticle__wall__contact__info.html#a3d2c7da7f217f017259b17f8255394d0',1,'particle_wall_contact_info::boundary_id'],['../structcollision__log.html#a0f92766e82444cd8d047b89bb3f8a322',1,'collision_log::boundary_id']]],
+  ['boundary_5findex_78',['boundary_index',['../structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0',1,'IBParticlesDEM::BoundaryCellsInfo::boundary_index'],['../classTracerScratchData.html#a1d371284515b118b0a535e5354f0cba6',1,'TracerScratchData::boundary_index']]],
   ['boundary_5flayer_5fthickness_79',['boundary_layer_thickness',['../classBoundaryConditions_1_1BoundaryConditions.html#a6de45c0a01d1a9e0f8df3d9ee7c1e61d',1,'BoundaryConditions::BoundaryConditions']]],
   ['boundary_5fpoints_5fand_5fnormal_5fvectors_80',['boundary_points_and_normal_vectors',['../structDEM_1_1dem__data__structures.html#a192fca7d4e3b2efa39a7e32600d2f0e6',1,'DEM::dem_data_structures']]],
   ['boundary_5frotational_5fspeed_81',['boundary_rotational_speed',['../structParameters_1_1Lagrangian_1_1BCDEM.html#a32c01b9253bdaeab1141ba23885bdb9b',1,'Parameters::Lagrangian::BCDEM']]],

@@ -110,6 +110,16 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a46e920e9ce8178291fe47082bd282fa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab71c7b44d79914157d26b84dac34f651" id="r_ab71c7b44d79914157d26b84dac34f651"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#ab71c7b44d79914157d26b84dac34f651">force_chains</a></td></tr>
 <tr class="separator:ab71c7b44d79914157d26b84dac34f651"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f5187a69e555bb29b5419bcc36c759e" id="r_a9f5187a69e555bb29b5419bcc36c759e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#a9f5187a69e555bb29b5419bcc36c759e">particle_wall_collision_statistics</a></td></tr>
+<tr class="separator:a9f5187a69e555bb29b5419bcc36c759e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6865ec7d26090abe3e6f009c85a4867" id="r_af6865ec7d26090abe3e6f009c85a4867"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#af6865ec7d26090abe3e6f009c85a4867">log_collisions_with_all_walls</a></td></tr>
+<tr class="separator:af6865ec7d26090abe3e6f009c85a4867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96deafa9b540cb3bd1543c21b29180ba" id="r_a96deafa9b540cb3bd1543c21b29180ba"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#a96deafa9b540cb3bd1543c21b29180ba">particle_wall_collision_boundary_ids</a></td></tr>
+<tr class="separator:a96deafa9b540cb3bd1543c21b29180ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28fe17e7bd86d24c68d77d3d23899847" id="r_a28fe17e7bd86d24c68d77d3d23899847"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#a28fe17e7bd86d24c68d77d3d23899847">collision_verbosity</a></td></tr>
+<tr class="separator:a28fe17e7bd86d24c68d77d3d23899847"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6feb042052fc0fb054670b5ad68c763" id="r_ab6feb042052fc0fb054670b5ad68c763"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#ab6feb042052fc0fb054670b5ad68c763">collision_stats_file_name</a></td></tr>
+<tr class="separator:ab6feb042052fc0fb054670b5ad68c763"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="namespaceParameters_1_1Lagrangian.html">Lagrangian</a> Postprocessing - Defines the parameters for the <a class="el" href="namespaceParameters_1_1Lagrangian.html">Lagrangian</a> post-processing. </p>
@@ -160,13 +170,45 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01683">1683</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01715">1715</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00565">force_chains</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00563">lagrangian_post_processing_enabled</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00579">collision_stats_file_name</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00576">collision_verbosity</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00565">force_chains</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00563">lagrangian_post_processing_enabled</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00571">log_collisions_with_all_walls</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00574">particle_wall_collision_boundary_ids</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00568">particle_wall_collision_statistics</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="ab6feb042052fc0fb054670b5ad68c763" name="ab6feb042052fc0fb054670b5ad68c763"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6feb042052fc0fb054670b5ad68c763">&#9670;&#160;</a></span>collision_stats_file_name</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Parameters::Lagrangian::LagrangianPostProcessing::collision_stats_file_name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00579">579</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="a28fe17e7bd86d24c68d77d3d23899847" name="a28fe17e7bd86d24c68d77d3d23899847"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28fe17e7bd86d24c68d77d3d23899847">&#9670;&#160;</a></span>collision_verbosity</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a> Parameters::Lagrangian::LagrangianPostProcessing::collision_verbosity</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00576">576</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
 <a id="ab71c7b44d79914157d26b84dac34f651" name="ab71c7b44d79914157d26b84dac34f651"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab71c7b44d79914157d26b84dac34f651">&#9670;&#160;</a></span>force_chains</h2>
 
@@ -198,6 +240,54 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00563">563</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="af6865ec7d26090abe3e6f009c85a4867" name="af6865ec7d26090abe3e6f009c85a4867"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6865ec7d26090abe3e6f009c85a4867">&#9670;&#160;</a></span>log_collisions_with_all_walls</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::Lagrangian::LagrangianPostProcessing::log_collisions_with_all_walls</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00571">571</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="a96deafa9b540cb3bd1543c21b29180ba" name="a96deafa9b540cb3bd1543c21b29180ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96deafa9b540cb3bd1543c21b29180ba">&#9670;&#160;</a></span>particle_wall_collision_boundary_ids</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; Parameters::Lagrangian::LagrangianPostProcessing::particle_wall_collision_boundary_ids</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00574">574</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="a9f5187a69e555bb29b5419bcc36c759e" name="a9f5187a69e555bb29b5419bcc36c759e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f5187a69e555bb29b5419bcc36c759e">&#9670;&#160;</a></span>particle_wall_collision_statistics</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::Lagrangian::LagrangianPostProcessing::particle_wall_collision_statistics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00568">568</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>

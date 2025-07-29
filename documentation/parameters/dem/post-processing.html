@@ -454,13 +454,23 @@
         <article role="main">
           <section id="post-processing">
 <h1>Post-processing<a class="headerlink" href="#post-processing" title="Link to this heading">#</a></h1>
-<p>Lethe has built-in post-processing capabilities. All post-processing results are written as VTU, PTVU, and/or PVD files.</p>
+<p>Lethe has built-in post-processing capabilities. All post-processing results are written as VTU, PTVU, PVD, CSV and/or DAT files.</p>
 <p>The post-processing subsection of the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file is according to the following example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection post-processing
- # Enable output of grid, granular temperature, and particles&#39; average velocity
- set lagrangian post-processing = false
- # Enable output of force chains
- set force chains = false
+   # Enable output of grid, granular temperature, and particles&#39; average velocity
+   set lagrangian post-processing = false
+
+   # Enable output of force chains
+   set force chains = false
+
+   # Enable particle-wall collision statistics
+   subsection particle wall collision statistics
+     set enable particle wall contact statistics = false
+     set collision statistics file               = collision_statistics.csv
+     set verbosity                               = quiet # Choices are quiet|verbose
+     set log collisions with all walls           = true
+     set wall boundary ids                       = 0
+   end
 end
 </pre></div>
 </div>
@@ -495,6 +505,17 @@ end
 <p>The following video shows force chains for the <a class="reference external" href="../../examples/dem/rectangular-hopper/rectangular-hopper.html">Rectangular Hopper example</a>.</p>
 <blockquote>
 <div><iframe width="560" height="315" src="https://www.youtube.com/embed/XrXXCz00Yjk?si=45mRK2E4yzT0BQIe" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></blockquote>
+</section>
+<section id="particle-wall-collision-statistics">
+<h2>Particle-wall collision statistics<a class="headerlink" href="#particle-wall-collision-statistics" title="Link to this heading">#</a></h2>
+<p>The particle-wall contact statistics logging feature allows to log the statistics of collisions between particles and walls in a .dat file or a .csv file. This feature is useful for post-processing and analysis of particle-wall interactions.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">particle</span> <span class="pre">wall</span> <span class="pre">collision</span> <span class="pre">statistics</span></code> enables the feature.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">collision</span> <span class="pre">statistics</span> <span class="pre">file</span></code> is the name of the file where the particle-wall contact statistics will be logged. The file will be created from the working directory of the simulation. If the name does not specify the format, the file will be created in .csv format. If the name ends with .dat or .csv, the file will be created in the corresponding format.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code> controls the verbosity of the particle-wall collisions. The available options are <code class="docutils literal notranslate"><span class="pre">quiet</span></code> (the default option) and <code class="docutils literal notranslate"><span class="pre">verbose</span></code>. If set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>, the start and the end of a collision are printed in the terminal.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">collisions</span> <span class="pre">with</span> <span class="pre">all</span> <span class="pre">walls</span></code> is a boolean parameter that controls whether the particle-wall contact statistics will be logged for all walls or only for the walls defined by the <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">boundary</span> <span class="pre">ids</span></code> parameter. If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the statistics will be logged for all walls. If set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, the statistics will be logged only for the walls defined by the <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">boundary</span> <span class="pre">ids</span></code> parameter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">boundary</span> <span class="pre">ids</span></code> is the list of the wall boundary IDs where the particle-wall contact statistics will be logged when <code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">collisions</span> <span class="pre">with</span> <span class="pre">all</span> <span class="pre">walls</span></code> is set to false. When <code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">collisions</span> <span class="pre">with</span> <span class="pre">all</span> <span class="pre">walls</span></code> is set to true, this parameter is ignored. Each wall boundary ID must be separated by a comma.</p></li>
+</ul>
 </section>
 </section>
 
@@ -556,6 +577,7 @@ end
 <li><a class="reference internal" href="#">Post-processing</a><ul>
 <li><a class="reference internal" href="#lagrangian-post-processing">Lagrangian post-processing</a></li>
 <li><a class="reference internal" href="#force-chains-post-processing">Force chains post-processing</a></li>
+<li><a class="reference internal" href="#particle-wall-collision-statistics">Particle-wall collision statistics</a></li>
 </ul>
 </li>
 </ul>
