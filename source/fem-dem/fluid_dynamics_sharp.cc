@@ -4003,7 +4003,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->sum_over_previous_stages,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -4099,7 +4099,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->sum_over_previous_stages,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);

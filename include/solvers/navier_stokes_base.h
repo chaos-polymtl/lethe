@@ -924,24 +924,36 @@ protected:
   VectorType newton_update;
   VectorType present_solution;
 
-  VectorType present_k_i_solution;
-  VectorType temp_present_k_i_solution;
-
   VectorType system_rhs;
-  VectorType tmp;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
-  VectorType              previous_solutions_0;
 
-  std::vector<VectorType> previous_k_j_solutions;
-  VectorType              previous_k_j_solutions_p;
+  /**
+   * @brief Structure that stores all SDIRK-related vectors used during the time integration process.
+   */
+  struct SDIRKVectors
+  {
+    /// Vector to hold the locally non-relevant part of the solution (for
+    /// calculus purposes)
+    VectorType not_locally_relevant_for_calculus;
 
-  VectorType sum_bi_ki;
-  VectorType temp_sum_bi_ki;
+    /// Stores the previous k_j stage vectors (one per stage j < i)
+    std::vector<VectorType> previous_k_j_solutions;
 
-  VectorType sum_over_previous_stages;
-  VectorType temp_sum_over_previous_stages;
+    /// Stores the sum of b_i * k_i across all stages
+    VectorType sum_bi_ki;
+    VectorType temp_sum_bi_ki;
+
+    /// Stores the sum of a_ij * k_j for j < i
+    VectorType sum_over_previous_stages;
+    VectorType temp_sum_over_previous_stages;
+  };
+
+  /**
+   * @brief Instance of SDIRK-related vectors.
+   */
+  SDIRKVectors sdirk_vectors;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;

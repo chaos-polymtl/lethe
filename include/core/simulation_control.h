@@ -134,8 +134,6 @@ protected:
     bdf_coefs = calculate_bdf_coefficients(assembly_method, time_step_vector);
   }
 
-  unsigned int stage_i;
-
 public:
   /**
    * @brief The simulation control class is constructed by a simple parameter structure
@@ -220,6 +218,7 @@ public:
   /**
    * @brief Establish if the method is a bdf method
    *
+   * @return true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise.
    */
   bool
   is_bdf()
@@ -234,6 +233,7 @@ public:
   /**
    * @brief Establish if the method is a sdirk method
    *
+   * @return true if the method is sdirk22 or sdirk33, false otherwise.
    */
   bool
   is_sdirk()
@@ -491,18 +491,6 @@ public:
   get_bdf_coefficients()
   {
     return bdf_coefs;
-  }
-
-  unsigned int
-  get_stage_i_number()
-  {
-    return stage_i;
-  }
-
-  void
-  set_stage_i_number(unsigned int s)
-  {
-    stage_i = s;
   }
 
   /**

@@ -35,6 +35,8 @@ is_bdf1(const Parameters::SimulationControl::TimeSteppingMethod method)
  * @brief Determines if the time integration method is within the bdf family
  *
  * @param method A time integration method
+ *
+ * @return true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise.
  */
 inline bool
 is_bdf(const Parameters::SimulationControl::TimeSteppingMethod method)
@@ -44,19 +46,6 @@ is_bdf(const Parameters::SimulationControl::TimeSteppingMethod method)
           method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
           method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3);
-}
-
-/**
- * @brief Establish if the method is a sdirk method
- *
- * @param method A time integration method
- */
-inline bool
-is_sdirk(const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (method ==
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
-          method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
 }
 
 /**

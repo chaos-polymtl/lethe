@@ -277,7 +277,7 @@ public:
     // For the SDIRK methods, \sum_{j=1}^{i-1} a_{ij} k_j is needed for the
     // assembler
     this->fe_values[velocities].get_function_values(sum_over_previous_stages,
-                                                    this->u_sum_over_stages);
+                                                    this->sdirk_stage_sum);
 
     // Gather velocity (values, gradient and laplacian)
     this->fe_values[velocities].get_function_values(current_solution,
@@ -1101,7 +1101,7 @@ public:
   std::vector<Tensor<1, dim>>              pressure_gradients;
   std::vector<std::vector<double>>         previous_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
-  std::vector<Tensor<1, dim>>              u_sum_over_stages;
+  std::vector<Tensor<1, dim>>              sdirk_stage_sum;
 
   // Shape functions
   std::vector<std::vector<double>>         div_phi_u;

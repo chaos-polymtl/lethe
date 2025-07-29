@@ -1261,7 +1261,7 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
 
       strong_residual[q] +=
         (velocity[0] - velocity[1]) / (h * stage_data.a_ij[0]) -
-        scratch_data.u_sum_over_stages[q];
+        scratch_data.sdirk_stage_sum[q];
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -1314,7 +1314,7 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
 
       strong_residual[q] +=
         (velocity[0] - velocity[1]) / (h * stage_data.a_ij[0]) -
-        scratch_data.u_sum_over_stages[q];
+        scratch_data.sdirk_stage_sum[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -1323,7 +1323,7 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
           local_rhs_i -= (1 / (h * stage_data.a_ij[0])) * phi_u_i *
                            (scratch_data.velocity_values[q] -
                             scratch_data.previous_velocity_values[0][q]) -
-                         phi_u_i * scratch_data.u_sum_over_stages[q];
+                         phi_u_i * scratch_data.sdirk_stage_sum[q];
           local_rhs(i) += local_rhs_i * JxW[q];
         }
     }

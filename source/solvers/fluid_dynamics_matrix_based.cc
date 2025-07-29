@@ -87,7 +87,8 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // If enabled, create mortar coupling
   this->update_mortar_coupling();
 
-  // Important note : calculus on the following vectors (addition,
+
+  // Important note : calculation on the following vectors (addition,
   // multiplication, etc.) can only be done if these are reinitialized WITHOUT
   // locally_relevant_dofs. This is why most of them are reinitialized both with
   // and without locally_relevant_dofs.
@@ -100,27 +101,6 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
-
-  this->present_k_i_solution.reinit(this->locally_owned_dofs,
-                                    this->locally_relevant_dofs,
-                                    this->mpi_communicator);
-  this->temp_present_k_i_solution.reinit(this->locally_owned_dofs,
-                                         this->mpi_communicator);
-
-
-  this->sum_bi_ki.reinit(this->locally_owned_dofs,
-                         this->locally_relevant_dofs,
-                         this->mpi_communicator);
-  this->temp_sum_bi_ki.reinit(this->locally_owned_dofs, this->mpi_communicator);
-
-
-  this->sum_over_previous_stages.reinit(this->locally_owned_dofs,
-                                        this->locally_relevant_dofs,
-                                        this->mpi_communicator);
-  this->temp_sum_over_previous_stages.reinit(this->locally_owned_dofs,
-                                             this->mpi_communicator);
-
-
   // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
     {
@@ -128,20 +108,32 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
-  this->previous_solutions_0.reinit(this->locally_owned_dofs,
-                                    this->mpi_communicator);
 
+
+  this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
+                                       this->locally_relevant_dofs,
+                                       this->mpi_communicator);
+  this->sdirk_vectors.temp_sum_bi_ki.reinit(this->locally_owned_dofs,
+                                            this->mpi_communicator);
+
+
+  this->sdirk_vectors.sum_over_previous_stages.reinit(
+    this->locally_owned_dofs,
+    this->locally_relevant_dofs,
+    this->mpi_communicator);
+  this->sdirk_vectors.temp_sum_over_previous_stages.reinit(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  this->sdirk_vectors.not_locally_relevant_for_calculus.reinit(
+    this->locally_owned_dofs, this->mpi_communicator);
 
   // Initialize vector of previous hk_j solutions
-  for (auto &solution : this->previous_k_j_solutions)
+  for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
-  this->previous_k_j_solutions_p.reinit(this->locally_owned_dofs,
-                                        this->mpi_communicator);
-  this->tmp.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
@@ -442,7 +434,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         }
 
       // sdirk methods
-      if (is_sdirk(this->simulation_control->get_assembly_method()))
+      if (this->simulation_control->is_sdirk())
         {
           this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
@@ -626,7 +618,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->sum_over_previous_stages,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -857,7 +849,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->sum_over_previous_stages,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
