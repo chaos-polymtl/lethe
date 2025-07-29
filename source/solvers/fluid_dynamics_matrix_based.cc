@@ -87,8 +87,10 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // If enabled, create mortar coupling
   this->update_mortar_coupling();
 
-  // Important note : calculus on the following vectors (addition, multiplication, etc.) can only be done if these are reinitialized WITHOUT locally_relevant_dofs.
-  // This is why most of them are reinitialized both with and without locally_relevant_dofs.
+  // Important note : calculus on the following vectors (addition,
+  // multiplication, etc.) can only be done if these are reinitialized WITHOUT
+  // locally_relevant_dofs. This is why most of them are reinitialized both with
+  // and without locally_relevant_dofs.
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
@@ -98,26 +100,25 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
-  
+
   this->present_k_i_solution.reinit(this->locally_owned_dofs,
-                                      this->locally_relevant_dofs,
-                                      this->mpi_communicator);
+                                    this->locally_relevant_dofs,
+                                    this->mpi_communicator);
   this->temp_present_k_i_solution.reinit(this->locally_owned_dofs,
-                                this->mpi_communicator);
+                                         this->mpi_communicator);
 
 
   this->sum_bi_ki.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
-  this->temp_sum_bi_ki.reinit(this->locally_owned_dofs,
-                                this->mpi_communicator);
+                         this->locally_relevant_dofs,
+                         this->mpi_communicator);
+  this->temp_sum_bi_ki.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
-  
+
   this->sum_over_previous_stages.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+                                        this->locally_relevant_dofs,
+                                        this->mpi_communicator);
   this->temp_sum_over_previous_stages.reinit(this->locally_owned_dofs,
-                                this->mpi_communicator);
+                                             this->mpi_communicator);
 
 
   // Initialize vector of previous solutions
@@ -128,9 +129,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
   this->previous_solutions_0.reinit(this->locally_owned_dofs,
-                                this->mpi_communicator);
+                                    this->mpi_communicator);
 
-    
+
   // Initialize vector of previous hk_j solutions
   for (auto &solution : this->previous_k_j_solutions)
     {
@@ -139,7 +140,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
   this->previous_k_j_solutions_p.reinit(this->locally_owned_dofs,
-                                this->mpi_communicator);
+                                        this->mpi_communicator);
   this->tmp.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
 
@@ -439,13 +440,13 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                   this->simulation_control));
             }
         }
-      
+
       // sdirk methods
       if (is_sdirk(this->simulation_control->get_assembly_method()))
         {
           this->assemblers.emplace_back(
-                std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
-                  this->simulation_control));
+            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
+              this->simulation_control));
         }
 
       // Rotating frame sources term
@@ -600,7 +601,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     &FluidDynamicsMatrixBased::copy_local_matrix_to_global_matrix,
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                          this->cell_quadrature->size()));
+                                         this->cell_quadrature->size()));
 
   // Add mortar entries
   if (this->simulation_parameters.mortar.enable)

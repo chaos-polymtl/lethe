@@ -78,11 +78,12 @@ namespace Parameters
   {
     prm.enter_subsection("simulation control");
     {
-      prm.declare_entry("method",
-                        "steady",
-                        Patterns::Selection("steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33"),
-                        "The kind of solver for the linear system. "
-                        "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33>.");
+      prm.declare_entry(
+        "method",
+        "steady",
+        Patterns::Selection("steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33"),
+        "The kind of solver for the linear system. "
+        "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33>.");
 
       prm.declare_entry(
         "bdf startup method",

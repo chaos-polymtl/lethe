@@ -172,7 +172,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   // of the BDF schemes
   previous_solutions.resize(maximum_number_of_previous_solutions());
 
-  previous_k_j_solutions.resize(SimulationControl::get_number_of_stages(this->simulation_control->get_assembly_method()));
+  previous_k_j_solutions.resize(SimulationControl::get_number_of_stages(
+    this->simulation_control->get_assembly_method()));
 
   // Change the behavior of the timer for situations when you don't want
   // outputs
@@ -585,37 +586,42 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  // The variables containing the vectors are both defined with and without locally_relevant_dofs.
-  // The locally_relevant_dofs are used for the assembly, while the non-locally_relevant_dofs are used for the calculus on the vectors (addition, multiplication, etc.).
+  // The variables containing the vectors are both defined with and without
+  // locally_relevant_dofs. The locally_relevant_dofs are used for the assembly,
+  // while the non-locally_relevant_dofs are used for the calculus on the
+  // vectors (addition, multiplication, etc.).
   const auto method = this->simulation_control->get_assembly_method();
 
   const auto time_step = this->simulation_control->get_time_step();
 
-  auto &present_solution   = this->present_solution;
-  // Since we are updating present_solution at each stage for the SDIRK method, we also use the variable local_evaluation_point which was previously used in the newton_nonlinear_solver.
+  auto &present_solution = this->present_solution;
+  // Since we are updating present_solution at each stage for the SDIRK method,
+  // we also use the variable local_evaluation_point which was previously used
+  // in the newton_nonlinear_solver.
   auto &local_evaluation_point = this->local_evaluation_point;
-  
-  auto &previous_solutions = this->previous_solutions;
+
+  auto &previous_solutions   = this->previous_solutions;
   auto &previous_solutions_0 = this->previous_solutions_0;
 
   // The following variables are used for the SDIRK method
 
   // u_{n+1} = u_n + \sum_{i=1}^{s} b_i k_i
-  auto &sum_bi_ki = this->sum_bi_ki;
+  auto &sum_bi_ki      = this->sum_bi_ki;
   auto &temp_sum_bi_ki = this->temp_sum_bi_ki;
-  
+
   // \sum_{j=1}^{i-1} a_{ij} k_j when we are at least at stage 2
   // If we are at stage 1, sum_over_previous_stages is set to 0.
-  auto &sum_over_previous_stages = this->sum_over_previous_stages;
+  auto &sum_over_previous_stages      = this->sum_over_previous_stages;
   auto &temp_sum_over_previous_stages = this->temp_sum_over_previous_stages;
 
   // Intermediate variable to make the calculus of easier to understand
   // This will be stored in the previous_k_j_solutions vector
-  auto &present_k_i_solution = this->present_k_i_solution;
+  auto &present_k_i_solution      = this->present_k_i_solution;
   auto &temp_present_k_i_solution = this->temp_present_k_i_solution;
 
-  // Very important variable because \sum_{j=1}^{i-1} a_{ij} k_j has to be calculated at each stage
-  auto &previous_k_j_solutions = this->previous_k_j_solutions;
+  // Very important variable because \sum_{j=1}^{i-1} a_{ij} k_j has to be
+  // calculated at each stage
+  auto &previous_k_j_solutions   = this->previous_k_j_solutions;
   auto &previous_k_j_solutions_p = this->previous_k_j_solutions_p;
 
   // Temporary variable to compute the sum over the previous stages
@@ -633,8 +639,8 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
       if (simulation_parameters.multiphysics.fluid_dynamics)
         {
-          // Solve and percolate the auxiliary physics that should be treated BEFORE
-          // the fluid dynamics
+          // Solve and percolate the auxiliary physics that should be treated
+          // BEFORE the fluid dynamics
           multiphysics->solve(false,
                               simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(false);
@@ -647,87 +653,107 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
             announce_string(this->pcout, "Fluid Dynamics");
 
 
-          if (method != Parameters::SimulationControl::TimeSteppingMethod::steady &&
-              method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf && 
-              method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
-              method != Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
+          if (method !=
+                Parameters::SimulationControl::TimeSteppingMethod::steady &&
+              method !=
+                Parameters::SimulationControl::TimeSteppingMethod::steady_bdf &&
+              method !=
+                Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
+              method !=
+                Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
               method != Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-              {
-                // If a SDIRK method is selected, we need to solve as many nonlinear systems as the number of stages.
+            {
+              // If a SDIRK method is selected, we need to solve as many
+              // nonlinear systems as the number of stages.
 
-                  // At each stage, the value of the (a_ij), (b_i) and (c_i) coefficients are differents
-                  SDIRKStageData stage_data(scratch_data->sdirk_table, stage + 1);
-                  const double a_ii = stage_data.a_ij[stage];
+              // At each stage, the value of the (a_ij), (b_i) and (c_i)
+              // coefficients are differents
+              SDIRKStageData stage_data(scratch_data->sdirk_table, stage + 1);
+              const double   a_ii = stage_data.a_ij[stage];
 
-                  // At each stage, we need to recompute \sum_{j=1}^{i-1} a_{ij} k_j = sum_over_previous_stages
-                  temp_sum_over_previous_stages = sum_over_previous_stages;
-                  temp_sum_over_previous_stages = 0;
+              // At each stage, we need to recompute \sum_{j=1}^{i-1} a_{ij} k_j
+              // = sum_over_previous_stages
+              temp_sum_over_previous_stages = sum_over_previous_stages;
+              temp_sum_over_previous_stages = 0;
 
-                  if (stage > 0)
-                  {
-                    // At the first stage, the sum_over_previous_stages is set to 0.
-                    // But for the next stages, we need to update this sum_over_previous_stages
-                    for (unsigned int p = 0; p < stage; ++p)
+              if (stage > 0)
+                {
+                  // At the first stage, the sum_over_previous_stages is set to
+                  // 0. But for the next stages, we need to update this
+                  // sum_over_previous_stages
+                  for (unsigned int p = 0; p < stage; ++p)
                     {
                       previous_k_j_solutions_p = previous_k_j_solutions[p];
-                      tmp = previous_k_j_solutions[0];
-                      tmp.equ(stage_data.a_ij[p] / a_ii, previous_k_j_solutions_p);
+                      tmp                      = previous_k_j_solutions[0];
+                      tmp.equ(stage_data.a_ij[p] / a_ii,
+                              previous_k_j_solutions_p);
                       temp_sum_over_previous_stages.add(1.0, tmp);
                     }
-                  }
+                }
 
-                  sum_over_previous_stages = temp_sum_over_previous_stages;
+              sum_over_previous_stages = temp_sum_over_previous_stages;
 
-                  // The nonlinear system to solve at each stage n°i is:
-                  // (u*_{i} - u_{n})/(time_step*a_ii) - sum_over_previous_stages = Navier-Stokes core.
-                  PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-                  // Once we have solved the nonlinear system for the velocity, we want to store the value of the coefficient k_i for the final sum b_i*k_i.
-                  // k_i = (u*_{i} - u_{n})/(time_step*a_ii) - sum_over_previous_stages
-                  previous_solutions_0 = previous_solutions[0];
-                  temp_present_k_i_solution = present_solution;
-                  temp_present_k_i_solution.add(-1.0, previous_solutions_0);
-                  temp_present_k_i_solution *= 1.0 / (time_step*a_ii);
-                  temp_present_k_i_solution.add(-1.0, temp_sum_over_previous_stages);
-
-                  present_k_i_solution = temp_present_k_i_solution;
-
-                  // We store the value of the present_k_i_solution in the previous_k_j_solutions vector.
-                  previous_k_j_solutions[stage] = present_k_i_solution;
-
-                  // We update the sum of b_i*k_i
-                  const double b_i = stage_data.b_i;
-                  temp_sum_bi_ki.add(b_i, temp_present_k_i_solution);
-                  sum_bi_ki = temp_sum_bi_ki;
-              }
-
-          if (method == Parameters::SimulationControl::TimeSteppingMethod::steady ||
-              method == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf || 
-              method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-              method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
-              method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-          {
-            // if a mono-stage method is selected, the value of the present_solution is directly obtained by solving the non-linear system with the Newton's method.
+              // The nonlinear system to solve at each stage n°i is:
+              // (u*_{i} - u_{n})/(time_step*a_ii) - sum_over_previous_stages =
+              // Navier-Stokes core.
               PhysicsSolver<VectorType>::solve_non_linear_system(false);
-          }
+
+              // Once we have solved the nonlinear system for the velocity, we
+              // want to store the value of the coefficient k_i for the final
+              // sum b_i*k_i. k_i = (u*_{i} - u_{n})/(time_step*a_ii) -
+              // sum_over_previous_stages
+              previous_solutions_0      = previous_solutions[0];
+              temp_present_k_i_solution = present_solution;
+              temp_present_k_i_solution.add(-1.0, previous_solutions_0);
+              temp_present_k_i_solution *= 1.0 / (time_step * a_ii);
+              temp_present_k_i_solution.add(-1.0,
+                                            temp_sum_over_previous_stages);
+
+              present_k_i_solution = temp_present_k_i_solution;
+
+              // We store the value of the present_k_i_solution in the
+              // previous_k_j_solutions vector.
+              previous_k_j_solutions[stage] = present_k_i_solution;
+
+              // We update the sum of b_i*k_i
+              const double b_i = stage_data.b_i;
+              temp_sum_bi_ki.add(b_i, temp_present_k_i_solution);
+              sum_bi_ki = temp_sum_bi_ki;
+            }
+
+          if (method ==
+                Parameters::SimulationControl::TimeSteppingMethod::steady ||
+              method ==
+                Parameters::SimulationControl::TimeSteppingMethod::steady_bdf ||
+              method ==
+                Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+              method ==
+                Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+              method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+            {
+              // if a mono-stage method is selected, the value of the
+              // present_solution is directly obtained by solving the non-linear
+              // system with the Newton's method.
+              PhysicsSolver<VectorType>::solve_non_linear_system(false);
+            }
 
 
           // If the physics need to be solved after the physics, the matrix free
-          // solver requires to update the value here. This is due to the different
-          // type of vectors.
+          // solver requires to update the value here. This is due to the
+          // different type of vectors.
           if (this->multiphysics->get_active_physics().size() > 1)
-          {
-            this->update_solutions_for_multiphysics();
-          }
+            {
+              this->update_solutions_for_multiphysics();
+            }
 
-          // Solve and percolate the auxiliary physics that should be treated AFTER
-          // the fluid dynamics
-          multiphysics->solve(true, simulation_parameters.simulation_control.method);
-          // Dear future Bruno, percolating auxiliary physics before fluid dynamics
-          // is necessary because of the checkpointing mechanism. You spent an
-          // evening debugging this, trust me.
+          // Solve and percolate the auxiliary physics that should be treated
+          // AFTER the fluid dynamics
+          multiphysics->solve(true,
+                              simulation_parameters.simulation_control.method);
+          // Dear future Bruno, percolating auxiliary physics before fluid
+          // dynamics is necessary because of the checkpointing mechanism. You
+          // spent an evening debugging this, trust me.
           multiphysics->percolate_time_vectors(true);
-
         }
       else
         {
@@ -736,7 +762,8 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
           // Solve and percolate the auxiliary physics that should be treated
           // BEFORE the fluid dynamics
-          multiphysics->solve(false, simulation_parameters.simulation_control.method);
+          multiphysics->solve(false,
+                              simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(false);
 
           if (this->simulation_parameters.initial_condition->type ==
@@ -758,24 +785,25 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
           // Solve and percolate the auxiliary physics that should be treated
           // AFTER the fluid dynamics
-          multiphysics->solve(true, simulation_parameters.simulation_control.method);
+          multiphysics->solve(true,
+                              simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(true);
         }
     }
 
   if (method != Parameters::SimulationControl::TimeSteppingMethod::steady &&
-      method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf && 
+      method != Parameters::SimulationControl::TimeSteppingMethod::steady_bdf &&
       method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
       method != Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
       method != Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-  {
-    // For SDIRK methods, we need to update the present_solution.
-    // u_{n+1} = u_n + \sum_{i=1}^{s} b_i k_i
-    temp_sum_bi_ki = sum_bi_ki;
-    local_evaluation_point = previous_solutions[0];
-    local_evaluation_point.add(time_step, temp_sum_bi_ki);
-    present_solution = local_evaluation_point;
-  }
+    {
+      // For SDIRK methods, we need to update the present_solution.
+      // u_{n+1} = u_n + \sum_{i=1}^{s} b_i k_i
+      temp_sum_bi_ki         = sum_bi_ki;
+      local_evaluation_point = previous_solutions[0];
+      local_evaluation_point.add(time_step, temp_sum_bi_ki);
+      present_solution = local_evaluation_point;
+    }
 }
 
 

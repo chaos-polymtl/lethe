@@ -74,7 +74,7 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
       table.c[0] = gamma;
       table.c[1] = 0.7179332608;
       table.c[2] = 1.0;
-      
+
       table.b.resize(3);
       table.b[0] = 1.208496649;
       table.b[1] = -0.6443631707;

@@ -5,8 +5,8 @@
 #define lethe_simulation_control_h
 
 #include <core/bdf.h>
-#include <core/sdirk_stage_data.h>
 #include <core/parameters.h>
+#include <core/sdirk_stage_data.h>
 
 /**
  * @brief The SimulationControl class is responsible for the control of steady-state and transient
@@ -238,9 +238,9 @@ public:
   bool
   is_sdirk()
   {
-    return method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
-           method ==
-             Parameters::SimulationControl::TimeSteppingMethod::sdirk33;
+    return method ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
+           method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33;
   }
 
 

@@ -5,12 +5,12 @@
 #define lethe_navier_stokes_scratch_data_h
 
 #include <core/bdf.h>
-#include <core/sdirk_stage_data.h>
 #include <core/dem_properties.h>
 #include <core/density_model.h>
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 #include <core/rheological_model.h>
+#include <core/sdirk_stage_data.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/cahn_hilliard_filter.h>
@@ -233,7 +233,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         const VectorType &sum_over_previous_stages,
+         const VectorType              &sum_over_previous_stages,
          std::shared_ptr<Function<dim>> forcing_function,
          Tensor<1, dim>                 beta_force,
          const double                   pressure_scaling_factor)
@@ -274,7 +274,8 @@ public:
       compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
     this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
 
-    // For the SDIRK methods, \sum_{j=1}^{i-1} a_{ij} k_j is need for the assembler
+    // For the SDIRK methods, \sum_{j=1}^{i-1} a_{ij} k_j is need for the
+    // assembler
     this->fe_values[velocities].get_function_values(sum_over_previous_stages,
                                                     this->u_sum_over_stages);
 

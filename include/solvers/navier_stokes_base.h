@@ -7,11 +7,11 @@
 
 // Lethe Includes
 #include <core/mesh_controller.h>
-#include <core/sdirk_stage_data.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
+#include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
 
 #include <solvers/flow_control.h>
@@ -932,10 +932,10 @@ protected:
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
-  VectorType previous_solutions_0;
+  VectorType              previous_solutions_0;
 
   std::vector<VectorType> previous_k_j_solutions;
-  VectorType previous_k_j_solutions_p;
+  VectorType              previous_k_j_solutions_p;
 
   VectorType sum_bi_ki;
   VectorType temp_sum_bi_ki;
