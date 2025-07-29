@@ -274,11 +274,13 @@ public:
       compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
     this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
 
+    // For the SDIRK methods, \sum_{j=1}^{i-1} a_{ij} k_j is need for the assembler
+    this->fe_values[velocities].get_function_values(sum_over_previous_stages,
+                                                    this->u_sum_over_stages);
+
     // Gather velocity (values, gradient and laplacian)
     this->fe_values[velocities].get_function_values(current_solution,
                                                     this->velocity_values);
-    this->fe_values[velocities].get_function_values(sum_over_previous_stages,
-                                                    this->u_sum_over_stages);
     this->fe_values[velocities].get_function_gradients(
       current_solution, this->velocity_gradients);
     this->fe_values[velocities].get_function_laplacians(
