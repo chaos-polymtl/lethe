@@ -64,7 +64,7 @@ calculate_navier_stokes_gls_tau_transient(const double u_mag,
 }
 
 /**
- * @brief Implements a Moe a posteriori shock capturing method to keep the field bounded. This limiting is only used when DG advection is used for the Tracer.
+ * @brief Implements a Moe a posteriori shock capturing method to keep the field bounded. This limiter is only used when DG advection is selected for the Tracer.
  * The limiter is based on the implementation proposed by: Moe, Scott A.,
  * James A. Rossmanith, and David C. Seal. "A simple and effective high-order
  * shock-capturing limiter for discontinuous Galerkin methods." arXiv preprint
