@@ -1188,11 +1188,12 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
-  auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-    this->triangulation.get());
-  if (tria.n_levels() >
+  if (this->triangulation->n_global_levels() >
       this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
     return;
+  AssertThrow(this->triangulation->all_reference_cells_are_hyper_cube(),
+              ExcMessage("Uniform refinement is not supported for "
+                         "simplex meshes."));
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
@@ -1229,7 +1230,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   multiphysics->prepare_for_mesh_adaptation();
 
   // Refine
-  tria.refine_global(1);
+  this->triangulation->refine_global(1);
 
   // If mortar is enabled, update mapping cache with refined triangulation
   if (this->simulation_parameters.mortar.enable)
