@@ -28,7 +28,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
   // Loop over every local cells:
   // 2. Calculate approximate upper and lower bounds using the neighbors
   // 3. Calculate the value of the theta limiting parameter
-  // 4. Rescale the nodal values of the function using the average value of the
+  // 4. Rescale the nodal values of the solution using the average value of the
   // solution within the element and the theta limiter.
 
   // We need the vertices-to-cell map to have access to the neighbors rapidly
