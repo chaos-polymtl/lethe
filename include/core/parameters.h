@@ -723,6 +723,12 @@ namespace Parameters
       grad_div
     } stabilization;
 
+    enum class ScalarLimiters
+    {
+      moe,
+      none
+    } scalar_limiter;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

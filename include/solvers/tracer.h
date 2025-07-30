@@ -17,6 +17,7 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/stabilization.h>
 #include <solvers/tracer_assemblers.h>
 #include <solvers/tracer_scratch_data.h>
 
@@ -450,6 +451,26 @@ private:
    */
   void
   write_tracer_statistics();
+
+  /**
+   * @brief Modify the tracer solution by applying a limiter;
+   */
+  virtual void
+  modify_solution() override
+  {
+    if (simulation_parameters.fem_parameters.tracer_uses_dg)
+      {
+        if (simulation_parameters.stabilization.scalar_limiter ==
+            Parameters::Stabilization::ScalarLimiters::moe)
+          {
+            moe_scalar_limiter<dim>(this->dof_handler,
+                                    this->evaluation_point,
+                                    this->local_evaluation_point);
+
+            present_solution = this->local_evaluation_point;
+          }
+      }
+  };
 
 
   /**

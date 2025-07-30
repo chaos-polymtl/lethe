@@ -18,6 +18,9 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
 
     # Pressure scaling factor
     set pressure scaling factor          = 1
+    
+    # Scalar limiter
+    set scalar limiter                   = none #<none|moe>
   end
   
 
@@ -37,4 +40,4 @@ There are three choices of stabilization strategy:
 
 * ``pressure scaling factor`` used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver by decreasing the condition number for cases where pressure and velocity have very different scales.
 
-
+* ``scalar limiter`` applies a scalar limiter to the solution of the tracer equation when a Discontinuous Galerkin method (DG) is used. The available option are ``none`` and  ``moe``.  The ``none`` option disables the limiter. The ``moe`` limiter applies a monotone upstream-centered scheme for conservation laws (MUSCL) type of limiter (see `Moe et al. (2015) <https://doi.org/10.48550/arXiv.1507.03024>`). This is useful to prevent oscillations in the solution of the tracer equation, especially in cases with sharp gradients and when the diffusion coefficient is very small or zero.

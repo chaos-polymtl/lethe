@@ -1,13 +1,12 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 set dimension = 2
 
 subsection simulation control
-  set method           = bdf1
+  set method           = bdf2
   set time end         = 0.2
-  set time step        = 0.02
-  set output name      = stab_tracer
+  set time step        = 0.005
   set output frequency = 0
 end
 
@@ -42,8 +41,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 1, 1 : 0, 0 : 1, 1.0 : true
-  set initial refinement = 5
+  set grid arguments     = 50, 1 : 0, 0 : 1, 1.0 : true
+  set initial refinement = 0
 end
 
 subsection multiphysics
