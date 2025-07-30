@@ -26,7 +26,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
   // First loop over all active cells (local and ghost):
   // 1. Calculate the max and the min value of the field we wish to limit
   // Loop over every local cells:
-  // 2. Calculate approximate upper and lower bound using the neighbors
+  // 2. Calculate approximate upper and lower bounds using the neighbors
   // 3. Calculate the value of the theta limiting parameter
   // 4. Rescale the nodal values of the function using the average value of the
   // solution within the element and the theta limiter.
