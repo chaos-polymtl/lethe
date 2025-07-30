@@ -1188,6 +1188,9 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
+  if (this->triangulation.n_levels() >
+      this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
+    return;
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
