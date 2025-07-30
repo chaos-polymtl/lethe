@@ -31,7 +31,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
   // 4. Rescale the nodal values of the function using the average value of the
   // solution within the element and the theta limiter.
 
-  // We need a vertices to cell map to have access to the neighbors rapidly
+  // We need the vertices-to-cell map to have access to the neighbors rapidly
   // We obtain this map using the LetheGridTools functionnalities.
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
