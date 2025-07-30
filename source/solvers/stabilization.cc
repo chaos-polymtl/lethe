@@ -94,7 +94,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
             LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
 
-          // 2. Calculate approximate upper and lower bound using the neighbhors
+          // 2. Calculate approximate upper and lower bounds using the neighbhors
 
           // Here we assume that alpha = 0 (see the Moe paper). The definition
           // of alpha in the original paper is flaky in my opinion, let's use
