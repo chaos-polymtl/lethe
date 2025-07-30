@@ -98,7 +98,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
 
           // Here we assume that alpha = 0 (see the Moe paper). The definition
           // of alpha in the original paper is flaky in my opinion, let's use
-          // the more robust version as a started point.
+          // the more robust version as a starting point.
           double upper_bound =
             mean_value_per_cells.at(cell->global_active_cell_index());
           double lower_bound =
