@@ -17,7 +17,6 @@ subsection simulation control
   set time end          = 0.05
   set time step         = 0.01
   set number mesh adapt = 0
-  set output name       = conduction
   set output frequency  = 0
 end
 
@@ -39,7 +38,6 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set density             = 2000
     set kinematic viscosity = 0.01
   end
 end
@@ -109,11 +107,6 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection heat transfer
-    set tolerance      = 1e-8
-    set max iterations = 100
-    set verbosity      = quiet
-  end
   subsection fluid dynamics
     set tolerance      = 1e-8
     set max iterations = 100
