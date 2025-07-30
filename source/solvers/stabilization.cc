@@ -82,7 +82,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
   // Loop over every cell and do:
   // 2. Calculate approximate upper and lower bound using the neighbhors
   // 3. Calculate the theta limiter
-  // 4. Rescale the nodal values of the function
+  // 4. Rescale the nodal values of the solution
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
