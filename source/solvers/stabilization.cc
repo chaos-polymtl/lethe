@@ -38,7 +38,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
     vertices_to_cell;
   LetheGridTools::vertices_cell_mapping(dof_handler, vertices_to_cell);
 
-  // Step 1, loop over every cell and calculate the max, the min and the mean.
+  // Step 1. loop over every cell and calculate the max, the min and the mean.
   // These values are stored in std::map for rapid access.
   std::map<typename ::dealii::types::global_cell_index, double>
     max_value_per_cells;
