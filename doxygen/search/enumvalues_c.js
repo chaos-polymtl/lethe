@@ -6,5 +6,6 @@ var searchData=
   ['mobility_5fstatus_3',['mobility_status',['../structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7abdfd37e8359d01ed10577a9d0d609c15',1,'Parameters::Testing']]],
   ['modela_4',['modelA',['../namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c',1,'Parameters']]],
   ['modelb_5',['modelB',['../namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690',1,'Parameters']]],
-  ['multiple_5fstep_5fbdf_6',['multiple_step_bdf',['../structParameters_1_1SimulationControl.html#a4560ab579df469caea9d52cc5a7a53baa1c37ff61e0d4dfbb46475ead409a821c',1,'Parameters::SimulationControl']]]
+  ['moe_6',['moe',['../structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296a7f33334d4c2f6dd6ffc701944cec2f1c',1,'Parameters::Stabilization']]],
+  ['multiple_5fstep_5fbdf_7',['multiple_step_bdf',['../structParameters_1_1SimulationControl.html#a4560ab579df469caea9d52cc5a7a53baa1c37ff61e0d4dfbb46475ead409a821c',1,'Parameters::SimulationControl']]]
 ];

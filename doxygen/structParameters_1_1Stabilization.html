@@ -102,6 +102,10 @@ Public Types</h2></td></tr>
 , <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baa5b26215bec0d4dc2a7af08e2ae886418">grad_div</a>
  }</td></tr>
 <tr class="separator:aa349ab6e7ab2df88077df91d4707a4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bd9121da8c1c4092e2f016b7f8eb296" id="r_a5bd9121da8c1c4092e2f016b7f8eb296"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296">ScalarLimiters</a> { <a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296a7f33334d4c2f6dd6ffc701944cec2f1c">moe</a>
+, <a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+ }</td></tr>
+<tr class="separator:a5bd9121da8c1c4092e2f016b7f8eb296"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -125,6 +129,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a978f1c321f2edfd3601e5e235f89105e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7aa4d80ac010b83de1242172de802ef" id="r_ae7aa4d80ac010b83de1242172de802ef"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4ba">Parameters::Stabilization::NavierStokesStabilization</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef">stabilization</a></td></tr>
 <tr class="separator:ae7aa4d80ac010b83de1242172de802ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9392e3c81cdb38e014a315d167d12485" id="r_a9392e3c81cdb38e014a315d167d12485"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296">Parameters::Stabilization::ScalarLimiters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Stabilization.html#a9392e3c81cdb38e014a315d167d12485">scalar_limiter</a></td></tr>
+<tr class="separator:a9392e3c81cdb38e014a315d167d12485"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1Stabilization.html" title="Stabilization - Defines parameters for an advanced control over the stabilization strategy used by th...">Stabilization</a> - Defines parameters for an advanced control over the stabilization strategy used by the solvers. </p>
@@ -157,6 +163,34 @@ Public Attributes</h2></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00719">719</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a5bd9121da8c1c4092e2f016b7f8eb296" name="a5bd9121da8c1c4092e2f016b7f8eb296"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bd9121da8c1c4092e2f016b7f8eb296">&#9670;&#160;</a></span>ScalarLimiters</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296">Parameters::Stabilization::ScalarLimiters</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a5bd9121da8c1c4092e2f016b7f8eb296a7f33334d4c2f6dd6ffc701944cec2f1c" name="a5bd9121da8c1c4092e2f016b7f8eb296a7f33334d4c2f6dd6ffc701944cec2f1c"></a>moe&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5bd9121da8c1c4092e2f016b7f8eb296a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a5bd9121da8c1c4092e2f016b7f8eb296a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00726">726</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -205,9 +239,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00771">771</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00777">777</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baaca6efd547a7b6d9885402b9544f941d5">gls</a>, <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baa5b26215bec0d4dc2a7af08e2ae886418">grad_div</a>, <a class="el" href="parameters_8h_source.html#l00709">heat_transfer_dcdd_stabilization</a>, <a class="el" href="parameters_8h_source.html#l00717">pressure_scaling_factor</a>, <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baaae21e5838883a96aab921c84e14383bb">pspg_supg</a>, <a class="el" href="structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef">stabilization</a>, <a class="el" href="parameters_8h_source.html#l00707">use_default_stabilization</a>, and <a class="el" href="parameters_8h_source.html#l00713">vof_dcdd_stabilization</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baaca6efd547a7b6d9885402b9544f941d5">gls</a>, <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baa5b26215bec0d4dc2a7af08e2ae886418">grad_div</a>, <a class="el" href="parameters_8h_source.html#l00709">heat_transfer_dcdd_stabilization</a>, <a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296a7f33334d4c2f6dd6ffc701944cec2f1c">moe</a>, <a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="parameters_8h_source.html#l00717">pressure_scaling_factor</a>, <a class="el" href="structParameters_1_1Stabilization.html#aa349ab6e7ab2df88077df91d4707a4baaae21e5838883a96aab921c84e14383bb">pspg_supg</a>, <a class="el" href="structParameters_1_1Stabilization.html#a9392e3c81cdb38e014a315d167d12485">scalar_limiter</a>, <a class="el" href="structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef">stabilization</a>, <a class="el" href="parameters_8h_source.html#l00707">use_default_stabilization</a>, and <a class="el" href="parameters_8h_source.html#l00713">vof_dcdd_stabilization</a>.</p>
 
 </div>
 </div>
@@ -241,6 +275,20 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00717">717</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a9392e3c81cdb38e014a315d167d12485" name="a9392e3c81cdb38e014a315d167d12485"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9392e3c81cdb38e014a315d167d12485">&#9670;&#160;</a></span>scalar_limiter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="structParameters_1_1Stabilization.html#a5bd9121da8c1c4092e2f016b7f8eb296">Parameters::Stabilization::ScalarLimiters</a> Parameters::Stabilization::scalar_limiter</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
