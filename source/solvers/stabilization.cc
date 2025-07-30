@@ -87,8 +87,6 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
     {
       if (cell->is_locally_owned())
         {
-          // Get an approximate cell size
-          // const double alpha = 50 * cell->diameter();
           cell->get_dof_indices(local_dof_indices);
 
           // Active neighbors include the current cell as well
