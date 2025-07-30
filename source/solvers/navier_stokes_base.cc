@@ -1188,7 +1188,9 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
-  if (this->triangulation.n_levels() >
+  auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+    this->triangulation.get());
+  if (tria.n_levels() >
       this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
     return;
   TimerOutput::Scope t(this->computing_timer, "Refine");
@@ -1227,7 +1229,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   multiphysics->prepare_for_mesh_adaptation();
 
   // Refine
-  this->triangulation->refine_global(1);
+  tria.refine_global(1);
 
   // If mortar is enabled, update mapping cache with refined triangulation
   if (this->simulation_parameters.mortar.enable)
