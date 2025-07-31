@@ -27,6 +27,9 @@ Lethe requires a modern version of the `deal.II library <https://www.dealii.org/
 Installing deal.II using apt 
 -----------------------------------------
 
+::warning::
+  The master version of Lethe does not support deal.II 9.6 anymore. Until an apt release of deal.II 9.7 is available, you should use the 1.0.1 version of Lethe if you wish to use the deal.II 9.6 package.
+
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
 In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports>`_:
