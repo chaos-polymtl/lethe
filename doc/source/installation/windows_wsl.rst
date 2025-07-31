@@ -95,6 +95,9 @@ The following step is to install deal.II. This can be done through
 Installing deal.II using apt (Step #1)
 -----------------------------------------
 
+::warning::
+  The master version of Lethe does not support deal.II 9.6 anymore. Until an apt release of deal.II 9.7 is available, you should use the 1.0.1 version of Lethe if you wish to use the deal.II 9.6 package. If you wish to use the current master version of Lethe, you should install deal.II 9.7 using the other installation methods.
+
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
 1. |linux_shell| In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports>`_:
