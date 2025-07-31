@@ -407,6 +407,21 @@ protected:
   refine_mesh_uniform();
 
   /**
+   * @brief Transfer solution after mesh refinement
+   */
+  void
+  transfer_after_refinement(
+    SolutionTransfer<dim, VectorType> &solution_transfer,
+    std::vector<SolutionTransfer<dim, VectorType>>
+      &previous_solutions_transfer);
+
+  /**
+   * @brief Transfer solution when no mesh refinement is done
+   */
+  void
+  transfer_without_refinement();
+
+  /**
    * @brief Restart a previous simulation from a checkpoint file.
    */
   virtual void
