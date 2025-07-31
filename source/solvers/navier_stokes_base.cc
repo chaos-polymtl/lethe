@@ -1149,39 +1149,10 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     average_velocities->prepare_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
-  this->setup_dofs();
+  setup_dofs();
 
-  // Set up the vectors for the transfer
-  VectorType tmp = init_temporary_vector();
-
-  // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
-
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(tmp);
-
-  // Fix on the new mesh
-  present_solution = tmp;
-
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      VectorType tmp_previous_solution = init_temporary_vector();
-      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
-      nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
-    }
-
-  multiphysics->post_mesh_adaptation();
-  if (this->simulation_parameters.post_processing
-        .calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile)
-    average_velocities->post_mesh_adaptation();
-
-  // Only needed if other physics apart from fluid dynamics are enabled.
-  if (this->multiphysics->get_active_physics().size() > 1)
-    this->update_multiphysics_time_average_solution();
+  // Transfer solution
+  transfer_after_refinement(solution_transfer, previous_solutions_transfer);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1238,6 +1209,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   setup_dofs();
 
+  // Transfer solution
+  transfer_after_refinement(solution_transfer, previous_solutions_transfer);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::transfer_after_refinement(
+  SolutionTransfer<dim, VectorType>              &solution_transfer,
+  std::vector<SolutionTransfer<dim, VectorType>> &previous_solutions_transfer)
+{
   // Set up the vectors for the transfer
   VectorType tmp = init_temporary_vector();
 
@@ -1270,6 +1251,37 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     this->update_multiphysics_time_average_solution();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::transfer_without_refinement()
+{
+  // Set up the vectors for the transfer
+  VectorType tmp = init_temporary_vector();
+  tmp            = this->present_solution;
+
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    tmp.update_ghost_values();
+
+  // Distribute constraints
+  auto &nonzero_constraints = this->nonzero_constraints;
+  nonzero_constraints.distribute(tmp);
+
+  // Fix on the new mesh
+  this->present_solution = tmp;
+
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      VectorType tmp_previous_solution = init_temporary_vector();
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        tmp_previous_solution.update_ghost_values();
+
+      nonzero_constraints.distribute(tmp_previous_solution);
+      previous_solutions[i] = tmp_previous_solution;
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2006,32 +2018,8 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_configuration()
     {
       setup_dofs();
 
-      // Set up the vectors for the transfer
-      VectorType tmp = init_temporary_vector();
-      tmp            = this->present_solution;
-
-      if constexpr (std::is_same_v<VectorType,
-                                   LinearAlgebra::distributed::Vector<double>>)
-        tmp.update_ghost_values();
-
-      // Distribute constraints
-      auto &nonzero_constraints = this->nonzero_constraints;
-      nonzero_constraints.distribute(tmp);
-
-      // Fix on the new mesh
-      this->present_solution = tmp;
-
-      for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-        {
-          VectorType tmp_previous_solution = init_temporary_vector();
-          if constexpr (std::is_same_v<
-                          VectorType,
-                          LinearAlgebra::distributed::Vector<double>>)
-            tmp_previous_solution.update_ghost_values();
-
-          nonzero_constraints.distribute(tmp_previous_solution);
-          previous_solutions[i] = tmp_previous_solution;
-        }
+      // Transfer solution
+      transfer_without_refinement();
     }
 }
 
