@@ -4193,6 +4193,12 @@ namespace Parameters
                         default_entry_point,
                         Patterns::List(Patterns::Double()),
                         "Center of rotation coordinates of rotor domain");
+      
+      prm.declare_entry(
+        "rotation axis",
+        "1, 0, 0",
+        Patterns::List(Patterns::Double()),
+        "Unit vector representing the rotor rotation axis");
 
       prm.enter_subsection("rotor rotation angle");
       rotor_rotation_angle = std::make_shared<Functions::ParsedFunction<dim>>();
@@ -4235,7 +4241,8 @@ namespace Parameters
       stator_boundary_id = prm.get_integer("stator boundary id");
       center_of_rotation =
         value_string_to_tensor<dim>(prm.get("center of rotation"));
-
+      rotation_axis =
+        value_string_to_tensor<dim>(prm.get("rotation axis"));
       prm.enter_subsection("rotor rotation angle");
       rotor_rotation_angle->parse_parameters(prm);
       rotor_rotation_angle->set_time(0);

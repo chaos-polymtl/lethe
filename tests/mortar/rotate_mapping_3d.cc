@@ -42,7 +42,7 @@ test()
   unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
   unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
-  const unsigned int dim            = 2;
+  const unsigned int dim            = 3;
   const unsigned int mapping_degree = 3;
   const unsigned int fe_degree      = 3;
 
@@ -54,8 +54,8 @@ test()
 
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
-  mesh_parameters.grid_type                = "hyper_cube_with_cylindrical_hole";
-  mesh_parameters.grid_arguments           = "1.0 : 2.0 : 5.0 : 1 : true";
+  mesh_parameters.grid_type                = "cylinder_shell";
+  mesh_parameters.grid_arguments           = "2.0 : 0.5 : 1.0 : 4 : 4 : true";
   mesh_parameters.scale                    = 1;
   mesh_parameters.simplex                  = false;
   mesh_parameters.initial_refinement       = 2;
@@ -67,15 +67,14 @@ test()
   mortar_parameters.enable           = "true";
   mortar_parameters.rotor_mesh       = std::make_shared<Parameters::Mesh>();
   mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
-  mortar_parameters.rotor_mesh->grid_type      = "hyper_ball_balanced";
-  mortar_parameters.rotor_mesh->grid_arguments = "0, 0 : 1.0";
-  mortar_parameters.rotor_mesh->rotation_angle = 3.0;
+  mortar_parameters.rotor_mesh->grid_type      = "cylinder_shell";
+  mortar_parameters.rotor_mesh->grid_arguments = "2.0 : 0.25 : 0.5 : 4 : 4 : true";
   mortar_parameters.rotor_mesh->scale          = 1;
   mortar_parameters.rotor_mesh->simplex        = false;
-  mortar_parameters.stator_boundary_id         = 4;
+  mortar_parameters.stator_boundary_id         = 0;
   mortar_parameters.rotor_boundary_id          = 5; // after shifting
-  const double rotation_angle =
-    2 * numbers::PI * mortar_parameters.rotor_mesh->rotation_angle / 360.0;
+  mortar_parameters.rotation_axis              = Tensor<1, dim>({0, 0, 1});
+  const double rotation_angle = 1.15;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);

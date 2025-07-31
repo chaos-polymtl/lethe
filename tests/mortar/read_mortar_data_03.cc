@@ -2,8 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Mortar: test functions to compute radius, number of subdivisions, and rotate mapping.
- *
+ * @brief This test reads two mesh input parameters and merges
+ * them in a unique triangulation. The goal is to test the steps on the
+ * function read_mesh_and_manifolds only related to reading and merging two
+ * distinct triangulations.
+ * Based on the test mortar/plot_01.cc
  */
 
 #include <deal.II/distributed/tria.h>
@@ -24,8 +27,6 @@
 // Lethe
 #include <core/boundary_conditions.h>
 #include <core/grids.h>
-#include <core/lethe_grid_tools.h>
-#include <core/mortar_coupling_manager.h>
 #include <core/parameters.h>
 
 // Tests (with common definitions)
@@ -42,9 +43,8 @@ test()
   unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
   unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
-  const unsigned int dim            = 2;
+  const unsigned int dim            = 3;
   const unsigned int mapping_degree = 3;
-  const unsigned int fe_degree      = 3;
 
   Parameters::Mesh                       mesh_parameters;
   Parameters::Mortar<dim>                mortar_parameters;
@@ -54,8 +54,8 @@ test()
 
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
-  mesh_parameters.grid_type                = "hyper_cube_with_cylindrical_hole";
-  mesh_parameters.grid_arguments           = "1.0 : 2.0 : 5.0 : 1 : true";
+  mesh_parameters.grid_type                = "cylinder_shell";
+  mesh_parameters.grid_arguments           = "2.0 : 0.5 : 1.0 : 4 : 4 : true";
   mesh_parameters.scale                    = 1;
   mesh_parameters.simplex                  = false;
   mesh_parameters.initial_refinement       = 2;
@@ -67,15 +67,13 @@ test()
   mortar_parameters.enable           = "true";
   mortar_parameters.rotor_mesh       = std::make_shared<Parameters::Mesh>();
   mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
-  mortar_parameters.rotor_mesh->grid_type      = "hyper_ball_balanced";
-  mortar_parameters.rotor_mesh->grid_arguments = "0, 0 : 1.0";
-  mortar_parameters.rotor_mesh->rotation_angle = 3.0;
+  mortar_parameters.rotor_mesh->grid_type      = "cylinder_shell";
+  mortar_parameters.rotor_mesh->grid_arguments = "2.0 : 0.25 : 0.5 : 4 : 4 : true";
   mortar_parameters.rotor_mesh->scale          = 1;
   mortar_parameters.rotor_mesh->simplex        = false;
-  mortar_parameters.stator_boundary_id         = 4;
+  mortar_parameters.stator_boundary_id         = 0;
   mortar_parameters.rotor_boundary_id          = 5; // after shifting
-  const double rotation_angle =
-    2 * numbers::PI * mortar_parameters.rotor_mesh->rotation_angle / 360.0;
+
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
@@ -88,44 +86,38 @@ test()
                                                boundary_conditions,
                                                mortar_parameters);
 
-  FE_Q<dim>          fe(fe_degree);
-  DoFHandler<dim>    dof_handler(triangulation);
-  MappingQ<dim, dim> mapping(mapping_degree);
-  MappingQCache<dim> mapping_cache(mapping_degree);
-
-  // Distribute dofs
-  dof_handler.distribute_dofs(fe);
-
-  // Number of subdivisions and rotor radius
-  const auto [n_subdivisions, radius] =
-    compute_n_subdivisions_and_radius(triangulation, mortar_parameters);
-
-  // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius, rotation_angle);
-
   // Print information
-  if (Utilities::MPI::this_mpi_process(comm) == 0)
+  for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
+       ++processor_number)
     {
-      deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
-      deallog << "Number of subdivisions at interface : " << n_subdivisions
-              << std::endl;
-      deallog << "Radius : " << radius << std::endl;
+      MPI_Barrier(comm);
+      if (processor_number == this_mpi_process)
+        {
+          deallog << "MPI=" << this_mpi_process << std::endl;
+          deallog << "Number of active cells : "
+                  << triangulation.n_active_cells() << std::endl;
+          deallog << "Number of vertices : " << triangulation.n_vertices()
+                  << std::endl;
+
+          for (const auto &face : triangulation.active_face_iterators())
+            deallog << "Cell center : " << face->center() << std::endl;
+        }
+      MPI_Barrier(comm);
     }
 
   // Generate vtu file
-  DataOut<dim> data_out;
+  DataOut<dim>       data_out;
+  MappingQ<dim, dim> mapping(mapping_degree);
 
   DataOutBase::VtkFlags flags;
   flags.write_higher_order_cells = true;
   data_out.set_flags(flags);
   data_out.attach_triangulation(triangulation);
-  data_out.attach_dof_handler(dof_handler);
 
   Vector<double> ranks(triangulation.n_active_cells());
   ranks = Utilities::MPI::this_mpi_process(comm);
   data_out.add_data_vector(ranks, "ranks");
-  data_out.build_patches(mapping_cache,
+  data_out.build_patches(mapping,
                          mapping_degree + 1,
                          DataOut<dim>::CurvedCellRegion::curved_inner_cells);
   data_out.write_vtu_in_parallel("out.vtu", comm);

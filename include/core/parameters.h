@@ -1812,6 +1812,8 @@ namespace Parameters
     unsigned int stator_boundary_id;
     /// Center of rotation of the rotor domain
     Point<dim> center_of_rotation;
+    /// Rotation axis of the rotor domain
+    Tensor<1,dim> rotation_axis;
     /// Rotation angle of the rotor domain in radians
     std::shared_ptr<Functions::ParsedFunction<dim>> rotor_rotation_angle;
     /// Angular velocity of the rotor domain

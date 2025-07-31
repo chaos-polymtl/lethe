@@ -1814,8 +1814,19 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
     }
   else if constexpr (dim == 3)
     {
-      return;
-      // TODO Rotate mapping in 3D
+      mapping_cache.initialize(
+        mapping,
+        dof_handler.get_triangulation(),
+        [&](const auto &cell, const auto &point) {
+          if (cell->center().norm() > radius)
+            return point;
+
+          return static_cast<Point<dim>>(
+            Physics::Transformations::Rotations::rotation_matrix_3d(
+              Tensor<1,dim>({0, 0, 1}), rotation_angle) *
+            point);
+        },
+        false);
     }
 }
 
