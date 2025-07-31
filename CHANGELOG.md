@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-07-31
+
+### Fixed
+
+- MINOR Add "max refinement level" parameter to "uniform" mesh adaptation method. Before, transient simulations would have meshes being refined indefinitely. This PR fixes this, adds an application test, and adds an assertion to avoid the use of uniform mesh adaptation with simplex meshes. [#1599](https://github.com/chaos-polymtl/lethe/pull/1599)
+
 ### [Master] - 2025-07-25
 
 ### Added

@@ -1188,6 +1188,12 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
+  if (this->triangulation->n_global_levels() >
+      this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
+    return;
+  AssertThrow(this->triangulation->all_reference_cells_are_hyper_cube(),
+              ExcMessage("Uniform refinement is not supported for "
+                         "simplex meshes."));
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
