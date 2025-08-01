@@ -1794,7 +1794,9 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
                                MappingQCache<dim>    &mapping_cache,
                                const Mapping<dim>    &mapping,
                                const double           radius,
-                               const double           rotation_angle)
+                               const double           rotation_angle,
+                               const Point<dim>       center_of_rotation,
+                               const Tensor<1, dim>   rotation_axis)
 {
   if constexpr (dim == 2)
     {
@@ -1818,12 +1820,24 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          if (cell->center().norm() > radius)
+          std::cout << "point " << point << std::endl;
+          const auto aux =
+            cross_product_3d((point - center_of_rotation),
+                             rotation_axis);
+          std::cout << "aux " << aux << std::endl;
+          const double num = aux.norm();
+          std::cout << "num " << num << std::endl;
+          const double den = rotation_axis.norm();
+          std::cout << "den " << den << std::endl;
+          const double radius_3d   = num / den;
+          std::cout << "radius 3d " << radius_3d << std::endl;
+          std::cout << cell->center().norm() << std::endl;
+          if (cell->center().norm() > radius_3d)
             return point;
 
           return static_cast<Point<dim>>(
             Physics::Transformations::Rotations::rotation_matrix_3d(
-              Tensor<1,dim>({0, 0, 1}), rotation_angle) *
+              rotation_axis, rotation_angle) *
             point);
         },
         false);
@@ -1835,11 +1849,15 @@ LetheGridTools::rotate_mapping(const DoFHandler<2> &dof_handler,
                                MappingQCache<2>    &mapping_cache,
                                const Mapping<2>    &mapping,
                                const double         radius,
-                               const double         rotation_angle);
+                               const double         rotation_angle,
+                               const Point<2>       center_of_rotation,
+                               const Tensor<1,2>    rotation_axis);
 
 template void
 LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                MappingQCache<3>    &mapping_cache,
                                const Mapping<3>    &mapping,
                                const double         radius,
-                               const double         rotation_angle);
+                               const double         rotation_angle,
+                               const Point<3>       center_of_rotation,
+                               const Tensor<1,3>    rotation_axis);

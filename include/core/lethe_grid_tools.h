@@ -408,7 +408,9 @@ namespace LetheGridTools
                  MappingQCache<dim>    &mapping_cache,
                  const Mapping<dim>    &mapping,
                  const double           radius,
-                 const double           rotation_angle);
+                 const double           rotation_angle,
+                 const Point<dim>       center_of_rotation = Point<dim>(),
+                 const Tensor<1,dim>    rotation_axis = Tensor<1,dim>());
 
   /**
    * @brief

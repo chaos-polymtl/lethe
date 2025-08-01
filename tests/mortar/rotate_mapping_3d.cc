@@ -67,14 +67,16 @@ test()
   mortar_parameters.enable           = "true";
   mortar_parameters.rotor_mesh       = std::make_shared<Parameters::Mesh>();
   mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
-  mortar_parameters.rotor_mesh->grid_type      = "cylinder_shell";
-  mortar_parameters.rotor_mesh->grid_arguments = "2.0 : 0.25 : 0.5 : 4 : 4 : true";
-  mortar_parameters.rotor_mesh->scale          = 1;
-  mortar_parameters.rotor_mesh->simplex        = false;
-  mortar_parameters.stator_boundary_id         = 0;
-  mortar_parameters.rotor_boundary_id          = 5; // after shifting
-  mortar_parameters.rotation_axis              = Tensor<1, dim>({0, 0, 1});
-  const double rotation_angle = 1.15;
+  mortar_parameters.rotor_mesh->grid_type = "cylinder_shell";
+  mortar_parameters.rotor_mesh->grid_arguments =
+    "2.0 : 0.25 : 0.5 : 4 : 4 : true";
+  mortar_parameters.rotor_mesh->scale   = 1;
+  mortar_parameters.rotor_mesh->simplex = false;
+  mortar_parameters.stator_boundary_id  = 0;
+  mortar_parameters.rotor_boundary_id   = 5; // after shifting
+  mortar_parameters.rotation_axis       = Tensor<1, dim>({0, 0, 1});
+  const Point<dim> center_of_rotation   = Point<dim>();
+  const double rotation_angle           = 1.15;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
@@ -101,7 +103,7 @@ test()
 
   // Rotate mapping
   LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius, rotation_angle);
+    dof_handler, mapping_cache, mapping, radius, rotation_angle, center_of_rotation, mortar_parameters.rotation_axis);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)

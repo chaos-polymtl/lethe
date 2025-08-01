@@ -406,12 +406,15 @@ compute_n_subdivisions_and_radius(
                           double radius_current =
                             v.distance(mortar_parameters.center_of_rotation);
                           if constexpr (dim == 3)
-                          {
-                            const auto aux = cross_product_3d((v - mortar_parameters.center_of_rotation), mortar_parameters.rotation_axis);
-                            const double num = aux.norm();
-                            const double den = mortar_parameters.rotation_axis.norm();
-                            radius_current = num/den;
-                          }
+                            {
+                              const auto aux = cross_product_3d(
+                                (v - mortar_parameters.center_of_rotation),
+                                mortar_parameters.rotation_axis);
+                              const double num = aux.norm();
+                              const double den =
+                                mortar_parameters.rotation_axis.norm();
+                              radius_current = num / den;
+                            }
                           radius_min = std::min(radius_min, radius_current);
                           radius_max = std::max(radius_max, radius_current);
                         }

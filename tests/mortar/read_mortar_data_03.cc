@@ -67,12 +67,13 @@ test()
   mortar_parameters.enable           = "true";
   mortar_parameters.rotor_mesh       = std::make_shared<Parameters::Mesh>();
   mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
-  mortar_parameters.rotor_mesh->grid_type      = "cylinder_shell";
-  mortar_parameters.rotor_mesh->grid_arguments = "2.0 : 0.25 : 0.5 : 4 : 4 : true";
-  mortar_parameters.rotor_mesh->scale          = 1;
-  mortar_parameters.rotor_mesh->simplex        = false;
-  mortar_parameters.stator_boundary_id         = 0;
-  mortar_parameters.rotor_boundary_id          = 5; // after shifting
+  mortar_parameters.rotor_mesh->grid_type = "cylinder_shell";
+  mortar_parameters.rotor_mesh->grid_arguments =
+    "2.0 : 0.25 : 0.5 : 4 : 4 : true";
+  mortar_parameters.rotor_mesh->scale   = 1;
+  mortar_parameters.rotor_mesh->simplex = false;
+  mortar_parameters.stator_boundary_id  = 0;
+  mortar_parameters.rotor_boundary_id   = 5; // after shifting
 
 
   // Initialized merged triangulation
