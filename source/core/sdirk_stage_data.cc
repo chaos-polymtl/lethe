@@ -85,29 +85,30 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
 
   else if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk43)
     {
-      // SDIRK43 - 3-stage, 4th-order method 
-      // Reference: L. Ferracina, M.N. Spijker, "Strong stability of singly-diagonally-implicit Runge–Kutta methods"
-      // Applied Numerical Mathematics 58 (2008) 1675–1686
-      // DOI: doi:10.1016/j.apnum.2007.10.004
+      // SDIRK43 - 3-stage, 4th-order method
+      // Reference: L. Ferracina, M.N. Spijker, "Strong stability of
+      // singly-diagonally-implicit Runge–Kutta methods" Applied Numerical
+      // Mathematics 58 (2008) 1675–1686 DOI: doi:10.1016/j.apnum.2007.10.004
       const double gamma = 0.128886400515;
 
       table.A.reinit(3, 3);
       table.A(0, 0) = gamma;
-      table.A(1, 0) = 1/2 - gamma;
+      table.A(1, 0) = 1 / 2 - gamma;
       table.A(1, 1) = gamma;
-      table.A(2, 0) = 2*gamma;
-      table.A(2, 1) = 1 - 4*gamma;
+      table.A(2, 0) = 2 * gamma;
+      table.A(2, 1) = 1 - 4 * gamma;
       table.A(2, 2) = gamma;
 
       table.c.resize(3);
       table.c[0] = gamma;
-      table.c[1] = 1/2;
+      table.c[1] = 1 / 2;
       table.c[2] = 1 - gamma;
 
       table.b.resize(3);
-      table.b[0] = 1/(6*std::pow((2*gamma - 1), 2.0));
-      table.b[1] = 2*(6*std::pow(gamma, 2.0) - 6*gamma + 1)/(3*std::pow((2*gamma - 1), 2.0));
-      table.b[2] = 1/(6*std::pow((2*gamma - 1), 2.0));
+      table.b[0] = 1 / (6 * std::pow((2 * gamma - 1), 2.0));
+      table.b[1] = 2 * (6 * std::pow(gamma, 2.0) - 6 * gamma + 1) /
+                   (3 * std::pow((2 * gamma - 1), 2.0));
+      table.b[2] = 1 / (6 * std::pow((2 * gamma - 1), 2.0));
 
       return table;
     }

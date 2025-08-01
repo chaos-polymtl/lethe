@@ -583,7 +583,10 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::multi_stage_precond(unsigned int stage, Parameters::SimulationControl::TimeSteppingMethod method, double time_step)
+NavierStokesBase<dim, VectorType, DofsType>::multi_stage_precond(
+  unsigned int                                      stage,
+  Parameters::SimulationControl::TimeSteppingMethod method,
+  double                                            time_step)
 {
   // Very important variable because \sum_{j=1}^{i-1} a_{ij} k_j has to be
   // calculated at each stage
@@ -619,11 +622,9 @@ NavierStokesBase<dim, VectorType, DofsType>::multi_stage_precond(unsigned int st
       // sum_over_previous_stages
       for (unsigned int p = 0; p < stage; ++p)
         {
-          locally_owned_for_calculus =
-            previous_k_j_solutions[p];
-          temp_sum_over_previous_stages.add(
-            stage_data.a_ij[p] / a_ii,
-            locally_owned_for_calculus);
+          locally_owned_for_calculus = previous_k_j_solutions[p];
+          temp_sum_over_previous_stages.add(stage_data.a_ij[p] / a_ii,
+                                            locally_owned_for_calculus);
         }
     }
 
@@ -632,10 +633,13 @@ NavierStokesBase<dim, VectorType, DofsType>::multi_stage_precond(unsigned int st
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postcond(unsigned int stage, Parameters::SimulationControl::TimeSteppingMethod method, double time_step)
+NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postcond(
+  unsigned int                                      stage,
+  Parameters::SimulationControl::TimeSteppingMethod method,
+  double                                            time_step)
 {
-  auto &present_solution = this->present_solution;
-  auto &previous_solutions = this->previous_solutions;
+  auto &present_solution       = this->present_solution;
+  auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 
   auto &temp_sum_over_previous_stages =
@@ -652,15 +656,14 @@ NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postcond(unsigned int s
   SDIRKTable     table = sdirk_table(method);
   SDIRKStageData stage_data(table, stage + 1);
   const double   a_ii = stage_data.a_ij[stage];
-  
+
   // Once we have solved the nonlinear system for the velocity, we
   // want to store the value of the coefficient k_i for the final
   // sum b_i*k_i. k_i = (u*_{i} - u_{n})/(time_step*a_ii) -
   // sum_over_previous_stages
   locally_owned_for_calculus = previous_solutions[0];
-  local_evaluation_point            = present_solution;
-  local_evaluation_point.add(-1.0,
-                              locally_owned_for_calculus);
+  local_evaluation_point     = present_solution;
+  local_evaluation_point.add(-1.0, locally_owned_for_calculus);
   local_evaluation_point *= 1.0 / (time_step * a_ii);
   local_evaluation_point.add(-1.0, temp_sum_over_previous_stages);
 
@@ -676,19 +679,20 @@ NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postcond(unsigned int s
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(double time_step)
+NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(
+  double time_step)
 {
-  auto &present_solution = this->present_solution;
-  auto &previous_solutions = this->previous_solutions;
+  auto &present_solution       = this->present_solution;
+  auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 
   // The following variables are used for the SDIRK method
   // u_{n+1} = u_n + \sum_{i=1}^{s} b_i k_i
   auto &sum_bi_ki      = this->sdirk_vectors.sum_bi_ki;
   auto &temp_sum_bi_ki = this->sdirk_vectors.temp_sum_bi_ki;
-  
+
   // At each time iteration, we reset the value of sum_bi_ki
-  temp_sum_bi_ki = 0;
+  temp_sum_bi_ki         = 0;
   temp_sum_bi_ki         = sum_bi_ki;
   local_evaluation_point = previous_solutions[0];
   local_evaluation_point.add(time_step, temp_sum_bi_ki);
@@ -706,13 +710,13 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   // locally_relevant_dofs. The locally_relevant_dofs are used for the assembly,
   // while the non-locally_relevant_dofs are used for the calculus on the
   // vectors (addition, multiplication, etc.).
-  const auto method = this->simulation_control->get_assembly_method();
-  const auto time_step = this->simulation_control->get_time_step();
+  const auto         method = this->simulation_control->get_assembly_method();
+  const auto         time_step = this->simulation_control->get_time_step();
   const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
 
   auto &present_solution = this->present_solution;
 
-   // The following variables are used for the SDIRK method
+  // The following variables are used for the SDIRK method
   // u_{n+1} = u_n + \sum_{i=1}^{s} b_i k_i
   auto &temp_sum_bi_ki = this->sdirk_vectors.temp_sum_bi_ki;
   // At each time iteration, we reset the value of sum_bi_ki
@@ -736,16 +740,16 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
             announce_string(this->pcout, "Fluid Dynamics");
 
           if (n_stages > 1)
-          {
-            multi_stage_precond(stage, method, time_step);
-          }
+            {
+              multi_stage_precond(stage, method, time_step);
+            }
 
           PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
           if (n_stages > 1)
-          {
-            multi_stage_postcond(stage, method, time_step);
-          }
+            {
+              multi_stage_postcond(stage, method, time_step);
+            }
 
 
           // If the physics need to be solved after the physics, the matrix free

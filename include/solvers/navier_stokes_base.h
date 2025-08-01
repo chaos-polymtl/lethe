@@ -363,7 +363,8 @@ protected:
    * It updates the sum_over_previous_stages variable to use it in the solver.
    */
   virtual void
-  multi_stage_precond(unsigned int stage, Parameters::SimulationControl::TimeSteppingMethod method,
+  multi_stage_precond(unsigned int                                      stage,
+                      Parameters::SimulationControl::TimeSteppingMethod method,
                       double time_step);
 
   /**
@@ -371,9 +372,9 @@ protected:
    * Update the \sum_{i=1}^{stage} b_i \times k_i
    */
   virtual void
-  multi_stage_postcond(unsigned int stage,
+  multi_stage_postcond(unsigned int                                      stage,
                        Parameters::SimulationControl::TimeSteppingMethod method,
-                      double time_step);
+                       double time_step);
 
   /**
    * @brief update_multi_stage_solution
