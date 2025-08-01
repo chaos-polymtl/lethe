@@ -24,6 +24,7 @@ test()
   physical_properties.number_of_fluids                = 1;
   physical_properties.number_of_solids                = 1;
   physical_properties.number_of_material_interactions = 1;
+  physical_properties.reference_temperature           = 0;
 
 
   // Generate fluid properties

@@ -25,6 +25,7 @@ test()
   physical_properties.number_of_fluids                = 2;
   physical_properties.number_of_solids                = 2;
   physical_properties.number_of_material_interactions = 5;
+  physical_properties.reference_temperature           = 0;
 
   physical_properties.fluids.resize(2);
   physical_properties.solids.resize(2);

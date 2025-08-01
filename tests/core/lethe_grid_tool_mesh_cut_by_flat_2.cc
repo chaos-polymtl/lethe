@@ -40,7 +40,7 @@ test()
   DoFHandler<2>    dof_handler;
   DoFHandler<1, 2> flat_dof_handler;
 
-  FlatManifold<1, 2> flat_manifold();
+  FlatManifold<1, 2> flat_manifold;
 
 
   // Mesh
