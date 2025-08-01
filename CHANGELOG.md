@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-01
+
+### Added
+
+- MINOR This PR adds a mortar Arbitrary Lagrangian Eulerian (ALE) asssembler to allow the simulation of rotor-stator transient problems. [#1597](https://github.com/chaos-polymtl/lethe/pull/1597)
+
 ### [Master] - 2025-07-31
 
 ### Fixed
