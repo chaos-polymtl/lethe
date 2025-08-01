@@ -2658,3 +2658,99 @@ NavierStokesAssemblerALE<dim>::assemble_rhs(
 
 template class NavierStokesAssemblerALE<3>;
 template class NavierStokesAssemblerALE<2>;
+
+
+template <int dim>
+void
+NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  /// Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // Mortar ALE components
+  const auto velocity_ale = scratch_data.rotor_linear_velocity_values;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access
+      const double JxW = JxW_vec[q];
+
+      // Calculate strong residual vector
+      strong_residual_vec[q] +=
+        -scratch_data.velocity_gradients[q] * velocity_ale[q];
+
+      // Strong residual jacobian calculation
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian_vec[q][j] +=
+            -scratch_data.grad_phi_u[q][j] * velocity_ale[q];
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const Tensor<2, dim> &grad_phi_u_j =
+                scratch_data.grad_phi_u[q][j];
+
+              // Weak form for : -u_ALE * gradu
+              local_matrix(i, j) +=
+                -phi_u_i * (grad_phi_u_j * velocity_ale[q]) * JxW;
+            }
+        }
+
+    } // end loop on quadrature points
+}
+
+template <int dim>
+void
+NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // ALE components
+  const auto velocity_ale = scratch_data.rotor_linear_velocity_values;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access
+      const double JxW = JxW_vec[q];
+
+      // Calculate strong residual vector
+      strong_residual_vec[q] +=
+        -scratch_data.velocity_gradients[q] * velocity_ale[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          local_rhs[i] +=
+            (scratch_data.phi_u[q][i] *
+             (scratch_data.velocity_gradients[q] * velocity_ale[q])) *
+            JxW;
+        }
+    } // end loop on quadrature points
+}
+
+template class NavierStokesAssemblerMortarALE<3>;
+template class NavierStokesAssemblerMortarALE<2>;

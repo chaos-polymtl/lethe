@@ -85,7 +85,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->define_zero_constraints();
 
   // If enabled, create mortar coupling
-  this->update_mortar_coupling();
+  this->reinit_mortar();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -115,7 +115,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                   false);
 
   // Add sparsity pattern entries
-  if (this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar_parameters.enable)
     this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
 
   sparsity_pattern.copy_from(dsp);
@@ -273,6 +273,15 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
       this->assemblers.emplace_back(
         std::make_shared<NavierStokesAssemblerALE<dim>>(
           this->simulation_control, this->simulation_parameters.ale));
+    }
+
+  // Mortar ALE
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<NavierStokesAssemblerMortarALE<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.mortar_parameters));
     }
 
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
@@ -544,6 +553,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                         *this->get_mapping());
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.enable_mortar();
+
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
@@ -555,7 +567,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
                                          this->cell_quadrature->size()));
 
   // Add mortar entries
-  if (this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar_parameters.enable)
     this->mortar_coupling_operator->add_system_matrix_entries(
       this->system_matrix);
 
@@ -662,6 +674,11 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
         *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters,
+                               this->mortar_manager->radius);
+
   scratch_data.calculate_physical_properties();
 
   copy_data.reset();
@@ -763,6 +780,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
                                         *this->get_mapping());
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.enable_mortar();
+
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
@@ -774,7 +794,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
                                          this->cell_quadrature->size()));
 
   // Add mortar entries
-  if (this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar_parameters.enable)
     {
       // Change sign of RHS to be compatible with mortar coupling terms
       this->system_rhs.compress(VectorOperation::add);
@@ -887,6 +907,11 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
         *this->multiphysics->get_solution(PhysicsID::heat_transfer),
         *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters,
+                               this->mortar_manager->radius);
 
   scratch_data.calculate_physical_properties();
 
@@ -1652,7 +1677,7 @@ FluidDynamicsMatrixBased<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
-  if (this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar_parameters.enable)
     {
       read_mesh_and_manifolds_for_stator_and_rotor(
         *this->triangulation,
@@ -1660,11 +1685,11 @@ FluidDynamicsMatrixBased<dim>::solve()
         this->simulation_parameters.manifolds_parameters,
         this->simulation_parameters.restart_parameters.restart,
         this->simulation_parameters.boundary_conditions,
-        this->simulation_parameters.mortar);
+        this->simulation_parameters.mortar_parameters);
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-      this->rotate_mortar_mapping();
+      this->rotate_rotor_mapping(true);
     }
   else
     read_mesh_and_manifolds(
@@ -1696,6 +1721,7 @@ FluidDynamicsMatrixBased<dim>::solve()
 
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
+      this->update_mortar_configuration();
 
       if (!this->simulation_control->is_at_start())
         NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();

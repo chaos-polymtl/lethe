@@ -45,8 +45,8 @@ public:
                   const double            left,
                   const double            right)
     : MortarManagerBase<dim>(n_subdivisions,
-                             quadrature,
                              (right - left) / (2.0 * numbers::PI),
+                             quadrature,
                              0.0)
     , left(left)
     , right(right)
@@ -209,8 +209,8 @@ run(const std::string formulation, const std::string grid = "split_hyper_cube")
       const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
         std::make_shared<MortarManagerCircle<dim>>(
           4 * Utilities::pow(2, n_global_refinements + 1),
-          quadrature,
           radius,
+          quadrature,
           rotate_pi);
 
       op.add_coupling(mortar_manager, 0, 5, sip_factor);

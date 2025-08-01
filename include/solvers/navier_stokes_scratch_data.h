@@ -112,6 +112,7 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
+    gather_mortar                            = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -150,6 +151,7 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
+    gather_mortar                            = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
 
@@ -184,6 +186,8 @@ public:
                            sd.fe_values_cahn_hilliard->get_quadrature(),
                            sd.fe_values_cahn_hilliard->get_mapping(),
                            sd.cahn_hilliard_filter);
+    if (sd.gather_mortar)
+      enable_mortar();
 
     gather_hessian = sd.gather_hessian;
   }
@@ -995,6 +999,28 @@ public:
                            this->filtered_phase_order_cahn_hilliard_values);
   }
 
+  /**
+   * @brief enable_mortar Enables the calculation of the rotor rotation angle
+   */
+  void
+  enable_mortar();
+
+
+  /**
+   * @brief Renitialize the content of the scratch data for mortar
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the FE which is used to fill the
+   * FeValues.
+   *
+   * @param[in] mortar_parameters Parameters for the mortar method
+   *
+   * @param[in] radius Radius of the rotor domain
+   */
+  void
+  reinit_mortar(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                const Parameters::Mortar<dim> &mortar_parameters,
+                const double                  &radius);
 
   /** @brief Calculates the physical properties. This function calculates the
    * physical properties that may be required by the fluid dynamics problem.
@@ -1183,6 +1209,12 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;
   FEValuesExtractors::Scalar     phase_order;
   FEValuesExtractors::Scalar     chemical_potential;
+
+  /**
+   * Scratch component for the mortar method
+   */
+  bool                        gather_mortar;
+  std::vector<Tensor<1, dim>> rotor_linear_velocity_values;
 
   /**
    * Is boundary cell indicator

@@ -26,8 +26,8 @@ main()
       std::cout << "Rotation angle: " << rotate << std::endl;
 
       const MortarManagerCircle<dim> manager(n_subdivisions,
-                                             QGauss<dim>(n_quadrature_points),
                                              radius,
+                                             QGauss<dim>(n_quadrature_points),
                                              rotate);
 
       const auto print = [&](const double shift) {

@@ -345,8 +345,8 @@ main(int argc, char **argv)
 
       const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
         4 * Utilities::pow(2, n_global_refinements + 1),
-        quadrature,
         radius,
+        quadrature,
         0.0);
 
       const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
