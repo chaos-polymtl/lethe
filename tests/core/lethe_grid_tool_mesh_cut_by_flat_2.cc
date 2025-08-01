@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
@@ -40,7 +40,7 @@ test()
   DoFHandler<2>    dof_handler;
   DoFHandler<1, 2> flat_dof_handler;
 
-  FlatManifold<1, 2> flat_manifold();
+  FlatManifold<1, 2> flat_manifold;
 
 
   // Mesh

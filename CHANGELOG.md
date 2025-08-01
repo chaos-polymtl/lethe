@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Add "max refinement level" parameter to "uniform" mesh adaptation method. Before, transient simulations would have meshes being refined indefinitely. This PR fixes this, adds an application test, and adds an assertion to avoid the use of uniform mesh adaptation with simplex meshes. [#1599](https://github.com/chaos-polymtl/lethe/pull/1599)
 
+### Fixed
+
+- MINOR Remove some compilation warning in some of the unit tests for mortar and core. [#1601](https://github.com/chaos-polymtl/lethe/pull/1601)
+
 ### [Master] - 2025-07-25
 
 ### Added

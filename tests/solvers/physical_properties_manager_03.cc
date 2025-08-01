@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -25,6 +25,7 @@ test()
   physical_properties.number_of_fluids                = 2;
   physical_properties.number_of_solids                = 2;
   physical_properties.number_of_material_interactions = 5;
+  physical_properties.reference_temperature           = 0;
 
   physical_properties.fluids.resize(2);
   physical_properties.solids.resize(2);

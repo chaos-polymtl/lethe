@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -23,6 +23,7 @@ test()
   physical_properties.number_of_fluids                = 1;
   physical_properties.number_of_solids                = 0;
   physical_properties.number_of_material_interactions = 0;
+  physical_properties.reference_temperature           = 0;
   physical_properties.fluids.resize(1);
   physical_properties.fluids[0].density_model =
     Parameters::Material::DensityModel::constant;

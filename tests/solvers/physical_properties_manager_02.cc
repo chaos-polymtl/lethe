@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -24,6 +24,7 @@ test()
   physical_properties.number_of_fluids                = 1;
   physical_properties.number_of_solids                = 1;
   physical_properties.number_of_material_interactions = 1;
+  physical_properties.reference_temperature           = 0;
 
 
   // Generate fluid properties
