@@ -416,12 +416,6 @@ protected:
       &previous_solutions_transfer);
 
   /**
-   * @brief Transfer solution when no mesh refinement is done
-   */
-  void
-  transfer_without_refinement();
-
-  /**
    * @brief Restart a previous simulation from a checkpoint file.
    */
   virtual void

@@ -1255,37 +1255,6 @@ NavierStokesBase<dim, VectorType, DofsType>::transfer_after_refinement(
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::transfer_without_refinement()
-{
-  // Set up the vectors for the transfer
-  VectorType tmp = init_temporary_vector();
-  tmp            = this->present_solution;
-
-  if constexpr (std::is_same_v<VectorType,
-                               LinearAlgebra::distributed::Vector<double>>)
-    tmp.update_ghost_values();
-
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(tmp);
-
-  // Fix on the new mesh
-  this->present_solution = tmp;
-
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      VectorType tmp_previous_solution = init_temporary_vector();
-      if constexpr (std::is_same_v<VectorType,
-                                   LinearAlgebra::distributed::Vector<double>>)
-        tmp_previous_solution.update_ghost_values();
-
-      nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
-    }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
   auto &present_solution = this->present_solution;
@@ -2015,12 +1984,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_configuration()
   if (this->simulation_control->is_at_start() || !refinement_step ||
       this->simulation_parameters.mesh_adaptation.type ==
         Parameters::MeshAdaptation::Type::none)
-    {
-      setup_dofs();
-
-      // Transfer solution
-      transfer_without_refinement();
-    }
+    setup_dofs();
 }
 
 template <int dim, typename VectorType, typename DofsType>
