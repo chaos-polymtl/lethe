@@ -4195,7 +4195,7 @@ namespace Parameters
                         "Center of rotation coordinates of rotor domain");
 
       prm.declare_entry("rotation axis",
-                        "1, 0, 0",
+                        "0.0, 0.0, 1.0",
                         Patterns::List(Patterns::Double()),
                         "Unit vector representing the rotor rotation axis");
 
