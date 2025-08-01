@@ -158,6 +158,7 @@ SimulationControl::get_number_of_stages(
         return 2;
 
       case Method::sdirk33:
+      case Method::sdirk43:
         return 3;
 
       default:

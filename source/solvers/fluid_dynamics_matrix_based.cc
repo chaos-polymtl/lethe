@@ -124,7 +124,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->sdirk_vectors.temp_sum_over_previous_stages.reinit(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  this->sdirk_vectors.not_locally_relevant_for_calculus.reinit(
+  this->sdirk_vectors.locally_owned_for_calculus.reinit(
     this->locally_owned_dofs, this->mpi_communicator);
 
   // Initialize vector of previous hk_j solutions

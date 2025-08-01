@@ -359,6 +359,30 @@ protected:
   dynamic_flow_control();
 
   /**
+   * @brief multi_stage_precond
+   * It updates the sum_over_previous_stages variable to use it in the solver.
+   */
+  virtual void
+  multi_stage_precond(unsigned int stage, Parameters::SimulationControl::TimeSteppingMethod method,
+                      double time_step);
+
+  /**
+   * @brief multi_stage_postcond
+   * Update the \sum_{i=1}^{stage} b_i \times k_i
+   */
+  virtual void
+  multi_stage_postcond(unsigned int stage,
+                       Parameters::SimulationControl::TimeSteppingMethod method,
+                      double time_step);
+
+  /**
+   * @brief update_multi_stage_solution
+   * u_{n+1} = u_n + time_step \times \sum_{i=1}^{stage} b_i \times k_i
+   */
+  virtual void
+  update_multi_stage_solution(double time_step);
+
+  /**
    * @brief iterate
    * Do a regular CFD iteration
    */
@@ -936,7 +960,7 @@ protected:
   {
     /// Vector to hold the locally non-relevant part of the solution (for
     /// calculus purposes)
-    VectorType not_locally_relevant_for_calculus;
+    VectorType locally_owned_for_calculus;
 
     /// Stores the previous k_j stage vectors (one per stage j < i)
     std::vector<VectorType> previous_k_j_solutions;
