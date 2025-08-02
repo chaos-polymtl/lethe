@@ -35,6 +35,8 @@ is_bdf1(const Parameters::SimulationControl::TimeSteppingMethod method)
  * @brief Determines if the time integration method is within the bdf family
  *
  * @param method A time integration method
+ *
+ * @return true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise.
  */
 inline bool
 is_bdf(const Parameters::SimulationControl::TimeSteppingMethod method)

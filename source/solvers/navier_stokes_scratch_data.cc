@@ -39,6 +39,8 @@ NavierStokesScratchData<dim>::allocate()
   this->velocity_hessians    = std::vector<Tensor<3, dim>>(n_q_points);
   this->shear_rate           = std::vector<double>(n_q_points);
 
+  this->sdirk_stage_sum = std::vector<Tensor<1, dim>>(n_q_points);
+
   // Velocity for BDF schemes
   this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
     maximum_number_of_previous_solutions(),

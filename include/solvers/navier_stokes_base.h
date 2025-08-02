@@ -11,6 +11,7 @@
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
+#include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
 
 #include <solvers/flow_control.h>
@@ -356,6 +357,30 @@ protected:
    */
   virtual void
   dynamic_flow_control();
+
+  /**
+   * @brief multi_stage_precond
+   * It updates the sum_over_previous_stages variable to use it in the solver.
+   */
+  virtual void
+  multi_stage_precond(unsigned int                                      stage,
+                      Parameters::SimulationControl::TimeSteppingMethod method);
+
+  /**
+   * @brief multi_stage_postcond
+   * Update the \sum_{i=1}^{stage} b_i \times k_i
+   */
+  virtual void
+  multi_stage_postcond(unsigned int                                      stage,
+                       Parameters::SimulationControl::TimeSteppingMethod method,
+                       double time_step);
+
+  /**
+   * @brief update_multi_stage_solution
+   * u_{n+1} = u_n + time_step \times \sum_{i=1}^{stage} b_i \times k_i
+   */
+  virtual void
+  update_multi_stage_solution(double time_step);
 
   /**
    * @brief iterate
@@ -922,10 +947,37 @@ protected:
   VectorType local_evaluation_point;
   VectorType newton_update;
   VectorType present_solution;
+
   VectorType system_rhs;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
+
+  /**
+   * @brief Structure that stores all SDIRK-related vectors used during the time integration process.
+   */
+  struct SDIRKVectors
+  {
+    /// Vector to hold the locally non-relevant part of the solution (for
+    /// calculus purposes)
+    VectorType locally_owned_for_calculus;
+
+    /// Stores the previous k_j stage vectors (one per stage j < i)
+    std::vector<VectorType> previous_k_j_solutions;
+
+    /// Stores the sum of b_i * k_i across all stages
+    VectorType sum_bi_ki;
+    VectorType temp_sum_bi_ki;
+
+    /// Stores the sum of a_ij * k_j for j < i
+    VectorType sum_over_previous_stages;
+    VectorType temp_sum_over_previous_stages;
+  };
+
+  /**
+   * @brief Instance of SDIRK-related vectors.
+   */
+  SDIRKVectors sdirk_vectors;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;

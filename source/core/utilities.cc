@@ -547,8 +547,7 @@ std::string
 get_last_value_of_parameter(const std::string &file_name,
                             const std::string &parameter_name)
 {
-  std::string return_value;
-
+  std::string   return_value;
   std::ifstream x_file(file_name);
   AssertThrow(x_file.fail() == false, ExcIO());
 
