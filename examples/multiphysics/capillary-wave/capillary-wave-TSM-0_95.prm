@@ -55,8 +55,8 @@ subsection initial conditions
   end
   subsection VOF
     set Function expression = if (y<=1e-6*cos(2*3.14159/1e-4*x), min(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,1), max(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,0))
-    set smoothing type = diffusive
-    set diffusion factor = 1
+    set smoothing type      = diffusive
+    set diffusion factor    = 1
   end
 end
 

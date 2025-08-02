@@ -88,9 +88,9 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                    = uniform
-  set frequency               = 2
-  set max refinement level    = 3
+  set type                 = uniform
+  set frequency            = 2
+  set max refinement level = 3
 end
 
 #---------------------------------------------------
