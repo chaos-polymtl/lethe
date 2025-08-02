@@ -479,7 +479,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
       // Check if the post processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing
@@ -505,7 +506,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
       // Check if the post processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing
@@ -648,7 +650,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
       // Check if the post processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing
@@ -675,7 +678,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
       // Check if the post processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing

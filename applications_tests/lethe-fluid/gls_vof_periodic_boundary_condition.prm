@@ -39,11 +39,8 @@ subsection initial conditions
 
   subsection VOF
     set Function expression = if (y<0.5 , 1, 0)
-
-    subsection projection step
-      set enable           = true
-      set diffusion factor = 1
-    end
+    set smoothing type      = diffusive
+    set diffusion factor    = 1
   end
 end
 

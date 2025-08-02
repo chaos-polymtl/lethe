@@ -364,7 +364,8 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
       // Check if the post processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing
@@ -393,7 +394,8 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
       // Check if the post-processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing
@@ -607,7 +609,8 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
       // Check if the post-processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing
@@ -636,7 +639,8 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
       // Check if the post-processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile &&
+            Parameters::FluidDynamicsInitialConditionType::
+              average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing
@@ -1446,7 +1450,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           // Check if the post processed variable needs to be calculated with
           // the average velocity profile or the fluid solution.
           if (this->simulation_parameters.initial_condition->type ==
-                Parameters::InitialConditionType::average_velocity_profile &&
+                Parameters::FluidDynamicsInitialConditionType::
+                  average_velocity_profile &&
               !this->simulation_parameters.multiphysics.fluid_dynamics &&
               simulation_control->get_current_time() >
                 this->simulation_parameters.post_processing
@@ -1470,7 +1475,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           // Check if the post processed variable needs to be calculated with
           // the average velocity profile or the fluid solution.
           if (this->simulation_parameters.initial_condition->type ==
-                Parameters::InitialConditionType::average_velocity_profile &&
+                Parameters::FluidDynamicsInitialConditionType::
+                  average_velocity_profile &&
               !this->simulation_parameters.multiphysics.fluid_dynamics &&
               simulation_control->get_current_time() >
                 this->simulation_parameters.post_processing
@@ -2478,8 +2484,16 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
 
-  if (simulation_parameters.initial_condition->enable_projection_step)
+
+  if (simulation_parameters.initial_condition
+        ->vof_initial_condition_smoothing ==
+      Parameters::VOFInitialConditionType::diffusive)
     smooth_phase_fraction(this->present_solution);
+
+  else if (simulation_parameters.initial_condition
+             ->vof_initial_condition_smoothing ==
+           Parameters::VOFInitialConditionType::geometric)
+    reinitialize_interface_with_geometric_method();
 
   apply_phase_filter(this->present_solution, this->filtered_solution);
 

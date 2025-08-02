@@ -328,7 +328,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   interface_reconstruction_cells.clear();
   intersected_dofs.clear();
 
-  // Initialize local distance vetors.
+  // Initialize local distance vectors.
   initialize_distance();
 
   // Identify intersected cells and compute the interface reconstruction.
