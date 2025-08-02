@@ -230,8 +230,9 @@ protected:
    **/
 
   virtual void
-  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
-                        bool                             restart = false)
+  set_initial_condition(
+    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    bool                                          restart = false)
   {
     unsigned int ref_iter = 0;
     do
@@ -325,8 +326,8 @@ protected:
 
   virtual void
   set_initial_condition_fd(
-    Parameters::InitialConditionType initial_condition_type,
-    bool                             restart = false) = 0;
+    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    bool                                          restart = false) = 0;
 
   /**
    * End of key physics components for fluid dynamics

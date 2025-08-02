@@ -134,7 +134,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   if (this->simulation_parameters.post_processing
         .calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile)
+        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
     {
       this->average_velocities->initialize_vectors(
         this->locally_owned_dofs,
@@ -171,7 +171,7 @@ FluidDynamicsMatrixBased<dim>::update_multiphysics_time_average_solution()
   if (this->simulation_parameters.post_processing
         .calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile)
+        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
     {
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics,
@@ -956,8 +956,8 @@ FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
 template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
-  Parameters::InitialConditionType initial_condition_type,
-  bool                             restart)
+  Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+  bool                                          restart)
 {
   if (restart)
     {
@@ -967,7 +967,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->read_checkpoint();
     }
   else if (initial_condition_type ==
-           Parameters::InitialConditionType::L2projection)
+           Parameters::FluidDynamicsInitialConditionType::L2projection)
     {
       assemble_L2_projection();
       setup_preconditioner();
@@ -980,12 +980,14 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->present_solution = this->newton_update;
       this->finish_time_step();
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::nodal)
     {
       this->set_nodal_values();
       this->finish_time_step();
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::viscous)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::viscous)
     {
       this->set_nodal_values();
       std::shared_ptr<RheologicalModel> original_viscosity_model =
@@ -1008,7 +1010,8 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->simulation_parameters.physical_properties_manager.set_rheology(
         original_viscosity_model);
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::ramp)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::ramp)
     {
       this->pcout << "*********************************" << std::endl;
       this->pcout << " Initial condition using ramp " << std::endl;
@@ -1106,7 +1109,8 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
         }
     }
   else if (initial_condition_type ==
-           Parameters::InitialConditionType::average_velocity_profile)
+           Parameters::FluidDynamicsInitialConditionType::
+             average_velocity_profile)
     {
       announce_string(this->pcout,
                       "Initial condition using average velocity profile");
