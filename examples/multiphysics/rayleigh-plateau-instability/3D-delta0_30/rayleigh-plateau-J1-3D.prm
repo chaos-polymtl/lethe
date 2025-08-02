@@ -65,8 +65,8 @@ subsection initial conditions
   end
   subsection VOF
     set Function expression = if((y^2 + z^2) <= 1.3110e-6, 1, 0)
-    set smoothing type = diffusive
-    set diffusion factor = 1
+    set smoothing type      = diffusive
+    set diffusion factor    = 1
   end
 end
 
@@ -148,7 +148,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions VOF
-  set number = 3
+  set number         = 3
   set time dependent = true
   subsection bc 0
     set id   = 1
