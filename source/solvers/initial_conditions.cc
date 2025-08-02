@@ -140,13 +140,11 @@ namespace Parameters
         Patterns::Selection("none|diffusive|geometric"),
         "Apply a projection step with diffusion to smooth the VOF initial condition");
 
-      prm.enter_subsection("projection step");
       prm.declare_entry(
         "diffusion factor",
         "1",
         Patterns::Double(),
         "Factor applied to the diffusion term in the projection step");
-      prm.leave_subsection();
       prm.leave_subsection();
 
       prm.enter_subsection("cahn hilliard");
@@ -215,11 +213,7 @@ namespace Parameters
           throw(
             std::runtime_error("Unknown VOF initial condition smoothing type"));
 
-        prm.enter_subsection("projection step");
-        {
-          projection_step_diffusion_factor = prm.get_double("diffusion factor");
-        }
-        prm.leave_subsection();
+        projection_step_diffusion_factor = prm.get_double("diffusion factor");
       }
       prm.leave_subsection();
 
