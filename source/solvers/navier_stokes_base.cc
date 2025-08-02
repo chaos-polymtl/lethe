@@ -585,8 +585,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::multi_stage_precond(
   unsigned int                                      stage,
-  Parameters::SimulationControl::TimeSteppingMethod method,
-  double                                            time_step)
+  Parameters::SimulationControl::TimeSteppingMethod method)
 {
   // Very important variable because \sum_{j=1}^{i-1} a_{ij} k_j has to be
   // calculated at each stage
@@ -706,8 +705,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  // The variables containing the vectors are both defined with and without
-  // locally_relevant_dofs. The locally_relevant_dofs are used for the assembly,
+  // The locally_relevant_dofs are used for the assembly,
   // while the non-locally_relevant_dofs are used for the calculus on the
   // vectors (addition, multiplication, etc.).
   const auto         method = this->simulation_control->get_assembly_method();
@@ -741,13 +739,17 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
           if (n_stages > 1)
             {
-              multi_stage_precond(stage, method, time_step);
+              // For SDIRK, some variables need to be updated before solving the
+              // non-linear system.
+              multi_stage_precond(stage, method);
             }
 
           PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
           if (n_stages > 1)
             {
+              // For SDIRK, some variables need to be updated after solving the
+              // non-linear system.
               multi_stage_postcond(stage, method, time_step);
             }
 
@@ -806,6 +808,9 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     }
   if (n_stages > 1)
     {
+      // For SDIRK, the solution is not directly computed with the non-linear
+      // solver. Once we looped over all the stages, we can finally update the
+      // present_solution vector.
       update_multi_stage_solution(time_step);
     }
 }

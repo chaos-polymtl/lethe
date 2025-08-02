@@ -364,8 +364,7 @@ protected:
    */
   virtual void
   multi_stage_precond(unsigned int                                      stage,
-                      Parameters::SimulationControl::TimeSteppingMethod method,
-                      double time_step);
+                      Parameters::SimulationControl::TimeSteppingMethod method);
 
   /**
    * @brief multi_stage_postcond
