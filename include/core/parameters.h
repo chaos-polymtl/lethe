@@ -82,7 +82,8 @@ namespace Parameters
       bdf3,
       sdirk22,
       sdirk33,
-      sdirk43
+      sdirk43,
+      sdirk44
     } method;
 
     // Method used for time progression (steady, unsteady)

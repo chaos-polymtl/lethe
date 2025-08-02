@@ -82,9 +82,9 @@ namespace Parameters
         "method",
         "steady",
         Patterns::Selection(
-          "steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43"),
+          "steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43|sdirk44"),
         "The kind of solver for the linear system. "
-        "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43>.");
+        "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43|sdirk44>.");
 
       prm.declare_entry(
         "bdf startup method",
@@ -223,6 +223,8 @@ namespace Parameters
         method = TimeSteppingMethod::sdirk33;
       else if (sv == "sdirk43")
         method = TimeSteppingMethod::sdirk43;
+      else if (sv == "sdirk44")
+        method = TimeSteppingMethod::sdirk44;
       else
         {
           std::runtime_error("Invalid time stepping scheme");

@@ -242,7 +242,9 @@ public:
              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
            method ==
              Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
-           method == Parameters::SimulationControl::TimeSteppingMethod::sdirk43;
+           method ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk43 ||
+           method == Parameters::SimulationControl::TimeSteppingMethod::sdirk44;
   }
 
 

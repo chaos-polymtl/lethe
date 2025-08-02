@@ -161,6 +161,9 @@ SimulationControl::get_number_of_stages(
       case Method::sdirk43:
         return 3;
 
+      case Method::sdirk44:
+        return 4;
+
       default:
         AssertThrow(
           false,

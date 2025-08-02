@@ -26,7 +26,8 @@ test()
     {Method::bdf3, 1},
     {Method::sdirk22, 2},
     {Method::sdirk33, 3},
-    {Method::sdirk43, 3}};
+    {Method::sdirk43, 3},
+    {Method::sdirk44, 4}};
 
   for (const auto &[method, expected] : test_cases)
     {

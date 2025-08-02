@@ -201,14 +201,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   this->pcout << std::setprecision(
     simulation_parameters.simulation_control.log_precision);
-
-  scratch_data = std::make_unique<NavierStokesScratchData<dim>>(
-    simulation_control,
-    simulation_parameters.physical_properties_manager,
-    *fe,
-    *cell_quadrature,
-    *mapping,
-    *face_quadrature);
 }
 
 template <int dim, typename VectorType, typename DofsType>

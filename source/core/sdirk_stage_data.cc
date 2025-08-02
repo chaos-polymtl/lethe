@@ -89,11 +89,12 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
       // Reference: L. Ferracina, M.N. Spijker, "Strong stability of
       // singly-diagonally-implicit Runge–Kutta methods" Applied Numerical
       // Mathematics 58 (2008) 1675–1686 DOI: doi:10.1016/j.apnum.2007.10.004
-      const double gamma = 0.128886400515;
+      // const double gamma = 0.128886400515;
+      const double gamma = 1.068579021301629;
 
       table.A.reinit(3, 3);
       table.A(0, 0) = gamma;
-      table.A(1, 0) = 1 / 2 - gamma;
+      table.A(1, 0) = 1.0 / 2.0 - gamma;
       table.A(1, 1) = gamma;
       table.A(2, 0) = 2 * gamma;
       table.A(2, 1) = 1 - 4 * gamma;
@@ -101,14 +102,48 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
 
       table.c.resize(3);
       table.c[0] = gamma;
-      table.c[1] = 1 / 2;
+      table.c[1] = 1.0 / 2.0;
       table.c[2] = 1 - gamma;
 
       table.b.resize(3);
-      table.b[0] = 1 / (6 * std::pow((2 * gamma - 1), 2.0));
+      table.b[0] = 1.0 / (6 * std::pow((2 * gamma - 1), 2.0));
       table.b[1] = 2 * (6 * std::pow(gamma, 2.0) - 6 * gamma + 1) /
                    (3 * std::pow((2 * gamma - 1), 2.0));
       table.b[2] = 1 / (6 * std::pow((2 * gamma - 1), 2.0));
+
+      return table;
+    }
+
+  else if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk44)
+    {
+      // SDIRK43 - 3-stage, 4th-order method
+      // Reference: L. Ferracina, M.N. Spijker, "Strong stability of
+      // singly-diagonally-implicit Runge–Kutta methods" Applied Numerical
+      // Mathematics 58 (2008) 1675–1686 DOI: doi:10.1016/j.apnum.2007.10.004
+
+      table.A.reinit(4, 4);
+      table.A(0, 0) = 0.097961082941;
+      table.A(1, 0) = 0.262318069183;
+      table.A(1, 1) = 0.097961082941;
+      table.A(2, 0) = 0.230169419019;
+      table.A(2, 1) = 0.294466719347;
+      table.A(2, 2) = 0.097961082941;
+      table.A(3, 0) = 0.210562684389;
+      table.A(3, 1) = 0.269382888280;
+      table.A(3, 2) = 0.307008634881;
+      table.A(3, 3) = 0.097961082941;
+
+      table.c.resize(3);
+      table.c[0] = 0.5;
+      table.c[1] = 2.0 / 3.0;
+      table.c[2] = 0.5;
+      table.c[3] = 1.0;
+
+      table.b.resize(3);
+      table.b[0] = 0.222119403264;
+      table.b[1] = 0.282060762166;
+      table.b[2] = 0.236881213175;
+      table.b[3] = 0.258938621395;
 
       return table;
     }

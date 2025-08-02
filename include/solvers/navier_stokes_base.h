@@ -1042,8 +1042,6 @@ protected:
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
-
-  std::unique_ptr<NavierStokesScratchData<dim>> scratch_data;
 };
 
 #endif

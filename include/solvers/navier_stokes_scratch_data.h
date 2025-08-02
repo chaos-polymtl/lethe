@@ -107,7 +107,9 @@ public:
             simulation_control->get_assembly_method() ==
               Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
             simulation_control->get_assembly_method() ==
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk43 ?
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk43 ||
+            simulation_control->get_assembly_method() ==
+              Parameters::SimulationControl::TimeSteppingMethod::sdirk44 ?
           ::sdirk_table(simulation_control->get_assembly_method()) :
           SDIRKTable())
   {
