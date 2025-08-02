@@ -68,8 +68,8 @@ protected:
    **/
   virtual void
   set_initial_condition_fd(
-    Parameters::InitialConditionType initial_condition_type,
-    bool                             restart = false) override;
+    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    bool                                          restart = false) override;
 
 protected:
   /**

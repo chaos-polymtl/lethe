@@ -700,8 +700,8 @@ FluidDynamicsBlock<dim>::set_solution_vector(double value)
 template <int dim>
 void
 FluidDynamicsBlock<dim>::set_initial_condition_fd(
-  Parameters::InitialConditionType initial_condition_type,
-  bool                             restart)
+  Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+  bool                                          restart)
 {
   if (restart)
     {
@@ -711,20 +711,22 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
       this->read_checkpoint();
     }
   else if (initial_condition_type ==
-           Parameters::InitialConditionType::L2projection)
+           Parameters::FluidDynamicsInitialConditionType::L2projection)
     {
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
       this->present_solution = this->newton_update;
       this->finish_time_step();
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::nodal)
     {
       this->set_nodal_values();
       this->finish_time_step();
     }
 
-  else if (initial_condition_type == Parameters::InitialConditionType::viscous)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::viscous)
     {
       this->set_nodal_values();
       std::shared_ptr<RheologicalModel> original_viscosity_model =
