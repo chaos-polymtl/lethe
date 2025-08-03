@@ -4,7 +4,7 @@ Launching Your First Simulation
 
 The objective of this section is to highlight the steps that are necessary to launch your first simulation after you have cloned and compiled Lethe.
 
-Launching an application requires an executable of the required solver, and a parameters file (with extension .prm). After building Lethe, the solver executable files can be found in : ``$INSTALLATIO_FOLDER/bin`` directory.
+Launching an application requires an executable of the required solver, and a parameters file (with extension .prm). After building Lethe, the solver executable files can be found in : ``$INSTALLATION_FOLDER/bin`` directory.
 
 The executable for the solvers can be used from any folder. Simulations can be launched by:
 
