@@ -30,9 +30,9 @@ The source folder of lethe contains an examples folder. This folder contains rea
 Step 2: Launching the Example
 -----------------------------
 
-The cavity example we are launching uses the *lethe-fluid* solver. All of the solvers of Lethe can be found within the installation folder.
+The cavity example we are launching uses the *lethe-fluid* solver. All of the solvers of Lethe can be found within the ``bin`` folder of the installation folder. The installation folder is the folder you have specified  (``-DCMAKE_INSTALL_PREFIX=...``) when you ran the cmake command to compile Lethe. 
 
-From the ``/first_simulation`` folder we have created, we can launch the simulation directly. If the executable is within your path, you can launch the simulation using the following command: ``lethe-fluid cavity.prm``. If you have decided to copy the executable to the ``first_simulation`` folder, you can launch using the following command: ``./lethe-fluid cavity.prm``. You can also launch the simulation using the absolute path of the executable: ``$INSTALLATION_FOLDER/bin/lethe-fluid cavity.prm``.
+From the ``first_simulation`` folder we have created, we can launch the simulation directly. If the executable is within your path, you can launch the simulation using the following command: ``lethe-fluid cavity.prm``. If you have decided to copy the executable to the ``first_simulation`` folder, you can launch using the following command: ``./lethe-fluid cavity.prm``. You can also launch the simulation using the absolute path of the executable: ``$INSTALLATION_FOLDER/bin/lethe-fluid cavity.prm``.
 
 
 Step 3: Post-processing the Results
