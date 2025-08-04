@@ -43,6 +43,7 @@
 #include <deal.II/lac/affine_constraints.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/data_out_resample.h>
 
 using namespace dealii;
 
@@ -203,6 +204,7 @@ protected:
     if (this->simulation_control->is_output_iteration())
       {
         this->write_output_results(this->present_solution);
+        //this->write_sliced_results(this->present_solution);
       }
   };
 
@@ -844,6 +846,13 @@ protected:
    */
   void
   write_output_results(const VectorType &solution);
+
+  /**
+ * @brief write_sliced_results
+ * Output results projected on a plane with one dimension less than the simulation.
+ */
+  void
+  write_sliced_results(const VectorType &solution);
 
   /**
    * @brief output_field_hook
