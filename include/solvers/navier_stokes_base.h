@@ -410,10 +410,9 @@ protected:
    * @brief Transfer solution after mesh refinement
    */
   void
-  transfer_solution(
-    SolutionTransfer<dim, VectorType> &solution_transfer,
-    std::vector<SolutionTransfer<dim, VectorType>>
-      &previous_solutions_transfer);
+  transfer_solution(SolutionTransfer<dim, VectorType> &solution_transfer,
+                    std::vector<SolutionTransfer<dim, VectorType>>
+                      &previous_solutions_transfer);
 
   /**
    * @brief Restart a previous simulation from a checkpoint file.
