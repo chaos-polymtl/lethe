@@ -1820,26 +1820,12 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          std::cout << "point " << point << std::endl;
-          std::cout << "center " << center_of_rotation << std::endl;
-          std::cout << "rot axis " << rotation_axis << std::endl;
-          const auto aux =
-            cross_product_3d((point - center_of_rotation),
+            const auto aux =
+            cross_product_3d((cell->center() - center_of_rotation),
                              rotation_axis);
-          std::cout << "aux " << aux << std::endl;
-          const double num = aux.norm();
-          std::cout << "num " << num << std::endl;
-          const double den = rotation_axis.norm();
-          std::cout << "den " << den << std::endl;
-          const double radius_3d   = num / den;
-          std::cout << "radius 3d " << radius_3d << std::endl;
-          std::cout << "cell center norm " << cell->center().norm() << std::endl;
+          const double point_radial_distance = aux.norm() / rotation_axis.norm();
 
-          const auto aux2 = cross_product_3d((cell->center() - center_of_rotation), rotation_axis);
-          const double num2 = aux2.norm();
-          const double cell_dist_3d = num2/den;
-          std::cout << "cell center norm " << cell_dist_3d << std::endl;
-          if (cell_dist_3d > radius_3d)
+          if (point_radial_distance > radius)
             return point;
 
           return static_cast<Point<dim>>(
