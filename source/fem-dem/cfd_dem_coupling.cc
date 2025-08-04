@@ -954,6 +954,9 @@ CFDDEMSolver<dim>::insert_particles()
                                dem_parameters);
 
       dem_action_manager->particle_insertion_step();
+
+      // Sort particles after insertion
+      sort_particles_into_subdomains_and_cells();
     }
 }
 
@@ -1571,6 +1574,9 @@ CFDDEMSolver<dim>::solve()
       this->update_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
+      // Insert particle if needed
+      insert_particles();
+
       this->dynamic_flow_control();
 
       if (!this->simulation_control->is_at_start())
@@ -1637,9 +1643,6 @@ CFDDEMSolver<dim>::solve()
             dem_iterator(dem_counter);
           }
       }
-
-      // Insert particle if needed
-      insert_particles();
 
       contact_search_total_number += contact_search_counter;
 
