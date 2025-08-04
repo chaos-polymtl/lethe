@@ -1152,7 +1152,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   setup_dofs();
 
   // Transfer solution
-  transfer_after_refinement(solution_transfer, previous_solutions_transfer);
+  transfer_solution(solution_transfer, previous_solutions_transfer);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1210,12 +1210,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   setup_dofs();
 
   // Transfer solution
-  transfer_after_refinement(solution_transfer, previous_solutions_transfer);
+  transfer_solution(solution_transfer, previous_solutions_transfer);
 }
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::transfer_after_refinement(
+NavierStokesBase<dim, VectorType, DofsType>::transfer_solution(
   SolutionTransfer<dim, VectorType>              &solution_transfer,
   std::vector<SolutionTransfer<dim, VectorType>> &previous_solutions_transfer)
 {
@@ -1981,6 +1981,11 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_configuration()
   else
     refinement_step = this->simulation_control->get_step_number() == 0;
 
+  // We need to update the mortar operator/evaluator, as well as the sparsity
+  // pattern, at every iteration; this is done by setup_dofs(). Since
+  // setup_dofs() is already called within refine_mesh(), here we make sure
+  // that, when there is no mesh refinement, setup_dofs() is still called if
+  // mortar is enabled
   if (this->simulation_control->is_at_start() || !refinement_step ||
       this->simulation_parameters.mesh_adaptation.type ==
         Parameters::MeshAdaptation::Type::none)

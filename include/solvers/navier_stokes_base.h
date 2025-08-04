@@ -410,7 +410,7 @@ protected:
    * @brief Transfer solution after mesh refinement
    */
   void
-  transfer_after_refinement(
+  transfer_solution(
     SolutionTransfer<dim, VectorType> &solution_transfer,
     std::vector<SolutionTransfer<dim, VectorType>>
       &previous_solutions_transfer);
