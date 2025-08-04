@@ -410,7 +410,7 @@ namespace LetheGridTools
                  const double           radius,
                  const double           rotation_angle,
                  const Point<dim>       center_of_rotation = Point<dim>(),
-                 const Tensor<1,dim>    rotation_axis = Tensor<1,dim>());
+                 const Tensor<1, dim>   rotation_axis      = Tensor<1, dim>());
 
   /**
    * @brief

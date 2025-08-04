@@ -422,7 +422,7 @@ compute_n_subdivisions_and_radius(
                                 mortar_parameters.rotation_axis.norm();
                               radius_current = num / den;
                             }
-                            
+
                           radius_min = std::min(radius_min, radius_current);
                           radius_max = std::max(radius_max, radius_current);
                         }

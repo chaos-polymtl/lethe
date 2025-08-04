@@ -1824,7 +1824,8 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
           const auto aux =
             cross_product_3d((cell->center() - center_of_rotation),
                              rotation_axis);
-          const double point_radial_distance = aux.norm() / rotation_axis.norm();
+          const double point_radial_distance =
+            aux.norm() / rotation_axis.norm();
 
           if (point_radial_distance > radius)
             return point;
@@ -1845,7 +1846,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<2> &dof_handler,
                                const double         radius,
                                const double         rotation_angle,
                                const Point<2>       center_of_rotation,
-                               const Tensor<1,2>    rotation_axis);
+                               const Tensor<1, 2>   rotation_axis);
 
 template void
 LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
@@ -1854,4 +1855,4 @@ LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                const double         radius,
                                const double         rotation_angle,
                                const Point<3>       center_of_rotation,
-                               const Tensor<1,3>    rotation_axis);
+                               const Tensor<1, 3>   rotation_axis);

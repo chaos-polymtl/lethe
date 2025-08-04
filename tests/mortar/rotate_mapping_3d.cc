@@ -76,7 +76,7 @@ test()
   mortar_parameters.rotor_boundary_id   = 5; // after shifting
   mortar_parameters.rotation_axis       = Tensor<1, dim>({0, 0, 1});
   const Point<dim> center_of_rotation   = Point<dim>();
-  const double rotation_angle           = 0.1;
+  const double     rotation_angle       = 0.1;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
@@ -102,8 +102,13 @@ test()
     compute_n_subdivisions_and_radius(triangulation, mortar_parameters);
 
   // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius, rotation_angle, center_of_rotation, mortar_parameters.rotation_axis);
+  LetheGridTools::rotate_mapping(dof_handler,
+                                 mapping_cache,
+                                 mapping,
+                                 radius,
+                                 rotation_angle,
+                                 center_of_rotation,
+                                 mortar_parameters.rotation_axis);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)
