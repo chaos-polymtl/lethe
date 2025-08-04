@@ -405,6 +405,13 @@ compute_n_subdivisions_and_radius(
                           auto   v = face->vertex(vertex_index);
                           double radius_current =
                             v.distance(mortar_parameters.center_of_rotation);
+
+                          // In 3D, the interface radius to be computed is
+                          // actually with respect to the rotation axis. For
+                          // this computation, we use the relation:
+                          // radius_current = ||VC x d||/||d||, where VC is the
+                          // current vertex minus the center of rotation, and d
+                          // is the rotation axis
                           if constexpr (dim == 3)
                             {
                               const auto aux = cross_product_3d(
@@ -415,6 +422,7 @@ compute_n_subdivisions_and_radius(
                                 mortar_parameters.rotation_axis.norm();
                               radius_current = num / den;
                             }
+                            
                           radius_min = std::min(radius_min, radius_current);
                           radius_max = std::max(radius_max, radius_current);
                         }

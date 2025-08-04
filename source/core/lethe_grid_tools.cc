@@ -1820,7 +1820,8 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-            const auto aux =
+          // Compute point radial distance with respect to the rotation axis
+          const auto aux =
             cross_product_3d((cell->center() - center_of_rotation),
                              rotation_axis);
           const double point_radial_distance = aux.norm() / rotation_axis.norm();
