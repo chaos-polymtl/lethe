@@ -99,9 +99,6 @@ test()
                   << triangulation.n_active_cells() << std::endl;
           deallog << "Number of vertices : " << triangulation.n_vertices()
                   << std::endl;
-
-          for (const auto &face : triangulation.active_face_iterators())
-            deallog << "Cell center : " << face->center() << std::endl;
         }
       MPI_Barrier(comm);
     }
