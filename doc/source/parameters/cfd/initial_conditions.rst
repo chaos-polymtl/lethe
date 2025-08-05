@@ -64,7 +64,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
   * The ``smoothing type`` allows to smooth the VOF initial condition and avoid a staircase definition of the free surface.
 
-    * When the parameter ``smoothing type = diffusive``, the initial condition is projected following :
+    * When the parameter ``smoothing type = diffusive``, the initial condition is projected following:
 
     .. math::
       \psi(\Omega_K) = \int_{\Omega_K} \phi d\Omega
