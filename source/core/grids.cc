@@ -434,8 +434,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 
   // Rotor triangulation
   Triangulation<dim> rotor_temp_tria;
-  attach_grid_to_triangulation(rotor_temp_tria,
-                                *mortar_parameters.rotor_mesh);
+  attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
 
   if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
     {
@@ -551,7 +550,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       // Merge triangulations
       GridGenerator::merge_triangulations(
         stator_temp_tria, rotor_temp_tria, triangulation, 0.0, true, true);
-      
+
       // Check number of faces at the rotor-stator interface
       for (const auto &face : triangulation.active_face_iterators())
         {
