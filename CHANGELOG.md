@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Refactors the way the initial conditions smoothing for VOF can be applied. On top of the diffusive smoothing, a new approach can be used to set-up the initial condition using geometric redistanciation. This is great when using the geometric redistanciation strategy since the interface remains defined coherently throughout the simulation. [#1602](https://github.com/chaos-polymtl/lethe/pull/1602)
+- MINOR Refactors the way the initial conditions smoothing for VOF can be applied. On top of the diffusive smoothing, a new approach can be used to set up the initial condition using geometric redistanciation. This is great when using the geometric redistanciation strategy since the interface remains defined coherently throughout the simulation. [#1602](https://github.com/chaos-polymtl/lethe/pull/1602)
 
 ### [Master] - 2025-08-01
 
