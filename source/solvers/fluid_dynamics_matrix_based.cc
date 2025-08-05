@@ -113,32 +113,29 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
     }
 
   // Reinitialize vectors used for the SDIRK methods
-  if (this->simulation_control->is_sdirk())
+  this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
+                                       this->locally_relevant_dofs,
+                                       this->mpi_communicator);
+  this->sdirk_vectors.temp_sum_bi_ki.reinit(this->locally_owned_dofs,
+                                            this->mpi_communicator);
+
+
+  this->sdirk_vectors.sum_over_previous_stages.reinit(
+    this->locally_owned_dofs,
+    this->locally_relevant_dofs,
+    this->mpi_communicator);
+  this->sdirk_vectors.temp_sum_over_previous_stages.reinit(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  this->sdirk_vectors.locally_owned_for_calculus.reinit(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  // Initialize vector of previous hk_j solutions
+  for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
     {
-      this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
-                                           this->locally_relevant_dofs,
-                                           this->mpi_communicator);
-      this->sdirk_vectors.temp_sum_bi_ki.reinit(this->locally_owned_dofs,
-                                                this->mpi_communicator);
-
-
-      this->sdirk_vectors.sum_over_previous_stages.reinit(
-        this->locally_owned_dofs,
-        this->locally_relevant_dofs,
-        this->mpi_communicator);
-      this->sdirk_vectors.temp_sum_over_previous_stages.reinit(
-        this->locally_owned_dofs, this->mpi_communicator);
-
-      this->sdirk_vectors.locally_owned_for_calculus.reinit(
-        this->locally_owned_dofs, this->mpi_communicator);
-
-      // Initialize vector of previous hk_j solutions
-      for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
-        {
-          solution.reinit(this->locally_owned_dofs,
-                          this->locally_relevant_dofs,
-                          this->mpi_communicator);
-        }
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
     }
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
