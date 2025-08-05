@@ -64,7 +64,7 @@ subsection initial conditions
   end
   subsection VOF
     set Function expression = if(y^2 <= 1.3110e-6, 1, 0)
-    set smoothing type = diffusive
+    set smoothing type      = diffusive
   end
 end
 
