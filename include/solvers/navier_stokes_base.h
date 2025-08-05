@@ -478,7 +478,7 @@ protected:
    * twice
    */
   void
-  rotate_rotor_mapping(bool is_first);
+  rotate_rotor_mapping(const bool is_first);
 
   /**
    * @brief Update non-zero constraints if the boundary is time dependent.
