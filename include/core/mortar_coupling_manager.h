@@ -715,7 +715,6 @@ protected:
   unsigned int n_dofs_per_cell;
 
   Utilities::MPI::NoncontiguousPartitioner partitioner;
-  Utilities::MPI::NoncontiguousPartitioner partitioner_cell;
 
   std::vector<types::global_dof_index> dof_indices;
   std::vector<types::global_dof_index> dof_indices_ghost;
