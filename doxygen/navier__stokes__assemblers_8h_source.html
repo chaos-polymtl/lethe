@@ -844,8 +844,40 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>};</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
 <div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span> </div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span> </div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span><span class="keyword">class </span>NavierStokesAssemblerMortarALE : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>{</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>  NavierStokesAssemblerMortarALE(</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    <span class="keyword">const</span> std::shared_ptr&lt;SimulationControl&gt; &amp;simulation_control,</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;</a>            &amp;mortar_parameters)</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    : simulation_control(simulation_control)</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>    , mortar_parameters(mortar_parameters)</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>  {}</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span><span class="comment"></span> </div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span><span class="comment">   * @brief assemble_matrix Assembles the matrix</span></div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="comment">   * @param scratch_data (see base class)</span></div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment">   * @param copy_data (see base class)</span></div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>  <a class="code hl_function" href="classPhysicsAssemblerBase.html#a93134cecb4a4408c88b596b99c18886d">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>                  <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="comment"></span> </div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment">   * @brief assemble_rhs Assembles the rhs</span></div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span><span class="comment">   * @param scratch_data (see base class)</span></div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment">   * @param copy_data (see base class)</span></div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>  <a class="code hl_function" href="classPhysicsAssemblerBase.html#aeaa14d0a42eca7f74da5af2dd41b2262">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>               <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span> </div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>  <span class="keyword">const</span> std::shared_ptr&lt;SimulationControl&gt; simulation_control;</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;</a>           &amp;mortar_parameters;</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>};</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span> </div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aale_8h_html"><div class="ttname"><a href="ale_8h.html">ale.h</a></div></div>
 <div class="ttc" id="aboundary__conditions_8h_html"><div class="ttname"><a href="boundary__conditions_8h.html">boundary_conditions.h</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1NSBoundaryConditions_html"><div class="ttname"><a href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a></div><div class="ttdoc">This class manages the boundary conditions for Navier-Stokes solver It introduces the boundary functi...</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00162">boundary_conditions.h:163</a></div></div>
@@ -883,6 +915,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aphysics__assemblers_8h_html"><div class="ttname"><a href="physics__assemblers_8h.html">physics_assemblers.h</a></div></div>
 <div class="ttc" id="arheological__model_8h_html"><div class="ttname"><a href="rheological__model_8h.html">rheological_model.h</a></div></div>
 <div class="ttc" id="asimulation__control_8h_html"><div class="ttname"><a href="simulation__control_8h.html">simulation_control.h</a></div></div>
+<div class="ttc" id="astructParameters_1_1Mortar_html"><div class="ttname"><a href="structParameters_1_1Mortar.html">Parameters::Mortar</a></div><div class="ttdoc">Mortar - Defines parameters used to construct mortar elements.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01803">parameters.h:1804</a></div></div>
 <div class="ttc" id="astructParameters_1_1PhaseChange_html"><div class="ttname"><a href="structParameters_1_1PhaseChange.html">Parameters::PhaseChange</a></div><div class="ttdoc">Phase change model for melting/freezing liquids The model assumes that the phase change occurs betwee...</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00187">parameters.h:188</a></div></div>
 <div class="ttc" id="astructParameters_1_1VelocitySource_html"><div class="ttname"><a href="structParameters_1_1VelocitySource.html">Parameters::VelocitySource</a></div><div class="ttdoc">VelocitySource - Adds velocity-dependent source term to the Navier-Stokes equations with the appropri...</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01587">parameters.h:1588</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

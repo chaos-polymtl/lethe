@@ -454,7 +454,7 @@
         <article role="main">
           <section id="mortar">
 <h1>Mortar<a class="headerlink" href="#mortar" title="Link to this heading">#</a></h1>
-<p>The mortar section is used when simulating rotor-stator geometries, in which the rotor (fluid) mesh is attached to the stator by mortar elements.</p>
+<p>The mortar section is used when simulating rotor-stator geometries, in which the rotor mesh is attached to the stator by mortar elements.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mortar
   set enable = true
   subsection mesh
@@ -462,11 +462,13 @@
     set grid type              = subdivided_hyper_rectangle
     set grid arguments         = 1,1,1 : -1,-1,-1 : 1,1,1 : true
     set initial refinement     = 0
-    set initial rotation angle = 0
   end
   set rotor boundary id   = 4
   set stator boundary id  = 2
   set center of rotation  = 0, 0
+  subsection rotor rotation angle
+    set Function expression = 0
+  end
   subsection rotor angular velocity
     set Function expression = 0
   end
@@ -493,10 +495,17 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> is the reference point for the prescribed rotation at the rotor domain.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">rotation</span> <span class="pre">angle</span></code> subsection allows the imposition of a constant or time-dependent rotation angle for the rotor.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">angular</span> <span class="pre">velocity</span></code> subsection allows the imposition of a constant or time-dependent angular velocity for the rotor.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">angular</span> <span class="pre">velocity</span></code> expression needs to correspond to the time derivative of the <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">rotation</span> <span class="pre">angle</span></code>.</p>
+</div>
+<ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">penalty</span> <span class="pre">factor</span></code> is used for the weak imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) <a class="footnote-reference brackets" href="#larson2013" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">oversampling</span> <span class="pre">factor</span></code> is used to increase the number of quadrature points. This feature is used to better approximate the weak imposition of the interface coupling.</p></li>
-<li><p>When enabling <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>), the rotor angular rotation at every iteration is printed.</p></li>
+<li><p>When enabling <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>), the rotor rotation information is printed at every iteration.</p></li>
 </ul>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>

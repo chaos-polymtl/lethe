@@ -81,6 +81,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classMortarManagerBase-members.html">List of all members</a>  </div>
@@ -102,9 +103,9 @@ Inheritance diagram for MortarManagerBase&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a48b069c611979fdbb73d00207175d238" id="r_a48b069c611979fdbb73d00207175d238"><td class="memTemplParams" colspan="2">template&lt;int dim2&gt; </td></tr>
-<tr class="memitem:a48b069c611979fdbb73d00207175d238"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a48b069c611979fdbb73d00207175d238">MortarManagerBase</a> (const unsigned int <a class="el" href="classMortarManagerBase.html#a647e0452c65565c00a2f73a3aa7b5ca6">n_subdivisions</a>, const Quadrature&lt; dim2 &gt; &amp;<a class="el" href="classMortarManagerBase.html#a21ffbe3ab3df11a209a9a5a0f5d08e01">quadrature</a>, const double <a class="el" href="classMortarManagerBase.html#acab22369cf2efe18ccdc844dbefb2304">radius</a>, const double <a class="el" href="classMortarManagerBase.html#a6d7c8dd63b74c16890b3682754a75d67">rotation_angle</a>, const Point&lt; dim &gt; &amp;<a class="el" href="classMortarManagerBase.html#adb4b141e800938b5892577f689f90c2e">center_of_rotation</a>=Point&lt; dim &gt;())</td></tr>
-<tr class="separator:a48b069c611979fdbb73d00207175d238"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a15058455c78e0cb34206c7a844efa2" id="r_a9a15058455c78e0cb34206c7a844efa2"><td class="memTemplParams" colspan="2">template&lt;int dim2&gt; </td></tr>
+<tr class="memitem:a9a15058455c78e0cb34206c7a844efa2"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a9a15058455c78e0cb34206c7a844efa2">MortarManagerBase</a> (unsigned int <a class="el" href="classMortarManagerBase.html#a3fb1ce2c352b89f578bdf29db15e5679">n_subdivisions</a>, double <a class="el" href="classMortarManagerBase.html#ab9693b0f3c77e5fb6eb709380f8c511a">radius</a>, const Quadrature&lt; dim2 &gt; &amp;<a class="el" href="classMortarManagerBase.html#a21ffbe3ab3df11a209a9a5a0f5d08e01">quadrature</a>, const double <a class="el" href="classMortarManagerBase.html#a6d7c8dd63b74c16890b3682754a75d67">rotation_angle</a>, const Point&lt; dim &gt; &amp;<a class="el" href="classMortarManagerBase.html#adb4b141e800938b5892577f689f90c2e">center_of_rotation</a>=Point&lt; dim &gt;())</td></tr>
+<tr class="separator:a9a15058455c78e0cb34206c7a844efa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a482a54cd6e2e39b2427004381a4f39a1" id="r_a482a54cd6e2e39b2427004381a4f39a1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a482a54cd6e2e39b2427004381a4f39a1">is_mesh_aligned</a> () const</td></tr>
 <tr class="separator:a482a54cd6e2e39b2427004381a4f39a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afee76779adab11ad8e0d8f9809ad6cec" id="r_afee76779adab11ad8e0d8f9809ad6cec"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#afee76779adab11ad8e0d8f9809ad6cec">get_n_total_mortars</a> () const</td></tr>
@@ -128,6 +129,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8c9fcad4b1b3b791de6dae174538d77a" id="r_a8c9fcad4b1b3b791de6dae174538d77a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a8c9fcad4b1b3b791de6dae174538d77a">get_normals</a> (const Point&lt; dim &gt; &amp;face_center) const</td></tr>
 <tr class="separator:a8c9fcad4b1b3b791de6dae174538d77a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a3fb1ce2c352b89f578bdf29db15e5679" id="r_a3fb1ce2c352b89f578bdf29db15e5679"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a3fb1ce2c352b89f578bdf29db15e5679">n_subdivisions</a></td></tr>
+<tr class="separator:a3fb1ce2c352b89f578bdf29db15e5679"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9693b0f3c77e5fb6eb709380f8c511a" id="r_ab9693b0f3c77e5fb6eb709380f8c511a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#ab9693b0f3c77e5fb6eb709380f8c511a">radius</a></td></tr>
+<tr class="separator:ab9693b0f3c77e5fb6eb709380f8c511a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab1cb4fa0c299ea337f26811d9a17fd4f" id="r_ab1cb4fa0c299ea337f26811d9a17fd4f"><td class="memItemLeft" align="right" valign="top">std::pair&lt; unsigned int, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#ab1cb4fa0c299ea337f26811d9a17fd4f">get_config</a> (const Point&lt; dim &gt; &amp;face_center) const</td></tr>
@@ -143,14 +151,10 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a647e0452c65565c00a2f73a3aa7b5ca6" id="r_a647e0452c65565c00a2f73a3aa7b5ca6"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a647e0452c65565c00a2f73a3aa7b5ca6">n_subdivisions</a></td></tr>
-<tr class="separator:a647e0452c65565c00a2f73a3aa7b5ca6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21ffbe3ab3df11a209a9a5a0f5d08e01" id="r_a21ffbe3ab3df11a209a9a5a0f5d08e01"><td class="memItemLeft" align="right" valign="top">Quadrature&lt; 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a21ffbe3ab3df11a209a9a5a0f5d08e01">quadrature</a></td></tr>
 <tr class="separator:a21ffbe3ab3df11a209a9a5a0f5d08e01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a044b3b7c0b7c99ef0d261de6aec5e411" id="r_a044b3b7c0b7c99ef0d261de6aec5e411"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a044b3b7c0b7c99ef0d261de6aec5e411">n_quadrature_points</a></td></tr>
 <tr class="separator:a044b3b7c0b7c99ef0d261de6aec5e411"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acab22369cf2efe18ccdc844dbefb2304" id="r_acab22369cf2efe18ccdc844dbefb2304"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#acab22369cf2efe18ccdc844dbefb2304">radius</a></td></tr>
-<tr class="separator:acab22369cf2efe18ccdc844dbefb2304"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d7c8dd63b74c16890b3682754a75d67" id="r_a6d7c8dd63b74c16890b3682754a75d67"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#a6d7c8dd63b74c16890b3682754a75d67">rotation_angle</a></td></tr>
 <tr class="separator:a6d7c8dd63b74c16890b3682754a75d67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb4b141e800938b5892577f689f90c2e" id="r_adb4b141e800938b5892577f689f90c2e"><td class="memItemLeft" align="right" valign="top">const Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMortarManagerBase.html#adb4b141e800938b5892577f689f90c2e">center_of_rotation</a></td></tr>
@@ -162,8 +166,8 @@ class MortarManagerBase&lt; dim &gt;</div><p>Base class for the mortar manager. 
 
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00027">27</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a48b069c611979fdbb73d00207175d238" name="a48b069c611979fdbb73d00207175d238"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48b069c611979fdbb73d00207175d238">&#9670;&#160;</a></span>MortarManagerBase()</h2>
+<a id="a9a15058455c78e0cb34206c7a844efa2" name="a9a15058455c78e0cb34206c7a844efa2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a15058455c78e0cb34206c7a844efa2">&#9670;&#160;</a></span>MortarManagerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -175,20 +179,20 @@ template&lt;int dim2&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt;<a class="el" href="classMortarManagerBase.html">::MortarManagerBase</a> </td>
           <td>(</td>
-          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>n_subdivisions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>radius</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const Quadrature&lt; dim2 &gt; &amp;&#160;</td>
           <td class="paramname"><em>quadrature</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>radius</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -210,7 +214,7 @@ template&lt;int dim2&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00240">240</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00241">241</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -734,7 +738,7 @@ template&lt;int dim&gt; </div>
 
 <p>Center of rotation. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00176">176</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00177">177</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -762,35 +766,27 @@ template&lt;int dim&gt; </div>
 
 <p>Number of quadrature points per cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00170">170</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00173">173</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
-<a id="a647e0452c65565c00a2f73a3aa7b5ca6" name="a647e0452c65565c00a2f73a3aa7b5ca6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a647e0452c65565c00a2f73a3aa7b5ca6">&#9670;&#160;</a></span>n_subdivisions</h2>
+<a id="a3fb1ce2c352b89f578bdf29db15e5679" name="a3fb1ce2c352b89f578bdf29db15e5679"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fb1ce2c352b89f578bdf29db15e5679">&#9670;&#160;</a></span>n_subdivisions</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const unsigned int <a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt;::n_subdivisions</td>
+          <td class="memname">unsigned int <a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt;::n_subdivisions</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Number of cells at the interface between inner and outer domains. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00166">166</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00124">124</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -818,35 +814,27 @@ template&lt;int dim&gt; </div>
 
 <p>Mortar quadrature. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00168">168</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00171">171</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
-<a id="acab22369cf2efe18ccdc844dbefb2304" name="acab22369cf2efe18ccdc844dbefb2304"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acab22369cf2efe18ccdc844dbefb2304">&#9670;&#160;</a></span>radius</h2>
+<a id="ab9693b0f3c77e5fb6eb709380f8c511a" name="ab9693b0f3c77e5fb6eb709380f8c511a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9693b0f3c77e5fb6eb709380f8c511a">&#9670;&#160;</a></span>radius</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const double <a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt;::radius</td>
+          <td class="memname">double <a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt;::radius</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Radius at the interface between inner and outer domains. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00172">172</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00126">126</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -874,7 +862,7 @@ template&lt;int dim&gt; </div>
 
 <p>Rotation angle for the inner domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00174">174</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00175">175</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
