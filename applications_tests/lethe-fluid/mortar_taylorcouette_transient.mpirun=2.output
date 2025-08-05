@@ -1,0 +1,64 @@
+Running on 2 MPI rank(s)...
+Mortar - Rotor grid angle is: 0 rad 
+         Rotor grid velocity is: 2 rad/time 
+
+   Number of active cells:       512
+   Number of degrees of freedom: 4928
+   Volume of triangulation:      2.94523
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.2      Time step: 0.2      CFL: 0       
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.4 rad 
+         Rotor grid velocity is: 2 rad/time 
+
+   Number of active cells:       512
+   Number of degrees of freedom: 4928
+   Volume of triangulation:      2.94523
+
++------------------------------------------+
+|  Torque summary                          |
++------------------------------------------+
+Boundary ID      T_x          T_y           T_z      
+0.000000e+00 0.000000e+00 0.000000e+00 -3.583271e-01 
+1.000000e+00 0.000000e+00 0.000000e+00  1.954177e-01 
+2.000000e+00 0.000000e+00 0.000000e+00 -4.940199e-01 
+3.000000e+00 0.000000e+00 0.000000e+00  3.596889e-01 
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.4      Time step: 0.2      CFL: 2.14888 
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.8 rad 
+         Rotor grid velocity is: 2 rad/time 
+
+   Number of active cells:       512
+   Number of degrees of freedom: 4928
+   Volume of triangulation:      2.94523
+
++------------------------------------------+
+|  Torque summary                          |
++------------------------------------------+
+Boundary ID      T_x          T_y           T_z      
+0.000000e+00 0.000000e+00 0.000000e+00 -3.583271e-01 
+1.000000e+00 0.000000e+00 0.000000e+00  1.954177e-01 
+2.000000e+00 0.000000e+00 0.000000e+00 -4.940199e-01 
+3.000000e+00 0.000000e+00 0.000000e+00  3.596889e-01 
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.6      Time step: 0.2      CFL: 2.14888 
+*******************************************************************************
+Mortar - Rotor grid angle is: 1.2 rad 
+         Rotor grid velocity is: 2 rad/time 
+
+   Number of active cells:       512
+   Number of degrees of freedom: 4928
+   Volume of triangulation:      2.94523
+
++------------------------------------------+
+|  Torque summary                          |
++------------------------------------------+
+Boundary ID      T_x          T_y           T_z      
+0.000000e+00 0.000000e+00 0.000000e+00 -3.583271e-01 
+1.000000e+00 0.000000e+00 0.000000e+00  1.954177e-01 
+2.000000e+00 0.000000e+00 0.000000e+00 -4.940199e-01 
+3.000000e+00 0.000000e+00 0.000000e+00  3.596889e-01 

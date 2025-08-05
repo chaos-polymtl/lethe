@@ -1,5 +1,6 @@
 Running on 3 MPI rank(s)...
-Mortar - Rotor grid angle is: 0.5 rad 
+Mortar - Rotor grid angle is: 0.5 rad
+         Rotor grid velocity is: 0 rad/time
 
    Number of active cells:       320
    Number of degrees of freedom: 4131
@@ -8,11 +9,18 @@ Mortar - Rotor grid angle is: 0.5 rad
 *****************************
 Steady iteration:        1/3
 *****************************
+Mortar - Rotor grid angle is: 0.5 rad
+         Rotor grid velocity is: 0 rad/time
+
+   Number of active cells:       320
+   Number of degrees of freedom: 4131
+   Volume of triangulation:      4
 
 *****************************
 Steady iteration:        2/3
 *****************************
-Mortar - Rotor grid angle is: 0.5 rad 
+Mortar - Rotor grid angle is: 0.5 rad
+         Rotor grid velocity is: 0 rad/time
 
    Number of active cells:       1280
    Number of degrees of freedom: 15939
@@ -21,7 +29,8 @@ Mortar - Rotor grid angle is: 0.5 rad
 *****************************
 Steady iteration:        3/3
 *****************************
-Mortar - Rotor grid angle is: 0.5 rad 
+Mortar - Rotor grid angle is: 0.5 rad
+         Rotor grid velocity is: 0 rad/time
 
    Number of active cells:       5120
    Number of degrees of freedom: 62595

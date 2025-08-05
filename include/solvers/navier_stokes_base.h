@@ -407,6 +407,14 @@ protected:
   refine_mesh_uniform();
 
   /**
+   * @brief Transfer solution after mesh refinement
+   */
+  void
+  transfer_solution(SolutionTransfer<dim, VectorType> &solution_transfer,
+                    std::vector<SolutionTransfer<dim, VectorType>>
+                      &previous_solutions_transfer);
+
+  /**
    * @brief Restart a previous simulation from a checkpoint file.
    */
   virtual void
@@ -437,11 +445,14 @@ protected:
   void
   define_zero_constraints();
 
+  void
+  update_mortar_configuration();
+
   /**
    * @brief Initialize mortar coupling operator
    */
   void
-  update_mortar_coupling();
+  reinit_mortar();
 
   /**
    * @brief Returns the mapping shared pointer. A MappingQCache is
@@ -450,7 +461,7 @@ protected:
   inline std::shared_ptr<Mapping<dim>>
   get_mapping()
   {
-    if (!this->simulation_parameters.mortar.enable)
+    if (!this->simulation_parameters.mortar_parameters.enable)
       return this->mapping;
     else
       return this->mapping_cache;
@@ -458,9 +469,16 @@ protected:
 
   /**
    * @brief Rotate rotor mapping in mortar method
+   *
+   * @param[in] is_first Whether this is the first mapping rotation. This
+   * boolean is used only for printing output purposes; since the mapping needs
+   * to be rotated before setting up dofs, but also after the constraints are
+   * first defined, this function is called twice before the iterate() loop. The
+   * parameter is_first just prevents the mortar verbosity from being printed
+   * twice
    */
   void
-  rotate_mortar_mapping();
+  rotate_rotor_mapping(const bool is_first);
 
   /**
    * @brief Update non-zero constraints if the boundary is time dependent.

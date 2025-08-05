@@ -43,9 +43,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type                = gmsh
-  set file name           = ./structure.msh
-  set initial refinement  = 1
+  set type               = gmsh
+  set file name          = ./structure.msh
+  set initial refinement = 1
 end
 
 #---------------------------------------------------

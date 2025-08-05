@@ -1149,39 +1149,10 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     average_velocities->prepare_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
-  this->setup_dofs();
+  setup_dofs();
 
-  // Set up the vectors for the transfer
-  VectorType tmp = init_temporary_vector();
-
-  // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
-
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(tmp);
-
-  // Fix on the new mesh
-  present_solution = tmp;
-
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      VectorType tmp_previous_solution = init_temporary_vector();
-      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
-      nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
-    }
-
-  multiphysics->post_mesh_adaptation();
-  if (this->simulation_parameters.post_processing
-        .calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile)
-    average_velocities->post_mesh_adaptation();
-
-  // Only needed if other physics apart from fluid dynamics are enabled.
-  if (this->multiphysics->get_active_physics().size() > 1)
-    this->update_multiphysics_time_average_solution();
+  // Transfer solution
+  transfer_solution(solution_transfer, previous_solutions_transfer);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1233,11 +1204,21 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   this->triangulation->refine_global(1);
 
   // If mortar is enabled, update mapping cache with refined triangulation
-  if (this->simulation_parameters.mortar.enable)
+  if (this->simulation_parameters.mortar_parameters.enable)
     this->mapping_cache->initialize(*this->mapping, *this->triangulation);
 
   setup_dofs();
 
+  // Transfer solution
+  transfer_solution(solution_transfer, previous_solutions_transfer);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::transfer_solution(
+  SolutionTransfer<dim, VectorType>              &solution_transfer,
+  std::vector<SolutionTransfer<dim, VectorType>> &previous_solutions_transfer)
+{
   // Set up the vectors for the transfer
   VectorType tmp = init_temporary_vector();
 
@@ -1987,24 +1968,46 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
+NavierStokesBase<dim, VectorType, DofsType>::update_mortar_configuration()
 {
-  TimerOutput::Scope t(this->computing_timer, "Update mortar");
-
-  if (!this->simulation_parameters.mortar.enable)
+  if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
-  // Rotate mapping, but first check if we are not at the start of the
-  // simulation so we don't rotate it twice. For following iterations, this will
-  // be done only once when setup_dofs() is called
-  if (!this->simulation_control->is_at_start())
-    rotate_mortar_mapping();
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+
+  // We need to update the mortar operator/evaluator, as well as the sparsity
+  // pattern, at every iteration; this is done by setup_dofs(). Since
+  // setup_dofs() is already called within refine_mesh(), here we make sure
+  // that, when there is no mesh refinement, setup_dofs() is still called if
+  // mortar is enabled
+  if (this->simulation_control->is_at_start() || !refinement_step ||
+      this->simulation_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none)
+    setup_dofs();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  rotate_rotor_mapping(false);
+
+  TimerOutput::Scope t(this->computing_timer, "Reinit mortar");
 
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
     this->dof_handler,
-    this->simulation_parameters.mortar);
+    this->simulation_parameters.mortar_parameters);
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
@@ -2021,44 +2024,58 @@ NavierStokesBase<dim, VectorType, DofsType>::update_mortar_coupling()
       this->zero_constraints,
       this->mortar_coupling_evaluator,
       this->mortar_manager,
-      this->simulation_parameters.mortar.rotor_boundary_id,
-      this->simulation_parameters.mortar.stator_boundary_id,
-      this->simulation_parameters.mortar.sip_factor);
+      this->simulation_parameters.mortar_parameters.rotor_boundary_id,
+      this->simulation_parameters.mortar_parameters.stator_boundary_id,
+      this->simulation_parameters.mortar_parameters.sip_factor);
 }
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::rotate_mortar_mapping()
+NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
+  const bool is_first)
 {
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
   TimerOutput::Scope t(this->computing_timer, "Rotate mortar");
 
-  if (this->simulation_parameters.mortar.enable)
+  // Get updated rotation angle (radians)
+  simulation_parameters.mortar_parameters.rotor_rotation_angle->set_time(
+    this->simulation_control->get_current_time());
+  const double rotation_angle =
+    simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
+      Point<dim>());
+
+  // Get updated angular velocity (radians/time)
+  simulation_parameters.mortar_parameters.rotor_angular_velocity->set_time(
+    this->simulation_control->get_current_time());
+  const double angular_velocity =
+    simulation_parameters.mortar_parameters.rotor_angular_velocity->value(
+      Point<dim>());
+
+  if (simulation_parameters.mortar_parameters.verbosity ==
+        Parameters::Verbosity::verbose &&
+      !is_first)
     {
-      // Get updated rotation angle (radians)
-      simulation_parameters.mortar.rotor_rotation_angle->set_time(
-        this->simulation_control->get_current_time());
-      const double rotation_angle =
-        simulation_parameters.mortar.rotor_rotation_angle->value(Point<dim>());
-
-      if (simulation_parameters.mortar.verbosity ==
-          Parameters::Verbosity::verbose)
-        this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
-                    << " rad \n"
-                    << std::endl;
-
-      // Create new mapping cache
-      this->mapping_cache =
-        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-
-      LetheGridTools::rotate_mapping(
-        this->dof_handler,
-        *this->mapping_cache,
-        *this->mapping,
-        compute_n_subdivisions_and_radius(*this->triangulation,
-                                          this->simulation_parameters.mortar)
-          .second,
-        rotation_angle);
+      this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
+                  << " rad \n"
+                  << "         Rotor grid velocity is: " << angular_velocity
+                  << " rad/time \n"
+                  << std::endl;
     }
+
+  // Create new mapping cache
+  this->mapping_cache =
+    std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+
+  LetheGridTools::rotate_mapping(
+    this->dof_handler,
+    *this->mapping_cache,
+    *this->mapping,
+    compute_n_subdivisions_and_radius(
+      *this->triangulation, this->simulation_parameters.mortar_parameters)
+      .second,
+    rotation_angle);
 }
 
 template <int dim, typename VectorType, typename DofsType>

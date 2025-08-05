@@ -40,8 +40,8 @@ public:
                   const Quadrature<dim2> &quadrature,
                   const double            shift)
     : MortarManagerBase<dim>(n_subdivisions,
-                             quadrature,
                              1.0 / (2.0 * numbers::PI),
+                             quadrature,
                              shift * (2.0 * numbers::PI))
   {}
 

@@ -1814,6 +1814,8 @@ namespace Parameters
     Point<dim> center_of_rotation;
     /// Rotation angle of the rotor domain in radians
     std::shared_ptr<Functions::ParsedFunction<dim>> rotor_rotation_angle;
+    /// Angular velocity of the rotor domain
+    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity;
     /// Penalty factor for mortar elements
     double sip_factor;
     /// Oversampling factor for quadrature points
