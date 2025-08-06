@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Mortar: test functions to compute radius, number of subdivisions, and rotate mapping.
- *
+ * @brief Mortar: test functions to compute radius, number of
+ * subdivisions, and rotate mapping for a 3D case.
  */
 
 #include <deal.II/distributed/tria.h>
