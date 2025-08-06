@@ -566,8 +566,23 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
-  const unsigned int n_opposite_faces_per_dofs = dim;
-  const unsigned int dofs_per_cell             = fe->n_dofs_per_cell();
+  const unsigned int        n_opposite_faces_per_dofs = dim;
+  std::vector<unsigned int> dof_opposite_faces(n_opposite_faces_per_dofs);
+  const unsigned int        dofs_per_cell = fe->n_dofs_per_cell();
+
+  // Jacobians
+  std::vector<Point<dim>>                  stencil_real(2 * dim - 1);
+  std::vector<Tensor<1, dim>>              distance_gradients(2 * dim - 1);
+  std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians(
+    2 * dim - 1);
+  std::vector<DerivativeForm<1, dim - 1, dim>> face_transformation_jacobians(
+    2 * dim - 1);
+
+  /* Compute the jacobian matrix. The Ax=b system is
+formulated as the dim-1 system. We solve for the
+correction in the reference face. */
+  LAPACKFullMatrix<double> jacobian_matrix(dim - 1, dim - 1);
+  jacobian_matrix.set_property(LAPACKSupport::general);
 
   std::map<types::global_dof_index, Point<dim>> dof_support_points =
     DoFTools::map_dofs_to_support_points(*mapping, dof_handler);
@@ -662,10 +677,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                   continue;
                 }
 
-              std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
               cell->get_dof_indices(dof_indices);
-              std::vector<double> cell_dof_values(dofs_per_cell);
               cell->get_dof_values(distance_with_ghost,
                                    cell_dof_values.begin(),
                                    cell_dof_values.end());
@@ -682,8 +695,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                     }
 
                   // Get opposite faces
-                  std::vector<unsigned int> dof_opposite_faces(
-                    n_opposite_faces_per_dofs);
+
                   get_dof_opposite_faces(i, dof_opposite_faces);
 
                   // Get the real coordinates of the current DoF I
@@ -737,13 +749,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                             compute_numerical_jacobian_stencil(
                               x_n_ref, dof_opposite_faces[j], perturbation);
 
-                          std::vector<Point<dim>>     stencil_real(2 * dim - 1);
-                          std::vector<Tensor<1, dim>> distance_gradients(
-                            2 * dim - 1);
-                          std::vector<DerivativeForm<1, dim, dim>>
-                            cell_transformation_jacobians(2 * dim - 1);
-                          std::vector<DerivativeForm<1, dim - 1, dim>>
-                            face_transformation_jacobians(2 * dim - 1);
 
 
                           /* Prepare FEPointEvaluation to compute value and
@@ -767,11 +772,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                 face_transformation_jacobians[k]);
                             }
 
-                          /* Compute the jacobian matrix. The Ax=b system is
-                          formulated as the dim-1 system. We solve for the
-                          correction in the reference face. */
-                          LAPACKFullMatrix<double> jacobian_matrix(dim - 1,
-                                                                   dim - 1);
+
                           compute_numerical_jacobian(
                             stencil_real,
                             x_I_real,
@@ -797,7 +798,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                             residual_n_vec.end());
                           residual_n_vec *= -1.0;
 
-                          jacobian_matrix.set_property(LAPACKSupport::general);
+
 
                           /* Factorize and solve the matrix. The correction is
                           put back in residual_n_vec. */
@@ -895,20 +896,20 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           // Re-compute the solution with the relaxation
                           x_n_p1_ref = stencil_ref[0] + relaxation * correction;
 
-                          // Transform the solution from reference to the real
-                          // cell. This could be improved to not call
-                          // fe_point_evaluation.
-                          std::vector<Point<dim>> x_n_p1_ref_vec = {x_n_p1_ref};
-                          fe_point_evaluation.reinit(cell, x_n_p1_ref_vec);
-                          Point<dim> x_n_p1_real =
-                            fe_point_evaluation.quadrature_point(0);
-
                           // Update the solution.
-                          x_n_ref  = x_n_p1_ref;
-                          x_n_real = x_n_p1_real;
+                          x_n_ref = x_n_p1_ref;
 
                           newton_it += 1;
                         } // End of the Newton solver.
+
+                      // Transform the solution from reference to the real
+                      // cell. This could be improved to not call
+                      // fe_point_evaluation.
+                      std::vector<Point<dim>> x_n_p1_ref_vec = {x_n_ref};
+                      fe_point_evaluation.reinit(cell, x_n_p1_ref_vec);
+                      Point<dim> x_n_p1_real =
+                        fe_point_evaluation.quadrature_point(0);
+                      x_n_real = x_n_p1_real;
 
                       // Compute the distance approximation: distance(x_I) =
                       // distance(x_n) + |x_n - x_I|
