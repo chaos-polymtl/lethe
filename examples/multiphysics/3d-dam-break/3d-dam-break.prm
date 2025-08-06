@@ -79,11 +79,7 @@ subsection initial conditions
 
   subsection VOF
     set Function expression = if (x>1.992 & z<0.55 & y>=-0.5, 1, 0)
-
-    subsection projection step
-      set enable           = true
-      set diffusion factor = 1
-    end
+    set smoothing type      = diffusive
   end
 end
 

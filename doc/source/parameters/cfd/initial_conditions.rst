@@ -19,11 +19,8 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
     subsection VOF
       set Function expression = if (x<0.5 & y<1, 1, 0)
-
-      subsection projection step
-        set enable           = false
-        set diffusion factor = 1
-      end
+      set smoothing type = none # <none|diffusive|geometric>
+      set diffusion factor = 1
     end
 
     subsection temperature
@@ -65,9 +62,9 @@ It is often necessary to set-up complex initial conditions when simulating trans
   .. note::
     The ``Function expression`` can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : ``if ( (x^2+y^2)<=(r)^2 ,1,0)``
 
-  * The ``subsection projection step`` allows to smooth the VOF initial condition using a projection step and avoid a staircase definition of the free surface.
+  * The ``smoothing type`` allows to smooth the VOF initial condition and avoid a staircase definition of the free surface.
 
-    * When the parameter ``enable`` is set to ``true``, the initial condition is projected following :
+    * When the parameter ``smoothing type = diffusive``, the initial condition is projected following:
 
     .. math::
       \psi(\Omega_K) = \int_{\Omega_K} \phi d\Omega
@@ -76,6 +73,8 @@ It is often necessary to set-up complex initial conditions when simulating trans
       \int_\Omega \left( \psi^* v + \eta_\psi \nabla \psi^* \cdot \nabla v  \right) d\Omega = \int_\Omega \psi v  d\Omega
 
     where :math:`\psi(\Omega_K)` corresponds to a color function value on the Kth element, :math:`\phi` is the phase fraction, :math:`\psi^*` is the smoothed phase fraction, :math:`\eta_\psi = \alpha h^2` with :math:`\alpha` corresponding to the ``diffusion factor`` and :math:`h` to the cell size, and :math:`v` is a test function.
+    
+    * When the parameter ``smoothing type = geometric``, the initial condition is smoothed using a geometric redistanciation method. 
 
 * The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection VOF`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at :math:`0`.
 * The ``subsection temperature`` allows the user to define an initial temperature for the fluid domain (if ``set heat tranfer = true`` in :doc:`multiphysics`).

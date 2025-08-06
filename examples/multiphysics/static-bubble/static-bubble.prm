@@ -50,10 +50,8 @@ subsection initial conditions
   end
   subsection VOF
     set Function expression = if (x^2 + y^2 < 0.5^2 , 1, 0)
-    subsection projection step
-      set enable           = true
-      set diffusion factor = 1
-    end
+    set smoothing type      = diffusive
+    set diffusion factor    = 1
   end
 end
 

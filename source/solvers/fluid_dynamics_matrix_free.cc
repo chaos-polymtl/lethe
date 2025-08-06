@@ -2359,8 +2359,8 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
-  Parameters::InitialConditionType initial_condition_type,
-  bool                             restart)
+  Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+  bool                                          restart)
 {
   if (restart)
     {
@@ -2369,13 +2369,15 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       this->pcout << "************************" << std::endl;
       this->read_checkpoint();
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::nodal)
     {
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
       this->finish_time_step();
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::viscous)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::viscous)
     {
       // Set the nodal values to have an initial condition that is adequate
       this->set_nodal_values();
@@ -2403,7 +2405,8 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       // Reset original rheology for the system operator
       this->physical_properties_manager->set_rheology(original_viscosity_model);
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::ramp)
+  else if (initial_condition_type ==
+           Parameters::FluidDynamicsInitialConditionType::ramp)
     {
       this->pcout << "*********************************" << std::endl;
       this->pcout << " Initial condition using ramp " << std::endl;

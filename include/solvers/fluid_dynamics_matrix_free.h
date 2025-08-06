@@ -440,8 +440,8 @@ protected:
    **/
   virtual void
   set_initial_condition_fd(
-    Parameters::InitialConditionType initial_condition_type,
-    bool                             restart = false) override;
+    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    bool                                          restart = false) override;
 
   /**
    * @brief Assemble the matrix associated with the solver. Only required for
