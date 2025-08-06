@@ -63,7 +63,54 @@ template <int dim>
 std::vector<unsigned int>
 MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
 {
-  return get_indices_internal(face_center, 1);
+  if (dim == 1)
+    return std::vector<unsigned int>{0};
+
+  // Mesh alignment type and cell index
+  const auto [type, id] = get_config(face_center);
+
+  if (type == 0) // aligned
+    {
+      std::vector<unsigned int> indices;
+
+      const unsigned int index = id;
+
+      AssertIndexRange(index, n_subdivisions * 2);
+
+      indices.emplace_back(index);
+
+      return indices;
+    }
+  else if (type == 1) // inside
+    {
+      std::vector<unsigned int> indices;
+
+      for (unsigned int q = 0; q < 2; ++q)
+        {
+          const unsigned int index = (id * 2 + 1 + q) % (n_subdivisions * 2);
+
+          AssertIndexRange(index, n_subdivisions * 2);
+
+          indices.emplace_back(index);
+        }
+
+      return indices;
+    }
+  else // outside
+    {
+      std::vector<unsigned int> indices;
+
+      for (unsigned int q = 0; q < 2; ++q)
+        {
+          const unsigned int index = id * 2 + q;
+
+          AssertIndexRange(index, n_subdivisions * 2);
+
+          indices.emplace_back(index);
+        }
+
+      return indices;
+    }
 }
 
 template <int dim>
@@ -97,74 +144,6 @@ MortarManagerBase<dim>::get_n_points() const
   else // inside/outside
     {
       return 2 * n_quadrature_points;
-    }
-}
-
-template <int dim>
-std::vector<unsigned int>
-MortarManagerBase<dim>::get_indices(const Point<dim> &face_center) const
-{
-  return get_indices_internal(face_center, n_quadrature_points);
-}
-
-template <int dim>
-std::vector<unsigned int>
-MortarManagerBase<dim>::get_indices_internal(
-  const Point<dim> &face_center,
-  unsigned int      n_quadrature_points) const
-{
-  if (dim == 1)
-    return std::vector<unsigned int>{0};
-
-  // Mesh alignment type and cell index
-  const auto [type, id] = get_config(face_center);
-
-  if (type == 0) // aligned
-    {
-      std::vector<unsigned int> indices;
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        {
-          const unsigned int index = id * n_quadrature_points + q;
-
-          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
-
-          indices.emplace_back(index);
-        }
-
-      return indices;
-    }
-  else if (type == 1) // inside
-    {
-      std::vector<unsigned int> indices;
-
-      for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
-        {
-          const unsigned int index =
-            (id * n_quadrature_points * 2 + n_quadrature_points + q) %
-            (n_subdivisions * n_quadrature_points * 2);
-
-          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
-
-          indices.emplace_back(index);
-        }
-
-      return indices;
-    }
-  else // outside
-    {
-      std::vector<unsigned int> indices;
-
-      for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
-        {
-          const unsigned int index = id * n_quadrature_points * 2 + q;
-
-          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
-
-          indices.emplace_back(index);
-        }
-
-      return indices;
     }
 }
 
@@ -541,13 +520,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
   data.penalty_factor =
     compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
 
-  // Number of quadrature points
-  const unsigned int n_points = mortar_manager->get_n_total_points();
   // Number of cells
   const unsigned int n_sub_cells = mortar_manager->get_n_total_mortars();
 
-  std::vector<types::global_dof_index> is_local;
-  std::vector<types::global_dof_index> is_ghost;
   std::vector<types::global_dof_index> is_local_cell;
   std::vector<types::global_dof_index> is_ghost_cell;
 
@@ -559,40 +534,13 @@ CouplingOperator<dim, Number>::CouplingOperator(
           {
             const auto face = cell->face(face_no);
 
-            // Indices of quadrature points
-            const auto indices_q =
-              mortar_manager->get_indices(get_face_center(cell, face));
-
-            // Loop over the quadrature points, storing indices for both sides.
-            // We assume that the rotor side is the 'local' reference, and the
-            // stator side is the 'ghost reference.
-            for (unsigned int ii = 0; ii < indices_q.size(); ++ii)
-              {
-                unsigned int i = indices_q[ii];
-                unsigned int id_local, id_ghost;
-
-                if (face->boundary_id() == bid_m)
-                  {
-                    id_local = i;
-                    id_ghost = i + n_points;
-                  }
-                else if (face->boundary_id() == bid_p)
-                  {
-                    id_local = i + n_points;
-                    id_ghost = i;
-                  }
-
-                is_local.emplace_back(id_local);
-                is_ghost.emplace_back(id_ghost);
-              }
-
-            // Indices of cells/DoFs on them
+            // Indices of mortars on face of cell.
             const auto indices =
               mortar_manager->get_mortar_indices(get_face_center(cell, face));
 
             const auto local_dofs = this->get_dof_indices(cell);
 
-            // Loop over the DoFs indices of the cells at the rotor-stator
+            // Loop over the mortar indices at the rotor-stator
             // interface. The logic of local (rotor) and ghost (stator) is the
             // same as in the previous loop.
             for (unsigned int ii = 0; ii < indices.size(); ++ii)
@@ -729,23 +677,24 @@ CouplingOperator<dim, Number>::CouplingOperator(
           }
 
   // Setup communication
-  partitioner.reinit(is_local, is_ghost, dof_handler.get_mpi_communicator());
-  partitioner_cell.reinit(is_local_cell,
-                          is_ghost_cell,
-                          dof_handler.get_mpi_communicator());
+  partitioner.reinit(is_local_cell,
+                     is_ghost_cell,
+                     dof_handler.get_mpi_communicator());
 
   // Finalized penalty parameters
+  const unsigned n_q_points =
+    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
   std::vector<Number> all_penalty_parameter_ghost(
     data.all_penalty_parameter.size());
-  partitioner.template export_to_ghosted_array<Number, 1>(
-    data.all_penalty_parameter, all_penalty_parameter_ghost);
+  partitioner.template export_to_ghosted_array<Number, 0>(
+    data.all_penalty_parameter, all_penalty_parameter_ghost, n_q_points);
   for (unsigned int i = 0; i < data.all_penalty_parameter.size(); ++i)
     data.all_penalty_parameter[i] =
       std::max(data.all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
 
   // Finialize DoF indices and update constraints
   dof_indices_ghost.resize(dof_indices.size());
-  partitioner_cell.template export_to_ghosted_array<types::global_dof_index, 0>(
+  partitioner.template export_to_ghosted_array<types::global_dof_index, 0>(
     dof_indices, dof_indices_ghost, n_dofs_per_cell);
 
   {
@@ -932,12 +881,14 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
           }
 
   // 2) Communicate
+  const unsigned n_q_points =
+    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
   partitioner.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_values_local.data()),
                             all_values_local.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),
                       all_values_ghost.size()),
-    q_data_size);
+    n_q_points * q_data_size);
 
   // 3) Integrate
   ptr_q = 0;
@@ -1125,7 +1076,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
 
   // 2) Communicate: export data from local to ghost side
-  partitioner_cell.template export_to_ghosted_array<Number, 0>(
+  partitioner.template export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_values_local.data()),
                             all_values_local.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),

@@ -73,14 +73,6 @@ public:
   get_n_points() const;
 
   /**
-   * @brief Returns the indices of all quadrature points at both sides of the interface
-   *
-   * @param[in] face_center Face center
-   */
-  std::vector<unsigned int>
-  get_indices(const Point<dim> &face_center) const;
-
-  /**
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
    *
    * @param[in] face_center Face center
@@ -139,15 +131,6 @@ protected:
    */
   std::pair<unsigned int, unsigned int>
   get_config(const Point<dim> &face_center) const;
-
-  /**
-   * @brief Returns the indices of all quadrature points at both sides of the interface
-   *
-   * @param[in] face_center Face center
-   */
-  std::vector<unsigned int>
-  get_indices_internal(const Point<dim>  &face_center,
-                       const unsigned int n_quadrature_points) const;
 
   /**
    * @brief Convert radiant to quadrature point in real space.
@@ -715,7 +698,6 @@ protected:
   unsigned int n_dofs_per_cell;
 
   Utilities::MPI::NoncontiguousPartitioner partitioner;
-  Utilities::MPI::NoncontiguousPartitioner partitioner_cell;
 
   std::vector<types::global_dof_index> dof_indices;
   std::vector<types::global_dof_index> dof_indices_ghost;
