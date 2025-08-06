@@ -5,7 +5,7 @@
 #----------------------
 # The problem dimension <2|3>
 
-set dim = 3
+set dim = 2
 
 # Order of FE element <1|2|3>
 

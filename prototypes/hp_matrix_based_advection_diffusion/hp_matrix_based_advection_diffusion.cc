@@ -615,6 +615,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
       // Set boundary values for the initial newton iteration
       VectorType local_solution(system_rhs);
 
+      // TODO : USE THE VERSION OF INTERPOLATE BOUNDARY VALUES FOR HP REFINEMENT
       std::map<types::global_dof_index, double> boundary_values_left_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
                                                0,
@@ -1256,6 +1257,65 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
   triangulation.execute_coarsening_and_refinement();
 }
 
+// template <int dim, int fe_degree>
+// void
+// MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
+// {
+//   TimerOutput::Scope t(computing_timer, "hp refinement");
+
+//   Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
+//   KellyErrorEstimator<dim>::estimate(
+//     dof_handler,
+//     face_quadrature_collection,
+//     std::map<types::boundary_id, const Function<dim> *>(),
+//     solution,
+//     estimated_error_per_cell);
+
+//   Vector<float> smoothness_indicators(triangulation.n_active_cells());
+//   FESeries::Fourier<dim, dim> fourier =
+//     SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
+//   SmoothnessEstimator::Fourier::coefficient_decay(fourier,
+//                                                   dof_handler,
+//                                                   solution,
+//                                                   smoothness_indicators);
+
+//   // h-refine / coarsen flags based on error
+//   parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
+//     triangulation, estimated_error_per_cell, 0.3, 0.03);
+
+//   for (const auto &cell : triangulation.active_cell_iterators())
+//     {
+//       if (cell->is_locally_owned())
+//         {
+//           for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
+//             {
+//               if (cell->face(f)->at_boundary())
+//                 {
+//                   cell->clear_refine_flag();
+//                   cell->clear_coarsen_flag();
+//                   break; // No need to check other faces
+//                 }
+//             }
+//         }
+//     }
+
+//   // p-refine flags based on smoothness indicators
+//   hp::Refinement::p_adaptivity_from_relative_threshold(dof_handler,
+//                                                        smoothness_indicators,
+//                                                        0.2,
+//                                                        0.2);
+
+//   // Choose p over h when both are allowed
+//   hp::Refinement::choose_p_over_h(dof_handler);
+
+//   // Prevent large p-level jumps between neighbors
+//   hp::Refinement::limit_p_level_difference(dof_handler);
+
+//   // Prepare and execute the refinement
+//   triangulation.prepare_coarsening_and_refinement();
+//   triangulation.execute_coarsening_and_refinement();
+// }
+
 template <int dim, int fe_degree>
 void
 MatrixBasedAdvectionDiffusion<dim, fe_degree>::solve()
@@ -1322,14 +1382,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
 
   Vector<float> norm_per_cell(triangulation.n_active_cells());
 
-  // VectorTools::integrate_difference(mapping,
-  //                                   dof_handler,
-  //                                   solution,
-  //                                   Functions::ZeroFunction<dim>(),
-  //                                   norm_per_cell,
-  //                                   QGauss<dim>(2),
-  //                                   VectorTools::H1_seminorm);
-
   return VectorTools::compute_global_error(triangulation,
                                            norm_per_cell,
                                            VectorTools::H1_seminorm);
@@ -1342,15 +1394,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
   solution.update_ghost_values();
 
   Vector<float> error_per_cell(triangulation.n_active_cells());
-
-  // VectorTools::integrate_difference(mapping,
-  //                                   dof_handler,
-  //                                   solution,
-  //                                   AnalyticalSolution<dim>(
-  //                                     parameters.peclet_number),
-  //                                   error_per_cell,
-  //                                   QGauss<dim>(fe.degree + 1),
-  //                                   VectorTools::L2_norm);
 
   return VectorTools::compute_global_error(triangulation,
                                            error_per_cell,
@@ -1556,7 +1599,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
           pcout << "  L2 norm: " << compute_l2_error() << std::endl;
         }
 
+      pcout << "Refine mesh using hp refinement..." << std::endl;
       hp_refine();
+      pcout << std::endl; 
 
       computing_timer.print_summary();
       computing_timer.reset();
