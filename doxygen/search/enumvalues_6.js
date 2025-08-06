@@ -8,7 +8,7 @@ var searchData=
   ['gaussian_5fheat_5fflux_5fvof_5finterface_5',['gaussian_heat_flux_vof_interface',['../classParameters_1_1Laser.html#a798a749dbdd49e463f4bc2c16773636da8135b73e011afa43328176cba9ac8d27',1,'Parameters::Laser']]],
   ['gcmg_6',['gcmg',['../structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341',1,'Parameters::LinearSolver']]],
   ['gear3_7',['gear3',['../structParameters_1_1SimulationControl.html#a367c8bfa0c5e6d273f3d95b45b8d175fafb8f244c8dc991683a95cacbd8172a48',1,'Parameters::SimulationControl']]],
-  ['geometric_8',['geometric',['../namespaceParameters.html#a3676562bd2a976771578fd7497ea338aa65a383f3960a0cb2b8b0ace54817d575',1,'Parameters']]],
+  ['geometric_8',['geometric',['../namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca65a383f3960a0cb2b8b0ace54817d575',1,'Parameters::geometric'],['../namespaceParameters.html#a3676562bd2a976771578fd7497ea338aa65a383f3960a0cb2b8b0ace54817d575',1,'Parameters::geometric']]],
   ['ghost_5flocal_5fperiodic_5fparticle_5fparticle_9',['ghost_local_periodic_particle_particle',['../contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa7622341096cc33c01e481878a4b9276c',1,'contact_type.h']]],
   ['ghost_5fparticle_5fparticle_10',['ghost_particle_particle',['../contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa68a8a4ba6e02dff9747fee8bbdd6d778',1,'contact_type.h']]],
   ['ghost_5fperiodic_5fparticle_5fparticle_11',['ghost_periodic_particle_particle',['../contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa16be8ebed688d98d8e43741d5592f8c8',1,'contact_type.h']]],

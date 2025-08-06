@@ -9,7 +9,7 @@ var searchData=
   ['radius_5fdisk_6',['radius_disk',['../classCylindricalHelix.html#a146a811f7b10fee58e1853a6b3250c7b',1,'CylindricalHelix']]],
   ['radius_5fsphere_5fequivalent_5fvolume_7',['radius_sphere_equivalent_volume',['../classVoidFractionBase.html#a4ceba620c04395d68a98c38e25914ebb',1,'VoidFractionBase']]],
   ['radius_5fto_5fpoint_8',['radius_to_point',['../utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf',1,'utilities.h']]],
-  ['ramp_9',['ramp',['../structParameters_1_1Ramp.html',1,'Parameters::Ramp'],['../classParameters_1_1InitialConditions.html#a3e11201ab43e854f3b7b39e93bf47bef',1,'Parameters::InitialConditions::ramp'],['../namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a93939238f5427e2d2d2b1365d18483f9',1,'Parameters::ramp']]],
+  ['ramp_9',['ramp',['../structParameters_1_1Ramp.html',1,'Parameters::Ramp'],['../classParameters_1_1InitialConditions.html#a3e11201ab43e854f3b7b39e93bf47bef',1,'Parameters::InitialConditions::ramp'],['../namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9',1,'Parameters::ramp']]],
   ['ramp_5fn_10',['ramp_n',['../structParameters_1_1Ramp.html#a8654989a65534c10ae6cbcf185eb7582',1,'Parameters::Ramp::ramp_n'],['../structParameters_1_1Ramp__n.html',1,'Parameters::Ramp_n']]],
   ['ramp_5fviscosity_11',['ramp_viscosity',['../structParameters_1_1Ramp__viscosity.html',1,'Parameters::Ramp_viscosity'],['../structParameters_1_1Ramp.html#a1f0b020a72b5d33f7198d2c041b61cc6',1,'Parameters::Ramp::ramp_viscosity']]],
   ['rbf_5fshape_12',['rbf_shape',['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdae54312d0ea888cdacf72bca2101e8042',1,'Shape']]],

@@ -468,11 +468,8 @@
 
   subsection VOF
     set Function expression = if (x&lt;0.5 &amp; y&lt;1, 1, 0)
-
-    subsection projection step
-      set enable           = false
-      set diffusion factor = 1
-    end
+    set smoothing type = none # &lt;none|diffusive|geometric&gt;
+    set diffusion factor = 1
   end
 
   subsection temperature
@@ -513,9 +510,9 @@ end
 <p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(</span> <span class="pre">(x^2+y^2)&lt;=(r)^2</span> <span class="pre">,1,0)</span></code></p>
 </div>
 <ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection</span> <span class="pre">step</span></code> allows to smooth the VOF initial condition using a projection step and avoid a staircase definition of the free surface.</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">smoothing</span> <span class="pre">type</span></code> allows to smooth the VOF initial condition and avoid a staircase definition of the free surface.</p>
 <ul class="simple">
-<li><p>When the parameter <code class="docutils literal notranslate"><span class="pre">enable</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the initial condition is projected following :</p></li>
+<li><p>When the parameter <code class="docutils literal notranslate"><span class="pre">smoothing</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">diffusive</span></code>, the initial condition is projected following:</p></li>
 </ul>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -526,6 +523,9 @@ end
 \[\int_\Omega \left( \psi^* v + \eta_\psi \nabla \psi^* \cdot \nabla v  \right) d\Omega = \int_\Omega \psi v  d\Omega\]</div>
 </div>
 <p>where <span class="math notranslate nohighlight">\(\psi(\Omega_K)\)</span> corresponds to a color function value on the Kth element, <span class="math notranslate nohighlight">\(\phi\)</span> is the phase fraction, <span class="math notranslate nohighlight">\(\psi^*\)</span> is the smoothed phase fraction, <span class="math notranslate nohighlight">\(\eta_\psi = \alpha h^2\)</span> with <span class="math notranslate nohighlight">\(\alpha\)</span> corresponding to the <code class="docutils literal notranslate"><span class="pre">diffusion</span> <span class="pre">factor</span></code> and <span class="math notranslate nohighlight">\(h\)</span> to the cell size, and <span class="math notranslate nohighlight">\(v\)</span> is a test function.</p>
+<ul class="simple">
+<li><p>When the parameter <code class="docutils literal notranslate"><span class="pre">smoothing</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">geometric</span></code>, the initial condition is smoothed using a geometric redistanciation method.</p></li>
+</ul>
 </li>
 </ul>
 </li>
