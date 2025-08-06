@@ -41,15 +41,18 @@ main()
 
             const auto p = radius_to_point<dim>(radius, rad);
 
-            const auto indices = manager.get_indices(p);
+            const auto indices = manager.get_mortar_indices(p);
+
             const auto weights = manager.get_weights(p);
             const auto points  = manager.get_points(p);
             const auto normals = manager.get_normals(p);
 
-            for (unsigned int i = 0; i < indices.size(); ++i)
+            for (unsigned int i = 0; i < weights.size(); ++i)
               {
                 printf("%2d: %8.4f %8.4f %8.4f %8.4f %8.4f\n",
-                       indices[i],
+                       (i < n_quadrature_points ? indices[0] : indices[1]) *
+                           n_quadrature_points +
+                         (i % n_quadrature_points),
                        weights[i],
                        points[i][0],
                        points[i][1],

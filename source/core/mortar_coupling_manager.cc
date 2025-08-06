@@ -63,7 +63,54 @@ template <int dim>
 std::vector<unsigned int>
 MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
 {
-  return get_indices_internal(face_center, 1);
+  if (dim == 1)
+    return std::vector<unsigned int>{0};
+
+  // Mesh alignment type and cell index
+  const auto [type, id] = get_config(face_center);
+
+  if (type == 0) // aligned
+    {
+      std::vector<unsigned int> indices;
+
+      const unsigned int index = id;
+
+      AssertIndexRange(index, n_subdivisions * 2);
+
+      indices.emplace_back(index);
+
+      return indices;
+    }
+  else if (type == 1) // inside
+    {
+      std::vector<unsigned int> indices;
+
+      for (unsigned int q = 0; q < 2; ++q)
+        {
+          const unsigned int index = (id * 2 + 1 + q) % (n_subdivisions * 2);
+
+          AssertIndexRange(index, n_subdivisions * 2);
+
+          indices.emplace_back(index);
+        }
+
+      return indices;
+    }
+  else // outside
+    {
+      std::vector<unsigned int> indices;
+
+      for (unsigned int q = 0; q < 2; ++q)
+        {
+          const unsigned int index = id * 2 + q;
+
+          AssertIndexRange(index, n_subdivisions * 2);
+
+          indices.emplace_back(index);
+        }
+
+      return indices;
+    }
 }
 
 template <int dim>
@@ -97,74 +144,6 @@ MortarManagerBase<dim>::get_n_points() const
   else // inside/outside
     {
       return 2 * n_quadrature_points;
-    }
-}
-
-template <int dim>
-std::vector<unsigned int>
-MortarManagerBase<dim>::get_indices(const Point<dim> &face_center) const
-{
-  return get_indices_internal(face_center, n_quadrature_points);
-}
-
-template <int dim>
-std::vector<unsigned int>
-MortarManagerBase<dim>::get_indices_internal(
-  const Point<dim> &face_center,
-  unsigned int      n_quadrature_points) const
-{
-  if (dim == 1)
-    return std::vector<unsigned int>{0};
-
-  // Mesh alignment type and cell index
-  const auto [type, id] = get_config(face_center);
-
-  if (type == 0) // aligned
-    {
-      std::vector<unsigned int> indices;
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        {
-          const unsigned int index = id * n_quadrature_points + q;
-
-          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
-
-          indices.emplace_back(index);
-        }
-
-      return indices;
-    }
-  else if (type == 1) // inside
-    {
-      std::vector<unsigned int> indices;
-
-      for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
-        {
-          const unsigned int index =
-            (id * n_quadrature_points * 2 + n_quadrature_points + q) %
-            (n_subdivisions * n_quadrature_points * 2);
-
-          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
-
-          indices.emplace_back(index);
-        }
-
-      return indices;
-    }
-  else // outside
-    {
-      std::vector<unsigned int> indices;
-
-      for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
-        {
-          const unsigned int index = id * n_quadrature_points * 2 + q;
-
-          AssertIndexRange(index, n_subdivisions * n_quadrature_points * 2);
-
-          indices.emplace_back(index);
-        }
-
-      return indices;
     }
 }
 
