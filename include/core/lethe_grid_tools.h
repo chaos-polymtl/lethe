@@ -90,7 +90,9 @@ namespace LetheGridTools
 
   /**
    * @brief
-   * Return a vector of cells around a cell including vertex neighbors
+   * Return a vector of cells around a cell. The vector of cells includes all
+   * the cells that share a vertex with the initial cell, including the initial
+   * cell.
    *
    * @param cell The initial cell. We want to know all the cells that share a vertex with this cell.
    *

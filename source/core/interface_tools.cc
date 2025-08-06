@@ -3,6 +3,8 @@
 
 #include <core/interface_tools.h>
 
+#include <deal.II/base/timer.h>
+
 template <int dim>
 double
 InterfaceTools::compute_cell_wise_volume(
@@ -316,6 +318,11 @@ template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 {
+  TimerOutput timer(dof_handler.get_mpi_communicator(),
+                    this->pcout,
+                    TimerOutput::summary,
+                    TimerOutput::wall_times);
+
   if (verbosity != Parameters::Verbosity::quiet)
     {
       announce_string(this->pcout, "Signed Distance Solver");
@@ -329,36 +336,56 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   intersected_dofs.clear();
 
   // Initialize local distance vectors.
-  initialize_distance();
-
+  {
+    TimerOutput::Scope t(timer, "Initialize-dist");
+    initialize_distance();
+  }
   // Identify intersected cells and compute the interface reconstruction.
-  InterfaceTools::reconstruct_interface(*mapping,
-                                        dof_handler,
-                                        *fe,
-                                        level_set,
-                                        iso_level,
-                                        interface_reconstruction_vertices,
-                                        interface_reconstruction_cells,
-                                        intersected_dofs);
+  {
+    TimerOutput::Scope t(timer, "Reconstruct Interface");
+
+    InterfaceTools::reconstruct_interface(*mapping,
+                                          dof_handler,
+                                          *fe,
+                                          level_set,
+                                          iso_level,
+                                          interface_reconstruction_vertices,
+                                          interface_reconstruction_cells,
+                                          intersected_dofs);
+  }
 
   /* Compute the distance for the DoFs of the intersected cells (the ones in
   the intersected_dofs set). They correspond to the first neighbor DoFs.*/
-  compute_first_neighbors_distance();
-
+  {
+    TimerOutput::Scope t(timer, "First");
+    compute_first_neighbors_distance();
+  }
   /* Compute signed distance from distance (only first neighbors have an
   updated value)*/
-  compute_signed_distance_from_distance();
+  {
+    TimerOutput::Scope t(timer, "First-p2");
+    compute_signed_distance_from_distance();
+  }
 
   // Conserve local and global volume
-  compute_cell_wise_volume_correction();
-  conserve_global_volume();
+  {
+    TimerOutput::Scope t(timer, "Mass volume corr");
+    compute_cell_wise_volume_correction();
+    conserve_global_volume();
+  }
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
-  compute_second_neighbors_distance();
+  {
+    TimerOutput::Scope t(timer, "Second");
+    compute_second_neighbors_distance();
+  }
 
   // Compute signed distance from distance (all DoFs have updated value)
-  compute_signed_distance_from_distance();
+  {
+    TimerOutput::Scope t(timer, "Second-p2");
+    compute_signed_distance_from_distance();
+  }
 
   // Update ghost values to regain reading ability.
   update_ghost_values();
@@ -558,6 +585,36 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   track this change. */
   bool change = true;
 
+  // Extract the vertices to cell information to have the neighbours
+  // Vertices to cell mapping
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_cell;
+  LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+
+  // Create a set with the cells for which we wish to loop
+  std::set<typename DoFHandler<dim>::active_cell_iterator> corona_cell;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          const unsigned int cell_index = cell->global_active_cell_index();
+
+          // If the cell is intersected, the distance is already computed.
+          if (interface_reconstruction_vertices.find(cell_index) !=
+              interface_reconstruction_vertices.end())
+            {
+              auto active_neighbors =
+                LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell,
+                                                            cell);
+              corona_cell.insert(active_neighbors.begin(),
+                                 active_neighbors.end());
+            }
+        }
+    }
+
+
+
   /* The count corresponds to how many times we iterate. In fact, it
   corresponds to the number of cell layers (starting from the interface)
   that the approximation of the distance is known. */
@@ -568,7 +625,31 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
         pcout << "Solving signed distance of layer " << count << std::endl;
       change = false;
 
+      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      std::vector<double>                  cell_dof_values(dofs_per_cell);
       for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              cell->get_dof_values(distance_with_ghost,
+                                   cell_dof_values.begin(),
+                                   cell_dof_values.end());
+              // Loop over the cell's DoFs to check if a absolute distance is
+              // below the max distance
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  if (std::abs(cell_dof_values[i]) < (max_distance))
+                    {
+                      // If this is the case, insert the cell in the corona,
+                      // break the loop since anyway the cell is inside of the
+                      // corona.
+                      corona_cell.insert(cell);
+                      break;
+                    }
+                }
+            }
+        }
+      for (const auto &cell : corona_cell)
         {
           if (cell->is_locally_owned())
             {
@@ -856,7 +937,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           distance(dof_indices[i]) = approx_distance;
                         }
                     } // End of the loop on the opposite faces
-                }     // End of the loop on the DoFs
+                } // End of the loop on the DoFs
             }
         } // End of the loop on the cells
 
