@@ -35,23 +35,11 @@ hyper_shell_with_hyper_shell(const double        radius,
   const double r2_o = radius * 1.0;
 
   // inner domain triangulation
-  Triangulation<dim> circle_one;
-  GridGenerator::hyper_shell(circle_one,
-                             (dim == 2) ? Point<dim>(0, 0) :
-                                          Point<dim>(0, 0, 0),
-                             r1_i,
-                             r1_o,
-                             6,
-                             true);
+  Triangulation<2> circle_one;
+  GridGenerator::hyper_shell(circle_one, Point<2>(), r1_i, r1_o, 6, true);
   // outer domain triangulation
-  Triangulation<dim> circle_two;
-  GridGenerator::hyper_shell(circle_two,
-                             (dim == 2) ? Point<dim>(0, 0) :
-                                          Point<dim>(0, 0, 0),
-                             r2_i,
-                             r2_o,
-                             6,
-                             true);
+  Triangulation<2> circle_two;
+  GridGenerator::hyper_shell(circle_two, Point<2>(), r2_i, r2_o, 6, true);
 
   // shift boundary id of circle two
   for (const auto &face : circle_two.active_face_iterators())
@@ -59,12 +47,21 @@ hyper_shell_with_hyper_shell(const double        radius,
       face->set_boundary_id(face->boundary_id() + 2);
 
   // create unique triangulation
+  Triangulation<2> temp;
   GridGenerator::merge_triangulations(
-    circle_one, circle_two, tria, tolerance, true, true);
+    circle_one, circle_two, temp, tolerance, true, true);
+  temp.set_manifold(0, SphericalManifold<2>(Point<2>()));
+
+  if constexpr (dim == 3)
+    GridGenerator::extrude_triangulation(temp, 3, radius, tria, true);
+  if constexpr (dim == 2)
+    tria.copy_triangulation(temp);
+
   // store manifolds in merged triangulation
-  tria.set_manifold(0,
-                    SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) :
-                                                        Point<dim>(0, 0, 0)));
+  if (dim == 2)
+    tria.set_manifold(0, SphericalManifold<dim>(Point<dim>()));
+  else
+    tria.set_manifold(0, CylindricalManifold<dim>(2));
 }
 
 /**
@@ -78,7 +75,7 @@ hyper_cube_with_cylindrical_hole(const double        radius,
                                  const double        rotate,
                                  Triangulation<dim> &tria)
 {
-  Triangulation<dim> tria_0, tria_1;
+  Triangulation<2> tria_0, tria_1;
 
   // inner domain triangulation
   GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
@@ -97,11 +94,27 @@ hyper_cube_with_cylindrical_hole(const double        radius,
       }
 
   // create unique triangulation
-  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
+  Triangulation<2> temp;
+  GridGenerator::merge_triangulations(tria_0, tria_1, temp, 0, true, true);
+  temp.set_manifold(0, SphericalManifold<2>(Point<2>()));
+  temp.set_manifold(1, FlatManifold<2>());
+  temp.set_manifold(2, SphericalManifold<2>(Point<2>()));
+
+  if constexpr (dim == 3)
+    GridGenerator::extrude_triangulation(temp, 2, radius, tria, true);
+  if constexpr (dim == 2)
+    tria.copy_triangulation(temp);
+
   // store manifolds in merged triangulation
-  tria.set_manifold(0, SphericalManifold<dim>(Point<dim>()));
-  tria.set_manifold(1, tria_0.get_manifold(1));
-  tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));
+  if (dim == 2)
+    tria.set_manifold(0, SphericalManifold<dim>(Point<dim>()));
+  else
+    tria.set_manifold(0, CylindricalManifold<dim>(2));
+  tria.set_manifold(1, FlatManifold<dim>());
+  if (dim == 2)
+    tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));
+  else
+    tria.set_manifold(2, CylindricalManifold<dim>(2));
 }
 
 /**
@@ -138,7 +151,7 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 1e-9, true, false);
   // store manifolds in merged triangulaiton
   tria.set_manifold(0, SphericalManifold<dim>(Point<dim>()));
-  tria.set_manifold(1, tria_0.get_manifold(1));
+  tria.set_manifold(1, FlatManifold<dim>());
   tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));
 }
 
@@ -2368,3 +2381,62 @@ private:
 
   std::set<unsigned int> coupling_bids;
 };
+
+
+template <int dim>
+class MyMortarManagerCircle : public MortarManagerBase<dim>
+{
+public:
+  template <int dim2>
+  MyMortarManagerCircle(const std::vector<unsigned int> &n_subdivisions,
+                        const std::vector<double>       &radius,
+                        const Quadrature<dim2>          &quadrature,
+                        const double                     rotation_angle);
+
+protected:
+  Point<dim>
+  from_1D(const double rad) const override;
+
+  double
+  to_1D(const Point<dim> &point) const override;
+
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &point) const override;
+};
+
+
+template <int dim>
+template <int dim2>
+MyMortarManagerCircle<dim>::MyMortarManagerCircle(
+  const std::vector<unsigned int> &n_subdivisions,
+  const std::vector<double>       &radius,
+  const Quadrature<dim2>          &quadrature,
+  const double                     rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+{}
+
+template <int dim>
+Point<dim>
+MyMortarManagerCircle<dim>::from_1D(const double radiant) const
+{
+  return radius_to_point<dim>(this->radius[0], radiant);
+}
+
+template <int dim>
+double
+MyMortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
+{
+  return point_to_angle(point, Point<dim>());
+}
+
+template <int dim>
+Tensor<1, dim, double>
+MyMortarManagerCircle<dim>::get_normal(const Point<dim> &point_in) const
+{
+  Point<dim> point = point_in;
+
+  if (dim == 3)
+    point[2] = 0.0;
+
+  return point / point.norm();
+}
