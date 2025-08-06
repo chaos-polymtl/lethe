@@ -13,19 +13,19 @@ set element order = 1
 
 # Geometry <hyperball|hypercube|hypercube with hole|hyperrectangle>
 
-set geometry = hypercube
+set geometry = hyperball
 
 # Global refinement 1st cycle
 
-set initial refinement = 3
+set initial refinement = 4
 
 # Add exponential nonlinearity <true|false>
 
-set nonlinearity = false
+set nonlinearity = true
 
 # Number of cycles <1 up to 9-dim >
 
-set number of cycles = 4
+set number of cycles = 2
 
 # Output vtu files <true|false>
 
@@ -41,7 +41,7 @@ set output path = ./
 
 # Peclet number
 
-set peclet number = 1
+set peclet number = 10
 
 # GMRES Preconditioner <AMG|GMG|ILU>
 

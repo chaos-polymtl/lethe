@@ -991,9 +991,12 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::run()
         {
           pcout << "Output results..." << std::endl;
           output_results(cycle);
+          pcout << std::endl;
         }
 
+      pcout << "Refine mesh using hp refinement..." << std::endl;
       hp_refine();
+      pcout << std::endl; 
 
       computing_timer.print_summary();
       computing_timer.reset();
