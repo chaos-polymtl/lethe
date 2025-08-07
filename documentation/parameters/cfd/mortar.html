@@ -466,6 +466,7 @@
   set rotor boundary id   = 4
   set stator boundary id  = 2
   set center of rotation  = 0, 0
+  set rotation axis       = 0, 0, 1
   subsection rotor rotation angle
     set Function expression = 0
   end
@@ -495,6 +496,7 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> is the reference point for the prescribed rotation at the rotor domain.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rotation</span> <span class="pre">axis</span></code> is the unit vector that defines the rotor axis of rotation.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">rotation</span> <span class="pre">angle</span></code> subsection allows the imposition of a constant or time-dependent rotation angle for the rotor.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">angular</span> <span class="pre">velocity</span></code> subsection allows the imposition of a constant or time-dependent angular velocity for the rotor.</p></li>
 </ul>

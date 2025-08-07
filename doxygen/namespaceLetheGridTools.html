@@ -149,9 +149,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6" id="r_a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">find_point_line_distance</a> (const Point&lt; dim &gt; &amp;line_origin, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a90583db59423ee4e85fff79df1cb0bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83b35afef5de27197e1efee785aae40f" id="r_a83b35afef5de27197e1efee785aae40f"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a83b35afef5de27197e1efee785aae40f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a83b35afef5de27197e1efee785aae40f">rotate_mapping</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, MappingQCache&lt; dim &gt; &amp;mapping_cache, const Mapping&lt; dim &gt; &amp;mapping, const double radius, const double rotation_angle)</td></tr>
-<tr class="separator:a83b35afef5de27197e1efee785aae40f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a4c084733495bbef55826c11d3efb50" id="r_a8a4c084733495bbef55826c11d3efb50"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a8a4c084733495bbef55826c11d3efb50"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a8a4c084733495bbef55826c11d3efb50">rotate_mapping</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, MappingQCache&lt; dim &gt; &amp;mapping_cache, const Mapping&lt; dim &gt; &amp;mapping, const double &amp;radius, const double &amp;rotation_angle, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;(), const Tensor&lt; 1, dim &gt; &amp;rotation_axis=Tensor&lt; 1, dim &gt;())</td></tr>
+<tr class="separator:a8a4c084733495bbef55826c11d3efb50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ac39192d5fabd9d06ba64a2a7150c5693" name="ac39192d5fabd9d06ba64a2a7150c5693"></a>
@@ -929,8 +929,8 @@ template&lt;int spacedim, int structdim&gt; </div>
 
 </div>
 </div>
-<a id="a83b35afef5de27197e1efee785aae40f" name="a83b35afef5de27197e1efee785aae40f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83b35afef5de27197e1efee785aae40f">&#9670;&#160;</a></span>rotate_mapping()</h2>
+<a id="a8a4c084733495bbef55826c11d3efb50" name="a8a4c084733495bbef55826c11d3efb50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a4c084733495bbef55826c11d3efb50">&#9670;&#160;</a></span>rotate_mapping()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -958,14 +958,26 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double&#160;</td>
+          <td class="paramtype">const double &amp;&#160;</td>
           <td class="paramname"><em>radius</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>rotation_angle</em>&#160;</td>
+          <td class="paramtype">const double &amp;&#160;</td>
+          <td class="paramname"><em>rotation_angle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>center_of_rotation</em> = <code>Point&lt;dim&gt;()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rotation_axis</em> = <code>Tensor&lt;1,&#160;dim&gt;()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -982,6 +994,8 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Current mapping </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">radius</td><td>Radius or the rotor domain which is going to be rotated </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">rotation_angle</td><td>Rotation angle of the rotor domain </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">center_of_rotation</td><td>Center of rotation of the rotor domain. Default is the origin </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rotation_axis</td><td>Rotation axis of the rotor domain for 3D case </td></tr>
   </table>
   </dd>
 </dl>

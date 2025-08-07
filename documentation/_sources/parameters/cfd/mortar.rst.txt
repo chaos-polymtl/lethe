@@ -17,6 +17,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     set rotor boundary id   = 4
     set stator boundary id  = 2
     set center of rotation  = 0, 0
+    set rotation axis       = 0, 0, 1
     subsection rotor rotation angle
       set Function expression = 0
     end
@@ -40,6 +41,8 @@ The mortar section is used when simulating rotor-stator geometries, in which the
   To circumvent this, the rotor boundary IDs are shifted. The ``rotor boundary id`` entry refers to the shifted ID number, assuming that the enumeration starts sequentially from the last entry of the stator boundary IDs.
 
 * The ``center of rotation`` is the reference point for the prescribed rotation at the rotor domain.
+
+* The ``rotation axis`` is the unit vector that defines the rotor axis of rotation.
 
 * The ``rotor rotation angle`` subsection allows the imposition of a constant or time-dependent rotation angle for the rotor.
 
