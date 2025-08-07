@@ -746,7 +746,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
 
 
           auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation(basetria, nullptr);
+            create_description_from_triangulation(basetria, mpi_communicator);
 
           triangulation->create_triangulation(construction_data);
         }
