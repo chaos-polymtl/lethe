@@ -401,16 +401,19 @@ namespace LetheGridTools
    * @param[in] mapping Current mapping
    * @param[in] radius Radius or the rotor domain which is going to be rotated
    * @param[in] rotation_angle Rotation angle of the rotor domain
+   * @param[in] center_of_rotation Center of rotation of the rotor domain.
+   * Default is the origin
+   * @param[in] rotation_axis Rotation axis of the rotor domain for 3D case
    */
   template <int dim>
   void
   rotate_mapping(const DoFHandler<dim> &dof_handler,
                  MappingQCache<dim>    &mapping_cache,
                  const Mapping<dim>    &mapping,
-                 const double           radius,
-                 const double           rotation_angle,
-                 const Point<dim>       center_of_rotation = Point<dim>(),
-                 const Tensor<1, dim>   rotation_axis      = Tensor<1, dim>());
+                 const double          &radius,
+                 const double          &rotation_angle,
+                 const Point<dim>      &center_of_rotation = Point<dim>(),
+                 const Tensor<1, dim>  &rotation_axis      = Tensor<1, dim>());
 
   /**
    * @brief
