@@ -1,0 +1,12 @@
+
+DEAL::MPI=0
+DEAL::Number of active cells : 928
+DEAL::Number of vertices : 1264
+
+DEAL::MPI=1
+DEAL::Number of active cells : 1264
+DEAL::Number of vertices : 1770
+
+DEAL::MPI=2
+DEAL::Number of active cells : 928
+DEAL::Number of vertices : 1285

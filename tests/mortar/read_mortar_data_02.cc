@@ -43,8 +43,7 @@ test()
   unsigned int   n_mpi_processes(Utilities::MPI::n_mpi_processes(comm));
   unsigned int   this_mpi_process(Utilities::MPI::this_mpi_process(comm));
 
-  const unsigned int dim            = 2;
-  const unsigned int mapping_degree = 3;
+  const unsigned int dim = 2;
 
   Parameters::Mesh                       mesh_parameters;
   Parameters::Mortar<dim>                mortar_parameters;
@@ -103,40 +102,6 @@ test()
         }
       MPI_Barrier(comm);
     }
-
-  // Generate vtu file
-  DataOut<dim>       data_out;
-  MappingQ<dim, dim> mapping(mapping_degree);
-
-  DataOutBase::VtkFlags flags;
-  flags.write_higher_order_cells = true;
-  data_out.set_flags(flags);
-  data_out.attach_triangulation(triangulation);
-
-  Vector<double> ranks(triangulation.n_active_cells());
-  ranks = Utilities::MPI::this_mpi_process(comm);
-  data_out.add_data_vector(ranks, "ranks");
-  data_out.build_patches(mapping,
-                         mapping_degree + 1,
-                         DataOut<dim>::CurvedCellRegion::curved_inner_cells);
-  data_out.write_vtu_in_parallel("out.vtu", comm);
-
-  // Plot boundary IDs
-  DataPostprocessors::BoundaryIds<dim> boundary_ids;
-  DataOutFaces<dim>                    data_out_faces;
-  FE_Q<dim>                            dummy_fe(1);
-
-  DoFHandler<dim> dummy_dof_handler(triangulation);
-  dummy_dof_handler.distribute_dofs(dummy_fe);
-
-  Vector<double> dummy_solution(dummy_dof_handler.n_dofs());
-
-  data_out_faces.attach_dof_handler(dummy_dof_handler);
-  data_out_faces.add_data_vector(dummy_solution, boundary_ids);
-  data_out_faces.build_patches();
-
-  std::ofstream out("boundary_ids.vtu");
-  data_out_faces.write_vtu(out);
 }
 
 int

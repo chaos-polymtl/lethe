@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Refactors the way the initial conditions smoothing for VOF can be applied. On top of the diffusive smoothing, a new approach can be used to set up the initial condition using geometric redistanciation. This is great when using the geometric redistanciation strategy since the interface remains defined coherently throughout the simulation. [#1602](https://github.com/chaos-polymtl/lethe/pull/1602)
 
+### [Master] - 2025-08-05
+
+### Fixed
+
+- MINOR The rotate_mapping() function was only implemented for 2D rotation; this PR adds the option for 3D rotation. [#1605](https://github.com/chaos-polymtl/lethe/pull/1605)
+
 ### [Master] - 2025-08-01
 
 ### Added
