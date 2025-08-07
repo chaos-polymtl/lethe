@@ -2007,6 +2007,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
+    *this->get_mapping(),
     this->dof_handler,
     this->simulation_parameters.mortar_parameters);
 
@@ -2073,9 +2074,10 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
     this->dof_handler,
     *this->mapping_cache,
     *this->mapping,
-    compute_n_subdivisions_and_radius(
-      *this->triangulation, this->simulation_parameters.mortar_parameters)
-      .second,
+    std::get<1>(compute_n_subdivisions_and_radius(
+      *this->triangulation,
+      *this->mapping,
+      this->simulation_parameters.mortar_parameters)),
     rotation_angle);
 }
 
