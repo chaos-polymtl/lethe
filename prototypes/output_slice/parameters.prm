@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+# The problem dimension <2|3>
+
+set dim = 3
+
+# Order of FE element <1|2|3>
+
+set element order = 1
+
+# Geometry <hyperball|hypercube|hyperrectangle>
+
+set geometry = hyperrectangle
+
+# Global refinement 1st cycle
+
+set initial refinement = 3
+
+# Number of cycles <1 up to 9-dim >
+
+set number of cycles = 1
+
+# Output vtu files <true|false>
+
+set output = true
+
+# Output slice vtu files <true|false>
+
+set output slice = true
+
+# Name for vtu files
+
+set output name = solution
+
+# Path for vtu output files
+
+set output path = ./output/
+
+# Preconditioner <AMG|GMG>
+
+set preconditioner = AMG
+
+# Repetitions in z direction for the hyper rectangle
+
+set repetitions = 2
+
+# Source term <zero|mms>
+
+set source term = zero
