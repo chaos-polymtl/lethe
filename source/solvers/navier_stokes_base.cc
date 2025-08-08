@@ -1969,40 +1969,12 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::update_mortar_configuration()
+NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
 {
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
-  bool refinement_step;
-  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
-    refinement_step = this->simulation_control->get_step_number() %
-                        this->simulation_parameters.mesh_adaptation.frequency ==
-                      0;
-  else
-    refinement_step = this->simulation_control->get_step_number() == 0;
-
-  // We need to update the mortar operator/evaluator, as well as the sparsity
-  // pattern, at every iteration; this is done by setup_dofs(). Since
-  // setup_dofs() is already called within refine_mesh(), here we make sure
-  // that, when there is no mesh refinement, setup_dofs() is still called if
-  // mortar is enabled
-  if (this->simulation_control->is_at_start() || !refinement_step ||
-      this->simulation_parameters.mesh_adaptation.type ==
-        Parameters::MeshAdaptation::Type::none)
-    setup_dofs();
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar()
-{
-  if (!this->simulation_parameters.mortar_parameters.enable)
-    return;
-
-  rotate_rotor_mapping(false);
-
-  TimerOutput::Scope t(this->computing_timer, "Reinit mortar");
+  TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
@@ -2039,7 +2011,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
-  TimerOutput::Scope t(this->computing_timer, "Rotate mortar");
+  TimerOutput::Scope t(this->computing_timer, "Rotate rotor mapping");
 
   // Get updated rotation angle (radians)
   simulation_parameters.mortar_parameters.rotor_rotation_angle->set_time(
