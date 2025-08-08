@@ -349,10 +349,10 @@ private:
   compute_l2_error() const;
 
   void
-  output_results(const unsigned int cycle) const;
+  output_results(const unsigned int cycle);
 
   void
-  output_slice_results(const unsigned int cycle) const;
+  output_slice_results(const unsigned int cycle);
 
   using VectorType = TrilinosWrappers::MPI::Vector;
   using MatrixType = TrilinosWrappers::SparseMatrix;
@@ -360,6 +360,7 @@ private:
   parallel::distributed::Triangulation<dim>          triangulation;
   parallel::distributed::Triangulation<dim - 1, dim> patch_triangulation;
   const MappingQ<dim>                                mapping;
+  const MappingQ<dim - 1, dim>                       patch_mapping;
 
   FE_Q<dim>                 fe;
   DoFHandler<dim>           dof_handler;
@@ -398,6 +399,7 @@ MatrixBasedPoissonProblem<dim, fe_degree>::MatrixBasedPoissonProblem(
                       dim>::construct_multigrid_hierarchy)
   , patch_triangulation(MPI_COMM_WORLD)
   , mapping(fe_degree)
+  , patch_mapping(fe_degree)
   , fe(fe_degree)
   , dof_handler(triangulation)
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -1219,10 +1221,15 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_l2_error() const
 template <int dim, int fe_degree>
 void
 MatrixBasedPoissonProblem<dim, fe_degree>::output_results(
-  const unsigned int cycle) const
+  const unsigned int cycle)
 {
   if (triangulation.n_global_active_cells() > 1e6)
     return;
+
+  TimerOutput::Scope t(computing_timer, "output complete");
+
+  Timer output_timer;
+  output_timer.start();
 
   solution.update_ghost_values();
 
@@ -1253,30 +1260,35 @@ MatrixBasedPoissonProblem<dim, fe_degree>::output_results(
 template <int dim, int fe_degree>
 void
 MatrixBasedPoissonProblem<dim, fe_degree>::output_slice_results(
-  const unsigned int cycle) const
+  const unsigned int cycle)
 {
   if (triangulation.n_global_active_cells() > 1e6)
     return;
 
+  TimerOutput::Scope t(computing_timer, "output slice");
+
+  Timer output_timer;
+  output_timer.start();
+
   solution.update_ghost_values();
-  MappingQ<dim - 1, dim> patch_mapping(fe.degree);
 
   DataOutResample<dim, dim - 1, dim> data_out(patch_triangulation,
                                               patch_mapping);
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(dof_handler, solution, "solution");
 
-  // Vector<float> subdomain(triangulation.n_active_cells());
-  // for (unsigned int i = 0; i < subdomain.size(); ++i)
-  //   {
-  //     subdomain(i) = triangulation.locally_owned_subdomain();
-  //   }
-  // data_out.add_data_vector(subdomain, "subdomain");
+  Vector<float> subdomain(triangulation.n_active_cells());
+  for (unsigned int i = 0; i < subdomain.size(); ++i)
+    {
+      subdomain(i) = triangulation.locally_owned_subdomain();
+    }
+  data_out.add_data_vector(subdomain, "subdomain");
 
   pcout << "building patches for slice output" << std::endl;
 
-  data_out.build_patches(
-    mapping); //, fe.degree, DataOut<dim-1, dim>::curved_inner_cells);
+  data_out.build_patches(mapping,
+                         fe.degree,
+                         DataOut<dim - 1, dim>::curved_inner_cells);
   pcout << "slice output" << std::endl;
   DataOutBase::VtkFlags flags;
   flags.compression_level = DataOutBase::CompressionLevel::best_speed;
