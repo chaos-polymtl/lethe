@@ -2,6 +2,13 @@
 # Change Log
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
+
+### [Master] - 2025-08-07
+
+### Fixed
+
+- MINOR Although Lethe can be configured without METIS, there would be nothing to indicate to the user that a parallel simulation without METIS would not work if a simplex mesh was used. This PR adds this assertion and also fixes some issues with some nullptr that were lying around there and there and could prevent compilation. [#1610](https://github.com/chaos-polymtl/lethe/pull/1610)
+
 ### [Master] - 2025-07-31
 
 ### Added

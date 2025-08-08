@@ -11,11 +11,9 @@
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
-#include <deal.II/grid/tria_accessor.h>
 
 // Std
 #include <fstream>
-#include <iostream>
 
 
 template <int dim, int spacedim>
@@ -44,8 +42,22 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
               [](dealii::Triangulation<dim, spacedim> &basetria,
                  const MPI_Comm                        comm,
                  const unsigned int /*group_size*/) {
+#if defined(DEAL_II_WITH_METIS)
                 GridTools::partition_triangulation(
-                  Utilities::MPI::n_mpi_processes(comm), basetria);
+                  Utilities::MPI::n_mpi_processes(comm),
+                  basetria,
+                  SparsityTools::Partitioner::metis);
+#elif defined(DEAL_II_WITH_ZOLTAN)
+                GridTools::partition_triangulation(
+                  Utilities::MPI::n_mpi_processes(comm),
+                  basetria,
+                  SparsityTools::Partitioner::zoltan);
+#else
+                AssertThrow(
+                  false,
+                  ExcMessage(
+                    "Parallel simulation with simplex meshes require that deal.II be compiled with either Metis or Zoltan"));
+#endif
               },
               comm,
               Utilities::MPI::n_mpi_processes(comm) /* group size */,
