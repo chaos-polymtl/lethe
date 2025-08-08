@@ -885,7 +885,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span> </div>
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span> </div>
 <div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>          <span class="keyword">auto</span> construction_data = TriangulationDescription::Utilities::</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>            create_description_from_triangulation(basetria, <span class="keyword">nullptr</span>);</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>            create_description_from_triangulation(basetria, mpi_communicator);</div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span> </div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>          triangulation-&gt;create_triangulation(construction_data);</div>
 <div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>        }</div>
@@ -935,7 +935,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>          <span class="keyword">auto</span> construction_data = TriangulationDescription::Utilities::</div>
 <div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>            create_description_from_triangulation(</div>
 <div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>              temporary_tri_triangulation,</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>              <span class="keyword">nullptr</span>,</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>              mpi_communicator,</div>
 <div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>              TriangulationDescription::Settings::</div>
 <div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>                construct_multigrid_hierarchy);</div>
 <div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>          box_to_refine.create_triangulation(construction_data);</div>
