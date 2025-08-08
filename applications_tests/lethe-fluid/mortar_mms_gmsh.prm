@@ -32,7 +32,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ../../square-with-circle.msh
+  set file name          = ../../square-with-hole.msh
   set initial refinement = 2
 end
 
@@ -59,7 +59,12 @@ end
 #---------------------------------------------------
 
 subsection mortar
-  set enable             = true
+  set enable = true
+  subsection mesh
+    set type               = gmsh
+    set file name          = ../../circle.msh
+    set initial refinement = 2
+  end
   set rotor boundary id  = 2
   set stator boundary id = 1
   set center of rotation = 1, 1

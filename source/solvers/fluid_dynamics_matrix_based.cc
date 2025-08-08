@@ -78,14 +78,17 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   FEValuesExtractors::Vector velocities(0);
 
+  // If enabled, rotate rotor mapping
+  this->rotate_rotor_mapping(false);
+
   // Non Zero constraints
   this->define_non_zero_constraints();
 
   // Zero constraints
   this->define_zero_constraints();
 
-  // If enabled, create mortar coupling
-  this->reinit_mortar();
+  // If enabled, create mortar operators
+  this->reinit_mortar_operators();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -162,6 +165,76 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                    &this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Update mortar configuration");
+
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+
+  // We need to update the mortar operator/evaluator, as well as the sparsity
+  // pattern, at every iteration. Since this is already done within
+  // setup_dofs(), which is called in refine_mesh(), here we make sure that,
+  // when there is no mesh refinement, the mortar information is still updated
+  if (this->simulation_control->is_at_start() || !refinement_step ||
+      this->simulation_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none)
+    {
+      // Clear the preconditioner before the matrix they are associated with is
+      // cleared
+      amg_preconditioner.reset();
+      ilu_preconditioner.reset();
+      current_preconditioner_fill_level = initial_preconditioner_fill_level;
+
+      // Now reset system matrix
+      system_matrix.clear();
+
+      // Rotate mapping
+      this->rotate_rotor_mapping(false);
+
+      // Non Zero constraints
+      this->define_non_zero_constraints();
+
+      // Zero constraints
+      this->define_zero_constraints();
+
+      // Create mortar manager, operator, and evaluator
+      this->reinit_mortar_operators();
+
+      // Create dynamic sparsity pattern
+      DynamicSparsityPattern dsp(this->locally_relevant_dofs);
+      DoFTools::make_sparsity_pattern(this->dof_handler,
+                                      dsp,
+                                      this->get_nonzero_constraints(),
+                                      false);
+
+      // Add mortar sparsity pattern entries
+      this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+      sparsity_pattern.copy_from(dsp);
+
+      SparsityTools::distribute_sparsity_pattern(
+        dsp,
+        this->dof_handler.locally_owned_dofs(),
+        this->mpi_communicator,
+        this->locally_relevant_dofs);
+
+      system_matrix.reinit(this->locally_owned_dofs,
+                           this->locally_owned_dofs,
+                           dsp,
+                           this->mpi_communicator);
+    }
 }
 
 template <int dim>

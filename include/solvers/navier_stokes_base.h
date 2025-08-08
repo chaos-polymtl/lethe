@@ -446,14 +446,11 @@ protected:
   void
   define_zero_constraints();
 
-  void
-  update_mortar_configuration();
-
   /**
-   * @brief Initialize mortar coupling operator
+   * @brief Initialize mortar coupling manager, operator, and evaluator
    */
   void
-  reinit_mortar();
+  reinit_mortar_operators();
 
   /**
    * @brief Returns the mapping shared pointer. A MappingQCache is
