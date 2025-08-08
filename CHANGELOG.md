@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-08-08
 
+### Fixed 
+
+- MINOR The mortar update was not accounting for the updated constraints when rotating the mesh, and the initial condition was being erased when updating the mortar information. This has been fixed. This PR also changes the way of reading msh files, so that two separate rotor/stator meshes are taken as input (the same way it was being done for dealii grids). [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
+
+### [Master] - 2025-08-08
+
 ### Fixed
 
 - MINOR Account for a reference rotation in the mortar coupling manager. This is nedded for cases where the initial mesh contain cells with edges not aligned with the x axis. [#1611](https://github.com/chaos-polymtl/lethe/pull/1611)
