@@ -1,0 +1,2 @@
+add_executable(output_slice_parallel output_slice_parallel.cc)
+deal_ii_setup_target(output_slice_parallel)
