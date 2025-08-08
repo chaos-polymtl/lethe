@@ -233,7 +233,7 @@ public:
   /**
    * @brief Establish if the method is a sdirk method
    *
-   * @return true if the method is sdirk22 or sdirk33, false otherwise.
+   * @return true if the method is sdirk, false otherwise.
    */
   bool
   is_sdirk()
