@@ -59,7 +59,7 @@ end
 #---------------------------------------------------
 
 subsection mortar
-  set enable             = true
+  set enable = true
   subsection mesh
     set type               = gmsh
     set file name          = ../../circle.msh
