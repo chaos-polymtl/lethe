@@ -320,7 +320,7 @@ public:
  * stages,
  * - \( h \) is the time step size,
  * - \( a_{ij} \), \( a_{ii} \) are coefficients from the SDIRK Butcher tableau.
- * These coefficients are given data by the method and constant for the all
+ * These coefficients are given data by the method and constant for the entire
  * simulation.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions

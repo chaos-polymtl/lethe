@@ -987,7 +987,7 @@ protected:
   struct SDIRKVectors
   {
     /// Vector to hold the locally non-relevant part of the solution (for
-    /// calculus purposes)
+    /// calculation purposes)
     VectorType locally_owned_for_calculus;
 
     /// Stores the previous k_j stage vectors (one per stage j < i)

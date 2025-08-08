@@ -773,23 +773,23 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
                               simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(false);
 
-      if (this->simulation_parameters.initial_condition->type ==
-          Parameters::FluidDynamicsInitialConditionType::
-            average_velocity_profile)
-        {
-          // We get the solution via the average solution
-          this->local_evaluation_point =
-            this->average_velocities->get_average_velocities();
-          present_solution = this->local_evaluation_point;
-        }
-      else
-        {
-          // We get the solution via an initial condition
-          this->simulation_parameters.initial_condition->uvwp.set_time(
-            this->simulation_control->get_current_time());
-          set_initial_condition_fd(
-            this->simulation_parameters.initial_condition->type);
-        }
+          if (this->simulation_parameters.initial_condition->type ==
+              Parameters::FluidDynamicsInitialConditionType::
+                average_velocity_profile)
+            {
+              // We get the solution via the average solution
+              this->local_evaluation_point =
+                this->average_velocities->get_average_velocities();
+              present_solution = this->local_evaluation_point;
+            }
+          else
+            {
+              // We get the solution via an initial condition
+              this->simulation_parameters.initial_condition->uvwp.set_time(
+                this->simulation_control->get_current_time());
+              set_initial_condition_fd(
+                this->simulation_parameters.initial_condition->type);
+            }
 
           // Solve and percolate the auxiliary physics that should be treated
           // AFTER the fluid dynamics
