@@ -3,6 +3,8 @@
 
 #include <dem/log_collision_data.h>
 
+#include <deal.II/base/mpi.h>
+
 using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
