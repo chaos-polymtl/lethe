@@ -64,6 +64,8 @@ log_collision_data(
                 {
                   collision_log<dim> start_log;
                   start_log.particle_id = particle_id;
+                  start_log.dp   = particle_properties[PropertiesIndex::dp];
+                  start_log.mass = particle_properties[PropertiesIndex::mass];
                   start_log.velocity[0] =
                     particle_properties[PropertiesIndex::v_x];
                   start_log.velocity[1] =
@@ -102,6 +104,8 @@ log_collision_data(
                 {
                   collision_log<dim> end_log;
                   end_log.particle_id = particle_id;
+                  end_log.dp   = particle_properties[PropertiesIndex::dp];
+                  end_log.mass = particle_properties[PropertiesIndex::mass];
                   end_log.velocity[0] =
                     particle_properties[PropertiesIndex::v_x];
                   end_log.velocity[1] =
@@ -184,14 +188,14 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
               if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
                 {
                   myfile
-                    << "particle_id boundary_id start_time end_time start_particle_velocity_x start_particle_velocity_y start_particle_velocity_z start_particle_angular_velocity_x start_particle_angular_velocity_y start_particle_angular_velocity_z end_particle_velocity_x end_particle_velocity_y end_particle_velocity_z end_particle_angular_velocity_x end_particle_angular_velocity_y end_particle_angular_velocity_z"
+                    << "particle_id diameter mass boundary_id start_time end_time start_particle_velocity_x start_particle_velocity_y start_particle_velocity_z start_particle_angular_velocity_x start_particle_angular_velocity_y start_particle_angular_velocity_z end_particle_velocity_x end_particle_velocity_y end_particle_velocity_z end_particle_angular_velocity_x end_particle_angular_velocity_y end_particle_angular_velocity_z"
                     << std::endl;
                   sep = " ";
                 }
               else // .csv is default
                 {
                   myfile
-                    << "particle_id,boundary_id,start_time,end_time,start_particle_velocity_x,start_particle_velocity_y,start_particle_velocity_z,start_particle_angular_velocity_x,start_particle_angular_velocity_y,start_particle_angular_velocity_z,end_particle_velocity_x,end_particle_velocity_y,end_particle_velocity_z,end_particle_angular_velocity_x,end_particle_angular_velocity_y,end_particle_angular_velocity_z"
+                    << "particle_id,diameter,mass,boundary_id,start_time,end_time,start_particle_velocity_x,start_particle_velocity_y,start_particle_velocity_z,start_particle_angular_velocity_x,start_particle_angular_velocity_y,start_particle_angular_velocity_z,end_particle_velocity_x,end_particle_velocity_y,end_particle_velocity_z,end_particle_angular_velocity_x,end_particle_angular_velocity_y,end_particle_angular_velocity_z"
                     << std::endl;
                   sep = ",";
                 }
@@ -214,15 +218,15 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
               const auto &end   = event.end_log;
 
               // Write the collision data to the file
-              myfile << start.particle_id << sep
-                     << static_cast<int>(start.boundary_id) << sep << start.time
-                     << sep << end.time << sep << start.velocity[0] << sep
-                     << start.velocity[1] << sep << start.velocity[2] << sep
-                     << start.omega[0] << sep << start.omega[1] << sep
-                     << start.omega[2] << sep << end.velocity[0] << sep
-                     << end.velocity[1] << sep << end.velocity[2] << sep
-                     << end.omega[0] << sep << end.omega[1] << sep
-                     << end.omega[2] << std::endl;
+              myfile << start.particle_id << sep << start.dp << sep
+                     << start.mass << sep << static_cast<int>(start.boundary_id)
+                     << sep << start.time << sep << end.time << sep
+                     << start.velocity[0] << sep << start.velocity[1] << sep
+                     << start.velocity[2] << sep << start.omega[0] << sep
+                     << start.omega[1] << sep << start.omega[2] << sep
+                     << end.velocity[0] << sep << end.velocity[1] << sep
+                     << end.velocity[2] << sep << end.omega[0] << sep
+                     << end.omega[1] << sep << end.omega[2] << std::endl;
             }
           myfile.close();
         }

@@ -21,6 +21,8 @@ template <int dim>
 struct collision_log
 {
   unsigned int       particle_id;
+  double             dp;
+  double             mass;
   Tensor<1, dim>     velocity;
   Tensor<1, dim>     omega;
   double             time;

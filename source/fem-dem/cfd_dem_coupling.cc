@@ -1433,9 +1433,10 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
                                    *parallel_triangulation,
                                    sparse_contacts_object);
     }
-  
-  auto dem_current_time = (this->simulation_control->get_current_time()) + (dem_time_step * counter);
-  
+
+  auto dem_current_time =
+    (this->simulation_control->get_current_time()) + (dem_time_step * counter);
+
   // Log the contact statistics if the parameter is enabled
   if (dem_parameters.post_processing.particle_wall_collision_statistics)
     {
