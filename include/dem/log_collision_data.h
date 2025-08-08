@@ -178,8 +178,7 @@ log_collision_data(
                              &particle_wall_pairs_in_contact,
   const double                current_time,
   OngoingCollisionLog<dim>   &ongoing_collision_log,
-  CompletedCollisionLog<dim> &collision_event_log,
-  const ConditionalOStream   &pcout);
+  CompletedCollisionLog<dim> &collision_event_log);
 
 /**
  * @brief Writes the collision statistics to a file.

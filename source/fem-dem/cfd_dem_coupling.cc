@@ -1441,8 +1441,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
         contact_manager.get_particle_wall_in_contact(),
         this->simulation_control->get_current_time(),
         ongoing_collision_log,
-        collision_event_log,
-        this->pcout);
+        collision_event_log);
     }
 
   dem_action_manager->reset_triggers();
