@@ -1804,13 +1804,15 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          if (cell->center().norm() > radius)
+          if ((cell->center() - center_of_rotation).norm() > radius)
             return point;
 
-          return static_cast<Point<dim>>(
+          const auto shift_point = point - center_of_rotation;
+          const auto rotate_point =
             Physics::Transformations::Rotations::rotation_matrix_2d(
               rotation_angle) *
-            point);
+            shift_point;
+          return static_cast<Point<dim>>(rotate_point + center_of_rotation);
         },
         false);
     }
