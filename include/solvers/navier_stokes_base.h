@@ -362,6 +362,9 @@ protected:
   /**
    * @brief multi_stage_preresolution
    * It updates the sum_over_previous_stages variable to use it in the solver.
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK methods for now (BDF methods are single stage)
    */
   virtual void
   multi_stage_preresolution(
@@ -372,6 +375,10 @@ protected:
    * @brief multi_stage_postresolution
    * Calculate k_i from u*_i : k_i = (u*_i - u_n)/time_step*a_ii - sum(a_ij *
    * k_j) Update the sum(b_i * k_i)
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK methods for now (BDF methods are single stage)
+   * @param time_step The current time step to build the solution at the next time step
    */
   virtual void
   multi_stage_postresolution(
@@ -382,6 +389,8 @@ protected:
   /**
    * @brief update_multi_stage_solution
    * u_{n+1} = u_n + time_step * sum(b_i * k_i)
+   *
+   * @param time_step The current time step to build the solution at the next time step
    */
   virtual void
   update_multi_stage_solution(double time_step);
