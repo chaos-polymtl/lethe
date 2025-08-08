@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-08
+
+### Fixed
+
+- MINOR Account for a reference rotation in the mortar coupling manager. This is nedded for cases where the initial mesh contain cells with edges not aligned with the x axis. [#1611](https://github.com/chaos-polymtl/lethe/pull/1611)
+
 ### [Master] - 2025-08-07
 
 ### Fixed

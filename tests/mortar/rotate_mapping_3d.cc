@@ -98,8 +98,10 @@ test()
   dof_handler.distribute_dofs(fe);
 
   // Number of subdivisions and rotor radius
-  const auto [n_subdivisions, radius] =
-    compute_n_subdivisions_and_radius(triangulation, mortar_parameters);
+  const auto [n_subdivisions, radius, _] =
+    compute_n_subdivisions_and_radius(triangulation,
+                                      mapping,
+                                      mortar_parameters);
 
   // Rotate mapping
   LetheGridTools::rotate_mapping(dof_handler,

@@ -31,8 +31,7 @@ public:
   MortarManagerBase(unsigned int            n_subdivisions,
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
-                    const double            rotation_angle,
-                    const Point<dim>       &center_of_rotation = Point<dim>());
+                    const double            rotation_angle);
 
   /**
    * @brief Verify if cells of the inner and outer domains are aligned
@@ -156,8 +155,6 @@ protected:
   const unsigned int n_quadrature_points;
   /// Rotation angle for the inner domain
   const double rotation_angle;
-  /// Center of rotation
-  const Point<dim> center_of_rotation;
 };
 
 /**
@@ -171,9 +168,10 @@ protected:
  * @return radius Radius at the interface between inner and outer domains
  */
 template <int dim>
-std::pair<unsigned int, double>
+std::tuple<unsigned int, double, double>
 compute_n_subdivisions_and_radius(
   const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
   const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
@@ -200,11 +198,13 @@ public:
                       double                  radius,
                       const Quadrature<dim2> &quadrature,
                       const double            rotation_angle,
-                      const Point<dim> &center_of_rotation = Point<dim>());
+                      const Point<dim>       &center_of_rotation = Point<dim>(),
+                      const double            pre_rotation_angle = 0.0);
 
   template <int dim2>
   MortarManagerCircle(const Quadrature<dim2>        &quadrature,
-                      const DoFHandler<dim2>        &dof_handler,
+                      const Mapping<dim>            &mapping,
+                      const DoFHandler<dim>         &dof_handler,
                       const Parameters::Mortar<dim> &mortar_parameters);
 
 protected:
@@ -216,6 +216,13 @@ protected:
 
   Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const override;
+
+  /// Initial rotation angle used for computing mortar locations, accounting for
+  /// cases here the element edges are not aligned with the x axis
+  const double pre_rotation_angle;
+
+  /// Center of rotation
+  const Point<dim> center_of_rotation;
 };
 
 
@@ -224,14 +231,12 @@ template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
                                           double       radius,
                                           const Quadrature<dim2> &quadrature_in,
-                                          const double      rotation_angle,
-                                          const Point<dim> &center_of_rotation)
+                                          const double rotation_angle)
   : n_subdivisions(n_subdivisions)
   , radius(radius)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
-  , center_of_rotation(center_of_rotation)
 {}
 
 
@@ -242,12 +247,11 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   double                  radius,
   const Quadrature<dim2> &quadrature,
   const double            rotation_angle,
-  const Point<dim>       &center_of_rotation)
-  : MortarManagerBase<dim>(n_subdivisions,
-                           radius,
-                           quadrature,
-                           rotation_angle,
-                           center_of_rotation)
+  const Point<dim>       &center_of_rotation,
+  const double            pre_rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+  , pre_rotation_angle(pre_rotation_angle)
+  , center_of_rotation(center_of_rotation)
 {}
 
 
@@ -255,25 +259,26 @@ template <int dim>
 template <int dim2>
 MortarManagerCircle<dim>::MortarManagerCircle(
   const Quadrature<dim2>        &quadrature,
-  const DoFHandler<dim2>        &dof_handler,
+  const Mapping<dim>            &mapping,
+  const DoFHandler<dim>         &dof_handler,
   const Parameters::Mortar<dim> &mortar_parameters)
   : MortarManagerCircle(
-      compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                        mortar_parameters)
-        .first,
-      compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                        mortar_parameters)
-        .second,
+      std::get<0>(
+        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                          mapping,
+                                          mortar_parameters)),
+      std::get<1>(
+        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                          mapping,
+                                          mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      mortar_parameters.center_of_rotation)
-{
-  const auto [n_subdivisions, radius] =
-    compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                      mortar_parameters);
-  this->n_subdivisions = n_subdivisions;
-  this->radius         = radius;
-}
+      mortar_parameters.center_of_rotation,
+      std::get<2>(
+        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                          mapping,
+                                          mortar_parameters)))
+{}
 
 
 /**

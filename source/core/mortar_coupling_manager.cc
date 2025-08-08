@@ -369,9 +369,10 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
 
 #if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim>
-std::pair<unsigned int, double>
+std::tuple<unsigned int, double, double>
 compute_n_subdivisions_and_radius(
   const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
   const Parameters::Mortar<dim> &mortar_parameters)
 {
   // Number of subdivisions per process
@@ -381,29 +382,36 @@ compute_n_subdivisions_and_radius(
   // Tolerance for rotor radius computation
   const double tolerance = 1e-8;
   // Min and max values for rotor radius computation
-  double radius_min = 1e12;
-  double radius_max = 1e-12;
+  double radius_min = std::numeric_limits<double>::max();
+  double radius_max = 0;
+  // Minimum rotation angle in initial mesh configuration
+  double pre_rotation_min = std::numeric_limits<double>::max();
 
   // Check number of faces and vertices at the rotor-stator interface
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
-          for (const auto &face : cell->face_iterators())
+          for (const auto face_no : cell->face_indices())
             {
+              const auto face = cell->face(face_no);
+
               if (face->at_boundary())
                 {
                   if (face->boundary_id() ==
                       mortar_parameters.rotor_boundary_id)
                     {
                       n_subdivisions_local++;
+
+                      const auto vertices = mapping.get_vertices(cell, face_no);
+
                       for (unsigned int vertex_index = 0;
                            vertex_index < face->n_vertices();
                            vertex_index++)
                         {
                           n_vertices_local++;
-                          auto   v = face->vertex(vertex_index);
-                          double radius_current =
+                          const auto v = vertices[vertex_index];
+                          double     radius_current =
                             v.distance(mortar_parameters.center_of_rotation);
 
                           // In 3D, the interface radius to be computed is
@@ -427,6 +435,26 @@ compute_n_subdivisions_and_radius(
                           radius_max = std::max(radius_max, radius_current);
                         }
                     }
+                  // Obtain the minimum initial rotation angle based on the
+                  // stator interface
+                  else if (face->boundary_id() ==
+                           mortar_parameters.stator_boundary_id)
+                    {
+                      const auto vertices = mapping.get_vertices(cell, face_no);
+
+                      for (unsigned int vertex_index = 0;
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
+                        {
+                          n_vertices_local++;
+                          const auto v = vertices[vertex_index];
+
+                          pre_rotation_min = std::min(
+                            pre_rotation_min,
+                            point_to_angle(mortar_parameters.center_of_rotation,
+                                           v));
+                        }
+                    }
                 }
             }
         }
@@ -443,6 +471,9 @@ compute_n_subdivisions_and_radius(
   radius_max =
     Utilities::MPI::max(radius_max, triangulation.get_mpi_communicator());
 
+  pre_rotation_min =
+    Utilities::MPI::min(pre_rotation_min, triangulation.get_mpi_communicator());
+
   AssertThrow(
     std::abs(radius_max - radius_min) < tolerance,
     ExcMessage(
@@ -453,19 +484,20 @@ compute_n_subdivisions_and_radius(
   // Final radius value
   const double radius = radius_min;
 
-  return {n_subdivisions, radius};
+  return {n_subdivisions, radius, pre_rotation_min};
 }
 #else
 template <int dim>
-std::pair<unsigned int, double>
+std::tuple<unsigned int, double, double>
 compute_n_subdivisions_and_radius(const Triangulation<dim> &,
+                                  const Mapping<dim> &,
                                   const Parameters::Mortar<dim> &)
 {
   AssertThrow(false,
               ExcMessage(
                 "The mortar coupling requires deal.II 9.7 or more recent."));
 
-  return {1, 1.0};
+  return {1, 1.0, 0.0};
 }
 #endif
 
@@ -492,14 +524,16 @@ template <int dim>
 Point<dim>
 MortarManagerCircle<dim>::from_1D(const double radiant) const
 {
-  return radius_to_point<dim>(this->radius, radiant);
+  return radius_to_point<dim>(this->radius, radiant + pre_rotation_angle);
 }
 
 template <int dim>
 double
 MortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
 {
-  return point_to_angle(point, this->center_of_rotation);
+  return std::fmod(point_to_angle(point, this->center_of_rotation) -
+                     pre_rotation_angle + 2 * numbers::PI,
+                   2 * numbers::PI);
 }
 
 template <int dim>
@@ -1589,14 +1623,16 @@ template class CouplingEvaluationSIPG<3, 4, double>;
 template class NavierStokesCouplingEvaluation<2, double>;
 template class NavierStokesCouplingEvaluation<3, double>;
 
-template std::pair<unsigned int, double>
+template std::tuple<unsigned int, double, double>
 compute_n_subdivisions_and_radius<2>(
   const Triangulation<2>      &triangulation,
+  const Mapping<2>            &mapping,
   const Parameters::Mortar<2> &mortar_parameters);
 
-template std::pair<unsigned int, double>
+template std::tuple<unsigned int, double, double>
 compute_n_subdivisions_and_radius<3>(
   const Triangulation<3>      &triangulation,
+  const Mapping<3>            &mapping,
   const Parameters::Mortar<3> &mortar_parameters);
 
 template Quadrature<2>
