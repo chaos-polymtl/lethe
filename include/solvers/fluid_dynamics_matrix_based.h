@@ -108,6 +108,15 @@ protected:
   define_dynamic_zero_constraints();
 
   /**
+   * @brief Update mortar configuration.
+   *
+   * When the rotor domain is rotated, the mortar cells need to be reinitialized
+   * according to the new rotor-stator interface configuration.
+   */
+  void
+  update_mortar_configuration();
+
+  /**
    * @brief Assemble the local matrix for a given cell.
    *
    * This function is used by the WorkStream class to assemble
