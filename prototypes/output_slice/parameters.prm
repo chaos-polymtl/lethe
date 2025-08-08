@@ -13,7 +13,7 @@ set element order = 1
 
 # Geometry <hyperball|hypercube|hyperrectangle>
 
-set geometry = hyperrectangle
+set geometry = hyperball
 
 # Global refinement 1st cycle
 
