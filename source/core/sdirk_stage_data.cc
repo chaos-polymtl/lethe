@@ -24,9 +24,9 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   SDIRKTable table;
 
-  // Important note : the nomenclature used for the name of the SDIRK methods
-  // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
-  // means SDIRK with order 3 and 3 stages
+  // Important note : When referencing to SDIRK methods the pattern used is
+  // sdirkOrderStage. For instance, sdirk22 indicates SDIRK method with order 2
+  // and 2 stages
   if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       // SDIRK22 - Alexander's method (L-stable)
@@ -54,9 +54,9 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
       return table;
     }
 
-  // Important note : the nomenclature used for the name of the SDIRK methods
-  // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
-  // means SDIRK with order 3 and 3 stages
+  // Important note : When referencing to SDIRK methods the pattern used is
+  // sdirkOrderStage. For instance, sdirk22 indicates SDIRK method with order 2
+  // and 2 stages
   else if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       // SDIRK33 - 3-stage, 3rd-order L-stable method (Kennedy-Carpenter)
@@ -91,8 +91,9 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
     }
 
 
-  // Important note : the nomenclature used for the name of the SDIRK methods
-  // are sdirkOrderStage: sdirk43 means SDIRK with order 4 and 3 stages
+  // Important note : When referencing to SDIRK methods the pattern used is
+  // sdirkOrderStage. For instance, sdirk22 indicates SDIRK method with order 2
+  // and 2 stages
   else if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk43)
     {
       // SDIRK43 - 3-stage, 4th-order method

@@ -682,8 +682,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(
   auto &sum_bi_ki      = this->sdirk_vectors.sum_bi_ki;
   auto &temp_sum_bi_ki = this->sdirk_vectors.temp_sum_bi_ki;
 
-  // At each time iteration, we reset the value of sum_bi_ki
-  temp_sum_bi_ki         = 0;
+  // At each time iteration, we update the value of present_solution
   temp_sum_bi_ki         = sum_bi_ki;
   local_evaluation_point = previous_solutions[0];
   local_evaluation_point.add(time_step, temp_sum_bi_ki);

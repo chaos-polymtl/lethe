@@ -109,7 +109,6 @@ This subsection is the most important in a simulation and therefore, the most co
 	* ``bdf3``: 3rd order backward differentiation
 	* ``sdirk22``: 2nd order 2 stages singly diagonally implicit Runge-Kutta
 	* ``sdirk33``: 3rd order 3 stages singly diagonally implicit Runge-Kutta
-	* ``sdirk43``: 4th order 3 stages singly diagonally implicit Runge-Kutta
 
 .. note::
 	For now, the SDIRK schemes are only available for a matrix based resolution.
