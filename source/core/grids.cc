@@ -417,16 +417,12 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
-  /* Dealii meshes: since the rotor and stator meshes are read separately,
-  a dummy triangulation is created for each domain and then merged */
-
-  /* Gmsh meshes: the complete rotor-stator configuration is read in a single
-  file, and thus the grid is attached to the 'already merged' triangulation.
-  Manifolds need to be attached manually */
-
   // Faces at rotor-stator interface
   unsigned int n_faces_rotor_interface  = 0;
   unsigned int n_faces_stator_interface = 0;
+
+  // Since the rotor and stator meshes are read separately, a dummy
+  // triangulation is created for each part of the domain and then merged
 
   // Stator triangulation
   Triangulation<dim> stator_temp_tria;
