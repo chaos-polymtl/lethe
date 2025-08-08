@@ -13,8 +13,7 @@ log_collision_data(
                              &particle_wall_pairs_in_contact,
   const double                current_time,
   OngoingCollisionLog<dim>   &ongoing_collision_log,
-  CompletedCollisionLog<dim> &collision_event_log,
-  const ConditionalOStream   &pcout)
+  CompletedCollisionLog<dim> &collision_event_log)
 {
   // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
@@ -202,8 +201,7 @@ log_collision_data<2, DEM::DEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
@@ -212,8 +210,7 @@ log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
@@ -222,8 +219,7 @@ log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
@@ -232,8 +228,7 @@ log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
@@ -242,8 +237,7 @@ log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
@@ -252,8 +246,7 @@ log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 write_collision_stats<2>(const DEMSolverParameters<2>   &parameters,
