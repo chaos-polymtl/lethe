@@ -217,6 +217,8 @@ protected:
   Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const override;
 
+  /// Initial rotation angle used for computing mortar locations, accounting for
+  /// cases here the element edges are not aligned with the x axis
   const double pre_rotation_angle;
 
   /// Center of rotation

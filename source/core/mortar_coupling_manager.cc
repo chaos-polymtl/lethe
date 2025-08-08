@@ -384,7 +384,7 @@ compute_n_subdivisions_and_radius(
   // Min and max values for rotor radius computation
   double radius_min = std::numeric_limits<double>::max();
   double radius_max = 0;
-
+  // Minimum rotation angle in initial mesh configuration
   double pre_rotation_min = std::numeric_limits<double>::max();
 
   // Check number of faces and vertices at the rotor-stator interface
@@ -435,6 +435,8 @@ compute_n_subdivisions_and_radius(
                           radius_max = std::max(radius_max, radius_current);
                         }
                     }
+                  // Obtain the minimum initial rotation angle based on the
+                  // stator interface
                   else if (face->boundary_id() ==
                            mortar_parameters.stator_boundary_id)
                     {
