@@ -25,7 +25,7 @@ end
 subsection mesh
   set type                                = dealii
   set grid type                           = subdivided_hyper_rectangle
-  set grid arguments                      = 1, 1, 1 : 0, 0, 0 : 0.05, 0.05, 0.05 : true
+  set grid arguments                      = 1, 1, 2 : 0, 0, 0 : 0.05, 0.05, 0.1 : true
   set initial refinement                  = 0
   set expand particle-wall contact search = false
 end
@@ -92,7 +92,7 @@ subsection insertion info
   set inserted number of particles at each time step = 2
   set list x                                         = 0.02, 0.04
   set list y                                         = 0.01, 0.01
-  set list z                                         = 0.04, 0.02
+  set list z                                         = 0.04, 0.08
   set list velocity x                                = 0.0, 0.3
   set list omega x                                   = 98, 9
   set list omega y                                   = 23, 0
