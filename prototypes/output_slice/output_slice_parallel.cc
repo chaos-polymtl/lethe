@@ -1,5 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+// This prototype tests the DataOutResample feature of deal.II
+// It allows one to output the solution on a different triangulation than the
+// one used for the simulaiton. This is useful for example when one is
+// interested on looking at a slice of the domain.
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/index_set.h>
