@@ -86,9 +86,9 @@ log_collision_data(
                   if (parameters.post_processing.collision_verbosity ==
                       Parameters::Verbosity::verbose)
                     {
-                      pcout << "Collision with boundary "
-                            << start_log.boundary_id << " started for particle "
-                            << particle_id << std::endl;
+                      std::cout
+                        << "Collision with boundary " << start_log.boundary_id
+                        << " started for particle " << particle_id << std::endl;
                     }
                 }
 
@@ -137,9 +137,9 @@ log_collision_data(
                   if (parameters.post_processing.collision_verbosity ==
                       Parameters::Verbosity::verbose)
                     {
-                      pcout << "Collision with boundary " << end_log.boundary_id
-                            << " ended for particle " << particle_id
-                            << std::endl;
+                      std::cout << "Collision with boundary "
+                                << end_log.boundary_id << " ended for particle "
+                                << particle_id << std::endl;
                     }
                 }
             }
