@@ -144,7 +144,7 @@ main(int argc, char **argv)
 
   const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
     std::make_shared<MyMortarManager<dim>>(
-      2 * Utilities::pow(2, n_global_refinements), quadrature, shift);
+      Utilities::pow(2, n_global_refinements), quadrature, shift);
 
   op.add_coupling(mortar_manager, 1, 4);
 

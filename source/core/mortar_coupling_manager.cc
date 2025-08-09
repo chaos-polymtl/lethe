@@ -339,7 +339,12 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
   // Angular variation in each cell
   const double delta = 2 * numbers::PI / n_subdivisions;
   // Minimum rotation angle
-  double rot_min = rotation_angle - std::floor(rotation_angle / delta) * delta;
+  const double rot_min =
+    rotation_angle - std::floor(rotation_angle / delta) * delta;
+
+
+  AssertThrow(rot_min <= delta, ExcInternalError());
+
   // Point position in the cell
   const double segment = (angle_cell_center - delta / 2) / delta;
   // Point position after rotation
@@ -359,7 +364,8 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
       else
         // inner (rotated) domain
         return {1,
-                static_cast<unsigned int>(std::round(segment_rot)) %
+                (static_cast<unsigned int>(std::round(segment_rot)) +
+                 2 * n_subdivisions) %
                   (2 * n_subdivisions)};
     }
 }
@@ -578,6 +584,11 @@ CouplingOperator<dim, Number>::CouplingOperator(
   std::vector<types::global_dof_index> is_local_cell;
   std::vector<types::global_dof_index> is_ghost_cell;
 
+#  ifdef DEBUG
+  std::vector<double> vec_local_cells(n_sub_cells * 2, 0.0);
+  std::vector<double> vec_ghost_cells(n_sub_cells * 2, 0.0);
+#  endif
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto face_no : cell->face_indices())
@@ -611,6 +622,10 @@ CouplingOperator<dim, Number>::CouplingOperator(
                     id_ghost = i;
                   }
 
+#  ifdef DEBUG
+                vec_local_cells[id_local] += 1.0;
+                vec_ghost_cells[id_ghost] += 1.0;
+#  endif
                 is_local_cell.emplace_back(id_local);
                 is_ghost_cell.emplace_back(id_ghost);
 
@@ -727,6 +742,76 @@ CouplingOperator<dim, Number>::CouplingOperator(
             for (unsigned int i = 0; i < mortar_manager->get_n_points(); ++i)
               data.all_penalty_parameter.emplace_back(penalty_parameter);
           }
+
+#  ifdef DEBUG
+  Utilities::MPI::sum(vec_local_cells,
+                      dof_handler.get_mpi_communicator(),
+                      vec_local_cells);
+  Utilities::MPI::sum(vec_ghost_cells,
+                      dof_handler.get_mpi_communicator(),
+                      vec_ghost_cells);
+
+  std::set<unsigned int> vec_local_cells_0;
+  std::set<unsigned int> vec_local_cells_2;
+
+  for (unsigned int i = 0; i < vec_local_cells.size(); ++i)
+    {
+      if (vec_local_cells[i] == 0)
+        vec_local_cells_0.insert(i);
+      if (vec_local_cells[i] > 1)
+        vec_local_cells_2.insert(i);
+    }
+
+  std::set<unsigned int> vec_ghost_cells_0;
+  std::set<unsigned int> vec_ghost_cells_2;
+
+  for (unsigned int i = 0; i < vec_ghost_cells.size(); ++i)
+    {
+      if (vec_ghost_cells[i] == 0)
+        vec_ghost_cells_0.insert(i);
+      if (vec_ghost_cells[i] > 1)
+        vec_ghost_cells_2.insert(i);
+    }
+
+  if (!(vec_local_cells_0.empty() && vec_local_cells_2.empty() &&
+        vec_ghost_cells_0.empty() && vec_ghost_cells_2.empty()))
+    {
+      std::cout << "CouplingOperator mortar matching failed:" << std::endl;
+
+      if (!vec_local_cells_0.empty())
+        {
+          std::cout << " - some local cells are not owned: ";
+          for (const auto &i : vec_local_cells_0)
+            std::cout << i << " ";
+          std::cout << std::endl;
+        }
+      if (!vec_local_cells_2.empty())
+        {
+          std::cout << " - some local cells are owned multiple times: ";
+          for (const auto &i : vec_local_cells_2)
+            std::cout << i << " ";
+          std::cout << std::endl;
+        }
+      if (!vec_ghost_cells_0.empty())
+        {
+          std::cout << " - some ghost cells are not owned: ";
+          for (const auto &i : vec_ghost_cells_0)
+            std::cout << i << " ";
+          std::cout << std::endl;
+        }
+      if (!vec_ghost_cells_2.empty())
+        {
+          std::cout << " - some ghost cells are owned multiple times: ";
+          for (const auto &i : vec_ghost_cells_2)
+            std::cout << i << " ";
+          std::cout << std::endl;
+        }
+
+      MPI_Barrier(dof_handler.get_mpi_communicator());
+
+      AssertThrow(false, ExcInternalError());
+    }
+#  endif
 
   // Setup communication
   partitioner.reinit(is_local_cell,
