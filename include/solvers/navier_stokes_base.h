@@ -353,7 +353,8 @@ protected:
     Parameters::SimulationControl::TimeSteppingMethod method);
 
   /**
-   * @brief Calculate k_i from u*_i : k_i = (u*_i - u_n)/time_step*a_ii - sum(a_ij * k_j) Update the sum(b_i * k_i)
+   * @brief Calculate \f$ k_i \f$ from \f$ u*_i : k_i = \frac{u*_i - u_n}{time_step*a_ii} - \sum{j=1}^{i-1} a_ij * k_j \f$
+   * Update \f$ \sum_{i=1}^{N_{stages}} b_i * k_i \f$
    *
    * @param stage An unsigned integer which gives the index of the current stage
    * @param method SDIRK methods for now (BDF methods are single stage)
@@ -366,7 +367,7 @@ protected:
     double                                            time_step);
 
   /**
-   * @brief u_{n+1} = u_n + time_step * sum(b_i * k_i)
+   * @brief \f$ u_{n+1} = u_n + time_step * \sum_{i=1}^{N_{stages}} b_i * k_i \f$
    *
    * @param time_step The current time step to build the solution at the next time step
    */
