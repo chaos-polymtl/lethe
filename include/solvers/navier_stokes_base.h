@@ -13,6 +13,7 @@
 #include <core/pvd_handler.h>
 #include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
+#include <core/solutions_output.h>
 
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
@@ -200,7 +201,8 @@ protected:
 
     if (this->simulation_control->is_output_iteration())
       {
-        this->write_output_results(this->present_solution);
+        this->gather_output_results(this->present_solution);
+        this->write_output_results();
       }
   };
 
@@ -252,7 +254,10 @@ protected:
         this->postprocess_fd(true);
         multiphysics->postprocess(true);
         if (this->simulation_control->is_output_iteration())
-          this->write_output_results(this->present_solution);
+          {
+            this->gather_output_results(this->present_solution);
+            this->write_output_results();
+          }
       }
   }
 
@@ -1048,64 +1053,8 @@ protected:
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
 
-  /**
-   * @brief Struct containing information about the solution output.
-   * It is used to pass all the information required upon calling
-   * add_data_vector() for the DataOut instance without losing track of its
-   * attributes such as name and data component interpretation.
-   */
-  struct OutputStruct
-  {
-    /**
-     * @brief Constructor for when data is in data_postprocessor.
-     *
-     * @param[in] solution Solution field.
-     *
-     * @param[in] data_postprocessor Data postprocessor.
-     *
-     */
-    OutputStruct(
-      const VectorType                              &solution,
-      const std::shared_ptr<DataPostprocessor<dim>> &data_postprocessor)
-      : solution(solution)
-      , data_postprocessor(data_postprocessor)
-      , is_postprocessor(true)
-    {};
-    /**
-     * @brief Constructor for when data is not related to a data_postprocessor.
-     *
-     * @param[in] dof_handler DoFHandler containing solution.
-     *
-     * @param[in] solution Solution field.
-     *
-     * @param[in] solution_names Vector with strings containing solution name.
-     *
-     * @param[in] data_component_interpretation Vector with data component interpretation of
-     * the solution.
-     */
-    OutputStruct(const DofsType                 &dof_handler,
-                 const VectorType               &solution,
-                 const std::vector<std::string> &solution_names,
-                 const std::vector<
-                   DataComponentInterpretation::DataComponentInterpretation>
-                   &data_component_interpretation)
-      : dof_handler(dof_handler)
-      , solution(solution)
-      , solution_names(solution_names)
-      , data_component_interpretation(data_component_interpretation)
-      , is_postprocessor(false)
-    {};
-    DofsType                 dof_handler;
-    VectorType               solution;
-    std::vector<std::string> solution_names;
-    std::vector<DataComponentInterpretation::DataComponentInterpretation>
-                                            data_component_interpretation;
-    std::shared_ptr<DataPostprocessor<dim>> data_postprocessor;
-    bool                                    is_postprocessor;
-  };
-
   /// Vector containing structs with vtu output information
-  std::vector<OutputStruct> solution_output_structs;
+  std::vector<OutputStruct<dim, VectorType>> solution_output_structs;
 };
 
 #endif

@@ -41,6 +41,12 @@
 
 #include <sys/stat.h>
 
+template struct OutputStruct<2, GlobalVectorType>;
+template struct OutputStruct<3, GlobalVectorType>;
+template struct OutputStruct<2, GlobalBlockVectorType>;
+template struct OutputStruct<3, GlobalBlockVectorType>;
+template struct OutputStruct<2, LinearAlgebra::distributed::Vector<double>>;
+template struct OutputStruct<3, LinearAlgebra::distributed::Vector<double>>;
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -2734,293 +2740,297 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   data_component_interpretation.emplace_back(
     DataComponentInterpretation::component_is_scalar);
 
-  OutputStruct solution_fd_struct(this->dof_handler,
-                                  solution, solution_names, data_component_interpretation);
+  OutputStruct<dim, VectorType> solution_fd_struct(
+    this->dof_handler, solution, solution_names, data_component_interpretation);
 
   solution_output_structs.emplace_back(solution_fd_struct);
-  // DataOut<dim> data_out;
-
-  // // Additional flag to enable the output of high-order elements
-  // DataOutBase::VtkFlags flags;
-  // if (this->velocity_fem_degree > 1)
-  //   flags.write_higher_order_cells = true;
-  // data_out.set_flags(flags);
-
-  // // Attach the solution data to data_out object
-  // data_out.attach_dof_handler(this->dof_handler);
-  // data_out.add_data_vector(solution,
-  //                          solution_names,
-  //                          DataOut<dim>::type_dof_data,
-  //                          data_component_interpretation);
-
-  if (this->simulation_parameters.post_processing
-        .calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
-    {
-      // Add the interpretation of the average solution. The dim first
-      // components are the average velocity vectors and the following one is
-      // the average pressure. (<u>, <v>, <w>, <p>)
-      std::vector<std::string> average_solution_names(dim, "average_velocity");
-      average_solution_names.emplace_back("average_pressure");
-
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        average_data_component_interpretation(
-          dim, DataComponentInterpretation::component_is_part_of_vector);
-      average_data_component_interpretation.emplace_back(
-        DataComponentInterpretation::component_is_scalar);
-
-      OutputStruct average_solution_struct(
-        this->dof_handler,
-        this->average_velocities->get_average_velocities(),
-        average_solution_names,
-        average_data_component_interpretation);
-
-      this->solution_output_structs.emplace_back(
-        average_solution_struct);
-
-      // data_out.add_data_vector(
-      //   this->average_velocities->get_average_velocities(),
-      //   average_solution_names,
-      //   DataOut<dim>::type_dof_data,
-      //   average_data_component_interpretation);
-
-      // Add the interpretation of the reynolds stresses of solution.
-      // The dim first components are the normal reynolds stress vectors and
-      // the following ones are others resolved reynolds stresses.
-      std::vector<std::string> reynolds_normal_stress_names(
-        dim, "reynolds_normal_stress");
-      reynolds_normal_stress_names.emplace_back("turbulent_kinetic_energy");
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        reynolds_normal_stress_data_component_interpretation(
-          dim, DataComponentInterpretation::component_is_part_of_vector);
-      reynolds_normal_stress_data_component_interpretation.emplace_back(
-        DataComponentInterpretation::component_is_scalar);
-
-      OutputStruct reynolds_normal_stress_struct(
-        this->dof_handler,
-        this->average_velocities->get_reynolds_normal_stresses(),
-        reynolds_normal_stress_names,
-        reynolds_normal_stress_data_component_interpretation);
-
-      solution_output_structs.emplace_back(reynolds_normal_stress_struct);
-
-
-      std::vector<std::string> reynolds_shear_stress_names = {
-        "reynolds_shear_stress_uv"};
-      if (dim == 2)
-        {
-          reynolds_shear_stress_names.emplace_back("dummy_rss_2d");
-        }
-      if (dim == 3)
-        {
-          reynolds_shear_stress_names.emplace_back("reynolds_shear_stress_vw");
-          reynolds_shear_stress_names.emplace_back("reynolds_shear_stress_uw");
-        }
-      reynolds_shear_stress_names.emplace_back("dummy_rss");
-
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        reynolds_shear_stress_data_component_interpretation(
-          dim, DataComponentInterpretation::component_is_scalar);
-      reynolds_shear_stress_data_component_interpretation.emplace_back(
-        DataComponentInterpretation::component_is_scalar);
-
-      // data_out.add_data_vector(
-      //   this->average_velocities->get_reynolds_normal_stresses(),
-      //   reynolds_normal_stress_names,
-      //   DataOut<dim>::type_dof_data,
-      //   reynolds_normal_stress_data_component_interpretation);
-      //
-      // data_out.add_data_vector(
-      //   this->average_velocities->get_reynolds_shear_stresses(),
-      //   reynolds_shear_stress_names,
-      //   DataOut<dim>::type_dof_data,
-      //   reynolds_shear_stress_data_component_interpretation);
-    }
-
-  Vector<float> subdomain(this->triangulation->n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    subdomain(i) = this->triangulation->locally_owned_subdomain();
-  // data_out.add_data_vector(subdomain, "subdomain");
-
-
-  // Create the post-processors to have derived information about the velocity
-  // They are generated outside the if condition for smoothing to ensure
-  // that the objects still exist when the write output of DataOut is called
-  // Regular discontinuous postprocessors
-  QCriterionPostprocessor<dim> qcriterion;
-  DivergencePostprocessor<dim> divergence;
-  VorticityPostprocessor<dim>  vorticity;
-  // data_out.add_data_vector(solution, vorticity);
-
-  // Get physical properties models
-  std::vector<std::shared_ptr<DensityModel>> density_models =
-    this->simulation_parameters.physical_properties_manager
-      .get_density_vector();
-  std::vector<std::shared_ptr<RheologicalModel>> rheological_models =
-    this->simulation_parameters.physical_properties_manager
-      .get_rheology_vector();
-
-  const double n_fluids = this->simulation_parameters
-                            .physical_properties_manager.get_number_of_fluids();
-
-  std::vector<DensityPostprocessor<dim>> density_postprocessors;
-  density_postprocessors.reserve(n_fluids);
-  std::vector<KinematicViscosityPostprocessor<dim>>
-    kinematic_viscosity_postprocessors;
-  kinematic_viscosity_postprocessors.reserve(n_fluids);
-  std::vector<DynamicViscosityPostprocessor<dim>>
-    dynamic_viscosity_postprocessors;
-  dynamic_viscosity_postprocessors.reserve(n_fluids);
-
-  for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
-    {
-      density_postprocessors.emplace_back(
-        DensityPostprocessor<dim>(density_models[f_id], f_id));
-      kinematic_viscosity_postprocessors.emplace_back(
-        KinematicViscosityPostprocessor<dim>(rheological_models[f_id], f_id));
-      dynamic_viscosity_postprocessors.emplace_back(
-        DynamicViscosityPostprocessor<dim>(
-          rheological_models[f_id],
-          density_models[f_id]->get_density_ref(),
-          f_id));
-
-      // Only output when density is not constant or if it is a multiphase
-      // flow
-      if (!density_models[f_id]->is_constant_density_model() ||
-          this->simulation_parameters.multiphysics.VOF ||
-          this->simulation_parameters.multiphysics.cahn_hilliard)
-        // data_out.add_data_vector(solution, density_postprocessors[f_id]);
-
-        // Only output the kinematic viscosity for non-newtonian rheology
-        if (rheological_models[f_id]->is_non_newtonian_rheological_model())
-          {
-            // data_out.add_data_vector(solution,
-            //                          kinematic_viscosity_postprocessors[f_id]);
-
-            // Only output the dynamic viscosity for multiphase flows
-            if (this->simulation_parameters.multiphysics.VOF ||
-                this->simulation_parameters.multiphysics.cahn_hilliard)
-            // data_out.add_data_vector(solution,
-            //                          dynamic_viscosity_postprocessors[f_id]);
-          }
-    }
-
-  ShearRatePostprocessor<dim> shear_rate_processor;
-  if (this->simulation_parameters.physical_properties_manager
-        .is_non_newtonian())
-    // data_out.add_data_vector(solution, shear_rate_processor);
-
-    // Trilinos vector for the smoothed output fields
-    QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
-      *this->triangulation,
-      this->simulation_parameters,
-      number_quadrature_points);
-
-  ContinuityPostProcessorSmoothing<dim, VectorType> continuity_smoothing(
-    *this->triangulation,
-    this->simulation_parameters,
-    number_quadrature_points);
-
-  // TODO: generalize this to VectorType
-  GlobalVectorType qcriterion_field;
-  GlobalVectorType continuity_field;
-
-  if (this->simulation_parameters.post_processing.smoothed_output_fields)
-    {
-      // Qcriterion smoothing
-      {
-        qcriterion_field =
-          qcriterion_smoothing.calculate_smoothed_field(solution,
-                                                        this->dof_handler,
-                                                        this->get_mapping());
-
-        std::vector<DataComponentInterpretation::DataComponentInterpretation>
-          data_component_interpretation(
-            1, DataComponentInterpretation::component_is_scalar);
-
-        std::vector<std::string> qcriterion_name = {"qcriterion"};
-        const DoFHandler<dim>   &dof_handler_qcriterion =
-          qcriterion_smoothing.get_dof_handler();
-        data_out.add_data_vector(dof_handler_qcriterion,
-                                 qcriterion_field,
-                                 qcriterion_name,
-                                 data_component_interpretation);
-      }
-      // Continuity smoothing
-      {
-        continuity_field =
-          continuity_smoothing.calculate_smoothed_field(solution,
-                                                        this->dof_handler,
-                                                        this->get_mapping());
-
-        std::vector<DataComponentInterpretation::DataComponentInterpretation>
-          data_component_interpretation(
-            1, DataComponentInterpretation::component_is_scalar);
-
-        std::vector<std::string> continuity_name = {"velocity_divergence"};
-        const DoFHandler<dim>   &dof_handler_qcriterion =
-          continuity_smoothing.get_dof_handler();
-        // data_out.add_data_vector(dof_handler_qcriterion,
-        //                          continuity_field,
-        //                          continuity_name,
-        //                          data_component_interpretation);
-      }
-    }
-  else
-    {
-      // Use the non-smoothed version of the post-processors
-      // data_out.add_data_vector(solution, divergence);
-      // data_out.add_data_vector(solution, qcriterion);
-    }
-
-
-  SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
-                            simulation_parameters.velocity_sources.omega_y,
-                            simulation_parameters.velocity_sources.omega_z);
-
-  if (simulation_parameters.velocity_sources.rotating_frame_type ==
-      Parameters::VelocitySource::RotatingFrameType::srf)
-    data_out.add_data_vector(solution, srf);
-
-  output_field_hook(data_out);
-
-  multiphysics->attach_solution_to_output(data_out);
-
-  // Build the patches and write the output
-  data_out.build_patches(*this->get_mapping(),
-                         subdivision,
-                         DataOut<dim>::curved_inner_cells);
-
-  write_vtu_and_pvd<dim>(this->pvdhandler,
-                         data_out,
-                         folder,
-                         solution_name,
-                         time,
-                         iter,
-                         group_files,
-                         this->mpi_communicator);
-
-  if (simulation_control->get_output_boundaries() &&
-      simulation_control->get_step_number() == 0)
-    {
-      DataOutFaces<dim> data_out_faces;
-
-      // Add the additional flag to enable high-order cells output when the
-      // velocity interpolation order is larger than 1
-      DataOutBase::VtkFlags flags;
-      if (this->velocity_fem_degree > 1)
-        flags.write_higher_order_cells = true;
-      data_out_faces.set_flags(flags);
-
-      BoundaryPostprocessor<dim> boundary_id;
-      data_out_faces.attach_dof_handler(this->dof_handler);
-      data_out_faces.add_data_vector(solution, boundary_id);
-      data_out_faces.build_patches(*this->get_mapping(), subdivision);
-
-      write_boundaries_vtu<dim>(
-        data_out_faces, folder, time, iter, this->mpi_communicator);
-    }
+  // // DataOut<dim> data_out;
+  //
+  // // // Additional flag to enable the output of high-order elements
+  // // DataOutBase::VtkFlags flags;
+  // // if (this->velocity_fem_degree > 1)
+  // //   flags.write_higher_order_cells = true;
+  // // data_out.set_flags(flags);
+  //
+  // // // Attach the solution data to data_out object
+  // // data_out.attach_dof_handler(this->dof_handler);
+  // // data_out.add_data_vector(solution,
+  // //                          solution_names,
+  // //                          DataOut<dim>::type_dof_data,
+  // //                          data_component_interpretation);
+  //
+  // if (this->simulation_parameters.post_processing
+  //       .calculate_average_velocities ||
+  //     this->simulation_parameters.initial_condition->type ==
+  //       Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+  //   {
+  //     // Add the interpretation of the average solution. The dim first
+  //     // components are the average velocity vectors and the following one is
+  //     // the average pressure. (<u>, <v>, <w>, <p>)
+  //     std::vector<std::string> average_solution_names(dim,
+  //     "average_velocity");
+  //     average_solution_names.emplace_back("average_pressure");
+  //
+  //     std::vector<DataComponentInterpretation::DataComponentInterpretation>
+  //       average_data_component_interpretation(
+  //         dim, DataComponentInterpretation::component_is_part_of_vector);
+  //     average_data_component_interpretation.emplace_back(
+  //       DataComponentInterpretation::component_is_scalar);
+  //
+  //     OutputStruct average_solution_struct(
+  //       this->dof_handler,
+  //       this->average_velocities->get_average_velocities(),
+  //       average_solution_names,
+  //       average_data_component_interpretation);
+  //
+  //     this->solution_output_structs.emplace_back(
+  //       average_solution_struct);
+  //
+  //     // data_out.add_data_vector(
+  //     //   this->average_velocities->get_average_velocities(),
+  //     //   average_solution_names,
+  //     //   DataOut<dim>::type_dof_data,
+  //     //   average_data_component_interpretation);
+  //
+  //     // Add the interpretation of the reynolds stresses of solution.
+  //     // The dim first components are the normal reynolds stress vectors and
+  //     // the following ones are others resolved reynolds stresses.
+  //     std::vector<std::string> reynolds_normal_stress_names(
+  //       dim, "reynolds_normal_stress");
+  //     reynolds_normal_stress_names.emplace_back("turbulent_kinetic_energy");
+  //     std::vector<DataComponentInterpretation::DataComponentInterpretation>
+  //       reynolds_normal_stress_data_component_interpretation(
+  //         dim, DataComponentInterpretation::component_is_part_of_vector);
+  //     reynolds_normal_stress_data_component_interpretation.emplace_back(
+  //       DataComponentInterpretation::component_is_scalar);
+  //
+  //     OutputStruct reynolds_normal_stress_struct(
+  //       this->dof_handler,
+  //       this->average_velocities->get_reynolds_normal_stresses(),
+  //       reynolds_normal_stress_names,
+  //       reynolds_normal_stress_data_component_interpretation);
+  //
+  //     solution_output_structs.emplace_back(reynolds_normal_stress_struct);
+  //
+  //
+  //     std::vector<std::string> reynolds_shear_stress_names = {
+  //       "reynolds_shear_stress_uv"};
+  //     if (dim == 2)
+  //       {
+  //         reynolds_shear_stress_names.emplace_back("dummy_rss_2d");
+  //       }
+  //     if (dim == 3)
+  //       {
+  //         reynolds_shear_stress_names.emplace_back("reynolds_shear_stress_vw");
+  //         reynolds_shear_stress_names.emplace_back("reynolds_shear_stress_uw");
+  //       }
+  //     reynolds_shear_stress_names.emplace_back("dummy_rss");
+  //
+  //     std::vector<DataComponentInterpretation::DataComponentInterpretation>
+  //       reynolds_shear_stress_data_component_interpretation(
+  //         dim, DataComponentInterpretation::component_is_scalar);
+  //     reynolds_shear_stress_data_component_interpretation.emplace_back(
+  //       DataComponentInterpretation::component_is_scalar);
+  //
+  //     // data_out.add_data_vector(
+  //     //   this->average_velocities->get_reynolds_normal_stresses(),
+  //     //   reynolds_normal_stress_names,
+  //     //   DataOut<dim>::type_dof_data,
+  //     //   reynolds_normal_stress_data_component_interpretation);
+  //     //
+  //     // data_out.add_data_vector(
+  //     //   this->average_velocities->get_reynolds_shear_stresses(),
+  //     //   reynolds_shear_stress_names,
+  //     //   DataOut<dim>::type_dof_data,
+  //     //   reynolds_shear_stress_data_component_interpretation);
+  //   }
+  //
+  // Vector<float> subdomain(this->triangulation->n_active_cells());
+  // for (unsigned int i = 0; i < subdomain.size(); ++i)
+  //   subdomain(i) = this->triangulation->locally_owned_subdomain();
+  // // data_out.add_data_vector(subdomain, "subdomain");
+  //
+  //
+  // // Create the post-processors to have derived information about the
+  // velocity
+  // // They are generated outside the if condition for smoothing to ensure
+  // // that the objects still exist when the write output of DataOut is called
+  // // Regular discontinuous postprocessors
+  // QCriterionPostprocessor<dim> qcriterion;
+  // DivergencePostprocessor<dim> divergence;
+  // VorticityPostprocessor<dim>  vorticity;
+  // // data_out.add_data_vector(solution, vorticity);
+  //
+  // // Get physical properties models
+  // std::vector<std::shared_ptr<DensityModel>> density_models =
+  //   this->simulation_parameters.physical_properties_manager
+  //     .get_density_vector();
+  // std::vector<std::shared_ptr<RheologicalModel>> rheological_models =
+  //   this->simulation_parameters.physical_properties_manager
+  //     .get_rheology_vector();
+  //
+  // const double n_fluids = this->simulation_parameters
+  //                           .physical_properties_manager.get_number_of_fluids();
+  //
+  // std::vector<DensityPostprocessor<dim>> density_postprocessors;
+  // density_postprocessors.reserve(n_fluids);
+  // std::vector<KinematicViscosityPostprocessor<dim>>
+  //   kinematic_viscosity_postprocessors;
+  // kinematic_viscosity_postprocessors.reserve(n_fluids);
+  // std::vector<DynamicViscosityPostprocessor<dim>>
+  //   dynamic_viscosity_postprocessors;
+  // dynamic_viscosity_postprocessors.reserve(n_fluids);
+  //
+  // for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
+  //   {
+  //     density_postprocessors.emplace_back(
+  //       DensityPostprocessor<dim>(density_models[f_id], f_id));
+  //     kinematic_viscosity_postprocessors.emplace_back(
+  //       KinematicViscosityPostprocessor<dim>(rheological_models[f_id],
+  //       f_id));
+  //     dynamic_viscosity_postprocessors.emplace_back(
+  //       DynamicViscosityPostprocessor<dim>(
+  //         rheological_models[f_id],
+  //         density_models[f_id]->get_density_ref(),
+  //         f_id));
+  //
+  //     // Only output when density is not constant or if it is a multiphase
+  //     // flow
+  //     if (!density_models[f_id]->is_constant_density_model() ||
+  //         this->simulation_parameters.multiphysics.VOF ||
+  //         this->simulation_parameters.multiphysics.cahn_hilliard)
+  //       // data_out.add_data_vector(solution, density_postprocessors[f_id]);
+  //
+  //       // Only output the kinematic viscosity for non-newtonian rheology
+  //       if (rheological_models[f_id]->is_non_newtonian_rheological_model())
+  //         {
+  //           // data_out.add_data_vector(solution,
+  //           // kinematic_viscosity_postprocessors[f_id]);
+  //
+  //           // Only output the dynamic viscosity for multiphase flows
+  //           if (this->simulation_parameters.multiphysics.VOF ||
+  //               this->simulation_parameters.multiphysics.cahn_hilliard)
+  //           // data_out.add_data_vector(solution,
+  //           // dynamic_viscosity_postprocessors[f_id]);
+  //         }
+  //   }
+  //
+  // ShearRatePostprocessor<dim> shear_rate_processor;
+  // if (this->simulation_parameters.physical_properties_manager
+  //       .is_non_newtonian())
+  //   // data_out.add_data_vector(solution, shear_rate_processor);
+  //
+  //   // Trilinos vector for the smoothed output fields
+  //   QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
+  //     *this->triangulation,
+  //     this->simulation_parameters,
+  //     number_quadrature_points);
+  //
+  // ContinuityPostProcessorSmoothing<dim, VectorType> continuity_smoothing(
+  //   *this->triangulation,
+  //   this->simulation_parameters,
+  //   number_quadrature_points);
+  //
+  // // TODO: generalize this to VectorType
+  // GlobalVectorType qcriterion_field;
+  // GlobalVectorType continuity_field;
+  //
+  // if (this->simulation_parameters.post_processing.smoothed_output_fields)
+  //   {
+  //     // Qcriterion smoothing
+  //     {
+  //       qcriterion_field =
+  //         qcriterion_smoothing.calculate_smoothed_field(solution,
+  //                                                       this->dof_handler,
+  //                                                       this->get_mapping());
+  //
+  //       std::vector<DataComponentInterpretation::DataComponentInterpretation>
+  //         data_component_interpretation(
+  //           1, DataComponentInterpretation::component_is_scalar);
+  //
+  //       std::vector<std::string> qcriterion_name = {"qcriterion"};
+  //       const DoFHandler<dim>   &dof_handler_qcriterion =
+  //         qcriterion_smoothing.get_dof_handler();
+  //       data_out.add_data_vector(dof_handler_qcriterion,
+  //                                qcriterion_field,
+  //                                qcriterion_name,
+  //                                data_component_interpretation);
+  //     }
+  //     // Continuity smoothing
+  //     {
+  //       continuity_field =
+  //         continuity_smoothing.calculate_smoothed_field(solution,
+  //                                                       this->dof_handler,
+  //                                                       this->get_mapping());
+  //
+  //       std::vector<DataComponentInterpretation::DataComponentInterpretation>
+  //         data_component_interpretation(
+  //           1, DataComponentInterpretation::component_is_scalar);
+  //
+  //       std::vector<std::string> continuity_name = {"velocity_divergence"};
+  //       const DoFHandler<dim>   &dof_handler_qcriterion =
+  //         continuity_smoothing.get_dof_handler();
+  //       // data_out.add_data_vector(dof_handler_qcriterion,
+  //       //                          continuity_field,
+  //       //                          continuity_name,
+  //       //                          data_component_interpretation);
+  //     }
+  //   }
+  // else
+  //   {
+  //     // Use the non-smoothed version of the post-processors
+  //     // data_out.add_data_vector(solution, divergence);
+  //     // data_out.add_data_vector(solution, qcriterion);
+  //   }
+  //
+  //
+  // SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
+  //                           simulation_parameters.velocity_sources.omega_y,
+  //                           simulation_parameters.velocity_sources.omega_z);
+  //
+  // if (simulation_parameters.velocity_sources.rotating_frame_type ==
+  //     Parameters::VelocitySource::RotatingFrameType::srf)
+  //   data_out.add_data_vector(solution, srf);
+  //
+  // output_field_hook(data_out);
+  //
+  // multiphysics->attach_solution_to_output(data_out);
+  //
+  // // Build the patches and write the output
+  //
+  // data_out.build_patches(*this->get_mapping(),
+  //                        subdivision,
+  //                        DataOut<dim>::curved_inner_cells);
+  //
+  // write_vtu_and_pvd<dim>(this->pvdhandler,
+  //                        data_out,
+  //                        folder,
+  //                        solution_name,
+  //                        time,
+  //                        iter,
+  //                        group_files,
+  //                        this->mpi_communicator);
+  //
+  // if (simulation_control->get_output_boundaries() &&
+  //     simulation_control->get_step_number() == 0)
+  //   {
+  //     DataOutFaces<dim> data_out_faces;
+  //
+  //     // Add the additional flag to enable high-order cells output when the
+  //     // velocity interpolation order is larger than 1
+  //     DataOutBase::VtkFlags flags;
+  //     if (this->velocity_fem_degree > 1)
+  //       flags.write_higher_order_cells = true;
+  //     data_out_faces.set_flags(flags);
+  //
+  //     BoundaryPostprocessor<dim> boundary_id;
+  //     data_out_faces.attach_dof_handler(this->dof_handler);
+  //     data_out_faces.add_data_vector(solution, boundary_id);
+  //     data_out_faces.build_patches(*this->get_mapping(), subdivision);
+  //
+  //     write_boundaries_vtu<dim>(
+  //       data_out_faces, folder, time, iter, this->mpi_communicator);
+  //   }
 }
 
 template <int dim, typename VectorType, typename DofsType>
