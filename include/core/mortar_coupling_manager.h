@@ -119,7 +119,8 @@ public:
 
   /// Number of cells at the interface between inner and outer domains
   std::vector<unsigned int> n_subdivisions;
-  /// Radius at the interface between inner and outer domains
+  /// Vector containing the radius at the mortar interface and the domain length
+  /// in the direction of the rotation axis
   std::vector<double> radius;
 
 protected:
@@ -132,7 +133,11 @@ protected:
    * type = 0: mesh aligned
    * type = 1: mesh not aligned, inner domain (allows rotation)
    * type = 2: mesh not aligned, outer domain (fixed)
-   * @return id Index of the cell in which lies the rotated cell center
+   * @return id_in_plane Index of the cell in which lies the rotated cell center
+   * @return id_out_plane Second index of the cell in which lies the rotated cell center.
+   *
+   * Note that the id_out_plane corresponds to indexes along the rotation axis,
+   * and it is necessary only for 3D problems.
    */
   std::tuple<unsigned int, unsigned int, unsigned int>
   get_config(const Point<dim> &face_center) const;
@@ -165,7 +170,8 @@ protected:
 
 /**
  * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
- * @param[in] dof_handler DoFHandler associated to the triangulation
+ * @param[in] triangulation The triangulation object
+ * @param[in] mapping Mapping associated to the domain
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
  *

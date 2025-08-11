@@ -29,21 +29,24 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_total_mortars() const
 {
-  if (dim == 1)
+  if constexpr (dim == 1)
     return 1;
 
-  unsigned int temp = n_subdivisions[0];
+  unsigned int n_total_subdivisions = n_subdivisions[0];
 
-  if (dim == 3)
-    temp *= n_subdivisions[1];
+  // In 3D, besides the subdivisons in the plane perpendicular to the rotation
+  // axis, we also need to account for the number of subdivisons along the
+  // rotation axis direction
+  if constexpr (dim == 3)
+    n_total_subdivisions *= n_subdivisions[1];
 
   if (this->is_mesh_aligned()) // aligned
     {
-      return temp;
+      return n_total_subdivisions;
     }
   else // inside/outside
     {
-      return 2 * temp;
+      return 2 * n_total_subdivisions;
     }
 }
 
@@ -51,7 +54,7 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_mortars() const
 {
-  if (dim == 1)
+  if constexpr (dim == 1)
     return 1;
 
   if (this->is_mesh_aligned()) // aligned
@@ -68,21 +71,21 @@ template <int dim>
 std::vector<unsigned int>
 MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
 {
-  if (dim == 1)
+  if constexpr (dim == 1)
     return std::vector<unsigned int>{0};
 
-  // Mesh alignment type and cell index
-  const auto [type, id_x, id_y] = get_config(face_center);
+  // Mesh alignment type and cell indexes
+  const auto [type, id_in_plane, id_out_plane] = get_config(face_center);
 
   if (type == 0) // aligned
     {
       std::vector<unsigned int> indices;
 
-      const unsigned int index = id_x;
+      const unsigned int index = id_in_plane;
 
       AssertIndexRange(index, n_subdivisions[0]);
 
-      indices.emplace_back(index + n_subdivisions[0] * id_y);
+      indices.emplace_back(index + n_subdivisions[0] * id_out_plane);
 
       return indices;
     }
@@ -93,11 +96,11 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
       for (unsigned int q = 0; q < 2; ++q)
         {
           const unsigned int index =
-            (id_x * 2 + 1 + q) % (n_subdivisions[0] * 2);
+            (id_in_plane * 2 + 1 + q) % (n_subdivisions[0] * 2);
 
           AssertIndexRange(index, n_subdivisions[0] * 2);
 
-          indices.emplace_back(index + n_subdivisions[0] * id_y);
+          indices.emplace_back(index + n_subdivisions[0] * id_out_plane);
         }
 
       return indices;
@@ -108,11 +111,11 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
 
       for (unsigned int q = 0; q < 2; ++q)
         {
-          const unsigned int index = id_x * 2 + q;
+          const unsigned int index = id_in_plane * 2 + q;
 
           AssertIndexRange(index, n_subdivisions[0] * 2);
 
-          indices.emplace_back(index + n_subdivisions[0] * id_y);
+          indices.emplace_back(index + n_subdivisions[0] * id_out_plane);
         }
 
       return indices;
@@ -123,7 +126,7 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_total_points() const
 {
-  if (dim == 1)
+  if constexpr (dim == 1)
     return 1;
 
   return get_n_total_mortars() * n_quadrature_points;
@@ -133,7 +136,7 @@ template <int dim>
 unsigned int
 MortarManagerBase<dim>::get_n_points() const
 {
-  if (dim == 1)
+  if constexpr (dim == 1)
     return 1;
 
   return get_n_mortars() * n_quadrature_points;
@@ -143,16 +146,16 @@ template <int dim>
 std::vector<Point<dim>>
 MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
 {
-  if (dim == 1)
+  if constexpr (dim == 1)
     return std::vector<Point<dim>>{face_center};
 
   // Mesh alignment type and cell index
-  const auto [type, id_x, id_y] = get_config(face_center);
+  const auto [type, id_in_plane, id_out_plane] = get_config(face_center);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   double       delta_1 = 1.0;
 
-  if (dim == 3)
+  if constexpr (dim == 3)
     delta_1 = radius[1] / n_subdivisions[1];
 
   if (type == 0) // aligned
@@ -161,12 +164,12 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
-          const auto x = from_1D((id_x + quadrature.point(q)[0]) * delta_0);
+          const auto x =
+            from_1D((id_in_plane + quadrature.point(q)[0]) * delta_0);
 
           if constexpr (dim == 3)
-            points.emplace_back(x[0],
-                                x[1],
-                                (id_y + quadrature.point(q)[1]) * delta_1);
+            points.emplace_back(
+              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
           else
             points.emplace_back(x);
         }
@@ -186,15 +189,15 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
 
       if (type == 2) // outside
         {
-          rad_0 = id_x * delta_0;
-          rad_1 = id_x * delta_0 + rot_min;
-          rad_2 = (id_x + 1) * delta_0;
+          rad_0 = id_in_plane * delta_0;
+          rad_1 = id_in_plane * delta_0 + rot_min;
+          rad_2 = (id_in_plane + 1) * delta_0;
         }
       else // inside
         {
-          rad_0 = id_x * delta_0 + rot_min;
-          rad_1 = (id_x + 1) * delta_0;
-          rad_2 = (id_x + 1) * delta_0 + rot_min;
+          rad_0 = id_in_plane * delta_0 + rot_min;
+          rad_1 = (id_in_plane + 1) * delta_0;
+          rad_2 = (id_in_plane + 1) * delta_0 + rot_min;
         }
 
       std::vector<Point<dim>> points;
@@ -205,9 +208,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
             from_1D(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0));
 
           if constexpr (dim == 3)
-            points.emplace_back(x[0],
-                                x[1],
-                                (id_y + quadrature.point(q)[1]) * delta_1);
+            points.emplace_back(
+              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
           else
             points.emplace_back(x);
         }
@@ -218,9 +220,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
             from_1D(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1));
 
           if constexpr (dim == 3)
-            points.emplace_back(x[0],
-                                x[1],
-                                (id_y + quadrature.point(q)[1]) * delta_1);
+            points.emplace_back(
+              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
           else
             points.emplace_back(x);
         }
@@ -305,7 +306,7 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center) const
     return std::vector<double>{1.0};
 
   // Mesh alignment type and cell index
-  const auto [type, id_x, _] = get_config(face_center);
+  const auto [type, id_in_plane, _] = get_config(face_center);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   double       delta_1 = 1.0;
@@ -332,15 +333,15 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center) const
 
       if (type == 2) // outside
         {
-          rad_0 = id_x * delta_0;
-          rad_1 = id_x * delta_0 + rot_min;
-          rad_2 = (id_x + 1) * delta_0;
+          rad_0 = id_in_plane * delta_0;
+          rad_1 = id_in_plane * delta_0 + rot_min;
+          rad_2 = (id_in_plane + 1) * delta_0;
         }
       else // inside
         {
-          rad_0 = id_x * delta_0 + rot_min;
-          rad_1 = (id_x + 1) * delta_0;
-          rad_2 = (id_x + 1) * delta_0 + rot_min;
+          rad_0 = id_in_plane * delta_0 + rot_min;
+          rad_1 = (id_in_plane + 1) * delta_0;
+          rad_2 = (id_in_plane + 1) * delta_0 + rot_min;
         }
 
       std::vector<double> weights;
@@ -395,33 +396,35 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
   // Point position after rotation
   const double segment_rot =
     (angle_cell_center - delta_0 / 2 - rot_min) / delta_0;
+  // Cell index in the direction of the rotation axis
+  unsigned int id_out_plane = 0;
 
-  unsigned int id_y = 0;
-
-  if (dim == 3)
+  if constexpr (dim == 3)
     {
       const double delta_1 = radius[1] / n_subdivisions[1];
-      id_y                 = static_cast<unsigned int>(
+      id_out_plane         = static_cast<unsigned int>(
         std::round((face_center[2] - delta_1 / 2) / delta_1));
     }
 
   if (this->is_mesh_aligned())
     {
       // Case 1: mesh is aligned
-      return {0, static_cast<unsigned int>(std::round(segment)), id_y};
+      return {0, static_cast<unsigned int>(std::round(segment)), id_out_plane};
     }
   else
     {
       // Case 2: mesh is not aligned
       if (std::abs(segment - std::round(segment)) < tolerance)
         // outer (fixed) domain
-        return {2, static_cast<unsigned int>(std::round(segment)), id_y};
+        return {2,
+                static_cast<unsigned int>(std::round(segment)),
+                id_out_plane};
       else
         // inner (rotated) domain
         return {1,
                 static_cast<unsigned int>(std::round(segment_rot)) %
                   (2 * n_subdivisions[0]),
-                id_y};
+                id_out_plane};
     }
 }
 
@@ -696,7 +699,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                                     weights.end());
 
             // Normals of quadrature points
-            if (dim == 3)
+            if constexpr (dim == 3)
               {
                 const auto points =
                   mortar_manager->get_points(get_face_center(cell, face));
@@ -746,7 +749,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                                         normals.begin(),
                                         normals.end());
 
-                if (dim == 1)
+                if constexpr (dim == 1)
                   {
                     if (face_no == 0)
                       all_points_ref.emplace_back(0.0);
@@ -755,7 +758,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                     else
                       AssertThrow(false, ExcNotImplemented());
                   }
-                else if (dim == 2)
+                else if constexpr (dim == 2)
                   {
                     auto points = mortar_manager->get_points_ref(
                       get_face_center(cell, face));
@@ -783,7 +786,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                         AssertThrow(false, ExcNotImplemented());
                       }
                   }
-                else if (dim == 3)
+                else if constexpr (dim == 3)
                   {
                     AssertThrow(false, ExcNotImplemented()); // TODO
                   }
