@@ -95,7 +95,7 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
 
 template <int dim>
 void
-VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
+VOFLinearSubequationsSolver<dim>::solve_void_fraction_linear_system()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -184,7 +184,7 @@ VOFLinearSubequationsSolver<dim>::solve()
 {
   check_dependencies_validity();
   assemble_system_matrix_and_rhs();
-  solve_linear_system_and_update_solution();
+  solve_void_fraction_linear_system();
   this->subequations_interface.set_solution_valid(this->subequation_id);
 }
 

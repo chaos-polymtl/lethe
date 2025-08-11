@@ -44,7 +44,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   FlowControl<dim>                         &flow_control,
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions,
-  const VoidFractionBase<dim>              &void_fraction_manager)
+  const ParticleProjector<dim>             &void_fraction_manager)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)

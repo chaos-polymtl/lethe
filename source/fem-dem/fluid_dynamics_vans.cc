@@ -593,12 +593,19 @@ FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
   data_out.add_data_vector(void_fraction_manager.dof_handler,
                            void_fraction_manager.void_fraction_locally_relevant,
                            "void_fraction");
-  if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-      Parameters::VoidFractionMode::qcm)
-    data_out.add_data_vector(
-      void_fraction_manager.particle_velocity_qcm.dof_handler,
-      void_fraction_manager.particle_velocity_qcm.particle_field_solution,
-      "particle_velocity");
+  if (this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_velocity)
+    {
+      std::vector<std::string> names(dim, "particle_velocity");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        data_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
+      data_out.add_data_vector(
+        void_fraction_manager.particle_velocity.dof_handler,
+        void_fraction_manager.particle_velocity.particle_field_solution,
+        names,
+        data_interpretation);
+    }
 }
 
 template <int dim>

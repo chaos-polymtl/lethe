@@ -65,8 +65,8 @@ public:
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
-             const VectorType            &time_derivative_previous_solutions,
-             const VoidFractionBase<dim> &void_fraction_manager);
+             const VectorType             &time_derivative_previous_solutions,
+             const ParticleProjector<dim> &void_fraction_manager);
 
 private:
   /// Reference to the simulation parameters
@@ -170,7 +170,7 @@ protected:
 
   /// Object that manages the void fraction calculation from functions
   /// or from parameters.
-  VoidFractionBase<dim> void_fraction_manager;
+  ParticleProjector<dim> void_fraction_manager;
 
   /// Member variables which are used to manage boundary conditions
   bool           has_periodic_boundaries;
