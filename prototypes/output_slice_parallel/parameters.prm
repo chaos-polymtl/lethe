@@ -9,19 +9,15 @@ set dim = 3
 
 # Order of FE element <1|2|3>
 
-set element order = 1
+set element order = 3
 
 # Geometry <hyperball|hypercube|hyperrectangle>
 
-set geometry = hyperball
+set geometry = hyperrectangle
 
-# Global refinement 1st cycle
+# Global refinement
 
-set initial refinement = 3
-
-# Number of cycles <1 up to 9-dim >
-
-set number of cycles = 1
+set initial refinement = 4
 
 # Output vtu files <true|false>
 
@@ -39,14 +35,6 @@ set output name = solution
 
 set output path = ./output/
 
-# Preconditioner <AMG|GMG>
-
-set preconditioner = AMG
-
 # Repetitions in z direction for the hyper rectangle
 
 set repetitions = 2
-
-# Source term <zero|mms>
-
-set source term = zero
