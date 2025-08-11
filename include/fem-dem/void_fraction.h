@@ -100,8 +100,10 @@ class ParticleFieldQCM
 public:
   ParticleFieldQCM(parallel::DistributedTriangulationBase<dim> *triangulation,
                    const unsigned int                           fe_degree,
-                   const bool                                   simplex)
+                   const bool                                   simplex,
+                   const bool neumann_boundaries)
     : dof_handler(*triangulation)
+    , neumann_boundaries(neumann_boundaries)
   {
     if (simplex)
       {
@@ -160,6 +162,12 @@ public:
   /// outside of the object for now.
   AffineConstraints<double> particle_field_constraints;
 
+  /// Boolean that indicates if Neumann boundary conditions are used during the
+  /// projectin In this case, instead of assuming a value of zero if there are
+  /// no particles, the mass matrix is cancelled in region without particles
+  /// which results in a no flux zone.
+  const bool neumann_boundaries;
+
   /**
    * @brief Setup the degrees of freedom.
    *
@@ -169,17 +177,23 @@ public:
 };
 
 /**
- * @brief Void fraction calculator. This class manages the calculation of the
+ * @brief Particle information projection.
+ * This class manages the calculation of the projection of the particle
+ * information onto a triangulation. Its main use is the calculation of the
  * void fraction which is used as an auxiliary field for the solvers that solve
  * the Volume-Averaged Navier-Stokes equations. The present architecture
  * of the class support all of the different void fraction calculation methods
  * within a single class instead of building a class hierarchy. This is
  * because there are only a few void fraction calculation strategies.
  *
+ * Using QCM, this class is also capable of projecting arbitrary fields
+ * belonging to the particle back onto the mesh by leveraging the
+ * @ParticleFieldQCM class.
+ *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  */
 template <int dim>
-class VoidFractionBase : public PhysicsLinearSubequationsSolver
+class ParticleProjector : public PhysicsLinearSubequationsSolver
 {
 public:
   /**
@@ -193,7 +207,7 @@ public:
    * @param simplex A flag to indicate if the simulations are being done with simplex elements.
    * @param pcout The ConditionalOStream used to print the information.
    */
-  VoidFractionBase(
+  ParticleProjector(
     parallel::DistributedTriangulationBase<dim>             *triangulation,
     std::shared_ptr<Parameters::VoidFractionParameters<dim>> input_parameters,
     const Parameters::LinearSolver  &linear_solver_parameters,
@@ -207,7 +221,7 @@ public:
     , void_fraction_parameters(input_parameters)
     , linear_solver_parameters(linear_solver_parameters)
     , particle_handler(particle_handler)
-    , particle_velocity_qcm(triangulation, fe_degree, simplex)
+    , particle_velocity(triangulation, fe_degree, simplex, true)
   {
     if (simplex)
       {
@@ -472,7 +486,7 @@ private:
    *
    */
   virtual void
-  solve_linear_system_and_update_solution() override;
+  solve_void_fraction_linear_system() override;
 
   /*
    *
@@ -482,22 +496,38 @@ private:
   calculate_field_projection(
     ParticleFieldQCM<dim, component_start, n_components> &field_qcm)
   {
+    AssertThrow(
+      n_components == 1 || n_components == dim,
+      ExcMessage(
+        "QCM projection of a field only supports 1 or dim components"));
+
     FEValues<dim> fe_values_velocity(*mapping,
                                      *field_qcm.fe,
                                      *quadrature,
                                      update_values | update_quadrature_points |
                                        update_JxW_values | update_gradients);
 
-    FEValuesExtractors::Vector velocities;
-    velocities.first_vector_component = 0;
+    // Field extractor if dim components are used
+    FEValuesExtractors::Vector vector_extractor;
+    vector_extractor.first_vector_component = 0;
 
     const unsigned int dofs_per_cell = field_qcm.fe->dofs_per_cell;
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
     const unsigned int                   n_q_points = quadrature->size();
-    FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
-    Vector<double>              local_rhs(dofs_per_cell);
-    std::vector<Tensor<1, dim>> phi_vf(dofs_per_cell);
-    std::vector<Tensor<2, dim>> grad_phi_vf(dofs_per_cell);
+    FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
+    Vector<double>     local_rhs(dofs_per_cell);
+
+
+    // Declare the vectors for the shape function differently depending on the
+    // number of components We currently assume either 1 or dim components
+    typename std::conditional<n_components == 1,
+                              std::vector<double>,
+                              std::vector<Tensor<1, dim>>>::type
+      phi_vf(dofs_per_cell);
+    typename std::conditional<n_components == 1,
+                              std::vector<Tensor<1, dim>>,
+                              std::vector<Tensor<2, dim>>>::type
+      grad_phi_vf(dofs_per_cell);
 
     double         r_sphere = 0.0;
     double         total_volume_of_particle_in_sphere;
@@ -514,26 +544,8 @@ private:
         calculate_reference_sphere_radius = false;
       }
 
-    // Lambda functions for calculating the radius of the reference sphere
-    // Calculate the radius by the volume (area in 2D) of sphere:
-    // r = (2*dim*V/pi)^(1/dim) / 2
-    auto radius_sphere_volume_cell = [](auto cell_measure) {
-      return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / double(dim));
-    };
-
-    // Calculate the radius is obtained from the volume of sphere based on
-    // R_s = h_omega:
-    // V_s = pi*(2*V_c^(1/dim))^(dim)/(2*dim) = pi*2^(dim)*V_c/(2*dim)
-    auto radius_h_omega = [&radius_sphere_volume_cell](double cell_measure) {
-      double reference_sphere_volume =
-        M_PI * Utilities::fixed_power<dim>(2.0) * cell_measure / (2.0 * dim);
-
-      return radius_sphere_volume_cell(reference_sphere_volume);
-    };
-
     field_qcm.system_rhs    = 0;
     field_qcm.system_matrix = 0;
-
 
     for (const auto &cell : field_qcm.dof_handler.active_cell_iterators())
       {
@@ -564,19 +576,8 @@ private:
             // averaging volume for the QCM
             if (calculate_reference_sphere_radius)
               {
-                if (void_fraction_parameters->qcm_sphere_equal_cell_volume ==
-                    true)
-                  {
-                    // Get the radius by the volume of sphere which is
-                    // equal to the volume of cell
-                    r_sphere = radius_sphere_volume_cell(cell->measure());
-                  }
-                else
-                  {
-                    // The radius is obtained from the volume of sphere based
-                    // on R_s = h_omega
-                    r_sphere = radius_h_omega(cell->measure());
-                  }
+                r_sphere =
+                  calculate_qcm_radius_from_cell_measure(cell->measure());
               }
 
             for (unsigned int q = 0; q < n_q_points; ++q)
@@ -598,72 +599,25 @@ private:
                           particle_properties
                             [DEM::CFDDEMProperties::PropertiesIndex::dp] *
                           0.5;
-                        double single_particle_volume =
-                          M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
-                          (2 * dim);
 
                         // Distance between particle and quadrature point
                         // centers
                         distance = particle.get_location().distance(
                           quadrature_point_location[q]);
 
-                        // Particle completely in the reference sphere
-                        if (distance <= (r_sphere - r_particle))
+                        const double particle_volume_in_sphere =
+                          calculate_intersection_measure(r_particle,
+                                                         r_sphere,
+                                                         distance);
+
+                        total_volume_of_particle_in_sphere +=
+                          particle_volume_in_sphere;
+                        for (unsigned int d = 0; d < n_components; ++d)
                           {
-                            const double particle_volume =
-                              single_particle_volume;
-
-                            total_volume_of_particle_in_sphere +=
-                              particle_volume;
-                            for (unsigned int d = 0; d < n_components; ++d)
-                              {
-                                particles_velocity_in_sphere[d] +=
-                                  particle_volume *
-                                  particle_properties[component_start + d];
-                              }
+                            particles_velocity_in_sphere[d] +=
+                              particle_volume_in_sphere *
+                              particle_properties[component_start + d];
                           }
-
-                        // Particle partially in the reference sphere
-                        else if ((distance > (r_sphere - r_particle)) &&
-                                 (distance < (r_sphere + r_particle)))
-                          {
-                            if (dim == 2)
-                              {
-                                const double particle_volume =
-                                  particle_circle_intersection_2d(r_particle,
-                                                                  r_sphere,
-                                                                  distance);
-
-                                total_volume_of_particle_in_sphere +=
-                                  particle_volume;
-
-                                for (unsigned int d = 0; d < n_components; ++d)
-                                  {
-                                    particles_velocity_in_sphere[d] +=
-                                      particle_volume *
-                                      particle_properties[component_start + d];
-                                  }
-                              }
-                            else if (dim == 3)
-                              {
-                                const double particle_volume =
-                                  particle_sphere_intersection_3d(r_particle,
-                                                                  r_sphere,
-                                                                  distance);
-                                total_volume_of_particle_in_sphere +=
-                                  particle_volume;
-
-                                for (unsigned int d = 0; d < n_components; ++d)
-                                  {
-                                    particles_velocity_in_sphere[d] +=
-                                      particle_volume *
-                                      particle_properties[component_start + d];
-                                  }
-                              }
-                          }
-
-                        // Particle completely outside the reference sphere. Do
-                        // absolutely nothing.
                       }
                   }
 
@@ -687,9 +641,6 @@ private:
                           particle_properties
                             [DEM::CFDDEMProperties::PropertiesIndex::dp] *
                           0.5;
-                        double single_particle_volume =
-                          M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
-                          (2 * dim);
 
                         // Adjust the location of the particle in the cell to
                         // account for the periodicity. If the position of the
@@ -710,87 +661,71 @@ private:
                         distance = particle_location.distance(
                           quadrature_point_location[q]);
 
-                        // Particle completely in the reference sphere
-                        if (distance <= (r_sphere - r_particle))
+                        const double particle_volume_in_sphere =
+                          calculate_intersection_measure(r_particle,
+                                                         r_sphere,
+                                                         distance);
+
+                        total_volume_of_particle_in_sphere +=
+                          particle_volume_in_sphere;
+                        for (unsigned int d = 0; d < n_components; ++d)
                           {
-                            const double particle_volume =
-                              single_particle_volume;
-                            total_volume_of_particle_in_sphere +=
-                              particle_volume;
-                            for (unsigned int d = 0; d < n_components; ++d)
-                              {
-                                particles_velocity_in_sphere[d] +=
-                                  particle_volume *
-                                  particle_properties[component_start + d];
-                              }
+                            particles_velocity_in_sphere[d] +=
+                              particle_volume_in_sphere *
+                              particle_properties[component_start + d];
                           }
-
-                        // Particle partially in the reference sphere
-                        else if ((distance > (r_sphere - r_particle)) &&
-                                 (distance < (r_sphere + r_particle)))
-                          {
-                            if (dim == 2)
-                              {
-                                const double particle_volume =
-                                  particle_circle_intersection_2d(r_particle,
-                                                                  r_sphere,
-                                                                  distance);
-
-                                total_volume_of_particle_in_sphere +=
-                                  particle_volume;
-
-                                for (unsigned int d = 0; d < n_components; ++d)
-                                  {
-                                    particles_velocity_in_sphere[d] +=
-                                      particle_volume *
-                                      particle_properties[component_start + d];
-                                  }
-                              }
-                            else if (dim == 3)
-                              {
-                                const double particle_volume =
-                                  particle_sphere_intersection_3d(r_particle,
-                                                                  r_sphere,
-                                                                  distance);
-                                total_volume_of_particle_in_sphere +=
-                                  particle_volume;
-
-                                for (unsigned int d = 0; d < dim; ++d)
-                                  {
-                                    particles_velocity_in_sphere[d] +=
-                                      particle_volume *
-                                      particle_properties
-                                        [DEM::CFDDEMProperties::
-                                           PropertiesIndex::v_x +
-                                         d];
-                                  }
-                              }
-                          }
-
-
-                        // Particle completely outside the reference sphere. Do
-                        // absolutely nothing.
                       }
                   }
 
                 for (unsigned int k = 0; k < dofs_per_cell; ++k)
                   {
-                    phi_vf[k] = fe_values_velocity[velocities].value(k, q);
-                    grad_phi_vf[k] =
-                      fe_values_velocity[velocities].gradient(k, q);
+                    if constexpr (n_components == dim)
+                      {
+                        phi_vf[k] =
+                          fe_values_velocity[vector_extractor].value(k, q);
+                        grad_phi_vf[k] =
+                          fe_values_velocity[vector_extractor].gradient(k, q);
+                      }
+                    if constexpr (n_components == 1)
+                      {
+                        phi_vf[k] = fe_values_velocity.shape_value(k, q);
+                        grad_phi_vf[k] =
+                          fe_values_velocity.shape_gradient(k, q);
+                      }
                   }
 
                 for (unsigned int i = 0; i < dofs_per_cell; ++i)
                   {
+                    // We extract the component i and j to only calculate the
+                    // matrix when i and j are equal This is an optimization
+                    // that is only necessary when we have more than 1
+                    // component, but the cost is marginal when there is only
+                    // one component so might as well live with it.
+
+                    const unsigned int component_i =
+                      field_qcm.fe->system_to_component_index(i).first;
                     // Assemble L2 projection
                     // Matrix assembly
                     for (unsigned int j = 0; j < dofs_per_cell; ++j)
                       {
-                        local_matrix(i, j) +=
-                          ((phi_vf[j] * phi_vf[i]) +
-                           (this->l2_smoothing_factor *
-                            scalar_product(grad_phi_vf[j], grad_phi_vf[i]))) *
-                          fe_values_velocity.JxW(q);
+                        const unsigned int component_j =
+                          field_qcm.fe->system_to_component_index(j).first;
+                        if (component_i == component_j)
+                          {
+                            // If there are particles, assemble a smoothed L2
+                            // projection
+                            if (field_qcm.neumann_boundaries == false ||
+                                total_volume_of_particle_in_sphere > 0)
+                              {
+                                local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) *
+                                                      fe_values_velocity.JxW(q);
+                              }
+                            local_matrix(i, j) +=
+                              ((this->l2_smoothing_factor *
+                                scalar_product(grad_phi_vf[j],
+                                               grad_phi_vf[i]))) *
+                              fe_values_velocity.JxW(q);
+                          }
                       }
 
                     if (total_volume_of_particle_in_sphere > 0)
@@ -804,7 +739,7 @@ private:
               }
 
             cell->get_dof_indices(local_dof_indices);
-            field_qcm.field_constraints.distribute_local_to_global(
+            field_qcm.particle_field_constraints.distribute_local_to_global(
               local_matrix,
               local_rhs,
               local_dof_indices,
@@ -849,7 +784,7 @@ private:
                                    preconditionerOptions);
 
     solver.solve(field_qcm.system_matrix,
-                 field_qcm.field_locally_owned,
+                 field_qcm.particle_field_locally_owned,
                  field_qcm.system_rhs,
                  *ilu_preconditioner);
 
@@ -859,14 +794,17 @@ private:
                     << solver_control.last_step() << " steps " << std::endl;
       }
 
-    field_qcm.field_constraints.distribute(field_qcm.field_locally_owned);
-    field_qcm.field_locally_relevant = field_qcm.field_locally_owned;
+    field_qcm.particle_field_constraints.distribute(
+      field_qcm.particle_field_locally_owned);
+    field_qcm.particle_field_locally_relevant =
+      field_qcm.particle_field_locally_owned;
 
 #ifndef LETHE_USE_LDV
     // Perform copy between two vector types to ensure there is a deal.II vector
-    convert_vector_trilinos_to_dealii(field_qcm.field_solution,
-                                      field_qcm.field_locally_relevant);
-    field_qcm.field_solution.update_ghost_values();
+    convert_vector_trilinos_to_dealii(
+      field_qcm.particle_field_solution,
+      field_qcm.particle_field_locally_relevant);
+    field_qcm.particle_field_solution.update_ghost_values();
 #else
     void_fraction_solution = void_fraction_locally_relevant;
 #endif
@@ -989,7 +927,7 @@ private:
 
 public:
   ParticleFieldQCM<dim, DEM::CFDDEMProperties::PropertiesIndex::v_x, 3>
-    particle_velocity_qcm;
+    particle_velocity;
 };
 
 

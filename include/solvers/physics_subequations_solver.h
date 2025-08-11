@@ -60,7 +60,7 @@ protected:
    * the equation is already linear.
    */
   virtual void
-  solve_linear_system_and_update_solution() = 0;
+  solve_void_fraction_linear_system() = 0;
 
 
   const ConditionalOStream pcout;
