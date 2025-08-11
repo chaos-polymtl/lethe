@@ -91,10 +91,10 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->reinit_mortar_operators();
 
 
-  // Important note : operations on the following vectors (addition,
-  // multiplication, etc.) can only be done if these are reinitialized WITHOUT
-  // locally_relevant_dofs. This is why most of them are reinitialized both with
-  // and without locally_relevant_dofs.
+  // Operations on the following vectors (addition, multiplication, etc.) can
+  // only be done if these are reinitialized WITHOUT locally_relevant_dofs. This
+  // is why most of them are reinitialized both with and without
+  // locally_relevant_dofs.
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
@@ -112,30 +112,29 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
 
-  // Reinitialize vectors used for the SDIRK methods
-  this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
-                                       this->locally_relevant_dofs,
-                                       this->mpi_communicator);
-  this->sdirk_vectors.temp_sum_bi_ki.reinit(this->locally_owned_dofs,
-                                            this->mpi_communicator);
-
-
-  this->sdirk_vectors.sum_over_previous_stages.reinit(
-    this->locally_owned_dofs,
-    this->locally_relevant_dofs,
-    this->mpi_communicator);
-  this->sdirk_vectors.temp_sum_over_previous_stages.reinit(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  this->sdirk_vectors.locally_owned_for_calculus.reinit(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  // Initialize vector of previous hk_j solutions
-  for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
+  if (this->simulation_control->is_sdirk())
     {
-      solution.reinit(this->locally_owned_dofs,
-                      this->locally_relevant_dofs,
-                      this->mpi_communicator);
+      // Reinitialize vectors used for the SDIRK methods
+      this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
+                                           this->locally_relevant_dofs,
+                                           this->mpi_communicator);
+      this->sdirk_vectors.local_sum_bi_ki.reinit(this->locally_owned_dofs,
+                                                 this->mpi_communicator);
+      this->sdirk_vectors.sum_over_previous_stages.reinit(
+        this->locally_owned_dofs,
+        this->locally_relevant_dofs,
+        this->mpi_communicator);
+      this->sdirk_vectors.local_sum_over_previous_stages.reinit(
+        this->locally_owned_dofs, this->mpi_communicator);
+      this->sdirk_vectors.locally_owned_for_calculation.reinit(
+        this->locally_owned_dofs, this->mpi_communicator);
+
+      for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
+        {
+          solution.reinit(this->locally_owned_dofs,
+                          this->locally_relevant_dofs,
+                          this->mpi_communicator);
+        }
     }
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);

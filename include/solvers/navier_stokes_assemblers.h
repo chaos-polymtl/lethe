@@ -309,7 +309,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the transient time arising from SDIRK time
+ * @brief Class that assembles the transient term arising from SDIRK time
  * integration for the Navier Stokes equations.
  * For a given stage \( i \), the following expression is assembled and treated
  * implicitly: \f[ \frac{\mathbf{u}_i^* - \mathbf{u}_n}{h a_{ii}} -

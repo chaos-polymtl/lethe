@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Testing the results of the BDF (2nd order BDF) scheme on the TGV example
+
 # Listing of Parameters
 #----------------------
 

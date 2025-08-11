@@ -62,9 +62,8 @@ struct SDIRKTable
  * @return SDIRKTable A structure containing the Butcher tableau (A, b, c) for the requested method.
  */
 
-// Important note : When referencing to SDIRK methods the pattern used is
-// sdirkOrderStage. For instance, sdirk22 indicates SDIRK method with order 2
-// and 2 stages
+// When referencing to SDIRK methods the pattern used is sdirkOrderStage. For
+// instance, sdirk22 indicates SDIRK method with order 2 and 2 stages
 SDIRKTable
 sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method);
 
