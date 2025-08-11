@@ -2709,10 +2709,13 @@ NavierStokesBase<dim, VectorType, DofsType>::output_field_hook(
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
+NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   const VectorType &solution)
 {
   TimerOutput::Scope t(this->computing_timer, "Output VTU");
+
+  // Clear container with output structs
+  this->solution_output_structs.clear();
 
   const std::string  folder        = simulation_control->get_output_path();
   const std::string  solution_name = simulation_control->get_output_name();
@@ -2731,20 +2734,24 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.emplace_back(
     DataComponentInterpretation::component_is_scalar);
 
-  DataOut<dim> data_out;
+  OutputStruct solution_fd_struct(this->dof_handler,
+                                  solution, solution_names, data_component_interpretation);
 
-  // Additional flag to enable the output of high-order elements
-  DataOutBase::VtkFlags flags;
-  if (this->velocity_fem_degree > 1)
-    flags.write_higher_order_cells = true;
-  data_out.set_flags(flags);
+  solution_output_structs.emplace_back(solution_fd_struct);
+  // DataOut<dim> data_out;
 
-  // Attach the solution data to data_out object
-  data_out.attach_dof_handler(this->dof_handler);
-  data_out.add_data_vector(solution,
-                           solution_names,
-                           DataOut<dim>::type_dof_data,
-                           data_component_interpretation);
+  // // Additional flag to enable the output of high-order elements
+  // DataOutBase::VtkFlags flags;
+  // if (this->velocity_fem_degree > 1)
+  //   flags.write_higher_order_cells = true;
+  // data_out.set_flags(flags);
+
+  // // Attach the solution data to data_out object
+  // data_out.attach_dof_handler(this->dof_handler);
+  // data_out.add_data_vector(solution,
+  //                          solution_names,
+  //                          DataOut<dim>::type_dof_data,
+  //                          data_component_interpretation);
 
   if (this->simulation_parameters.post_processing
         .calculate_average_velocities ||
@@ -2763,11 +2770,20 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       average_data_component_interpretation.emplace_back(
         DataComponentInterpretation::component_is_scalar);
 
-      data_out.add_data_vector(
+      OutputStruct average_solution_struct(
+        this->dof_handler,
         this->average_velocities->get_average_velocities(),
         average_solution_names,
-        DataOut<dim>::type_dof_data,
         average_data_component_interpretation);
+
+      this->solution_output_structs.emplace_back(
+        average_solution_struct);
+
+      // data_out.add_data_vector(
+      //   this->average_velocities->get_average_velocities(),
+      //   average_solution_names,
+      //   DataOut<dim>::type_dof_data,
+      //   average_data_component_interpretation);
 
       // Add the interpretation of the reynolds stresses of solution.
       // The dim first components are the normal reynolds stress vectors and
@@ -2780,6 +2796,14 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
           dim, DataComponentInterpretation::component_is_part_of_vector);
       reynolds_normal_stress_data_component_interpretation.emplace_back(
         DataComponentInterpretation::component_is_scalar);
+
+      OutputStruct reynolds_normal_stress_struct(
+        this->dof_handler,
+        this->average_velocities->get_reynolds_normal_stresses(),
+        reynolds_normal_stress_names,
+        reynolds_normal_stress_data_component_interpretation);
+
+      solution_output_structs.emplace_back(reynolds_normal_stress_struct);
 
 
       std::vector<std::string> reynolds_shear_stress_names = {
@@ -2801,23 +2825,23 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       reynolds_shear_stress_data_component_interpretation.emplace_back(
         DataComponentInterpretation::component_is_scalar);
 
-      data_out.add_data_vector(
-        this->average_velocities->get_reynolds_normal_stresses(),
-        reynolds_normal_stress_names,
-        DataOut<dim>::type_dof_data,
-        reynolds_normal_stress_data_component_interpretation);
-
-      data_out.add_data_vector(
-        this->average_velocities->get_reynolds_shear_stresses(),
-        reynolds_shear_stress_names,
-        DataOut<dim>::type_dof_data,
-        reynolds_shear_stress_data_component_interpretation);
+      // data_out.add_data_vector(
+      //   this->average_velocities->get_reynolds_normal_stresses(),
+      //   reynolds_normal_stress_names,
+      //   DataOut<dim>::type_dof_data,
+      //   reynolds_normal_stress_data_component_interpretation);
+      //
+      // data_out.add_data_vector(
+      //   this->average_velocities->get_reynolds_shear_stresses(),
+      //   reynolds_shear_stress_names,
+      //   DataOut<dim>::type_dof_data,
+      //   reynolds_shear_stress_data_component_interpretation);
     }
 
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
-  data_out.add_data_vector(subdomain, "subdomain");
+  // data_out.add_data_vector(subdomain, "subdomain");
 
 
   // Create the post-processors to have derived information about the velocity
@@ -2827,7 +2851,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   QCriterionPostprocessor<dim> qcriterion;
   DivergencePostprocessor<dim> divergence;
   VorticityPostprocessor<dim>  vorticity;
-  data_out.add_data_vector(solution, vorticity);
+  // data_out.add_data_vector(solution, vorticity);
 
   // Get physical properties models
   std::vector<std::shared_ptr<DensityModel>> density_models =
@@ -2866,32 +2890,32 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       if (!density_models[f_id]->is_constant_density_model() ||
           this->simulation_parameters.multiphysics.VOF ||
           this->simulation_parameters.multiphysics.cahn_hilliard)
-        data_out.add_data_vector(solution, density_postprocessors[f_id]);
+        // data_out.add_data_vector(solution, density_postprocessors[f_id]);
 
-      // Only output the kinematic viscosity for non-newtonian rheology
-      if (rheological_models[f_id]->is_non_newtonian_rheological_model())
-        {
-          data_out.add_data_vector(solution,
-                                   kinematic_viscosity_postprocessors[f_id]);
+        // Only output the kinematic viscosity for non-newtonian rheology
+        if (rheological_models[f_id]->is_non_newtonian_rheological_model())
+          {
+            // data_out.add_data_vector(solution,
+            //                          kinematic_viscosity_postprocessors[f_id]);
 
-          // Only output the dynamic viscosity for multiphase flows
-          if (this->simulation_parameters.multiphysics.VOF ||
-              this->simulation_parameters.multiphysics.cahn_hilliard)
-            data_out.add_data_vector(solution,
-                                     dynamic_viscosity_postprocessors[f_id]);
-        }
+            // Only output the dynamic viscosity for multiphase flows
+            if (this->simulation_parameters.multiphysics.VOF ||
+                this->simulation_parameters.multiphysics.cahn_hilliard)
+            // data_out.add_data_vector(solution,
+            //                          dynamic_viscosity_postprocessors[f_id]);
+          }
     }
 
   ShearRatePostprocessor<dim> shear_rate_processor;
   if (this->simulation_parameters.physical_properties_manager
         .is_non_newtonian())
-    data_out.add_data_vector(solution, shear_rate_processor);
+    // data_out.add_data_vector(solution, shear_rate_processor);
 
-  // Trilinos vector for the smoothed output fields
-  QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
-    *this->triangulation,
-    this->simulation_parameters,
-    number_quadrature_points);
+    // Trilinos vector for the smoothed output fields
+    QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
+      *this->triangulation,
+      this->simulation_parameters,
+      number_quadrature_points);
 
   ContinuityPostProcessorSmoothing<dim, VectorType> continuity_smoothing(
     *this->triangulation,
@@ -2937,17 +2961,17 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         std::vector<std::string> continuity_name = {"velocity_divergence"};
         const DoFHandler<dim>   &dof_handler_qcriterion =
           continuity_smoothing.get_dof_handler();
-        data_out.add_data_vector(dof_handler_qcriterion,
-                                 continuity_field,
-                                 continuity_name,
-                                 data_component_interpretation);
+        // data_out.add_data_vector(dof_handler_qcriterion,
+        //                          continuity_field,
+        //                          continuity_name,
+        //                          data_component_interpretation);
       }
     }
   else
     {
       // Use the non-smoothed version of the post-processors
-      data_out.add_data_vector(solution, divergence);
-      data_out.add_data_vector(solution, qcriterion);
+      // data_out.add_data_vector(solution, divergence);
+      // data_out.add_data_vector(solution, qcriterion);
     }
 
 
