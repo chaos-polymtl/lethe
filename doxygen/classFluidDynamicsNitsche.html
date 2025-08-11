@@ -196,6 +196,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aa9d4082f8100a4be7481c4a7b80121a7 inherit pro_methods_classFluidDynamicsMatrixBased"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01fd5496793c44c9889381ab54f7d6ba inherit pro_methods_classFluidDynamicsMatrixBased" id="r_a01fd5496793c44c9889381ab54f7d6ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#a01fd5496793c44c9889381ab54f7d6ba">define_dynamic_zero_constraints</a> ()</td></tr>
 <tr class="separator:a01fd5496793c44c9889381ab54f7d6ba inherit pro_methods_classFluidDynamicsMatrixBased"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac95ee9d38109d2248756e7ea8c78205b inherit pro_methods_classFluidDynamicsMatrixBased" id="r_ac95ee9d38109d2248756e7ea8c78205b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#ac95ee9d38109d2248756e7ea8c78205b">update_mortar_configuration</a> ()</td></tr>
+<tr class="separator:ac95ee9d38109d2248756e7ea8c78205b inherit pro_methods_classFluidDynamicsMatrixBased"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af16a439b2d5157717df92d004d1b41c8 inherit pro_methods_classFluidDynamicsMatrixBased" id="r_af16a439b2d5157717df92d004d1b41c8"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#af16a439b2d5157717df92d004d1b41c8">assemble_local_system_matrix</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data)</td></tr>
 <tr class="separator:af16a439b2d5157717df92d004d1b41c8 inherit pro_methods_classFluidDynamicsMatrixBased"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7241a134f0e9ec373c83b5f68469926a inherit pro_methods_classFluidDynamicsMatrixBased" id="r_a7241a134f0e9ec373c83b5f68469926a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#a7241a134f0e9ec373c83b5f68469926a">assemble_local_system_rhs</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data)</td></tr>
@@ -273,10 +275,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a59aa10c2999179c9384cb7bb33979078 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cd0bbcce8693ac4e77f67976a16bbee inherit pro_methods_classNavierStokesBase" id="r_a2cd0bbcce8693ac4e77f67976a16bbee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a2cd0bbcce8693ac4e77f67976a16bbee">define_zero_constraints</a> ()</td></tr>
 <tr class="separator:a2cd0bbcce8693ac4e77f67976a16bbee inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaddda9348d1de7f0f3903f3058b89b5f inherit pro_methods_classNavierStokesBase" id="r_aaddda9348d1de7f0f3903f3058b89b5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#aaddda9348d1de7f0f3903f3058b89b5f">update_mortar_configuration</a> ()</td></tr>
-<tr class="separator:aaddda9348d1de7f0f3903f3058b89b5f inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35b71ee7cbce5dc9c82e45085aef3c23 inherit pro_methods_classNavierStokesBase" id="r_a35b71ee7cbce5dc9c82e45085aef3c23"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a35b71ee7cbce5dc9c82e45085aef3c23">reinit_mortar</a> ()</td></tr>
-<tr class="separator:a35b71ee7cbce5dc9c82e45085aef3c23 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa90a27f0f9f032a90a50ee3cda0b0c4 inherit pro_methods_classNavierStokesBase" id="r_afa90a27f0f9f032a90a50ee3cda0b0c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#afa90a27f0f9f032a90a50ee3cda0b0c4">reinit_mortar_operators</a> ()</td></tr>
+<tr class="separator:afa90a27f0f9f032a90a50ee3cda0b0c4 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a615f24a6a6c089eaacc715f1e8ef0a14 inherit pro_methods_classNavierStokesBase" id="r_a615f24a6a6c089eaacc715f1e8ef0a14"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Mapping&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a615f24a6a6c089eaacc715f1e8ef0a14">get_mapping</a> ()</td></tr>
 <tr class="separator:a615f24a6a6c089eaacc715f1e8ef0a14 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ae1c9c8f8ed38e840684b0007ff8359 inherit pro_methods_classNavierStokesBase" id="r_a6ae1c9c8f8ed38e840684b0007ff8359"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a6ae1c9c8f8ed38e840684b0007ff8359">rotate_rotor_mapping</a> (const bool is_first)</td></tr>
@@ -467,7 +467,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00024">24</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00152">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00151">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00925">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00154">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_forces_table</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00155">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_torques_table</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00150">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solids</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00152">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00151">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00922">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00154">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_forces_table</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00155">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_torques_table</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00150">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solids</a>.</p>
 
 </div>
 </div>
@@ -502,7 +502,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00893">893</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00494">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_matrix()</a>, and <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00719">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00567">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_matrix()</a>, and <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00792">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
 
 </div>
 </div>
@@ -571,7 +571,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00904">904</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00719">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00792">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
 
 </div>
 </div>
@@ -972,7 +972,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00954">954</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00208">fill_table_from_file()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02131">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00208">fill_table_from_file()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02103">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>.</p>
 
 </div>
 </div>
@@ -1078,7 +1078,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00913">913</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l02914">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l02886">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>.</p>
 
 </div>
 </div>
