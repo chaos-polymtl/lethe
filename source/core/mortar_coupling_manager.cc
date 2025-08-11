@@ -427,7 +427,8 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
                 // id_out_plane};
                 (static_cast<unsigned int>(std::round(segment_rot)) +
                  2 * n_subdivisions[0]) %
-                  (2 * n_subdivisions[0]), id_out_plane};
+                  (2 * n_subdivisions[0]),
+                id_out_plane};
     }
 }
 
