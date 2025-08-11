@@ -640,8 +640,8 @@ NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postresolution(
   auto &locally_owned_for_calculation =
     this->sdirk_vectors.locally_owned_for_calculation;
   auto &previous_k_j_solutions = this->sdirk_vectors.previous_k_j_solutions;
-  auto &sum_bi_ki       = this->sdirk_vectors.sum_bi_ki;
-  auto &local_sum_bi_ki = this->sdirk_vectors.local_sum_bi_ki;
+  auto &sum_bi_ki              = this->sdirk_vectors.sum_bi_ki;
+  auto &local_sum_bi_ki        = this->sdirk_vectors.local_sum_bi_ki;
 
   SDIRKTable     table = sdirk_table(method);
   SDIRKStageData stage_data(table, stage + 1);
@@ -676,8 +676,8 @@ NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(
   auto &present_solution       = this->present_solution;
   auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
-  auto &sum_bi_ki       = this->sdirk_vectors.sum_bi_ki;
-  auto &local_sum_bi_ki = this->sdirk_vectors.local_sum_bi_ki;
+  auto &sum_bi_ki              = this->sdirk_vectors.sum_bi_ki;
+  auto &local_sum_bi_ki        = this->sdirk_vectors.local_sum_bi_ki;
 
   // At each time iteration, we update the value of present_solution
   local_sum_bi_ki        = sum_bi_ki;
