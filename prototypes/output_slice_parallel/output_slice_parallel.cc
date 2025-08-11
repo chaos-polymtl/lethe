@@ -101,7 +101,7 @@ Settings::try_parse(const std::string &prm_filename)
   prm.declare_entry("output slice",
                     "true",
                     Patterns::Bool(),
-                    "Output vtu files <true|false>");
+                    "Output slice vtu files <true|false>");
   prm.declare_entry("output name",
                     "solution",
                     Patterns::FileName(),
@@ -249,7 +249,6 @@ OutputSliceParallel<dim, fe_degree>::OutputSliceParallel(
   , mpi_communicator(MPI_COMM_WORLD)
   , parameters(parameters)
 {}
-
 
 template <int dim, int fe_degree>
 void
