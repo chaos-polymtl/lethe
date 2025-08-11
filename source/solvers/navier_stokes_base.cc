@@ -631,18 +631,15 @@ NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postresolution(
   Parameters::SimulationControl::TimeSteppingMethod method,
   double                                            time_step)
 {
+  // Copy the reference to some of the vectors to enhance readability below
   auto &present_solution       = this->present_solution;
   auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
-
   auto &local_sum_over_previous_stages =
     this->sdirk_vectors.local_sum_over_previous_stages;
-
   auto &locally_owned_for_calculation =
     this->sdirk_vectors.locally_owned_for_calculation;
-
   auto &previous_k_j_solutions = this->sdirk_vectors.previous_k_j_solutions;
-
   auto &sum_bi_ki       = this->sdirk_vectors.sum_bi_ki;
   auto &local_sum_bi_ki = this->sdirk_vectors.local_sum_bi_ki;
 
@@ -675,12 +672,10 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(
   double time_step)
 {
+  // Copy the reference to some of the vectors to enhance readability below
   auto &present_solution       = this->present_solution;
   auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
-
-  // The following variables are used for the SDIRK method
-  // u_{n+1} = u_n + sum(b_i * k_i)
   auto &sum_bi_ki       = this->sdirk_vectors.sum_bi_ki;
   auto &local_sum_bi_ki = this->sdirk_vectors.local_sum_bi_ki;
 
