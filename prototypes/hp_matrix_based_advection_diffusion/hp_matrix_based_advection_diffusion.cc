@@ -452,7 +452,8 @@ private:
   hp::QCollection<dim - 1>  face_quadrature_collection;
 
   DoFHandler<dim>           dof_handler;
-  AffineConstraints<double> constraints;
+  AffineConstraints<double> zero_constraints;
+  AffineConstraints<double> nonzero_constraints;
   MatrixType                system_matrix;
   SparsityPattern           sparsity_pattern;
 
@@ -584,187 +585,154 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                        locally_relevant_dofs,
                        mpi_communicator);
 
-  constraints.clear();
-  constraints.reinit(locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+  zero_constraints.clear();
+  zero_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
+
+  nonzero_constraints.clear();
+  nonzero_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
 
   if (parameters.problem_type == Settings::boundary_layer)
     {
       // Create zero BCs for the delta.
       // Left wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                0,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                1,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
       // Top wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                3,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
       // Bottom wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                2,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
 
-      // Set boundary values for the initial newton iteration
-      VectorType local_solution(system_rhs);
-
-      // TODO : USE THE VERSION OF INTERPOLATE BOUNDARY VALUES FOR HP REFINEMENT
-      std::map<types::global_dof_index, double> boundary_values_left_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
+      // Nonzero constraints 
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                0,
-                                               Functions::ConstantFunction<dim>(
-                                                 -1.0),
-                                               boundary_values_left_wall);
-      for (auto &boundary_value : boundary_values_left_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
+                                               Functions::ConstantFunction<dim>(-1.0),
+                                               nonzero_constraints);
 
-      std::map<types::global_dof_index, double> boundary_values_right_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               1,
-                                               Functions::ConstantFunction<dim>(
-                                                 1.0),
-                                               boundary_values_right_wall);
-      for (auto &boundary_value : boundary_values_right_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+                                                1,
+                                                Functions::ConstantFunction<dim>(1.0),
+                                                nonzero_constraints);
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+                                                3,
+                                                Functions::ZeroFunction<dim>(),
+                                                nonzero_constraints);
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+                                                2,
+                                                BoundaryFunction<dim>(),
+                                                nonzero_constraints);
 
-      std::map<types::global_dof_index, double> boundary_values_top_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               3,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_top_wall);
-      for (auto &boundary_value : boundary_values_top_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
-
-      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               2,
-                                               BoundaryFunction<dim>(),
-                                               boundary_values_bottom_wall);
-      for (auto &boundary_value : boundary_values_bottom_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
-
-      solution = local_solution;
     }
   else if (parameters.problem_type == Settings::double_glazing)
     {
       // Left wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                0,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                1,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
       // Top wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                3,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
       // Bottom wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                2,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
 
-      // Set boundary values for the initial newton iteration
-      VectorType local_solution(system_rhs);
-
-      std::map<types::global_dof_index, double> boundary_values_left_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
+      // Nonzero constraints 
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                0,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_left_wall);
-      for (auto &boundary_value : boundary_values_left_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
+                                               Functions::ConstantFunction<dim>(-1.0),
+                                               nonzero_constraints);
 
-      std::map<types::global_dof_index, double> boundary_values_right_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               1,
-                                               Functions::ConstantFunction<dim>(
-                                                 1.0),
-                                               boundary_values_right_wall);
-      for (auto &boundary_value : boundary_values_right_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
-
-      std::map<types::global_dof_index, double> boundary_values_top_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               3,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_top_wall);
-      for (auto &boundary_value : boundary_values_top_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
-
-      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               2,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_bottom_wall);
-      for (auto &boundary_value : boundary_values_bottom_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
-
-      solution = local_solution;
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+                                                1,
+                                                Functions::ConstantFunction<dim>(1.0),
+                                                nonzero_constraints);
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+                                                3,
+                                                Functions::ZeroFunction<dim>(),
+                                                nonzero_constraints);
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+                                                2,
+                                                BoundaryFunction<dim>(),
+                                                nonzero_constraints);
     }
   else if (parameters.problem_type == Settings::boundary_layer_with_hole)
     {
       // Left wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                0,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                1,
                                                Functions::ZeroFunction<dim>(),
-                                               constraints);
+                                               zero_constraints);
 
-      // Set boundary values for the initial newton iteration
-      VectorType local_solution(system_rhs);
-
-      std::map<types::global_dof_index, double> boundary_values_left_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
+      // Nonzero constraints 
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                0,
                                                BoundaryValues<dim>(),
-                                               boundary_values_left_wall);
-      for (auto &boundary_value : boundary_values_left_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
+                                               nonzero_constraints);
 
-      std::map<types::global_dof_index, double> boundary_values_right_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
+      VectorTools::interpolate_boundary_values(mapping, dof_handler,
                                                1,
                                                BoundaryValues<dim>(),
-                                               boundary_values_right_wall);
-      for (auto &boundary_value : boundary_values_right_wall)
-        local_solution(boundary_value.first) = boundary_value.second;
-
-      solution = local_solution;
+                                               nonzero_constraints);
     }
 
-  constraints.close();
+  DoFTools::make_hanging_node_constraints(dof_handler, zero_constraints);
+  zero_constraints.close();
 
-  constraints.make_consistent_in_parallel(
+  DoFTools::make_hanging_node_constraints(dof_handler,
+                                          nonzero_constraints);
+  nonzero_constraints.close();
+
+
+  zero_constraints.make_consistent_in_parallel(
+    locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+
+  nonzero_constraints.make_consistent_in_parallel(
     locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
+  DoFTools::make_sparsity_pattern(dof_handler, dsp, zero_constraints, false);
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              dof_handler.locally_owned_dofs(),
                                              mpi_communicator,
                                              locally_relevant_dofs);
-  constraints.condense(dsp);
-  // sparsity_pattern.copy_from(dsp);
+  zero_constraints.condense(dsp);
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
                        dsp,
                        mpi_communicator);
+
+  // Instantiante local_solution to get solution without ghost elements
+  VectorType local_solution(system_rhs);
+  local_solution = solution;
+  nonzero_constraints.distribute(local_solution);
+  solution = local_solution;
 }
 
 template <int dim, int fe_degree>
@@ -878,7 +846,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
             }
           local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
-          constraints.distribute_local_to_global(cell_rhs,
+          zero_constraints.distribute_local_to_global(cell_rhs,
                                                  local_dof_indices,
                                                  system_rhs);
         }
@@ -893,8 +861,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 {
   TimerOutput::Scope t(computing_timer, "assemble matrix");
 
-  // const QGauss<dim> quadrature_formula(fe.degree + 1);
-
   system_matrix = 0;
 
   hp::FEValues<dim> hp_fe_values(fe_collection,
@@ -902,17 +868,11 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                           update_values | update_gradients | update_hessians |
                             update_JxW_values | update_quadrature_points);
 
-  // const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  // const unsigned int n_q_points    = fe_values.n_quadrature_points;
-
   FullMatrix<double> cell_matrix;
-
-  // std::vector<double> newton_step_values(n_q_points);
 
   std::vector<types::global_dof_index> local_dof_indices;
 
   AdvectionField<dim>         advection_field(parameters.problem_type);
-  // std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -998,7 +958,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
             }
           local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
-          constraints.distribute_local_to_global(cell_matrix,
+          zero_constraints.distribute_local_to_global(cell_matrix,
                                                  local_dof_indices,
                                                  system_matrix);
         }
@@ -1013,7 +973,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
   const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
-
+ 
   VectorType residual;
   VectorType evaluation_point(system_rhs);
   VectorType local_newton_update(system_rhs);
@@ -1037,28 +997,17 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
   local_evaluation_point = solution;
 
-  // const QGauss<dim> quadrature_formula(fe.degree + 1);
-
   hp::FEValues<dim> hp_fe_values(fe_collection,
                           quadrature_collection,
                           update_values | update_gradients | update_hessians |
                             update_JxW_values | update_quadrature_points);
 
-  // const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  // const unsigned int n_q_points    = fe_values.n_quadrature_points;
-
   Vector<double>      cell_residual;
   SourceTerm<dim>     source_term;
-  // std::vector<double> source_term_values(n_q_points);
-
-  // std::vector<double>         values(n_q_points);
-  // std::vector<Tensor<1, dim>> gradients(n_q_points);
-  // std::vector<double>         laplacians(n_q_points);
 
   std::vector<types::global_dof_index> local_dof_indices;
 
   AdvectionField<dim>         advection_field(parameters.problem_type);
-  // std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -1147,7 +1096,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
             }
           local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
-          constraints.distribute_local_to_global(cell_residual,
+          zero_constraints.distribute_local_to_global(cell_residual,
                                                  local_dof_indices,
                                                  residual);
         }
@@ -1211,7 +1160,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
             "This program supports only AMG and ILU as preconditioner."));
     }
 
-  constraints.distribute(completely_distributed_solution);
+  zero_constraints.distribute(completely_distributed_solution);
 
   linear_iterations = solver_control.last_step();
 
@@ -1256,65 +1205,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
 
   triangulation.execute_coarsening_and_refinement();
 }
-
-// template <int dim, int fe_degree>
-// void
-// MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
-// {
-//   TimerOutput::Scope t(computing_timer, "hp refinement");
-
-//   Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
-//   KellyErrorEstimator<dim>::estimate(
-//     dof_handler,
-//     face_quadrature_collection,
-//     std::map<types::boundary_id, const Function<dim> *>(),
-//     solution,
-//     estimated_error_per_cell);
-
-//   Vector<float> smoothness_indicators(triangulation.n_active_cells());
-//   FESeries::Fourier<dim, dim> fourier =
-//     SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
-//   SmoothnessEstimator::Fourier::coefficient_decay(fourier,
-//                                                   dof_handler,
-//                                                   solution,
-//                                                   smoothness_indicators);
-
-//   // h-refine / coarsen flags based on error
-//   parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
-//     triangulation, estimated_error_per_cell, 0.3, 0.03);
-
-//   for (const auto &cell : triangulation.active_cell_iterators())
-//     {
-//       if (cell->is_locally_owned())
-//         {
-//           for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
-//             {
-//               if (cell->face(f)->at_boundary())
-//                 {
-//                   cell->clear_refine_flag();
-//                   cell->clear_coarsen_flag();
-//                   break; // No need to check other faces
-//                 }
-//             }
-//         }
-//     }
-
-//   // p-refine flags based on smoothness indicators
-//   hp::Refinement::p_adaptivity_from_relative_threshold(dof_handler,
-//                                                        smoothness_indicators,
-//                                                        0.2,
-//                                                        0.2);
-
-//   // Choose p over h when both are allowed
-//   hp::Refinement::choose_p_over_h(dof_handler);
-
-//   // Prevent large p-level jumps between neighbors
-//   hp::Refinement::limit_p_level_difference(dof_handler);
-
-//   // Prepare and execute the refinement
-//   triangulation.prepare_coarsening_and_refinement();
-//   triangulation.execute_coarsening_and_refinement();
-// }
 
 template <int dim, int fe_degree>
 void
