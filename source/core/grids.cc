@@ -417,6 +417,12 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
+  // First check if stator and rotor meshes are of the same type
+  AssertThrow(
+    mesh_parameters.type == mortar_parameters.rotor_mesh->type,
+    ExcMessage(
+      "The mesh types for the rotor and stator geometries must be the same."));
+
   // Faces at rotor-stator interface
   unsigned int n_faces_rotor_interface  = 0;
   unsigned int n_faces_stator_interface = 0;

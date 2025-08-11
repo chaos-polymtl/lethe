@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed 
 
-- MINOR The mortar update was not accounting for the updated constraints when rotating the mesh, and the initial condition was being erased when updating the mortar information. This has been fixed. This PR also changes the way of reading msh files, so that two separate rotor/stator meshes are taken as input (the same way it was being done for dealii grids). [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
+- MINOR The mortar update was not accounting for the updated constraints when rotating the mesh, and the initial condition was being erased when updating the mortar information. This has been fixed. This PR also changes the way msh files are read, so that two separate rotor/stator meshes are taken as input (the same way it was done for dealii grids). [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
 
 ### [Master] - 2025-08-08
 
