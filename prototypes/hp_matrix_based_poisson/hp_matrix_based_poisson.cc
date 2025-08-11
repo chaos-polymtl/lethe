@@ -6,6 +6,7 @@
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/timer.h>
 
+#include <deal.II/distributed/cell_weights.h>
 #include <deal.II/distributed/grid_refinement.h>
 #include <deal.II/distributed/tria.h>
 
@@ -41,7 +42,6 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/smoothness_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
-#include <deal.II/distributed/cell_weights.h>
 
 #include <fstream>
 #include <iostream>
@@ -271,14 +271,14 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
 
-  hp::MappingCollection<dim> mapping_collection;
-  hp::FECollection<dim>     fe_collection;
-  hp::QCollection<dim>      quadrature_collection;
-  hp::QCollection<dim - 1>  face_quadrature_collection;
-  DoFHandler<dim>           dof_handler;
-  AffineConstraints<double> constraints;
-  MatrixType                system_matrix;
-  SparsityPattern           sparsity_pattern;
+  hp::MappingCollection<dim>                  mapping_collection;
+  hp::FECollection<dim>                       fe_collection;
+  hp::QCollection<dim>                        quadrature_collection;
+  hp::QCollection<dim - 1>                    face_quadrature_collection;
+  DoFHandler<dim>                             dof_handler;
+  AffineConstraints<double>                   constraints;
+  MatrixType                                  system_matrix;
+  SparsityPattern                             sparsity_pattern;
   std::unique_ptr<parallel::CellWeights<dim>> cell_weights;
 
   IndexSet locally_owned_dofs;
@@ -321,9 +321,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::HPMatrixBasedPoissonProblem(
     }
 
   cell_weights = std::make_unique<parallel::CellWeights<dim>>(
-    dof_handler,
-    parallel::CellWeights<dim>::ndofs_weighting(
-      {1, 1}));
+    dof_handler, parallel::CellWeights<dim>::ndofs_weighting({1, 1}));
 
   const unsigned int min_fe_index = parameters.element_order;
   triangulation.signals.post_p4est_refinement.connect(
@@ -331,8 +329,8 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::HPMatrixBasedPoissonProblem(
       const parallel::distributed::TemporarilyMatchRefineFlags<dim>
         refine_modifier(triangulation);
       hp::Refinement::limit_p_level_difference(dof_handler,
-                                                parameters.element_order,
-                                                /*contains=*/min_fe_index);
+                                               parameters.element_order,
+                                               /*contains=*/min_fe_index);
     },
     boost::signals2::at_front);
 }
@@ -438,8 +436,9 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::setup_system()
                                            constraints);
   constraints.close();
 
-  constraints.make_consistent_in_parallel(
-    locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  constraints.make_consistent_in_parallel(locally_owned_dofs,
+                                          locally_relevant_dofs,
+                                          mpi_communicator);
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
@@ -822,7 +821,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::hp_refine()
     solution,
     estimated_error_per_cell);
 
-  Vector<float>          smoothness_indicators(triangulation.n_active_cells());
+  Vector<float> smoothness_indicators(triangulation.n_active_cells());
   FESeries::Fourier<dim, dim> fourier =
     SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
   SmoothnessEstimator::Fourier::coefficient_decay(fourier,
@@ -996,7 +995,7 @@ HPMatrixBasedPoissonProblem<dim, fe_degree>::run()
 
       pcout << "Refine mesh using hp refinement..." << std::endl;
       hp_refine();
-      pcout << std::endl; 
+      pcout << std::endl;
 
       computing_timer.print_summary();
       computing_timer.reset();
