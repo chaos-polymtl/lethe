@@ -422,9 +422,6 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
       else
         // inner (rotated) domain
         return {1,
-                // static_cast<unsigned int>(std::round(segment_rot)) %
-                //   (2 * n_subdivisions[0]),
-                // id_out_plane};
                 (static_cast<unsigned int>(std::round(segment_rot)) +
                  2 * n_subdivisions[0]) %
                   (2 * n_subdivisions[0]),
