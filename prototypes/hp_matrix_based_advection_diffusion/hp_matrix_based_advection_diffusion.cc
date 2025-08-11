@@ -8,6 +8,9 @@
 #include <deal.II/base/tensor_function.h>
 #include <deal.II/base/timer.h>
 
+#include <deal.II/distributed/grid_refinement.h>
+#include <deal.II/distributed/tria.h>
+
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -26,8 +29,6 @@
 #include <deal.II/hp/fe_collection.h>
 #include <deal.II/hp/fe_values.h>
 #include <deal.II/hp/refinement.h>
-#include <deal.II/distributed/grid_refinement.h>
-#include <deal.II/distributed/tria.h>
 
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
@@ -41,11 +42,11 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/matrix_tools.h>
+#include <deal.II/numerics/smoothness_estimator.h>
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
-#include <deal.II/numerics/smoothness_estimator.h>
-#include <deal.II/numerics/error_estimator.h>
 
 #include <fstream>
 #include <iostream>
@@ -447,9 +448,9 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
 
-  hp::FECollection<dim>     fe_collection;
-  hp::QCollection<dim>      quadrature_collection;
-  hp::QCollection<dim - 1>  face_quadrature_collection;
+  hp::FECollection<dim>    fe_collection;
+  hp::QCollection<dim>     quadrature_collection;
+  hp::QCollection<dim - 1> face_quadrature_collection;
 
   DoFHandler<dim>           dof_handler;
   AffineConstraints<double> zero_constraints;
@@ -491,12 +492,12 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::MatrixBasedAdvectionDiffusion(
   , mpi_communicator(MPI_COMM_WORLD)
   , parameters(parameters)
 {
-    for (unsigned int degree = 1; degree <= 4; ++degree)
+  for (unsigned int degree = 1; degree <= 4; ++degree)
     {
       fe_collection.push_back(FE_Q<dim>(degree));
       quadrature_collection.push_back(QGauss<dim>(degree + 1));
       face_quadrature_collection.push_back(QGauss<dim - 1>(degree + 1));
-  }
+    }
 }
 
 
@@ -595,126 +596,138 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
     {
       // Create zero BCs for the delta.
       // Left wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                0,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                1,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
       // Top wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                3,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
       // Bottom wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                2,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
 
-      // Nonzero constraints 
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      // Nonzero constraints
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                0,
-                                               Functions::ConstantFunction<dim>(-1.0),
+                                               Functions::ConstantFunction<dim>(
+                                                 -1.0),
                                                nonzero_constraints);
 
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                                1,
-                                                Functions::ConstantFunction<dim>(1.0),
-                                                nonzero_constraints);
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                                3,
-                                                Functions::ZeroFunction<dim>(),
-                                                nonzero_constraints);
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                                2,
-                                                BoundaryFunction<dim>(),
-                                                nonzero_constraints);
-
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               1,
+                                               Functions::ConstantFunction<dim>(
+                                                 1.0),
+                                               nonzero_constraints);
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               nonzero_constraints);
+      VectorTools::interpolate_boundary_values(
+        mapping, dof_handler, 2, BoundaryFunction<dim>(), nonzero_constraints);
     }
   else if (parameters.problem_type == Settings::double_glazing)
     {
       // Left wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                0,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                1,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
       // Top wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                3,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
       // Bottom wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                2,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
 
-      // Nonzero constraints 
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      // Nonzero constraints
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                0,
-                                               Functions::ConstantFunction<dim>(-1.0),
+                                               Functions::ConstantFunction<dim>(
+                                                 -1.0),
                                                nonzero_constraints);
 
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                                1,
-                                                Functions::ConstantFunction<dim>(1.0),
-                                                nonzero_constraints);
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                                3,
-                                                Functions::ZeroFunction<dim>(),
-                                                nonzero_constraints);
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                                2,
-                                                BoundaryFunction<dim>(),
-                                                nonzero_constraints);
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               1,
+                                               Functions::ConstantFunction<dim>(
+                                                 1.0),
+                                               nonzero_constraints);
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               nonzero_constraints);
+      VectorTools::interpolate_boundary_values(
+        mapping, dof_handler, 2, BoundaryFunction<dim>(), nonzero_constraints);
     }
   else if (parameters.problem_type == Settings::boundary_layer_with_hole)
     {
       // Left wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                0,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
                                                1,
                                                Functions::ZeroFunction<dim>(),
                                                zero_constraints);
 
-      // Nonzero constraints 
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                               0,
-                                               BoundaryValues<dim>(),
-                                               nonzero_constraints);
+      // Nonzero constraints
+      VectorTools::interpolate_boundary_values(
+        mapping, dof_handler, 0, BoundaryValues<dim>(), nonzero_constraints);
 
-      VectorTools::interpolate_boundary_values(mapping, dof_handler,
-                                               1,
-                                               BoundaryValues<dim>(),
-                                               nonzero_constraints);
+      VectorTools::interpolate_boundary_values(
+        mapping, dof_handler, 1, BoundaryValues<dim>(), nonzero_constraints);
     }
 
   DoFTools::make_hanging_node_constraints(dof_handler, zero_constraints);
   zero_constraints.close();
 
-  DoFTools::make_hanging_node_constraints(dof_handler,
-                                          nonzero_constraints);
+  DoFTools::make_hanging_node_constraints(dof_handler, nonzero_constraints);
   nonzero_constraints.close();
 
 
-  zero_constraints.make_consistent_in_parallel(
-    locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  zero_constraints.make_consistent_in_parallel(locally_owned_dofs,
+                                               locally_relevant_dofs,
+                                               mpi_communicator);
 
-  nonzero_constraints.make_consistent_in_parallel(
-    locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  nonzero_constraints.make_consistent_in_parallel(locally_owned_dofs,
+                                                  locally_relevant_dofs,
+                                                  mpi_communicator);
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler, dsp, zero_constraints, false);
@@ -743,16 +756,17 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
   system_rhs = 0;
   hp::FEValues<dim> hp_fe_values(fe_collection,
-                          quadrature_collection,
-                          update_values | update_gradients | update_hessians |
-                            update_JxW_values | update_quadrature_points);
+                                 quadrature_collection,
+                                 update_values | update_gradients |
+                                   update_hessians | update_JxW_values |
+                                   update_quadrature_points);
 
-  Vector<double>      cell_rhs;
-  SourceTerm<dim>     source_term;
+  Vector<double>  cell_rhs;
+  SourceTerm<dim> source_term;
 
   std::vector<types::global_dof_index> local_dof_indices;
 
-  AdvectionField<dim>         advection_field(parameters.problem_type);
+  AdvectionField<dim> advection_field(parameters.problem_type);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -768,10 +782,10 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
           const unsigned int n_q_points = fe_values.n_quadrature_points;
 
-          std::vector<double> source_term_values(n_q_points);
-          std::vector<double> newton_step_values(n_q_points);
+          std::vector<double>         source_term_values(n_q_points);
+          std::vector<double>         newton_step_values(n_q_points);
           std::vector<Tensor<1, dim>> newton_step_gradients(n_q_points);
-          std::vector<double> newton_step_laplacians(n_q_points);
+          std::vector<double>         newton_step_laplacians(n_q_points);
           std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
           if (parameters.source_term == Settings::mms)
@@ -847,8 +861,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
           local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
           zero_constraints.distribute_local_to_global(cell_rhs,
-                                                 local_dof_indices,
-                                                 system_rhs);
+                                                      local_dof_indices,
+                                                      system_rhs);
         }
     }
 
@@ -864,15 +878,16 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
   system_matrix = 0;
 
   hp::FEValues<dim> hp_fe_values(fe_collection,
-                          quadrature_collection,
-                          update_values | update_gradients | update_hessians |
-                            update_JxW_values | update_quadrature_points);
+                                 quadrature_collection,
+                                 update_values | update_gradients |
+                                   update_hessians | update_JxW_values |
+                                   update_quadrature_points);
 
   FullMatrix<double> cell_matrix;
 
   std::vector<types::global_dof_index> local_dof_indices;
 
-  AdvectionField<dim>         advection_field(parameters.problem_type);
+  AdvectionField<dim> advection_field(parameters.problem_type);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -886,7 +901,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
           const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
 
-          const unsigned int n_q_points = fe_values.n_quadrature_points;
+          const unsigned int  n_q_points = fe_values.n_quadrature_points;
           std::vector<double> newton_step_values(n_q_points);
           std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
@@ -959,8 +974,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
           local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
           zero_constraints.distribute_local_to_global(cell_matrix,
-                                                 local_dof_indices,
-                                                 system_matrix);
+                                                      local_dof_indices,
+                                                      system_matrix);
         }
     }
 
@@ -973,7 +988,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
   const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
- 
+
   VectorType residual;
   VectorType evaluation_point(system_rhs);
   VectorType local_newton_update(system_rhs);
@@ -998,16 +1013,17 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
   local_evaluation_point = solution;
 
   hp::FEValues<dim> hp_fe_values(fe_collection,
-                          quadrature_collection,
-                          update_values | update_gradients | update_hessians |
-                            update_JxW_values | update_quadrature_points);
+                                 quadrature_collection,
+                                 update_values | update_gradients |
+                                   update_hessians | update_JxW_values |
+                                   update_quadrature_points);
 
-  Vector<double>      cell_residual;
-  SourceTerm<dim>     source_term;
+  Vector<double>  cell_residual;
+  SourceTerm<dim> source_term;
 
   std::vector<types::global_dof_index> local_dof_indices;
 
-  AdvectionField<dim>         advection_field(parameters.problem_type);
+  AdvectionField<dim> advection_field(parameters.problem_type);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -1016,14 +1032,14 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
           const unsigned int dofs_per_cell = cell->get_fe().dofs_per_cell;
           cell_residual.reinit(dofs_per_cell);
           cell_residual = 0.0;
-          
+
           hp_fe_values.reinit(cell);
 
           const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
 
-          const unsigned int n_q_points = fe_values.n_quadrature_points;
-          std::vector<double>         source_term_values(n_q_points);
-          std::vector<double>         values(n_q_points);
+          const unsigned int  n_q_points = fe_values.n_quadrature_points;
+          std::vector<double> source_term_values(n_q_points);
+          std::vector<double> values(n_q_points);
           std::vector<Tensor<1, dim>> gradients(n_q_points);
           std::vector<double>         laplacians(n_q_points);
           std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
@@ -1097,8 +1113,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
           local_dof_indices.resize(dofs_per_cell);
           cell->get_dof_indices(local_dof_indices);
           zero_constraints.distribute_local_to_global(cell_residual,
-                                                 local_dof_indices,
-                                                 residual);
+                                                      local_dof_indices,
+                                                      residual);
         }
     }
 
@@ -1154,10 +1170,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
           break;
         }
       default:
-        Assert(
-          false,
-          ExcMessage(
-            "This program supports only AMG and ILU as preconditioner."));
+        Assert(false,
+               ExcMessage(
+                 "This program supports only AMG and ILU as preconditioner."));
     }
 
   zero_constraints.distribute(completely_distributed_solution);
@@ -1182,7 +1197,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
     solution,
     estimated_error_per_cell);
 
-  Vector<float>          smoothness_indicators(triangulation.n_active_cells());
+  Vector<float> smoothness_indicators(triangulation.n_active_cells());
   FESeries::Fourier<dim, dim> fourier =
     SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
   SmoothnessEstimator::Fourier::coefficient_decay(fourier,
@@ -1375,7 +1390,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       Utilities::System::get_current_vectorization_level() +
       "), VECTORIZATION_LEVEL=" +
       std::to_string(DEAL_II_COMPILER_VECTORIZATION_LEVEL);
-    std::string SOL_header     = "Finite element space: ";// + fe.get_name();
+    std::string SOL_header     = "Finite element space: "; // + fe.get_name();
     std::string PRECOND_header = "";
     if (parameters.preconditioner == Settings::amg)
       PRECOND_header = "Preconditioner: AMG";
@@ -1491,7 +1506,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
 
       pcout << "Refine mesh using hp refinement..." << std::endl;
       hp_refine();
-      pcout << std::endl; 
+      pcout << std::endl;
 
       computing_timer.print_summary();
       computing_timer.reset();
