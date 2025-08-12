@@ -234,7 +234,8 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
             }
           myfile.close();
         }
-      // Ensure all MPI processes reach this point before continuing
+      // Ensure all MPI processes reach this point before continuing.
+      // The barrier forces the synchronisation of the processes.
       MPI_Barrier(MPI_COMM_WORLD);
     }
 }
