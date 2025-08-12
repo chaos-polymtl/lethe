@@ -191,6 +191,12 @@ ParticleProjector<dim>::setup_constraints(
     }
   void_fraction_constraints.close();
 
+  AssertThrow(
+    has_periodic_boundaries == false ||
+      void_fraction_parameters->project_particle_velocity,
+    ExcMessage(
+      "The projection of particle velocity is currently not supported for periodic boundary conditions"));
+
 
   // Reinit system matrix
 
