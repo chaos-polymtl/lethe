@@ -193,7 +193,7 @@ protected:
 
   Particles::ParticleHandler<dim, dim> particle_handler;
 
-  ParticleProjector<dim> void_fraction_manager;
+  ParticleProjector<dim> particle_projector;
 
   bool           has_periodic_boundaries;
   Tensor<1, dim> periodic_offset;
