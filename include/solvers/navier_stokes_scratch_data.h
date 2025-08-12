@@ -284,8 +284,8 @@ public:
     // assembler
     if (this->simulation_control->is_sdirk())
       {
-        this->fe_values[velocities].get_function_values(sum_over_previous_stages,
-                                                        this->sdirk_stage_sum);
+        this->fe_values[velocities].get_function_values(
+          sum_over_previous_stages, this->sdirk_stage_sum);
       }
 
     // Gather velocity (values, gradient and laplacian)
