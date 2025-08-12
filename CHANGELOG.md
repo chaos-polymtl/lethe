@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-11
+
+### Added
+
+- MINOR Prototype of slice output feature using deal.II's [DataOutputResample](https://dealii.org/current/doxygen/deal.II/classDataOutResample.html). The prototype works in parallel for the cases tested. This is the first step towards having a slice output feature, which will allow users to output only a slice or a region of the domain. [#1612](https://github.com/chaos-polymtl/lethe/pull/1612)
+
 ### [Master] - 2025-08-08
 
 ### Fixed 
