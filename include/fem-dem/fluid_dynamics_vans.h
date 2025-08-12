@@ -12,8 +12,8 @@
 
 #include <dem/dem.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
+#include <fem-dem/particle_projector.h>
 #include <fem-dem/vans_assemblers.h>
-#include <fem-dem/void_fraction.h>
 
 #include <deal.II/fe/mapping_q.h>
 

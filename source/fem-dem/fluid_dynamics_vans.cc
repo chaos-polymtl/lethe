@@ -6,7 +6,7 @@
 
 #include <dem/particle_handler_conversion.h>
 #include <fem-dem/fluid_dynamics_vans.h>
-#include <fem-dem/void_fraction.h>
+#include <fem-dem/particle_projector.h>
 
 #include <deal.II/base/work_stream.h>
 
