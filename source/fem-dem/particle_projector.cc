@@ -4,7 +4,7 @@
 #include <core/lethe_grid_tools.h>
 #include <core/vector.h>
 
-#include <fem-dem/void_fraction.h>
+#include <fem-dem/particle_projector.h>
 
 #include <deal.II/base/timer.h>
 

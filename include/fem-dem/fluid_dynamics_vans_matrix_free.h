@@ -7,7 +7,7 @@
 #include <solvers/fluid_dynamics_matrix_free.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/void_fraction.h>
+#include <fem-dem/particle_projector.h>
 
 
 /**

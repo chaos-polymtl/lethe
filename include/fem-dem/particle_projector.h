@@ -97,11 +97,11 @@ particle_sphere_intersection_3d(double r_particle,
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
- * @tparam component_start An integer that indicates at which particle property the field starts
+ * @tparam property_start_index An integer that indicates at which particle property the field starts
  *
  * @tparam n_components The number of components in the field. This number should be either 1 (a scalar) or dim (a Tensor<1,dim>)
  */
-template <int dim, int component_start, int n_components>
+template <int dim, int property_start_index, int n_components>
 class ParticleFieldQCM
 {
 public:
@@ -512,7 +512,7 @@ private:
   /**
   * @brief Calculates the projection of a particle field onto the mesh.
   *
-  * @tparam component_start An integer for the particle_property that will be projected
+  * @tparam property_start_index An integer for the particle_property that will be projected
   *
   * @tparam n_components The number of components of the field. This should be either 1 (scalar) or dim (a Tensor<1,dim>).
   *
@@ -520,10 +520,10 @@ private:
 
    *
    */
-  template <int component_start, int n_components>
+  template <int property_start_index, int n_components>
   void
   calculate_field_projection(
-    ParticleFieldQCM<dim, component_start, n_components> &field_qcm)
+    ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm)
   {
     AssertThrow(
       n_components == 1 || n_components == dim,
@@ -645,7 +645,7 @@ private:
                           {
                             particles_velocity_in_sphere[d] +=
                               particle_volume_in_sphere *
-                              particle_properties[component_start + d];
+                              particle_properties[property_start_index + d];
                           }
                       }
                   }
@@ -701,7 +701,7 @@ private:
                           {
                             particles_velocity_in_sphere[d] +=
                               particle_volume_in_sphere *
-                              particle_properties[component_start + d];
+                              particle_properties[property_start_index + d];
                           }
                       }
                   }

@@ -6,7 +6,7 @@
 
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
 
-#include <fem-dem/void_fraction.h>
+#include <fem-dem/particle_projector.h>
 
 using namespace dealii;
 
