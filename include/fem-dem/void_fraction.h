@@ -505,7 +505,15 @@ private:
   virtual void
   solve_void_fraction_linear_system() override;
 
-  /*
+  /**
+  * @brief Calculates the projection of a particle field onto the mesh.
+  *
+  * @tparam component_start An integer for the particle_property that will be projected
+  *
+  * @tparam n_components The number of components of the field. This should be either 1 (scalar) or dim (a Tensor<1,dim>).
+  *
+  * @param field_qcm The container for the field that will be projected.
+
    *
    */
   template <int component_start, int n_components>
