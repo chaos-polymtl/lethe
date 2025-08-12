@@ -2803,7 +2803,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   multiphysics->attach_solution_to_output(data_out);
 
   // Build the patches and write the output
-
   data_out.build_patches(*this->get_mapping(),
                          subdivision,
                          DataOut<dim>::curved_inner_cells);
