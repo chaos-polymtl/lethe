@@ -121,9 +121,9 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    AssertThrow(fields_value.find(field::temperature) != fields_value.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "ThermalExpansionPhaseChange", "temperature"));
+    Assert(fields_value.find(field::temperature) != fields_value.end(),
+           PhysicialPropertyModelFieldUndefined("ThermalExpansionPhaseChange",
+                                                "temperature"));
     if (fields_value.at(field::temperature) > p_phase_change_params.T_liquidus)
       return p_phase_change_params.thermal_expansion_l;
     else
@@ -139,9 +139,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "ThermalExpansionPhaseChange", "temperature"));
+    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("ThermalExpansionPhaseChange",
+                                                "temperature"));
     const std::vector<double> &T = field_vectors.at(field::temperature);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
@@ -167,9 +167,9 @@ public:
   {
     if (id == field::temperature)
       {
-        AssertThrow(field_values.find(field::temperature) != field_values.end(),
-                    PhysicialPropertyModelFieldUndefined(
-                      "ThermalExpansionPhaseChange", "temperature"));
+        Assert(field_values.find(field::temperature) != field_values.end(),
+               PhysicialPropertyModelFieldUndefined(
+                 "ThermalExpansionPhaseChange", "temperature"));
         return this->numerical_jacobian(field_values, field::temperature);
       }
     else
@@ -188,9 +188,9 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) override
   {
-    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "ThermalExpansionPhaseChange", "temperature"));
+    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("ThermalExpansionPhaseChange",
+                                                "temperature"));
     vector_numerical_jacobian(field_vectors, id, jacobian_vector);
   };
 

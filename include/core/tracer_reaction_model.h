@@ -119,10 +119,9 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    AssertThrow(
-      fields_value.find(field::tracer_concentration) != fields_value.end(),
-      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
-                                           "tracer_concentration"));
+    Assert(fields_value.find(field::tracer_concentration) != fields_value.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "ConstantTracerReactionPrefactor", "tracer_concentration"));
     return tracer_reaction_constant *
            pow(fields_value.at(field::tracer_concentration),
                tracer_reaction_order - 1.);
@@ -138,7 +137,7 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    AssertThrow(
+    Assert(
       field_vectors.find(field::tracer_concentration) != field_vectors.end(),
       PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
                                            "tracer_concentration"));
@@ -162,10 +161,9 @@ public:
   double
   jacobian(const std::map<field, double> &field_values, field id) override
   {
-    AssertThrow(
-      field_values.find(field::tracer_concentration) != field_values.end(),
-      PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
-                                           "tracer_concentration"));
+    Assert(field_values.find(field::tracer_concentration) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "ConstantTracerReactionPrefactor", "tracer_concentration"));
     if (id == field::tracer_concentration)
       return tracer_reaction_constant * (tracer_reaction_order - 1.) *
              pow(field_values.at(field::tracer_concentration),
@@ -186,7 +184,7 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) override
   {
-    AssertThrow(
+    Assert(
       field_vectors.find(field::tracer_concentration) != field_vectors.end(),
       PhysicialPropertyModelFieldUndefined("ConstantTracerReactionPrefactor",
                                            "tracer_concentration"));
@@ -253,14 +251,12 @@ public:
   double
   value(const std::map<field, double> &field_values) override
   {
-    AssertThrow(field_values.find(field::levelset) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
-    AssertThrow(field_values.find(field::tracer_concentration) !=
-                  field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor",
-                  "tracer_concentration"));
+    Assert(field_values.find(field::levelset) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    Assert(field_values.find(field::tracer_concentration) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
     const double levelset      = field_values.at(field::levelset);
     const double concentration = field_values.at(field::tracer_concentration);
     const double k =
@@ -279,14 +275,13 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
-    AssertThrow(field_vectors.find(field::tracer_concentration) !=
-                  field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor",
-                  "tracer_concentration"));
+    Assert(field_vectors.find(field::levelset) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    Assert(field_vectors.find(field::tracer_concentration) !=
+             field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
 
     const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
     const std::vector<double> &concentration_vec =
@@ -315,14 +310,12 @@ public:
   double
   jacobian(const std::map<field, double> &field_values, field id) override
   {
-    AssertThrow(field_values.find(field::levelset) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
-    AssertThrow(field_values.find(field::tracer_concentration) !=
-                  field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor",
-                  "tracer_concentration"));
+    Assert(field_values.find(field::levelset) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    Assert(field_values.find(field::tracer_concentration) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
     if (id == field::levelset)
       {
         return numerical_jacobian(field_values, field::levelset);
@@ -353,14 +346,13 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) override
   {
-    AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor", "levelset"));
-    AssertThrow(field_vectors.find(field::tracer_concentration) !=
-                  field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerReactionPrefactor",
-                  "tracer_concentration"));
+    Assert(field_vectors.find(field::levelset) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "levelset"));
+    Assert(field_vectors.find(field::tracer_concentration) !=
+             field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
     if (id == field::levelset)
       {
         vector_numerical_jacobian(field_vectors, id, jacobian_vector);

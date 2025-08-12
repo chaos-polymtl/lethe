@@ -463,8 +463,8 @@ public:
     const double                  &p_density_ref,
     const std::map<field, double> &field_values) const override
   {
-    AssertThrow(field_values.find(field::shear_rate) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
+    Assert(field_values.find(field::shear_rate) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
     const double shear_rate_magnitude = field_values.at(field::shear_rate);
     return calculate_kinematic_viscosity(shear_rate_magnitude) * p_density_ref;
   }
@@ -481,8 +481,8 @@ public:
     const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double>                        &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::shear_rate) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
+    Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
     const std::vector<double> &shear_rate_magnitude =
       field_vectors.at(field::shear_rate);
 
@@ -627,8 +627,8 @@ public:
     const double                  &p_density_ref,
     const std::map<field, double> &field_values) const override
   {
-    AssertThrow(field_values.find(field::shear_rate) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
+    Assert(field_values.find(field::shear_rate) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
     const double shear_rate_magnitude = field_values.at(field::shear_rate);
     return calculate_kinematic_viscosity(shear_rate_magnitude) * p_density_ref;
   }
@@ -645,8 +645,8 @@ public:
     const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double>                        &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::shear_rate) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
+    Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
     const std::vector<double> &shear_rate_magnitude =
       field_vectors.at(field::shear_rate);
 
@@ -777,9 +777,9 @@ public:
     const double                  &p_density_ref,
     const std::map<field, double> &field_values) const override
   {
-    AssertThrow(field_values.find(field::temperature) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
-                                                     "temperature"));
+    Assert(field_values.find(field::temperature) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
+                                                "temperature"));
     const double temperature = field_values.at(field::temperature);
     return kinematic_viscosity(temperature) * p_density_ref;
   }
@@ -796,9 +796,9 @@ public:
     const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double>                        &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
-                                                     "temperature"));
+    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
+                                                "temperature"));
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
