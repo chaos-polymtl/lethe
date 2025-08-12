@@ -1932,59 +1932,64 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01804" name="l01804"></a><span class="lineno"> 1804</span>        mapping,</div>
 <div class="line"><a id="l01805" name="l01805"></a><span class="lineno"> 1805</span>        dof_handler.get_triangulation(),</div>
 <div class="line"><a id="l01806" name="l01806"></a><span class="lineno"> 1806</span>        [&amp;](<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell, <span class="keyword">const</span> <span class="keyword">auto</span> &amp;point) {</div>
-<div class="line"><a id="l01807" name="l01807"></a><span class="lineno"> 1807</span>          <span class="keywordflow">if</span> (cell-&gt;center().norm() &gt; radius)</div>
+<div class="line"><a id="l01807" name="l01807"></a><span class="lineno"> 1807</span>          <span class="keywordflow">if</span> ((cell-&gt;center() - center_of_rotation).norm() &gt; radius)</div>
 <div class="line"><a id="l01808" name="l01808"></a><span class="lineno"> 1808</span>            <span class="keywordflow">return</span> point;</div>
 <div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span> </div>
-<div class="line"><a id="l01810" name="l01810"></a><span class="lineno"> 1810</span>          <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>Point&lt;dim&gt;<span class="keyword">&gt;</span>(</div>
-<div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span>            Physics::Transformations::Rotations::rotation_matrix_2d(</div>
-<div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span>              rotation_angle) *</div>
-<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span>            point);</div>
-<div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span>        },</div>
-<div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span>        <span class="keyword">false</span>);</div>
-<div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span>    }</div>
-<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>    {</div>
-<div class="line"><a id="l01819" name="l01819"></a><span class="lineno"> 1819</span>      mapping_cache.initialize(</div>
-<div class="line"><a id="l01820" name="l01820"></a><span class="lineno"> 1820</span>        mapping,</div>
-<div class="line"><a id="l01821" name="l01821"></a><span class="lineno"> 1821</span>        dof_handler.get_triangulation(),</div>
-<div class="line"><a id="l01822" name="l01822"></a><span class="lineno"> 1822</span>        [&amp;](<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell, <span class="keyword">const</span> <span class="keyword">auto</span> &amp;point) {</div>
-<div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>          <span class="comment">// Compute point radial distance with respect to the rotation axis</span></div>
-<div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>          <span class="keyword">const</span> <span class="keyword">auto</span> aux =</div>
-<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>            cross_product_3d((cell-&gt;center() - center_of_rotation),</div>
-<div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>                             rotation_axis);</div>
-<div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> point_radial_distance =</div>
-<div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>            aux.norm() / rotation_axis.norm();</div>
-<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span> </div>
-<div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span>          <span class="keywordflow">if</span> (point_radial_distance &gt; radius)</div>
-<div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>            <span class="keywordflow">return</span> point;</div>
-<div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span> </div>
-<div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span>          <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>Point&lt;dim&gt;<span class="keyword">&gt;</span>(</div>
-<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span>            Physics::Transformations::Rotations::rotation_matrix_3d(</div>
-<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span>              rotation_axis, rotation_angle) *</div>
-<div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span>            point);</div>
-<div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span>        },</div>
-<div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span>        <span class="keyword">false</span>);</div>
-<div class="line"><a id="l01839" name="l01839"></a><span class="lineno"> 1839</span>    }</div>
-<div class="line"><a id="l01840" name="l01840"></a><span class="lineno"> 1840</span>}</div>
+<div class="line"><a id="l01810" name="l01810"></a><span class="lineno"> 1810</span>          <span class="comment">// Shift point by the center of rotation</span></div>
+<div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span>          <span class="keyword">const</span> <span class="keyword">auto</span> shift_point = point - center_of_rotation;</div>
+<div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span>          <span class="comment">// Rotate</span></div>
+<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span>          <span class="keyword">const</span> <span class="keyword">auto</span> rotate_point =</div>
+<div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span>            Physics::Transformations::Rotations::rotation_matrix_2d(</div>
+<div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span>              rotation_angle) *</div>
+<div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span>            shift_point;</div>
+<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span>          <span class="comment">// Return rotated point according to center of rotation</span></div>
+<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>          <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>Point&lt;dim&gt;<span class="keyword">&gt;</span>(rotate_point + center_of_rotation);</div>
+<div class="line"><a id="l01819" name="l01819"></a><span class="lineno"> 1819</span>        },</div>
+<div class="line"><a id="l01820" name="l01820"></a><span class="lineno"> 1820</span>        <span class="keyword">false</span>);</div>
+<div class="line"><a id="l01821" name="l01821"></a><span class="lineno"> 1821</span>    }</div>
+<div class="line"><a id="l01822" name="l01822"></a><span class="lineno"> 1822</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>    {</div>
+<div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>      mapping_cache.initialize(</div>
+<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>        mapping,</div>
+<div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>        dof_handler.get_triangulation(),</div>
+<div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span>        [&amp;](<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell, <span class="keyword">const</span> <span class="keyword">auto</span> &amp;point) {</div>
+<div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>          <span class="comment">// Compute point radial distance with respect to the rotation axis</span></div>
+<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>          <span class="keyword">const</span> <span class="keyword">auto</span> aux =</div>
+<div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span>            cross_product_3d((cell-&gt;center() - center_of_rotation),</div>
+<div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>                             rotation_axis);</div>
+<div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> point_radial_distance =</div>
+<div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span>            aux.norm() / rotation_axis.norm();</div>
+<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span> </div>
+<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span>          <span class="keywordflow">if</span> (point_radial_distance &gt; radius)</div>
+<div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span>            <span class="keywordflow">return</span> point;</div>
+<div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span> </div>
+<div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span>          <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>Point&lt;dim&gt;<span class="keyword">&gt;</span>(</div>
+<div class="line"><a id="l01839" name="l01839"></a><span class="lineno"> 1839</span>            Physics::Transformations::Rotations::rotation_matrix_3d(</div>
+<div class="line"><a id="l01840" name="l01840"></a><span class="lineno"> 1840</span>              rotation_axis, rotation_angle) *</div>
+<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span>            point);</div>
+<div class="line"><a id="l01842" name="l01842"></a><span class="lineno"> 1842</span>        },</div>
+<div class="line"><a id="l01843" name="l01843"></a><span class="lineno"> 1843</span>        <span class="keyword">false</span>);</div>
+<div class="line"><a id="l01844" name="l01844"></a><span class="lineno"> 1844</span>    }</div>
+<div class="line"><a id="l01845" name="l01845"></a><span class="lineno"> 1845</span>}</div>
 </div>
-<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span> </div>
-<div class="line"><a id="l01842" name="l01842"></a><span class="lineno"> 1842</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01843" name="l01843"></a><span class="lineno"> 1843</span><a class="code hl_function" href="namespaceLetheGridTools.html#a8a4c084733495bbef55826c11d3efb50">LetheGridTools::rotate_mapping</a>(<span class="keyword">const</span> DoFHandler&lt;2&gt; &amp;dof_handler,</div>
-<div class="line"><a id="l01844" name="l01844"></a><span class="lineno"> 1844</span>                               MappingQCache&lt;2&gt;    &amp;mapping_cache,</div>
-<div class="line"><a id="l01845" name="l01845"></a><span class="lineno"> 1845</span>                               <span class="keyword">const</span> Mapping&lt;2&gt;    &amp;mapping,</div>
-<div class="line"><a id="l01846" name="l01846"></a><span class="lineno"> 1846</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;radius,</div>
-<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;rotation_angle,</div>
-<div class="line"><a id="l01848" name="l01848"></a><span class="lineno"> 1848</span>                               <span class="keyword">const</span> Point&lt;2&gt;      &amp;center_of_rotation,</div>
-<div class="line"><a id="l01849" name="l01849"></a><span class="lineno"> 1849</span>                               <span class="keyword">const</span> Tensor&lt;1, 2&gt;  &amp;rotation_axis);</div>
-<div class="line"><a id="l01850" name="l01850"></a><span class="lineno"> 1850</span> </div>
-<div class="line"><a id="l01851" name="l01851"></a><span class="lineno"> 1851</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01852" name="l01852"></a><span class="lineno"> 1852</span><a class="code hl_function" href="namespaceLetheGridTools.html#a8a4c084733495bbef55826c11d3efb50">LetheGridTools::rotate_mapping</a>(<span class="keyword">const</span> DoFHandler&lt;3&gt; &amp;dof_handler,</div>
-<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>                               MappingQCache&lt;3&gt;    &amp;mapping_cache,</div>
-<div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>                               <span class="keyword">const</span> Mapping&lt;3&gt;    &amp;mapping,</div>
-<div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;radius,</div>
-<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;rotation_angle,</div>
-<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span>                               <span class="keyword">const</span> Point&lt;3&gt;      &amp;center_of_rotation,</div>
-<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span>                               <span class="keyword">const</span> Tensor&lt;1, 3&gt;  &amp;rotation_axis);</div>
+<div class="line"><a id="l01846" name="l01846"></a><span class="lineno"> 1846</span> </div>
+<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01848" name="l01848"></a><span class="lineno"> 1848</span><a class="code hl_function" href="namespaceLetheGridTools.html#a8a4c084733495bbef55826c11d3efb50">LetheGridTools::rotate_mapping</a>(<span class="keyword">const</span> DoFHandler&lt;2&gt; &amp;dof_handler,</div>
+<div class="line"><a id="l01849" name="l01849"></a><span class="lineno"> 1849</span>                               MappingQCache&lt;2&gt;    &amp;mapping_cache,</div>
+<div class="line"><a id="l01850" name="l01850"></a><span class="lineno"> 1850</span>                               <span class="keyword">const</span> Mapping&lt;2&gt;    &amp;mapping,</div>
+<div class="line"><a id="l01851" name="l01851"></a><span class="lineno"> 1851</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;radius,</div>
+<div class="line"><a id="l01852" name="l01852"></a><span class="lineno"> 1852</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;rotation_angle,</div>
+<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>                               <span class="keyword">const</span> Point&lt;2&gt;      &amp;center_of_rotation,</div>
+<div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>                               <span class="keyword">const</span> Tensor&lt;1, 2&gt;  &amp;rotation_axis);</div>
+<div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span> </div>
+<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span><a class="code hl_function" href="namespaceLetheGridTools.html#a8a4c084733495bbef55826c11d3efb50">LetheGridTools::rotate_mapping</a>(<span class="keyword">const</span> DoFHandler&lt;3&gt; &amp;dof_handler,</div>
+<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span>                               MappingQCache&lt;3&gt;    &amp;mapping_cache,</div>
+<div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span>                               <span class="keyword">const</span> Mapping&lt;3&gt;    &amp;mapping,</div>
+<div class="line"><a id="l01860" name="l01860"></a><span class="lineno"> 1860</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;radius,</div>
+<div class="line"><a id="l01861" name="l01861"></a><span class="lineno"> 1861</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>        &amp;rotation_angle,</div>
+<div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span>                               <span class="keyword">const</span> Point&lt;3&gt;      &amp;center_of_rotation,</div>
+<div class="line"><a id="l01863" name="l01863"></a><span class="lineno"> 1863</span>                               <span class="keyword">const</span> Tensor&lt;1, 3&gt;  &amp;rotation_axis);</div>
 <div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition</b> <a href="serial__solid_8h_source.html#l00048">serial_solid.h:49</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="alethe__grid__tools_8h_html"><div class="ttname"><a href="lethe__grid__tools_8h.html">lethe_grid_tools.h</a></div></div>
