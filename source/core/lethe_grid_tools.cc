@@ -1807,11 +1807,14 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
           if ((cell->center() - center_of_rotation).norm() > radius)
             return point;
 
+          // Shift point by the center of rotation
           const auto shift_point = point - center_of_rotation;
+          // Rotate
           const auto rotate_point =
             Physics::Transformations::Rotations::rotation_matrix_2d(
               rotation_angle) *
             shift_point;
+          // Return rotated point according to center of rotation
           return static_cast<Point<dim>>(rotate_point + center_of_rotation);
         },
         false);
@@ -1822,20 +1825,31 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
+          // Make sure the rotation axis is a unit vector
+          const Tensor<1, dim> rotation_axis_unit = rotation_axis/rotation_axis.norm();
+
           // Compute point radial distance with respect to the rotation axis
           const auto aux =
             cross_product_3d((cell->center() - center_of_rotation),
-                             rotation_axis);
+                             rotation_axis_unit);
           const double point_radial_distance =
-            aux.norm() / rotation_axis.norm();
+            aux.norm() / rotation_axis_unit.norm();
 
           if (point_radial_distance > radius)
             return point;
 
-          return static_cast<Point<dim>>(
-            Physics::Transformations::Rotations::rotation_matrix_3d(
-              rotation_axis, rotation_angle) *
-            point);
+          // Distance from point to center of rotation
+          const auto shift_point = point - center_of_rotation;
+          // Closest point passing through the center of rotation in the rotation axis direction
+          const auto closest_point = center_of_rotation + (shift_point * rotation_axis_unit) * rotation_axis_unit;
+          // Radial distance between point and closest point in rotation axis
+          const auto radial_dist = point - closest_point;
+          // Rotate
+          const auto rotate_point = Physics::Transformations::Rotations::rotation_matrix_3d(
+              rotation_axis_unit, rotation_angle) *
+            radial_dist;
+          // Return rotated point according to rotation axis
+          return static_cast<Point<dim>>(rotate_point + closest_point);
         },
         false);
     }
